@@ -371,6 +371,13 @@
     <string name="practise_tip_2">करिये अनलिमिटेड प्रैक्टिस लेकिन सिर्फ अंग्रेज़ी में</string>
     <string name="practise_tip_3">अपने पार्टनर का आदर करें तथा कृप्या गलत भाषा का उपयोग ना करे </string>
     <string name="select_country">देश चुनिए</string>
+    <string name="next_class">अगली कक्षा</string>
+    <string name="pp_label">प्रैक्टिस पार्टनर चयनित! कॉल शुरू</string>
+    <string name="enter_country">कृपया देश दर्ज करें</string>
+    <string name="no_result_found">कोई परिणाम नहीं मिला</string>
+    <string name="correct_answer_label">आपका उत्तर सही है</string>
+    <string name="wrong_answer_label">आपका जवाब गलत है</string>
+    <string name="english_practise_hint">साथी के साथ लाइव कॉल पर अंग्रेजी का अभ्यास करें.</string>
 
 
 </resources>

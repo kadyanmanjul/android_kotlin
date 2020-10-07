@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/profile_image"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_5sdp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_user_rec_placeholder"
+        app:srcCompat="@drawable/ic_user_rec_placeholder" />
 
     <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/profile_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/_5sdp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_user_rec_placeholder"
-            app:srcCompat="@drawable/ic_user_rec_placeholder" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|bottom"
-            android:layout_marginStart="@dimen/_1sdp"
-            android:layout_marginBottom="@dimen/_7sdp"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/play_button_description"
-            android:scaleType="fitCenter"
-            app:srcCompat="@drawable/ic_rec_mic" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|bottom"
+        android:layout_marginStart="@dimen/_1sdp"
+        android:layout_marginBottom="@dimen/_7sdp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/play_button_description"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/ic_rec_mic" />
 </FrameLayout>

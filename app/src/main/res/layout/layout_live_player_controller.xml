@@ -175,7 +175,6 @@
                         android:background="#0fff"
                         android:clickable="true"
                         android:focusable="true"
-                        android:onClick="toggleFullScreen"
                         android:padding="10dp"
                         android:src="@drawable/ic_fullscreen"
                         android:tint="#fff"

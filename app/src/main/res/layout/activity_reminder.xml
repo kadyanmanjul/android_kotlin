@@ -1,196 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        tools:context=".ui.reminder.set_reminder.ReminderActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.reminder.set_reminder.ReminderActivity">
 
     <data>
 
         <variable
-                name="reminderData"
-                type="com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity" />
+            name="reminderData"
+            type="com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/parent_Container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        android:id="@+id/parent_Container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <include
-                android:id="@+id/toolbar"
-                layout="@layout/reminder_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            android:id="@+id/toolbar"
+            layout="@layout/reminder_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ScrollView
-                android:id="@+id/scroll_view"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/create_reminder_btn"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar">
+            android:id="@+id/scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/create_reminder_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/reminder_msg_tv"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_16sdp"
-                        android:layout_marginTop="@dimen/_16sdp"
-                        android:layout_marginEnd="@dimen/_16sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                        android:textColor="@color/black"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                    android:id="@+id/reminder_msg_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:layout_marginEnd="@dimen/_16sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TimePicker
-                        android:id="@+id/time_picker"
-                        style="@style/MyTimePickerWidgetStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_16sdp"
-                        android:layout_marginEnd="@dimen/_16sdp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/reminder_msg_tv" />
+                    android:id="@+id/time_picker"
+                    style="@style/MyTimePickerWidgetStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginEnd="@dimen/_16sdp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/reminder_msg_tv" />
 
                 <View
-                        android:id="@+id/sperator1"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_2sdp"
-                        android:background="@color/artboard_color"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/time_picker" />
+                    android:id="@+id/sperator1"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_2sdp"
+                    android:background="@color/artboard_color"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/time_picker" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/repeat_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_16sdp"
-                        android:layout_marginTop="@dimen/_8sdp"
-                        android:text="@string/repeat"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                        android:textColor="@color/black"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/sperator1" />
+                    android:id="@+id/repeat_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:text="@string/repeat"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/sperator1" />
 
                 <HorizontalScrollView
-                        android:id="@+id/chips_layout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_16sdp"
-                        android:layout_marginEnd="@dimen/_16sdp"
-                        android:overScrollMode="never"
-                        android:scrollbars="none"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/repeat_tv">
+                    android:id="@+id/chips_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginEnd="@dimen/_16sdp"
+                    android:overScrollMode="never"
+                    android:scrollbars="none"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/repeat_tv">
 
                     <com.google.android.material.chip.ChipGroup
-                            android:id="@+id/repeat_mode_chips"
+                        android:id="@+id/repeat_mode_chips"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/_8sdp"
+                        android:paddingEnd="@dimen/_8sdp"
+                        app:chipSpacingHorizontal="@dimen/_8sdp"
+                        app:flow_horizontalStyle="spread"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/repeat_tv"
+                        app:singleLine="true"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/weekend_chip"
+                            style="@style/ReminderChipStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:paddingStart="@dimen/_8sdp"
-                            android:paddingEnd="@dimen/_8sdp"
-                            app:chipSpacingHorizontal="@dimen/_8sdp"
-                            app:flow_horizontalStyle="spread"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/repeat_tv"
+                            android:text="@string/on_weekends"
+                            android:textAlignment="center"
+                            android:textAppearance="@style/TextStyle.ChipText"
+                            android:textSize="@dimen/font_12"
+                            app:chipEndPadding="@dimen/_8sdp"
+                            app:chipMinHeight="@dimen/_20sdp"
+                            app:chipStartPadding="@dimen/_8sdp"
                             app:singleLine="true"
-                            app:singleSelection="true">
+                            app:singleSelection="true" />
 
                         <com.google.android.material.chip.Chip
-                                android:id="@+id/weekend_chip"
-                                style="@style/ReminderChipStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/on_weekends"
-                                android:textAlignment="center"
-                                android:textAppearance="@style/TextStyle.ChipText"
-                                android:textSize="@dimen/font_12"
-                                app:chipEndPadding="@dimen/_8sdp"
-                                app:chipMinHeight="@dimen/_20sdp"
-                                app:chipStartPadding="@dimen/_8sdp"
-                                app:singleLine="true"
-                                app:singleSelection="true" />
+                            android:id="@+id/weekdays_chip"
+                            style="@style/ReminderChipStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/on_weekdays"
+                            android:textAlignment="center"
+                            android:textAppearance="@style/TextStyle.ChipText"
+                            android:textSize="@dimen/font_12"
+                            app:chipEndPadding="@dimen/_8sdp"
+                            app:chipMinHeight="@dimen/_20sdp"
+                            app:chipStartPadding="@dimen/_8sdp"
+                            app:singleLine="true"
+                            app:singleSelection="true" />
 
                         <com.google.android.material.chip.Chip
-                                android:id="@+id/weekdays_chip"
-                                style="@style/ReminderChipStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/on_weekdays"
-                                android:textAlignment="center"
-                                android:textAppearance="@style/TextStyle.ChipText"
-                                android:textSize="@dimen/font_12"
-                                app:chipEndPadding="@dimen/_8sdp"
-                                app:chipMinHeight="@dimen/_20sdp"
-                                app:chipStartPadding="@dimen/_8sdp"
-                                app:singleLine="true"
-                                app:singleSelection="true" />
-
-                        <com.google.android.material.chip.Chip
-                                android:id="@+id/everyday_chip"
-                                style="@style/ReminderChipStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:checked="true"
-                                android:text="@string/every_day"
-                                android:textAlignment="center"
-                                android:textAppearance="@style/TextStyle.ChipText"
-                                android:textSize="@dimen/font_12"
-                                app:chipEndPadding="@dimen/_8sdp"
-                                app:chipMinHeight="@dimen/_20sdp"
-                                app:chipStartPadding="@dimen/_8sdp"
-                                app:singleLine="true"
-                                app:singleSelection="true" />
+                            android:id="@+id/everyday_chip"
+                            style="@style/ReminderChipStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="@string/every_day"
+                            android:textAlignment="center"
+                            android:textAppearance="@style/TextStyle.ChipText"
+                            android:textSize="@dimen/font_12"
+                            app:chipEndPadding="@dimen/_8sdp"
+                            app:chipMinHeight="@dimen/_20sdp"
+                            app:chipStartPadding="@dimen/_8sdp"
+                            app:singleLine="true"
+                            app:singleSelection="true" />
                     </com.google.android.material.chip.ChipGroup>
                 </HorizontalScrollView>
 
                 <View
-                        android:id="@+id/saperator2"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_2sdp"
-                        android:layout_marginTop="@dimen/_16sdp"
-                        android:background="@color/artboard_color"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/chips_layout" />
+                    android:id="@+id/saperator2"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_2sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:background="@color/artboard_color"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/chips_layout" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 
         <com.google.android.material.button.MaterialButton
-                android:id="@+id/create_reminder_btn"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:layout_marginBottom="@dimen/_16sdp"
-                android:paddingStart="@dimen/_32sdp"
-                android:paddingTop="@dimen/_6sdp"
-                android:paddingEnd="@dimen/_32sdp"
-                android:paddingBottom="@dimen/_6sdp"
-                android:text="@string/set_reminder"
-                android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                app:cornerRadius="@dimen/_16sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintWidth_default="percent"
-                app:rippleColor="@color/white"
-                app:strokeColor="@color/text_color_10" />
+            android:id="@+id/create_reminder_btn"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:layout_marginBottom="@dimen/_16sdp"
+            android:paddingStart="@dimen/_32sdp"
+            android:paddingTop="@dimen/_6sdp"
+            android:paddingEnd="@dimen/_32sdp"
+            android:paddingBottom="@dimen/_6sdp"
+            android:text="@string/set_reminder"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+            app:cornerRadius="@dimen/_16sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:rippleColor="@color/white"
+            app:strokeColor="@color/text_color_10" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

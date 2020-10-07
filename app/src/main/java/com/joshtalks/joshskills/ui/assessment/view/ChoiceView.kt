@@ -54,8 +54,6 @@ class ChoiceView : FrameLayout {
         setUpUI()
     }
 
-    fun unBind() {
-    }
 
     private fun setUpUI() {
         assessmentQuestion?.let { assessmentQuestion ->

@@ -36,7 +36,6 @@ class AssessmentQuestionAdapter(
     override fun onViewRecycled(holder: ViewHolder) {
         super.onViewRecycled(holder)
         holder.binding.questionView.unBind()
-        holder.binding.choiceView.unBind()
     }
 
     override fun getItemViewType(position: Int): Int {

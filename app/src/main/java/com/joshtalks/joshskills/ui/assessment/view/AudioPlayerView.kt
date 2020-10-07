@@ -33,15 +33,14 @@ import com.tonyodev.fetch2.Priority
 import com.tonyodev.fetch2.Request
 import com.tonyodev.fetch2core.DownloadBlock
 import com.tonyodev.fetch2core.Downloader
-import com.tonyodev.fetch2core.Func
 import io.reactivex.disposables.CompositeDisposable
+import java.io.File
+import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.File
-import kotlin.random.Random
 
 
 class AudioPlayerView : FrameLayout, View.OnClickListener,
@@ -305,9 +304,9 @@ class AudioPlayerView : FrameLayout, View.OnClickListener,
                 AppObjectController.getFetchObject().remove(request.id)
                 AppObjectController.getFetchObject()
                     .addListener(downloadListener)
-                    .enqueue(request, Func {
+                    .enqueue(request, {
                     },
-                        Func {
+                        {
                             it.throwable?.printStackTrace()
                             onDownloadIssue()
                         }).awaitFinishOrTimeout(20000)

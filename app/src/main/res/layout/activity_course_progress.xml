@@ -1,50 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:wheel="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:wheel="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
-                name="handler"
-                type="com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity" />
+            name="handler"
+            type="com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity" />
     </data>
 
     <FrameLayout
-            android:id="@+id/main_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        android:id="@+id/main_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <androidx.core.widget.NestedScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fillViewport="true"
-                android:transitionGroup="true">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:transitionGroup="true">
 
             <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/root_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                    android:id="@+id/root_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <RelativeLayout
-                            android:id="@+id/toolbar"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:minHeight="?attr/actionBarSize"
-                            android:paddingStart="@dimen/_12sdp"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent">
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="?attr/actionBarSize"
+                        android:paddingStart="@dimen/_12sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
                         <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/iv_back"
-                                android:layout_width="wrap_content"
+                            android:id="@+id/iv_back"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentStart="true"
                             android:layout_centerVertical="true"
@@ -75,197 +75,197 @@
                     </RelativeLayout>
 
                     <LinearLayout
-                            android:id="@+id/sub_root_view"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:paddingStart="@dimen/_8sdp"
-                            android:paddingTop="@dimen/_4sdp"
-                            android:paddingEnd="@dimen/_8sdp"
-                            android:paddingBottom="@dimen/_8sdp"
-                            android:visibility="invisible"
-                            app:layout_constraintTop_toBottomOf="@+id/toolbar"
-                            tools:visibility="visible">
+                        android:id="@+id/sub_root_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingStart="@dimen/_8sdp"
+                        android:paddingTop="@dimen/_4sdp"
+                        android:paddingEnd="@dimen/_8sdp"
+                        android:paddingBottom="@dimen/_8sdp"
+                        android:visibility="invisible"
+                        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                        tools:visibility="visible">
 
 
                         <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/_80sdp"
-                                android:background="@drawable/round_rect_default"
-                                android:backgroundTint="@color/controls_panel_stroke"
-                                android:padding="@dimen/_8sdp">
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_80sdp"
+                            android:background="@drawable/round_rect_default"
+                            android:backgroundTint="@color/controls_panel_stroke"
+                            android:padding="@dimen/_8sdp">
 
                             <androidx.appcompat.widget.AppCompatImageView
-                                    android:id="@+id/user_image"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="0dp"
-                                    android:adjustViewBounds="true"
-                                    android:background="@drawable/bg_white_round_36"
-                                    android:clickable="true"
-                                    android:focusable="true"
-                                    android:scaleType="fitCenter"
-                                    android:src="@drawable/circle"
-                                    app:layout_constraintBottom_toBottomOf="parent"
-                                    app:layout_constraintHeight_default="percent"
-                                    app:layout_constraintHeight_percent="0.8"
-                                    app:layout_constraintLeft_toLeftOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    app:layout_constraintWidth_default="percent"
-                                    app:layout_constraintWidth_percent="0.15" />
+                                android:id="@+id/user_image"
+                                android:layout_width="wrap_content"
+                                android:layout_height="0dp"
+                                android:adjustViewBounds="true"
+                                android:background="@drawable/bg_white_round_36"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/circle"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintHeight_default="percent"
+                                app:layout_constraintHeight_percent="0.8"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintWidth_default="percent"
+                                app:layout_constraintWidth_percent="0.15" />
 
 
                             <androidx.appcompat.widget.AppCompatTextView
-                                    android:id="@+id/tv_user_name"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginEnd="@dimen/_4sdp"
-                                    android:ellipsize="marquee"
-                                    android:gravity="center"
-                                    android:marqueeRepeatLimit="marquee_forever"
-                                    android:singleLine="true"
-                                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                                    android:textColor="@color/black"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintStart_toEndOf="@+id/user_image"
-                                    app:layout_constraintTop_toTopOf="@+id/user_image"
-                                    app:layout_constraintWidth_default="percent"
-                                    app:layout_constraintWidth_percent="0.6"
-                                    tools:text="Sample test" />
+                                android:id="@+id/tv_user_name"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/_4sdp"
+                                android:ellipsize="marquee"
+                                android:gravity="center"
+                                android:marqueeRepeatLimit="marquee_forever"
+                                android:singleLine="true"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+                                android:textColor="@color/black"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/user_image"
+                                app:layout_constraintTop_toTopOf="@+id/user_image"
+                                app:layout_constraintWidth_default="percent"
+                                app:layout_constraintWidth_percent="0.6"
+                                tools:text="Sample test" />
 
 
                             <androidx.appcompat.widget.AppCompatTextView
-                                    android:id="@+id/tv_course_duration"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginEnd="@dimen/_4sdp"
-                                    android:ellipsize="marquee"
-                                    android:gravity="center"
-                                    android:marqueeRepeatLimit="marquee_forever"
-                                    android:paddingTop="@dimen/_4sdp"
-                                    android:singleLine="true"
-                                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-                                    android:textColor="@color/black"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintStart_toEndOf="@+id/user_image"
-                                    app:layout_constraintTop_toBottomOf="@+id/tv_user_name"
-                                    tools:text="Sample test" />
+                                android:id="@+id/tv_course_duration"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/_4sdp"
+                                android:ellipsize="marquee"
+                                android:gravity="center"
+                                android:marqueeRepeatLimit="marquee_forever"
+                                android:paddingTop="@dimen/_4sdp"
+                                android:singleLine="true"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                                android:textColor="@color/black"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/user_image"
+                                app:layout_constraintTop_toBottomOf="@+id/tv_user_name"
+                                tools:text="Sample test" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/_8sdp"
-                                android:background="@drawable/round_rect_default"
-                                android:backgroundTint="#F5C116"
-                                android:paddingStart="@dimen/_8sdp"
-                                android:paddingTop="@dimen/_10sdp"
-                                android:paddingEnd="@dimen/_8sdp"
-                                android:paddingBottom="@dimen/_10sdp">
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_8sdp"
+                            android:background="@drawable/round_rect_default"
+                            android:backgroundTint="#F5C116"
+                            android:paddingStart="@dimen/_8sdp"
+                            android:paddingTop="@dimen/_10sdp"
+                            android:paddingEnd="@dimen/_8sdp"
+                            android:paddingBottom="@dimen/_10sdp">
 
                             <androidx.appcompat.widget.AppCompatImageView
-                                    android:id="@+id/image_view"
-                                    android:layout_width="0dp"
-                                    android:layout_height="0dp"
-                                    android:adjustViewBounds="true"
-                                    android:padding="@dimen/_2sdp"
-                                    android:scaleType="fitCenter"
-                                    app:layout_constraintBottom_toBottomOf="parent"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    app:layout_constraintWidth_default="percent"
-                                    app:layout_constraintWidth_percent="0.2" />
+                                android:id="@+id/image_view"
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:adjustViewBounds="true"
+                                android:padding="@dimen/_2sdp"
+                                android:scaleType="fitCenter"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintWidth_default="percent"
+                                app:layout_constraintWidth_percent="0.2" />
 
                             <LinearLayout
-                                    android:layout_width="0dp"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginEnd="@dimen/_4sdp"
+                                android:orientation="vertical"
+                                app:layout_constraintBottom_toBottomOf="@+id/image_view"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/image_view"
+                                app:layout_constraintTop_toTopOf="@+id/image_view"
+                                app:layout_constraintWidth_default="percent"
+                                app:layout_constraintWidth_percent="0.8">
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/tv_welcome"
+                                    android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:layout_marginEnd="@dimen/_4sdp"
-                                    android:orientation="vertical"
-                                    app:layout_constraintBottom_toBottomOf="@+id/image_view"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintStart_toEndOf="@+id/image_view"
-                                    app:layout_constraintTop_toTopOf="@+id/image_view"
-                                    app:layout_constraintWidth_default="percent"
-                                    app:layout_constraintWidth_percent="0.8">
+                                    android:layout_gravity="top|end"
+                                    android:layout_weight="0.4"
+                                    android:ellipsize="marquee"
+                                    android:gravity="top|end"
+                                    android:marqueeRepeatLimit="marquee_forever"
+                                    android:singleLine="true"
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+                                    android:textColor="@color/white"
+                                    tools:text="Sample test" />
 
                                 <androidx.appcompat.widget.AppCompatTextView
-                                        android:id="@+id/tv_welcome"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:layout_gravity="top|end"
-                                        android:layout_weight="0.4"
-                                        android:ellipsize="marquee"
-                                        android:gravity="top|end"
-                                        android:marqueeRepeatLimit="marquee_forever"
-                                        android:singleLine="true"
-                                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                                        android:textColor="@color/white"
-                                        tools:text="Sample test" />
-
-                                <androidx.appcompat.widget.AppCompatTextView
-                                        android:id="@+id/tv_course_status"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="match_parent"
-                                        android:layout_gravity="top|end"
-                                        android:layout_weight="0.6"
-                                        android:ellipsize="marquee"
-                                        android:gravity="top|end"
-                                        android:marqueeRepeatLimit="marquee_forever"
-                                        android:singleLine="true"
-                                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                                        android:textColor="@color/white"
-                                        tools:text="Sample test" />
+                                    android:id="@+id/tv_course_status"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="top|end"
+                                    android:layout_weight="0.6"
+                                    android:ellipsize="marquee"
+                                    android:gravity="top|end"
+                                    android:marqueeRepeatLimit="marquee_forever"
+                                    android:singleLine="true"
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                                    android:textColor="@color/white"
+                                    tools:text="Sample test" />
                             </LinearLayout>
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/_8sdp"
-                                android:orientation="vertical">
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_8sdp"
+                            android:orientation="vertical">
 
                             <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:background="@drawable/round_rect_default"
-                                    android:backgroundTint="#0B81CD"
-                                    android:foreground="?android:attr/selectableItemBackground"
-                                    android:onClick="@{()->handler.certificateProgressView()}"
-                                    android:orientation="horizontal"
-                                    android:paddingStart="@dimen/_8sdp"
-                                    android:paddingTop="@dimen/_12sdp"
-                                    android:paddingBottom="@dimen/_12sdp">
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/round_rect_default"
+                                android:backgroundTint="#0B81CD"
+                                android:foreground="?android:attr/selectableItemBackground"
+                                android:onClick="@{()->handler.certificateProgressView()}"
+                                android:orientation="horizontal"
+                                android:paddingStart="@dimen/_8sdp"
+                                android:paddingTop="@dimen/_12sdp"
+                                android:paddingBottom="@dimen/_12sdp">
 
                                 <androidx.appcompat.widget.AppCompatTextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:ellipsize="marquee"
-                                        android:gravity="start|center"
-                                        android:marqueeRepeatLimit="marquee_forever"
-                                        android:singleLine="true"
-                                        android:tag="true"
-                                        android:text="@string/certificate_progress_h"
-                                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                                        android:textColor="@color/white" />
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="marquee"
+                                    android:gravity="start|center"
+                                    android:marqueeRepeatLimit="marquee_forever"
+                                    android:singleLine="true"
+                                    android:tag="true"
+                                    android:text="@string/certificate_progress_h"
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+                                    android:textColor="@color/white" />
 
                                 <androidx.appcompat.widget.AppCompatImageView
-                                        android:id="@+id/cp_iv"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginStart="@dimen/_8sdp"
-                                        android:src="@drawable/ic_baseline_expand_more" />
+                                    android:id="@+id/cp_iv"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_8sdp"
+                                    android:src="@drawable/ic_baseline_expand_more" />
                             </LinearLayout>
 
 
                             <androidx.constraintlayout.widget.ConstraintLayout
-                                    android:id="@+id/certficate_progress_conatiner"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:animateLayoutChanges="true"
-                                    android:background="#FAFFCE"
-                                    android:paddingTop="@dimen/_8sdp"
-                                    android:visibility="gone"
-                                    tools:visibility="visible">
+                                android:id="@+id/certficate_progress_conatiner"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:animateLayoutChanges="true"
+                                android:background="#FAFFCE"
+                                android:paddingTop="@dimen/_8sdp"
+                                android:visibility="gone"
+                                tools:visibility="visible">
 
                                 <androidx.appcompat.widget.AppCompatTextView
                                     android:id="@+id/text_view_1"
@@ -283,195 +283,195 @@
                                     tools:text="Sample test" />
 
                                 <ProgressBar
-                                        android:id="@+id/course_progress_bar"
-                                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                                        android:layout_width="0dp"
-                                        android:layout_height="@dimen/_24sdp"
-                                        android:layout_gravity="bottom"
-                                        android:layout_marginTop="@dimen/_16sdp"
-                                        android:max="100"
-                                        android:progress="0"
-                                        android:progressDrawable="@drawable/hprogress_bar_drawable"
-                                        android:secondaryProgress="0"
-                                        app:layout_constraintEnd_toEndOf="parent"
-                                        app:layout_constraintStart_toStartOf="parent"
-                                        app:layout_constraintTop_toBottomOf="@+id/text_view_1"
-                                        app:layout_constraintWidth_default="percent"
-                                        app:layout_constraintWidth_percent="0.8" />
+                                    android:id="@+id/course_progress_bar"
+                                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                                    android:layout_width="0dp"
+                                    android:layout_height="@dimen/_24sdp"
+                                    android:layout_gravity="bottom"
+                                    android:layout_marginTop="@dimen/_16sdp"
+                                    android:max="100"
+                                    android:progress="0"
+                                    android:progressDrawable="@drawable/hprogress_bar_drawable"
+                                    android:secondaryProgress="0"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/text_view_1"
+                                    app:layout_constraintWidth_default="percent"
+                                    app:layout_constraintWidth_percent="0.8" />
 
 
                                 <androidx.appcompat.widget.AppCompatTextView
-                                        android:id="@+id/tv_course_complete_status"
+                                    android:id="@+id/tv_course_complete_status"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/_6sdp"
+                                    android:gravity="center"
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                                    android:textColor="@color/gray_9E"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/course_progress_bar"
+                                    app:layout_constraintWidth_default="percent"
+                                    app:layout_constraintWidth_percent="0.8"
+                                    tools:text="Sample test" />
+
+                                <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/_8sdp"
+                                    android:background="@color/white"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_course_complete_status">
+
+
+                                    <androidx.appcompat.widget.AppCompatTextView
+                                        android:id="@+id/sample_certificate_tv"
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
-                                        android:layout_marginTop="@dimen/_6sdp"
+                                        android:layout_marginTop="@dimen/_12sdp"
                                         android:gravity="center"
+                                        android:onClick="@{()->handler.openSampleCertificate()}"
                                         android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                                        android:textColor="@color/gray_9E"
+                                        android:textColor="@color/gray_79"
                                         app:layout_constraintEnd_toEndOf="parent"
                                         app:layout_constraintStart_toStartOf="parent"
-                                        app:layout_constraintTop_toBottomOf="@+id/course_progress_bar"
+                                        app:layout_constraintTop_toTopOf="parent"
                                         app:layout_constraintWidth_default="percent"
                                         app:layout_constraintWidth_percent="0.8"
                                         tools:text="Sample test" />
 
-                                <androidx.constraintlayout.widget.ConstraintLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginTop="@dimen/_8sdp"
-                                        android:background="@color/white"
-                                        app:layout_constraintEnd_toEndOf="parent"
-                                        app:layout_constraintStart_toStartOf="parent"
-                                        app:layout_constraintTop_toBottomOf="@+id/tv_course_complete_status">
-
-
-                                    <androidx.appcompat.widget.AppCompatTextView
-                                            android:id="@+id/sample_certificate_tv"
-                                            android:layout_width="0dp"
-                                            android:layout_height="wrap_content"
-                                            android:layout_marginTop="@dimen/_12sdp"
-                                            android:gravity="center"
-                                            android:onClick="@{()->handler.openSampleCertificate()}"
-                                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                                            android:textColor="@color/gray_79"
-                                            app:layout_constraintEnd_toEndOf="parent"
-                                            app:layout_constraintStart_toStartOf="parent"
-                                            app:layout_constraintTop_toTopOf="parent"
-                                            app:layout_constraintWidth_default="percent"
-                                            app:layout_constraintWidth_percent="0.8"
-                                            tools:text="Sample test" />
-
 
                                     <com.google.android.material.button.MaterialButton
-                                            android:id="@+id/claim_certificate_btn"
-                                            android:layout_width="0dp"
-                                            android:layout_height="wrap_content"
-                                            android:layout_gravity="center"
-                                            android:layout_marginTop="@dimen/_6sdp"
-                                            android:backgroundTint="#9AA7B2"
-                                            android:gravity="center"
-                                            android:onClick="@{()->handler.requestForCertificate()}"
-                                            android:paddingTop="@dimen/_12sdp"
-                                            android:paddingBottom="@dimen/_12sdp"
-                                            android:text="@string/claim_certificate_h"
-                                            android:textAllCaps="false"
-                                            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                                            android:textColor="@color/white"
-                                            app:cornerRadius="@dimen/_4sdp"
-                                            app:elevation="0dp"
-                                            app:icon="@drawable/ic_lock"
-                                            app:iconGravity="textStart"
-                                            app:iconPadding="@dimen/_8sdp"
-                                            app:iconSize="@dimen/_16sdp"
-                                            app:iconTint="#FFFFFF"
-                                            app:iconTintMode="multiply"
-                                            app:layout_constraintEnd_toEndOf="parent"
-                                            app:layout_constraintStart_toStartOf="parent"
-                                            app:layout_constraintTop_toBottomOf="@+id/sample_certificate_tv"
-                                            app:layout_constraintWidth_default="percent"
-                                            app:layout_constraintWidth_percent="0.8"
-                                            app:rippleColor="@color/white" />
+                                        android:id="@+id/claim_certificate_btn"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:layout_marginTop="@dimen/_6sdp"
+                                        android:backgroundTint="#9AA7B2"
+                                        android:gravity="center"
+                                        android:onClick="@{()->handler.requestForCertificate()}"
+                                        android:paddingTop="@dimen/_12sdp"
+                                        android:paddingBottom="@dimen/_12sdp"
+                                        android:text="@string/claim_certificate_h"
+                                        android:textAllCaps="false"
+                                        android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                                        android:textColor="@color/white"
+                                        app:cornerRadius="@dimen/_4sdp"
+                                        app:elevation="0dp"
+                                        app:icon="@drawable/ic_lock"
+                                        app:iconGravity="textStart"
+                                        app:iconPadding="@dimen/_8sdp"
+                                        app:iconSize="@dimen/_16sdp"
+                                        app:iconTint="#FFFFFF"
+                                        app:iconTintMode="multiply"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toBottomOf="@+id/sample_certificate_tv"
+                                        app:layout_constraintWidth_default="percent"
+                                        app:layout_constraintWidth_percent="0.8"
+                                        app:rippleColor="@color/white" />
 
                                 </androidx.constraintlayout.widget.ConstraintLayout>
                             </androidx.constraintlayout.widget.ConstraintLayout>
                         </LinearLayout>
 
                         <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/_8sdp"
-                                android:background="@drawable/round_rect_default"
-                                android:orientation="vertical">
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_8sdp"
+                            android:background="@drawable/round_rect_default"
+                            android:orientation="vertical">
 
                             <LinearLayout
-                                    android:id="@+id/performance_ll"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:background="@drawable/round_rect_default"
-                                    android:backgroundTint="#0B81CD"
-                                    android:foreground="?android:attr/selectableItemBackground"
-                                    android:onClick="@{()->handler.performanceView()}"
-                                    android:orientation="horizontal"
-                                    android:paddingStart="@dimen/_8sdp"
-                                    android:paddingTop="@dimen/_12sdp"
-                                    android:paddingBottom="@dimen/_12sdp">
+                                android:id="@+id/performance_ll"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/round_rect_default"
+                                android:backgroundTint="#0B81CD"
+                                android:foreground="?android:attr/selectableItemBackground"
+                                android:onClick="@{()->handler.performanceView()}"
+                                android:orientation="horizontal"
+                                android:paddingStart="@dimen/_8sdp"
+                                android:paddingTop="@dimen/_12sdp"
+                                android:paddingBottom="@dimen/_12sdp">
 
                                 <androidx.appcompat.widget.AppCompatTextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:ellipsize="marquee"
-                                        android:gravity="start|center"
-                                        android:marqueeRepeatLimit="marquee_forever"
-                                        android:singleLine="true"
-                                        android:tag="true"
-                                        android:text="@string/performance_h"
-                                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                                        android:textColor="@color/white" />
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="marquee"
+                                    android:gravity="start|center"
+                                    android:marqueeRepeatLimit="marquee_forever"
+                                    android:singleLine="true"
+                                    android:tag="true"
+                                    android:text="@string/performance_h"
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+                                    android:textColor="@color/white" />
 
                                 <ImageView
-                                        android:id="@+id/iv_pv"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginStart="@dimen/_16sdp"
-                                        android:src="@drawable/ic_baseline_expand_more" />
+                                    android:id="@+id/iv_pv"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_16sdp"
+                                    android:src="@drawable/ic_baseline_expand_more" />
                             </LinearLayout>
 
 
                             <FrameLayout
-                                    android:id="@+id/performance_container"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:visibility="gone"
-                                    tools:visibility="visible">
+                                android:id="@+id/performance_container"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:visibility="gone"
+                                tools:visibility="visible">
 
                                 <com.mindorks.placeholderview.PlaceHolderView
-                                        android:id="@+id/progress_detail_rv"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:clipToPadding="false"
-                                        android:nestedScrollingEnabled="true" />
+                                    android:id="@+id/progress_detail_rv"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:clipToPadding="false"
+                                    android:nestedScrollingEnabled="true" />
                             </FrameLayout>
                         </LinearLayout>
 
                     </LinearLayout>
 
                     <FrameLayout
-                            android:id="@+id/sub_root_view_2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:visibility="gone"
-                            app:layout_constraintTop_toBottomOf="@+id/toolbar"
-                            tools:visibility="visible">
+                        android:id="@+id/sub_root_view_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                        tools:visibility="visible">
 
                         <com.joshtalks.recyclerview_fastscroll.views.FastScrollRecyclerView
-                                android:id="@+id/recycler_view"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:nestedScrollingEnabled="true"
-                                android:paddingStart="@dimen/_16sdp"
-                                android:paddingTop="@dimen/_4sdp"
-                                android:paddingEnd="@dimen/_4sdp"
-                                android:paddingBottom="@dimen/_4sdp"
-                                app:fastScrollAutoHide="false"
-                                app:fastScrollPopupBgColor="@color/colorAccent"
-                                app:fastScrollPopupPosition="adjacent"
-                                app:fastScrollPopupTextColor="@android:color/primary_text_dark"
-                                app:fastScrollPopupTextVerticalAlignmentMode="font_metrics"
-                                app:fastScrollThumbColor="@color/colorAccent"
-                                app:fastScrollThumbEnabled="true"
-                                app:fastScrollTrackColor="#1f000000" />
+                            android:id="@+id/recycler_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="true"
+                            android:paddingStart="@dimen/_16sdp"
+                            android:paddingTop="@dimen/_4sdp"
+                            android:paddingEnd="@dimen/_4sdp"
+                            android:paddingBottom="@dimen/_4sdp"
+                            app:fastScrollAutoHide="false"
+                            app:fastScrollPopupBgColor="@color/colorAccent"
+                            app:fastScrollPopupPosition="adjacent"
+                            app:fastScrollPopupTextColor="@android:color/primary_text_dark"
+                            app:fastScrollPopupTextVerticalAlignmentMode="font_metrics"
+                            app:fastScrollThumbColor="@color/colorAccent"
+                            app:fastScrollThumbEnabled="true"
+                            app:fastScrollTrackColor="#1f000000" />
 
                     </FrameLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/bottom_image_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="bottom"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitEnd"
-                        android:visibility="gone" />
+                    android:id="@+id/bottom_image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="bottom"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitEnd"
+                    android:visibility="gone" />
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

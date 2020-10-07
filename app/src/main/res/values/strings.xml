@@ -438,5 +438,13 @@
     <string name="practise_tip_2">Kariye Unlimited Practice, but only in English</string>
     <string name="practise_tip_3">Apne Partner ki respect karein aur abusive language na use karein</string>
     <string name="select_country">Select country</string>
+    <string name="next_class">Next Class</string>
+    <string name="pp_label">Practice Partner Selected! Call Starting</string>
+    <string name="ex_referralcode">eg. L3ARN</string>
+    <string name="enter_country">enter country</string>
+    <string name="no_result_found">no result found</string>
+    <string name="correct_answer_label">Your answer is Correct</string>
+    <string name="wrong_answer_label">Your answer is Wrong</string>
+    <string name="english_practise_hint">Practice English on live call with partner</string>
 
 </resources>

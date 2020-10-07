@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.assessment
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
@@ -405,9 +404,9 @@ class AssessmentActivity : CoreJoshActivity() {
 
     private fun showToastForQuestion(assessmentQuestion: AssessmentQuestionWithRelations) {
         if (evaluateAnswer(assessmentQuestion))
-            showToast("Your answer is Correct")
+            showToast(getString(R.string.correct_answer_label))
         else
-            showToast("Your answer is Wrong")
+            showToast(getString(R.string.wrong_answer_label))
     }
 
     private fun evaluateAnswer(assessmentQuestion: AssessmentQuestionWithRelations?): Boolean {
@@ -510,25 +509,5 @@ class AssessmentActivity : CoreJoshActivity() {
                 activity.startActivity(this)
             }
         }
-
-        /**
-         *  Use this method for
-         *  Directly Opening Assessment Screen
-         *  from Notification
-         */
-        fun getIntent(
-            context: Context,
-            assessmentId: Int,
-            startedFrom: String = EMPTY,
-            flags: Array<Int> = arrayOf()
-        ) = Intent(context, AssessmentActivity::class.java).apply {
-            putExtra(KEY_ASSESSMENT_ID, assessmentId)
-            if (startedFrom.isNotBlank())
-                putExtra(STARTED_FROM, startedFrom)
-            flags.forEach { flag ->
-                this.addFlags(flag)
-            }
-        }
     }
-
 }

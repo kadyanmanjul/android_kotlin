@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.chat.extra
 import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
@@ -13,7 +12,6 @@ import com.joshtalks.skydoves.balloon.ArrowOrientation
 import com.joshtalks.skydoves.balloon.Balloon
 import com.joshtalks.skydoves.balloon.BalloonAnimation
 import com.joshtalks.skydoves.balloon.OnBalloonDismissListener
-import com.joshtalks.skydoves.balloon.OnBalloonOutsideTouchListener
 import com.joshtalks.skydoves.balloon.TextForm
 import io.github.inflationx.calligraphy3.TypefaceUtils
 import kotlinx.android.synthetic.main.calling_feature_showcas_view.iv_call
@@ -57,7 +55,7 @@ class CallingFeatureShowcaseView : DialogFragment() {
         toolbar.inflateMenu(R.menu.conversation_menu)
         val typefaceSpan = TypefaceUtils.load(requireContext().assets, "fonts/OpenSans-Regular.ttf")
         val textForm: TextForm = TextForm.Builder(requireContext())
-            .setText("Practice English on live call with partner")
+            .setText(getString(R.string.english_practise_hint))
             .setTextColorResource(R.color.black)
             .setTextSize(14f)
             .setTextTypeface(typefaceSpan)
@@ -80,17 +78,10 @@ class CallingFeatureShowcaseView : DialogFragment() {
             .setDismissWhenClicked(true)
             .setOnBalloonDismissListener {
             }
-            .setOnBalloonOutsideTouchListener(object : OnBalloonOutsideTouchListener {
-                override fun onBalloonOutsideTouch(view: View, event: MotionEvent) {
-
-                }
-
-            })
             .setOnBalloonDismissListener(object : OnBalloonDismissListener {
                 override fun onBalloonDismiss() {
                     dismissAllowingStateLoss()
                 }
-
             })
             .build()
         ballon.showAlignBottom(iv_call)
