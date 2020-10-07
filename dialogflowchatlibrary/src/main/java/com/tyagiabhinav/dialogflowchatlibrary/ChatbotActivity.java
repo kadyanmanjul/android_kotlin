@@ -11,9 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.button.MaterialButton;
@@ -78,20 +76,6 @@ public class ChatbotActivity extends AppCompatActivity implements ChatbotCallbac
 
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.statusBarColor));
 
-        Toolbar toolbar = ChatbotSettings.getInstance().getAppToolbar();
-        if (toolbar == null) {
-            toolbar = findViewById(R.id.toolbar);
-            ChatbotSettings.getInstance().setAppToolbar(toolbar);
-        }
-
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeButtonEnabled(true);
-        }
-
         final ScrollView scrollview = findViewById(R.id.chatScrollView);
         scrollview.post(new Runnable() {
             @Override
@@ -103,6 +87,13 @@ public class ChatbotActivity extends AppCompatActivity implements ChatbotCallbac
         chatLayout = findViewById(R.id.chatLayout);
         btnAction1 = findViewById(R.id.btnAction1);
         btnAction2 = findViewById(R.id.btnAction2);
+
+        findViewById(R.id.chat_back_iv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         btnAction1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,14 +162,20 @@ public class ChatbotActivity extends AppCompatActivity implements ChatbotCallbac
         Struct param = msg.getParam();
         if (eventName != null && !eventName.trim().isEmpty()) {
             if (param != null && param.getFieldsCount() > 0) {
-                EventInput eventInput = EventInput.newBuilder().setName(eventName).setLanguageCode("en-US").setParameters(param).build();
-                send(eventInput, msg.getActionText());
+                Log.e("param123", param.toString());
+                if (param.getFieldsMap().containsKey("selectedItems")
+                        && param.getFieldsMap().get("selectedItems").getListValue().getValuesList().size() > 0) {
+                    EventInput eventInput = EventInput.newBuilder().setName(eventName).setLanguageCode("en-US").setParameters(param).build();
+                    send(eventInput, msg.getActionText());
+                } else {
+                    Toast.makeText(this, "Please select a value", Toast.LENGTH_SHORT).show();
+                }
             } else {
                 EventInput eventInput = EventInput.newBuilder().setName(eventName).setLanguageCode("en-US").build();
                 send(eventInput, msg.getActionText());
             }
         } else {
-            send(msg.getActionText());
+            send(msg.getActionText(), true);
         }
     }
 
@@ -194,7 +191,7 @@ public class ChatbotActivity extends AppCompatActivity implements ChatbotCallbac
 
         if (ChatbotSettings.getInstance().isAutoWelcome()) {
             showProcessWaitBubble();
-            send("hi");
+            send("hi", true);
         }
     }
 
@@ -202,18 +199,20 @@ public class ChatbotActivity extends AppCompatActivity implements ChatbotCallbac
         if (msg.trim().isEmpty()) {
             Toast.makeText(getApplicationContext(), "Please enter your query!", Toast.LENGTH_LONG).show();
         } else {
-            send(msg);
+            send(msg, true);
         }
     }
 
-    private void send(String message) {
+    private void send(String message, boolean showWaitBubble) {
         Log.d(TAG, "send: 1");
         TextMessageTemplate tmt = new TextMessageTemplate(getApplicationContext(), ChatbotActivity.this, Constants.USER);
         if (!ChatbotSettings.getInstance().isAutoWelcome()) {
             chatLayout.addView(tmt.showMessage(message));
             btnAction1.setVisibility(View.GONE);
             btnAction2.setVisibility(View.GONE);
-            showProcessWaitBubble();
+            if (showWaitBubble) {
+                showProcessWaitBubble();
+            }
         } else {
             ChatbotSettings.getInstance().setAutoWelcome(false);
         }
@@ -310,13 +309,17 @@ public class ChatbotActivity extends AppCompatActivity implements ChatbotCallbac
                     } else {
                         // when no param context if found... go to default
                         TextMessageTemplate tmt = new TextMessageTemplate(ChatbotActivity.this, ChatbotActivity.this, Constants.BOT);
+                        //if(response.hasQueryResult() && !response.getQueryResult().getFulfillmentText().isEmpty()) {
                         chatLayout.addView(tmt.showMessage(response));
+                        //}
                     }
                 }
             } else {
                 // when no param context if found... go to default
                 TextMessageTemplate tmt = new TextMessageTemplate(ChatbotActivity.this, ChatbotActivity.this, Constants.BOT);
+                //if(response.hasQueryResult() && !response.getQueryResult().getFulfillmentText().isEmpty()) {
                 chatLayout.addView(tmt.showMessage(response));
+                //}
             }
             List<Message> fulfilmentMessages = response.getQueryResult().getFulfillmentMessagesList();
             for (Message message : fulfilmentMessages) {
