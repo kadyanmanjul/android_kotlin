@@ -17,7 +17,7 @@
     app:contentInsetLeft="0dp"
     app:contentInsetRight="0dp"
     app:contentInsetStart="0dp"
-        app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
+    app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -38,20 +38,20 @@
             android:padding="@dimen/_4sdp"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_arrow_back"
-                tools:visibility="visible" />
+            tools:visibility="visible" />
 
         <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/image_view_logo"
-                android:layout_width="@dimen/_26sdp"
-                android:layout_height="@dimen/_26sdp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/_4sdp"
-                android:layout_toEndOf="@id/iv_back"
-                android:background="@drawable/white_button_round_enabled"
-                android:gravity="center_vertical|start"
-                android:src="@drawable/ic_josh_course"
-                android:visibility="gone"
-                tools:visibility="visible" />
+            android:id="@+id/image_view_logo"
+            android:layout_width="@dimen/_26sdp"
+            android:layout_height="@dimen/_26sdp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:layout_toEndOf="@id/iv_back"
+            android:background="@drawable/white_button_round_enabled"
+            android:gravity="center_vertical|start"
+            android:src="@drawable/ic_josh_course"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_message_title"
@@ -70,33 +70,33 @@
             tools:text="Spoken English Course" />
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ic_notification_dot"
-                android:layout_width="@dimen/_8sdp"
-                android:layout_height="@dimen/_8sdp"
-                android:layout_alignEnd="@id/text_message_title"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:background="@drawable/timer_drawable"
-                android:backgroundTint="@color/wa_color"
-                android:gravity="start"
-                android:tint="@color/wh_fc"
-                android:visibility="invisible"
-                tools:visibility="visible" />
+            android:id="@+id/ic_notification_dot"
+            android:layout_width="@dimen/_8sdp"
+            android:layout_height="@dimen/_8sdp"
+            android:layout_alignEnd="@id/text_message_title"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:background="@drawable/timer_drawable"
+            android:backgroundTint="@color/wa_color"
+            android:gravity="start"
+            android:tint="@color/wh_fc"
+            android:visibility="invisible"
+            tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_earn"
-                android:layout_width="@dimen/_26sdp"
-                android:layout_height="@dimen/_26sdp"
+            android:id="@+id/iv_earn"
+            android:layout_width="@dimen/_26sdp"
+            android:layout_height="@dimen/_26sdp"
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/_4sdp"
             android:layout_toStartOf="@id/iv_help"
-                android:padding="@dimen/_4sdp"
-                android:visibility="gone"
-                tools:visibility="visible" />
+            android:padding="@dimen/_4sdp"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_help"
-            android:layout_width="@dimen/_22sdp"
-            android:layout_height="@dimen/_22sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:padding="@dimen/_4sdp"

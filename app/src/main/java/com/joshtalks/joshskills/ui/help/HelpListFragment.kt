@@ -33,9 +33,9 @@ class HelpListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = activity?.run {
+        viewModel = requireActivity().run {
             ViewModelProvider(this).get(HelpViewModel::class.java)
-        }!!
+        }
         AppObjectController.getUnreadFreshchatMessages()
     }
 

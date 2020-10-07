@@ -20,101 +20,109 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-            <com.google.android.material.appbar.MaterialToolbar
-                    android:id="@+id/toolbar"
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/chat_bg"
+            android:tintMode="multiply" />
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimaryDark"
+            android:contentInsetStart="0dp"
+            android:contentInsetLeft="0dp"
+            android:contentInsetEnd="0dp"
+            android:contentInsetRight="0dp"
+            android:elevation="@dimen/_4sdp"
+            android:minHeight="?attr/actionBarSize"
+            app:contentInsetEnd="0dp"
+            app:contentInsetEndWithActions="0dp"
+            app:contentInsetLeft="0dp"
+            app:contentInsetRight="0dp"
+            app:contentInsetStart="0dp"
+            app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/_6sdp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/_4sdp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical|start"
+                    android:paddingTop="@dimen/_6sdp"
+                    android:paddingBottom="@dimen/_6sdp"
+                    app:srcCompat="@drawable/ic_arrow_back"
+                    tools:visibility="visible" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/image_view_logo"
+                    android:layout_width="@dimen/_26sdp"
+                    android:layout_height="@dimen/_26sdp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/_4sdp"
+                    android:layout_toEndOf="@id/iv_back"
+                    android:background="@drawable/white_button_round_enabled"
+                    android:gravity="center_vertical|start"
+                    android:src="@drawable/ic_josh_course"
+                    tools:visibility="visible" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_message_title"
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:background="@color/colorPrimaryDark"
-                    android:contentInsetStart="0dp"
-                    android:contentInsetLeft="0dp"
-                    android:contentInsetEnd="0dp"
-                    android:contentInsetRight="0dp"
-                    android:elevation="@dimen/_4sdp"
-                    android:minHeight="?attr/actionBarSize"
-                    app:contentInsetEnd="0dp"
-                    app:contentInsetEndWithActions="0dp"
-                    app:contentInsetLeft="0dp"
-                    app:contentInsetRight="0dp"
-                    app:contentInsetStart="0dp"
-                    app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:layout_marginVertical="@dimen/_4sdp"
+                    android:layout_toStartOf="@id/iv_call"
+                    android:layout_toEndOf="@id/image_view_logo"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="start|center"
+                    android:singleLine="true"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+                    android:textColor="@color/white"
+                    tools:text="Spoken English Course" />
 
-                <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="@dimen/_6sdp">
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ic_notification_dot"
+                    android:layout_width="@dimen/_8sdp"
+                    android:layout_height="@dimen/_8sdp"
+                    android:layout_alignEnd="@id/text_message_title"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:background="@drawable/timer_drawable"
+                    android:backgroundTint="@color/wa_color"
+                    android:gravity="start"
+                    android:tint="@color/wh_fc"
+                    android:visibility="invisible"
+                    tools:visibility="visible" />
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/iv_back"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginStart="@dimen/_4sdp"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:gravity="center_vertical|start"
-                            android:paddingTop="@dimen/_6sdp"
-                            android:paddingBottom="@dimen/_6sdp"
-                            app:srcCompat="@drawable/ic_arrow_back"
-                            tools:visibility="visible" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_call"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:onClick="@{()->handler.practiseOnCall()}"
+                    android:padding="@dimen/_4sdp"
+                    android:src="@drawable/ic_group_call"
+                    android:tint="@color/white"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </RelativeLayout>
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/image_view_logo"
-                            android:layout_width="@dimen/_26sdp"
-                            android:layout_height="@dimen/_26sdp"
-                            android:layout_centerVertical="true"
-                            android:layout_marginStart="@dimen/_4sdp"
-                            android:layout_toEndOf="@id/iv_back"
-                            android:background="@drawable/white_button_round_enabled"
-                            android:gravity="center_vertical|start"
-                            android:src="@drawable/ic_josh_course"
-                            tools:visibility="visible" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/text_message_title"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_centerVertical="true"
-                            android:layout_marginHorizontal="@dimen/_8sdp"
-                            android:layout_marginVertical="@dimen/_4sdp"
-                            android:layout_toStartOf="@id/iv_call"
-                            android:layout_toEndOf="@id/image_view_logo"
-                            android:foreground="?android:attr/selectableItemBackground"
-                            android:gravity="start|center"
-                            android:singleLine="true"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                            android:textColor="@color/white"
-                            tools:text="Spoken English Course" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/ic_notification_dot"
-                            android:layout_width="@dimen/_8sdp"
-                            android:layout_height="@dimen/_8sdp"
-                            android:layout_alignEnd="@id/text_message_title"
-                            android:layout_marginTop="@dimen/_4sdp"
-                            android:background="@drawable/timer_drawable"
-                            android:backgroundTint="@color/wa_color"
-                            android:gravity="start"
-                            android:tint="@color/wh_fc"
-                            android:visibility="invisible"
-                            tools:visibility="visible" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/iv_call"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:onClick="@{()->handler.practiseOnCall()}"
-                            android:padding="@dimen/_4sdp"
-                            android:src="@drawable/ic_group_call"
-                            android:tint="@color/white"
-                            android:visibility="gone"
-                            tools:visibility="visible" />
-                </RelativeLayout>
-
-            </com.google.android.material.appbar.MaterialToolbar>
+        </com.google.android.material.appbar.MaterialToolbar>
 
 
         <FrameLayout
