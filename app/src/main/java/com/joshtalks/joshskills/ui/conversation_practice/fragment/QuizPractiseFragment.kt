@@ -98,7 +98,7 @@ class QuizPractiseFragment private constructor() : Fragment(), OnChoiceClickList
         AppAnalytics.create(AnalyticsEvent.CONVO_OPTION_SELECTED.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam(AnalyticsEvent.OPTION_TYPE.NAME,answersModelID)
+            .addParam(AnalyticsEvent.OPTION_TYPE.NAME, answersModelID)
             .addParam("flow", "Conversational prac")
             .push()
     }
@@ -107,7 +107,7 @@ class QuizPractiseFragment private constructor() : Fragment(), OnChoiceClickList
         AppAnalytics.create(AnalyticsEvent.CON_QUIZ_SUBMIT_BUTTON_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam(AnalyticsEvent.CHOICE_ID.NAME,answersModelID)
+            .addParam(AnalyticsEvent.CHOICE_ID.NAME, answersModelID)
             .addParam("flow", "Conversational prac")
             .push()
     }
@@ -119,21 +119,21 @@ class QuizPractiseFragment private constructor() : Fragment(), OnChoiceClickList
             }
             binding.viewPager.currentItem = binding.viewPager.currentItem + 1
         } else {
-            val quizModel = quizModelList[binding.viewPager.currentItem].apply {
+            val quizModel = quizModelList.getOrNull(binding.viewPager.currentItem)?.apply {
                 isAttempted = true
             }
             //quizModel.isAttempted = true
-            val resp = quizModel.answersModel.find { it.isCorrect && it.isSelectedByUser }
+            val resp = quizModel?.answersModel?.find { it.isCorrect && it.isSelectedByUser }
             if (resp != null) {
                 showToast("Your answer is Correct")
             } else {
                 showToast("Your answer is Wrong")
             }
 
-            quizModel.answersModel.listIterator().forEach {
+            quizModel?.answersModel?.listIterator()?.forEach {
                 it.isEvaluate = true
             }
-            logSubmitButtonAnalyticEvent(quizModel.id.toString())
+            logSubmitButtonAnalyticEvent(quizModel?.id.toString())
             binding.viewPager.adapter?.notifyDataSetChanged()
             isEvaluate = true
             btnTextSetup()
