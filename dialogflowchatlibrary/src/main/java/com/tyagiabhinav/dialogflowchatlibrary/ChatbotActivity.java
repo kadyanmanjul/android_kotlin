@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.progressindicator.ProgressIndicator;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
@@ -60,6 +61,7 @@ public class ChatbotActivity extends AppCompatActivity implements ChatbotCallbac
     private LinearLayout chatLayout;
     private MaterialButton btnAction1;
     private MaterialButton btnAction2;
+    private ProgressIndicator progressIndicator;
 
     //Variables
     private SessionsClient sessionsClient;
@@ -87,6 +89,7 @@ public class ChatbotActivity extends AppCompatActivity implements ChatbotCallbac
         chatLayout = findViewById(R.id.chatLayout);
         btnAction1 = findViewById(R.id.btnAction1);
         btnAction2 = findViewById(R.id.btnAction2);
+        progressIndicator = findViewById(R.id.progressIndicator);
 
         findViewById(R.id.chat_back_iv).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -342,6 +345,14 @@ public class ChatbotActivity extends AppCompatActivity implements ChatbotCallbac
                         btnAction2.setText(suggestionList.get(1).getStringValue());
                         btnAction2.setVisibility(View.VISIBLE);
                     }
+                }
+                if (message.hasPayload() && message.getPayload().containsFields("progressPercentage")) {
+                    Double progressPercentage = message.getPayload()
+                            .getFieldsMap()
+                            .get("progressPercentage")
+                            .getNumberValue();
+
+                    progressIndicator.setProgress(progressPercentage.intValue());
                 }
             }
         } else {

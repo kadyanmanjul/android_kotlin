@@ -19,5 +19,6 @@
     <color name="statusBarColor">@color/chatPrimaryPressed</color>
     <color name="selectorBGColor">@color/chatPrimary</color>
     <color name="black">#172344</color>
+    <color name="bg_grey_100">#B4B9C6</color>
 
 </resources>
