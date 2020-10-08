@@ -42,6 +42,7 @@ const val SELECTED_QUALITY = "selected_quality"
 const val CLEAR_CACHE = "is_clear_cache"
 const val USER_LOCALE = "user_locale"
 const val USER_LOCALE_UPDATED = "user_locale_update"
+const val BETTERY_OPTIMIZATION_ALREADY_ASKED = "bettery_optimization_asked"
 
 
 object PrefManager {

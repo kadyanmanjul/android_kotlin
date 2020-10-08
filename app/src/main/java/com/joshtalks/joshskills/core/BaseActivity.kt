@@ -30,6 +30,7 @@ import android.util.DisplayMetrics
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleObserver
@@ -376,7 +377,9 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
 
     fun checkForOemNotifications() {
         val oemIntent = PowerManagers.getIntentForOEM(this)
-        if (oemIntent != null && shouldRequireCustomPermission()) {
+        if (NotificationManagerCompat.from(this).areNotificationsEnabled()
+                .not() && oemIntent != null && shouldRequireCustomPermission()
+        ) {
             CustomPermissionDialogFragment.showCustomPermissionDialog(
                 oemIntent,
                 supportFragmentManager
