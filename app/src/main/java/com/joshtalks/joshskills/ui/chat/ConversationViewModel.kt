@@ -35,7 +35,8 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.io.File
-import java.util.*
+import java.util.ConcurrentModificationException
+import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -109,7 +110,7 @@ class ConversationViewModel(application: Application) :
 
     private fun addObserver() {
         compositeDisposable.add(
-            RxBus2.listen(DBInsertion::class.java).subscribeOn(Schedulers.computation()).subscribe {
+            RxBus2.listen(DBInsertion::class.java).subscribeOn(Schedulers.io()).subscribe {
                 jobs += getUserRecentChats()
             })
         val filter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")

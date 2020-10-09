@@ -453,25 +453,27 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     }
 
     private fun onlyChatView() {
-        inboxEntity.chat_type?.run {
-            when {
-                this.equals("NC", ignoreCase = true) -> {
-                    conversationBinding.flAttachment.visibility = GONE
-                    conversationBinding.quickToggle.visibility = GONE
-                    conversationBinding.recordButton.visibility = INVISIBLE
-                    conversationBinding.attachmentContainer.visibility = GONE
-                    isOnlyChat = true
-                    conversationBinding.messageButton.visibility = VISIBLE
-                    conversationBinding.messageButton.setImageResource(R.drawable.ic_send)
-                    Glide.with(applicationContext)
-                        .load(R.drawable.ic_send)
-                        .override(Target.SIZE_ORIGINAL)
-                        .into(conversationBinding.messageButton)
-                }
-                this.equals("RC", ignoreCase = true) -> {
-                    conversationBinding.bottomBar.visibility = GONE
-                }
-                else -> {
+        if (this::inboxEntity.isInitialized) {
+            inboxEntity.chat_type?.run {
+                when {
+                    this.equals("NC", ignoreCase = true) -> {
+                        conversationBinding.flAttachment.visibility = GONE
+                        conversationBinding.quickToggle.visibility = GONE
+                        conversationBinding.recordButton.visibility = INVISIBLE
+                        conversationBinding.attachmentContainer.visibility = GONE
+                        isOnlyChat = true
+                        conversationBinding.messageButton.visibility = VISIBLE
+                        conversationBinding.messageButton.setImageResource(R.drawable.ic_send)
+                        Glide.with(applicationContext)
+                            .load(R.drawable.ic_send)
+                            .override(Target.SIZE_ORIGINAL)
+                            .into(conversationBinding.messageButton)
+                    }
+                    this.equals("RC", ignoreCase = true) -> {
+                        conversationBinding.bottomBar.visibility = GONE
+                    }
+                    else -> {
+                    }
                 }
             }
         }
