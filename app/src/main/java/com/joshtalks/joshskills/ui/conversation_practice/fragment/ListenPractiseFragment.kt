@@ -22,6 +22,8 @@ import com.joshtalks.joshskills.repository.server.conversation_practice.ListenMo
 import com.joshtalks.joshskills.ui.conversation_practice.IMAGE_URL
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.ARG_PRACTISE_OBJ
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.AudioPractiseAdapter
+import java.util.ArrayList
+import java.util.LinkedList
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 import kotlinx.android.synthetic.main.fragment_listen_practise.audio_player
 import kotlinx.android.synthetic.main.fragment_listen_practise.image_view
@@ -29,8 +31,6 @@ import kotlinx.android.synthetic.main.fragment_listen_practise.placeholder_bg
 import kotlinx.android.synthetic.main.fragment_listen_practise.recycler_view
 import kotlinx.android.synthetic.main.fragment_listen_practise.sub_title_tv
 import kotlinx.android.synthetic.main.fragment_listen_practise.title_tv
-import java.util.ArrayList
-import java.util.LinkedList
 
 class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEventListener {
 
@@ -137,7 +137,10 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
 
     override fun onTrackChange(tag: String?) {
 
-        if (placeholder_bg.visibility == View.VISIBLE) {
+        if (!isVisible)
+            return
+
+        if (placeholder_bg != null && placeholder_bg.visibility == View.VISIBLE) {
             return
         }
 

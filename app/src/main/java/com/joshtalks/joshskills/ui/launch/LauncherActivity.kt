@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.telephony.TelephonyManager
+import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -44,6 +45,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
+        WorkManager.getInstance(applicationContext).cancelAllWork()
         animatedProgressBar()
         Branch.getInstance(applicationContext).resetUserSession()
         WorkManagerAdmin.appStartWorker()

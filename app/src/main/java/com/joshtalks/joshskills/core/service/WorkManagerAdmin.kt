@@ -195,7 +195,11 @@ object WorkManagerAdmin {
         val workRequest = PeriodicWorkRequestBuilder<MemoryManagementWorker>(24, TimeUnit.HOURS)
             .addTag("cleanup")
             .build()
-        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniquePeriodicWork(
+            "memoryManagerWorker",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            workRequest
+        )
     }
 
 

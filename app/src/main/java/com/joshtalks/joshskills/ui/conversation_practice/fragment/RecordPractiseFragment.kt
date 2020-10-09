@@ -12,7 +12,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.exoplayer2.Player
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ALPHA_MAX
+import com.joshtalks.joshskills.core.ALPHA_MIN
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PractiseUser
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.ViewTypeForPractiseUser
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
@@ -22,6 +29,9 @@ import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEvent
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.interfaces.OnConversationPractiseSubmit
+import com.joshtalks.joshskills.core.setImage
+import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.textColorSet
 import com.joshtalks.joshskills.databinding.FragmentRecordPractiseBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ConversationPractiseSubmitEventBus
@@ -36,8 +46,9 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import java.util.ArrayList
+import java.util.LinkedList
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
-import java.util.*
 
 class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEventListener,
     OnConversationPractiseSubmit {
@@ -446,6 +457,9 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
     }
 
     override fun onTrackChange(tag: String?) {
+        if (!isVisible)
+            return
+
         if (binding.audioPlayer.isPlaying().not()) {
             return
         }

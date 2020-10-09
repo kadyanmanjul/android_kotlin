@@ -18,7 +18,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.util.ReminderUtil
-import java.util.*
+import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,6 +58,8 @@ class AlarmReceiver : BroadcastReceiver() {
                 reminder?.let {
                     val alarmCalendar = Calendar.getInstance()
 
+                    if (reminder.status != ReminderUtil.Companion.ReminderStatus.ACTIVE.name)
+                        return@launch
                     when (reminder.reminderFrequency) {
                         ReminderUtil.Companion.ReminderFrequency.WEEKDAYS.name -> {
                             if (alarmCalendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY ||

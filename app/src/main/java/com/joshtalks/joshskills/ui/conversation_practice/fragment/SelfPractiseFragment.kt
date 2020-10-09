@@ -279,6 +279,9 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
     }
 
     override fun onTrackChange(tag: String?) {
+        if (!isVisible)
+            return
+
         if (tag.isNullOrEmpty().not()) {
             listenModelList.indexOfFirst { it.id == tag?.toInt() }.run {
                 val startPos = audioPractiseAdapter?.items?.size ?: 0
