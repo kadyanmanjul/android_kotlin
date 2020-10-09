@@ -6,11 +6,6 @@
     android:layout_height="match_parent"
     android:background="#E1F3FB">
 
-    <FrameLayout
-        android:id="@+id/root_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar_layout"
         android:layout_width="match_parent"
@@ -103,5 +98,10 @@
             tools:visibility="visible" />
 
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/root_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </RelativeLayout>
