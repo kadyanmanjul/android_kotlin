@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.notification.BaseActivityNew
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.newonboarding.fragment.OnBoardIntroFragment
@@ -186,7 +187,7 @@ class OnBoardingActivityNew : CoreJoshActivity() {
             //  .setChatUserAvatar(getDrawable(R.drawable.avatarUser)) // provide avatar for your the user if default is not required
             //  .setShowMic(true) // False by Default, True if you want to use Voice input from the user to chat
             .build()
-        val intent = Intent(this, ChatbotActivity::class.java)
+        val intent = Intent(this, BaseActivityNew::class.java)
         val bundle = Bundle()
 
         // provide a UUID for your session with the Dialogflow agent

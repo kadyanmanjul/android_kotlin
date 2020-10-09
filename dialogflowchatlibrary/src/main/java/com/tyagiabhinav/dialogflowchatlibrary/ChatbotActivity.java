@@ -52,7 +52,7 @@ import java.util.UUID;
 
 import static com.tyagiabhinav.dialogflowchatlibrary.pref.SharedPrefsManager.COURSE_TEST_IDS;
 
-public class ChatbotActivity extends FragmentActivity implements ChatbotCallback, OnClickCallback {
+public abstract class ChatbotActivity extends FragmentActivity implements ChatbotCallback, OnClickCallback {
 
     public static final String SESSION_ID = "sessionID";
     private static final String TAG = ChatbotActivity.class.getSimpleName();
@@ -102,6 +102,7 @@ public class ChatbotActivity extends FragmentActivity implements ChatbotCallback
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "Send click");
+                logEvent(btnAction1.getText().toString());
                 if (btnAction1.getTag() == "EndOfFlow") {
                     returnToActivity();
                 } else {
@@ -114,6 +115,7 @@ public class ChatbotActivity extends FragmentActivity implements ChatbotCallback
         btnAction2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                logEvent(btnAction1.getText().toString());
                 Log.d(TAG, "Send click");
                 String msg = btnAction2.getText().toString();
                 sendMessage(msg);
@@ -410,4 +412,5 @@ public class ChatbotActivity extends FragmentActivity implements ChatbotCallback
         SharedPrefsManager.Companion.newInstance(getApplicationContext()).putArrayList(COURSE_TEST_IDS, new ArrayList<>());
     }
 
+    public abstract void logEvent(String event);
 }
