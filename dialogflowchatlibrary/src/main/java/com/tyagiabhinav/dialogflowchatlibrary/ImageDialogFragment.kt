@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.tyagiabhinav.dialogflowchatlibrary.databinding.ImageDialogFragmentBinding
 
 const val TRIAL_TEST_ID = 13
@@ -23,11 +22,19 @@ class ImageDialogFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         arguments?.let {
             title = it.getString("title")
             description = it.getString("description")
             imageUrl = it.getString("imgUrl")
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val width = ViewGroup.LayoutParams.MATCH_PARENT
+        val height = ViewGroup.LayoutParams.MATCH_PARENT
+        dialog!!.window!!.setLayout(width, height)
     }
 
     override fun onCreateView(
@@ -51,9 +58,9 @@ class ImageDialogFragment : DialogFragment() {
         binding.titleTv.text = title
         binding.timeTv.visibility = View.GONE
         binding.description.text = description
+        println("imageulf $imageUrl")
         Glide.with(requireContext())
             .load(imageUrl)
-            .apply(RequestOptions.circleCropTransform())
             .into(binding.courseIv)
     }
 

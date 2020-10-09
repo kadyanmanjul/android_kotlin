@@ -164,11 +164,7 @@ public abstract class ChatbotActivity extends FragmentActivity implements Chatbo
     @Override
     public void OnUserClickAction(ReturnMessage msg, boolean isImageClick, ImageDialogFragment fragment) {
         if (isImageClick) {
-            getSupportFragmentManager().beginTransaction().replace(
-                    R.id.root_view,
-                    fragment,
-                    fragment.getClass().getName()
-            );
+            fragment.show(getSupportFragmentManager(), fragment.getClass().getName());
         } else {
             String eventName = msg.getEventName();
             Struct param = msg.getParam();
