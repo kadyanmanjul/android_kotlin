@@ -331,7 +331,7 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
                             }
                             ReturnMessage msg = msgBuilder.build();
                             returnMsg = msg;
-                            callback.OnUserClickAction(msg);
+                            callback.OnUserClickAction(msg, false, null);
                         }
                         break;
                     case "hyperlink":

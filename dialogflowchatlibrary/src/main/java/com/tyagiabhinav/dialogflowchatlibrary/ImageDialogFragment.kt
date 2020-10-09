@@ -39,7 +39,15 @@ class ImageDialogFragment : DialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = ImageDialogFragment()
+        fun newInstance(title: String, description: String, imgUrl: String): ImageDialogFragment {
+            val args = Bundle()
+            args.putString("title", title)
+            args.putString("description", description)
+            args.putString("imgUrl", imgUrl)
+            val fragment = ImageDialogFragment()
+            fragment.arguments = args
+            return fragment
+        }
     }
 
 }

@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import com.google.cloud.dialogflow.v2.DetectIntentResponse;
 import com.google.protobuf.Value;
+import com.tyagiabhinav.dialogflowchatlibrary.ImageDialogFragment;
 import com.tyagiabhinav.dialogflowchatlibrary.R;
 import com.tyagiabhinav.dialogflowchatlibrary.networkutil.TaskRunner;
 import com.tyagiabhinav.dialogflowchatlibrary.pref.SharedPrefsManager;
@@ -28,9 +30,11 @@ import java.util.Map;
 public class CardMessageTemplate extends MessageLayoutTemplate {
 
     private static final String TAG = CardMessageTemplate.class.getSimpleName();
+    private OnClickCallback callback;
 
     public CardMessageTemplate(Context context, OnClickCallback callback, int type) {
         super(context, callback, type);
+        this.callback = callback;
         setOnlyTextResponse(false);
     }
 
@@ -108,6 +112,15 @@ public class CardMessageTemplate extends MessageLayoutTemplate {
                         }
                     };
                     new TaskRunner().executeTask(downloadImage);
+
+                    cardLayout.findViewById(R.id.img).setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ImageDialogFragment fragment = ImageDialogFragment.newInstance(title, description, imgUrl);
+                            callback.OnUserClickAction(null, true, fragment);
+                        }
+                    });
+
                 }
 
                 if (align.equalsIgnoreCase("horizontal") || align.equalsIgnoreCase("h")) {

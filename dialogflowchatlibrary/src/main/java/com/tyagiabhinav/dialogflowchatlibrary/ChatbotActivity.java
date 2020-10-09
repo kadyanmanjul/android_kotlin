@@ -162,25 +162,33 @@ public abstract class ChatbotActivity extends FragmentActivity implements Chatbo
     }
 
     @Override
-    public void OnUserClickAction(ReturnMessage msg) {
-        String eventName = msg.getEventName();
-        Struct param = msg.getParam();
-        if (eventName != null && !eventName.trim().isEmpty()) {
-            if (param != null && param.getFieldsCount() > 0) {
-                Log.e("param123", param.toString());
-                if (param.getFieldsMap().containsKey("selectedItems")
-                        && param.getFieldsMap().get("selectedItems").getListValue().getValuesList().size() > 0) {
-                    EventInput eventInput = EventInput.newBuilder().setName(eventName).setLanguageCode("en-US").setParameters(param).build();
-                    send(eventInput, msg.getActionText());
+    public void OnUserClickAction(ReturnMessage msg, boolean isImageClick, ImageDialogFragment fragment) {
+        if (isImageClick) {
+            getSupportFragmentManager().beginTransaction().replace(
+                    R.id.root_view,
+                    fragment,
+                    fragment.getClass().getName()
+            );
+        } else {
+            String eventName = msg.getEventName();
+            Struct param = msg.getParam();
+            if (eventName != null && !eventName.trim().isEmpty()) {
+                if (param != null && param.getFieldsCount() > 0) {
+                    Log.e("param123", param.toString());
+                    if (param.getFieldsMap().containsKey("selectedItems")
+                            && param.getFieldsMap().get("selectedItems").getListValue().getValuesList().size() > 0) {
+                        EventInput eventInput = EventInput.newBuilder().setName(eventName).setLanguageCode("en-US").setParameters(param).build();
+                        send(eventInput, msg.getActionText());
+                    } else {
+                        Toast.makeText(this, "Please select a value", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(this, "Please select a value", Toast.LENGTH_SHORT).show();
+                    EventInput eventInput = EventInput.newBuilder().setName(eventName).setLanguageCode("en-US").build();
+                    send(eventInput, msg.getActionText());
                 }
             } else {
-                EventInput eventInput = EventInput.newBuilder().setName(eventName).setLanguageCode("en-US").build();
-                send(eventInput, msg.getActionText());
+                send(msg.getActionText(), true);
             }
-        } else {
-            send(msg.getActionText(), true);
         }
     }
 
