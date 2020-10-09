@@ -5,7 +5,9 @@ import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.media.MediaPlayer;
+
 import com.joshtalks.joshskills.core.AppObjectController;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -59,8 +61,10 @@ public class RingtoneManager {
                 mPlayer = null;
                 return;
             }
-            mPlayer.setLooping(true);
-            mPlayer.start();
+            if (mPlayer != null) {
+                mPlayer.setLooping(true);
+                mPlayer.start();
+            }
         }
     }
 
