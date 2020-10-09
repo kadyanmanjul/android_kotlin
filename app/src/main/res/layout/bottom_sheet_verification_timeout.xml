@@ -29,16 +29,16 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_rating_view"
-                android:layout_width="@dimen/_72sdp"
-                android:layout_height="@dimen/_72sdp"
-                android:background="@drawable/timer_drawable"
-                android:padding="@dimen/_2sdp"
-                android:src="@drawable/ic_sad_white"
-                app:layout_constraintBottom_toTopOf="@+id/view"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/view" />
+            android:id="@+id/iv_rating_view"
+            android:layout_width="@dimen/_72sdp"
+            android:layout_height="@dimen/_72sdp"
+            android:background="@drawable/timer_drawable"
+            android:padding="@dimen/_2sdp"
+            app:layout_constraintBottom_toTopOf="@+id/view"
+            app:srcCompat="@drawable/ic_sad_white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/view" />
 
         <ImageButton
                 android:id="@+id/imageButton2"

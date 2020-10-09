@@ -219,18 +219,18 @@
 
 
                 <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/success_iv"
-                        android:layout_width="@dimen/_72sdp"
-                        android:layout_height="@dimen/_72sdp"
-                        android:layout_gravity="center"
-                        android:layout_marginBottom="@dimen/_24sdp"
-                        android:background="@drawable/timer_drawable"
-                        android:backgroundTint="@color/color_success"
-                        android:elevation="@dimen/_4sdp"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_tick_default"
-                        android:tint="@color/white"
-                        android:visibility="invisible" />
+                    android:id="@+id/success_iv"
+                    android:layout_width="@dimen/_72sdp"
+                    android:layout_height="@dimen/_72sdp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="@dimen/_24sdp"
+                    android:background="@drawable/timer_drawable"
+                    android:backgroundTint="@color/color_success"
+                    android:elevation="@dimen/_4sdp"
+                    android:scaleType="center"
+                    android:tint="@color/white"
+                    app:srcCompat="@drawable/ic_tick_default"
+                    android:visibility="invisible" />
 
 
                 <androidx.appcompat.widget.AppCompatTextView

@@ -103,7 +103,7 @@
                             app:layout_constraintTop_toBottomOf="@+id/course_name"
                             tools:text="with Ankur Warikoo" />
 
-                        <ImageView
+                        <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/imageView3"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -442,13 +442,13 @@
                         app:layout_constraintWidth_default="percent"
                         tools:ignore="MissingConstraints" />
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/imageView2"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_60sdp"
                         android:layout_marginHorizontal="@dimen/_24sdp"
                         android:layout_marginTop="@dimen/_40sdp"
-                        android:src="@drawable/payment_bottom"
+                        app:srcCompat="@drawable/payment_bottom"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/et_container"

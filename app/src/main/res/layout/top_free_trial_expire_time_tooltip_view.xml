@@ -1,29 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent">
 
     <RelativeLayout
-            android:id="@+id/balloon_content"
+        android:id="@+id/balloon_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:background="@drawable/feedback_rectangle"
+            android:backgroundTint="@color/yellow"
+            android:paddingVertical="@dimen/_6sdp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-        <FrameLayout
-                android:backgroundTint="@color/yellow"
-                android:background="@drawable/feedback_rectangle"
-                android:paddingVertical="@dimen/_6sdp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
             <androidx.appcompat.widget.AppCompatTextView
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                 android:id="@+id/expiry_tool_tip_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center"
-                    android:paddingHorizontal="@dimen/_16sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_16sdp"
                     android:textColor="@color/black"
                     tools:text="fe fef e fe fe eff e fe f e ff ef e f" />
         </FrameLayout>
@@ -38,6 +40,6 @@
         android:layout_below="@id/balloon_content"
         android:scaleType="fitXY"
         android:rotation="180"
-        android:src="@drawable/arrow"
+        app:srcCompat="@drawable/arrow"
         android:tint="@color/yellow" />
 </RelativeLayout>

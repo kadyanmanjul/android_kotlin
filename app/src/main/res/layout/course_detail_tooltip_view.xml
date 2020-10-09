@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/transparent">
 
     <RelativeLayout
@@ -42,6 +43,6 @@
         android:layout_marginRight="@dimen/_30sdp"
         android:rotation="180"
         android:scaleType="fitXY"
-        android:src="@drawable/arrow"
+        app:srcCompat="@drawable/arrow"
         android:tint="@color/yellow" />
 </RelativeLayout>

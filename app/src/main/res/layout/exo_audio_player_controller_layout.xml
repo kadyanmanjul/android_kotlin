@@ -17,22 +17,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/exo_play"
             android:layout_width="@dimen/_24sdp"
             android:layout_height="@dimen/_24sdp"
             android:layout_gravity="center"
             android:padding="@dimen/_4sdp"
-            android:src="@drawable/ic_play_24dp"
+            ap="@drawable/ic_play_24dp"
             android:tint="@color/button_color" />
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/exo_pause"
             android:layout_width="@dimen/_24sdp"
             android:layout_height="@dimen/_24sdp"
             android:layout_gravity="center"
             android:padding="@dimen/_4sdp"
-            android:src="@drawable/ic_pause_24dp"
+            app:srcCompat="@drawable/ic_pause_24dp"
             android:tint="@color/button_color"
             android:visibility="gone"
             tools:visibility="visible" />

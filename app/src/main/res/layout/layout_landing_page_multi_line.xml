@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
-    <ImageView
-            android:id="@+id/landing_image"
-            android:layout_width="@dimen/_16sdp"
-            android:layout_height="@dimen/_16sdp"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/attach_image"
-            android:scaleType="fitXY"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/landing_image"
+        android:layout_width="@dimen/_16sdp"
+        android:layout_height="@dimen/_16sdp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/attach_image"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-            android:id="@+id/landing_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/_4sdp"
-            android:text="@string/download_certificate"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-            android:textColor="@color/dark_grey"
-            app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/landing_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_4sdp"
+        android:text="@string/download_certificate"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+        android:textColor="@color/dark_grey"
+        app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/landing_image"
             app:layout_constraintTop_toTopOf="parent" />
 

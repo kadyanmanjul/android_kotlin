@@ -34,7 +34,7 @@
                 android:layout_height="@dimen/_88sdp"
                 android:adjustViewBounds="true"
                 android:scaleType="fitXY"
-                android:src="@drawable/ic_pattern"
+                app:srcCompat="@drawable/ic_pattern"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

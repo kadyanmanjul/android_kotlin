@@ -89,7 +89,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:padding="@dimen/_4sdp"
-                        android:src="@drawable/ic_help_outline"
+                        app:srcCompat="@drawable/ic_help_outline"
                         android:tint="@color/white"
                         android:visibility="visible" />
                 </RelativeLayout>

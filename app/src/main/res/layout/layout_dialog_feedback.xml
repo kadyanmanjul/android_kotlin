@@ -39,21 +39,21 @@
                     tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/success_iv"
-                    android:layout_width="@dimen/_64sdp"
-                    android:layout_height="@dimen/_64sdp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/timer_drawable"
-                    android:backgroundTint="@color/wa_color"
-                    android:elevation="@dimen/_4sdp"
-                    android:scaleType="center"
-                    android:src="@drawable/ic_tick_small"
-                    android:tint="@color/white"
-                    android:visibility="visible"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/guideline"
-                    tools:visibility="visible" />
+                android:id="@+id/success_iv"
+                android:layout_width="@dimen/_64sdp"
+                android:layout_height="@dimen/_64sdp"
+                android:layout_gravity="center"
+                android:background="@drawable/timer_drawable"
+                android:backgroundTint="@color/wa_color"
+                android:elevation="@dimen/_4sdp"
+                android:scaleType="center"
+                android:tint="@color/white"
+                app:srcCompat="@drawable/ic_tick_small"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/guideline"
+                tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/top_feedback_title"
@@ -218,20 +218,20 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:layout_marginEnd="@dimen/_4sdp"
-                android:onClick="@{()->handler.dismiss()}"
-                android:padding="@dimen/_6sdp"
-                android:src="@drawable/ic_cross"
-                android:tint="@color/white"
-                android:visibility="visible"
-                app:layout_constraintBottom_toTopOf="@+id/top_feedback_title"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:visibility="visible" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:onClick="@{()->handler.dismiss()}"
+            android:padding="@dimen/_6sdp"
+            android:tint="@color/white"
+            app:srcCompat="@drawable/ic_cross"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/top_feedback_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="visible" />
 
         <include layout="@layout/progress_layout" />
     </FrameLayout>

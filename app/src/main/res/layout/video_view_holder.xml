@@ -64,7 +64,7 @@
                     android:background="@drawable/transparent_round_bg"
                     android:clickable="false"
                     android:padding="@dimen/_12sdp"
-                    android:src="@drawable/ic_white_play" />
+                    app:srcCompat="@drawable/ic_white_play" />
 
                 <FrameLayout
                     android:id="@+id/download_container"
@@ -93,7 +93,7 @@
                         android:paddingTop="@dimen/_5sdp"
                         android:paddingEnd="@dimen/_5sdp"
                         android:paddingBottom="@dimen/_5sdp"
-                        android:src="@drawable/ic_download"
+                        app:srcCompat="@drawable/ic_download"
                         android:tint="#FFFFFF"
                         android:visibility="invisible"
                         tools:visibility="visible" />
@@ -123,7 +123,7 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:padding="@dimen/_5sdp"
-                        android:src="@drawable/ic_cross"
+                        app:srcCompat="@drawable/ic_cross"
                         android:visibility="invisible"
                         tools:visibility="gone" />
 
@@ -143,7 +143,7 @@
                         android:clickable="false"
                         android:focusable="false"
                         android:scaleType="fitEnd"
-                        android:src="@drawable/bg_textview" />
+                        app:srcCompat="@drawable/bg_textview" />
 
                 </FrameLayout>
 

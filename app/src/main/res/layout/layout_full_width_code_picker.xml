@@ -1,36 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/countryCodeHolder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/countryCodeHolder"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
     <RelativeLayout
-            android:id="@+id/rlClickConsumer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ccp_selectable_bg">
+        android:id="@+id/rlClickConsumer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ccp_selectable_bg">
 
         <TextView
-                android:id="@+id/textView_selectedCountry"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toStartOf="@+id/imageView_arrow"
-                android:gravity="center"
-                android:text="(IN) +91"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                android:textColor="@android:color/black"
-                android:visibility="gone" />
+            android:id="@+id/textView_selectedCountry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/imageView_arrow"
+            android:gravity="center"
+            android:text="(IN) +91"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+            android:textColor="@android:color/black"
+            android:visibility="gone" />
 
-        <ImageView
-                android:id="@+id/imageView_arrow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:adjustViewBounds="true"
-                android:alpha="0.6"
-                android:src="@drawable/ccp_down_arrow"
-                android:visibility="gone" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageView_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:adjustViewBounds="true"
+            android:alpha="0.6"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ccp_down_arrow" />
     </RelativeLayout>
 </RelativeLayout>

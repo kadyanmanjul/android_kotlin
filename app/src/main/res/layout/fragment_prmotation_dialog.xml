@@ -23,42 +23,42 @@
 
 
             <com.joshtalks.joshskills.core.custom_ui.ZoomageView
-                    android:id="@+id/iv_promotion"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:adjustViewBounds="true"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="@{()->handler.openPromotion()}"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/video_placeholder"
-                    app:zoomage_animateOnReset="true"
-                    app:zoomage_autoCenter="true"
-                    app:zoomage_autoResetMode="UNDER"
-                    app:zoomage_maxScale="8"
-                    app:zoomage_minScale="0.6"
-                    app:zoomage_restrictBounds="false"
-                    app:zoomage_translatable="true"
-                    app:zoomage_zoomable="true"
+                android:id="@+id/iv_promotion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:adjustViewBounds="true"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="@{()->handler.openPromotion()}"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/video_placeholder"
+                app:zoomage_animateOnReset="true"
+                app:zoomage_autoCenter="true"
+                app:zoomage_autoResetMode="UNDER"
+                app:zoomage_maxScale="8"
+                app:zoomage_minScale="0.6"
+                app:zoomage_restrictBounds="false"
+                app:zoomage_translatable="true"
+                app:zoomage_zoomable="true"
 
-                    />
+                />
         </FrameLayout>
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/image_view_cancel"
-                android:layout_width="@dimen/_16sdp"
-                android:layout_height="@dimen/_16sdp"
-                android:layout_alignParentEnd="true"
-                android:layout_gravity="end|top"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:layout_marginEnd="@dimen/_4sdp"
-                android:background="@drawable/bg_white_round_36"
-                android:clickable="true"
-                android:focusable="true"
-                android:onClick="@{()->handler.cancelPromotion()}"
-                android:src="@drawable/ic_cross"
-                android:tint="@color/grey_7A" />
+            android:id="@+id/image_view_cancel"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_16sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="end|top"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:background="@drawable/bg_white_round_36"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{()->handler.cancelPromotion()}"
+            android:tint="@color/grey_7A"
+            app:srcCompat="@drawable/ic_cross" />
 
     </RelativeLayout>
 </layout>

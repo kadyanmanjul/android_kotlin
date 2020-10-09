@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/transparent">
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -12,7 +13,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:scaleType="fitXY"
-        android:src="@drawable/arrow"
+        app:srcCompat="@drawable/arrow"
         android:tint="@color/yellow" />
 
     <RelativeLayout

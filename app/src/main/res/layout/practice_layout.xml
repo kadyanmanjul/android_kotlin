@@ -35,7 +35,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="fitXY"
                 app:tint="@color/white_ef"
-                android:src="@drawable/ic_pattern"
+                app:srcCompat="@drawable/ic_pattern"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

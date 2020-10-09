@@ -61,7 +61,7 @@
                         android:clickable="false"
                         android:focusable="false"
                         android:scaleType="fitEnd"
-                        android:src="@drawable/bg_textview" />
+                        app:srcCompat="@drawable/bg_textview" />
 
                 </FrameLayout>
 
@@ -123,7 +123,7 @@
                     android:paddingTop="@dimen/_10sdp"
                     android:paddingEnd="@dimen/_30sdp"
                     android:paddingBottom="@dimen/_10sdp"
-                    android:src="@drawable/ic_download"
+                    app:srcCompat="@drawable/ic_download"
                     android:tint="@color/white"
                     android:visibility="visible"
                     tools:visibility="visible" />
@@ -148,7 +148,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="@dimen/_5sdp"
-                    android:src="@drawable/ic_cross"
+                    app:srcCompat="@drawable/ic_cross"
                     android:visibility="gone"
                     tools:visibility="gone" />
 

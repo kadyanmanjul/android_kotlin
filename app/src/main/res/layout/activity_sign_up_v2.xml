@@ -52,15 +52,15 @@
                     app:layout_constraintTop_toBottomOf="@+id/iv_back" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_help"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="@{()->handler.openHelpActivity()}"
-                    android:padding="@dimen/_4sdp"
-                    android:src="@drawable/ic_help_outline"
-                    android:tint="@color/black"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                android:id="@+id/iv_help"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{()->handler.openHelpActivity()}"
+                android:padding="@dimen/_4sdp"
+                android:tint="@color/black"
+                app:srcCompat="@drawable/ic_help_outline"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

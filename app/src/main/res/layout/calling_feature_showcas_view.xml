@@ -31,15 +31,15 @@
                     android:layout_height="wrap_content">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/iv_call"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:padding="@dimen/_4sdp"
-                        android:src="@drawable/ic_group_call"
-                        android:tint="@color/white"
-                        android:visibility="visible" />
+                    android:id="@+id/iv_call"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:padding="@dimen/_4sdp"
+                    android:tint="@color/white"
+                    app:srcCompat="@drawable/ic_group_call"
+                    android:visibility="visible" />
             </RelativeLayout>
 
         </com.google.android.material.appbar.MaterialToolbar>

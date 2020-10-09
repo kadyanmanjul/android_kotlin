@@ -25,7 +25,7 @@
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
-            android:src="@drawable/chat_bg"
+            app:srcCompat="@drawable/chat_bg"
             android:tintMode="multiply" />
 
         <com.google.android.material.appbar.MaterialToolbar
@@ -116,7 +116,7 @@
                     android:layout_centerVertical="true"
                     android:onClick="@{()->handler.practiseOnCall()}"
                     android:padding="@dimen/_4sdp"
-                    android:src="@drawable/ic_group_call"
+                    app:srcCompat="@drawable/ic_group_call"
                     android:tint="@color/white"
                     android:visibility="gone"
                     tools:visibility="visible" />
@@ -162,7 +162,7 @@
                 android:adjustViewBounds="true"
                 android:padding="@dimen/_4sdp"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_arrow_down"
+                app:srcCompat="@drawable/ic_arrow_down"
                 android:visibility="gone"
                 app:elevation="@dimen/_4sdp"
                 tools:visibility="visible" />
@@ -332,7 +332,6 @@
                 android:backgroundTint="@color/button_color"
                 android:padding="@dimen/_8sdp"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_send"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="@+id/inputLL"
                 app:layout_constraintRight_toRightOf="parent"

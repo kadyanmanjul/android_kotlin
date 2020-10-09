@@ -32,27 +32,27 @@
                 tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/cancel_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/_8sdp"
-                android:onClick="@{()->handler.cancel()}"
-                android:padding="@dimen/_8sdp"
-                android:src="@drawable/ic_cross"
-                app:layout_constraintBottom_toTopOf="@+id/iv_separator"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:tint="@color/grey_7A" />
+            android:id="@+id/cancel_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_8sdp"
+            android:onClick="@{()->handler.cancel()}"
+            android:padding="@dimen/_8sdp"
+            app:layout_constraintBottom_toTopOf="@+id/iv_separator"
+            app:srcCompat="@drawable/ic_cross"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:tint="@color/grey_7A" />
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_separator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/_12sdp"
-                android:padding="@dimen/_8sdp"
-                android:src="@drawable/ic_top_separator"
-                app:layout_constraintBottom_toTopOf="@+id/tv_title"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+            android:id="@+id/iv_separator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_12sdp"
+            android:padding="@dimen/_8sdp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_title"
+            app:srcCompat="@drawable/ic_top_separator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -124,13 +124,13 @@
                     tools:visibility="visible">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_centerVertical="true"
-                        android:elevation="@dimen/_4sdp"
-                        android:src="@drawable/ic_rating_start" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:elevation="@dimen/_4sdp"
+                    app:srcCompat="@drawable/ic_rating_start" />
 
             </com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper>
 
@@ -145,13 +145,13 @@
                     tools:visibility="visible">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_centerVertical="true"
-                        android:elevation="@dimen/_4sdp"
-                        android:src="@drawable/ic_rating_end" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:elevation="@dimen/_4sdp"
+                    app:srcCompat="@drawable/ic_rating_end" />
 
             </com.sdsmdg.harjot.materialshadows.MaterialShadowViewWrapper>
 
@@ -283,13 +283,13 @@
                 app:layout_constraintTop_toBottomOf="@+id/iv_separator">
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_tick"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_npt_success"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                android:id="@+id/iv_tick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:srcCompat="@drawable/ic_npt_success"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_user_name"

@@ -71,18 +71,18 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/image_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_marginTop="@dimen/_24sdp"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_refer_a_friend"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHeight_default="percent"
-                        app:layout_constraintHeight_percent="0.4"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_header" />
+                    android:id="@+id/image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="@dimen/_24sdp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:srcCompat="@drawable/ic_refer_a_friend"
+                    app:layout_constraintHeight_default="percent"
+                    app:layout_constraintHeight_percent="0.4"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_header" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_view_1"
@@ -142,7 +142,7 @@
                 android:layout_marginTop="@dimen/_8sdp"
                 android:background="@drawable/rect_with_bound"
                 android:clickable="true"
-                android:drawableEnd="@drawable/ic_content_copy"
+                app:drawableEndCompat="@drawable/ic_content_copy"
                 android:drawablePadding="@dimen/_18sdp"
                 android:drawableTint="@color/black"
                 android:focusable="true"

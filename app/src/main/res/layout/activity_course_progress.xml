@@ -104,7 +104,7 @@
                                 android:clickable="true"
                                 android:focusable="true"
                                 android:scaleType="fitCenter"
-                                android:src="@drawable/circle"
+                                app:srcCompat="@drawable/circle"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintHeight_default="percent"
                                 app:layout_constraintHeight_percent="0.8"
@@ -253,7 +253,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="@dimen/_8sdp"
-                                    android:src="@drawable/ic_baseline_expand_more" />
+                                    app:srcCompat="@drawable/ic_baseline_expand_more" />
                             </LinearLayout>
 
 
@@ -408,12 +408,12 @@
                                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                                     android:textColor="@color/white" />
 
-                                <ImageView
+                                <androidx.appcompat.widget.AppCompatImageView
                                     android:id="@+id/iv_pv"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="@dimen/_16sdp"
-                                    android:src="@drawable/ic_baseline_expand_more" />
+                                    app:srcCompat="@drawable/ic_baseline_expand_more" />
                             </LinearLayout>
 
 

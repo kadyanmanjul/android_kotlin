@@ -20,12 +20,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/tick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_14sdp"
-        android:src="@drawable/ic_circle_boundary"
+        app:srcCompat="@drawable/ic_circle_boundary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.01"

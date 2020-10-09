@@ -26,14 +26,14 @@
                 app:elevation="0dp" />
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_tick"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:scaleType="center"
-                android:src="@drawable/ic_check_smallest"
-                android:tint="@color/gray_82"
-                android:visibility="invisible" />
+            android:id="@+id/iv_tick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:scaleType="center"
+            android:tint="@color/gray_82"
+            app:srcCompat="@drawable/ic_check_smallest"
+            android:visibility="invisible" />
 
 
     </FrameLayout>

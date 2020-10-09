@@ -27,17 +27,17 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0" />
 
-        <TextView
-                android:id="@+id/tv_record_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top|center_horizontal"
-                android:layout_marginTop="24dp"
-                android:background="@drawable/bg_timer"
-                android:drawableStart="@drawable/timer_drawable"
-                android:drawablePadding="10dp"
-                android:paddingStart="16dp"
-                android:paddingTop="10dp"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_record_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_timer"
+            app:drawableStartCompat="@drawable/timer_drawable"
+            android:drawablePadding="10dp"
+            android:paddingStart="16dp"
+            android:paddingTop="10dp"
                 android:paddingEnd="16dp"
                 android:paddingBottom="10dp"
                 android:text="00:00"

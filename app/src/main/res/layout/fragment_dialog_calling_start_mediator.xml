@@ -37,7 +37,7 @@
                 android:id="@+id/image_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_wb_incandescent"
+                app:srcCompat="@drawable/ic_wb_incandescent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -92,7 +92,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:src="@drawable/have_a_referral"
+                app:srcCompat="@drawable/have_a_referral"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_60ssp"

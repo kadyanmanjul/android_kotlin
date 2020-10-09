@@ -251,7 +251,7 @@
                             android:background="@drawable/recv_bg_mic"
                             android:backgroundTint="@color/button_color"
                             android:scaleType="centerInside"
-                            android:src="@drawable/ic_rec_mic_big"
+                            app:srcCompat="@drawable/ic_rec_mic_big"
                             android:tint="@color/white"
                             android:visibility="gone" />
 
@@ -273,9 +273,9 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:layout_marginTop="@dimen/_8sdp"
-                                android:drawableStart="@drawable/ic_file_upload"
-                                android:drawablePadding="@dimen/_2sdp"
+                            android:layout_marginTop="@dimen/_8sdp"
+                            app:drawableStartCompat="@drawable/ic_file_upload"
+                            android:drawablePadding="@dimen/_2sdp"
                                 android:gravity="center"
                                 android:onClick="@{()->handler.chooseFile()}"
                                 android:paddingStart="@dimen/_4sdp"
@@ -373,20 +373,20 @@
                             <androidx.appcompat.widget.AppCompatImageView
                                     android:id="@+id/iv_cancel"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentEnd="true"
-                                    android:layout_centerInParent="true"
-                                    android:layout_centerVertical="true"
-                                    android:layout_gravity="center|end"
-                                    android:clickable="true"
-                                    android:focusable="true"
-                                    android:onClick="@{()->handler.removeAudioPractise()}"
-                                    android:paddingTop="@dimen/_4sdp"
-                                    android:paddingEnd="@dimen/_4sdp"
-                                    android:paddingBottom="@dimen/_4sdp"
-                                    android:src="@drawable/ic_cross"
-                                    android:tint="#878A91"
-                                    android:visibility="visible" />
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerInParent="true"
+                                android:layout_centerVertical="true"
+                                android:layout_gravity="center|end"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:onClick="@{()->handler.removeAudioPractise()}"
+                                android:paddingTop="@dimen/_4sdp"
+                                android:paddingEnd="@dimen/_4sdp"
+                                android:paddingBottom="@dimen/_4sdp"
+                                android:tint="#878A91"
+                                app:srcCompat="@drawable/ic_cross"
+                                android:visibility="visible" />
 
                             <androidx.appcompat.widget.AppCompatTextView
                                     android:id="@+id/submit_txt_info_duration"
@@ -409,19 +409,19 @@
                                 android:visibility="gone">
 
                             <androidx.appcompat.widget.AppCompatImageView
-                                    android:id="@+id/attachment_placeholder"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentStart="true"
-                                    android:layout_centerVertical="true"
-                                    android:layout_gravity="center"
-                                    android:adjustViewBounds="true"
-                                    android:clickable="true"
-                                    android:focusable="true"
-                                    android:onClick="@{()->handler.openAttachmentFile()}"
-                                    android:padding="@dimen/_5sdp"
-                                    android:scaleType="fitCenter"
-                                    android:src="@drawable/ic_attchement_upload" />
+                                android:id="@+id/attachment_placeholder"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_centerVertical="true"
+                                android:layout_gravity="center"
+                                android:adjustViewBounds="true"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:onClick="@{()->handler.openAttachmentFile()}"
+                                android:padding="@dimen/_5sdp"
+                                android:scaleType="fitCenter"
+                                app:srcCompat="@drawable/ic_attchement_upload" />
 
                             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                                 android:id="@+id/file_info_attachment_tv"
@@ -438,19 +438,19 @@
                                 android:textColor="@color/black" />
 
                             <androidx.appcompat.widget.AppCompatImageView
-                                    android:id="@+id/iv_cancel2"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentEnd="true"
-                                    android:layout_centerVertical="true"
-                                    android:layout_gravity="end|center"
-                                    android:clickable="true"
-                                    android:focusable="true"
-                                    android:onClick="@{()->handler.removeFileAttachment()}"
-                                    android:padding="@dimen/_4sdp"
-                                    android:src="@drawable/ic_cross"
-                                    android:tint="#878A91"
-                                    android:visibility="visible" />
+                                android:id="@+id/iv_cancel2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:layout_gravity="end|center"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:onClick="@{()->handler.removeFileAttachment()}"
+                                android:padding="@dimen/_4sdp"
+                                android:tint="#878A91"
+                                app:srcCompat="@drawable/ic_cross"
+                                android:visibility="visible" />
 
                         </RelativeLayout>
 

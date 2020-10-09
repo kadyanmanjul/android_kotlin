@@ -44,7 +44,7 @@
                 android:paddingTop="@dimen/_8sdp"
                 android:paddingBottom="@dimen/_8sdp">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_pdf_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
                     android:layout_gravity="start|center"
                     android:layout_marginLeft="@dimen/_10sdp"
                     android:layout_marginRight="@dimen/_10sdp"
-                    android:drawableStart="@drawable/ic_pdf"
+                    app:drawableStartCompat="@drawable/ic_pdf"
                     android:drawablePadding="@dimen/_4sdp"
                     android:ellipsize="marquee"
                     android:gravity="start|center"
@@ -82,7 +82,7 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:padding="@dimen/_5sdp"
-                        android:src="@drawable/ic_download"
+                        app:srcCompat="@drawable/ic_download"
                         android:tint="#7A7A7A"
                         android:visibility="visible" />
 
@@ -107,7 +107,7 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:padding="@dimen/_5sdp"
-                        android:src="@drawable/ic_cross"
+                        app:srcCompat="@drawable/ic_cross"
                         android:tint="#878A91"
                         android:visibility="gone"
                         tools:visibility="gone" />

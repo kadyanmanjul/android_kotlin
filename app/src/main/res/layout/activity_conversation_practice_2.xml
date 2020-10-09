@@ -61,16 +61,16 @@
                     tools:targetApi="o" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/history_iv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/_8sdp"
-                    android:onClick="@{()->handler.openSubmittedPractise()}"
-                    android:src="@drawable/ic_headphone_icon"
-                    android:visibility="invisible"
-                    app:layout_constraintBottom_toBottomOf="@+id/iv_back"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/iv_back" />
+                android:id="@+id/history_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:onClick="@{()->handler.openSubmittedPractise()}"
+                android:visibility="invisible"
+                app:srcCompat="@drawable/ic_headphone_icon"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_back"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/iv_back" />
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"

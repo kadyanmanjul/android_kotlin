@@ -1,41 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/rounded_rectangle_attach"
-        android:clickable="true"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:padding="@dimen/_10sdp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/rounded_rectangle_attach"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:padding="@dimen/_10sdp">
 
     <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:baselineAligned="false"
-            android:orientation="horizontal"
-            android:weightSum="2">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:weightSum="2">
 
 
         <LinearLayout
-                android:id="@+id/ll_audio"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:padding="@dimen/_5sdp">
+            android:id="@+id/ll_audio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="@dimen/_5sdp">
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/image_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:padding="@dimen/_5sdp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_audio_attachment" />
+                android:id="@+id/image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:padding="@dimen/_5sdp"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/ic_audio_attachment" />
 
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -60,13 +61,13 @@
                 android:padding="@dimen/_5sdp">
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:padding="@dimen/_5sdp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_camera_2" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:padding="@dimen/_5sdp"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/ic_camera_2" />
 
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -91,13 +92,13 @@
                 android:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:padding="@dimen/_5sdp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_gallary" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:padding="@dimen/_5sdp"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/ic_gallary" />
 
 
             <androidx.appcompat.widget.AppCompatTextView

@@ -19,36 +19,36 @@
             app:layout_constraintVertical_bias="0.1" />
 
     <com.google.android.material.textview.MaterialTextView
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/dont_close"
-            android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/be_calm" />
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dont_close"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/be_calm" />
 
-    <ImageView
-            android:id="@+id/image"
-            android:layout_width="@dimen/_172sdp"
-            android:layout_height="@dimen/_213sdp"
-            android:src="@drawable/payment_processing"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.4"
-            tools:ignore="ContentDescription" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image"
+        android:layout_width="@dimen/_172sdp"
+        android:layout_height="@dimen/_213sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.4"
+        app:srcCompat="@drawable/payment_processing"
+        tools:ignore="ContentDescription" />
 
     <com.pnikosis.materialishprogress.ProgressWheel
-            android:id="@+id/progress_bar"
-            android:layout_width="@dimen/_72sdp"
-            android:layout_height="@dimen/_72sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.75"
+        android:id="@+id/progress_bar"
+        android:layout_width="@dimen/_72sdp"
+        android:layout_height="@dimen/_72sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.75"
             app:matProg_barColor="@color/button_color"
             app:matProg_barWidth="@dimen/_4sdp"
             app:matProg_fillRadius="true"

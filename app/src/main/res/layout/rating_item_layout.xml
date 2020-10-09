@@ -18,15 +18,15 @@
             tools:text="5" />
 
     <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/star_iv"
-            android:layout_width="@dimen/_12sdp"
-            android:layout_height="@dimen/_12sdp"
-            android:layout_marginHorizontal="@dimen/_2sdp"
-            android:src="@drawable/ic_baseline_star"
-            android:tint="@color/dark_grey"
-            app:layout_constraintBottom_toBottomOf="@+id/user_rating"
-            app:layout_constraintStart_toEndOf="@+id/user_rating"
-            app:layout_constraintTop_toTopOf="@+id/user_rating" />
+        android:id="@+id/star_iv"
+        android:layout_width="@dimen/_12sdp"
+        android:layout_height="@dimen/_12sdp"
+        android:layout_marginHorizontal="@dimen/_2sdp"
+        android:tint="@color/dark_grey"
+        app:srcCompat="@drawable/ic_baseline_star"
+        app:layout_constraintBottom_toBottomOf="@+id/user_rating"
+        app:layout_constraintStart_toEndOf="@+id/user_rating"
+        app:layout_constraintTop_toTopOf="@+id/user_rating" />
 
     <ProgressBar
             android:id="@+id/progress_bar"

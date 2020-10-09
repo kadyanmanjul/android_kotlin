@@ -33,8 +33,8 @@
                 android:layout_gravity="end|center_vertical"
                 android:layout_margin="@dimen/_10sdp"
                 android:alpha="0"
-                android:drawableTop="@drawable/ic_fast_forward"
-                android:gravity="center"
+            app:drawableTopCompat="@drawable/ic_fast_forward"
+            android:gravity="center"
                 android:textColor="@android:color/white"
                 android:visibility="gone"
                 tools:visibility="visible" />
@@ -45,9 +45,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center_vertical"
                 android:layout_margin="@dimen/_10sdp"
-                android:alpha="0"
-                android:drawableTop="@drawable/ic_fast_rewind"
-                android:gravity="center"
+            android:alpha="0"
+            app:drawableTopCompat="@drawable/ic_fast_rewind"
+            android:gravity="center"
                 android:textColor="@android:color/white"
                 android:visibility="gone"
                 tools:visibility="visible" />

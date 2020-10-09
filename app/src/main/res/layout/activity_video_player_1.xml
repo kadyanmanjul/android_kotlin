@@ -84,49 +84,49 @@
 
 
                 <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/iv_more"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:padding="@dimen/_4sdp"
-                        android:src="@drawable/ic_more_option"
-                        android:tint="@color/white"
-                        android:visibility="visible" />
+                    android:id="@+id/iv_more"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="@dimen/_4sdp"
+                    android:tint="@color/white"
+                    app:srcCompat="@drawable/ic_more_option"
+                    android:visibility="visible" />
             </RelativeLayout>
         </com.google.android.material.appbar.MaterialToolbar>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/frame_progress"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                tool:visibility="visible">
+            android:id="@+id/frame_progress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            tool:visibility="visible">
 
-
-            <ImageView
-                    android:id="@+id/image_black"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#000000"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/close"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginTop="@dimen/_6sdp"
-                    android:layout_marginEnd="@dimen/_14sdp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+                android:id="@+id/image_black"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#000000"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_marginEnd="@dimen/_14sdp"
+                android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical|start"
@@ -153,9 +153,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginEnd="@dimen/_4sdp"
-                    android:drawableStart="@drawable/ic_play_12px"
-                    android:drawablePadding="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                app:drawableStartCompat="@drawable/ic_play_12px"
+                android:drawablePadding="@dimen/_8sdp"
                     android:gravity="center"
                     android:scaleWidth="20%"
                     android:scaleHeight="20%"

@@ -26,7 +26,7 @@
     </style>
 
     <style name="OverFlow" parent="@style/Widget.AppCompat.Light.ActionButton.Overflow">
-        <item name="android:src">@drawable/ic_more_vert</item>
+        <item name="srcCompat">@drawable/ic_more_vert</item>
     </style>
 
     <style name="full_dialog" parent="@android:style/Theme.Holo.Light.Dialog">

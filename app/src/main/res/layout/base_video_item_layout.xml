@@ -11,7 +11,7 @@
             android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:drawableStart="@drawable/ic_check"
+        app:drawableStartCompat="@drawable/ic_check"
         android:drawablePadding="@dimen/_16sdp"
         android:drawableTint="@android:color/transparent"
         android:gravity="center_vertical|start"

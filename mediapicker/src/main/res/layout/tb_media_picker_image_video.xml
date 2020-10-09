@@ -21,17 +21,17 @@
             android:layout_gravity="start|bottom"
             android:background="@drawable/tb_media_picker_dr_rect_gradient_light_to_black">
 
-        <TextView
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:drawableStart="@drawable/tb_media_picker_ic_folder_48px_352374"
-                android:id="@+id/item_folder_txt_folder_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|bottom"
-                android:padding="@dimen/offset_2"
-                android:drawablePadding="@dimen/offset_4"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:marqueeRepeatLimit="marquee_forever"
+            app:drawableStartCompat="@drawable/tb_media_picker_ic_folder_48px_352374"
+            android:id="@+id/item_folder_txt_folder_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|bottom"
+            android:padding="@dimen/offset_2"
+            android:drawablePadding="@dimen/offset_4"
                 android:textColor="@color/md_white_1000"
                 android:textSize="@dimen/font_12" />
 

@@ -72,15 +72,15 @@
             app:layout_constraintTop_toBottomOf="@+id/barrier" />
 
     <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/placeholder_bg"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:adjustViewBounds="true"
-            android:src="@drawable/listen_practise_bg"
-            app:layout_constraintBottom_toTopOf="@+id/audio_container"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/barrier" />
+        android:id="@+id/placeholder_bg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
+        app:layout_constraintBottom_toTopOf="@+id/audio_container"
+        app:srcCompat="@drawable/listen_practise_bg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/barrier" />
 
 
     <androidx.cardview.widget.CardView

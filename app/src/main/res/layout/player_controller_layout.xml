@@ -55,23 +55,23 @@
 
 
         <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/_4sdp"
-                android:src="@drawable/exo_controls_fullscreen_enter">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/_4sdp"
+            app:srcCompat="@drawable/exo_controls_fullscreen_enter">
 
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/img_bwd"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_gravity="center"
-                    android:layout_toStartOf="@id/play_pause_fl"
-                    android:adjustViewBounds="true"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/ic_replay_10" />
+                android:id="@+id/img_bwd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:layout_toStartOf="@id/play_pause_fl"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/ic_replay_10" />
 
 
             <FrameLayout
@@ -84,55 +84,55 @@
                     android:layout_marginEnd="@dimen/_36sdp">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/exo_play"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:adjustViewBounds="true"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/ic_play_actual"
-                        android:visibility="invisible" />
+                    android:id="@+id/exo_play"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible"
+                    app:srcCompat="@drawable/ic_play_actual" />
 
                 <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/exo_pause"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:adjustViewBounds="true"
-                        android:background="@android:color/transparent"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/ic_pause_actual"
-                        android:visibility="invisible" />
+                    android:id="@+id/exo_pause"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible"
+                    app:srcCompat="@drawable/ic_pause_actual" />
 
             </FrameLayout>
 
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/img_fwd"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_gravity="center"
-                    android:layout_toEndOf="@id/play_pause_fl"
-                    android:adjustViewBounds="true"
-                    android:background="@android:color/transparent"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/ic_forward_10" />
+                android:id="@+id/img_fwd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:layout_toEndOf="@id/play_pause_fl"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/ic_forward_10" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/img_full_screen_enter_exit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="@dimen/_8sdp"
-                    android:background="@android:color/transparent"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/ic_full_screen_enter" />
+                android:id="@+id/img_full_screen_enter_exit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:background="@android:color/transparent"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/ic_full_screen_enter" />
         </RelativeLayout>
     </LinearLayout>
 

@@ -107,19 +107,19 @@
                 app:layout_constraintTop_toBottomOf="@+id/heading" />
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/play_icon"
-                android:layout_width="@dimen/_60sdp"
-                android:layout_height="@dimen/_60sdp"
-                android:layout_gravity="center"
-                android:clickable="false"
-                android:padding="@dimen/_12sdp"
-                android:src="@drawable/ic_play_24dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/thumbnail_image"
-                app:layout_constraintEnd_toEndOf="@+id/thumbnail_image"
-                app:layout_constraintStart_toStartOf="@+id/thumbnail_image"
-                app:layout_constraintTop_toTopOf="@+id/thumbnail_image"
-                app:tint="@color/white" />
+            android:id="@+id/play_icon"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_60sdp"
+            android:layout_gravity="center"
+            android:clickable="false"
+            android:padding="@dimen/_12sdp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_play_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/thumbnail_image"
+            app:layout_constraintEnd_toEndOf="@+id/thumbnail_image"
+            app:layout_constraintStart_toStartOf="@+id/thumbnail_image"
+            app:layout_constraintTop_toTopOf="@+id/thumbnail_image"
+            app:tint="@color/white" />
 
         <androidx.constraintlayout.widget.Group
                 android:id="@+id/video_group"

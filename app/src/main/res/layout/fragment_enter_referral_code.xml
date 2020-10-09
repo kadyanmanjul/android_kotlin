@@ -24,37 +24,37 @@
             <ImageButton
                     android:id="@+id/close"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/_8sdp"
-                    android:background="@drawable/ic_cross"
-                    android:backgroundTint="@color/black"
-                    android:contentDescription="@string/close"
-                    android:onClick="@{()->handler.dismiss()}"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:rippleColor="@color/transparent_black" />
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_8sdp"
+                android:background="@drawable/ic_cross"
+                android:backgroundTint="@color/black"
+                android:contentDescription="@string/close"
+                android:onClick="@{()->handler.dismiss()}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:rippleColor="@color/transparent_black" />
 
-            <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_margin="@dimen/_32sdp"
-                    android:contentDescription="@string/enter_referral_code"
-                    android:src="@drawable/have_a_referral"
-                    app:layout_constraintBottom_toTopOf="@+id/tv_referral_code"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHeight_default="percent"
-                    app:layout_constraintHeight_percent="0.50"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.50" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_margin="@dimen/_32sdp"
+                android:contentDescription="@string/enter_referral_code"
+                app:layout_constraintBottom_toTopOf="@+id/tv_referral_code"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.50"
+                app:srcCompat="@drawable/have_a_referral"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.50" />
 
 
             <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/tv_referral_code"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                android:id="@+id/tv_referral_code"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                     android:layout_marginHorizontal="@dimen/_50sdp"
                     android:layout_marginBottom="8dp"
                     android:background="@drawable/rounded_rectangle_with_border"
@@ -110,7 +110,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/tv_referral_code"
                     tools:ignore="MissingConstraints" />
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/next"
                 android:layout_width="@dimen/_32sdp"
                 android:layout_height="@dimen/_32sdp"
@@ -120,7 +120,7 @@
                 android:contentDescription="@string/back_button_desc"
                 android:padding="@dimen/_6sdp"
                 android:rotation="180"
-                android:src="@drawable/ic_arrow_back"
+                app:srcCompat="@drawable/ic_arrow_back"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

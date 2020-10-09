@@ -71,7 +71,7 @@
                             android:clickable="true"
                             android:focusable="true"
                             android:padding="@dimen/_4sdp"
-                            android:src="@drawable/ic_download"
+                            app:srcCompat="@drawable/ic_download"
                             android:tint="#7A7A7A"
                             android:visibility="gone"
                             tools:visibility="visible" />
@@ -85,7 +85,7 @@
                             android:clickable="true"
                             android:focusable="true"
                             android:padding="@dimen/_4sdp"
-                            android:src="@drawable/ic_cross"
+                            app:srcCompat="@drawable/ic_cross"
                             android:tint="#7A7A7A"
                             android:visibility="invisible"
                             tools:visibility="visible" />

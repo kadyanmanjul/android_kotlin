@@ -29,84 +29,83 @@
                     android:orientation="horizontal">
 
                 <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:layout_weight="1"
-                        android:visibility="visible">
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:visibility="visible">
 
-                    <ImageView
-                            android:id="@id/exo_rew"
-                            android:layout_width="65dp"
-                            android:layout_height="65dp"
-                            android:layout_gravity="center"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:padding="10dp"
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@id/exo_rew"
+                        android:layout_width="65dp"
+                        android:layout_height="65dp"
+                        android:layout_gravity="center"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="10dp"
 
-                            android:tint="#fff"
-                            app:srcCompat="@drawable/ic_rewind" />
+                        android:tint="#fff"
+                        app:srcCompat="@drawable/ic_rewind" />
 
 
                     <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:text="10"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-                            android:textColor="#fff" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="10"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                        android:textColor="#fff" />
 
                 </FrameLayout>
 
-                <ImageView
-                        android:id="@id/exo_play"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:padding="20dp"
-                        android:tint="#ffffff"
-                        app:srcCompat="@drawable/ic_play_24dp" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@id/exo_play"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="20dp"
+                    android:tint="#ffffff"
+                    app:srcCompat="@drawable/ic_play_24dp" />
 
-                <ImageView
-                        android:id="@id/exo_pause"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
-
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:padding="20dp"
-                        android:src="@drawable/ic_pause"
-                        android:tint="#fff" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@id/exo_pause"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="20dp"
+                    android:tint="#fff"
+                    app:srcCompat="@drawable/ic_pause" />
 
                 <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
-                        android:layout_weight="1"
-                        android:visibility="invisible">
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_weight="1"
+                    android:visibility="invisible">
 
-                    <ImageView
-                            android:id="@id/exo_ffwd"
-                            android:layout_width="65dp"
-                            android:layout_height="65dp"
-                            android:layout_gravity="center"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:padding="10dp"
-                            android:tint="#fff"
-                            app:srcCompat="@drawable/ic_forward" />
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@id/exo_ffwd"
+                        android:layout_width="65dp"
+                        android:layout_height="65dp"
+                        android:layout_gravity="center"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="10dp"
+                        android:tint="#fff"
+                        app:srcCompat="@drawable/ic_forward" />
 
                     <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
 
-                            android:gravity="center"
-                            android:text="10"
-                            android:textColor="#fff"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold" />
+                        android:gravity="center"
+                        android:text="10"
+                        android:textColor="#fff"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold" />
 
                 </FrameLayout>
 
@@ -158,39 +157,39 @@
             <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="36dp"
-                    android:layout_marginBottom="@dimen/_6sdp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                android:layout_marginBottom="@dimen/_6sdp"
+                android:gravity="center"
+                android:orientation="horizontal">
 
                 <com.google.android.exoplayer2.ui.DefaultTimeBar
-                        android:id="@id/exo_progress"
-                        android:layout_width="0dp"
-                        android:layout_height="36dp"
-                        android:layout_weight="1" />
+                    android:id="@id/exo_progress"
+                    android:layout_width="0dp"
+                    android:layout_height="36dp"
+                    android:layout_weight="1" />
 
-                <ImageView
-                        android:id="@+id/ivFullScreenToggle"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:background="#0fff"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:padding="10dp"
-                        android:src="@drawable/ic_fullscreen"
-                        android:tint="#fff"
-                        android:visibility="gone" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivFullScreenToggle"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="#0fff"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="10dp"
+                    android:tint="#fff"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/ic_fullscreen" />
 
-                <ImageView
-                        android:id="@+id/ivFullScreenToggleOp"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:background="#0fff"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:padding="10dp"
-                        android:src="@drawable/ic_fullscreen"
-                        android:tint="#fff"
-                        android:visibility="gone" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivFullScreenToggleOp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="#0fff"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="10dp"
+                    android:tint="#fff"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/ic_fullscreen" />
 
 
             </LinearLayout>

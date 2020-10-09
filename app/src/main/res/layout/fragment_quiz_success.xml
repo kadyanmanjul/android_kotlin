@@ -31,17 +31,17 @@
 
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/man"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:src="@drawable/quiz_success_image"
-                app:layout_constraintBottom_toTopOf="@+id/materialButton"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHeight_default="percent"
-                app:layout_constraintHeight_percent="0.6"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.9" />
+            android:id="@+id/man"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/materialButton"
+            app:srcCompat="@drawable/quiz_success_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_percent="0.6"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.9" />
 
         <TextView
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
