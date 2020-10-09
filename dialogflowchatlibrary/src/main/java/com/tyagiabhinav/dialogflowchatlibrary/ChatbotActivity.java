@@ -11,8 +11,8 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.ProgressIndicator;
@@ -52,7 +52,7 @@ import java.util.UUID;
 
 import static com.tyagiabhinav.dialogflowchatlibrary.pref.SharedPrefsManager.COURSE_TEST_IDS;
 
-public class ChatbotActivity extends AppCompatActivity implements ChatbotCallback, OnClickCallback {
+public class ChatbotActivity extends FragmentActivity implements ChatbotCallback, OnClickCallback {
 
     public static final String SESSION_ID = "sessionID";
     private static final String TAG = ChatbotActivity.class.getSimpleName();
