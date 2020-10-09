@@ -174,7 +174,7 @@
 
     <!-- course progress layout-->
     <string name="course_progress_detail">You have completed %s of the course</string>
-    <string name="course_duration_day" formatted="false">Day %s/%s</string>
+    <string name="course_duration_day" formatted="false">Day %s %s</string>
     <string name="unlock_progress_header">To unlock &amp; download certificate, you need to complete at least %s of the course</string>
     <string name="sample_certificate">View Sample Certificate</string>
     <string name="certificate_progress_h">Certificate Progress</string>
@@ -455,5 +455,15 @@
     <string name="referral_desc2"><![CDATA[\Your friend also gets <br/> <strong>₹%1$s OFF</strong> on their first course\]]></string>
     <string name="earn_upto">\Earn upto ₹10,000 \</string>
     <string name="no_conditions_apply">No Conditions Apply</string>
+
+    <string name="c_practise_tab_1">Listen</string>
+    <string name="c_practise_tab_2">Quiz</string>
+    <string name="c_practise_tab_3">Practice</string>
+    <string name="c_practise_tab_4">Record</string>
+    <string name="user">User</string>
+    <string name="next_class_started">Next Class Started</string>
+    <string name="whatsApp_not_installed">WhatsApp not Installed</string>
+    <string name="invalid_coupon_code">Invalid Coupon Code. Try Again</string>
+    <string name="interest_message">You can select upto %s interests.</string>
 
 </resources>

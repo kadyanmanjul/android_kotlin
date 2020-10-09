@@ -114,7 +114,7 @@
     <string name="go_to_course">कोर्स पर जाएं</string>
     <string name="video_url_not_exist">कुछ गलत हुआ है! वीडियो मौजूद नहीं है</string>
     <string name="course_progress_detail">आपने %s कोर्स को पूरा कर दिया है</string>
-    <string name="course_duration_day">%sवां दिन</string>
+    <string name="course_duration_day">%s %sवां दिन</string>
     <string name="unlock_progress_header">सर्टिफिकेट को अनलॉक और डाउनलोड करने के लिए, आपको कम से कम %s कोर्स पूरा करना होगा</string>
     <string name="sample_certificate">"सैंपल सर्टिफिकेट देखें "</string>
     <string name="certificate_progress_h">"सर्टिफिकेट प्रोग्रेस "</string>
@@ -141,14 +141,14 @@
     <string name="reason">कारण : %s</string>
     <string name="wohoo">वू हू!</string>
     <string name="starting_title">आपने कर दिखाया!</string>
-    <string name="starting_info">आपका स्वागत है कोर्स में</string>
-    <string name="starting_info_2">आपका कोर्स में सफलतापूर्वक इनरोल किया गया।</string>
+    <string name="starting_info">आपका स्वागत है %s कोर्स में</string>
+    <string name="starting_info_2">आपका %s कोर्स में सफलतापूर्वक इनरोल किया गया।</string>
     <string name="tutor_line">मैं आपको पढ़ाने के लिए उत्साहित हूं</string>
     <string name="tutor_register">कृपया शुरू करने के लिए रजिस्टर करें</string>
     <string name="tutor_start">आइये शुरू करें</string>
     <string name="register_now">"अभी रजिस्टर करें "</string>
     <string name="start">मेरा कोर्स शुरू करें</string>
-    <string name="tip_used_info">टिप का इस्तेमाल किया! आपको बड़े भैया ₹ 50 की छूट मिली</string>
+    <string name="tip_used_info">टिप का इस्तेमाल किया! आपको बड़े भैया ₹ %s की छूट मिली</string>
     <string name="bade_bhaiya_tips_new">बड़े भैया टिप!</string>
     <string name="tip_title">आप सभी कोर्स पर छूट प्राप्त कर सकते हैं!</string>
     <string name="tip_valid">"अगले %s दिन तक वैध है "</string>
@@ -178,7 +178,7 @@
     <string name="missed_call_verify_message">हम वेरीफिकेशन करने के लिए मिस्ड कॉल का उपयोग करते हैं। कृपया वेरीफिकेशन करने की अनुमति दें।</string>
     <string name="otp_verify_message">आपके मोबाइल नंबर को वेरीफाई करने के लिए एक 4 अंकों का ओटीपी SMS के माध्यम से भेजा जाएगा</string>
     <string name="missed_call_label">"मिस्ड कॉल वेरीफिकेशन "</string>
-    <string name="wait_for_second">"10 सेकंड्स के लिए इंतजार करें "</string>
+    <string name="wait_for_second">"%s सेकंड्स के लिए इंतजार करें "</string>
     <string name="retry_miss_call_verify">पुनः मिस्ड कॉल वेरीफिकेशन करें</string>
     <string name="flash_call_verify_permission_message">अपने नंबर को वेरीफाई करने के लिए, JoshSkills को कॉल और फोन की अनुमति की आवश्यकता होगी। सेटिंग्स> अनुमतियाँ, और कॉल लॉग टैप करें।</string>
     <string name="registration">"पंजीकरण "</string>
@@ -389,5 +389,14 @@
     <string name="no_conditions_apply">कोई शर्तें लागू नहीं</string>
     <string name="ex_referralcode">eg. L3ARN</string>
 
+    <string name="c_practise_tab_1">बात सुनो</string>
+    <string name="c_practise_tab_2">प्रश्नोत्तरी</string>
+    <string name="c_practise_tab_3">अभ्यास</string>
+    <string name="c_practise_tab_4">रिकॉर्ड</string>
+    <string name="user">यूजर</string>
+    <string name="next_class_started">अगली कक्षा शुरू हुई</string>
+    <string name="whatsApp_not_installed">WhatsApp इंस्टॉल नहीं है</string>
+    <string name="invalid_coupon_code">अमान्य कूपन कोड। पुनः प्रयास करें</string>
+    <string name="interest_message">आप %s रुचियों का चयन कर सकते हैं।</string>
 
 </resources>

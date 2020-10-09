@@ -4,8 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.showToast
@@ -13,11 +11,9 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.reminder.DeleteReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 
 class ReminderListingViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -59,16 +55,7 @@ class ReminderListingViewModel(application: Application) : AndroidViewModel(appl
                     }
                 }
             } catch (ex: Exception) {
-                when (ex) {
-                    is HttpException -> {
-                    }
-                    is SocketTimeoutException, is UnknownHostException -> {
-                        showToast(context.getString(R.string.internet_not_available_msz))
-                    }
-                    else -> {
-                        FirebaseCrashlytics.getInstance().recordException(ex)
-                    }
-                }
+                ex.showAppropriateMsg()
             }
             return@launch
         }
@@ -96,16 +83,7 @@ class ReminderListingViewModel(application: Application) : AndroidViewModel(appl
                     }
                 }
             } catch (ex: Exception) {
-                when (ex) {
-                    is HttpException -> {
-                    }
-                    is SocketTimeoutException, is UnknownHostException -> {
-                        showToast(context.getString(R.string.internet_not_available_msz))
-                    }
-                    else -> {
-                        FirebaseCrashlytics.getInstance().recordException(ex)
-                    }
-                }
+                ex.showAppropriateMsg()
             }
             return@launch
         }

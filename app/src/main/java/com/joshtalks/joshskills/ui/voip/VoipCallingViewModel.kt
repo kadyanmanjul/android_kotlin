@@ -25,5 +25,4 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
             }
         }
     }
-
 }

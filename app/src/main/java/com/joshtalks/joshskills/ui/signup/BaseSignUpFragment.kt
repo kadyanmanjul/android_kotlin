@@ -18,7 +18,6 @@ private const val EMAIL_ID_HINT_REQUEST_CODE = 9002
 
 open class BaseSignUpFragment : Fragment(), OnSelectVerificationMethodListener {
 
-
     protected open fun retryVerificationThrowFlashCall() {}
     protected open fun retryVerificationThrowSms() {}
 

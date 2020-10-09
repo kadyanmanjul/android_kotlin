@@ -4,9 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshcamerax.utils.SharedPrefsManager
-import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
@@ -20,7 +18,6 @@ import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
 import com.joshtalks.joshskills.core.SHOW_COURSE_DETAIL_TOOLTIP
 import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
@@ -31,9 +28,6 @@ import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 
 class InboxViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -76,16 +70,6 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
-
-                when (ex) {
-                    is HttpException -> {
-                    }
-                    is SocketTimeoutException, is UnknownHostException -> {
-                    }
-                    else -> {
-                        FirebaseCrashlytics.getInstance().recordException(ex)
-                    }
-                }
             }
         }
     }
@@ -120,70 +104,47 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                 val response = AppObjectController.commonNetworkService.getReminders(
                     Mentor.getInstance().getId()
                 )
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        if (it.success) {
-                            response.body()?.responseData?.let { it1 ->
-                                appDatabase.reminderDao().insertAllReminders(
-                                    it1
-                                )
-                                if (it.message.toIntOrNull() == 0) {
-                                    SharedPrefsManager.newInstance(context)
-                                        .putBoolean(
-                                            SharedPrefsManager.Companion.IS_FIRST_REMINDER,
-                                            true
-                                        )
-                                } else {
-                                    SharedPrefsManager.newInstance(context)
-                                        .putBoolean(
-                                            SharedPrefsManager.Companion.IS_FIRST_REMINDER,
-                                            false
-                                        )
-                                }
-                                SharedPrefsManager.newInstance(context)
-                                    .putBoolean(
-                                        SharedPrefsManager.Companion.IS_REMINDER_SYNCED,
-                                        true
-                                    )
-                                reminderApiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
-
-                                val reminderUtil = ReminderUtil(getApplication())
-                                it1.forEach { reminderItem ->
-                                    val timeParts = reminderItem.reminderTime.split(":")
-                                    val hours = timeParts[0]
-                                    val mins = timeParts[1]
-                                    reminderUtil.setAlarm(
-                                        when (reminderItem.reminderFrequency) {
-                                            ReminderUtil.Companion.ReminderFrequency.EVERYDAY.name -> ReminderUtil.Companion.ReminderFrequency.EVERYDAY
-                                            ReminderUtil.Companion.ReminderFrequency.WEEKDAYS.name -> ReminderUtil.Companion.ReminderFrequency.WEEKDAYS
-                                            else -> ReminderUtil.Companion.ReminderFrequency.WEEKENDS
-                                        },
-                                        reminderUtil.getAlarmPendingIntent(reminderItem.id),
-                                        hours.toIntOrNull(),
-                                        mins.toIntOrNull()
-                                    )
-                                }
-
-                            }
-                        } else
-                            showToast(it.message)
-                        return@launch
+                if (response.success) {
+                    appDatabase.reminderDao().insertAllReminders(response.responseData)
+                    if (response.message.toIntOrNull() == 0) {
+                        SharedPrefsManager.newInstance(context)
+                            .putBoolean(
+                                SharedPrefsManager.Companion.IS_FIRST_REMINDER,
+                                true
+                            )
+                    } else {
+                        SharedPrefsManager.newInstance(context)
+                            .putBoolean(
+                                SharedPrefsManager.Companion.IS_FIRST_REMINDER,
+                                false
+                            )
+                    }
+                    SharedPrefsManager.newInstance(context)
+                        .putBoolean(
+                            SharedPrefsManager.Companion.IS_REMINDER_SYNCED,
+                            true
+                        )
+                    reminderApiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
+                    val reminderUtil = ReminderUtil(getApplication())
+                    response.responseData.forEach { reminderItem ->
+                        val timeParts = reminderItem.reminderTime.split(":")
+                        val hours = timeParts[0]
+                        val mins = timeParts[1]
+                        reminderUtil.setAlarm(
+                            when (reminderItem.reminderFrequency) {
+                                ReminderUtil.Companion.ReminderFrequency.EVERYDAY.name -> ReminderUtil.Companion.ReminderFrequency.EVERYDAY
+                                ReminderUtil.Companion.ReminderFrequency.WEEKDAYS.name -> ReminderUtil.Companion.ReminderFrequency.WEEKDAYS
+                                else -> ReminderUtil.Companion.ReminderFrequency.WEEKENDS
+                            },
+                            reminderUtil.getAlarmPendingIntent(reminderItem.id),
+                            hours.toIntOrNull(),
+                            mins.toIntOrNull()
+                        )
                     }
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
-                when (ex) {
-                    is HttpException -> {
-                    }
-                    is SocketTimeoutException, is UnknownHostException -> {
-                        showToast(context.getString(R.string.internet_not_available_msz))
-                    }
-                    else -> {
-                        FirebaseCrashlytics.getInstance().recordException(ex)
-                    }
-                }
             }
-            return@launch
         }
     }
 
@@ -230,7 +191,6 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                             this.subscriptionData.remainingDays
                         )
                         PrefManager.put(SHOW_COURSE_DETAIL_TOOLTIP, this.showTooltip5)
-
                     }
                 }
             } catch (ex: Throwable) {
@@ -244,7 +204,6 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
             overAllWatchTime.postValue(
                 AppObjectController.appDatabase.videoEngageDao().getOverallWatchTime() ?: 0
             )
-            return@launch
         }
     }
 }

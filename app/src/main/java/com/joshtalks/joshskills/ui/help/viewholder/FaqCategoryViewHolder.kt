@@ -27,8 +27,8 @@ import com.mindorks.placeholderview.annotations.View
 
 @Layout(R.layout.faq_category_item_layout)
 class FaqCategoryViewHolder(
-    val listFAQCategory: List<FAQCategory>,
-    var faqCategory: FAQCategory,
+    private val listFAQCategory: List<FAQCategory>,
+    private var faqCategory: FAQCategory,
     val position: Int
 ) {
 

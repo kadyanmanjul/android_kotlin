@@ -74,7 +74,6 @@ class ConversationPractiseViewHolder(activityRef: WeakReference<FragmentActivity
                     message.question?.imageList?.getOrNull(0)?.imageUrl
                 )
             )
-
         }
     }
 }

@@ -35,6 +35,7 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityReferralBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
@@ -249,9 +250,7 @@ class ReferralActivity : BaseActivity() {
             referralText.plus("\n").plus(userReferralURL)
         }
 
-        val pm = packageManager
         try {
-
             val waIntent = Intent(Intent.ACTION_SEND)
             waIntent.type = "text/plain"
             if (packageString.isNullOrEmpty().not()) {
@@ -267,8 +266,7 @@ class ReferralActivity : BaseActivity() {
                 .push()
 
         } catch (e: PackageManager.NameNotFoundException) {
-            Toast.makeText(this, "WhatsApp not Installed", Toast.LENGTH_SHORT)
-                .show()
+            showToast(getString(R.string.whatsApp_not_installed))
         }
     }
 

@@ -58,7 +58,7 @@ class CourseExploreAdapter(private var courseList: List<CourseExploreModel>) :
                     buyNowButton.visibility = VISIBLE
                     buyNowButton.text =
                         AppObjectController.getFirebaseRemoteConfig()
-                            .getString("show_details_label")
+                            .getString(FirebaseRemoteConfigKey.SHOW_DETAILS_LABEL)
 
                     buyNowButton.setOnClickListener {
                         RxBus2.publish(courseExploreModel)

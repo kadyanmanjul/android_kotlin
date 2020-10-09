@@ -56,12 +56,8 @@ class SettingsFragment : Fragment() {
 
         sheetBehaviour = BottomSheetBehavior.from(binding.clarDownloadsBottomSheet)
 
-        var selectedLanguage = PrefManager.getStringValue(USER_LOCALE)
+        val selectedLanguage = PrefManager.getStringValue(USER_LOCALE)
         var selectedQuality = PrefManager.getStringValue(SELECTED_QUALITY)
-
-        if (selectedLanguage.isEmpty()) {
-            selectedLanguage = "en"
-        }
         if (selectedQuality.isEmpty()) {
             selectedQuality = resources.getStringArray(R.array.resolutions).get(2) ?: "Low"
         }

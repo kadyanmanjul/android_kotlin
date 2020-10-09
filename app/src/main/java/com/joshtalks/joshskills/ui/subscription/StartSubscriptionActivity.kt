@@ -9,10 +9,13 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.STARTED_FROM
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityStartSubscriptionBinding
@@ -110,11 +113,11 @@ class StartSubscriptionActivity : BaseActivity() {
             }
         }
 
-        viewModel.apiCallStatusLiveData.observe(this, Observer {
+        viewModel.apiCallStatusLiveData.observe(this, {
             binding.progressBar.visibility = View.GONE
         })
 
-        viewModel.subscriptionTestDetailsLiveData.observe(this, Observer {
+        viewModel.subscriptionTestDetailsLiveData.observe(this, {
             it.id?.toString()?.let { testId ->
                 PaymentSummaryActivity.startPaymentSummaryActivity(
                     this,

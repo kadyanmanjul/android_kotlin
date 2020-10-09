@@ -50,7 +50,6 @@ class PromotionDialogFragment : DialogFragment() {
             dialog.window?.setLayout(width.toInt(), height.toInt())
             dialog.setCanceledOnTouchOutside(false)
             dialog.setCancelable(false)
-
         }
     }
 

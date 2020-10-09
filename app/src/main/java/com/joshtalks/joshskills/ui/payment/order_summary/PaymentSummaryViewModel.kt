@@ -6,7 +6,6 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
@@ -34,7 +33,7 @@ import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-import java.util.*
+import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -146,11 +145,10 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
 
 
     fun getCurrency(): String {
-        if (isSubscriptionTipUsed) {
-            return responseSubscriptionPaymentSummary.value?.currency ?: "INR"
-
+        return if (isSubscriptionTipUsed) {
+            responseSubscriptionPaymentSummary.value?.currency ?: "INR"
         } else {
-            return responsePaymentSummary.value?.currency ?: "INR"
+            responsePaymentSummary.value?.currency ?: "INR"
         }
     }
 

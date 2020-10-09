@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.joshtalks.joshskills.R
@@ -65,7 +64,7 @@ class CourseEnrolledDetailFragment : Fragment() {
     }
 
     private fun subscribeObserver() {
-        viewModel.courseEnrolledDetailLiveData.observe(requireActivity(), Observer { data ->
+        viewModel.courseEnrolledDetailLiveData.observe(requireActivity(), { data ->
             data?.let { courseEnrolledResponse ->
                 adapter.setContent(courseEnrolledResponse.contentList as ArrayList<CourseContent>)
                 binding.desc.text = courseEnrolledResponse.text
@@ -73,7 +72,7 @@ class CourseEnrolledDetailFragment : Fragment() {
             }
         })
 
-        viewModel.isEnrolled.observe(requireActivity(), Observer { data ->
+        viewModel.isEnrolled.observe(requireActivity(), { data ->
             if (data) {
                 moveToInboxScreen()
             }

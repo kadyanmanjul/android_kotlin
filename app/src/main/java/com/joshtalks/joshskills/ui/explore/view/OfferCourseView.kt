@@ -50,7 +50,8 @@ class OfferCourseView : FrameLayout {
         imageView.setImage(courseExploreModel.imageUrl)
         buyNowButton.visibility = View.VISIBLE
         buyNowButton.text =
-            AppObjectController.getFirebaseRemoteConfig().getString("show_details_label")
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.SHOW_DETAILS_LABEL)
 
         buyNowButton.setOnClickListener {
             RxBus2.publish(courseExploreModel)
@@ -63,7 +64,7 @@ class OfferCourseView : FrameLayout {
             buyNowButton.visibility = View.VISIBLE
             buyNowButton.text =
                 AppObjectController.getFirebaseRemoteConfig()
-                    .getString("show_details_label")
+                    .getString(FirebaseRemoteConfigKey.SHOW_DETAILS_LABEL)
 
             buyNowButton.setOnClickListener {
                 RxBus2.publish(courseExploreModel)

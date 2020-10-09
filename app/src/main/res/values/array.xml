@@ -12,4 +12,12 @@
         <item>Low</item>
     </string-array>
 
+    <string-array name="c_practise_tab">
+        <item>@string/c_practise_tab_1</item>
+        <item>@string/c_practise_tab_2</item>
+        <item>@string/c_practise_tab_3</item>
+        <item>@string/c_practise_tab_4</item>
+    </string-array>
+
+
 </resources>

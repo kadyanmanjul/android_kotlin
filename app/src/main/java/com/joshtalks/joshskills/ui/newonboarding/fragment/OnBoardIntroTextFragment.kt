@@ -16,8 +16,6 @@ const val CONTENT_DESC = "content_obj_desc"
 class OnBoardIntroTextFragment : Fragment() {
 
     private lateinit var binding: FragmentOnBoardIntroTextBinding
-
-
     companion object {
         fun newInstance(text: String?, desc: String?) = OnBoardIntroTextFragment().apply {
             arguments = Bundle().apply {

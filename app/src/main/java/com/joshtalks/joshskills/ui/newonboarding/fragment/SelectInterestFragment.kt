@@ -58,11 +58,11 @@ class SelectInterestFragment : Fragment() {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_select_interest, container, false)
         binding.handler = this
-        binding.interestDescriptionTv.text = VersionResponse.getInstance().interestText?: EMPTY
+        binding.interestDescriptionTv.text = VersionResponse.getInstance().interestText ?: EMPTY
 
         binding.toolbar.iv_help.setOnClickListener { (requireActivity() as BaseActivity).openHelpActivity() }
-        if(VersionResponse.getInstance().hasVersion())
-        populateInterests()
+        if (VersionResponse.getInstance().hasVersion())
+            populateInterests()
         return binding.root
     }
 
@@ -108,7 +108,7 @@ class SelectInterestFragment : Fragment() {
             chip.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (interestSet.size == maxSelection && isChecked) {
                     buttonView.isChecked = false
-                    showToast("You can select upto ${maxSelection} interests.")
+                    showToast(getString(R.string.interest_message, maxSelection.toString()))
                 } else {
 
                     if (isChecked)

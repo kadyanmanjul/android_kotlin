@@ -12,7 +12,6 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.GestureDetectorCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -70,7 +69,7 @@ class ReminderListActivity : CoreJoshActivity(),
 
         initRv()
         viewModel.reminderList.observe(this,
-            Observer { data ->
+            { data ->
                 reminderList.clear()
                 reminderList.addAll(data)
                 adapter.notifyDataSetChanged()

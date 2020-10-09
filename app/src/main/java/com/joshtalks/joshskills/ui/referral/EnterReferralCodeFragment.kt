@@ -12,7 +12,6 @@ import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.INSTANCE_ID
@@ -22,17 +21,14 @@ import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.hideKeyboard
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentEnterReferralCodeBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBus
+import com.joshtalks.joshskills.util.showAppropriateMsg
+import java.util.HashMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
-import java.util.HashMap
 
 private const val IS_PROMO_CODE_FRAGMENT = "is_promo_code_fragment"
 
@@ -154,17 +150,7 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
                     this@EnterReferralCodeFragment.dismiss()
                 } else binding.wrongCode.visibility = View.VISIBLE
             } catch (ex: Exception) {
-                when (ex) {
-                    is HttpException -> {
-                        showToast(getString(R.string.generic_message_for_error))
-                    }
-                    is SocketTimeoutException, is UnknownHostException -> {
-                        showToast(getString(R.string.internet_not_available_msz))
-                    }
-                    else -> {
-                        FirebaseCrashlytics.getInstance().recordException(ex)
-                    }
-                }
+                ex.showAppropriateMsg()
             }
             binding.progressBarButton.visibility = View.GONE
             hideProgress()

@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
@@ -19,7 +18,9 @@ import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.util.AudioRecording
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import io.reactivex.disposables.CompositeDisposable
+import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -27,10 +28,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import retrofit2.HttpException
-import java.io.File
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 
 
 class PracticeViewModel(application: Application) :
@@ -112,17 +109,7 @@ class PracticeViewModel(application: Application) :
                 }
             } catch (ex: Exception) {
                 requestStatusLiveData.postValue(false)
-                ex.printStackTrace()
-                when (ex) {
-                    is HttpException -> {
-                    }
-                    is SocketTimeoutException, is UnknownHostException -> {
-                        showToast(context.getString(R.string.internet_not_available_msz))
-                    }
-                    else -> {
-                        FirebaseCrashlytics.getInstance().recordException(ex)
-                    }
-                }
+                ex.showAppropriateMsg()
             }
         }
     }

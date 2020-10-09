@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -16,7 +15,6 @@ class CourseProgressViewModel(application: Application) :
     AndroidViewModel(application) {
 
     var conversationId: String = EMPTY
-    private var compositeDisposable = CompositeDisposable()
     private var appDatabase = AppObjectController.appDatabase
 
     private val _userContentViewModel: MutableLiveData<List<CourseContentEntity>> =

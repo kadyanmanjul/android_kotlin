@@ -36,7 +36,6 @@ const val IMAGE_URL = "image_url"
 class ConversationPracticeActivity : CoreJoshActivity() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val tabName = arrayOf("Listen", "Quiz", "Practice", "Record")
     private lateinit var practiseId: String
     private lateinit var binding: ActivityConversationPractice2Binding
 
@@ -63,7 +62,7 @@ class ConversationPracticeActivity : CoreJoshActivity() {
         AppAnalytics.create(AnalyticsEvent.CONVERSATION_PRACTISE_STARTED.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam(AnalyticsEvent.CONVERSATION_PRACTISE_ID.NAME,id)
+            .addParam(AnalyticsEvent.CONVERSATION_PRACTISE_ID.NAME, id)
             .push()
     }
 
@@ -96,6 +95,7 @@ class ConversationPracticeActivity : CoreJoshActivity() {
     }
 
     private fun initViewPagerTab() {
+        val tabName = resources.getStringArray(R.array.c_practise_tab)
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = tabName[position]
 

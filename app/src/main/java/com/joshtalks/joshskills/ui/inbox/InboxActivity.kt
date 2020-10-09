@@ -698,7 +698,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
 
         viewModel.reminderApiCallStatusLiveData.observe(this, {
-            if (it.equals(ApiCallStatus.SUCCESS)) {
+            if (ApiCallStatus.SUCCESS == it) {
                 animateBell()
             }
         })

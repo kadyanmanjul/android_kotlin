@@ -13,7 +13,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.StringAdapterItemBinding
 
 class StringAdapter(
-    val itemList: Array<String>,
+    private val itemList: Array<String>,
     private var onItemClick: (item: String, position: Int) -> Unit
 ) :
     RecyclerView.Adapter<StringAdapter.StringViewHolder>() {

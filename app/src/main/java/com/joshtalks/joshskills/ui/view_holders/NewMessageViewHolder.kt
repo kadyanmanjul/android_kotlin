@@ -12,7 +12,6 @@ class NewMessageViewHolder(private var label: String) : BaseCell() {
     @View(R.id.text_title)
     lateinit var textView: JoshTextView
 
-
     @Resolve
     fun onViewInflated() {
         textView.text = label

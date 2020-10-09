@@ -163,27 +163,6 @@ class OnBoardIntroFragment : Fragment() {
                 handler?.postDelayed(this, delay)
             }
         }, delay)
-        /* handler?.postDelayed({ *//* Create an Intent that will start the MainActivity. *//*
-            if (width == 0) {
-                width = binding.scrollingIv.width
-            } else {
-                if (scrollingPosition + binding.scrollView.width >= width) {
-                    scrollingPosition = 0
-                    binding.scrollView.scrollTo(
-                        0,
-                        0
-                    )
-                }
-                scrollingPosition += 5
-                binding.scrollView.post {
-                    binding.scrollView.smoothScrollTo(
-                        scrollingPosition,
-                        0
-                    )
-                }
-            }
-            startImageScrolling()
-        }, 20)*/
     }
 
     companion object {

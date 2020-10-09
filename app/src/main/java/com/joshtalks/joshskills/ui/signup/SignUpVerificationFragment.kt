@@ -213,20 +213,14 @@ class SignUpVerificationFragment : Fragment() {
                 (requireActivity() as SignUpActivity).verification?.verify(binding.otpView2.otp)
             } else {
                 startProgress()
-                /*if ((requireActivity() as BaseActivity).getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1 || (requireActivity() as BaseActivity).isGuestUser()
-                        .not()
-                ) {
-                    viewModel.verifyOTP(binding.otpView2.otp)
-                } else {*/
-                    val requestObj = SocialSignUpRequest.Builder(
-                        Mentor.getInstance().getId(),
-                        PrefManager.getStringValue(INSTANCE_ID, false),
-                        CreatedSource.OTP.name,
-                        Mentor.getInstance().getUserId()
-                    ).otp(binding.otpView2.otp)
-                        .build()
-                    viewModel.verifyUser(requestObj)
-                // }
+                val requestObj = SocialSignUpRequest.Builder(
+                    Mentor.getInstance().getId(),
+                    PrefManager.getStringValue(INSTANCE_ID, false),
+                    CreatedSource.OTP.name,
+                    Mentor.getInstance().getUserId()
+                ).otp(binding.otpView2.otp)
+                    .build()
+                viewModel.verifyUser(requestObj)
             }
             AppAnalytics.create(AnalyticsEvent.OTP_SCREEN_SATUS.NAME)
                 .addParam(AnalyticsEvent.NEXT_OTP_CLICKED.NAME, "Otp Submitted")

@@ -158,7 +158,7 @@ class WebRtcActivity : BaseActivity(), CallListener {
                         WebRtcService.isCallWasOnGoing = true
                     }
                     if (binding.userName.text.isNullOrEmpty()) {
-                        binding.userName.text = "User"
+                        binding.userName.text = getString(R.string.user)
                     }
                     AppAnalytics.create(AnalyticsEvent.INCOMING_CALL_VOIP.NAME)
                         .addBasicParam()

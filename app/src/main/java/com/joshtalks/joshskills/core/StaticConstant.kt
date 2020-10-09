@@ -133,6 +133,8 @@ class FirebaseRemoteConfigKey {
         const val COURSE_MAX_OFFER_PER = "COURSE_MAX_OFFER_PER"
         const val BUY_COURSE_OFFER_HINT = "BUY_COURSE_OFFER_HINT"
         const val BUY_COURSE_LAST_DAY_OFFER_HINT = "BUY_COURSE_LAST_DAY_OFFER_HINT"
+        const val SHOW_DETAILS_LABEL = "show_details_label"
+
 
         //bb tool tip
         const val BB_TOOL_TIP_EXPIRY_TEXT = "BB_TOOL_TIP_EXPIRY_TEXT"

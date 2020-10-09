@@ -16,6 +16,7 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
@@ -31,8 +32,8 @@ import com.sinch.android.rtc.calling.Call
 import com.sinch.android.rtc.calling.CallClientListener
 import com.sinch.gson.JsonElement
 import com.sinch.gson.JsonParser
-import timber.log.Timber
 import java.util.concurrent.ExecutorService
+import timber.log.Timber
 
 class WebRtcService : Service() {
 
@@ -81,8 +82,6 @@ class WebRtcService : Service() {
             } else {
                 AppObjectController.joshApplication.startService(serviceIntent)
             }
-            // AppObjectController.joshApplication.startService(serviceIntent)
-
         }
     }
 
@@ -98,7 +97,6 @@ class WebRtcService : Service() {
 
         override fun onClientFailed(client: SinchClient, error: SinchError) {
             Timber.tag(TAG).e("onClientFailed")
-
         }
 
         override fun onRegistrationCredentialsRequired(
@@ -106,7 +104,6 @@ class WebRtcService : Service() {
             registrationCallback: ClientRegistration
         ) {
             Timber.tag(TAG).e("onRegistrationCredentialsRequired")
-
         }
 
         override fun onLogMessage(level: Int, area: String, message: String) {
@@ -199,7 +196,7 @@ class WebRtcService : Service() {
                         call?.hangup()
                     }
                     this == CallConnect().action -> {
-                        printDAta(intent)
+                        printIntent(intent)
                         stopForeground(true)
                         mNotificationManager?.cancel(CALL_NOTIFICATION_ID)
                         processIncomingCall(
@@ -267,7 +264,7 @@ class WebRtcService : Service() {
 
     private fun getIncomingCallUserName(data: String?): String {
         val jsonElement: JsonElement = JsonParser().parse(data)
-        return jsonElement.asJsonObject.get("name")?.asString ?: "JoshSkills User"
+        return jsonElement.asJsonObject.get("name")?.asString ?: "Josh Skill User"
     }
 
     fun getCall() = call
@@ -288,8 +285,6 @@ class WebRtcService : Service() {
 
     private fun incomingCallNotification(data: String?): android.app.Notification {
         Timber.tag(TAG).e("incomingCallNotification   " + data)
-
-
         val incomingSoundUri: Uri =
             Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + applicationContext.packageName + "/" + R.raw.incoming)
 
@@ -382,11 +377,13 @@ class WebRtcService : Service() {
             .isAtLeast(Lifecycle.State.STARTED)
     }*/
 
-    fun printDAta(intent: Intent?) {
-        intent?.run {
-            this.getExtras()?.run {
-                for (key in this.keySet()) {
-                    Log.e(TAG, key + " : " + if (this[key] != null) this[key] else "NULL")
+    fun printIntent(intent: Intent?) {
+        if (BuildConfig.DEBUG) {
+            intent?.run {
+                this.extras?.run {
+                    for (key in this.keySet()) {
+                        Log.e(TAG, key + " : " + if (this[key] != null) this[key] else "NULL")
+                    }
                 }
             }
         }

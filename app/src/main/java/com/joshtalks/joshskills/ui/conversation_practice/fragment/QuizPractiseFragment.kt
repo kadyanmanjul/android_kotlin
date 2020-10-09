@@ -125,9 +125,9 @@ class QuizPractiseFragment private constructor() : Fragment(), OnChoiceClickList
             //quizModel.isAttempted = true
             val resp = quizModel?.answersModel?.find { it.isCorrect && it.isSelectedByUser }
             if (resp != null) {
-                showToast("Your answer is Correct")
+                showToast(getString(R.string.correct_answer_label))
             } else {
-                showToast("Your answer is Wrong")
+                showToast(getString(R.string.wrong_answer_label))
             }
 
             quizModel?.answersModel?.listIterator()?.forEach {

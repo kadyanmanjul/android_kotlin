@@ -491,9 +491,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
                                     inboxEntity.course_name
                                 )
                             }
-                        }/* else {
-                          //  showToast(getString(R.string.viewing_support_app_not_exist))
-                        }*/
+                        }
                     }
                 }, {
                     it.printStackTrace()

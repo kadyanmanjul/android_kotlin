@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.view_holders
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatImageView
@@ -17,6 +18,7 @@ import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
+import java.util.Locale
 
 
 @Layout(R.layout.performance_item_layout)
@@ -47,15 +49,15 @@ class PerformItemViewHolder(
     @Resolve
     fun onViewInflated() {
         llPractise.removeAllViewsInLayout()
-        practiseContentTV.text = moduleData.moduleName.capitalize()
-        practiseStatusTV.text = moduleData.statement.capitalize()
+        practiseContentTV.text = moduleData.moduleName.capitalize(Locale.getDefault())
+        practiseStatusTV.text = moduleData.statement.capitalize(Locale.getDefault())
         statusImageView.setBackgroundResource(0)
         statusImageView.setImageResource(R.drawable.ic_check_bold)
         if (moduleData.questionComplete.isNotEmpty() && moduleData.practiceIncomplete.isEmpty()) {
             allQuestionComplete = true
             statusImageView.setColorFilter(
                 ContextCompat.getColor(context, R.color.wa_color),
-                android.graphics.PorterDuff.Mode.SRC_IN
+                PorterDuff.Mode.SRC_IN
             )
 
         } else {
@@ -64,14 +66,14 @@ class PerformItemViewHolder(
                     ContextCompat.getColor(
                         context,
                         R.color.practise_complete_tint
-                    ), android.graphics.PorterDuff.Mode.SRC_IN
+                    ), PorterDuff.Mode.SRC_IN
                 )
             } else {
                 statusImageView.setColorFilter(
                     ContextCompat.getColor(
                         context,
                         R.color.disable_color
-                    ), android.graphics.PorterDuff.Mode.SRC_IN
+                    ), PorterDuff.Mode.SRC_IN
                 )
                 statusImageView.setImageResource(0)
                 statusImageView.setBackgroundResource(R.drawable.circle_for_question)
@@ -121,13 +123,13 @@ class PerformItemViewHolder(
         if (allQuestionComplete) {
             view.setColorFilter(
                 ContextCompat.getColor(context, R.color.wa_color),
-                android.graphics.PorterDuff.Mode.MULTIPLY
+                PorterDuff.Mode.MULTIPLY
             )
         } else {
             if (isCompleted) {
                 view.setColorFilter(
                     ContextCompat.getColor(context, R.color.practise_complete_tint),
-                    android.graphics.PorterDuff.Mode.MULTIPLY
+                    PorterDuff.Mode.MULTIPLY
                 )
             } else {
                 view.setImageResource(0)

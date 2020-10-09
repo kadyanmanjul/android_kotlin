@@ -18,7 +18,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.CountUpTimer
-import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -412,12 +411,12 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     }
 
     private fun startProgress() {
-        Thread(Runnable {
+        Thread {
             binding.progressHorizontal.progress = 0
             while (binding.progressHorizontal.progress < 100) {
-                handler.post(Runnable {
+                handler.post {
                     binding.progressHorizontal.progress += 1
-                })
+                }
                 try {
                     // Sleep for 100 milliseconds.
                     Thread.sleep(100)
@@ -430,7 +429,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                     playNextVideo()
                 }
             }
-        }).start()
+        }.start()
     }
 
     private fun playNextVideo() {
@@ -443,7 +442,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             nextButtonVisible = false
             searchingNextUrl = false
             pushPreviousAnalyticsEvents()
-            showToast("Next Class Started")
+            showToast(getString(R.string.next_class_started))
         }
     }
 

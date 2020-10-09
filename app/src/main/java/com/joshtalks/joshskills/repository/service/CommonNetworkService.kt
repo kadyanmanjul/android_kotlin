@@ -27,6 +27,7 @@ import com.joshtalks.joshskills.repository.server.reminder.DeleteReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
 import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
+import java.util.HashMap
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
@@ -38,7 +39,6 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.QueryMap
-import java.util.*
 
 @JvmSuppressWildcards
 interface CommonNetworkService {
@@ -130,7 +130,7 @@ interface CommonNetworkService {
     suspend fun setReminder(@Body requestSetReminderRequest: ReminderRequest): Response<BaseResponse<Int>>
 
     @GET("$DIR/mentor/reminders/")
-    suspend fun getReminders(@Query("mentor_id") mentorId: String): Response<BaseResponse<List<ReminderResponse>>>
+    suspend fun getReminders(@Query("mentor_id") mentorId: String): BaseResponse<List<ReminderResponse>>
 
     @POST("$DIR/mentor/delete_reminders/")
     suspend fun deleteReminders(@Body deleteReminderRequest: DeleteReminderRequest): Response<BaseResponse<*>>
