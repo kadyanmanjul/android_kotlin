@@ -459,4 +459,13 @@ enum class AnalyticsEvent(val NAME: String) {
     SIGN_OUT("sign out"),
     RATE_US_CLICKED("rate us"),
 
+    //Notifications
+    ARE_NOTIFICATIONS_ENABLED("are notifications enabled"),
+    ARE_NOTIFICATION_CHANNEL_ENABLED("are notification channel enabled"),
+    CHANNELS_ENABLED("channels_enabled"),
+    TOTAL_NOTIFICATION_CHANNELS("total_notification_channels"),
+    CHANNELS_ENABLED_SIZE("channels_enabled_size"),
+    CHANNELS_DISABLED("channels_disabled"),
+    CHANNELS_DISABLED_SIZE("channels_disabled_size"),
+
 }

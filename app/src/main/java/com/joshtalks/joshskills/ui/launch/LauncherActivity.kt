@@ -2,11 +2,14 @@ package com.joshtalks.joshskills.ui.launch
 
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.telephony.TelephonyManager
+import androidx.core.app.NotificationManagerCompat
 import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -35,6 +38,7 @@ import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import io.branch.referral.Branch
 import io.branch.referral.Defines
 import java.io.File
+import java.lang.Exception
 import kotlinx.android.synthetic.main.activity_launcher.progress_bar
 import org.json.JSONObject
 import timber.log.Timber
@@ -52,6 +56,47 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         logAppLaunchEvent(getNetworkOperatorName())
         AppObjectController.initialiseFreshChat()
         clearGlideCache()
+        logNotificationData()
+    }
+
+    private fun logNotificationData() {
+        try {
+            val isNotificationEnabled =
+                NotificationManagerCompat.from(AppObjectController.joshApplication)
+                    .areNotificationsEnabled()
+            AppAnalytics.create(AnalyticsEvent.ARE_NOTIFICATIONS_ENABLED.NAME)
+                .addUserDetails()
+                .addBasicParam()
+                .addParam("is_enabled", isNotificationEnabled)
+                .push()
+
+            if (isNotificationEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val a = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                val channels = a.notificationChannels
+                if (channels.isNullOrEmpty().not() && channels.size > 0) {
+                    val listChannelsOff = ArrayList<String?>()
+                    val listChannelsOn = ArrayList<String?>()
+                    for (channel in channels) {
+                        if ((channel.importance == NotificationManager.IMPORTANCE_NONE)) {
+                            listChannelsOff.add(channel.name.toString())
+                        }else {
+                            listChannelsOn.add(channel.name.toString())
+                        }
+                    }
+                    AppAnalytics.create(AnalyticsEvent.ARE_NOTIFICATION_CHANNEL_ENABLED.NAME)
+                        .addUserDetails()
+                        .addBasicParam()
+                        .addParam(AnalyticsEvent.TOTAL_NOTIFICATION_CHANNELS.NAME, channels.size)
+                        .addParam(AnalyticsEvent.CHANNELS_ENABLED.NAME, listChannelsOn)
+                        .addParam(AnalyticsEvent.CHANNELS_ENABLED_SIZE.NAME, listChannelsOn.size)
+                        .addParam(AnalyticsEvent.CHANNELS_DISABLED.NAME, listChannelsOff)
+                        .addParam(AnalyticsEvent.CHANNELS_DISABLED_SIZE.NAME, listChannelsOff.size)
+                        .push()
+                }
+            }
+        } catch (ex: Exception) {
+            LogException.catchException(ex)
+        }
     }
 
     private fun animatedProgressBar() {

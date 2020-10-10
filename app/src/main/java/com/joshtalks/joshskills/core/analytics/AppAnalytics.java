@@ -284,6 +284,15 @@ public class AppAnalytics {
         return this;
     }
 
+    public AppAnalytics addParam(String key, List<String> value) {
+        if (value == null || value.isEmpty() || value.size() == 0)
+            return this;
+        for (int i = 0; i < value.size(); i++) {
+            parameters.put(key + "_" + i, value.get(i));
+        }
+        return this;
+    }
+
     public AppAnalytics addParam(String key, int value) {
         parameters.put(key, value);
         return this;
