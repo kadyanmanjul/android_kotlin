@@ -86,7 +86,7 @@ import io.michaelrocks.libphonenumber.android.Phonenumber
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.*
+import java.util.Locale
 
 private const val GOOGLE_SIGN_UP_REQUEST_CODE = 9001
 const val FLOW_FROM = "Flow"
@@ -241,8 +241,6 @@ class SignUpActivity : BaseActivity() {
                 hideProgressBar()
                 if (TrueError.ERROR_TYPE_NETWORK == trueError.errorType) {
                     showToast(application.getString(R.string.internet_not_available_msz))
-                } else {
-                    //  showToast(application.getString(R.string.something_went_wrong))
                 }
             }
 
@@ -251,9 +249,6 @@ class SignUpActivity : BaseActivity() {
             }
 
             override fun onSuccessProfileShared(trueProfile: TrueProfile) {
-                /*if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1 || isGuestUser().not())
-                    viewModel.verifyUserViaTrueCaller(trueProfile)
-                else {*/
                 val requestObj = SocialSignUpRequest.Builder(
                     Mentor.getInstance().getId(),
                     PrefManager.getStringValue(INSTANCE_ID, false),
@@ -262,11 +257,9 @@ class SignUpActivity : BaseActivity() {
                 ).payload(trueProfile.payload)
                     .signatureAlgo(trueProfile.signatureAlgorithm)
                     .signature(trueProfile.signature)
-                    .name(trueProfile.firstName)
-                    .gender(trueProfile.gender)
+                    .name("${trueProfile.firstName} ${trueProfile.lastName}")
                     .build()
                 viewModel.verifyUser(requestObj)
-                //}
             }
 
         })
