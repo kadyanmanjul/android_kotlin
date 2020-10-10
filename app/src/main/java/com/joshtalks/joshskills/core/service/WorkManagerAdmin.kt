@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit
 object WorkManagerAdmin {
 
     fun appStartWorker() {
-
         WorkManager.getInstance(AppObjectController.joshApplication)
             .beginWith(
                 mutableListOf(
@@ -112,7 +111,7 @@ object WorkManagerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .enqueueUniquePeriodicWork(
                 MessageReadPeriodicWorker::class.java.simpleName,
-                ExistingPeriodicWorkPolicy.REPLACE,
+                ExistingPeriodicWorkPolicy.KEEP,
                 workRequest
             )
     }
@@ -158,6 +157,7 @@ object WorkManagerAdmin {
             .setInputData(data)
             .setConstraints(constraints)
             .setBackoffCriteria(BackoffPolicy.LINEAR, 11, TimeUnit.SECONDS)
+            .setInitialRunAttemptCount(3)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
         return workRequest.id

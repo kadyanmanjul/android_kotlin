@@ -12,6 +12,10 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.engage_notification.AppActivityDao
+import com.joshtalks.joshskills.engage_notification.AppActivityModel
+import com.joshtalks.joshskills.engage_notification.AppUsageDao
+import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.repository.local.dao.AssessmentDao
 import com.joshtalks.joshskills.repository.local.dao.LessonDao
 import com.joshtalks.joshskills.repository.local.dao.reminder.ReminderDao
@@ -66,7 +70,9 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     entities = [Course::class, ChatModel::class, Question::class, VideoType::class,
         AudioType::class, OptionType::class, PdfType::class, ImageType::class, VideoEngage::class,
         FeedbackEngageModel::class, NPSEventModel::class, Assessment::class, AssessmentQuestion::class,
-        Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class],
+        Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class,
+        AppUsageModel::class, AppActivityModel::class
+    ],
     version = 23,
     exportSchema = true
 )
@@ -317,7 +323,7 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        private val MIGRATION_21_22: Migration = object : Migration(21, 22) {
+        private val MIGRATION_21_22: Migration = object : Migration(21,22) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE video_watch_table ADD COLUMN is_sync INTEGER NOT NULL DEFAULT 0 ")
                 database.execSQL("ALTER TABLE video_watch_table ADD COLUMN course_id INTEGER NOT NULL DEFAULT -1 ")
@@ -364,6 +370,9 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun npsEventModelDao(): NPSEventModelDao
     abstract fun assessmentDao(): AssessmentDao
     abstract fun reminderDao(): ReminderDao
+    abstract fun appUsageDao(): AppUsageDao
+    abstract fun appActivityDao(): AppActivityDao
+
     abstract fun lessonDao(): LessonDao
 
 }

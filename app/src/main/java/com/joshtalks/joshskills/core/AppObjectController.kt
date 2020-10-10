@@ -37,6 +37,7 @@ import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
+import com.joshtalks.joshskills.engage_notification.UsageStatsService
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -602,6 +603,12 @@ class AppObjectController {
         fun startSinchCallingService() {
             Intent(joshApplication, WebRtcService::class.java).also { intent ->
                 joshApplication.startService(intent)
+            }
+        }
+
+        fun startAppUsageService(context: JoshApplication) {
+            Intent(context, UsageStatsService::class.java).also { intent ->
+                context.startService(intent)
             }
         }
 

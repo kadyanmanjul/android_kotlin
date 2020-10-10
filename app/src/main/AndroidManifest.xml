@@ -106,6 +106,7 @@
         <meta-data
             android:name="google_analytics_automatic_screen_reporting_enabled"
             android:value="true" />
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -213,28 +214,33 @@
                 <action android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.signup.OnBoardActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTask"
             android:theme="@style/AppNoBarTheme" />
+
         <activity
             android:name=".ui.video_player.VideoPlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:launchMode="singleTask"
             android:theme="@style/VideoPlayerTheme" />
+
         <activity
             android:name=".ui.pdfviewer.PdfViewerActivity"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTask"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateHidden" />
+
         <activity
             android:name=".ui.explore.CourseExploreActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
             android:launchMode="singleTask"
             android:parentActivityName=".ui.inbox.InboxActivity"
             android:theme="@style/AppNoBarTheme" />
+
         <activity
             android:name=".ui.practise.PractiseSubmitActivity"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
@@ -260,22 +266,26 @@
                 <action android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.courseprogress.CourseProgressActivity"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTask"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
+
         <activity
             android:name=".ui.subscription.StartSubscriptionActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
             android:launchMode="singleTask"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
+
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
+
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">
@@ -288,6 +298,7 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.signup.SignUpActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
@@ -295,6 +306,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".ui.course_details.CourseDetailsActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
@@ -305,6 +317,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.explore.CourseExploreActivity" />
         </activity>
+
         <activity
             android:name=".ui.conversation_practice.ConversationPracticeActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
@@ -312,12 +325,15 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".ui.conversation_practice.history.SubmittedPractiseActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
+
+
         <activity
             android:name=".ui.assessment.AssessmentActivity"
             android:launchMode="singleTask"
@@ -343,22 +359,26 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
+
         <activity
             android:name=".ui.newonboarding.OnBoardingActivityNew"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
+
         <activity
             android:name="com.tyagiabhinav.dialogflowchatlibrary.ChatbotActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
+
         <activity
             android:name=".ui.voip.SearchingUserActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme" />
+
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:launchMode="singleTop"
@@ -401,10 +421,12 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <service
             android:name=".core.chrome.KeepAliveService"
             android:exported="true"
             tools:ignore="ExportedService" />
+
         <service
             android:name="com.clevertap.android.sdk.CTBackgroundIntentService"
             android:exported="false">
@@ -412,10 +434,12 @@
                 <action android:name="com.clevertap.BG_EVENT" />
             </intent-filter>
         </service>
+
         <service
             android:name="com.clevertap.android.sdk.CTBackgroundJobService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+
 
         <receiver
             android:name=".core.chrome.BrowserActionsReceiver"
@@ -437,12 +461,14 @@
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name=".core.analytics.DismissNotifEventReceiver"
             android:exported="false" />
         <receiver
             android:name=".ui.reminder.set_reminder.AlarmNotifDismissReceiver"
             android:exported="false" />
+
         <receiver
             android:name=".ui.reminder.set_reminder.AlarmReceiver"
             android:enabled="true"
@@ -461,6 +487,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
@@ -476,6 +503,7 @@
                 android:name="com.joshtalks.joshskills.core.speedx.JoshAppInitializer"
                 android:value="androidx.startup" />
         </provider>
+
         <provider
             android:name="androidx.work.impl.WorkManagerInitializer"
             android:authorities="${applicationId}.workmanager-init"
@@ -500,6 +528,7 @@
             android:foregroundServiceType="phoneCall"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
+
         <activity android:name=".ui.deeplink.DeeplinkAnalyzeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -513,6 +542,7 @@
                 <data
                     android:host="@string/setting_dlink"
                     android:scheme="joshskills" />
+
                 <data
                     android:host="@string/referral_open_dlink"
                     android:scheme="joshskills" />
@@ -542,6 +572,13 @@
                     android:scheme="joshskills" />
             </intent-filter>
         </activity>
+        <service
+            android:name=".engage_notification.UsageStatsService"
+            android:directBootAware="true"
+            android:enabled="true"
+            android:exported="true"
+            android:isolatedProcess="true"
+            tools:ignore="ExportedService" />
 
         <activity
             android:name=".ui.certification_exam.CertificationBaseActivity"
