@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/grey_rounded_bg"
-        android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/_8sdp"
-        android:paddingVertical="@dimen/_12sdp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/grey_rounded_bg"
+    android:orientation="horizontal"
+    android:paddingHorizontal="@dimen/_8sdp"
+    android:paddingVertical="@dimen/_12sdp">
 
     <FrameLayout
-            android:id="@+id/play_pause_control"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+        android:id="@+id/play_pause_control"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/exo_play"
@@ -23,8 +23,8 @@
             android:layout_height="@dimen/_24sdp"
             android:layout_gravity="center"
             android:padding="@dimen/_4sdp"
-            ap="@drawable/ic_play_24dp"
-            android:tint="@color/button_color" />
+            android:tint="@color/button_color"
+            app:srcCompat="@drawable/ic_play_24dp" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/exo_pause"
@@ -32,9 +32,9 @@
             android:layout_height="@dimen/_24sdp"
             android:layout_gravity="center"
             android:padding="@dimen/_4sdp"
-            app:srcCompat="@drawable/ic_pause_24dp"
             android:tint="@color/button_color"
             android:visibility="gone"
+            app:srcCompat="@drawable/ic_pause_24dp"
             tools:visibility="visible" />
     </FrameLayout>
 
@@ -58,37 +58,38 @@
         app:unplayed_color="@color/text_90" />
 
     <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/barrier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/_10sdp"
-            app:barrierDirection="left"
-            app:constraint_referenced_ids="exo_duration,exo_position" />
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_10sdp"
+        app:barrierDirection="left"
+        app:constraint_referenced_ids="exo_duration,exo_position" />
 
     <TextView
-            android:id="@+id/exo_position"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:textColor="@color/text_90"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="MissingPrefix"
-            tools:text="10:15" />
+        android:id="@+id/exo_position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+        android:textColor="@color/text_90"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingPrefix"
+        tools:text="10:15" />
 
     <TextView
-            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-            android:id="@+id/exo_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:textColor="@color/text_90"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="MissingPrefix"
-            tools:text="10:15" />
+        android:id="@+id/exo_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+        android:textColor="@color/text_90"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingPrefix"
+        tools:text="10:15" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
