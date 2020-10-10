@@ -133,7 +133,6 @@ import com.joshtalks.joshskills.ui.view_holders.AssessmentViewHolder
 import com.joshtalks.joshskills.ui.view_holders.AudioPlayerViewHolder
 import com.joshtalks.joshskills.ui.view_holders.BaseCell
 import com.joshtalks.joshskills.ui.view_holders.BaseChatViewHolder
-import com.joshtalks.joshskills.ui.view_holders.CertificationExamViewHolder
 import com.joshtalks.joshskills.ui.view_holders.ConversationPractiseViewHolder
 import com.joshtalks.joshskills.ui.view_holders.ImageViewHolder
 import com.joshtalks.joshskills.ui.view_holders.NewMessageViewHolder
@@ -183,6 +182,7 @@ const val VIDEO_OPEN_REQUEST_CODE = 1102
 const val CONVERSATION_PRACTISE_REQUEST_CODE = 1105
 const val ASSESSMENT_REQUEST_CODE = 1106
 const val LESSON_REQUEST_CODE = 1107
+const val ASSESSMENT_REQUEST_CODE = 1106
 
 const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
 const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
@@ -462,27 +462,25 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     }
 
     private fun onlyChatView() {
-        if (this::inboxEntity.isInitialized) {
-            inboxEntity.chat_type?.run {
-                when {
-                    this.equals("NC", ignoreCase = true) -> {
-                        conversationBinding.flAttachment.visibility = GONE
-                        conversationBinding.quickToggle.visibility = GONE
-                        conversationBinding.recordButton.visibility = INVISIBLE
-                        conversationBinding.attachmentContainer.visibility = GONE
-                        isOnlyChat = true
-                        conversationBinding.messageButton.visibility = VISIBLE
-                        conversationBinding.messageButton.setImageResource(R.drawable.ic_send)
-                        Glide.with(applicationContext)
-                            .load(R.drawable.ic_send)
-                            .override(Target.SIZE_ORIGINAL)
-                            .into(conversationBinding.messageButton)
-                    }
-                    this.equals("RC", ignoreCase = true) -> {
-                        conversationBinding.bottomBar.visibility = GONE
-                    }
-                    else -> {
-                    }
+        inboxEntity.chat_type?.run {
+            when {
+                this.equals("NC", ignoreCase = true) -> {
+                    conversationBinding.flAttachment.visibility = GONE
+                    conversationBinding.quickToggle.visibility = GONE
+                    conversationBinding.recordButton.visibility = INVISIBLE
+                    conversationBinding.attachmentContainer.visibility = GONE
+                    isOnlyChat = true
+                    conversationBinding.messageButton.visibility = VISIBLE
+                    conversationBinding.messageButton.setImageResource(R.drawable.ic_send)
+                    Glide.with(applicationContext)
+                        .load(R.drawable.ic_send)
+                        .override(Target.SIZE_ORIGINAL)
+                        .into(conversationBinding.messageButton)
+                }
+                this.equals("RC", ignoreCase = true) -> {
+                    conversationBinding.bottomBar.visibility = GONE
+                }
+                else -> {
                 }
             }
         }
@@ -1078,12 +1076,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     logAssessmentEvent(it.assessmentId)
-                    AssessmentActivity.startAssessmentActivity(
-                        this,
-                        ASSESSMENT_REQUEST_CODE,
-                        chatRoomId = it.chatId,
-                        assessmentId = it.assessmentId
-                    )
+                    AssessmentActivity.startAssessmentActivity(this, it.assessmentId)
                 }, {
                     it.printStackTrace()
                 })
@@ -1231,12 +1224,6 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                             ) {
                                 tempView.message = chatObj
                                 tempView.message.isSelected = false
-                                tempView.message.question?.type?.run {
-                                    if (this == BASE_MESSAGE_TYPE.QUIZ || this == BASE_MESSAGE_TYPE.TEST) {
-                                        tempView.message.question?.vAssessmentCount = 1
-                                    }
-                                }
-                                //tempView.message.question?.vAssessmentCount=1
                                 AppObjectController.uiHandler.postDelayed({
                                     conversationBinding.chatRv.refreshView(index)
                                     callback.invoke()
@@ -1709,8 +1696,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             when (ExploreCardType.valueOf(exploreTypeStr)) {
                 ExploreCardType.FREETRIAL -> {
                     val remainingDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS, false)
-                    val isSubscriptionEnded =
-                        PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED, false)
+                    val isSubscriptionEnded = PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED, false)
                     val isSubscriptionStarted =
                         PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED, false)
                     if (remainingDays < 0 && isSubscriptionStarted.not()) {

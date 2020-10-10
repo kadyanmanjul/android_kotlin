@@ -162,13 +162,17 @@ class FirebaseRemoteConfigKey {
         //signin dialod desccriptiom
         const val SIGNIN_DIALOG_DESCRIPTION = "SIGNIN_DIALOG_DESCRIPTION"
 
-
+        //Ux cam feature
         const val UX_CAM_FEATURE_ENABLE = "UX_CAM_FEATURE_ENABLE"
 
         const val FORCE_SIGN_IN_FEATURE_ENABLE = "FORCE_SIGN_IN_FEATURE_ENABLE"
 
         //In app review
         const val MINIMUM_TIME_TO_SHOW_REVIEW = "MINIMUM_TIME_TO_SHOW_REVIEW"
+
+        //Free trial ids
+        const val FREE_TRIAL_COURSE_IDS = "FREE_TRIAL_COURSE_ID"
+
     }
 }
 

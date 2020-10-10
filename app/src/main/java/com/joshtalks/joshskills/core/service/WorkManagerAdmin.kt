@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
+import com.joshtalks.joshskills.core.notification.EngageToUseAppNotificationWorker
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import java.util.UUID
 import java.util.concurrent.TimeUnit
@@ -27,6 +28,7 @@ object WorkManagerAdmin {
                     OneTimeWorkRequestBuilder<RefreshFCMTokenWorker>().build()
                 )
             )
+            .then(OneTimeWorkRequestBuilder<EngageToUseAppNotificationWorker>().build())
             .then(OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build())
             .then(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
             .then(OneTimeWorkRequestBuilder<InstanceIdGenerationWorker>().build())
@@ -223,6 +225,17 @@ object WorkManagerAdmin {
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
+
+    fun startVersionAndFlowWorker() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+        val workRequest = OneTimeWorkRequestBuilder<GetVersionAndFlowDataWorker>()
+            .setConstraints(constraints)
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+    }
+
 
     fun startVersionAndFlowWorker() {
         val constraints = Constraints.Builder()
