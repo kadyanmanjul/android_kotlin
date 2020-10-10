@@ -295,7 +295,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     override fun onCurrentTimeUpdated(time: Long) {
 
         if (searchingNextUrl.not()
-            && (videoDuration?.minus(time))!! < 6000
+            && (videoDuration?.minus(time))!! < 2500
             && chatObject?.conversationId.isNullOrBlank().not()
             && chatObject?.sender?.user?.id.isNullOrBlank().not()
         ) {
@@ -419,7 +419,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                 }
                 try {
                     // Sleep for 100 milliseconds.
-                    Thread.sleep(100)
+                    Thread.sleep(50)
                 } catch (e: InterruptedException) {
                     e.printStackTrace()
                 }
