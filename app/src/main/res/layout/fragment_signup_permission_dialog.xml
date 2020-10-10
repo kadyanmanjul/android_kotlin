@@ -21,7 +21,7 @@
         <View
             android:id="@+id/view"
             android:layout_width="0dp"
-            android:layout_height="@dimen/_200sdp"
+            android:layout_height="@dimen/_180sdp"
             android:background="@drawable/rectangle_top_rounded"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -33,7 +33,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_60sdp"
+            android:layout_marginTop="@dimen/_40sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="@+id/view"
@@ -47,7 +47,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginHorizontal="@dimen/_54sdp"
-            android:layout_marginTop="@dimen/_40sdp"
             android:backgroundTint="@color/button_color"
             android:gravity="center"
             android:onClick="@{()->fragment.allow()}"
@@ -57,9 +56,11 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.Button"
             android:textColor="@color/white"
             app:cornerRadius="@dimen/_20sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/view"
             app:layout_constraintEnd_toEndOf="@+id/view"
             app:layout_constraintStart_toStartOf="@+id/view"
-            app:layout_constraintTop_toBottomOf="@+id/desc" />
+            app:layout_constraintTop_toBottomOf="@+id/desc"
+            app:layout_constraintVertical_bias="0.5" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
