@@ -50,6 +50,8 @@ class ImageDialogFragment : DialogFragment() {
         binding.handler = this
 
         updateUi()
+
+        (requireActivity() as ChatbotActivity).logEvent("thumbnail_enlarge $title")
         return binding.root
     }
 

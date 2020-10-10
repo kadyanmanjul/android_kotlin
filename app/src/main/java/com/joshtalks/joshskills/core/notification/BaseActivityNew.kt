@@ -1,16 +1,12 @@
 package com.joshtalks.joshskills.core.notification
 
-import android.os.Bundle
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.tyagiabhinav.dialogflowchatlibrary.ChatbotActivity
 
 class BaseActivityNew : ChatbotActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun logEvent(event: String?) {
-        val eventName = when (event) {
+        var eventName = when (event) {
             "Yes, Shuru Karein" -> {
                 "shuru_button_clicked"
             }
@@ -25,6 +21,9 @@ class BaseActivityNew : ChatbotActivity() {
             }
             "No I want to start my course" -> {
                 "start_course_clicked"
+            }
+            "Start Learning" -> {
+                "start_learning_clicked"
             }
             "I want to start my free trial" -> {
                 "want_free_trial_clicked"
@@ -42,9 +41,20 @@ class BaseActivityNew : ChatbotActivity() {
                 event
             }
         }
-        AppAnalytics.create(eventName)
-            .addUserDetails()
-            .addBasicParam()
-            .push()
+
+        if (eventName != null && eventName.contains("thumbnail_enlarge")) {
+            eventName = "thumbnail_enlarge"
+            AppAnalytics.create(eventName)
+                .addUserDetails()
+                .addBasicParam()
+                .addParam("course name", eventName.substring(17))
+                .push()
+        } else {
+
+            AppAnalytics.create(eventName)
+                .addUserDetails()
+                .addBasicParam()
+                .push()
+        }
     }
 }

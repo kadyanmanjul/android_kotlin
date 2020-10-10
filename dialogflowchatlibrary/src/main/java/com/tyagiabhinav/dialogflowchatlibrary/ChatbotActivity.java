@@ -201,6 +201,7 @@ public abstract class ChatbotActivity extends FragmentActivity implements Chatbo
         if (ChatbotSettings.getInstance().isAutoWelcome()) {
             showProcessWaitBubble();
             send("hi", true);
+            logEvent("start_chat_flow");
         }
     }
 
