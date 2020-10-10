@@ -79,7 +79,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                     for (channel in channels) {
                         if ((channel.importance == NotificationManager.IMPORTANCE_NONE)) {
                             listChannelsOff.add(channel.name.toString())
-                        }else {
+                        } else {
                             listChannelsOn.add(channel.name.toString())
                         }
                     }
@@ -188,9 +188,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
             } else {
                 when (versionResponse.version!!.name) {
                     ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V7 -> {
-                        val intent = getIntentForState()
-                        startActivity(intent)
-                        this@LauncherActivity.finish()
+                        startNextActivity()
                     }
                     ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V5, ONBOARD_VERSIONS.ONBOARDING_V6 -> {
                         if (PrefManager.getBoolValue(
@@ -198,9 +196,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                                 false
                             ) || User.getInstance().isVerified
                         ) {
-                            val intent = getIntentForState()
-                            startActivity(intent)
-                            this@LauncherActivity.finish()
+                            startNextActivity()
                         } else {
                             Glide.with(AppObjectController.joshApplication)
                                 .downloadOnly().load(versionResponse.image)
@@ -237,24 +233,28 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                     }
                     ONBOARD_VERSIONS.ONBOARDING_V8 -> {
                         if (PrefManager.getBoolValue(USER_LOCALE_UPDATED)) {
-                            val intent = getIntentForState()
-                            startActivity(intent)
-                            this@LauncherActivity.finish()
+                            startNextActivity()
                         } else {
                             requestWorkerForChangeLanguage(
                                 "hi",
                                 canCreateActivity = false,
                                 successCallback = {
                                     AppObjectController.isSettingUpdate = true
-                                    val intent = getIntentForState()
-                                    startActivity(intent)
-                                    this@LauncherActivity.finish()
+                                    startNextActivity()
+                                }, errorCallback = {
+                                    startNextActivity()
                                 })
                         }
                     }
                 }
             }
         }, 500)
+    }
+
+    private fun startNextActivity() {
+        val intent = getIntentForState()
+        startActivity(intent)
+        this@LauncherActivity.finish()
     }
 
     private fun navigateToCourseDetailsScreen(testId: String) {
