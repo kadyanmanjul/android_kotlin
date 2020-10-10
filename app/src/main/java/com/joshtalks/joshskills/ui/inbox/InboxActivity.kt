@@ -27,7 +27,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BETTERY_OPTIMIZATION_ALREADY_ASKED
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
@@ -39,7 +38,6 @@ import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
 import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
-import com.joshtalks.joshskills.core.PowerManagers
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
 import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
@@ -545,10 +543,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             WorkManagerAdmin.determineNPAEvent()
         }
         when {
-            PrefManager.getBoolValue(BETTERY_OPTIMIZATION_ALREADY_ASKED).not() -> {
+          /*  PrefManager.getBoolValue(BETTERY_OPTIMIZATION_ALREADY_ASKED).not() -> {
                 PowerManagers.checkIgnoreBatteryOptimization(this)
                 PrefManager.put(BETTERY_OPTIMIZATION_ALREADY_ASKED, true)
-            }
+            }*/
             NPSEventModel.getCurrentNPA() != null -> {
                 showNetPromoterScoreDialog()
             }

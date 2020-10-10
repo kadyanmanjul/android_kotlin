@@ -7,13 +7,8 @@ package com.joshtalks.joshskills.core
 
 import android.content.ComponentName
 import android.content.Context
-import android.content.Context.POWER_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Build
-import android.os.PowerManager
-import android.provider.Settings
 
 object PowerManagers {
 
@@ -133,7 +128,7 @@ object PowerManagers {
         }
         return null
     }
-
+/*
     fun checkIgnoreBatteryOptimization(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val intent = Intent()
@@ -145,5 +140,5 @@ object PowerManagers {
                 context.startActivity(intent)
             }
         }
-    }
+    }*/
 }
