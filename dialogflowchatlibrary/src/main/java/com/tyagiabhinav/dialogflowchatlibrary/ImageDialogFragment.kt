@@ -9,8 +9,6 @@ import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.tyagiabhinav.dialogflowchatlibrary.databinding.ImageDialogFragmentBinding
 
-const val TRIAL_TEST_ID = 13
-
 class ImageDialogFragment : DialogFragment() {
 
     private lateinit var binding: ImageDialogFragmentBinding
@@ -28,6 +26,7 @@ class ImageDialogFragment : DialogFragment() {
             description = it.getString("description")
             imageUrl = it.getString("imgUrl")
         }
+        setStyle(STYLE_NO_FRAME, android.R.style.Theme_Light_NoTitleBar)
     }
 
     override fun onStart() {

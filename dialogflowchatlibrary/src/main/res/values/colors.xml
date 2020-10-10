@@ -20,6 +20,6 @@
     <color name="selectorBGColor">@color/chatPrimary</color>
     <color name="black">#172344</color>
     <color name="bg_grey_100">#B4B9C6</color>
-    <color name="transparent_black_alfa_80">#F2000000</color>
+    <color name="transparent_black_2">#74000000</color>
 
 </resources>
