@@ -165,6 +165,8 @@ class FirebaseRemoteConfigKey {
 
         const val UX_CAM_FEATURE_ENABLE = "UX_CAM_FEATURE_ENABLE"
 
+        const val FORCE_SIGN_IN_FEATURE_ENABLE = "FORCE_SIGN_IN_FEATURE_ENABLE"
+
         //In app review
         const val MINIMUM_TIME_TO_SHOW_REVIEW = "MINIMUM_TIME_TO_SHOW_REVIEW"
     }

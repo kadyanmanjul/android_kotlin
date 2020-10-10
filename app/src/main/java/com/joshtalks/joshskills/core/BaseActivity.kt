@@ -372,6 +372,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
     }
 
     fun showSignUpDialog() {
+        if(AppObjectController.getFirebaseRemoteConfig().getBoolean(FirebaseRemoteConfigKey.FORCE_SIGN_IN_FEATURE_ENABLE))
         SignUpPermissionDialogFragment.showDialog(supportFragmentManager)
     }
 

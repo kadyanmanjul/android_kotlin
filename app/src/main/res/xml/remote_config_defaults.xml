@@ -417,6 +417,10 @@
         <value>true</value>
     </entry>
     <entry>
+        <key>FORCE_SIGN_IN_FEATURE_ENABLE</key>
+        <value>true</value>
+    </entry>
+    <entry>
         <key>SIGNIN_DIALOG_DESCRIPTION</key>
         <value>Apne subscription ko use karne ke liye sabse pehle apna registration complete kijiye  </value>
     </entry>
