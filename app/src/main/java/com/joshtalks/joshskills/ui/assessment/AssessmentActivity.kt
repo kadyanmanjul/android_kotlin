@@ -50,6 +50,7 @@ import com.joshtalks.joshskills.ui.assessment.fragment.QuizSuccessFragment
 import com.joshtalks.joshskills.ui.assessment.fragment.ReviseConceptFragment
 import com.joshtalks.joshskills.ui.assessment.fragment.TestSummaryFragment
 import com.joshtalks.joshskills.ui.assessment.viewmodel.AssessmentViewModel
+import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -313,6 +314,10 @@ class AssessmentActivity : CoreJoshActivity() {
                     }
 
                     AssessmentStatus.COMPLETED -> {
+                        val resultIntent = Intent().apply {
+                            putExtra(CHAT_ROOM_ID, intent.getStringExtra(CHAT_ROOM_ID))
+                        }
+                        setResult(RESULT_OK, resultIntent)
                         finish()
                     }
                 }
@@ -494,19 +499,22 @@ class AssessmentActivity : CoreJoshActivity() {
 
         fun startAssessmentActivity(
             activity: Activity,
+            requestCode: Int,
             assessmentId: Int,
+            chatRoomId: String? = null,
             startedFrom: String = EMPTY,
             flags: Array<Int> = arrayOf()
         ) {
             Intent(activity, AssessmentActivity::class.java).apply {
                 putExtra(KEY_ASSESSMENT_ID, assessmentId)
+                putExtra(CHAT_ROOM_ID, chatRoomId)
                 if (startedFrom.isNotBlank())
                     putExtra(STARTED_FROM, startedFrom)
                 flags.forEach { flag ->
                     this.addFlags(flag)
                 }
             }.run {
-                activity.startActivity(this)
+                activity.startActivityForResult(this, requestCode)
             }
         }
     }

@@ -168,12 +168,15 @@ import kotlinx.coroutines.launch
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
+const val CHAT_ROOM_ID = "chat_room_id"
+
 const val IMAGE_SELECT_REQUEST_CODE = 1077
 const val VISIBLE_ITEM_PERCENT = 75
 const val PRACTISE_SUBMIT_REQUEST_CODE = 1100
 const val COURSE_PROGRESS_REQUEST_CODE = 1101
 const val VIDEO_OPEN_REQUEST_CODE = 1102
 const val CONVERSATION_PRACTISE_REQUEST_CODE = 1105
+const val ASSESSMENT_REQUEST_CODE = 1106
 
 const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
 const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
@@ -1069,7 +1072,12 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     logAssessmentEvent(it.assessmentId)
-                    AssessmentActivity.startAssessmentActivity(this, it.assessmentId)
+                    AssessmentActivity.startAssessmentActivity(
+                        this,
+                        ASSESSMENT_REQUEST_CODE,
+                        chatRoomId = it.chatId,
+                        assessmentId = it.assessmentId
+                    )
                 }, {
                     it.printStackTrace()
                 })
@@ -1200,6 +1208,12 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                             ) {
                                 tempView.message = chatObj
                                 tempView.message.isSelected = false
+                                tempView.message.question?.type?.run {
+                                    if (this == BASE_MESSAGE_TYPE.QUIZ || this == BASE_MESSAGE_TYPE.TEST) {
+                                        tempView.message.question?.vAssessmentCount = 1
+                                    }
+                                }
+                                //tempView.message.question?.vAssessmentCount=1
                                 AppObjectController.uiHandler.postDelayed({
                                     conversationBinding.chatRv.refreshView(index)
                                     callback.invoke()
@@ -1397,6 +1411,14 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                         ex.printStackTrace()
                     }
                 }, 5000)
+            } else if (requestCode == ASSESSMENT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    data?.getStringExtra(CHAT_ROOM_ID)?.run {
+                        val chatObj = AppObjectController.appDatabase.chatDao()
+                            .getUpdatedChatObjectViaId(this)
+                        refreshViewAtPos(chatObj)
+                    }
+                }
             }
 
         } catch (ex: Exception) {
@@ -1638,7 +1660,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             when (ExploreCardType.valueOf(exploreTypeStr)) {
                 ExploreCardType.FREETRIAL -> {
                     val remainingDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS, false)
-                    val isSubscriptionEnded = PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED, false)
+                    val isSubscriptionEnded =
+                        PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED, false)
                     val isSubscriptionStarted =
                         PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED, false)
                     if (remainingDays < 0 && isSubscriptionStarted.not()) {
@@ -1881,6 +1904,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                             question.type == BASE_MESSAGE_TYPE.QUIZ || question.type == BASE_MESSAGE_TYPE.TEST -> {
                                 AssessmentActivity.startAssessmentActivity(
                                     this@ConversationActivity,
+                                    ASSESSMENT_REQUEST_CODE,
                                     question.assessmentId ?: 0
                                 )
                             }

@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_LOCALE_UPDATED
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
@@ -38,7 +39,6 @@ import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import io.branch.referral.Branch
 import io.branch.referral.Defines
 import java.io.File
-import java.lang.Exception
 import kotlinx.android.synthetic.main.activity_launcher.progress_bar
 import org.json.JSONObject
 import timber.log.Timber
@@ -236,15 +236,21 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                         }
                     }
                     ONBOARD_VERSIONS.ONBOARDING_V8 -> {
-                        requestWorkerForChangeLanguage(
-                            "hi",
-                            canCreateActivity = false,
-                            successCallback = {
-                                AppObjectController.isSettingUpdate = true
-                                val intent = getIntentForState()
-                                startActivity(intent)
-                                this@LauncherActivity.finish()
-                            })
+                        if (PrefManager.getBoolValue(USER_LOCALE_UPDATED)) {
+                            val intent = getIntentForState()
+                            startActivity(intent)
+                            this@LauncherActivity.finish()
+                        } else {
+                            requestWorkerForChangeLanguage(
+                                "hi",
+                                canCreateActivity = false,
+                                successCallback = {
+                                    AppObjectController.isSettingUpdate = true
+                                    val intent = getIntentForState()
+                                    startActivity(intent)
+                                    this@LauncherActivity.finish()
+                                })
+                        }
                     }
                 }
             }

@@ -152,12 +152,12 @@ class AssessmentViewHolder(
 
     @Click(R.id.root_sub_view)
     fun onClickRootView() {
-        RxBus2.publish(AssessmentStartEventBus(message.question?.assessmentId ?: 0))
+        RxBus2.publish(AssessmentStartEventBus(message.chatId, message.question?.assessmentId ?: 0))
     }
 
     @Click(R.id.btn_start)
     fun onClickStartView() {
-        RxBus2.publish(AssessmentStartEventBus(message.question?.assessmentId ?: 0))
+        RxBus2.publish(AssessmentStartEventBus(message.chatId, message.question?.assessmentId ?: 0))
     }
 
     override fun getRoot(): FrameLayout {

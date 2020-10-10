@@ -18,6 +18,9 @@ buildscript {
         maven{
             url 'https://sdk.uxcam.com/android/'
         }
+        maven{
+            url 'https://kotlin.bintray.com/kotlinx/'
+        }
 
     }
     dependencies {

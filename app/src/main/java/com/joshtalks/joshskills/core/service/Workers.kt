@@ -770,6 +770,7 @@ class LanguageChangeWorker(var context: Context, private var workerParams: Worke
                     if (it) {
                         PrefManager.put(USER_LOCALE, language)
                         PrefManager.put(USER_LOCALE_UPDATED, true)
+                        WorkManagerAdmin.startVersionAndFlowWorker()
                         completer.set(Result.success())
                     } else {
                         onErrorToFetch(defaultLanguage)

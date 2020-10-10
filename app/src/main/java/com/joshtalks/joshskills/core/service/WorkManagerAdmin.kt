@@ -223,7 +223,16 @@ object WorkManagerAdmin {
             .setConstraints(constraints)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+    }
 
+    fun startVersionAndFlowWorker() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+        val workRequest = OneTimeWorkRequestBuilder<GetVersionAndFlowDataWorker>()
+            .setConstraints(constraints)
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
 
 }
