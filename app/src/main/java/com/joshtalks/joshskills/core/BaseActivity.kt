@@ -376,10 +376,18 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
     }
 
     fun checkForOemNotifications() {
-        val oemIntent = PowerManagers.getIntentForOEM(this)
-        if (NotificationManagerCompat.from(this).areNotificationsEnabled()
-                .not() && oemIntent != null && shouldRequireCustomPermission()
-        ) {
+        if (shouldRequireCustomPermission()) {
+            var oemIntent = PowerManagers.getIntentForOEM(this)
+            if (oemIntent == null) {
+                oemIntent = Intent(
+                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse(
+                        "package:$packageName"
+                    )
+                )
+                oemIntent.addCategory(Intent.CATEGORY_DEFAULT)
+                oemIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+
             CustomPermissionDialogFragment.showCustomPermissionDialog(
                 oemIntent,
                 supportFragmentManager
@@ -390,7 +398,8 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
     fun shouldRequireCustomPermission(): Boolean {
         val oemIntent = PowerManagers.getIntentForOEM(this)
         val performedAction = PrefManager.getStringValue(CUSTOM_PERMISSION_ACTION_KEY)
-        return oemIntent != null && performedAction == EMPTY
+        return NotificationManagerCompat.from(this).areNotificationsEnabled()
+            .not() && oemIntent != null && performedAction == EMPTY
     }
 
     fun isUserProfileComplete(): Boolean {

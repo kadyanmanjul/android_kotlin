@@ -35,6 +35,7 @@ import com.joshtalks.joshskills.ui.signup.SignUpActivity
 
 class SettingsFragment : Fragment() {
 
+    private var action: PopupActions? = null
     lateinit var binding: FragmentSettingsBinding
 
     lateinit var sheetBehaviour: BottomSheetBehavior<*>
@@ -126,20 +127,20 @@ class SettingsFragment : Fragment() {
     }
 
     fun actionConfirmed() {
-        when (binding.clearBtn.text) {
-            getString(R.string.sign_out) -> {
+        when (action) {
+            PopupActions.SIGNOUT -> {
                 signout()
                 if (BuildConfig.DEBUG) {
                     showToast("Signing out")
                 }
             }
-            getString(R.string.login_signup) -> {
+            PopupActions.LOGIN -> {
                 openLoginScreen()
                 if (BuildConfig.DEBUG) {
                     showToast("Signing in")
                 }
             }
-            getString(R.string.clear_all_downloads) -> {
+            PopupActions.CLEAR_DOWLOADS -> {
                 clearDownloads()
                 if (BuildConfig.DEBUG) {
                     showToast("Downloads cleared")
@@ -194,6 +195,7 @@ class SettingsFragment : Fragment() {
 
     fun showSignoutBottomView() {
         binding.clearBtn.text = getString(R.string.sign_out)
+        action = PopupActions.SIGNOUT
         binding.clearDownloadsBottomTv.text = AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.SETTINGS_LOGOUT_CONFIRMATION)
         sheetBehaviour.state = BottomSheetBehavior.STATE_EXPANDED
@@ -201,6 +203,7 @@ class SettingsFragment : Fragment() {
 
     fun showClearDownloadsView() {
         binding.clearBtn.text = getString(R.string.clear_all_downloads)
+        action = PopupActions.CLEAR_DOWLOADS
         binding.clearDownloadsBottomTv.text = AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.SETTINGS_CLEAR_DATA_CONFIRMATION)
         sheetBehaviour.state = BottomSheetBehavior.STATE_EXPANDED
@@ -208,6 +211,7 @@ class SettingsFragment : Fragment() {
 
     private fun showLoginPopup() {
         binding.clearBtn.text = getString(R.string.login_signup)
+        action = PopupActions.LOGIN
         binding.clearDownloadsBottomTv.text = AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.SETTINGS_SIGN_IN_PROMPT)
         sheetBehaviour.state = BottomSheetBehavior.STATE_EXPANDED
@@ -251,4 +255,9 @@ class SettingsFragment : Fragment() {
             .push()
     }
 
+    enum class PopupActions {
+        LOGIN,
+        CLEAR_DOWLOADS,
+        SIGNOUT
+    }
 }
