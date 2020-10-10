@@ -169,6 +169,12 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 content.setSpan(UnderlineSpan(), 0, content.length, 0)
                 text_btn.text = content
                 new_user_layout.setOnClickListener {
+                    logEvent(AnalyticsEvent.BLANK_INBOX_SCREEN_CLICKED.NAME)
+                    new_user_layout.visibility = View.GONE
+                    viewModel.logInboxEngageEvent()
+                }
+                text_btn.setOnClickListener {
+                    logEvent(AnalyticsEvent.OK_GOT_IT_CLICKED.NAME)
                     new_user_layout.visibility = View.GONE
                     viewModel.logInboxEngageEvent()
                 }
@@ -732,6 +738,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         AppAnalytics.create(eventName)
             .addBasicParam()
             .addUserDetails()
+            .addParam("version",VersionResponse.getInstance().version?.name.toString())
             .push()
     }
 

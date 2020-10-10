@@ -427,6 +427,8 @@ enum class AnalyticsEvent(val NAME: String) {
     MEIN_YE_CHEEZ_ACHIEVE_CLICKED("mein ye cheez achieve clicked V3"),
     ACHIEVE_SCREEN_SCROLL("achieve_screen_scroll V3"),
     COURSE_SUGGEST_SCROLL("course_suggest_scroll V3"),
+    OK_GOT_IT_CLICKED("okgot_inbox_screen_clicked V3"),
+    BLANK_INBOX_SCREEN_CLICKED("blank_inbox_screen_clicked V3"),
 
     //REMINDER
     REMINDER_BELL_CLICKED("reminder_bell_clicked"),
