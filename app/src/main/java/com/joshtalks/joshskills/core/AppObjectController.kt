@@ -311,8 +311,14 @@ class AppObjectController {
         private fun initDebugService() {
             if (BuildConfig.DEBUG) {
                 StrictMode.setVmPolicy(
-                    StrictMode.VmPolicy.Builder().detectActivityLeaks()
-                        .detectLeakedClosableObjects()
+                    StrictMode.VmPolicy.Builder()
+                        .detectAll()
+                        .penaltyLog()
+                        .build()
+                )
+                StrictMode.setThreadPolicy(
+                    StrictMode.ThreadPolicy.Builder()
+                        .detectAll()
                         .penaltyLog()
                         .build()
                 )
