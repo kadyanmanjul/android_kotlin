@@ -13,8 +13,6 @@ import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
 import com.facebook.appevents.AppEventsLogger
-import com.facebook.stetho.Stetho
-import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.flurry.android.FlurryAgent
 import com.flurry.android.FlurryPerformance
 import com.freshchat.consumer.sdk.Freshchat
@@ -66,6 +64,8 @@ import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
 import java.io.File
+import java.lang.reflect.Constructor
+import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import java.net.URL
@@ -281,7 +281,7 @@ class AppObjectController {
 
                     }
                 builder.addInterceptor(logging)
-                builder.addNetworkInterceptor(StethoInterceptor())
+                builder.addNetworkInterceptor(getStethoInterceptor())
                 builder.eventListener(PrintingEventListener())
             }
             retrofit = Retrofit.Builder()
@@ -335,7 +335,7 @@ class AppObjectController {
             facebookEventLogger.flush()
 
             if (BuildConfig.DEBUG) {
-                Stetho.initializeWithDefaults(context)
+                initStethoLibrary(context)
                 FacebookSdk.setIsDebugEnabled(true)
                 FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
                 FacebookSdk.addLoggingBehavior(LoggingBehavior.CACHE)
@@ -555,7 +555,7 @@ class AppObjectController {
 
                         }
                     mediaOkhttpBuilder.addInterceptor(logging)
-                    mediaOkhttpBuilder.addNetworkInterceptor(StethoInterceptor())
+                    mediaOkhttpBuilder.addNetworkInterceptor(getStethoInterceptor())
                 }
 
                 mediaOkhttpBuilder.addInterceptor(object : Interceptor {
@@ -696,3 +696,16 @@ class NewRelicHttpMetricsLogger : Interceptor {
         }
     }
 }
+
+fun initStethoLibrary(context: Context) {
+    val cls = Class.forName("com.facebook.stetho.Stetho")
+    val m: Method = cls.getMethod("initializeWithDefaults", Context::class.java)
+    m.invoke(null, context)
+}
+
+fun getStethoInterceptor(): Interceptor {
+    val clazz = Class.forName("com.facebook.stetho.okhttp3.StethoInterceptor")
+    val ctor: Constructor<*> = clazz.getConstructor()
+    return ctor.newInstance() as Interceptor
+}
+
