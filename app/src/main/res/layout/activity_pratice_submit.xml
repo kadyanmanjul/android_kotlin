@@ -1,43 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:wheel="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:wheel="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
-                name="handler"
-                type="com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity" />
+            name="handler"
+            type="com.joshtalks.joshskills.ui.practise.PractiseSubmitFragment" />
     </data>
 
     <ScrollView
-            android:id="@+id/root_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#f4f4f4"
-            tools:context=".ui.practise.PractiseSubmitActivity">
+        android:id="@+id/root_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#f4f4f4">
 
         <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="@dimen/_16sdp">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/_16sdp">
 
                 <include layout="@layout/base_toolbar" />
 
                 <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/practise_info_layout"
-                        style="@style/Widget.MaterialComponents.CardView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_6sdp"
-                        android:layout_marginTop="@dimen/_6sdp"
+                    android:id="@+id/practise_info_layout"
+                    style="@style/Widget.MaterialComponents.CardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_6sdp"
+                    android:layout_marginTop="@dimen/_6sdp"
                         android:layout_marginEnd="@dimen/_6sdp"
                         app:contentPadding="@dimen/_8sdp"
                         card_view:cardCornerRadius="@dimen/_4sdp"
@@ -47,9 +45,11 @@
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:id="@+id/practice_title_tv"
                         android:gravity="start|center"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                         android:text="@string/today_practise"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+                        app:drawableEndCompat="@drawable/ic_add"
                         android:textColor="@color/black" />
 
                     <LinearLayout

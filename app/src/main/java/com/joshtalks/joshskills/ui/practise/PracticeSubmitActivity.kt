@@ -6,13 +6,21 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
-import android.os.*
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
 import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
@@ -41,15 +49,24 @@ import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshcamerax.utils.ImageQuality
 import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityPraticeSubmitBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.AudioType
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.eventbus.SeekBarProgressEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
@@ -65,20 +82,20 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
-import java.util.concurrent.TimeUnit
-import kotlin.random.Random
 
 const val PRACTISE_OBJECT = "practise_object"
 const val IMAGE_OR_VIDEO_SELECT_REQUEST_CODE = 1081
 const val TEXT_FILE_ATTACHMENT_REQUEST_CODE = 1082
 
 
-class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPlayerEventListener,
+class PractiseSubmitFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEventListener,
     ProgressUpdateListener {
     private var compositeDisposable = CompositeDisposable()
 
@@ -119,7 +136,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
             requestCode: Int,
             chatModel: ChatModel
         ) {
-            val intent = Intent(context, PractiseSubmitActivity::class.java).apply {
+            val intent = Intent(context, PractiseSubmitFragment::class.java).apply {
                 putExtra(PRACTISE_OBJECT, chatModel)
                 //      addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 //    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -127,29 +144,48 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
             }
             context.startActivityForResult(intent, requestCode)
         }
+
+        @JvmStatic
+        fun instance(chatModel: ChatModel) = PractiseSubmitFragment().apply {
+            arguments = Bundle().apply {
+                putParcelable(PRACTISE_OBJECT, chatModel)
+            }
+        }
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
+        /*requireActivity().requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        }
+        }*/
         super.onCreate(savedInstanceState)
-        if (intent.hasExtra(PRACTISE_OBJECT).not()) {
-            this.finish()
+
+        if (arguments != null) {
+            chatModel = arguments?.getParcelable<ChatModel>(PRACTISE_OBJECT) as ChatModel
+        } else {
+            requireActivity().finish()
         }
         totalTimeSpend = System.currentTimeMillis()
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_pratice_submit)
+
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.activity_pratice_submit, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
-        chatModel = intent.getParcelableExtra(PRACTISE_OBJECT) as ChatModel
-        scaleAnimation = AnimationUtils.loadAnimation(this, R.anim.scale)
+        scaleAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale)
         appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTICE_SCREEN.NAME)
             .addBasicParam()
             .addUserDetails()
             .addParam("chatId", chatModel.chatId)
-        initToolbarView()
+        initToolbarView(binding.rootView)
         setPracticeInfoView()
         addObserver()
         chatModel.question?.run {
@@ -166,20 +202,23 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                 setViewUserSubmitAnswer()
             }
         }
-        feedbackEngagementStatus(chatModel.question)
 
+        binding.practiceTitleTv.setOnClickListener {
 
+        }
+        coreJoshActivity?.feedbackEngagementStatus(chatModel.question)
+
+        return binding.rootView
     }
-
 
     override fun onResume() {
         super.onResume()
         subscribeRXBus()
-        requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
+        /*requireActivity().requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        }
+        }*/
         try {
             binding.videoPlayer.onResume()
         } catch (ex: Exception) {
@@ -265,25 +304,26 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                 }
             } else if (requestCode == TEXT_FILE_ATTACHMENT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
                 data?.data?.let {
-                    contentResolver.query(it, null, null, null, null)?.use { cursor ->
-                        val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                        //val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
-                        cursor.moveToFirst()
-                        val fileName = cursor.getString(nameIndex)
-                        val file = AppDirectory.copy2(
-                            it,
-                            AppDirectory.getSentFile(fileName)
-                        )
-                        file?.run {
-                            filePath = this.absolutePath
-                            isDocumentAttachDone = true
-                            binding.practiseInputLayout.visibility = GONE
-                            binding.practiseSubmitLayout.visibility = VISIBLE
-                            binding.submitFileViewContainer.visibility = VISIBLE
-                            binding.fileInfoAttachmentTv.text = fileName
-                            enableSubmitButton()
+                    requireActivity().contentResolver.query(it, null, null, null, null)
+                        ?.use { cursor ->
+                            val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                            //val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
+                            cursor.moveToFirst()
+                            val fileName = cursor.getString(nameIndex)
+                            val file = AppDirectory.copy2(
+                                it,
+                                AppDirectory.getSentFile(fileName)
+                            )
+                            file?.run {
+                                filePath = this.absolutePath
+                                isDocumentAttachDone = true
+                                binding.practiseInputLayout.visibility = GONE
+                                binding.practiseSubmitLayout.visibility = VISIBLE
+                                binding.submitFileViewContainer.visibility = VISIBLE
+                                binding.fileInfoAttachmentTv.text = fileName
+                                enableSubmitButton()
+                            }
                         }
-                    }
                 }
             }
 
@@ -301,7 +341,9 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                 .subscribeOn(Schedulers.computation())
                 .subscribe({
                     Handler(Looper.getMainLooper()).post {
-                        if (filePath.isNullOrEmpty().not() && currentAudio == filePath) {
+                        if (filePath.isNullOrEmpty()
+                                .not() && coreJoshActivity?.currentAudio == filePath
+                        ) {
                             binding.submitPractiseSeekbar.progress = it.progress
                         } else {
                             if (chatModel.question?.practiceEngagement != null && chatModel.question?.practiceEngagement?.getOrNull(
@@ -321,15 +363,15 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
         )
     }
 
-    private fun initToolbarView() {
-        val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
+    private fun initToolbarView(view: View) {
+        val titleView = view.findViewById<AppCompatTextView>(R.id.text_message_title)
         chatModel.question?.title?.run {
             titleView.text = "Today's Practice"
             titleView.text = this
         }
-        findViewById<View>(R.id.iv_back).visibility = VISIBLE
-        findViewById<View>(R.id.iv_back).setOnClickListener {
-            this@PractiseSubmitActivity.finish()
+        view.findViewById<View>(R.id.iv_back).visibility = VISIBLE
+        view.findViewById<View>(R.id.iv_back).setOnClickListener {
+            requireActivity().finish()
         }
     }
 
@@ -358,7 +400,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                         setImageInImageView(path, binding.imageView)
                         binding.imageView.setOnClickListener {
                             ImageShowFragment.newInstance(path, "", "")
-                                .show(supportFragmentManager, "ImageShow")
+                                .show(childFragmentManager, "ImageShow")
                         }
                     }
                 }
@@ -371,7 +413,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                             val videoId = this.videoList?.getOrNull(0)?.id
                             val videoUrl = this.videoList?.getOrNull(0)?.video_url
                             VideoPlayerActivity.startVideoActivity(
-                                this@PractiseSubmitActivity,
+                                requireActivity(),
                                 "",
                                 videoId,
                                 videoUrl
@@ -386,7 +428,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                     this.pdfList?.getOrNull(0)?.let { pdfType ->
                         binding.imageView.setOnClickListener {
                             PdfViewerActivity.startPdfActivity(
-                                this@PractiseSubmitActivity,
+                                requireActivity(),
                                 pdfType.id,
                                 EMPTY
                             )
@@ -487,7 +529,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
     }
 
     private fun addObserver() {
-        practiceViewModel.requestStatusLiveData.observe(this, Observer {
+        practiceViewModel.requestStatusLiveData.observe(viewLifecycleOwner, Observer {
             if (it) {
                 CoroutineScope(Dispatchers.IO).launch {
                     chatModel.question?.interval?.run {
@@ -497,8 +539,8 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                     val resultIntent = Intent().apply {
                         putExtra(PRACTISE_OBJECT, chatModel)
                     }
-                    setResult(RESULT_OK, resultIntent)
-                    finishAndRemoveTask()
+                    /* setResult(RESULT_OK, resultIntent)
+                     finishAndRemoveTask()*/
                 }
 
             } else {
@@ -529,13 +571,13 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                     EXPECTED_ENGAGE_TYPE.AU == it -> {
                         binding.submitAudioViewContainer.visibility = VISIBLE
                         filePath = practiseEngagement?.answerUrl
-                        if (PermissionUtils.isStoragePermissionEnabled(this@PractiseSubmitActivity) && AppDirectory.isFileExist(
+                        if (PermissionUtils.isStoragePermissionEnabled(requireActivity()) && AppDirectory.isFileExist(
                                 practiseEngagement?.localPath
                             )
                         ) {
                             filePath = practiseEngagement?.localPath
                             binding.submitPractiseSeekbar.max =
-                                Utils.getDurationOfMedia(this@PractiseSubmitActivity, filePath!!)
+                                Utils.getDurationOfMedia(requireActivity(), filePath!!)
                                     ?.toInt() ?: 0
                         } else {
                             if (practiseEngagement?.duration != null) {
@@ -553,7 +595,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                         filePath = practiseEngagement?.answerUrl
                         binding.videoPlayerSubmit.visibility = VISIBLE
 
-                        if (PermissionUtils.isStoragePermissionEnabled(this@PractiseSubmitActivity) && AppDirectory.isFileExist(
+                        if (PermissionUtils.isStoragePermissionEnabled(requireActivity()) && AppDirectory.isFileExist(
                                 practiseEngagement?.localPath
                             )
                         ) {
@@ -565,7 +607,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                             binding.videoPlayerSubmit.fitToScreen()
                             binding.videoPlayerSubmit.setPlayListener {
                                 VideoPlayerActivity.startVideoActivity(
-                                    this@PractiseSubmitActivity,
+                                    requireActivity(),
                                     null,
                                     null,
                                     filePath
@@ -598,7 +640,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
         binding.progressBarImageView.visibility = VISIBLE
 
 
-        Glide.with(applicationContext)
+        Glide.with(AppObjectController.joshApplication)
             .load(url)
             .override(Target.SIZE_ORIGINAL)
             .optionalTransform(
@@ -692,7 +734,8 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
 
     fun chooseFile() {
         chatModel.question?.expectedEngageType?.let { expectedEngageType ->
-            PermissionUtils.cameraRecordStorageReadAndWritePermission(this,
+            PermissionUtils.cameraRecordStorageReadAndWritePermission(
+                requireActivity(),
                 object : MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
@@ -705,7 +748,9 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                                 return
                             }
                             if (report.isAnyPermissionPermanentlyDenied) {
-                                PermissionUtils.cameraStoragePermissionPermanentlyDeniedDialog(this@PractiseSubmitActivity)
+                                PermissionUtils.cameraStoragePermissionPermanentlyDeniedDialog(
+                                    requireActivity()
+                                )
                                 return
                             }
                         }
@@ -723,7 +768,8 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
 
 
     private fun uploadMedia() {
-        PermissionUtils.cameraRecordStorageReadAndWritePermission(this,
+        PermissionUtils.cameraRecordStorageReadAndWritePermission(
+            requireActivity(),
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
@@ -737,14 +783,16 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                                 .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)
 
                             JoshCameraActivity.startJoshCameraxActivity(
-                                this@PractiseSubmitActivity,
+                                requireActivity(),
                                 options
                             )
                             return
 
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.cameraStoragePermissionPermanentlyDeniedDialog(this@PractiseSubmitActivity)
+                            PermissionUtils.cameraStoragePermissionPermanentlyDeniedDialog(
+                                requireActivity()
+                            )
                             return
                         }
                     }
@@ -767,7 +815,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
             .setAllowMultiSelection(false)
             .setScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
 
-        MediaPicker.with(this, MediaPicker.MediaTypes.VIDEO)
+        MediaPicker.with(requireActivity(), MediaPicker.MediaTypes.VIDEO)
             .setConfig(pickerConfig)
             .setFileMissingListener(object :
                 MediaPicker.MediaPickerImpl.OnMediaListener {
@@ -793,7 +841,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
             .setUriPermanentAccess(true)
             .setAllowMultiSelection(false)
             .setScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-        MediaPicker.with(this, MediaPicker.MediaTypes.AUDIO)
+        MediaPicker.with(requireActivity(), MediaPicker.MediaTypes.AUDIO)
             .setConfig(pickerConfig)
             .setFileMissingListener(object :
                 MediaPicker.MediaPickerImpl.OnMediaListener {
@@ -820,7 +868,8 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
         binding.practiseSubmitLayout.visibility = VISIBLE
         binding.submitAudioViewContainer.visibility = VISIBLE
         initializePractiseSeekBar()
-        binding.submitPractiseSeekbar.max = Utils.getDurationOfMedia(this, filePath!!)?.toInt() ?: 0
+        binding.submitPractiseSeekbar.max =
+            Utils.getDurationOfMedia(requireActivity(), filePath!!)?.toInt() ?: 0
         enableSubmitButton()
         scrollToEnd()
     }
@@ -835,7 +884,8 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
     }
 
     private fun recordPermission() {
-        PermissionUtils.audioRecordStorageReadAndWritePermission(this,
+        PermissionUtils.audioRecordStorageReadAndWritePermission(
+            requireActivity(),
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
@@ -846,7 +896,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
                             PermissionUtils.permissionPermanentlyDeniedDialog(
-                                this@PractiseSubmitActivity,
+                                requireActivity(),
                                 R.string.record_permission_message
                             )
                             return
@@ -866,7 +916,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
     @SuppressLint("ClickableViewAccessibility")
     private fun audioRecordTouchListener() {
         binding.uploadPractiseView.setOnTouchListener { _, event ->
-            if (PermissionUtils.isAudioAndStoragePermissionEnable(this).not()) {
+            if (PermissionUtils.isAudioAndStoragePermissionEnable(requireContext()).not()) {
                 recordPermission()
                 return@setOnTouchListener true
             }
@@ -877,7 +927,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                     binding.rootView.requestDisallowInterceptTouchEvent(true)
                     binding.counterContainer.visibility = VISIBLE
                     binding.uploadPractiseView.startAnimation(scaleAnimation)
-                    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     appAnalytics.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
                     //AppAnalytics.create(AnalyticsEvent.AUDIO_RECORD.NAME).push()
                     binding.counterTv.base = SystemClock.elapsedRealtime()
@@ -898,7 +948,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                     binding.uploadPractiseView.clearAnimation()
                     binding.counterContainer.visibility = GONE
                     binding.audioPractiseHint.visibility = VISIBLE
-                    window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
                     val timeDifference =
                         TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) - TimeUnit.MILLISECONDS.toSeconds(
@@ -931,18 +981,18 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
 
 
     fun playPracticeAudio() {
-        if (Utils.getCurrentMediaVolume(applicationContext) <= 0) {
-            StyleableToast.Builder(applicationContext).gravity(Gravity.BOTTOM)
+        if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
+            StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
                 .text(getString(R.string.volume_up_message)).cornerRadius(16)
                 .length(Toast.LENGTH_LONG)
                 .solidBackground().show()
         }
         appAnalytics.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio Played")
 
-        if (currentAudio == null) {
+        if (coreJoshActivity?.currentAudio == null) {
             onPlayAudio(chatModel, chatModel.question?.audioList?.getOrNull(0)!!)
         } else {
-            if (currentAudio == chatModel.question?.audioList?.getOrNull(0)?.audio_url) {
+            if (coreJoshActivity?.currentAudio == chatModel.question?.audioList?.getOrNull(0)?.audio_url) {
                 if (checkIsPlayer()) {
                     audioManager?.setProgressUpdateListener(this)
                     audioManager?.resumeOrPause()
@@ -961,7 +1011,8 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
             val audioType = AudioType()
             audioType.audio_url = filePath!!
             audioType.downloadedLocalPath = filePath!!
-            audioType.duration = Utils.getDurationOfMedia(this, filePath!!)?.toInt() ?: 0
+            audioType.duration =
+                Utils.getDurationOfMedia(requireContext(), filePath!!)?.toInt() ?: 0
             audioType.id = Random.nextInt().toString()
             appAnalytics.addParam(
                 AnalyticsEvent.PRACTICE_EXTRA.NAME,
@@ -977,17 +1028,17 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                 }
             binding.submitBtnPlayInfo.state = state
 
-            if (Utils.getCurrentMediaVolume(applicationContext) <= 0) {
-                StyleableToast.Builder(applicationContext).gravity(Gravity.BOTTOM)
+            if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
+                StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
                     .text(getString(R.string.volume_up_message)).cornerRadius(16)
                     .length(Toast.LENGTH_LONG)
                     .solidBackground().show()
             }
 
-            if (currentAudio == null) {
+            if (coreJoshActivity?.currentAudio == null) {
                 onPlayAudio(chatModel, audioType)
             } else {
-                if (currentAudio == audioType.audio_url) {
+                if (coreJoshActivity?.currentAudio == audioType.audio_url) {
                     if (checkIsPlayer()) {
                         audioManager?.setProgressUpdateListener(this)
                         audioManager?.resumeOrPause()
@@ -1007,7 +1058,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
 
     fun removeAudioPractise() {
         filePath = null
-        currentAudio = null
+        coreJoshActivity?.currentAudio = null
         binding.practiseSubmitLayout.visibility = GONE
         binding.submitAudioViewContainer.visibility = GONE
         isAudioRecordDone = false
@@ -1035,7 +1086,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
         binding.videoPlayerSubmit.downloadStreamButNotPlay()
         binding.videoPlayerSubmit.setPlayListener {
             VideoPlayerActivity.startVideoActivity(
-                this@PractiseSubmitActivity,
+                requireActivity(),
                 null,
                 null,
                 filePath
@@ -1060,14 +1111,14 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
     }
 
     private fun onPlayAudio(chatModel: ChatModel, audioObject: AudioType) {
-        currentAudio = audioObject.audio_url
+        coreJoshActivity?.currentAudio = audioObject.audio_url
         val audioList = java.util.ArrayList<AudioType>()
         audioList.add(audioObject)
         audioManager = ExoAudioPlayer.getInstance()
         audioManager?.playerListener = this
-        audioManager?.play(currentAudio!!)
+        audioManager?.play(coreJoshActivity?.currentAudio!!)
         audioManager?.setProgressUpdateListener(this)
-        if (filePath.isNullOrEmpty().not() && currentAudio == filePath) {
+        if (filePath.isNullOrEmpty().not() && coreJoshActivity?.currentAudio == filePath) {
             binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
         } else {
             binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
@@ -1080,7 +1131,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
 
     fun openAttachmentFile() {
         filePath?.let {
-            Utils.openFile(this@PractiseSubmitActivity, it)
+            Utils.openFile(requireActivity(), it)
         }
     }
 
@@ -1100,7 +1151,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
             isClickable = false
             backgroundTintList = ColorStateList.valueOf(
                 ContextCompat.getColor(
-                    applicationContext,
+                    AppObjectController.joshApplication,
                     R.color.seek_bar_background
                 )
             )
@@ -1113,7 +1164,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
             isClickable = true
             backgroundTintList = ColorStateList.valueOf(
                 ContextCompat.getColor(
-                    applicationContext,
+                    AppObjectController.joshApplication,
                     R.color.button_color
                 )
             )
@@ -1155,7 +1206,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                 requestEngage.text = binding.etPractise.text.toString()
                 requestEngage.localPath = filePath
                 requestEngage.duration =
-                    Utils.getDurationOfMedia(this@PractiseSubmitActivity, filePath)?.toInt()
+                    Utils.getDurationOfMedia(requireActivity(), filePath)?.toInt()
                 requestEngage.feedbackRequire = chatModel.question?.feedback_require
                 requestEngage.question = chatModel.question?.questionId!!
                 requestEngage.mentor = Mentor.getInstance().getId()
@@ -1167,11 +1218,13 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
             }
         }
     }
+/*
 
     override fun onBackPressed() {
         super.onBackPressed()
-        this@PractiseSubmitActivity.finishAndRemoveTask()
+        requireActivity().finishAndRemoveTask()
     }
+*/
 
     override fun onPlayerPause() {
         binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play

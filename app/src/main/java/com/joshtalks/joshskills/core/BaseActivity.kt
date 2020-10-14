@@ -284,7 +284,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
         return User.getInstance().dateOfBirth.isNullOrEmpty()
     }
 
-    protected fun feedbackEngagementStatus(question: Question?) {
+    fun feedbackEngagementStatus(question: Question?) {
         if (question != null && question.needFeedback == null) {
             WorkManager.getInstance(applicationContext)
                 .getWorkInfoByIdLiveData(WorkManagerAdmin.getQuestionFeedback(question.questionId))

@@ -64,7 +64,7 @@ import com.joshtalks.joshskills.ui.chat.PRACTISE_SUBMIT_REQUEST_CODE
 import com.joshtalks.joshskills.ui.chat.PRACTISE_UPDATE_MESSAGE_KEY
 import com.joshtalks.joshskills.ui.chat.course_content.ContentTimelineAdapter
 import com.joshtalks.joshskills.ui.courseprogress.course_certificate.ClaimCertificateFragment
-import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
+import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.view_holders.PerformHeaderViewHolder
 import com.joshtalks.joshskills.ui.view_holders.PerformItemViewHolder
@@ -477,7 +477,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
                                 AppAnalytics.create(AnalyticsEvent.PRACTICE_CLICKED_COURSE_OVERVIEW.NAME)
                                     .addParam("Question Id ", it.id).push()
                                 updatePractiseId = obj.chatId
-                                PractiseSubmitActivity.startPractiseSubmissionActivity(
+                                DayWiseCourseActivity.startDayWiseCourseActivity(
                                     this@CourseProgressActivity,
                                     PRACTISE_SUBMIT_REQUEST_CODE,
                                     obj

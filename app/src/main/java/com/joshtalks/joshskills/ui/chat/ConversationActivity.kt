@@ -115,10 +115,10 @@ import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.extra.CallingFeatureShowcaseView
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
+import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
-import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
@@ -1047,7 +1047,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                         )
                         .addParam("chatId", it.chatModel.chatId)
                         .push()
-                    PractiseSubmitActivity.startPractiseSubmissionActivity(
+                    DayWiseCourseActivity.startDayWiseCourseActivity(
                         activityRef.get()!!,
                         PRACTISE_SUBMIT_REQUEST_CODE,
                         it.chatModel
@@ -1920,7 +1920,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                                 }
                             }
                             question.type == BASE_MESSAGE_TYPE.PR -> {
-                                PractiseSubmitActivity.startPractiseSubmissionActivity(
+                                DayWiseCourseActivity.startDayWiseCourseActivity(
                                     this@ConversationActivity,
                                     PRACTISE_SUBMIT_REQUEST_CODE,
                                     chatModel
