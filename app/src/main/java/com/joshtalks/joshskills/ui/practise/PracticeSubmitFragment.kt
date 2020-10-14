@@ -195,7 +195,7 @@ class PractiseSubmitFragment : CoreJoshFragment(), Player.EventListener, AudioPl
                 appAnalytics.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Not Submitted")
                 setViewAccordingExpectedAnswer()
             } else {
-                binding.practiseInputLayout.visibility = GONE
+                hidePracticeInputLayout()
                 binding.submitAnswerBtn.visibility = GONE
                 appAnalytics.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
                 appAnalytics.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Already Submitted")
@@ -204,12 +204,36 @@ class PractiseSubmitFragment : CoreJoshFragment(), Player.EventListener, AudioPl
         }
 
         binding.practiceTitleTv.setOnClickListener {
-
+            if (binding.practiceContentLl.visibility == GONE)
+                binding.practiceContentLl.visibility = VISIBLE
+            else
+                binding.practiceContentLl.visibility = GONE
         }
         coreJoshActivity?.feedbackEngagementStatus(chatModel.question)
 
         return binding.rootView
     }
+
+    fun hidePracticeInputLayout() {
+        binding.practiseInputHeader.visibility = View.GONE
+        binding.practiceInputLl.visibility = View.GONE
+    }
+
+    fun showPracticeInputLayout() {
+        binding.practiseInputHeader.visibility = View.VISIBLE
+        binding.practiceInputLl.visibility = View.VISIBLE
+    }
+
+    fun showPracticeSubmitLayout() {
+        binding.yourSubAnswerTv.visibility = View.VISIBLE
+        binding.subPractiseSubmitLayout.visibility = View.VISIBLE
+    }
+
+    fun hidePracticeSubmitLayout() {
+        binding.yourSubAnswerTv.visibility = View.GONE
+        binding.subPractiseSubmitLayout.visibility = View.GONE
+    }
+
 
     override fun onResume() {
         super.onResume()
@@ -317,8 +341,8 @@ class PractiseSubmitFragment : CoreJoshFragment(), Player.EventListener, AudioPl
                             file?.run {
                                 filePath = this.absolutePath
                                 isDocumentAttachDone = true
-                                binding.practiseInputLayout.visibility = GONE
-                                binding.practiseSubmitLayout.visibility = VISIBLE
+                                hidePracticeInputLayout()
+                                showPracticeSubmitLayout()
                                 binding.submitFileViewContainer.visibility = VISIBLE
                                 binding.fileInfoAttachmentTv.text = fileName
                                 enableSubmitButton()
@@ -451,10 +475,9 @@ class PractiseSubmitFragment : CoreJoshFragment(), Player.EventListener, AudioPl
             }
             if ((this.material_type == BASE_MESSAGE_TYPE.TX).not()) {
                 if (this.qText.isNullOrEmpty().not()) {
-                    binding.practiseTextInfoLayout.visibility = VISIBLE
+                    binding.infoTv2.visibility = VISIBLE
                     binding.infoTv2.text =
                         HtmlCompat.fromHtml(this.qText!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
-                    binding.infoTv2.visibility = VISIBLE
                 }
             }
         }
@@ -462,7 +485,7 @@ class PractiseSubmitFragment : CoreJoshFragment(), Player.EventListener, AudioPl
 
     private fun setViewAccordingExpectedAnswer() {
         chatModel.question?.run {
-            binding.practiseInputLayout.visibility = VISIBLE
+            showPracticeInputLayout()
             this.expectedEngageType?.let {
                 if ((it == EXPECTED_ENGAGE_TYPE.TX).not()) {
                     binding.uploadPractiseView.visibility = VISIBLE
@@ -552,8 +575,8 @@ class PractiseSubmitFragment : CoreJoshFragment(), Player.EventListener, AudioPl
     private fun setViewUserSubmitAnswer() {
         chatModel.question?.run {
             this.expectedEngageType?.let {
-                binding.practiseInputLayout.visibility = GONE
-                binding.practiseSubmitLayout.visibility = VISIBLE
+                hidePracticeInputLayout()
+                showPracticeSubmitLayout()
                 binding.yourSubAnswerTv.visibility = VISIBLE
                 val params: ViewGroup.MarginLayoutParams =
                     binding.subPractiseSubmitLayout.layoutParams as ViewGroup.MarginLayoutParams
@@ -865,13 +888,12 @@ class PractiseSubmitFragment : CoreJoshFragment(), Player.EventListener, AudioPl
     }
 
     private fun audioAttachmentInit() {
-        binding.practiseSubmitLayout.visibility = VISIBLE
+        showPracticeSubmitLayout()
         binding.submitAudioViewContainer.visibility = VISIBLE
         initializePractiseSeekBar()
         binding.submitPractiseSeekbar.max =
             Utils.getDurationOfMedia(requireActivity(), filePath!!)?.toInt() ?: 0
         enableSubmitButton()
-        scrollToEnd()
     }
 
     private fun uploadTextFileChooser() {
@@ -935,7 +957,7 @@ class PractiseSubmitFragment : CoreJoshFragment(), Player.EventListener, AudioPl
                     binding.counterTv.start()
                     val params =
                         binding.counterContainer.layoutParams as ViewGroup.MarginLayoutParams
-                    params.topMargin = binding.rootView.scrollY
+//                    params.topMargin = binding.rootView.scrollY
                     practiceViewModel.startRecord()
                     binding.audioPractiseHint.visibility = GONE
                 }
@@ -1059,7 +1081,7 @@ class PractiseSubmitFragment : CoreJoshFragment(), Player.EventListener, AudioPl
     fun removeAudioPractise() {
         filePath = null
         coreJoshActivity?.currentAudio = null
-        binding.practiseSubmitLayout.visibility = GONE
+        hidePracticeSubmitLayout()
         binding.submitAudioViewContainer.visibility = GONE
         isAudioRecordDone = false
         binding.submitPractiseSeekbar.progress = 0
@@ -1078,7 +1100,7 @@ class PractiseSubmitFragment : CoreJoshFragment(), Player.EventListener, AudioPl
         AppDirectory.copy(path, videoSentFile.absolutePath)
         filePath = videoSentFile.absolutePath
         isVideoRecordDone = true
-        binding.practiseSubmitLayout.visibility = VISIBLE
+        showPracticeSubmitLayout()
         binding.videoPlayerSubmit.init()
         binding.videoPlayerSubmit.visibility = VISIBLE
         binding.videoPlayerSubmit.setUrl(filePath)
@@ -1093,13 +1115,6 @@ class PractiseSubmitFragment : CoreJoshFragment(), Player.EventListener, AudioPl
             )
         }
         enableSubmitButton()
-        scrollToEnd()
-    }
-
-    private fun scrollToEnd() {
-        binding.rootView.post {
-            binding.rootView.fullScroll(View.FOCUS_DOWN)
-        }
     }
 
     private fun checkIsPlayer(): Boolean {
@@ -1138,8 +1153,8 @@ class PractiseSubmitFragment : CoreJoshFragment(), Player.EventListener, AudioPl
     fun removeFileAttachment() {
         filePath = null
         isDocumentAttachDone = false
-        binding.practiseInputLayout.visibility = VISIBLE
-        binding.practiseSubmitLayout.visibility = GONE
+        showPracticeInputLayout()
+        hidePracticeSubmitLayout()
         binding.submitFileViewContainer.visibility = GONE
         binding.fileInfoAttachmentTv.text = EMPTY
         disableSubmitButton()
