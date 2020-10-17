@@ -178,7 +178,7 @@ class PractiseSubmitFragment : CoreJoshFragment(), Player.EventListener, AudioPl
     ): View? {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.activity_pratice_submit, container, false)
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.handler = this
         scaleAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale)
         appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTICE_SCREEN.NAME)

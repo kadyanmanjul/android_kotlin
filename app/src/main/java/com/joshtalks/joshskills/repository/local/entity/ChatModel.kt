@@ -24,7 +24,8 @@ import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
 import com.joshtalks.joshskills.util.RandomString
 import java.io.Serializable
-import java.util.*
+import java.util.Date
+import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -107,6 +108,9 @@ data class ChatModel(
 
 
 ) : DataBaseClass(), Parcelable {
+    @IgnoredOnParcel
+    @Ignore
+    var isPlaying: Boolean = false
 
     constructor() : this(
         chatId = "",
@@ -718,7 +722,7 @@ enum class OPTION_TYPE(val type: String) {
 
 enum class BASE_MESSAGE_TYPE(val type: String) {
     A("A"), TX("TX"), VI("VI"), AU("AU"), IM("IM"), Q("Q"), PD("PD"), PR("PR"), AR("AR"),
-    CP("CP"), QUIZ("QUIZ"), TEST("TEST"), OTHER("OTHER"), UNLOCK("UN"),P2P("P2P")
+    CP("CP"), QUIZ("QUIZ"), TEST("TEST"), OTHER("OTHER"), UNLOCK("UN"), P2P("P2P")
 
 }
 

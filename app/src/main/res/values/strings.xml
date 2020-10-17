@@ -465,5 +465,9 @@
     <string name="whatsApp_not_installed">WhatsApp not Installed</string>
     <string name="invalid_coupon_code">Invalid Coupon Code. Try Again</string>
     <string name="interest_message">You can select upto %s interests.</string>
+    <string name="speaking">Speaking</string>
+    <string name="grammer">Grammer</string>
+    <string name="vocabulary">Vocabulary</string>
+    <string name="reading">Reading</string>
 
 </resources>

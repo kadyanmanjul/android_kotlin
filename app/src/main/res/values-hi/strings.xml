@@ -398,5 +398,8 @@
     <string name="whatsApp_not_installed">WhatsApp इंस्टॉल नहीं है</string>
     <string name="invalid_coupon_code">अमान्य कूपन कोड। पुनः प्रयास करें</string>
     <string name="interest_message">आप %s रुचियों का चयन कर सकते हैं।</string>
-
+    <string name="speaking">बोले</string>
+    <string name="grammer">व्याकरण</string>
+    <string name="vocabulary">शब्दावली</string>
+    <string name="reading">पढ़ना</string>
 </resources>
