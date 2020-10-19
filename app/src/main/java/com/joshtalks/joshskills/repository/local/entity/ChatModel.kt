@@ -112,6 +112,10 @@ data class ChatModel(
     @Ignore
     var isPlaying: Boolean = false
 
+    @IgnoredOnParcel
+    @Ignore
+    var filePath: String? = null
+
     constructor() : this(
         chatId = "",
         conversationId = "",
