@@ -64,7 +64,7 @@ import com.joshtalks.joshskills.ui.chat.PRACTISE_SUBMIT_REQUEST_CODE
 import com.joshtalks.joshskills.ui.chat.PRACTISE_UPDATE_MESSAGE_KEY
 import com.joshtalks.joshskills.ui.chat.course_content.ContentTimelineAdapter
 import com.joshtalks.joshskills.ui.courseprogress.course_certificate.ClaimCertificateFragment
-import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
+import com.joshtalks.joshskills.ui.day_wise_course.activity.DayWiseCourseActivity
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.view_holders.PerformHeaderViewHolder
 import com.joshtalks.joshskills.ui.view_holders.PerformItemViewHolder

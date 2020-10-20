@@ -392,7 +392,7 @@
             android:theme="@style/AppNoBarTheme" />
 
         <activity
-            android:name=".ui.day_wise_course.DayWiseCourseActivity"
+            android:name=".ui.day_wise_course.activity.DayWiseCourseActivity"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTask"
             android:parentActivityName=".ui.inbox.InboxActivity"

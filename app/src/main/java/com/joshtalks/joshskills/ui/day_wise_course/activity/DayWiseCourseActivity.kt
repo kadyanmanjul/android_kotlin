@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.day_wise_course
+package com.joshtalks.joshskills.ui.day_wise_course.activity
 
 import android.app.Activity
 import android.content.Intent

@@ -115,7 +115,7 @@ import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.extra.CallingFeatureShowcaseView
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
-import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
+import com.joshtalks.joshskills.ui.day_wise_course.activity.DayWiseCourseActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT

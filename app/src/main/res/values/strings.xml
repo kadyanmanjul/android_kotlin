@@ -469,5 +469,7 @@
     <string name="grammer">Grammer</string>
     <string name="vocabulary">Vocabulary</string>
     <string name="reading">Reading</string>
+    <string name="lesson_name">Lesson %1$d: %2$s</string>
+    <string name="start_lesson">Start Lesson</string>
 
 </resources>
