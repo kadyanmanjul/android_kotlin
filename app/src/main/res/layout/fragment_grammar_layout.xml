@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:wheel="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.day_wise_course.grammar.GrammarFragment" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:overScrollMode="never">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/practice_content_ll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/_8sdp"
+            tools:visibility="visible">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/practice_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center"
+                android:padding="@dimen/_8sdp"
+                android:text="@string/today_practise"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                android:textColor="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+                android:id="@+id/video_player"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_160sdp"
+                android:layout_gravity="center"
+                android:background="#000"
+                android:focusable="true"
+                android:minHeight="@dimen/_160sdp"
+                app:controller_layout_id="@layout/layout_live_player_controller"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/practice_title_tv"
+                tools:visibility="visible" />
+
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                android:id="@+id/grammar_desc_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:gravity="start|center"
+                android:text="slkdfjweo sdf sdklf wpof spo wepofm sddopf wefpow fms s sofslkd ois sdfjiweof sdf wioef  siodf s"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                android:textColor="@color/black"
+                app:layout_constraintEnd_toStartOf="@+id/expand_iv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/video_player"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/expand_iv"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/video_player"
+                app:srcCompat="@drawable/arrow_down" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/additional_material_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawablePadding="@dimen/_8sdp"
+                android:gravity="center_vertical"
+                android:padding="@dimen/_8sdp"
+                android:text="Android study material"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+                app:drawableStartCompat="@drawable/ic_pdf"
+                app:layout_constraintEnd_toStartOf="@+id/download_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/grammar_desc_tv" />
+
+            <FrameLayout
+                android:id="@+id/download_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/additional_material_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/additional_material_tv">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_start_download"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_gravity="end|center"
+                    android:background="@drawable/circle_pdf_bg"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="@dimen/_6sdp"
+                    android:tint="#7A7A7A"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/ic_download" />
+
+                <com.pnikosis.materialishprogress.ProgressWheel
+                    android:id="@+id/progress_dialog"
+                    android:layout_width="@dimen/_28sdp"
+                    android:layout_height="@dimen/_28sdp"
+                    android:layout_gravity="center_vertical|end"
+                    android:visibility="gone"
+                    app:matProg_barWidth="@dimen/_2sdp"
+                    tools:visibility="gone"
+                    wheel:matProg_barColor="#878A91"
+                    wheel:matProg_fillRadius="true"
+                    wheel:matProg_progressIndeterminate="true" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_cancel_download"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|end"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="@dimen/_5sdp"
+                    android:tint="#878A91"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/ic_cross"
+                    tools:visibility="gone" />
+
+            </FrameLayout>
+            <!-- <androidx.appcompat.widget.AppCompatImageView
+                 android:id="@+id/download_iv"
+                 android:layout_width="@dimen/_24sdp"
+                 android:layout_height="@dimen/_24sdp"
+                 android:layout_marginEnd="@dimen/_8sdp"
+                 android:background="@drawable/circle_pdf_bg"
+                 android:padding="@dimen/_6sdp"
+                 app:layout_constraintBottom_toBottomOf="@+id/additional_material_tv"
+                 app:layout_constraintEnd_toEndOf="parent"
+                 app:layout_constraintTop_toTopOf="@+id/additional_material_tv"
+                 app:srcCompat="@drawable/ic_download" />
+ -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/quiz_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/_8sdp"
+                android:text="Today's quiz"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/additional_material_tv" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/quiz_question_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/_8sdp"
+                android:text="Ques. 1/5 - What is the correct translation of “Hum sab apni english sudharna chahte hai”?"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/quiz_tv"
+                tools:text="Ques. 1/5 - What is the correct translation of “Hum sab apni english sudharna chahte hai”?" />
+
+            <RadioGroup
+                android:id="@+id/quiz_radio_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/_8sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/quiz_question_tv">
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/option_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="We all want to improve our english"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular" />
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/option_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="We all will want to improve our english"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular" />
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/option_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Option third"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular" />
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/option_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Option fourth"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular" />
+            </RadioGroup>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/quiz_shader"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:alpha="0.92"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/quiz_radio_group"
+                app:layout_constraintTop_toTopOf="@+id/quiz_tv"
+                app:srcCompat="@color/white" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/submit_answer_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_marginVertical="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_16sdp"
+                android:background="@drawable/rounded_state_button_bg"
+                android:gravity="center"
+                android:padding="@dimen/_8sdp"
+                android:text="@string/submit_answer"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/quiz_radio_group"
+                app:rippleColor="@color/white" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/show_explanation_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_marginVertical="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_16sdp"
+                android:background="@drawable/rounded_state_button_bg"
+                android:enabled="false"
+                android:gravity="center"
+                android:padding="@dimen/_8sdp"
+                android:text="@string/show_explanation"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/submit_answer_btn"
+                app:rippleColor="@color/white" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>

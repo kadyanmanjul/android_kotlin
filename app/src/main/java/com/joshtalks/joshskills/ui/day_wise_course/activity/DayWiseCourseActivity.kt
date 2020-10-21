@@ -3,6 +3,9 @@ package com.joshtalks.joshskills.ui.day_wise_course.activity
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.tabs.TabLayout
@@ -40,9 +43,20 @@ class DayWiseCourseActivity : AppCompatActivity() {
             this,
             R.layout.daywise_course_activity
         )
+
         chatModel = intent.getParcelableExtra(CHAT_OBJECT)
         if (chatModel == null)
             finish()
+
+        val titleView: TextView = findViewById(R.id.text_message_title)
+        val helpIv: ImageView = findViewById(R.id.iv_help)
+        titleView.text = "Lesson 1"
+        helpIv.visibility = View.GONE
+        findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
+        findViewById<View>(R.id.iv_back).setOnClickListener {
+            onBackPressed()
+        }
+
         val adapter = LessonPagerAdapter(chatModel!!, supportFragmentManager, this.lifecycle)
         binding.lessonViewpager.adapter = adapter
 

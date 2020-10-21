@@ -142,7 +142,8 @@
                             android:background="@drawable/video_placeholder"
                             android:clickable="true"
                             android:focusable="true"
-                            android:visibility="gone" />
+                            android:visibility="gone"
+                            tools:visibility="visible" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar_image_view"
@@ -164,7 +165,9 @@
                         android:gravity="start|center"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/black"
-                        android:visibility="gone" />
+                        android:text="slkdfjweo sdf"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/practise_input_header"
@@ -346,26 +349,6 @@
                                 android:textColor="@color/gray_9E"
                                 app:layout_goneMarginTop="@dimen/spacing_large" />
                         </RelativeLayout>
-
-                        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                            android:id="@+id/et_submit_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:autoSizeMaxTextSize="@dimen/font_16"
-                            android:background="@drawable/round_rect_default"
-                            android:backgroundTint="#60e5e5e5"
-                            android:cursorVisible="false"
-                            android:enabled="false"
-                            android:focusable="false"
-                            android:gravity="start|top"
-                            android:imeOptions="actionDone"
-                            android:inputType="none"
-                            android:padding="@dimen/_4sdp"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                            android:textColor="@color/black"
-                            android:textCursorDrawable="@drawable/cursor_drawable"
-                            android:textSize="@dimen/font_15"
-                            android:visibility="gone" />
 
                     </LinearLayout>
 

@@ -202,7 +202,6 @@ class PracticeAdapter(
                         }
                     }
 
-
                     BASE_MESSAGE_TYPE.TX -> {
                         this.qText?.let {
                             binding.infoTv.visibility = VISIBLE
@@ -211,16 +210,21 @@ class PracticeAdapter(
                         }
                     }
                 }
+
+                if ((this.material_type == BASE_MESSAGE_TYPE.TX).not() && this.qText.isNullOrEmpty()
+                        .not()
+                ) {
+                    binding.infoTv2.text =
+                        HtmlCompat.fromHtml(this.qText!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    binding.infoTv2.visibility = VISIBLE
+                }
+
                 if (this.practiceEngagement.isNullOrEmpty()) {
                     binding.submitAnswerBtn.visibility = View.VISIBLE
-//                    appAnalytics.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, false)
-//                    appAnalytics.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Not Submitted")
                     setViewAccordingExpectedAnswer(chatModel)
                 } else {
                     hidePracticeInputLayout()
                     binding.submitAnswerBtn.visibility = View.GONE
-//                    appAnalytics.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
-//                    appAnalytics.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Already Submitted")
                     setViewUserSubmitAnswer(chatModel)
                 }
 

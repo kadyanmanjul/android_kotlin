@@ -98,7 +98,6 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
         }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
