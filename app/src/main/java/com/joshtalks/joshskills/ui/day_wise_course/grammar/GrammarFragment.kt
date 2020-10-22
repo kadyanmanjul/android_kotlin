@@ -17,7 +17,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.PdfOpenEventBus
-import com.joshtalks.joshskills.ui.day_wise_course.fragments.PRACTISE_OBJECT
+import com.joshtalks.joshskills.ui.day_wise_course.practice.PRACTISE_OBJECT
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest

@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.day_wise_course.activity
+package com.joshtalks.joshskills.ui.day_wise_course.lesson
 
 import android.content.Context
 import android.content.Intent
@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.databinding.ActivityDailyLessonsBinding
-import com.joshtalks.joshskills.ui.day_wise_course.adapter.LessonsAdapter
-import com.joshtalks.joshskills.ui.day_wise_course.lesson.LessonsViewModel
+import com.joshtalks.joshskills.repository.local.entity.LessonModel
+import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
 
 class DailyLessonsActivity : CoreJoshActivity() {
 
@@ -38,7 +38,7 @@ class DailyLessonsActivity : CoreJoshActivity() {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_daily_lessons)
 
-        adapter = LessonsAdapter(this)
+        adapter = LessonsAdapter(this, this::onItemClick)
         binding.lessonsRv.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
         binding.lessonsRv.adapter = adapter
@@ -50,6 +50,15 @@ class DailyLessonsActivity : CoreJoshActivity() {
             binding.lessonsRv.scrollToPosition(0)
 
         })
+    }
 
+    fun onItemClick(lessonModel: LessonModel) {
+        startActivity(
+            DayWiseCourseActivity.getDayWiseCourseActivityIntent(
+                this,
+                "${lessonModel.id}",
+                lessonModel.lessonName
+            )
+        )
     }
 }

@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.day_wise_course.adapter.LessonsAdapter" />
+            type="com.joshtalks.joshskills.ui.day_wise_course.lesson.LessonsAdapter" />
     </data>
 
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_16sdp"
+        android:layout_margin="@dimen/_8sdp"
         app:cardCornerRadius="@dimen/_8sdp"
         app:cardElevation="@dimen/_8sdp">
 
@@ -25,8 +26,8 @@
                 android:id="@+id/lesson_name_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
                 android:gravity="center"
+                android:layout_marginTop="@dimen/_4sdp"
                 android:text="Lesson 1: title name"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                 app:layout_constraintBottom_toTopOf="@+id/lesson_iv"
@@ -38,18 +39,18 @@
                 android:id="@+id/lesson_iv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_4sdp"
                 android:scaleType="fitXY"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/lesson_name_tv"
-                app:srcCompat="@drawable/have_a_referral" />
+                tools:srcCompat="@drawable/have_a_referral" />
 
             <TextView
                 android:id="@+id/start_lesson_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/_8sdp"
+                android:layout_marginVertical="@dimen/_4sdp"
                 android:gravity="center"
                 android:text="@string/start_lesson"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"

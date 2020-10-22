@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.day_wise_course.adapter
+package com.joshtalks.joshskills.ui.day_wise_course.lesson
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -11,7 +11,10 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.LayoutLessonItemBinding
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 
-class LessonsAdapter(val context: Context) :
+class LessonsAdapter(
+    val context: Context,
+    private val onItemClick: ((lesson: LessonModel) -> Unit)? = null
+) :
     PagedListAdapter<LessonModel, LessonsAdapter.LessonsViewHolder>(MyDiffUtilCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LessonsViewHolder {
@@ -39,7 +42,13 @@ class LessonsAdapter(val context: Context) :
                     lessonModel.lessonName
                 )
                 Utils.setImage(binding.lessonIv, lessonModel.varthumbnail)
+
+                binding.root.setOnClickListener {
+                    onItemClick?.invoke(lessonModel)
+                }
             }
+
+
         }
 
     }

@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.day_wise_course.fragments
+package com.joshtalks.joshskills.ui.day_wise_course.practice
 
 import android.content.Intent
 import android.os.Bundle
@@ -30,7 +30,6 @@ import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
-import com.joshtalks.joshskills.ui.day_wise_course.adapter.PracticeAdapter
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.ExoAudioPlayer.ProgressUpdateListener

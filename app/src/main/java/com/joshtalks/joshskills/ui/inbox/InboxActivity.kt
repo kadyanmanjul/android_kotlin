@@ -68,7 +68,7 @@ import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.SubscriptionData
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
-import com.joshtalks.joshskills.ui.day_wise_course.activity.DailyLessonsActivity
+import com.joshtalks.joshskills.ui.day_wise_course.lesson.DailyLessonsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.extra.TopTrialTooltipView
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
@@ -778,9 +778,11 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     if (it.inboxEntity.courseId.contentEquals("123")) {
-                        DailyLessonsActivity.startDailyLessonsActivity(
-                            this,
-                            it.inboxEntity.courseId
+                        startActivity(
+                            DailyLessonsActivity.startDailyLessonsActivity(
+                                this,
+                                it.inboxEntity.courseId
+                            )
                         )
                     } else
                         ConversationActivity.startConversionActivity(this, it.inboxEntity)

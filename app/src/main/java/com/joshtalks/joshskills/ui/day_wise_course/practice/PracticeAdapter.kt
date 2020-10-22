@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.day_wise_course.adapter
+package com.joshtalks.joshskills.ui.day_wise_course.practice
 
 import android.annotation.SuppressLint
 import android.content.Context

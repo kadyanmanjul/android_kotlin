@@ -6,7 +6,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.day_wise_course.activity.DailyLessonsActivity" />
+            type="com.joshtalks.joshskills.ui.day_wise_course.lesson.DailyLessonsActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

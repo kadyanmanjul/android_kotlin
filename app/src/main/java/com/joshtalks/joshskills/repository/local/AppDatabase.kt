@@ -319,6 +319,8 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_22_23: Migration = object : Migration(22, 23) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `lessonmodel` (`lesson_id` INTEGER PRIMARY KEY NOT NULL, `lesson_no` INTEGER NOT NULL, `lesson_name` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, `status` TEXT NOT NULL)")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN lesson INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN status TEXT NOT NULL DEFAULT 'NA'")
             }
         }
 

@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.repository.local.entity
 
 import android.os.Parcelable
+import androidx.lifecycle.LiveData
 import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Delete
@@ -149,14 +150,14 @@ data class Question(
     @ColumnInfo(name = "questionId")
     @SerializedName("id") var questionId: String = "",
 
-
     @ColumnInfo
     @Expose var chatId: String = "",
-
 
     @ColumnInfo
     @SerializedName("course_id") var course_id: Int = 0,
 
+    @ColumnInfo
+    @SerializedName("lesson") var lesson_id: Int = 0,
 
     @Ignore
     @SerializedName("images") var imageList: List<ImageType>? = null,
@@ -493,8 +494,14 @@ interface ChatDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertChatQuestion(question: Question)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertChatQuestions(question: List<Question>)
+
     @Query("SELECT * FROM question_table WHERE chatId= :chatId")
     suspend fun getQuestion(chatId: String): Question?
+
+    @Query("SELECT * FROM question_table WHERE lesson_id= :lessonId")
+    fun getQuestionsForLesson(lessonId: String): LiveData<List<Question>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAudioMessageList(audioList: List<AudioType>)
@@ -748,4 +755,16 @@ enum class DOWNLOAD_STATUS {
 
 enum class MESSAGE_STATUS(val type: String) {
     SEEN_BY_USER("seen_by_user"), DELIVERED("delivered"), SEEN_BY_SERVER("seen")
+}
+
+enum class QUESTION_STATUS(val type: String) {
+    NA("NA"), AT("AT")
+}
+
+enum class LESSON_STATUS(val type: String) {
+    NO("NO"), AT("AT"), Co("CO")
+}
+
+enum class QUESTION_TYPE(val type: String) {
+    GR("GR"), VP("VP"), RP("RP")
 }

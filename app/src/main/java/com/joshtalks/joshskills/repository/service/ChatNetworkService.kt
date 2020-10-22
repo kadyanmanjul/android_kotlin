@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.repository.service
 import com.joshtalks.joshskills.repository.local.entity.Course
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
+import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.BaseResponse
 import com.joshtalks.joshskills.repository.server.ChatMessageReceiver
@@ -107,4 +108,10 @@ interface ChatNetworkService {
         @Query("mentor_id") mentorId: String,
         @Query("course_id") courseId: String
     ): BaseResponse<List<LessonModel>>
+
+    @GET("$DIR/chat/lesson_questions/")
+    suspend fun getQuestionsForLesson(
+        @Query("mentor_id") mentorId: String,
+        @Query("lesson_id") lessonId: String
+    ): BaseResponse<List<Question>>
 }

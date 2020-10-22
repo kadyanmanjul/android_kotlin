@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import kotlinx.coroutines.launch
@@ -16,7 +15,6 @@ class LessonsViewModel(application: Application) :
 
     private val mRepository: LessonRepository = LessonRepository()
     var context: JoshApplication = getApplication()
-    var appDatabase = AppObjectController.appDatabase
 
     var allLessons: LiveData<PagedList<LessonModel>>? = null
 
