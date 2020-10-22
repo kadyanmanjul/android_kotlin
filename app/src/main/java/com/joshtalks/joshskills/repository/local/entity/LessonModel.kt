@@ -33,5 +33,15 @@ data class LessonModel(
     @ColumnInfo(name = "status")
     @SerializedName("status")
     @Expose
-    var status: String
+    var status: String,
+
+    @ColumnInfo(name = "course")
+    @SerializedName("course")
+    @Expose
+    var course: Int,
+
+    @ColumnInfo(name = "interval")
+    @SerializedName("interval")
+    @Expose
+    var interval: Int
 )

@@ -1,8 +1,10 @@
 package com.joshtalks.joshskills.repository.service
 
 import com.joshtalks.joshskills.repository.local.entity.Course
+import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
+import com.joshtalks.joshskills.repository.server.BaseResponse
 import com.joshtalks.joshskills.repository.server.ChatMessageReceiver
 import com.joshtalks.joshskills.repository.server.CoursePerformanceResponse
 import com.joshtalks.joshskills.repository.server.RequestEngage
@@ -18,6 +20,7 @@ import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 import retrofit2.http.QueryMap
 
 @JvmSuppressWildcards
@@ -99,4 +102,9 @@ interface ChatNetworkService {
     @PATCH("$DIR/chat/add_next_class/{id}/")
     suspend fun changeBatchRequest(@Path("id") conversationId: String): Response<Any>
 
+    @GET("$DIR/chat/lessons/")
+    suspend fun getLessonList(
+        @Query("mentor_id") mentorId: String,
+        @Query("course_id") courseId: String
+    ): BaseResponse<List<LessonModel>>
 }

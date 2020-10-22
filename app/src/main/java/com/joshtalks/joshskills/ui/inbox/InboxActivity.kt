@@ -68,6 +68,7 @@ import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.SubscriptionData
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
+import com.joshtalks.joshskills.ui.day_wise_course.activity.DailyLessonsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.extra.TopTrialTooltipView
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
@@ -543,10 +544,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             WorkManagerAdmin.determineNPAEvent()
         }
         when {
-          /*  PrefManager.getBoolValue(BETTERY_OPTIMIZATION_ALREADY_ASKED).not() -> {
-                PowerManagers.checkIgnoreBatteryOptimization(this)
-                PrefManager.put(BETTERY_OPTIMIZATION_ALREADY_ASKED, true)
-            }*/
+            /*  PrefManager.getBoolValue(BETTERY_OPTIMIZATION_ALREADY_ASKED).not() -> {
+                  PowerManagers.checkIgnoreBatteryOptimization(this)
+                  PrefManager.put(BETTERY_OPTIMIZATION_ALREADY_ASKED, true)
+              }*/
             NPSEventModel.getCurrentNPA() != null -> {
                 showNetPromoterScoreDialog()
             }
@@ -736,7 +737,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         AppAnalytics.create(eventName)
             .addBasicParam()
             .addUserDetails()
-            .addParam("version",VersionResponse.getInstance().version?.name.toString())
+            .addParam("version", VersionResponse.getInstance().version?.name.toString())
             .push()
     }
 
@@ -776,7 +777,13 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    ConversationActivity.startConversionActivity(this, it.inboxEntity)
+                    if (it.inboxEntity.courseId.contentEquals("123")) {
+                        DailyLessonsActivity.startDailyLessonsActivity(
+                            this,
+                            it.inboxEntity.courseId
+                        )
+                    } else
+                        ConversationActivity.startConversionActivity(this, it.inboxEntity)
                 }, {
                     it.printStackTrace()
                 })
