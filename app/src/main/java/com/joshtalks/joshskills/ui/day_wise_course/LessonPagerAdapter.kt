@@ -4,8 +4,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.ui.day_wise_course.grammar.GrammarFragment
 import com.joshtalks.joshskills.ui.day_wise_course.practice.NewPracticeFragment
@@ -26,14 +26,14 @@ class LessonPagerAdapter(
         questionList.forEach {
             val chatModel = ChatModel()
             chatModel.question = it
-            when (it.questionType) {
-                QUESTION_TYPE.GR.name -> {
+            when (it.chatType) {
+                CHAT_TYPE.GR -> {
                     grammarQuestions.add(chatModel)
                 }
-                QUESTION_TYPE.RP.name -> {
+                CHAT_TYPE.RP -> {
                     readingQuestions.add(chatModel)
                 }
-                QUESTION_TYPE.VP.name -> {
+                CHAT_TYPE.VP -> {
                     vocabularyQuestions.add(chatModel)
                 }
             }

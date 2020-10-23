@@ -231,6 +231,10 @@ data class Question(
     @ColumnInfo(name = "temp_type")
     @Expose var tempType: BASE_MESSAGE_TYPE? = type,
 
+    @ColumnInfo(name = "chat_type")
+    @SerializedName("chat_type")
+    @Expose var chatType: CHAT_TYPE = CHAT_TYPE.OTHER,
+
     @Ignore
     @Expose var vAssessmentCount: Int = -1
 
@@ -765,6 +769,6 @@ enum class LESSON_STATUS(val type: String) {
     NO("NO"), AT("AT"), Co("CO")
 }
 
-enum class QUESTION_TYPE(val type: String) {
-    GR("GR"), VP("VP"), RP("RP")
+enum class CHAT_TYPE(val type: String) {
+    GR("GR"), VP("VP"), RP("RP"), OTHER("OTHER")
 }

@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.repository.local.dao.LessonDao
 import com.joshtalks.joshskills.repository.local.dao.reminder.ReminderDao
 import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatDao
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.Course
@@ -83,7 +84,8 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     TypeConverterQuestionStatus::class,
     TypeConverterChoiceColumn::class,
     TypeConverterAssessmentType::class,
-    TypeConverterAssessmentMediaType::class
+    TypeConverterAssessmentMediaType::class,
+    ChatTypeConverters::class
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -321,6 +323,7 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `lessonmodel` (`lesson_id` INTEGER PRIMARY KEY NOT NULL, `lesson_no` INTEGER NOT NULL, `lesson_name` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, `status` TEXT NOT NULL)")
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN lesson INTEGER NOT NULL DEFAULT 0")
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN status TEXT NOT NULL DEFAULT 'NA'")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN chat_type TEXT NOT NULL DEFAULT 'NA'")
             }
         }
 
@@ -529,3 +532,28 @@ class ConvectorForNPSEvent {
         return AppObjectController.gsonMapper.fromJson(value, type)
     }
 }
+
+
+class ChatTypeConverters {
+    @TypeConverter
+    fun fromString(value: String?): CHAT_TYPE? {
+        return try {
+            val matType = object : TypeToken<CHAT_TYPE>() {}.type
+            AppObjectController.gsonMapper.fromJson(
+                value ?: CHAT_TYPE.OTHER.name, matType
+            )
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            CHAT_TYPE.OTHER
+        }
+    }
+
+    @TypeConverter
+    fun fromMatType(enumVal: CHAT_TYPE?): String? {
+        if (null != enumVal) {
+            return AppObjectController.gsonMapper.toJson(enumVal)
+        }
+        return AppObjectController.gsonMapper.toJson(CHAT_TYPE.OTHER)
+    }
+}
+

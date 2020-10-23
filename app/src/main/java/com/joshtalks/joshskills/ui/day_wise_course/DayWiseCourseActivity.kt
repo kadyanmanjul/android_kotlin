@@ -60,29 +60,28 @@ class DayWiseCourseActivity : AppCompatActivity() {
             onBackPressed()
         }
 
-        val adapter = LessonPagerAdapter(questionList, supportFragmentManager, this.lifecycle)
-        binding.lessonViewpager.adapter = adapter
-
-        TabLayoutMediator(
-            binding.lessonTabLayout,
-            binding.lessonViewpager,
-            object : TabLayoutMediator.TabConfigurationStrategy {
-                override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {
-                    when (position) {
-                        0 -> tab.text = getString(R.string.grammer)
-                        1 -> tab.text = getString(R.string.vocabulary)
-                        2 -> tab.text = getString(R.string.reading)
-                        3 -> tab.text = getString(R.string.speaking)
-                    }
-                }
-            }).attach()
-
         viewModel.syncQuestions(lessonId)
         viewModel.getQuestions(lessonId)
 
-        viewModel.questions.observe(this, {
-            questionList.addAll(it)
-            adapter.notifyDataSetChanged()
+        viewModel.questions.observe(this, { questions ->
+            questionList.clear()
+            questionList.addAll(questions)
+            val adapter = LessonPagerAdapter(questionList, supportFragmentManager, this.lifecycle)
+            binding.lessonViewpager.adapter = adapter
+            TabLayoutMediator(
+                binding.lessonTabLayout,
+                binding.lessonViewpager,
+                object : TabLayoutMediator.TabConfigurationStrategy {
+                    override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {
+                        when (position) {
+                            0 -> tab.text = getString(R.string.grammar)
+                            1 -> tab.text = getString(R.string.vocabulary)
+                            2 -> tab.text = getString(R.string.reading)
+                            3 -> tab.text = getString(R.string.speaking)
+                        }
+                    }
+                }).attach()
+
         })
 
     }
