@@ -40,7 +40,6 @@ import com.joshtalks.joshskills.core.service.video_download.VideoDownloadControl
 import com.joshtalks.joshskills.engage_notification.UsageStatsService
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.service.ChatNetworkService
 import com.joshtalks.joshskills.repository.service.CommonNetworkService
 import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
@@ -51,8 +50,7 @@ import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.newrelic.agent.android.FeatureFlag
 import com.newrelic.agent.android.NewRelic
-import com.sinch.android.rtc.Sinch
-import com.sinch.android.rtc.SinchClient
+import com.plivo.endpoint.Endpoint
 import com.tonyodev.fetch2.Fetch
 import com.tonyodev.fetch2.FetchConfiguration
 import com.tonyodev.fetch2.HttpUrlConnectionDownloader
@@ -183,10 +181,6 @@ class AppObjectController {
             private set
 
         @JvmStatic
-        var sinchClient: SinchClient? = null
-            private set
-
-        @JvmStatic
         var currentActivityClass: String? = null
 
         @JvmStatic
@@ -194,6 +188,9 @@ class AppObjectController {
 
         @JvmStatic
         var isSettingUpdate: Boolean = false
+
+        @JvmStatic
+        var endpoint: Endpoint? = null
 
         fun initLibrary(context: Context): AppObjectController {
             joshApplication = context as JoshApplication
@@ -300,12 +297,11 @@ class AppObjectController {
 
         fun init(context: JoshApplication) {
             joshApplication = context
-            initFacebookService(context)
             com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
             ActivityLifecycleCallback.register(joshApplication)
             AppEventsLogger.activateApp(joshApplication)
-            initSinchClient()
             initUXCam()
+            initFacebookService(joshApplication)
         }
 
 
@@ -330,6 +326,9 @@ class AppObjectController {
         }
 
         private fun initFacebookService(context: Context) {
+            if (FacebookSdk.isInitialized().not()) {
+                FacebookSdk.fullyInitialize()
+            }
             FacebookSdk.setAutoLogAppEventsEnabled(false)
             FacebookSdk.setLimitEventAndDataUsage(context, true)
             facebookEventLogger = AppEventsLogger.newLogger(context)
@@ -464,28 +463,6 @@ class AppObjectController {
             return FirebaseRemoteConfig.getInstance()
         }
 
-        fun initSinchClient(): SinchClient? {
-            if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
-                return null
-            }
-            if (sinchClient != null) {
-                return sinchClient
-            }
-            sinchClient = Sinch.getSinchClientBuilder()
-                .context(joshApplication)
-                .userId(Mentor.getInstance().getId())
-                .applicationKey(BuildConfig.SINCH_API_KEY)
-                .applicationSecret(BuildConfig.SINCH_API_SECRET)
-                .environmentHost("clientapi.sinch.com")
-                .build()
-            sinchClient?.setSupportCalling(true)
-            sinchClient?.setSupportManagedPush(true)
-            sinchClient?.setSupportPushNotifications(true)
-            sinchClient?.startListeningOnActiveConnection()
-            sinchClient?.setSupportActiveConnectionInBackground(true)
-            return sinchClient
-        }
-
         private fun initUXCam() {
             UXCam.setAutomaticScreenNameTagging(true)
         }
@@ -613,7 +590,6 @@ class AppObjectController {
         }
 
         fun releaseInstance() {
-            sinchClient = null
             fetch = null
             freshChat = null
         }
