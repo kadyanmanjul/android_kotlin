@@ -235,25 +235,6 @@
                             android:textColor="@color/gray_9E"
                             android:visibility="gone" />
 
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/upload_file_view"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="@dimen/_8sdp"
-                            android:drawablePadding="@dimen/_2sdp"
-                            android:gravity="center"
-                            android:paddingStart="@dimen/_4sdp"
-                            android:paddingTop="@dimen/_4sdp"
-                            android:paddingEnd="@dimen/_4sdp"
-                            android:text="@string/upload_file_msz"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                            android:textColor="@color/gray_9E"
-                            android:visibility="gone"
-                            app:drawableStartCompat="@drawable/ic_file_upload"
-                            app:drawableTint="@color/emoji_icon_color" />
-
                     </LinearLayout>
 
                     <androidx.appcompat.widget.AppCompatTextView

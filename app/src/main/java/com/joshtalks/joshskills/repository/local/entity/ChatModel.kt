@@ -176,6 +176,7 @@ data class Question(
     @SerializedName("parent_id") var parent_id: String? = "",
 
     @Ignore
+    @Expose
     @SerializedName("pdf") var pdfList: List<PdfType>? = null,
 
     @ColumnInfo(name = "qText")
@@ -504,6 +505,9 @@ interface ChatDao {
     @Query("SELECT * FROM question_table WHERE chatId= :chatId")
     suspend fun getQuestion(chatId: String): Question?
 
+    @Query("SELECT * FROM question_table WHERE questionId= :questionId")
+    suspend fun getQuestionByQuestionId(questionId: String): Question?
+
     @Query("SELECT * FROM question_table WHERE lesson_id= :lessonId")
     fun getQuestionsForLesson(lessonId: String): LiveData<List<Question>>
 
@@ -571,6 +575,31 @@ interface ChatDao {
 
     @Transaction
     suspend fun getUpdatedChatObjectViaId(id: String): ChatModel {
+        val chatModel: ChatModel = getChatObject(chatId = id)
+        if (chatModel.type == BASE_MESSAGE_TYPE.Q) {
+            val question: Question? = getQuestion(id)
+            if (question != null) {
+                when (question.material_type) {
+                    BASE_MESSAGE_TYPE.IM ->
+                        question.imageList =
+                            getImagesOfQuestion(questionId = question.questionId)
+                    BASE_MESSAGE_TYPE.VI -> question.videoList =
+
+                        getVideosOfQuestion(questionId = question.questionId)
+                    BASE_MESSAGE_TYPE.AU -> question.audioList =
+                        getAudiosOfQuestion(questionId = question.questionId)
+                    BASE_MESSAGE_TYPE.PD -> question.pdfList =
+                        getPdfOfQuestion(questionId = question.questionId)
+                }
+                chatModel.question = question
+            }
+        }
+        return chatModel
+    }
+
+
+    @Transaction
+    suspend fun getUpdatedQuestionObjectViaId(id: String): ChatModel {
         val chatModel: ChatModel = getChatObject(chatId = id)
         if (chatModel.type == BASE_MESSAGE_TYPE.Q) {
             val question: Question? = getQuestion(id)

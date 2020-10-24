@@ -274,7 +274,6 @@ class PracticeAdapter(
                 showPracticeInputLayout()
                 this.expectedEngageType?.let {
                     binding.uploadPractiseView.visibility = VISIBLE
-                    binding.uploadFileView.visibility = VISIBLE
 
                     binding.practiseInputHeader.text =
                         context.getString(R.string.record_answer_label)

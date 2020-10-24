@@ -404,4 +404,6 @@
     <string name="reading">पढ़ना</string>
     <string name="lesson_name">पाठ %1$d: %2$s</string>
     <string name="start_lesson">पाठ शुरू करें</string>
+    <string name="show_explanation">व्याख्या दिखाएँ</string>
+    <string name="explanation">व्याख्या</string>
 </resources>

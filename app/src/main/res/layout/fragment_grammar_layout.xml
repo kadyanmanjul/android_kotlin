@@ -12,6 +12,7 @@
     </data>
 
     <ScrollView
+        android:id="@+id/grammar_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
@@ -59,6 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:layout_marginTop="@dimen/_8sdp"
+                android:maxLines="1"
                 android:gravity="start|center"
                 android:text="slkdfjweo sdf sdklf wpof spo wepofm sddopf wefpow fms s sofslkd ois sdfjiweof sdf wioef  siodf s"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
@@ -72,6 +74,7 @@
                 android:id="@+id/expand_iv"
                 android:layout_width="@dimen/_20sdp"
                 android:layout_height="@dimen/_20sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
                 android:layout_marginTop="@dimen/_8sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/video_player"
@@ -83,6 +86,7 @@
                 android:layout_height="wrap_content"
                 android:drawablePadding="@dimen/_8sdp"
                 android:gravity="center_vertical"
+                android:onClick="@{()->handler.onClickPdfContainer()}"
                 android:padding="@dimen/_8sdp"
                 android:text="Android study material"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
@@ -112,6 +116,7 @@
                     android:background="@drawable/circle_pdf_bg"
                     android:clickable="true"
                     android:focusable="true"
+                    android:onClick="@{()->handler.downloadStart()}"
                     android:padding="@dimen/_6sdp"
                     android:tint="#7A7A7A"
                     android:visibility="visible"
@@ -136,6 +141,7 @@
                     android:layout_gravity="center_vertical|end"
                     android:clickable="true"
                     android:focusable="true"
+                    android:onClick="@{()->handler.downloadCancel()}"
                     android:padding="@dimen/_5sdp"
                     android:tint="#878A91"
                     android:visibility="gone"
@@ -203,7 +209,6 @@
                     android:id="@+id/option_3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:checked="true"
                     android:text="Option third"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular" />
 
@@ -235,11 +240,35 @@
                 android:layout_marginBottom="@dimen/_16sdp"
                 android:background="@drawable/rounded_state_button_bg"
                 android:gravity="center"
+                android:onClick="@{()->handler.onQuestionSubmit()}"
                 android:padding="@dimen/_8sdp"
                 android:text="@string/submit_answer"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/quiz_radio_group"
+                app:rippleColor="@color/white" />
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/continue_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_marginVertical="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_16sdp"
+                android:background="@drawable/rounded_state_button_bg"
+                android:gravity="center"
+                android:onClick="@{()->handler.onContinueClick()}"
+                android:padding="@dimen/_8sdp"
+                android:text="@string/continue_label"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                android:textColor="@color/white"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/quiz_radio_group"
@@ -256,6 +285,7 @@
                 android:background="@drawable/rounded_state_button_bg"
                 android:enabled="false"
                 android:gravity="center"
+                android:onClick="@{()->handler.showExplanation()}"
                 android:padding="@dimen/_8sdp"
                 android:text="@string/show_explanation"
                 android:textAllCaps="false"
@@ -266,6 +296,28 @@
                 app:layout_constraintTop_toBottomOf="@id/submit_answer_btn"
                 app:rippleColor="@color/white" />
 
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/explanation_lbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:padding="@dimen/_8sdp"
+                android:text="@string/explanation"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/show_explanation_btn" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/explanation_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/explanation_lbl" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </layout>
