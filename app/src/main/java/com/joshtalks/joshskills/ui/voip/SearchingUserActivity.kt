@@ -204,7 +204,7 @@ class SearchingUserActivity : BaseActivity(), OnDismissWithDialog {
                     .addUserDetails()
                     .push()
                 viewModel.voipDetailsLiveData.postValue(null)
-                WebRtcActivity.startVoipActivity(this, it)
+                WebRtcActivity.startOutgoingCallActivity(this, it)
             }
         }
     }

@@ -1,37 +1,50 @@
 package com.joshtalks.joshskills.ui.voip
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.ContentResolver
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.media.AudioAttributes
-import android.media.AudioManager.STREAM_RING
+import android.media.AudioManager
 import android.net.Uri
 import android.os.Binder
 import android.os.Build
-import android.os.Bundle
 import android.os.IBinder
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.Log
+import androidx.annotation.ColorRes
+import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.CallType
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.JoshSkillExecutors
-import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.notification.FCM_TOKEN
+import com.joshtalks.joshskills.repository.local.model.UserPlivoDetailsModel
+import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CONNECTED_CALL_CHANNEL_ID
+import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CONNECTED_CALL_NOTIFICATION_ID
+import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.EMPTY_CHANNEL_ID
+import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_CHANNEL_ID
+import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_NOTIFICATION_ID
+import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.OUTGOING_CALL_CHANNEL_ID
+import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.OUTGOING_CALL_NOTIFICATION_ID
 import com.joshtalks.joshskills.ui.voip.extra.FullScreenActivity
-import com.sinch.android.rtc.ClientRegistration
-import com.sinch.android.rtc.SinchClient
-import com.sinch.android.rtc.SinchClientListener
-import com.sinch.android.rtc.SinchError
-import com.sinch.android.rtc.calling.Call
-import com.sinch.android.rtc.calling.CallClientListener
-import com.sinch.gson.JsonElement
-import com.sinch.gson.JsonParser
+import com.joshtalks.joshskills.ui.voip.util.SoundPoolManager
+import com.plivo.endpoint.Endpoint
+import com.plivo.endpoint.EventListener
+import com.plivo.endpoint.Incoming
+import com.plivo.endpoint.Outgoing
+import java.util.HashMap
 import java.util.concurrent.ExecutorService
 import timber.log.Timber
 
@@ -39,41 +52,85 @@ class WebRtcService : Service() {
 
     private var mNotificationManager: NotificationManager? = null
     private val mBinder: IBinder = MyBinder()
-    private val INCOMING_CALL_CHANNEL_ID = "incoming_call_channel_id"
-    private val CALL_NOTIFICATION_ID = 200001
-    private var sinchClient: SinchClient? = null
-    private var call: Call? = null
+    private var endpoint: Endpoint? = null
+    private var userPlivo: UserPlivoDetailsModel? = null
+    private var callData: Any? = null
+    private var options: HashMap<String, Any> = object : HashMap<String, Any>() {
+        init {
+            put("debug", BuildConfig.DEBUG)
+            put("enableTracking", true)
+            put("maxAverageBitrate", 21000)
+        }
+    }
+    private var isSpeakerEnable = false
+    private var isMicEnable = true
 
     private val executor: ExecutorService =
         JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-Calling Service")
 
     companion object {
-        private val TAG = "SinchCallingListenService"
+        private val TAG = "PlivoCallingListenService"
 
         @Volatile
         var isCallWasOnGoing: Boolean = false
 
-        fun onIncomingCall(data: Map<String, String>) {
-            Timber.tag(TAG).e("OnIncomingCall")
-
-            val pq = AppObjectController.sinchClient?.relayRemotePushNotificationPayload(
-                data
-            )
-            var iData: String? = pq?.callResult?.headers?.get("data")
-            if (iData == null) {
-                if (pq?.displayName.equals("private", ignoreCase = true)) {
-                    return
-                } else {
-                    iData = pq?.displayName ?: EMPTY
-                }
-            }
-
+        fun loginUserClient() {
             val serviceIntent = Intent(
                 AppObjectController.joshApplication,
                 WebRtcService::class.java
             ).apply {
-                action = IncomingCallNotification().action
-                putExtra(INCOMING_CALL_JSON_OBJECT, iData)
+                action = LoginUser().action
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && JoshApplication.isAppVisible.not()) {
+                serviceIntent.also { intent ->
+                    AppObjectController.joshApplication.startForegroundService(intent)
+                }
+            } else {
+                AppObjectController.joshApplication.startService(serviceIntent)
+            }
+        }
+
+        fun startOutgoingCall(map: HashMap<String, String>) {
+            val serviceIntent = Intent(
+                AppObjectController.joshApplication,
+                WebRtcService::class.java
+            ).apply {
+                action = OutgoingCall().action
+                putExtra(CALL_USER_OBJ, map)
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && JoshApplication.isAppVisible.not()) {
+                serviceIntent.also { intent ->
+                    AppObjectController.joshApplication.startForegroundService(intent)
+                }
+            } else {
+                AppObjectController.joshApplication.startService(serviceIntent)
+            }
+        }
+
+        fun startOnNotificationIncomingCall(data: HashMap<String, String>) {
+            val serviceIntent = Intent(
+                AppObjectController.joshApplication,
+                WebRtcService::class.java
+            ).apply {
+                action = NotificationIncomingCall().action
+                putExtra(INCOMING_CALL_USER_OBJ, data)
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && JoshApplication.isAppVisible.not()) {
+                serviceIntent.also { intent ->
+                    AppObjectController.joshApplication.startForegroundService(intent)
+                }
+            } else {
+                AppObjectController.joshApplication.startService(serviceIntent)
+            }
+        }
+
+        fun startOnIncomingCall(data: HashMap<String, String>) {
+            val serviceIntent = Intent(
+                AppObjectController.joshApplication,
+                WebRtcService::class.java
+            ).apply {
+                action = IncomingCall().action
+                putExtra(INCOMING_CALL_USER_OBJ, data)
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && JoshApplication.isAppVisible.not()) {
                 serviceIntent.also { intent ->
@@ -85,196 +142,67 @@ class WebRtcService : Service() {
         }
     }
 
-    private var sinchClientListener = object : SinchClientListener {
-        override fun onClientStarted(client: SinchClient) {
-            Timber.tag(TAG).e("onClientStarted")
+    private var eventListener = object : EventListener {
+        override fun onLogin() {
+            endpoint?.keepAlive()
+            Timber.tag(TAG).e("LoginUser")
+            Timber.tag(TAG).e("= " + endpoint?.registered.toString())
         }
 
-        override fun onClientStopped(client: SinchClient) {
-            Timber.tag(TAG).e("onClientStopped")
+        override fun onLogout() {
+            Timber.tag(TAG).e("LogOutUser")
         }
 
-
-        override fun onClientFailed(client: SinchClient, error: SinchError) {
-            Timber.tag(TAG).e("onClientFailed")
+        override fun onLoginFailed() {
+            Timber.tag(TAG).e("onLoginFailed")
         }
 
-        override fun onRegistrationCredentialsRequired(
-            p0: SinchClient,
-            registrationCallback: ClientRegistration
-        ) {
-            Timber.tag(TAG).e("onRegistrationCredentialsRequired")
+        override fun onIncomingDigitNotification(p0: String) {
+            Timber.tag(TAG).e("onIncomingDigitNotification=  " + p0)
         }
 
-        override fun onLogMessage(level: Int, area: String, message: String) {
-            Timber.tag(TAG).e("Sinch Log %s", message)
+        override fun onIncomingCall(incoming: Incoming) {
+            Timber.tag(TAG).e("onIncomingCall")
+            callData = incoming
+            startOnIncomingCall(incoming.headerDict as HashMap<String, String>)
         }
 
-    }
-
-    private var callClientListener =
-        CallClientListener { _, incomingCall ->
-            isCallWasOnGoing = true
-            call = incomingCall
-            Timber.tag(TAG).e("Call Incoming%s", call)
-
-            val serviceIntent = Intent(
-                AppObjectController.joshApplication,
-                WebRtcService::class.java
-            ).apply {
-                action = IncomingCallNotification().action
-                putExtra(INCOMING_CALL_JSON_OBJECT, incomingCall.headers["data"])
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && JoshApplication.isAppVisible.not()) {
-                serviceIntent.also { intent ->
-                    AppObjectController.joshApplication.startForegroundService(intent)
-                }
-            } else {
-                AppObjectController.joshApplication.startService(serviceIntent)
-            }
-
-            val i = Intent()
-            i.setClass(this, WebRtcActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            }
-            i.putExtra(INCOMING_CALL_JSON_OBJECT, incomingCall.headers["data"])
-            startActivity(i)
-
+        override fun onIncomingCallHangup(incoming: Incoming) {
+            Timber.tag(TAG).e("onIncomingCallHangup ")
         }
 
-    override fun onCreate() {
-        super.onCreate()
-        if (AppObjectController.sinchClient == null || sinchClient == null) {
-            sinchClient = AppObjectController.initSinchClient()
-        }
-        executor.execute {
-            mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
-            sinchClient?.let { sinchClient ->
-                if (sinchClient.isStarted.not()) {
-                    sinchClient.setSupportActiveConnectionInBackground(true)
-                    sinchClient.start()
-                }
-                sinchClient.addSinchClientListener(sinchClientListener)
-                sinchClient.callClient?.addCallClientListener(callClientListener)
-                sinchClient.startListeningOnActiveConnection()
-            }
+        override fun onIncomingCallRejected(p0: Incoming) {
+            Timber.tag(TAG).e("onIncomingCallRejected")
         }
 
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Timber.tag(TAG).e("StartService")
-        if (intent?.action == null || sinchClient == null) {
-            return START_NOT_STICKY
+        override fun onIncomingCallInvalid(p0: Incoming) {
+            Timber.tag(TAG).e("onIncomingCallInvalid")
         }
-        executor.execute {
-            intent.action?.run {
-                Timber.tag(TAG).e(intent.getStringExtra(INCOMING_CALL_JSON_OBJECT))
-                when {
-                    this == IncomingCallNotification().action -> {
-                        getSinchCall(intent.getStringExtra(INCOMING_CALL_JSON_OBJECT))
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && JoshApplication.isAppVisible.not()) {
-                            val notification = incomingCallNotification(
-                                intent.getStringExtra(INCOMING_CALL_JSON_OBJECT)
-                            )
-                            mNotificationManager?.notify(
-                                CALL_NOTIFICATION_ID, notification
-                            )
-                            startForeground(CALL_NOTIFICATION_ID, notification)
-                        } else {
-                            processIncomingCall(intent.getStringExtra(INCOMING_CALL_JSON_OBJECT))
-                        }
-                    }
-                    this == IncomingCall().action -> {
-                        getSinchCall(intent.getStringExtra(INCOMING_CALL_JSON_OBJECT))
-                        processIncomingCall(intent.getStringExtra(INCOMING_CALL_JSON_OBJECT))
-                    }
-                    this == CallDisconnect().action -> {
-                        stopForeground(true)
-                        mNotificationManager?.cancel(CALL_NOTIFICATION_ID)
-                        call?.hangup()
-                    }
-                    this == CallConnect().action -> {
-                        printIntent(intent)
-                        stopForeground(true)
-                        mNotificationManager?.cancel(CALL_NOTIFICATION_ID)
-                        processIncomingCall(
-                            intent.getStringExtra(INCOMING_CALL_JSON_OBJECT),
-                            pickupCall = true
-                        )
-                    }
-                    this == OutgoingCall().action -> {
-                        Timber.tag(TAG).e("Outgoing")
-                    }
-                }
-            }
 
+        override fun onOutgoingCall(outgoing: Outgoing) {
+            callData = outgoing
+            Timber.tag(TAG).e("onOutgoingCall")
         }
-        return START_STICKY
-    }
 
-    private fun processIncomingCall(data: String?, pickupCall: Boolean? = false) {
-        val backIntent = Intent(
-            AppObjectController.joshApplication,
-            InboxActivity::class.java
-        ).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        override fun onOutgoingCallAnswered(p0: Outgoing) {
+            Timber.tag(TAG).e("onOutgoingCallAnswered")
         }
-        val callActivityIntent =
-            Intent(AppObjectController.joshApplication, WebRtcActivity::class.java).apply {
-                putExtra(IS_INCOMING_CALL, true)
-                putExtra(AUTO_PICKUP_CALL, pickupCall)
-                putExtra(INCOMING_CALL_JSON_OBJECT, data)
-            }
 
-        if (AppObjectController.currentActivityClass == null) {
-            AppObjectController.joshApplication.startActivities(
-                arrayOf(
-                    backIntent,
-                    callActivityIntent
-                )
-            )
-        } else {
-            AppObjectController.currentActivityClass?.run {
-                if (this.equals(WebRtcActivity::class.java.simpleName, ignoreCase = true)
-                        .not()
-                ) {
-                    AppObjectController.joshApplication.startActivities(
-                        arrayOf(
-                            backIntent,
-                            callActivityIntent
-                        )
-                    )
-                }
-            }
+        override fun onOutgoingCallRejected(p0: Outgoing) {
+            Timber.tag(TAG).e("onOutgoingCallRejected")
         }
-    }
 
-    private fun getSinchCall(data: String?) {
-        val jsonElement: JsonElement = JsonParser().parse(data)
-        jsonElement.asJsonObject.get("mentor_id")?.asString?.run {
-            Timber.tag(TAG).e("%s%s", this, call)
-            if (call == null) {
-                call = sinchClient?.callClient?.getCall(this)
-            }
+        override fun onOutgoingCallHangup(p0: Outgoing) {
+            Timber.tag(TAG).e("onOutgoingCallHangup")
         }
-    }
 
-    private fun getIncomingCallUserName(data: String?): String {
-        val jsonElement: JsonElement = JsonParser().parse(data)
-        return jsonElement.asJsonObject.get("name")?.asString ?: "Josh Skill User"
-    }
+        override fun onOutgoingCallInvalid(p0: Outgoing) {
+            Timber.tag(TAG).e("onOutgoingCallInvalid")
+        }
 
-    fun getCall() = call
-
-    override fun onBind(intent: Intent): IBinder? {
-        return mBinder
-    }
-
-    override fun onDestroy() {
-        Timber.tag(TAG).e("onDestroy")
+        override fun mediaMetrics(p0: HashMap<*, *>) {
+            Timber.tag(TAG).e("mediaMetrics")
+        }
     }
 
     inner class MyBinder : Binder() {
@@ -283,8 +211,282 @@ class WebRtcService : Service() {
         }
     }
 
-    private fun incomingCallNotification(data: String?): android.app.Notification {
-        Timber.tag(TAG).e("incomingCallNotification   " + data)
+    override fun onCreate() {
+        super.onCreate()
+        Timber.tag(TAG).e("onCreate")
+        mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
+        executor.execute {
+            endpoint = Endpoint.newInstance(BuildConfig.DEBUG, eventListener, options)
+            userPlivo = UserPlivoDetailsModel.getPlivoUser()
+        }
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        //startForeground(EMPTY_NOTIFICATION_ID, emptyNotification())
+        Timber.tag(TAG).e("onStartCommand=  " + intent?.action)
+        if (intent?.action == null) {
+            return START_NOT_STICKY
+        }
+        executor.execute {
+            if (userPlivo == null) {
+                userPlivo = UserPlivoDetailsModel.getPlivoUser()
+            }
+            intent.action?.run {
+                Timber.tag(TAG).e(intent.getStringExtra(INCOMING_CALL_JSON_OBJECT))
+                when {
+                    this == LoginUser().action -> {
+                        loginUser()
+                    }
+                    this == LogoutUser().action -> {
+                        logoutUser()
+                    }
+                    this == NotificationIncomingCall().action -> {
+                        if (loginUser()) {
+                            val incomingData: HashMap<String, String>? =
+                                intent.getSerializableExtra(INCOMING_CALL_USER_OBJ) as HashMap<String, String>?
+                            endpoint?.relayVoipPushNotification(incomingData)
+                        }
+                    }
+                    this == IncomingCall().action -> {
+                        SoundPoolManager.getInstance(applicationContext).playRinging()
+                        val incomingData: HashMap<String, String>? =
+                            intent.getSerializableExtra(INCOMING_CALL_USER_OBJ) as HashMap<String, String>?
+                        processIncomingCall(incomingData)
+                        showNotificationOnIncomingCall(incomingData)
+                    }
+                    this == OutgoingCall().action -> {
+                        val extraHeaders: HashMap<String, String>? =
+                            intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String>
+                        endpoint?.createOutgoingCall()?.callH(userPlivo?.username, extraHeaders)
+                        showNotificationOnOutgoingCall(extraHeaders)
+                        Timber.tag(TAG).e("Outgoing")
+                    }
+                    this == CallConnect().action -> {
+                        mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
+                        mNotificationManager?.cancel(OUTGOING_CALL_NOTIFICATION_ID)
+                        val incomingData: HashMap<String, String>? =
+                            intent.getSerializableExtra(INCOMING_CALL_USER_OBJ) as HashMap<String, String>?
+
+                        val sIntent =
+                            Intent(
+                                AppObjectController.joshApplication,
+                                WebRtcActivity::class.java
+                            ).apply {
+                                putExtra(CALL_TYPE, CallType.INCOMING)
+                                putExtra(AUTO_PICKUP_CALL, true)
+                                putExtra(CALL_USER_OBJ, incomingData)
+                                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                        startActivity(sIntent)
+                    }
+                    this == CallDisconnect().action -> {
+                        mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
+                        mNotificationManager?.cancel(OUTGOING_CALL_NOTIFICATION_ID)
+                        stopForeground(true)
+                    }
+                }
+            }
+        }
+        return START_STICKY
+    }
+
+    private fun loginUser(): Boolean {
+        if (userPlivo != null) {
+            return endpoint?.login(
+                userPlivo?.username,
+                userPlivo?.password,
+                PrefManager.getStringValue(FCM_TOKEN)
+            ) ?: false
+        }
+        return false
+    }
+
+    private fun logoutUser() {
+        endpoint?.logout()
+    }
+
+    private fun isAppVisible(): Boolean {
+        return if (JoshApplication.isAppVisible || Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
+            true
+        else
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && JoshApplication.isAppVisible.not()
+    }
+
+    private fun processIncomingCall(incomingData: HashMap<String, String>?) {
+        val callActivityIntent =
+            Intent(AppObjectController.joshApplication, WebRtcActivity::class.java).apply {
+                putExtra(IS_INCOMING_CALL, true)
+                putExtra(CALL_TYPE, CallType.INCOMING)
+                putExtra(CALL_USER_OBJ, incomingData)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+
+        if (isAppVisible()) {
+            startActivity(callActivityIntent)
+        }
+    }
+
+
+    private fun showNotificationOnIncomingCall(incomingData: HashMap<String, String>?) {
+        if (isAppVisible()) {
+            val notification = incomingCallNotification(incomingData)
+            startForeground(INCOMING_CALL_NOTIFICATION_ID, notification)
+        }
+    }
+
+    private fun showNotificationOnOutgoingCall(extraHeaders: HashMap<String, String>?) {
+        val notification = outgoingCallNotification(extraHeaders)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(
+                OUTGOING_CALL_NOTIFICATION_ID,
+                notification,
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL
+            )
+        } else {
+            startForeground(OUTGOING_CALL_NOTIFICATION_ID, notification)
+        }
+    }
+
+    private fun showNotificationConnectedCall(incomingData: HashMap<String, String>?) {
+        val notification = callConnectNotification(incomingData)
+        startForeground(CONNECTED_CALL_NOTIFICATION_ID, notification)
+    }
+
+
+    override fun onBind(intent: Intent): IBinder? {
+        return mBinder
+    }
+
+    fun answerCall() {
+        callData?.run {
+            if (this is Incoming) {
+                SoundPoolManager.getInstance(applicationContext).stopRinging()
+                this.answer()
+                showNotificationConnectedCall(this.headerDict as HashMap<String, String>)
+                return
+            }
+        }
+    }
+
+    fun endCall() {
+        callData?.run {
+            onDisconnectAndRemove()
+            if (this is Outgoing) {
+                this.hangup()
+                return
+            }
+            if (this is Incoming) {
+                this.hangup()
+                return
+            }
+        }
+    }
+
+    fun rejectCall() {
+        callData?.run {
+            onDisconnectAndRemove()
+            if (this is Incoming) {
+                this.reject()
+                return
+            }
+        }
+    }
+
+    fun holdCall() {
+        callData?.run {
+            if (this is Outgoing) {
+                this.hold()
+                return
+            }
+            if (this is Incoming) {
+                this.hold()
+                return
+            }
+        }
+    }
+
+    fun unHoldCall() {
+        callData?.run {
+            if (this is Outgoing) {
+                this.unhold()
+                return
+            }
+            if (this is Incoming) {
+                this.unhold()
+                return
+            }
+        }
+    }
+
+    private fun muteCall() {
+        callData?.run {
+            if (this is Outgoing) {
+                this.mute()
+                return
+            }
+            if (this is Incoming) {
+                this.mute()
+                return
+            }
+        }
+    }
+
+    private fun unMuteCall() {
+        callData?.run {
+            if (this is Outgoing) {
+                this.unmute()
+                return
+            }
+            if (this is Incoming) {
+                this.unmute()
+                return
+            }
+        }
+    }
+
+    fun switchAudioSpeaker() {
+        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+        if (isSpeakerEnable) {
+            isSpeakerEnable = false
+            audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+        } else {
+            isSpeakerEnable = true
+            audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+        }
+        audioManager.isSpeakerphoneOn = isSpeakerEnable
+    }
+
+    fun switchSpeck() {
+        isMicEnable = !isMicEnable
+        if (isMicEnable) {
+            unMuteCall()
+        } else {
+            muteCall()
+        }
+    }
+
+    private fun onDisconnectAndRemove() {
+        (getSystemService(NOTIFICATION_SERVICE) as NotificationManager?)?.cancelAll()
+        stopForeground(true)
+        SoundPoolManager.getInstance(applicationContext).stopRinging()
+        isCallWasOnGoing = false
+        callData = null
+        isSpeakerEnable = false
+        isMicEnable = true
+    }
+
+    fun getSpeaker() = isSpeakerEnable
+    fun getMic() = isMicEnable
+
+
+    override fun onDestroy() {
+        Timber.tag(TAG).e("onDestroy")
+    }
+
+    private fun incomingCallNotification(incomingData: HashMap<String, String>?): Notification {
+        Timber.tag(TAG).e("incomingCallNotification   ")
         val incomingSoundUri: Uri =
             Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + applicationContext.packageName + "/" + R.raw.incoming)
 
@@ -293,10 +495,7 @@ class WebRtcService : Service() {
             .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
             .build()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mNotificationManager?.getNotificationChannel(
-                INCOMING_CALL_CHANNEL_ID
-            ) == null
-        ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name: CharSequence = "Voip Incoming Call"
             val importance: Int = NotificationManager.IMPORTANCE_HIGH
             val mChannel = NotificationChannel(INCOMING_CALL_CHANNEL_ID, name, importance)
@@ -334,48 +533,171 @@ class WebRtcService : Service() {
             Intent(AppObjectController.joshApplication, WebRtcService::class.java)
                 .apply {
                     action = CallConnect().action
-                    putExtra(INCOMING_CALL_JSON_OBJECT, data)
+                    putExtra(INCOMING_CALL_USER_OBJ, incomingData)
                 }
 
         val answerActionPendingIntent: PendingIntent =
             PendingIntent.getService(this, 0, answerActionIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-        val extras = Bundle()
 
         val lNotificationBuilder = NotificationCompat.Builder(this, INCOMING_CALL_CHANNEL_ID)
-            .setContentTitle(getIncomingCallUserName(data))
+            .setChannelId(INCOMING_CALL_CHANNEL_ID)
+            .setContentTitle(incomingData?.get("X-PH-NAME"))
             .setContentText("Incoming voice call")
             .setSmallIcon(R.drawable.ic_status_bar_notification)
-            .setAutoCancel(true)
             .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
-            .setContentIntent(pendingIntent)
-            .setWhen(System.currentTimeMillis())
-            .setOnlyAlertOnce(true)
             .setOngoing(true)
-            .setAutoCancel(true)
-            .setExtras(extras)
             .setContentIntent(pendingIntent)
-            .setCategory(NotificationCompat.CATEGORY_CALL)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setContentIntent(pendingIntent)
-            .setFullScreenIntent(fullScreenPendingIntent, true)
-            .addAction(R.drawable.com_facebook_button_icon, "DECLINE", declineActionPendingIntent)
-            .addAction(R.drawable.com_facebook_button_icon, "ANSWER", answerActionPendingIntent)
+            .addAction(
+                NotificationCompat.Action(
+                    R.drawable.ic_call_end,
+                    getActionText(R.string.hang_up, R.color.error_color),
+                    declineActionPendingIntent
+                )
+            )
+            .addAction(
+                NotificationCompat.Action(
+                    R.drawable.ic_pick_call,
+                    getActionText(R.string.answer, R.color.action_color),
+                    answerActionPendingIntent
+                )
+            )
             .setVibrate(longArrayOf(0, 1000, 500, 1000))
-            .setSound(incomingSoundUri, STREAM_RING)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+
+        if (isAppVisible()) {
+            lNotificationBuilder.setFullScreenIntent(fullScreenPendingIntent, true)
+            lNotificationBuilder.priority = NotificationCompat.PRIORITY_HIGH
+            lNotificationBuilder.setCategory(NotificationCompat.CATEGORY_CALL)
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             lNotificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         }
 
         return lNotificationBuilder.build()
     }
-/*
-    private fun isAppVisible(): Boolean {
-        return ProcessLifecycleOwner
-            .get()
-            .lifecycle
-            .currentState
-            .isAtLeast(Lifecycle.State.STARTED)
-    }*/
+
+    private fun outgoingCallNotification(extraHeaders: HashMap<String, String>?): Notification {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name: CharSequence = "Voip Outgoing Call"
+            val importance: Int = NotificationManager.IMPORTANCE_LOW
+            val mChannel = NotificationChannel(OUTGOING_CALL_CHANNEL_ID, name, importance)
+            mNotificationManager?.createNotificationChannel(mChannel)
+        }
+        val notificationIntent = Intent(this, WebRtcActivity::class.java)
+        notificationIntent.action = "calling.action.main"
+
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            notificationIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val declineActionIntent =
+            Intent(AppObjectController.joshApplication, WebRtcService::class.java)
+        declineActionIntent.action = CallDisconnect().action
+        val declineActionPendingIntent: PendingIntent =
+            PendingIntent.getService(
+                this,
+                0,
+                declineActionIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        val lNotificationBuilder = NotificationCompat.Builder(this, OUTGOING_CALL_CHANNEL_ID)
+            .setContentTitle(extraHeaders?.get("X-PH-NAME"))
+            .setContentText("Outgoing voice call")
+            .setSmallIcon(R.drawable.ic_status_bar_notification)
+            .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
+            .setContentIntent(pendingIntent)
+            .setOngoing(true)
+            .addAction(
+                NotificationCompat.Action(
+                    R.drawable.ic_call_end,
+                    getActionText(R.string.hang_up, R.color.error_color),
+                    declineActionPendingIntent
+                )
+            )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            lNotificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+        }
+        return lNotificationBuilder.build()
+    }
+
+    private fun callConnectNotification(incomingData: HashMap<String, String>?): Notification {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name: CharSequence = "Voip call connect"
+            val importance: Int = NotificationManager.IMPORTANCE_LOW
+            val mChannel = NotificationChannel(CONNECTED_CALL_CHANNEL_ID, name, importance)
+            mNotificationManager?.createNotificationChannel(mChannel)
+        }
+        val notificationIntent = Intent(
+            AppObjectController.joshApplication,
+            WebRtcActivity::class.java
+        )
+        notificationIntent.action = "calling.action.main"
+
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            notificationIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val declineActionIntent =
+            Intent(AppObjectController.joshApplication, WebRtcService::class.java)
+        declineActionIntent.action = CallDisconnect().action
+
+        val declineActionPendingIntent: PendingIntent =
+            PendingIntent.getService(
+                this,
+                0,
+                declineActionIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+
+        val lNotificationBuilder = NotificationCompat.Builder(this, CONNECTED_CALL_CHANNEL_ID)
+            .setChannelId(CONNECTED_CALL_CHANNEL_ID)
+            .setContentTitle(incomingData?.get("X-PH-NAME"))
+            .setContentText("Ongoing voice call")
+            .setSmallIcon(R.drawable.ic_status_bar_notification)
+            .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
+            .setContentIntent(pendingIntent)
+            .setOngoing(true)
+            .setContentIntent(pendingIntent)
+            .setContentIntent(pendingIntent)
+            .addAction(
+                NotificationCompat.Action(
+                    R.drawable.ic_call_end,
+                    getActionText(R.string.hang_up, R.color.error_color),
+                    declineActionPendingIntent
+                )
+            )
+            .setContentInfo("Outgoing call")
+        return lNotificationBuilder.build()
+    }
+
+
+    private fun getActionText(@StringRes stringRes: Int, @ColorRes colorRes: Int): Spannable {
+        val spannable: Spannable = SpannableString(getText(stringRes))
+        spannable.setSpan(
+            ForegroundColorSpan(ContextCompat.getColor(this, colorRes)),
+            0,
+            spannable.length,
+            0
+        )
+        return spannable
+    }
+
+    private fun emptyNotification(): Notification {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name: CharSequence = ""
+            val importance: Int = NotificationManager.IMPORTANCE_LOW
+            val mChannel = NotificationChannel(EMPTY_CHANNEL_ID, name, importance)
+            mNotificationManager?.createNotificationChannel(mChannel)
+        }
+        val lNotificationBuilder = NotificationCompat.Builder(this, CONNECTED_CALL_CHANNEL_ID)
+            .setChannelId(EMPTY_CHANNEL_ID)
+        return lNotificationBuilder.build()
+    }
 
     fun printIntent(intent: Intent?) {
         if (BuildConfig.DEBUG) {
@@ -387,16 +709,48 @@ class WebRtcService : Service() {
                 }
             }
         }
-
     }
 }
 
 
-sealed class Notification
-data class IncomingCall(val action: String = "calling.action.incoming_call") : Notification()
-data class IncomingCallNotification(val action: String = "calling.action.incoming_call_notification") :
-    Notification()
+sealed class WebRtcCalling
+data class NotificationIncomingCall(val action: String = "calling.action.notification_incoming_call") :
+    WebRtcCalling()
 
-data class CallConnect(val action: String = "calling.action.connect") : Notification()
-data class CallDisconnect(val action: String = "calling.action.disconnect") : Notification()
-data class OutgoingCall(val action: String = "calling.action.outgoing_call") : Notification()
+data class IncomingCall(val action: String = "calling.action.incoming_call") : WebRtcCalling()
+data class CallConnect(val action: String = "calling.action.connect") : WebRtcCalling()
+data class CallDisconnect(val action: String = "calling.action.disconnect") : WebRtcCalling()
+data class OutgoingCall(val action: String = "calling.action.outgoing_call") : WebRtcCalling()
+data class LoginUser(val action: String = "calling.action.login") : WebRtcCalling()
+data class LogoutUser(val action: String = "calling.action.login") : WebRtcCalling()
+
+class NotificationId {
+    companion object {
+        val EMPTY_NOTIFICATION_ID = 200000
+        val INCOMING_CALL_NOTIFICATION_ID = 200001
+        val OUTGOING_CALL_NOTIFICATION_ID = 200002
+        val CONNECTED_CALL_NOTIFICATION_ID = 200003
+
+        val INCOMING_CALL_CHANNEL_ID = "incoming_call_channel_id"
+        val OUTGOING_CALL_CHANNEL_ID = "outgoing_call_channel_id"
+        val CONNECTED_CALL_CHANNEL_ID = "connected_call_channel_id"
+        val EMPTY_CHANNEL_ID = "empty_channel_id"
+
+    }
+
+}
+
+/*
+
+
+ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && JoshApplication.isAppVisible.not()) {
+                            val notification = incomingCallNotification(
+                                intent.getStringExtra(INCOMING_CALL_JSON_OBJECT)
+                            )
+                            mNotificationManager?.notify(
+                                CALL_NOTIFICATION_ID, notification
+                            )
+                            startForeground(CALL_NOTIFICATION_ID, notification)
+                        } else {
+                            processIncomingCall(intent.getStringExtra(INCOMING_CALL_JSON_OBJECT))
+                        }*/

@@ -18,6 +18,7 @@ import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.CallType
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -29,42 +30,54 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.sinch.android.rtc.PushPair
-import com.sinch.android.rtc.SinchClient
-import com.sinch.android.rtc.calling.Call
-import com.sinch.android.rtc.calling.CallDirection
-import com.sinch.android.rtc.calling.CallListener
-import com.sinch.android.rtc.calling.CallState
-import com.sinch.gson.JsonElement
-import com.sinch.gson.JsonParser
-import timber.log.Timber
+import java.util.HashMap
 
 const val CALL_USER_ID = "call_user_id"
 const val IS_INCOMING_CALL = "is_incoming_call"
 const val INCOMING_CALL_JSON_OBJECT = "incoming_json_call_object"
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
+const val CALL_USER_OBJ = "call_user_obj"
+const val CALL_TYPE = "call_type"
+const val INCOMING_CALL_USER_OBJ = "incoming_call_user_obj"
 
-class WebRtcActivity : BaseActivity(), CallListener {
+
+class WebRtcActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCallingBinding
-    private var call: Call? = null
-    private var sinchClient: SinchClient? = null
     private var mBoundService: WebRtcService? = null
-    private var voipCallDetailModel: VoipCallDetailModel? = null
-    private var isSpeakerEnable = false
-    private var isSpeckEnable = false
     private var mServiceBound = false
-    private var roomId: String = ""
 
     companion object {
-        private val TAG = "WebRtcActivity"
-        fun startVoipActivity(activity: Activity, voipCallDetailModel: VoipCallDetailModel) {
+
+        fun startOutgoingCallActivity(
+            activity: Activity,
+            voipCallDetailModel: VoipCallDetailModel? = null
+        ) {
             Intent(activity, WebRtcActivity::class.java).apply {
                 putExtra(CALL_USER_ID, voipCallDetailModel)
+                putExtra(CALL_USER_OBJ, getMapForOutgoing())
+                putExtra(CALL_TYPE, CallType.OUTGOING)
             }.run {
                 activity.startActivityForResult(this, 9999)
             }
         }
+
+        private fun getMapForOutgoing(
+            destId: String = "cc0f6cc567934b579b555d49904768542198822111217",
+            topic: String = "aise hi",
+            name: String = "Sunil",
+            location: String = "Japan",
+        ): HashMap<String, String> {
+            return object : HashMap<String, String>() {
+                init {
+                    put("X-PH-Destination", destId)
+                    put("X-PH-TOPIC", topic)
+                    put("X-PH-NAME", name)
+                    put("X-PH-LOCATION", location)
+                }
+            }
+        }
+
     }
 
     inner class ReceivedCallConnection : ServiceConnection {
@@ -72,12 +85,7 @@ class WebRtcActivity : BaseActivity(), CallListener {
             val myBinder = service as WebRtcService.MyBinder
             mBoundService = myBinder.getService()
             mServiceBound = true
-            mBoundService?.getCall()?.run {
-                if (call == null) {
-                    call = this
-                    call?.addCallListener(this@WebRtcActivity)
-                }
-            }
+            initCall()
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -110,139 +118,60 @@ class WebRtcActivity : BaseActivity(), CallListener {
             .addBasicParam()
             .addUserDetails()
             .push()
-        initSinch()
-        actionAfterSinchInit()
     }
 
-    private fun initSinch() {
-        sinchClient = AppObjectController.initSinchClient()
-        sinchClient?.run {
-            if (isStarted.not()) {
-                startListeningOnActiveConnection()
-                start()
-            }
-        }
-    }
-
-    private fun actionAfterSinchInit() {
-        try {
-            if (intent.hasExtra(CALL_USER_ID)) {//You are caller
-                binding.groupForOutgoing.visibility = View.VISIBLE
-                voipCallDetailModel = intent.getParcelableExtra(CALL_USER_ID)
-                voipCallDetailModel?.run {
-                    binding.userName.text = name
-                    binding.userLocation.text = locality
-                    binding.topicTextview.text = topic
-                    initCall(mentorId)
-                }
-            } else {//You are receiver
-                binding.groupForIncoming.visibility = View.VISIBLE
-                if (intent.hasExtra(INCOMING_CALL_JSON_OBJECT)) {
-                    SoundPoolManager.getInstance(applicationContext).playRinging()
-                    val jsonElement: JsonElement =
-                        JsonParser().parse(intent.getStringExtra(INCOMING_CALL_JSON_OBJECT))
-                    jsonElement.asJsonObject.get("name")?.asString?.run {
-                        binding.userName.text = this
-                    }
-                    jsonElement.asJsonObject.get("locality")?.asString?.run {
-                        binding.userLocation.text = this
-                    }
-                    jsonElement.asJsonObject.get("topic")?.asString?.run {
-                        binding.topicTextview.text = this
-                    }
-
-                    jsonElement.asJsonObject.get("mentor_id")?.asString?.run {
-                        roomId = this
-                        call = sinchClient?.callClient?.getCall(this)
-                        call?.addCallListener(this@WebRtcActivity)
-                        WebRtcService.isCallWasOnGoing = true
-                    }
-                    if (binding.userName.text.isNullOrEmpty()) {
-                        binding.userName.text = getString(R.string.user)
-                    }
-                    AppAnalytics.create(AnalyticsEvent.INCOMING_CALL_VOIP.NAME)
-                        .addBasicParam()
-                        .addUserDetails()
-                        .push()
-                    AppObjectController.uiHandler.postDelayed({
-                        intent.getBooleanExtra(AUTO_PICKUP_CALL, false).run {
-                            if (this) {
-                                binding.btnIncomingConnect.performClick()
-                            }
-                        }
-                    }, 250)
-
+    private fun initCall() {
+        val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
+        callType?.run {
+            val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String>
+            setUserInfo(map)
+            if (CallType.OUTGOING == this) {
+                WebRtcService.startOutgoingCall(map)
+                startCallTimer()
+                callDisViewEnable()
+            } else {
+                val autoPickUp = intent.getBooleanExtra(AUTO_PICKUP_CALL, false)
+                if (autoPickUp) {
+                    mBoundService?.answerCall()
+                    startCallTimer()
+                    callDisViewEnable()
+                } else {
+                    binding.groupForIncoming.visibility = View.VISIBLE
                 }
             }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
         }
     }
 
-
-    private fun initCall(mentorId: String) {
-        try {
-            val json =
-                AppObjectController.gsonMapper.toJson(voipCallDetailModel?.getOutgoingCallObject())
-            val map = hashMapOf<String, String?>()
-            map["data"] = json
-            call = sinchClient?.callClient?.callUser(mentorId, map)
-            call?.addCallListener(this)
-            sinchClient?.setPushNotificationDisplayName(json)
-            AppAnalytics.create(AnalyticsEvent.OUTGOING_CALL_VOIP.NAME)
-                .addBasicParam()
-                .addUserDetails()
-                .push()
-
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
+    private fun setUserInfo(map: HashMap<String, String>) {
+        binding.callStatus.text = map["X-PH-TOPIC"]
+        binding.userDetail.text = map["X-PH-NAME"] + " \n" + map["X-PH-LOCATION"]
     }
 
+    private fun startCallTimer() {
+        binding.callTime.base = SystemClock.elapsedRealtime()
+        binding.callTime.start()
+    }
+
+    private fun callDisViewEnable() {
+        binding.groupForIncoming.visibility = View.GONE
+        binding.groupForOutgoing.visibility = View.VISIBLE
+    }
 
     fun switchAudioMode() {
-        isSpeakerEnable = !isSpeakerEnable
-        updateStatus(binding.btnSpeaker, isSpeakerEnable)
-        if (isSpeakerEnable) {
-            sinchClient?.audioController?.enableSpeaker()
-        } else {
-            sinchClient?.audioController?.disableSpeaker()
-        }
+        mBoundService?.switchAudioSpeaker()
+        updateStatus(binding.btnSpeaker, mBoundService!!.getSpeaker())
+        volumeControlStream = AudioManager.STREAM_VOICE_CALL
+
     }
 
     fun switchTalkMode() {
-        isSpeckEnable = !isSpeckEnable
-        updateStatus(binding.btnMute, isSpeckEnable)
-        if (isSpeckEnable) {
-            sinchClient?.audioController?.mute()
-        } else {
-            sinchClient?.audioController?.unmute()
-        }
+        mBoundService?.switchSpeck()
+        updateStatus(binding.btnMute, mBoundService!!.getMic().not())
     }
 
-    fun actionOnCalling() {
-        if (call == null) {
-            onBackPressed()
-            return
-        }
-        call?.let {
-            if (CallDirection.OUTGOING == it.direction) {
-                it.hangup()
-                onBackPressed()
-            } else {
-                if (CallState.ESTABLISHED == it.state) {
-                    it.hangup()
-                    onBackPressed()
-                } else {
-                    answerCallPermissionCheck(it)
-                }
-            }
-        }
-    }
-
-    private fun answerCallPermissionCheck(call: Call) {
+    fun acceptCall() {
         if (PermissionUtils.isCallingPermissionEnabled(this)) {
-            answerCall(call)
+            answerCall()
             return
         }
         PermissionUtils.callingFeaturePermission(
@@ -251,7 +180,7 @@ class WebRtcActivity : BaseActivity(), CallListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
-                            answerCall(call)
+                            answerCall()
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
@@ -271,15 +200,24 @@ class WebRtcActivity : BaseActivity(), CallListener {
                     token?.continuePermissionRequest()
                 }
             })
-
     }
 
-    private fun answerCall(call: Call) {
+    fun onDeclineCall() {
+        mBoundService?.rejectCall()
+        onBackPressed()
+    }
+
+    fun onDisconnectCall() {
+        mBoundService?.endCall()
+        onBackPressed()
+    }
+
+    private fun answerCall() {
         AudioPlayer.getInstance().stopProgressTone()
         binding.groupForIncoming.visibility = View.GONE
         binding.groupForOutgoing.visibility = View.VISIBLE
-        call.answer()
-        call.addCallListener(this)
+        mBoundService?.answerCall()
+        startCallTimer()
         AppAnalytics.create(AnalyticsEvent.ANSWER_CALL_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -303,10 +241,6 @@ class WebRtcActivity : BaseActivity(), CallListener {
     private fun stopCall() {
         try {
             AudioPlayer.getInstance().stopProgressTone()
-            call?.run {
-                removeCallListener(this@WebRtcActivity)
-                hangup()
-            }
             SoundPoolManager.getInstance(this).release()
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -315,8 +249,8 @@ class WebRtcActivity : BaseActivity(), CallListener {
 
     override fun onStart() {
         super.onStart()
-        AppObjectController.joshApplication.bindService(
-            Intent(AppObjectController.joshApplication, WebRtcService::class.java),
+        bindService(
+            Intent(this, WebRtcService::class.java),
             ReceivedCallConnection(),
             BIND_AUTO_CREATE
         )
@@ -332,51 +266,4 @@ class WebRtcActivity : BaseActivity(), CallListener {
         setResult(RESULT_OK, resultIntent)
         finishAndRemoveTask()
     }
-
-    override fun onCallEnded(endedCall: Call) {
-        volumeControlStream = AudioManager.USE_DEFAULT_STREAM_TYPE
-        SoundPoolManager.getInstance(applicationContext).playDisconnect()
-        call?.removeCallListener(this)
-        call = null
-        binding.callTime.stop()
-        binding.callTime.visibility = View.GONE
-        binding.callStatus.text = getString(R.string.call_ended)
-        binding.callStatus.visibility = View.VISIBLE
-        AppObjectController.uiHandler.postDelayed({
-            onBackPressed()
-        }, 500)
-        Timber.tag(TAG).e("onCallEnded " + endedCall.details?.error)
-    }
-
-    override fun onCallEstablished(establishedCall: Call) {
-        if (CallDirection.OUTGOING == establishedCall.direction) {
-            AudioPlayer.getInstance().stopProgressTone()
-        }
-        SoundPoolManager.getInstance(applicationContext).stopRinging()
-        binding.callStatus.text = getString(R.string.connecting)
-        AppObjectController.uiHandler.postDelayed({
-            binding.callStatus.visibility = View.GONE
-            binding.callTime.visibility = View.VISIBLE
-            binding.callTime.base = SystemClock.elapsedRealtime()
-            binding.callTime.start()
-        }, 500)
-        Timber.tag(TAG).e("onCallEstablished")
-    }
-
-    override fun onCallProgressing(progressingCall: Call) {
-        volumeControlStream = AudioManager.STREAM_VOICE_CALL
-        if (CallDirection.OUTGOING == progressingCall.direction) {
-            AudioPlayer.getInstance().playProgressTone()
-            binding.callStatus.text = getString(R.string.ringing)
-        } else {
-            binding.callStatus.text = getString(R.string.voice_call)
-        }
-        Timber.tag(TAG).e("onCallProgressing")
-
-    }
-
-    override fun onShouldSendPushNotification(call: Call, pushPairs: List<PushPair>) {
-        Timber.tag(TAG).e("onShouldSendPushNotification")
-    }
-
 }

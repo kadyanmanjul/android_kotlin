@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.repository.service
 
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
+import com.joshtalks.joshskills.repository.local.model.UserPlivoDetailsModel
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
 import com.joshtalks.joshskills.repository.server.BaseResponse
 import com.joshtalks.joshskills.repository.server.CertificateDetail
@@ -151,6 +152,10 @@ interface CommonNetworkService {
 
     @POST("$DIR/version/onboarding/")
     suspend fun getOnBoardingVersionDetails(@Body params: Map<String, String>): VersionResponse
+
+    @GET("$DIR/voicecall/details")
+    suspend fun getPlivoUserDetails(): UserPlivoDetailsModel
+
 
     @GET("$DIR/certificateexam/{id}/")
     suspend fun getCertificateExamDetails(@Path("id") id: Int): CertificationQuestionModel

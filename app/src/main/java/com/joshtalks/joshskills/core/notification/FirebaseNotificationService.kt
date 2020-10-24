@@ -1,6 +1,10 @@
 package com.joshtalks.joshskills.core.notification
 
-import android.app.*
+import android.app.ActivityManager
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
@@ -19,7 +23,13 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.API_TOKEN
+import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.COURSE_ID
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.JoshSkillExecutors
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
@@ -40,9 +50,9 @@ import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService
-import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.concurrent.ExecutorService
+import timber.log.Timber
 
 const val FCM_TOKEN = "fcmToken"
 const val HAS_NOTIFICATION = "has_notification"
@@ -72,28 +82,46 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        if (Freshchat.isFreshchatNotification(remoteMessage)) {
-            Freshchat.handleFcmMessage(this, remoteMessage)
-        } else {
-            if (BuildConfig.DEBUG) {
-                Timber.tag(FirebaseNotificationService::class.java.simpleName).e(
-                    Gson().toJson(remoteMessage.data)
-                )
-            }
-            val collapseKey = remoteMessage.collapseKey ?: ""
-            if (collapseKey.equals("incoming_call", ignoreCase = true)) {
-                if (PrefManager.getStringValue(API_TOKEN).isNotEmpty()) {
-                    WebRtcService.onIncomingCall(remoteMessage.data)
-                }
-
+        try {
+            if (Freshchat.isFreshchatNotification(remoteMessage)) {
+                Freshchat.handleFcmMessage(this, remoteMessage)
             } else {
-                val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
-                val nc: NotificationObject = AppObjectController.gsonMapper.fromJson(
-                    AppObjectController.gsonMapper.toJson(remoteMessage.data),
-                    notificationTypeToken
-                )
-                sendNotification(nc)
+                if (BuildConfig.DEBUG) {
+                    Timber.tag(FirebaseNotificationService::class.java.simpleName).e(
+                        Gson().toJson(remoteMessage.data)
+                    )
+                }
+                onIncomingPlivoCall(remoteMessage)
+                val collapseKey = remoteMessage.collapseKey ?: ""
+                if (collapseKey.equals("incoming_call", ignoreCase = true)) {
+                    if (PrefManager.getStringValue(API_TOKEN).isNotEmpty()) {
+                        //   WebRtcService.onIncomingCall(remoteMessage.data)
+                    }
+
+                } else {
+                    val notificationTypeToken: Type =
+                        object : TypeToken<NotificationObject>() {}.type
+                    val nc: NotificationObject = AppObjectController.gsonMapper.fromJson(
+                        AppObjectController.gsonMapper.toJson(remoteMessage.data),
+                        notificationTypeToken
+                    )
+                    sendNotification(nc)
+                }
             }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
+    private fun onIncomingPlivoCall(remoteMessage: RemoteMessage) {
+        try {
+            val data: HashMap<String, String> = HashMap()
+            for ((key, value) in remoteMessage.data) {
+                data[key] = value
+            }
+            WebRtcService.startOnNotificationIncomingCall(data)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 

@@ -4,6 +4,7 @@ import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
@@ -72,7 +73,8 @@ object WorkManagerAdmin {
                     OneTimeWorkRequestBuilder<ReferralCodeRefreshWorker>().build(),
                     OneTimeWorkRequestBuilder<SyncEngageVideo>().build(),
                     OneTimeWorkRequestBuilder<FeedbackRatingWorker>().build(),
-                    OneTimeWorkRequestBuilder<LogAchievementLevelEventWorker>().build()
+                    OneTimeWorkRequestBuilder<LogAchievementLevelEventWorker>().build(),
+                    getPalioWorkRequest(),
                 )
             ).enqueue()
     }
@@ -159,7 +161,6 @@ object WorkManagerAdmin {
             .setInputData(data)
             .setConstraints(constraints)
             .setBackoffCriteria(BackoffPolicy.LINEAR, 11, TimeUnit.SECONDS)
-            .setInitialRunAttemptCount(3)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
         return workRequest.id
@@ -247,4 +248,13 @@ object WorkManagerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
 
+    private fun getPalioWorkRequest(): OneTimeWorkRequest {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+        return OneTimeWorkRequestBuilder<GetPlivoUserWorker>()
+            .setConstraints(constraints)
+            .setInitialDelay(30, TimeUnit.SECONDS)
+            .build()
+    }
 }

@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.engage_notification
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
@@ -96,7 +97,13 @@ class UsageStatsService : Service() {
             ).apply {
                 action = OnActive().action
             }
-            AppObjectController.joshApplication.startService(serviceIntent)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && JoshApplication.isAppVisible.not()) {
+                serviceIntent.also { intent ->
+                    AppObjectController.joshApplication.startForegroundService(intent)
+                }
+            } else {
+                AppObjectController.joshApplication.startService(serviceIntent)
+            }
         }
 
         fun inactiveUserService(context: Context) {
@@ -106,7 +113,13 @@ class UsageStatsService : Service() {
             ).apply {
                 action = OnInActive().action
             }
-            AppObjectController.joshApplication.startService(serviceIntent)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && JoshApplication.isAppVisible.not()) {
+                serviceIntent.also { intent ->
+                    AppObjectController.joshApplication.startForegroundService(intent)
+                }
+            } else {
+                AppObjectController.joshApplication.startService(serviceIntent)
+            }
         }
     }
 }

@@ -1,9 +1,9 @@
 package com.joshtalks.joshskills.repository.server
 
 import com.google.gson.annotations.SerializedName
+import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.sinch.gson.reflect.TypeToken
 import java.lang.reflect.Type
 
 data class LanguageItem(

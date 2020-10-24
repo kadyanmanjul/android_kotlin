@@ -73,12 +73,12 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
 
     override fun onCreate() {
         super.onCreate()
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+        AppObjectController.init(this)
         if (PrefManager.getStringValue(USER_LOCALE).isEmpty()) {
             PrefManager.put(USER_LOCALE, "en")
         }
         Lingver.init(this, PrefManager.getStringValue(USER_LOCALE))
-        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
-        AppObjectController.init(this)
         registerBroadcastReceiver()
     }
 
@@ -143,7 +143,6 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onAppForegrounded() {
-        AppObjectController.startAppUsageService(this)
         Timber.tag(TAG).e("************* foregrounded")
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
         isAppVisible = true

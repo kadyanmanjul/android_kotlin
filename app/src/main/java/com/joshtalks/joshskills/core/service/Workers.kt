@@ -48,6 +48,7 @@ import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.local.model.UserPlivoDetailsModel
 import com.joshtalks.joshskills.repository.server.ActiveUserRequest
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
@@ -55,6 +56,7 @@ import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
+import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.sinch.verification.PhoneNumberUtils
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
@@ -452,7 +454,6 @@ class WorkerInLandingScreen(context: Context, workerParams: WorkerParameters) :
         AppObjectController.clearDownloadMangerCallback()
         AppAnalytics.updateUser()
         SyncChatService.syncChatWithServer()
-        AppObjectController.startSinchCallingService()
         return Result.success()
     }
 }
@@ -789,6 +790,23 @@ class LanguageChangeWorker(var context: Context, private var workerParams: Worke
         PrefManager.put(USER_LOCALE, defaultLanguage)
         AppObjectController.isSettingUpdate = false
         Lingver.getInstance().setLocale(context, defaultLanguage)
+    }
+}
+
+class GetPlivoUserWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            if (UserPlivoDetailsModel.getPlivoUser() == null) {
+                AppObjectController.commonNetworkService.getPlivoUserDetails().run {
+                    this.savePlivoUser()
+                }
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        WebRtcService.loginUserClient()
+        return Result.success()
     }
 }
 

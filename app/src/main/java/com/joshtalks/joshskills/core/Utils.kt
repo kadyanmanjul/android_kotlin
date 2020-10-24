@@ -1012,4 +1012,14 @@ fun Context.changeLocale(language: String) {
 }
 
 
+fun Intent.serviceStart() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        this.also { intent ->
+            AppObjectController.joshApplication.startForegroundService(intent)
+        }
+    } else {
+        AppObjectController.joshApplication.startService(this)
+    }
+
+}
 

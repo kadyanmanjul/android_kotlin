@@ -24,6 +24,7 @@
     <uses-permission
         android:name="android.permission.GET_ACCOUNTS"
         android:maxSdkVersion="22" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -512,8 +513,10 @@
 
         <activity
             android:name=".ui.voip.WebRtcActivity"
+            android:autoRemoveFromRecents="true"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
+            android:taskAffinity=""
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
 

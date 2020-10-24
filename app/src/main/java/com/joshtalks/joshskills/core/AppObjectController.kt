@@ -37,7 +37,6 @@ import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
-import com.joshtalks.joshskills.engage_notification.UsageStatsService
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.service.ChatNetworkService
@@ -47,10 +46,8 @@ import com.joshtalks.joshskills.repository.service.SignUpNetworkService
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.view_holders.IMAGE_SIZE
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
-import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.newrelic.agent.android.FeatureFlag
 import com.newrelic.agent.android.NewRelic
-import com.plivo.endpoint.Endpoint
 import com.tonyodev.fetch2.Fetch
 import com.tonyodev.fetch2.FetchConfiguration
 import com.tonyodev.fetch2.HttpUrlConnectionDownloader
@@ -188,9 +185,6 @@ class AppObjectController {
 
         @JvmStatic
         var isSettingUpdate: Boolean = false
-
-        @JvmStatic
-        var endpoint: Endpoint? = null
 
         fun initLibrary(context: Context): AppObjectController {
             joshApplication = context as JoshApplication
@@ -577,25 +571,11 @@ class AppObjectController {
                 "sha256/KwccWaCgrnaw6tsrrSO61FgLacNgG2MMLq8GE6+oP5I="
             )
 
-        fun startSinchCallingService() {
-            Intent(joshApplication, WebRtcService::class.java).also { intent ->
-                joshApplication.startService(intent)
-            }
-        }
-
-        fun startAppUsageService(context: JoshApplication) {
-            Intent(context, UsageStatsService::class.java).also { intent ->
-                context.startService(intent)
-            }
-        }
-
         fun releaseInstance() {
             fetch = null
             freshChat = null
         }
     }
-
-
 }
 
 class HeaderInterceptor : Interceptor {
@@ -614,8 +594,6 @@ class HeaderInterceptor : Interceptor {
                 "APP_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE.toString()
             )
             .addHeader(KEY_APP_ACCEPT_LANGUAGE, PrefManager.getStringValue(USER_LOCALE))
-
-
         return chain.proceed(newRequest.build())
     }
 }
