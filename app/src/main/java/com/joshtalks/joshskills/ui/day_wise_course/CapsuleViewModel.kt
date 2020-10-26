@@ -63,7 +63,6 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-
     fun fetchAssessmentDetails(assessmentId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             val response = getAssessmentFromServer(assessmentId)

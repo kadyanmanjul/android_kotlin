@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
@@ -145,6 +146,9 @@ class ConversationViewModel(application: Application) :
         listOfChat.forEach { chat ->
             val question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
             question?.run {
+
+                question.lesson = appDatabase.lessonDao().getLesson(question.lesson_id)
+
                 when (this.material_type) {
                     BASE_MESSAGE_TYPE.IM -> question.imageList =
                         appDatabase.chatDao()
@@ -174,7 +178,7 @@ class ConversationViewModel(application: Application) :
                 return@forEach
             }
 
-            chatReturn.add(chat)
+            checkLesson(chatReturn, chat)
         }
         if (chatReturn.isNullOrEmpty()) {
             if (lastMessageTime != null) {
@@ -185,6 +189,59 @@ class ConversationViewModel(application: Application) :
         lastMessageTime = chatReturn.last().created
         chatObservableLiveData.postValue(chatReturn)
         updateAllMessageReadByUser()
+    }
+
+    private fun checkLesson(chatList: MutableList<ChatModel>, chat: ChatModel) {
+        val lessonModel = chat.question?.lesson
+        if (lessonModel != null) {
+            //It means This chat is a part of some lesson.
+            var lessons: HashMap<Int, ArrayList<ChatModel>> = HashMap()
+
+            val lastChatModelInList = chatList.last()
+            if (lastChatModelInList.type != BASE_MESSAGE_TYPE.LESSON) {
+                //Check if last chat in the current list is a lesson
+                //if its not then we create a new chat object with same data as current chat obejct but chane type to Lesson and add it to list
+
+                var chatNew = chat.copy()
+
+                chatNew.type = BASE_MESSAGE_TYPE.LESSON
+                chatNew.lessonStatus = LESSON_STATUS.AT //chat.question.status
+
+                val list = ArrayList<ChatModel>()
+                list.add(chatNew)
+                lessons.put(lessonModel.lessonNo, list)
+                chat.lessons = lessons
+                chatList.add(chatNew)
+            } else {
+                var currentList = lastChatModelInList.lessons!!.get(lessonModel.lessonNo)
+
+                if (currentList == null) {
+                    //checking wheather last chat and current chat belong to same lesson. No
+                    var chatNew = chat.copy()
+
+                    chatNew.type = BASE_MESSAGE_TYPE.LESSON
+                    chatNew.lessonStatus = LESSON_STATUS.AT //chat.question.status
+
+                    val list = ArrayList<ChatModel>()
+                    list.add(chatNew)
+                    lessons.put(lessonModel.lessonNo, list)
+                    chat.lessons = lessons
+                    chatList.add(chatNew)
+                } else {
+                    // it means last chat and current chat belong to same lesson. add current chat to last lesson
+                    currentList.add(chat)
+                    lessons.put(lessonModel.lessonNo, currentList)
+                    lastChatModelInList.lessons = lessons
+                    lastChatModelInList.lessonStatus = LESSON_STATUS.AT //chat.question.status
+
+                    chatList.set(chatList.size - 1, lastChatModelInList)
+                }
+            }
+        } else {
+            //current chat object is not part of any lesson we will directly add it to the list
+            chatList.add(chat)
+        }
+
     }
 
     private fun updateAllMessageReadByUser() {

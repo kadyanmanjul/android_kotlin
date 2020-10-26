@@ -107,6 +107,12 @@ object NetworkRequestHelper {
                             }
                             AppObjectController.appDatabase.chatDao().insertVideoMessageList(it)
                         }
+
+                        question.lesson?.let {
+                            AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
+
+                        }
+
                     }
                 }
                 RxBus2.publish(DBInsertion("Chat"))
@@ -195,12 +201,18 @@ object NetworkRequestHelper {
                             AppObjectController.appDatabase.chatDao().insertPdfMessageList(it)
 
                         }
+
+                        question.lesson?.let {
+                            AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
+
+                        }
+
                         question.videoList?.let {
                             it.listIterator().forEach { videoType ->
                                 videoType.questionId = question.questionId
                                 videoType.downloadStatus = DOWNLOAD_STATUS.NOT_START
                                 videoType.interval = question.interval
-                                videoType1=videoType
+                                videoType1 = videoType
                             }
                             AppObjectController.appDatabase.chatDao().insertVideoMessageList(it)
                         }

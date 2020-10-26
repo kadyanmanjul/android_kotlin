@@ -105,7 +105,13 @@ data class ChatModel(
     var lastUseTime: Date? = null,
 
     @Ignore
-    var playProgress: Int = 0
+    var playProgress: Int = 0,
+
+    @Ignore
+    var lessons: HashMap<Int, ArrayList<ChatModel>>? = null,
+
+    @Ignore
+    var lessonStatus: LESSON_STATUS? = LESSON_STATUS.NO
 
 
 ) : DataBaseClass(), Parcelable {
@@ -157,7 +163,10 @@ data class Question(
     @SerializedName("course_id") var course_id: Int = 0,
 
     @ColumnInfo
-    @SerializedName("lesson") var lesson_id: Int = 0,
+    @SerializedName("lesson_id") var lesson_id: Int = 0,
+
+    @Ignore
+    @SerializedName("lesson") var lesson: LessonModel? = null,
 
     @Ignore
     @SerializedName("images") var imageList: List<ImageType>? = null,
@@ -766,7 +775,7 @@ enum class OPTION_TYPE(val type: String) {
 
 enum class BASE_MESSAGE_TYPE(val type: String) {
     A("A"), TX("TX"), VI("VI"), AU("AU"), IM("IM"), Q("Q"), PD("PD"), PR("PR"), AR("AR"),
-    CP("CP"), QUIZ("QUIZ"), TEST("TEST"), OTHER("OTHER"), UNLOCK("UN"), P2P("P2P")
+    CP("CP"), QUIZ("QUIZ"), TEST("TEST"), OTHER("OTHER"), UNLOCK("UN"), P2P("P2P"), LESSON("LESSON")
 
 }
 

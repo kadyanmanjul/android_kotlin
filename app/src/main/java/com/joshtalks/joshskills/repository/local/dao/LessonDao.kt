@@ -12,6 +12,9 @@ interface LessonDao {
     @Query("SELECT * FROM lessonmodel ORDER BY lesson_no DESC")
     fun getLessons(): DataSource.Factory<Int, LessonModel>
 
+    @Query("SELECT * FROM lessonmodel WHERE lesson_id=:lessonId ORDER BY lesson_no DESC")
+    fun getLesson(lessonId: Int): LessonModel?
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertSingleItem(lesson: LessonModel)
 

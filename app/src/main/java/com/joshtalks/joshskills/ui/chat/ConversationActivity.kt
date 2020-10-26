@@ -83,6 +83,7 @@ import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.entity.Question
@@ -115,6 +116,8 @@ import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.extra.CallingFeatureShowcaseView
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
+import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
+import com.joshtalks.joshskills.ui.day_wise_course.lesson.LessonViewHolder
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
@@ -1280,6 +1283,9 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         chatModel: ChatModel
     ): BaseCell? {
         return when (chatModel.type) {
+            BASE_MESSAGE_TYPE.LESSON -> {
+                getGenericView(chatModel.question?.type, chatModel)
+            }
             BASE_MESSAGE_TYPE.Q -> {
                 return when (chatModel.question?.type) {
                     BASE_MESSAGE_TYPE.P2P,
@@ -1326,6 +1332,10 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 unlockViewHolder = UnlockNextClassViewHolder(activityRef, chatModel, lastMessage)
                 unlockViewHolder
             }
+            BASE_MESSAGE_TYPE.LESSON -> {
+                LessonViewHolder(activityRef, chatModel, lastMessage, this::onLessonItemClick)
+            }
+
             BASE_MESSAGE_TYPE.P2P -> P2PViewHolder(activityRef, chatModel, lastMessage)
             else -> return null
         }
@@ -1428,6 +1438,15 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         super.onActivityResult(requestCode, resultCode, data)
     }
 
+    fun onLessonItemClick(lessonModel: LessonModel) {
+        startActivity(
+            DayWiseCourseActivity.getDayWiseCourseActivityIntent(
+                this,
+                "${lessonModel.id}",
+                lessonModel.lessonName
+            )
+        )
+    }
 
     private fun fetchNewUnlockClasses(data: Intent) {
         lastVideoStartingDate?.let { date ->
