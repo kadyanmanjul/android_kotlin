@@ -36,7 +36,7 @@ data class LessonModel(
     @ColumnInfo(name = "status")
     @SerializedName("status")
     @Expose
-    var status: String,
+    var status: LESSON_STATUS? = LESSON_STATUS.NO,
 
     @ColumnInfo(name = "course")
     @SerializedName("course")

@@ -10,6 +10,7 @@ import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
@@ -17,6 +18,7 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentGrammarLayoutBinding
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
@@ -378,8 +380,8 @@ class GrammarFragment : Fragment() {
     }
 
     private fun setUpPdfView(message: ChatModel) {
-        message.question?.run {
-            this.pdfList?.getOrNull(0)?.let { pdfObj ->
+        message.question?.let {
+            it.pdfList?.getOrNull(0)?.let { pdfObj ->
                 try {
                     if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
                         fileDownloadingInProgressView()
@@ -495,19 +497,22 @@ class GrammarFragment : Fragment() {
         if (message?.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
             return
         }
-        download(message?.url!!)
+        download(message?.url)
     }
 
-    private fun download(url: String) {
-        message?.question?.pdfList?.get(0)?.let {
-            DownloadUtils.downloadFile(
-                it.url,
-                AppDirectory.docsReceivedFile(it.url).absolutePath,
-                message!!.chatId,
-                message!!,
-                downloadListener
-            )
-
+    private fun download(url: String?) {
+        message?.question?.pdfList?.let {
+            if (it.size > 0) {
+                DownloadUtils.downloadFile(
+                    it.get(0).url,
+                    AppDirectory.docsReceivedFile(it.get(0).url).absolutePath,
+                    message!!.chatId,
+                    message!!,
+                    downloadListener
+                )
+            } else if (BuildConfig.DEBUG) {
+                showToast("Pdf size is 0")
+            }
         }
     }
 

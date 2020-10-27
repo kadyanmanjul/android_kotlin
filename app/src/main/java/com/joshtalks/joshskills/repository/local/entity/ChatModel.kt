@@ -108,7 +108,10 @@ data class ChatModel(
     var playProgress: Int = 0,
 
     @Ignore
-    var lessons: HashMap<Int, ArrayList<ChatModel>>? = null,
+    var lessons: ArrayList<ChatModel>? = null,
+
+    @Ignore
+    var lessonId: Int? = null,
 
     @Ignore
     var lessonStatus: LESSON_STATUS? = LESSON_STATUS.NO

@@ -83,7 +83,6 @@ import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.entity.Question
@@ -1284,7 +1283,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     ): BaseCell? {
         return when (chatModel.type) {
             BASE_MESSAGE_TYPE.LESSON -> {
-                getGenericView(chatModel.question?.type, chatModel)
+                getGenericView(chatModel.type, chatModel)
             }
             BASE_MESSAGE_TYPE.Q -> {
                 return when (chatModel.question?.type) {
@@ -1438,12 +1437,12 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    fun onLessonItemClick(lessonModel: LessonModel) {
+    fun onLessonItemClick(lessonChats: ArrayList<ChatModel>, lessonId: Int) {
         startActivity(
             DayWiseCourseActivity.getDayWiseCourseActivityIntent(
                 this,
-                "${lessonModel.id}",
-                lessonModel.lessonName
+                "${lessonId}",
+                lessonChats
             )
         )
     }

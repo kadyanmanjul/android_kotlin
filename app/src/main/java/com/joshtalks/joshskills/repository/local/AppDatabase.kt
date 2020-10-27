@@ -27,6 +27,7 @@ import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.FeedbackEngageModel
 import com.joshtalks.joshskills.repository.local.entity.FeedbackEngageModelDao
 import com.joshtalks.joshskills.repository.local.entity.ImageType
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
@@ -85,7 +86,8 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     TypeConverterChoiceColumn::class,
     TypeConverterAssessmentType::class,
     TypeConverterAssessmentMediaType::class,
-    ChatTypeConverters::class
+    ChatTypeConverters::class,
+    LessonStatus::class
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -556,4 +558,29 @@ class ChatTypeConverters {
         return AppObjectController.gsonMapper.toJson(CHAT_TYPE.OTHER)
     }
 }
+
+
+class LessonStatus {
+    @TypeConverter
+    fun fromString(value: String?): LESSON_STATUS? {
+        return try {
+            val matType = object : TypeToken<LESSON_STATUS>() {}.type
+            AppObjectController.gsonMapper.fromJson(
+                value ?: LESSON_STATUS.NO.name, matType
+            )
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            LESSON_STATUS.NO
+        }
+    }
+
+    @TypeConverter
+    fun fromMatType(enumVal: LESSON_STATUS?): String? {
+        if (null != enumVal) {
+            return AppObjectController.gsonMapper.toJson(enumVal)
+        }
+        return AppObjectController.gsonMapper.toJson(LESSON_STATUS.NO)
+    }
+}
+
 

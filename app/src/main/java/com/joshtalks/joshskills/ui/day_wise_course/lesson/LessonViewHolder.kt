@@ -7,9 +7,9 @@ import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.ui.view_holders.BaseChatViewHolder
 import com.mindorks.placeholderview.annotations.Layout
+import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 import java.lang.ref.WeakReference
 
@@ -18,7 +18,7 @@ class LessonViewHolder(
     activityRef: WeakReference<FragmentActivity>,
     message: ChatModel,
     previousMessage: ChatModel?,
-    private val onItemClick: ((lesson: LessonModel) -> Unit)? = null
+    private val onItemClick: ((lessonChats: ArrayList<ChatModel>, lessonId: Int) -> Unit)? = null
 ) :
     BaseChatViewHolder(activityRef, message, previousMessage) {
 
@@ -39,11 +39,11 @@ class LessonViewHolder(
         return rootView
     }
 
+    @Resolve
     override fun onViewInflated() {
         super.onViewInflated()
-
-        message.lessons?.get(message.lessons!!.keys.firstOrNull()!!)?.run {
-            get(0).question?.lesson?.let { lessonModel ->
+        message.lessons?.let { lessonQuestions ->
+            lessonQuestions.get(0).question?.lesson?.let { lessonModel ->
                 lessonNameTv.text = getAppContext().getString(
                     R.string.lesson_name,
                     lessonModel.lessonNo,
@@ -52,9 +52,16 @@ class LessonViewHolder(
                 Utils.setImage(imageView, lessonModel.varthumbnail)
 
                 rootView.setOnClickListener {
-                    onItemClick?.invoke(lessonModel)
+                    onItemClick?.invoke(lessonQuestions, lessonModel.id)
                 }
             }
         }
+
+        rootView.setBackgroundResource(
+            getViewHolderBGResource(
+                previousMessage?.sender,
+                message.sender
+            )
+        )
     }
 }

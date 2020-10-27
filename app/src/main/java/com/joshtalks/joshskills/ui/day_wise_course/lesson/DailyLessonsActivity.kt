@@ -10,7 +10,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.databinding.ActivityDailyLessonsBinding
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
 
 class DailyLessonsActivity : CoreJoshActivity() {
 
@@ -53,12 +52,12 @@ class DailyLessonsActivity : CoreJoshActivity() {
     }
 
     fun onItemClick(lessonModel: LessonModel) {
-        startActivity(
+        /*startActivity(
             DayWiseCourseActivity.getDayWiseCourseActivityIntent(
                 this,
                 "${lessonModel.id}",
                 lessonModel.lessonName
             )
-        )
+        )*/
     }
 }
