@@ -1,140 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        tools:context=".ui.assessment.AssessmentActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.assessment.AssessmentActivity">
 
     <data>
 
         <variable
-                name="handler"
-                type="com.joshtalks.joshskills.ui.voip.SearchingUserActivity" />
+            name="handler"
+            type="com.joshtalks.joshskills.ui.voip.SearchingUserActivity" />
 
     </data>
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:gravity="center"
+            android:text="@string/finding_practise_partner"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.1" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_24sdp"
-                android:background="@drawable/rounded_rectangle_attach"
-            android:backgroundTint="@color/button_color"
-            android:paddingHorizontal="@dimen/_8sdp"
-                android:paddingVertical="@dimen/_12sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.05">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/image_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:srcCompat="@drawable/ic_wb_incandescent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/text_view"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center"
-                    android:layout_marginHorizontal="@dimen/_10sdp"
-                    android:gravity="start|center"
-                    android:text="@string/searching_user_title"
-                    android:textAllCaps="false"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                    android:textSize="@dimen/_11ssp"
-                    android:textColor="@color/white"
-                    app:layout_constraintBottom_toBottomOf="@+id/image_view"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/image_view"
-                    app:layout_constraintTop_toTopOf="@+id/image_view"
-                    app:rippleColor="@color/white" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/image_view_ph"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:srcCompat="@drawable/have_a_referral"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.35" />
+            app:layout_constraintVertical_bias="0.3"
+            app:srcCompat="@drawable/have_a_referral" />
 
 
         <ProgressBar
-                android:id="@+id/progress_bar"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_6sdp"
-                android:layout_gravity="bottom"
-                android:layout_marginTop="@dimen/_16sdp"
+            android:id="@+id/progress_bar"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_6sdp"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="@dimen/_24sdp"
             android:progressDrawable="@drawable/progress_background"
             android:progressTint="@color/button_color"
             android:secondaryProgress="0"
-                app:layout_constraintEnd_toEndOf="@+id/image_view_ph"
-                app:layout_constraintStart_toStartOf="@+id/image_view_ph"
-                app:layout_constraintTop_toBottomOf="@+id/image_view_ph"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.6"
-                tools:max="100"
-                tools:progress="40" />
-
-        <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/text_view_2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="@dimen/_28sdp"
-                android:gravity="center"
-                android:text="@string/find_pp_label"
-                android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                android:textColor="@color/black"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/progress_bar"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.8"
-                app:rippleColor="@color/white" />
+            app:layout_constraintEnd_toEndOf="@+id/image_view_ph"
+            app:layout_constraintStart_toStartOf="@+id/image_view_ph"
+            app:layout_constraintTop_toBottomOf="@+id/image_view_ph"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.6"
+            tools:max="100"
+            tools:progress="40" />
 
         <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_action"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/_16sdp"
-                android:backgroundTint="@color/red_color"
-                android:gravity="center"
-                android:onClick="@{()->handler.stopCalling()}"
-                android:paddingTop="@dimen/_12sdp"
-                android:paddingBottom="@dimen/_12sdp"
-                android:text="@string/stop"
-                android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
-                android:textColor="@color/white"
-                app:cornerRadius="@dimen/_36sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.95"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.6"
-                app:rippleColor="@color/white">
+            android:id="@+id/btn_action"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/_16sdp"
+            android:backgroundTint="@color/e1_red"
+            android:gravity="center"
+            android:onClick="@{()->handler.stopCalling()}"
+            android:paddingTop="@dimen/_12sdp"
+            android:paddingBottom="@dimen/_12sdp"
+            android:text="@string/stop"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
+            android:textColor="@color/white"
+            app:cornerRadius="@dimen/_36sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.9"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.6"
+            app:rippleColor="@color/white">
 
         </com.google.android.material.button.MaterialButton>
     </androidx.constraintlayout.widget.ConstraintLayout>

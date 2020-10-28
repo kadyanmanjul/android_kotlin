@@ -19,11 +19,12 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.CallType
+import com.joshtalks.joshskills.core.CountUpTimer
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityCallingBinding
-import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
+import com.joshtalks.joshskills.ui.voip.extra.VoipRatingFragment
 import com.joshtalks.joshskills.ui.voip.util.AudioPlayer
 import com.joshtalks.joshskills.ui.voip.util.SoundPoolManager
 import com.karumi.dexter.MultiplePermissionsReport
@@ -32,7 +33,6 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import java.util.HashMap
 
-const val CALL_USER_ID = "call_user_id"
 const val IS_INCOMING_CALL = "is_incoming_call"
 const val INCOMING_CALL_JSON_OBJECT = "incoming_json_call_object"
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
@@ -46,51 +46,85 @@ class WebRtcActivity : BaseActivity() {
     private lateinit var binding: ActivityCallingBinding
     private var mBoundService: WebRtcService? = null
     private var mServiceBound = false
+    private var countUpTimer = CountUpTimer(false)
 
     companion object {
-
         fun startOutgoingCallActivity(
             activity: Activity,
-            voipCallDetailModel: VoipCallDetailModel? = null
+            mapForOutgoing: HashMap<String, String?>
         ) {
             Intent(activity, WebRtcActivity::class.java).apply {
-                putExtra(CALL_USER_ID, voipCallDetailModel)
-                putExtra(CALL_USER_OBJ, getMapForOutgoing())
+                putExtra(CALL_USER_OBJ, mapForOutgoing)
                 putExtra(CALL_TYPE, CallType.OUTGOING)
             }.run {
                 activity.startActivityForResult(this, 9999)
             }
         }
-
-        private fun getMapForOutgoing(
-            destId: String = "cc0f6cc567934b579b555d49904768542198822111217",
-            topic: String = "aise hi",
-            name: String = "Sunil",
-            location: String = "Japan",
-        ): HashMap<String, String> {
-            return object : HashMap<String, String>() {
-                init {
-                    put("X-PH-Destination", destId)
-                    put("X-PH-TOPIC", topic)
-                    put("X-PH-NAME", name)
-                    put("X-PH-LOCATION", location)
-                }
-            }
-        }
-
     }
 
-    inner class ReceivedCallConnection : ServiceConnection {
+    private var myConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             val myBinder = service as WebRtcService.MyBinder
             mBoundService = myBinder.getService()
             mServiceBound = true
+            mBoundService?.addListener(callback)
             initCall()
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
             mServiceBound = false
         }
+    }
+
+    private var callback: WebRtcCallback = object : WebRtcCallback {
+        override fun onRinging() {
+
+        }
+
+        override fun onConnect() {
+            AppObjectController.uiHandler.post {
+                try {
+                    countUpTimer.lap()
+                    countUpTimer.resume()
+                    startCallTimer()
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
+            }
+
+        }
+
+        override fun onDisconnect() {
+            AppObjectController.uiHandler.post {
+                countUpTimer.pause()
+            }
+        }
+
+        override fun onCallDisconnect(id: String?) {
+            checkAndShowRating(id)
+        }
+
+        override fun onCallReject(id: String?) {
+            checkAndShowRating(id)
+        }
+
+        override fun onSelfDisconnect(id: String?) {
+            checkAndShowRating(id)
+        }
+
+        override fun onIncomingCallHangup(id: String?) {
+            checkAndShowRating(id)
+        }
+
+        private fun checkAndShowRating(id: String?) {
+            if (id.isNullOrEmpty().not() && countUpTimer.time > 0) {
+                VoipRatingFragment.newInstance(id)
+                    .show(supportFragmentManager, "voip_rating_dialog_fragment")
+                return
+            }
+            this@WebRtcActivity.finish()
+        }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -123,17 +157,12 @@ class WebRtcActivity : BaseActivity() {
     private fun initCall() {
         val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
         callType?.run {
-            val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String>
+            val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
             setUserInfo(map)
-            if (CallType.OUTGOING == this) {
-                WebRtcService.startOutgoingCall(map)
-                startCallTimer()
-                callDisViewEnable()
-            } else {
+            if (CallType.INCOMING == this) {
                 val autoPickUp = intent.getBooleanExtra(AUTO_PICKUP_CALL, false)
                 if (autoPickUp) {
-                    mBoundService?.answerCall()
-                    startCallTimer()
+                    acceptCall()
                     callDisViewEnable()
                 } else {
                     binding.groupForIncoming.visibility = View.VISIBLE
@@ -142,7 +171,7 @@ class WebRtcActivity : BaseActivity() {
         }
     }
 
-    private fun setUserInfo(map: HashMap<String, String>) {
+    private fun setUserInfo(map: HashMap<String, String?>) {
         binding.callStatus.text = map["X-PH-TOPIC"]
         binding.userDetail.text = map["X-PH-NAME"] + " \n" + map["X-PH-LOCATION"]
     }
@@ -161,7 +190,6 @@ class WebRtcActivity : BaseActivity() {
         mBoundService?.switchAudioSpeaker()
         updateStatus(binding.btnSpeaker, mBoundService!!.getSpeaker())
         volumeControlStream = AudioManager.STREAM_VOICE_CALL
-
     }
 
     fun switchTalkMode() {
@@ -204,12 +232,10 @@ class WebRtcActivity : BaseActivity() {
 
     fun onDeclineCall() {
         mBoundService?.rejectCall()
-        onBackPressed()
     }
 
     fun onDisconnectCall() {
         mBoundService?.endCall()
-        onBackPressed()
     }
 
     private fun answerCall() {
@@ -251,9 +277,14 @@ class WebRtcActivity : BaseActivity() {
         super.onStart()
         bindService(
             Intent(this, WebRtcService::class.java),
-            ReceivedCallConnection(),
+            myConnection,
             BIND_AUTO_CREATE
         )
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(myConnection)
     }
 
     override fun onBackPressed() {

@@ -92,5 +92,7 @@
     <color name="green_3d">#3DD2B5</color>
     <color name="red_f6">#F6595A</color>
     <color name="grey_68">#687C90</color>
+    <color name="e1_red">#E16262</color>
+    <color name="da_grey">#DADADA</color>
 
 </resources>

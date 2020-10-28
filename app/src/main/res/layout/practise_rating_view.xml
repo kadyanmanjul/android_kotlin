@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:hedgehog="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:paddingVertical="@dimen/_6sdp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center"
+        android:layout_weight="0.8"
+        android:gravity="start|center"
+        android:text="@string/rate_your_practise_partner"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+        android:textColor="@color/black"
+        tools:text="Confidance:" />
+
+
+    <com.joshtalks.joshskills.core.custom_ui.CustomIconRatingBar
+        android:id="@+id/rating_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|end"
+        android:layout_weight="1.2"
+        android:gravity="center|end"
+        hedgehog:halfstart="false"
+        hedgehog:starCount="5"
+        hedgehog:starEmpty="@drawable/ic_heart_empty"
+        hedgehog:starFill="@drawable/ic_heart_fill"
+        hedgehog:starHalf="@drawable/ic_heart_fill"
+        hedgehog:starImageHeight="@dimen/_22sdp"
+        hedgehog:starImagePadding="@dimen/_minus1sdp"
+        hedgehog:starImageWidth="@dimen/_22sdp" />
+
+
+</LinearLayout>

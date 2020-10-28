@@ -221,7 +221,7 @@ object WorkManagerAdmin {
             .build()
         val workRequest = OneTimeWorkRequestBuilder<IsUserActiveWorker>()
             .setInputData(data)
-            .setInitialDelay(1, TimeUnit.MINUTES)
+            .setInitialDelay(10, TimeUnit.SECONDS)
             .setConstraints(constraints)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)

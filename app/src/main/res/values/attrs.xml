@@ -241,4 +241,21 @@
         <attr name="tileBackgroundColor" format="color" />
     </declare-styleable>
 
+
+    <declare-styleable name="PractiseRatingView">
+        <attr name="rating_title" format="string" />
+    </declare-styleable>
+    <declare-styleable name="RatingBar">
+        <attr name="starImageSize" format="dimension" />
+        <attr name="starImageWidth" format="dimension" />
+        <attr name="starImageHeight" format="dimension" />
+        <attr name="starImagePadding" format="dimension" />
+        <attr name="starCount" format="integer" />
+        <attr name="starNum" format="integer" />
+        <attr name="starEmpty" format="reference" />
+        <attr name="starFill" format="reference" />
+        <attr name="starHalf" format="reference" />
+        <attr name="clickable" format="boolean" />
+        <attr name="halfstart" format="boolean" />
+    </declare-styleable>
 </resources>

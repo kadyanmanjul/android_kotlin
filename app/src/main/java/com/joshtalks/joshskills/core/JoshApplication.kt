@@ -29,7 +29,7 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
     ComponentCallbacks2/*, Configuration.Provider*/ {
 
     companion object {
-        @JvmStatic
+        @Volatile
         var isAppVisible = false
     }
 

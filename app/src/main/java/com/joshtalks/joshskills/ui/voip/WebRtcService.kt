@@ -17,7 +17,6 @@ import android.os.IBinder
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
@@ -33,7 +32,6 @@ import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.repository.local.model.UserPlivoDetailsModel
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CONNECTED_CALL_CHANNEL_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CONNECTED_CALL_NOTIFICATION_ID
-import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.EMPTY_CHANNEL_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_CHANNEL_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_NOTIFICATION_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.OUTGOING_CALL_CHANNEL_ID
@@ -44,6 +42,7 @@ import com.plivo.endpoint.Endpoint
 import com.plivo.endpoint.EventListener
 import com.plivo.endpoint.Incoming
 import com.plivo.endpoint.Outgoing
+import java.lang.ref.WeakReference
 import java.util.HashMap
 import java.util.concurrent.ExecutorService
 import timber.log.Timber
@@ -64,12 +63,16 @@ class WebRtcService : Service() {
     }
     private var isSpeakerEnable = false
     private var isMicEnable = true
-
+    private var callCallback: WeakReference<WebRtcCallback>? = null
     private val executor: ExecutorService =
         JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-Calling Service")
 
+
     companion object {
         private val TAG = "PlivoCallingListenService"
+
+        @Volatile
+        private var callUUID: String? = null
 
         @Volatile
         var isCallWasOnGoing: Boolean = false
@@ -90,7 +93,7 @@ class WebRtcService : Service() {
             }
         }
 
-        fun startOutgoingCall(map: HashMap<String, String>) {
+        fun startOutgoingCall(map: HashMap<String, String?>) {
             val serviceIntent = Intent(
                 AppObjectController.joshApplication,
                 WebRtcService::class.java
@@ -142,11 +145,15 @@ class WebRtcService : Service() {
         }
     }
 
+    fun addListener(callback: WebRtcCallback?) {
+        callCallback = WeakReference(callback)
+    }
+
     private var eventListener = object : EventListener {
         override fun onLogin() {
             endpoint?.keepAlive()
             Timber.tag(TAG).e("LoginUser")
-            Timber.tag(TAG).e("= " + endpoint?.registered.toString())
+            Timber.tag(TAG).e("= %s", endpoint?.registered.toString())
         }
 
         override fun onLogout() {
@@ -158,21 +165,28 @@ class WebRtcService : Service() {
         }
 
         override fun onIncomingDigitNotification(p0: String) {
-            Timber.tag(TAG).e("onIncomingDigitNotification=  " + p0)
+            Timber.tag(TAG).e("onIncomingDigitNotification=  %s", p0)
         }
 
         override fun onIncomingCall(incoming: Incoming) {
             Timber.tag(TAG).e("onIncomingCall")
             callData = incoming
             startOnIncomingCall(incoming.headerDict as HashMap<String, String>)
+            callUUID = incoming.headerDict.get("X-PH-MOBILEUUID")
         }
 
         override fun onIncomingCallHangup(incoming: Incoming) {
-            Timber.tag(TAG).e("onIncomingCallHangup ")
+            callData = incoming
+            Timber.tag(TAG).e("%s%s", "onIncomingCallHangup" + " ", getCallId())
+            callCallback?.get()?.onCallDisconnect(getCallId())
         }
 
-        override fun onIncomingCallRejected(p0: Incoming) {
+        //end user ne phone kaat diya
+        override fun onIncomingCallRejected(incoming: Incoming) {
             Timber.tag(TAG).e("onIncomingCallRejected")
+            callCallback?.get()?.onDisconnect()
+            callData = incoming
+            callCallback?.get()?.onIncomingCallHangup(getCallId())
         }
 
         override fun onIncomingCallInvalid(p0: Incoming) {
@@ -184,16 +198,26 @@ class WebRtcService : Service() {
             Timber.tag(TAG).e("onOutgoingCall")
         }
 
-        override fun onOutgoingCallAnswered(p0: Outgoing) {
+        override fun onOutgoingCallAnswered(outgoing: Outgoing) {
             Timber.tag(TAG).e("onOutgoingCallAnswered")
+            callData = outgoing
+            callCallback?.get()?.onConnect()
         }
 
-        override fun onOutgoingCallRejected(p0: Outgoing) {
-            Timber.tag(TAG).e("onOutgoingCallRejected")
+        // samene wale ne phone kaat diya
+        override fun onOutgoingCallRejected(outgoing: Outgoing) {
+            callData = outgoing
+            Timber.tag(TAG).e("onOutgoingCallRejected %s", getCallId())
+            callCallback?.get()?.onCallDisconnect(getCallId())
+            removeNotifications()
         }
 
-        override fun onOutgoingCallHangup(p0: Outgoing) {
-            Timber.tag(TAG).e("onOutgoingCallHangup")
+        // khud ne call kaata
+        override fun onOutgoingCallHangup(outgoing: Outgoing) {
+            callData = outgoing
+            Timber.tag(TAG).e("onOutgoingCallHangup  %s", getCallId())
+            callCallback?.get()?.onSelfDisconnect(getCallId())
+            removeNotifications()
         }
 
         override fun onOutgoingCallInvalid(p0: Outgoing) {
@@ -222,8 +246,7 @@ class WebRtcService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        //startForeground(EMPTY_NOTIFICATION_ID, emptyNotification())
-        Timber.tag(TAG).e("onStartCommand=  " + intent?.action)
+        Timber.tag(TAG).e("onStartCommand=  %s", intent?.action)
         if (intent?.action == null) {
             return START_NOT_STICKY
         }
@@ -259,6 +282,7 @@ class WebRtcService : Service() {
                             intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String>
                         endpoint?.createOutgoingCall()?.callH(userPlivo?.username, extraHeaders)
                         showNotificationOnOutgoingCall(extraHeaders)
+                        callUUID = extraHeaders?.get("X-PH-MOBILEUUID")
                         Timber.tag(TAG).e("Outgoing")
                     }
                     this == CallConnect().action -> {
@@ -289,6 +313,10 @@ class WebRtcService : Service() {
             }
         }
         return START_STICKY
+    }
+
+    fun getCallId(): String? {
+        return callUUID
     }
 
     private fun loginUser(): Boolean {
@@ -365,6 +393,7 @@ class WebRtcService : Service() {
                 SoundPoolManager.getInstance(applicationContext).stopRinging()
                 this.answer()
                 showNotificationConnectedCall(this.headerDict as HashMap<String, String>)
+                callCallback?.get()?.onConnect()
                 return
             }
         }
@@ -468,13 +497,17 @@ class WebRtcService : Service() {
     }
 
     private fun onDisconnectAndRemove() {
-        (getSystemService(NOTIFICATION_SERVICE) as NotificationManager?)?.cancelAll()
-        stopForeground(true)
+        callCallback?.get()?.onDisconnect()
+        removeNotifications()
         SoundPoolManager.getInstance(applicationContext).stopRinging()
         isCallWasOnGoing = false
-        callData = null
         isSpeakerEnable = false
         isMicEnable = true
+    }
+
+    private fun removeNotifications() {
+        (getSystemService(NOTIFICATION_SERVICE) as NotificationManager?)?.cancelAll()
+        stopForeground(true)
     }
 
     fun getSpeaker() = isSpeakerEnable
@@ -686,30 +719,6 @@ class WebRtcService : Service() {
         )
         return spannable
     }
-
-    private fun emptyNotification(): Notification {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name: CharSequence = ""
-            val importance: Int = NotificationManager.IMPORTANCE_LOW
-            val mChannel = NotificationChannel(EMPTY_CHANNEL_ID, name, importance)
-            mNotificationManager?.createNotificationChannel(mChannel)
-        }
-        val lNotificationBuilder = NotificationCompat.Builder(this, CONNECTED_CALL_CHANNEL_ID)
-            .setChannelId(EMPTY_CHANNEL_ID)
-        return lNotificationBuilder.build()
-    }
-
-    fun printIntent(intent: Intent?) {
-        if (BuildConfig.DEBUG) {
-            intent?.run {
-                this.extras?.run {
-                    for (key in this.keySet()) {
-                        Log.e(TAG, key + " : " + if (this[key] != null) this[key] else "NULL")
-                    }
-                }
-            }
-        }
-    }
 }
 
 
@@ -730,27 +739,20 @@ class NotificationId {
         val INCOMING_CALL_NOTIFICATION_ID = 200001
         val OUTGOING_CALL_NOTIFICATION_ID = 200002
         val CONNECTED_CALL_NOTIFICATION_ID = 200003
-
         val INCOMING_CALL_CHANNEL_ID = "incoming_call_channel_id"
         val OUTGOING_CALL_CHANNEL_ID = "outgoing_call_channel_id"
         val CONNECTED_CALL_CHANNEL_ID = "connected_call_channel_id"
         val EMPTY_CHANNEL_ID = "empty_channel_id"
-
     }
-
 }
 
-/*
+interface WebRtcCallback {
+    fun onRinging()
+    fun onConnect()
+    fun onDisconnect()
+    fun onCallDisconnect(id: String?)
+    fun onCallReject(id: String?)
+    fun onSelfDisconnect(id: String?)
+    fun onIncomingCallHangup(id: String?)
 
-
- if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && JoshApplication.isAppVisible.not()) {
-                            val notification = incomingCallNotification(
-                                intent.getStringExtra(INCOMING_CALL_JSON_OBJECT)
-                            )
-                            mNotificationManager?.notify(
-                                CALL_NOTIFICATION_ID, notification
-                            )
-                            startForeground(CALL_NOTIFICATION_ID, notification)
-                        } else {
-                            processIncomingCall(intent.getStringExtra(INCOMING_CALL_JSON_OBJECT))
-                        }*/
+}

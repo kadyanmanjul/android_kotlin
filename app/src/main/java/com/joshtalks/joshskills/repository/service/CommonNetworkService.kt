@@ -32,6 +32,8 @@ import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.server.reminder.DeleteReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
+import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
+import com.joshtalks.joshskills.repository.server.voip.SpeakingTopicModel
 import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
 import java.util.HashMap
 import kotlinx.coroutines.Deferred
@@ -156,6 +158,14 @@ interface CommonNetworkService {
     @GET("$DIR/voicecall/details")
     suspend fun getPlivoUserDetails(): UserPlivoDetailsModel
 
+    @POST("$DIR/voicecall/feedback")
+    suspend fun feedbackVoipCall(@Body request: RequestVoipRating): Any
+
+    @GET("$DIR/voicecall/topic/{id}/")
+    suspend fun getTopicDetail(@Path("id") id: String): SpeakingTopicModel
+
+    @GET("$DIR/voicecall/recipient_mentor")
+    suspend fun getP2PUser(@Query("course_id") id: String): HashMap<String, String?>?
 
     @GET("$DIR/certificateexam/{id}/")
     suspend fun getCertificateExamDetails(@Path("id") id: Int): CertificationQuestionModel
