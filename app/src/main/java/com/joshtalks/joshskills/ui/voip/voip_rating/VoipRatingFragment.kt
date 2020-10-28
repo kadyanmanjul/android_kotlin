@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.voip.extra
+package com.joshtalks.joshskills.ui.voip.voip_rating
 
 
 import android.app.Dialog
@@ -91,7 +91,7 @@ class VoipRatingFragment : DialogFragment() {
     private fun requestForFeedback(request: RequestVoipRating) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = AppObjectController.commonNetworkService.feedbackVoipCall(request)
+                AppObjectController.commonNetworkService.feedbackVoipCall(request)
                 FullScreenProgressDialog.hideProgressBar(requireActivity())
                 requireActivity().finishAndRemoveTask()
             } catch (ex: Throwable) {

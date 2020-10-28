@@ -17,7 +17,7 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorAccent"
+        android:background="#0D5CB8"
         android:keepScreenOn="true"
         android:orientation="vertical">
 
@@ -26,13 +26,14 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_8sdp"
             android:padding="@dimen/_4sdp"
+            android:onClick="@{()->handler.onDeclineCall()}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_arrow_back_2" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/call_status"
+            android:id="@+id/topic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/_8sdp"
@@ -146,12 +147,6 @@
             app:layout_constraintVertical_bias="0.9"
             app:srcCompat="@drawable/ic_baseline_mic_off" />
 
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/group_for_outgoing"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            app:constraint_referenced_ids="btn_mute,btn_speaker,btn_action" />
 
 
         <androidx.appcompat.widget.AppCompatImageButton
@@ -176,7 +171,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/circle2"
-            android:backgroundTint="@color/green"
+            android:backgroundTint="@color/blue33"
             android:foreground="?android:attr/selectableItemBackground"
             android:onClick="@{()->handler.acceptCall()}"
             android:padding="@dimen/_16sdp"
@@ -195,6 +190,13 @@
             android:layout_height="wrap_content"
             android:visibility="visible"
             app:constraint_referenced_ids="btn_incoming_disconnect,btn_incoming_connect" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_for_outgoing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            app:constraint_referenced_ids="btn_mute,btn_speaker,btn_action" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

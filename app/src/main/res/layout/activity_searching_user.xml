@@ -92,7 +92,6 @@
             app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_percent="0.6"
             app:rippleColor="@color/white">
-
         </com.google.android.material.button.MaterialButton>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

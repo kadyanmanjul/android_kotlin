@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.voip.extra
+package com.joshtalks.joshskills.ui.voip.voip_rating
 
 import android.content.Context
 import android.util.AttributeSet

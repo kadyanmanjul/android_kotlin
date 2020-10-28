@@ -24,9 +24,9 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityCallingBinding
-import com.joshtalks.joshskills.ui.voip.extra.VoipRatingFragment
 import com.joshtalks.joshskills.ui.voip.util.AudioPlayer
 import com.joshtalks.joshskills.ui.voip.util.SoundPoolManager
+import com.joshtalks.joshskills.ui.voip.voip_rating.VoipRatingFragment
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -197,7 +197,7 @@ class WebRtcActivity : BaseActivity() {
     }
 
     private fun setUserInfo(map: HashMap<String, String?>) {
-        binding.callStatus.text = map["X-PH-TOPIC"]
+        binding.topic.text = map["X-PH-TOPIC"]
         binding.userDetail.text = map["X-PH-NAME"] + " \n" + map["X-PH-LOCATION"]
     }
 
@@ -279,7 +279,7 @@ class WebRtcActivity : BaseActivity() {
         if (enable) {
             view.alpha = 1.0F
             view.backgroundTintList =
-                ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.green)
+                ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.blue33)
         } else {
             view.alpha = 0.5F
             view.backgroundTintList = ContextCompat.getColorStateList(

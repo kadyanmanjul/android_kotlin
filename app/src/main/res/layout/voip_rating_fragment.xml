@@ -8,7 +8,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.voip.extra.VoipRatingFragment" />
+            type="com.joshtalks.joshskills.ui.voip.voip_rating.VoipRatingFragment" />
 
     </data>
 
@@ -99,7 +99,7 @@
             app:layout_constraintTop_toBottomOf="@+id/view" />
 
 
-        <com.joshtalks.joshskills.ui.voip.extra.PractiseRatingView
+        <com.joshtalks.joshskills.ui.voip.voip_rating.PractiseRatingView
             android:id="@+id/pr_confidence"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -110,7 +110,7 @@
             app:layout_constraintWidth_percent="0.8"
             app:rating_title="@string/confidence" />
 
-        <com.joshtalks.joshskills.ui.voip.extra.PractiseRatingView
+        <com.joshtalks.joshskills.ui.voip.voip_rating.PractiseRatingView
             android:id="@+id/pr_grammar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -120,7 +120,7 @@
             app:layout_constraintWidth_percent="0.8"
             app:rating_title="@string/grammar" />
 
-        <com.joshtalks.joshskills.ui.voip.extra.PractiseRatingView
+        <com.joshtalks.joshskills.ui.voip.voip_rating.PractiseRatingView
             android:id="@+id/pr_pronunciation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -130,7 +130,7 @@
             app:layout_constraintWidth_percent="0.8"
             app:rating_title="@string/pronunciation" />
 
-        <com.joshtalks.joshskills.ui.voip.extra.PractiseRatingView
+        <com.joshtalks.joshskills.ui.voip.voip_rating.PractiseRatingView
             android:id="@+id/pr_eagerness_to_learn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -140,7 +140,7 @@
             app:layout_constraintWidth_percent="0.8"
             app:rating_title="@string/eagerness_to_learn" />
 
-        <com.joshtalks.joshskills.ui.voip.extra.PractiseRatingView
+        <com.joshtalks.joshskills.ui.voip.voip_rating.PractiseRatingView
             android:id="@+id/pr_was_the_respect_fullness"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

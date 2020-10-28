@@ -12,7 +12,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopicModel
-import com.joshtalks.joshskills.ui.voip.extra.LAST_VOIP_CALL_ID
+import com.joshtalks.joshskills.ui.voip.voip_rating.LAST_VOIP_CALL_ID
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
