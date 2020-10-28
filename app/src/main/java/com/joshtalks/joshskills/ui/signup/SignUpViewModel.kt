@@ -8,7 +8,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.tasks.Task
-import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
@@ -251,6 +250,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         AppAnalytics.updateUser()
         WorkManagerAdmin.requiredTaskAfterLoginComplete()
         fetchMentor()
+        WorkManagerAdmin.userActiveStatusWorker(true)
     }
 
     private fun fetchMentor() {

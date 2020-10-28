@@ -260,10 +260,13 @@ data class Question(
 
     @Ignore
     @Expose var vAssessmentCount: Int = -1,
+    @Expose var vAssessmentCount: Int = -1,
 
     @ColumnInfo(name = "certificate_exam_id")
     @SerializedName("certificateexam_id") var certificateExamId: Int? = null,
 
+    @ColumnInfo(name = "topic_id")
+    @SerializedName("topic_id") var topicId: String? = null,
 
     ) : Parcelable
 

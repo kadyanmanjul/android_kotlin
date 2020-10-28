@@ -57,9 +57,9 @@ object WorkManagerAdmin {
                 mutableListOf(
                     OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build(),
                     OneTimeWorkRequestBuilder<PatchDeviceDetailsWorker>().build(),
-                    OneTimeWorkRequestBuilder<JoshTalksInstallWorker>().build()
-
+                    OneTimeWorkRequestBuilder<JoshTalksInstallWorker>().build(),
                 )
+
             ).enqueue()
     }
 
