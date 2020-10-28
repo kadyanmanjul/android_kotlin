@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivitySearchingUserBinding
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -301,7 +302,16 @@ class SearchingUserActivity : BaseActivity() {
                 put("X-PH-NAME", hashMap?.get("name"))
                 put("X-PH-LOCATION", hashMap?.get("locality"))
                 put("X-PH-PICTURE", hashMap?.get("profile_pic"))
+                put("X-PH-CALLIENAME", getCallieName())
             }
         }
+    }
+
+    fun getCallieName(): String {
+        val name = Mentor.getInstance().getUser()?.firstName
+        if (name.isNullOrEmpty()) {
+            return "User"
+        }
+        return name
     }
 }

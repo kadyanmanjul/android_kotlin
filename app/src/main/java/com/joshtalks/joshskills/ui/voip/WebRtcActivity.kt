@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
+import android.graphics.Color
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
@@ -21,9 +22,13 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.CallType
 import com.joshtalks.joshskills.core.CountUpTimer
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.TextDrawable
+import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.ActivityCallingBinding
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.voip.util.AudioPlayer
 import com.joshtalks.joshskills.ui.voip.util.SoundPoolManager
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipRatingFragment
@@ -57,8 +62,6 @@ class WebRtcActivity : BaseActivity() {
             Intent(activity, WebRtcActivity::class.java).apply {
                 putExtra(CALL_USER_OBJ, mapForOutgoing)
                 putExtra(CALL_TYPE, CallType.OUTGOING)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             }.run {
                 activity.startActivityForResult(this, 9999)
             }
@@ -129,7 +132,7 @@ class WebRtcActivity : BaseActivity() {
             Timber.tag("SearchingUserActivity").e("checkAndShowRating   " + id)
 
             if (id.isNullOrEmpty().not() && countUpTimer.time > 0) {
-                VoipRatingFragment.newInstance(id)
+                VoipRatingFragment.newInstance(id, countUpTimer.time)
                     .show(supportFragmentManager, "voip_rating_dialog_fragment")
                 return
             }
@@ -177,13 +180,15 @@ class WebRtcActivity : BaseActivity() {
         val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
         callType?.run {
             val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
-            setUserInfo(map)
+            setUserInfo(this, map)
+            setImageInIV(this, map)
             if (CallType.INCOMING == this) {
                 val autoPickUp = intent.getBooleanExtra(AUTO_PICKUP_CALL, false)
                 if (autoPickUp) {
                     acceptCall()
                     callDisViewEnable()
                 } else {
+                    binding.callStatus.visibility = View.VISIBLE
                     binding.groupForIncoming.visibility = View.VISIBLE
                 }
             } else {
@@ -196,9 +201,39 @@ class WebRtcActivity : BaseActivity() {
         }
     }
 
-    private fun setUserInfo(map: HashMap<String, String?>) {
-        binding.topic.text = map["X-PH-TOPIC"]
-        binding.userDetail.text = map["X-PH-NAME"] + " \n" + map["X-PH-LOCATION"]
+    private fun setUserInfo(callType: CallType, map: HashMap<String, String?>) {
+        binding.topic.text = map["X-PH-TOPICNAME"]
+        binding.userDetail.text = if (CallType.INCOMING == callType) {
+            map["X-PH-NAME"] + " \n" + map["X-PH-LOCATION"]
+        } else {
+            map["X-PH-CALLIENAME"] + " \n" + map["X-PH-LOCATION"]
+        }
+    }
+
+    private fun setImageInIV(callType: CallType, map: HashMap<String, String?>) {
+        val url: String? = if (CallType.INCOMING == callType) {
+            map["X-PH-PICTURE"]
+        } else {
+            Mentor.getInstance().getUser()?.photo
+        }
+
+        if (url.isNullOrEmpty()) {
+            val image = TextDrawable.builder()
+                .beginConfig()
+                .textColor(Color.WHITE)
+                .fontSize(Utils.dpToPx(24))
+                .toUpperCase()
+                .endConfig()
+                .buildRound(
+                    binding.userDetail.text?.toString()?.substring(0, 2) ?: "US",
+                    ContextCompat.getColor(this, R.color.red)
+                )
+            binding.cImage.background = image
+            binding.cImage.setImageDrawable(image)
+        } else {
+            binding.cImage.setImage(url)
+        }
+
     }
 
     private fun startCallTimer() {
@@ -264,6 +299,7 @@ class WebRtcActivity : BaseActivity() {
     }
 
     private fun answerCall() {
+        binding.callStatus.visibility = View.GONE
         AudioPlayer.getInstance().stopProgressTone()
         binding.groupForIncoming.visibility = View.GONE
         binding.groupForOutgoing.visibility = View.VISIBLE

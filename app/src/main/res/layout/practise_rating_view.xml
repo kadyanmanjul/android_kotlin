@@ -12,10 +12,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="start|center"
-        android:layout_weight="0.8"
+        android:layout_weight="0.9"
         android:gravity="start|center"
         android:text="@string/rate_your_practise_partner"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
         android:textColor="@color/black"
         tools:text="Confidance:" />
 
@@ -25,7 +25,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center|end"
-        android:layout_weight="1.2"
+        android:layout_weight="1.1"
         android:gravity="center|end"
         hedgehog:halfstart="false"
         hedgehog:starCount="5"

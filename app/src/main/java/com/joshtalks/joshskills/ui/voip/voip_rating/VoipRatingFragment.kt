@@ -16,15 +16,19 @@ import com.joshtalks.joshskills.databinding.VoipRatingFragmentBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.util.showAppropriateMsg
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 const val LAST_VOIP_CALL_ID = "last_call_id"
+const val LAST_VOIP_CALL_TIME = "last_call_time"
 
 class VoipRatingFragment : DialogFragment() {
     private lateinit var binding: VoipRatingFragmentBinding
     private var plivoId: String = EMPTY
+    private var lastCallTime: Long = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +36,8 @@ class VoipRatingFragment : DialogFragment() {
         arguments?.getString(LAST_VOIP_CALL_ID)?.run {
             plivoId = this
         }
+        lastCallTime = arguments?.getLong(LAST_VOIP_CALL_TIME) ?: 0
+
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -57,7 +63,6 @@ class VoipRatingFragment : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         binding =
             DataBindingUtil.inflate(
                 inflater,
@@ -68,6 +73,18 @@ class VoipRatingFragment : DialogFragment() {
         binding.lifecycleOwner = this
         binding.handler = this
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.tvSpeaking.text = getString(R.string.speaking_time_msz, getTimeHhMm())
+    }
+
+    private fun getTimeHhMm(): String {
+        return String.format(
+            "%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(lastCallTime),
+            TimeUnit.MILLISECONDS.toSeconds(lastCallTime)
+        )
     }
 
     fun close() {
@@ -103,10 +120,11 @@ class VoipRatingFragment : DialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(callId: String?) = VoipRatingFragment()
+        fun newInstance(callId: String?, time: Int) = VoipRatingFragment()
             .apply {
                 arguments = Bundle().apply {
                     putString(LAST_VOIP_CALL_ID, callId)
+                    putLong(LAST_VOIP_CALL_TIME, time.toLong())
                 }
             }
     }

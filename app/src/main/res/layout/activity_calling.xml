@@ -31,6 +31,22 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_arrow_back_2" />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/call_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_8sdp"
+            android:gravity="center"
+            android:text="@string/pp_calling"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+            android:textColor="@color/white"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/topic"
+            app:layout_constraintEnd_toEndOf="@+id/topic"
+            app:layout_constraintStart_toStartOf="@+id/topic"
+            tools:ignore="MissingPrefix"
+            tools:visibility="visible" />
+
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/topic"
