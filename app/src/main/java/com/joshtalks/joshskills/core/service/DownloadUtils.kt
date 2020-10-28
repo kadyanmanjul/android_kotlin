@@ -28,7 +28,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.reflect.Type
-import java.util.*
+import java.util.HashMap
 import java.util.concurrent.ExecutorService
 
 const val DOWNLOAD_OBJECT = "DownloadObject"
@@ -122,6 +122,7 @@ object DownloadUtils {
                                 }
                             BASE_MESSAGE_TYPE.PD ->
                                 question.pdfList?.get(0).let { pdfType ->
+                                    pdfType?.questionId = question.questionId
                                     pdfType?.downloadedLocalPath = filePath
                                     appDatabase.chatDao().updatePdfObject(pdfType!!)
 

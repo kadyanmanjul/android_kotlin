@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.os.SystemClock
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -13,6 +14,7 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.SeekBar
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -31,24 +33,32 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.PracticeItemLayoutBinding
+import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
+import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
-import java.util.concurrent.TimeUnit
+import com.joshtalks.joshskills.util.ExoAudioPlayer
+import com.muddzdev.styleabletoast.StyleableToast
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
+import java.util.concurrent.TimeUnit
+import kotlin.random.Random.Default.nextInt
 
 class PracticeAdapter(
     val context: Context,
+    val practiceViewModel: PracticeViewModel,
     val itemList: ArrayList<ChatModel>,
     val clickListener: PracticeClickListeners
 ) :
     RecyclerView.Adapter<PracticeAdapter.PracticeViewHolder>() {
 
+    var audioManager = ExoAudioPlayer.getInstance()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PracticeViewHolder {
         val binding = PracticeItemLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
 
@@ -64,12 +74,16 @@ class PracticeAdapter(
     }
 
     inner class PracticeViewHolder(val binding: PracticeItemLayoutBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+        RecyclerView.ViewHolder(binding.root), AudioPlayerEventListener,
+        ExoAudioPlayer.ProgressUpdateListener {
+        private var currentPlayingPosition: Int = 0
         private var startTime: Long = 0L
         var filePath: String? = null
         var appAnalytics: AppAnalytics? = null
 
+        var currentChatModel: ChatModel? = null
         fun bind(chatModel: ChatModel) {
+
             appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTICE_SCREEN.NAME)
                 .addBasicParam()
                 .addUserDetails()
@@ -97,7 +111,7 @@ class PracticeAdapter(
             }
             binding.btnPlayInfo.setOnClickListener {
                 appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio Played")
-                clickListener.playPracticeAudio(chatModel, layoutPosition)
+                playPracticeAudio(chatModel, layoutPosition)
             }
 
             binding.submitBtnPlayInfo.setOnClickListener {
@@ -105,7 +119,7 @@ class PracticeAdapter(
                     AnalyticsEvent.PRACTICE_EXTRA.NAME,
                     "Already Submitted audio Played"
                 )
-                clickListener.playSubmitPracticeAudio(chatModel, layoutPosition)
+                playSubmitPracticeAudio(chatModel, layoutPosition)
                 val state =
                     if (chatModel.isPlaying) {
                         MaterialPlayPauseDrawable.State.Play
@@ -117,7 +131,7 @@ class PracticeAdapter(
 
             binding.ivCancel.setOnClickListener {
                 chatModel.filePath = null
-                clickListener.removeAudioPractise(chatModel)
+                removeAudioPractise(chatModel)
                 removeAudioPractice()
             }
 
@@ -144,6 +158,158 @@ class PracticeAdapter(
             }
         }
 
+        //===============================
+        override fun onPlayerPause() {
+        }
+
+        override fun onPlayerResume() {
+        }
+
+        override fun onCurrentTimeUpdated(lastPosition: Long) {
+        }
+
+        override fun onTrackChange(tag: String?) {
+        }
+
+        override fun onPositionDiscontinuity(lastPos: Long, reason: Int) {
+        }
+
+        override fun onPositionDiscontinuity(reason: Int) {
+        }
+
+        override fun onPlayerReleased() {
+        }
+
+        override fun onPlayerEmptyTrack() {
+        }
+
+        override fun complete() {
+            audioManager?.onPause()
+            audioManager?.setProgressUpdateListener(null)
+        }
+
+        override fun onProgressUpdate(progress: Long) {
+            currentChatModel?.playProgress = progress.toInt()
+            if (currentPlayingPosition != -1) {
+                binding.progressBarImageView.progress = progress.toInt()
+            }
+        }
+
+        override fun onDurationUpdate(duration: Long?) {
+            currentChatModel?.playProgress = duration?.toInt() ?: 0
+        }
+
+        private fun checkIsPlayer(): Boolean {
+            return audioManager != null
+        }
+
+        private fun isAudioPlaying(): Boolean {
+            return this.checkIsPlayer() && audioManager!!.isPlaying()
+        }
+
+        private fun onPlayAudio(chatModel: ChatModel, audioObject: AudioType, position: Int) {
+            currentPlayingPosition = position
+            if (currentChatModel != null && currentChatModel?.isPlaying == true) {
+                audioManager?.onPause()
+            } else {
+                currentChatModel = chatModel
+                val audioList = java.util.ArrayList<AudioType>()
+                audioList.add(audioObject)
+                audioManager = ExoAudioPlayer.getInstance()
+                audioManager?.playerListener = this
+                audioManager?.play(audioObject.audio_url)
+                audioManager?.setProgressUpdateListener(this)
+            }
+
+            chatModel.isPlaying = chatModel.isPlaying.not()
+        }
+
+        fun playPracticeAudio(chatModel: ChatModel, position: Int) {
+            if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
+                StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
+                    .text(context.getString(R.string.volume_up_message)).cornerRadius(16)
+                    .length(Toast.LENGTH_LONG)
+                    .solidBackground().show()
+            }
+
+            if (currentChatModel == null) {
+                chatModel.question?.audioList?.getOrNull(0)
+                    ?.let {
+                        onPlayAudio(chatModel, it, position)
+                        binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
+                    }
+            } else {
+                if (currentChatModel == chatModel) {
+                    if (checkIsPlayer()) {
+                        audioManager?.setProgressUpdateListener(this)
+                        audioManager?.resumeOrPause()
+                        if (audioManager?.isPlaying() == true) {
+
+                            binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
+                        } else
+                            binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+                    } else {
+                        onPlayAudio(
+                            chatModel,
+                            chatModel.question?.audioList?.getOrNull(0)!!,
+                            position
+                        )
+                        binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
+                    }
+                } else {
+                    onPlayAudio(chatModel, chatModel.question?.audioList?.getOrNull(0)!!, position)
+                    binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
+                }
+            }
+        }
+
+        fun playSubmitPracticeAudio(chatModel: ChatModel, position: Int) {
+            try {
+                val audioType = AudioType()
+                audioType.audio_url = filePath!!
+                audioType.downloadedLocalPath = filePath!!
+                audioType.duration =
+                    Utils.getDurationOfMedia(context, filePath!!)?.toInt() ?: 0
+                audioType.id = nextInt().toString()
+
+                if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
+                    StyleableToast.Builder(AppObjectController.joshApplication)
+                        .gravity(Gravity.BOTTOM)
+                        .text(context.getString(R.string.volume_up_message)).cornerRadius(16)
+                        .length(Toast.LENGTH_LONG)
+                        .solidBackground().show()
+                }
+
+                if (currentChatModel == null) {
+                    onPlayAudio(chatModel, audioType, position)
+                } else {
+                    if (currentChatModel == chatModel) {
+                        if (checkIsPlayer()) {
+                            audioManager?.setProgressUpdateListener(this)
+                            chatModel.isPlaying = chatModel.isPlaying.not()
+                            audioManager?.resumeOrPause()
+                            notifyItemChanged(layoutPosition)
+                        } else {
+                            onPlayAudio(chatModel, audioType, position)
+                        }
+                    } else {
+                        onPlayAudio(chatModel, audioType, position)
+
+                    }
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+
+        }
+
+        fun removeAudioPractise(chatModel: ChatModel) {
+            if (isAudioPlaying()) {
+                audioManager?.resumeOrPause()
+            }
+        }
+
+        //============================================================================
         fun setPracticeInfoView(chatModel: ChatModel) {
             chatModel.question?.run {
                 when (this.material_type) {
@@ -343,6 +509,7 @@ class PracticeAdapter(
                         binding.counterTv.base = SystemClock.elapsedRealtime()
                         startTime = System.currentTimeMillis()
                         binding.counterTv.start()
+                        startRecording(chatModel, layoutPosition, startTime)
                         clickListener.startRecording(chatModel, layoutPosition, startTime)
                         binding.audioPractiseHint.visibility = View.GONE
 
@@ -354,6 +521,7 @@ class PracticeAdapter(
                         binding.rootView.requestDisallowInterceptTouchEvent(false)
                         binding.counterTv.stop()
                         val stopTime = System.currentTimeMillis()
+                        stopRecording(chatModel, layoutPosition, stopTime)
                         clickListener.stopRecording(chatModel, layoutPosition, stopTime)
                         binding.uploadPractiseView.clearAnimation()
                         binding.counterContainer.visibility = View.GONE
@@ -378,6 +546,32 @@ class PracticeAdapter(
                 }
 
                 true
+            }
+        }
+
+        fun onSeekChange(seekTo: Long) {
+            audioManager?.seekTo(seekTo)
+        }
+
+        fun startRecording(chatModel: ChatModel, position: Int, startTime: Long) {
+            this.startTime = startTime
+            practiceViewModel.startRecord()
+        }
+
+        fun stopRecording(chatModel: ChatModel, position: Int, stopTime: Long) {
+            practiceViewModel.stopRecording()
+            val timeDifference =
+                TimeUnit.MILLISECONDS.toSeconds(stopTime) - TimeUnit.MILLISECONDS.toSeconds(
+                    startTime
+                )
+            if (timeDifference > 1) {
+                practiceViewModel.recordFile?.let {
+//                                isAudioRecordDone = true
+                    filePath = AppDirectory.getAudioSentFile(null).absolutePath
+                    chatModel.filePath = filePath
+                    AppDirectory.copy(it.absolutePath, filePath!!)
+                }
+
             }
         }
 

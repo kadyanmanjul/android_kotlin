@@ -39,13 +39,13 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.disposables.CompositeDisposable
-import java.util.ArrayList
-import java.util.concurrent.TimeUnit
-import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.ArrayList
+import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 
 const val PRACTISE_OBJECT = "practise_object"
 const val IMAGE_OR_VIDEO_SELECT_REQUEST_CODE = 1081
@@ -120,7 +120,7 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
         binding.lifecycleOwner = this
         binding.handler = this
 
-        adapter = PracticeAdapter(requireContext(), chatModelList!!, this)
+        adapter = PracticeAdapter(requireContext(), practiceViewModel, chatModelList!!, this)
         binding.practiceRv.layoutManager = LinearLayoutManager(requireContext())
         binding.practiceRv.adapter = adapter
 
@@ -220,9 +220,6 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
 
         chatModel.isPlaying = chatModel.isPlaying.not()
         adapter.notifyDataSetChanged()
-    }
-
-    fun playPracticeAudio() {
     }
 
     fun removeAudioPractise() {

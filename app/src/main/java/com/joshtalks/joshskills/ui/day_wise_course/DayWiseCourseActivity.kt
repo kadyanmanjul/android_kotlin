@@ -18,7 +18,7 @@ import com.joshtalks.joshskills.repository.local.entity.ChatModel
 class DayWiseCourseActivity : AppCompatActivity() {
 
     private lateinit var binding: DaywiseCourseActivityBinding
-    lateinit var lessonId: String
+    var lessonId: Int = 0
 //    val questionList: ArrayList<Question> = ArrayList()
 
     lateinit var chatList: ArrayList<ChatModel>
@@ -32,7 +32,7 @@ class DayWiseCourseActivity : AppCompatActivity() {
         private val CHAT_ITEMS = "chat_items"
         fun getDayWiseCourseActivityIntent(
             context: Context,
-            lessonId: String,
+            lessonId: Int,
             chatList: ArrayList<ChatModel>
         ) = Intent(context, DayWiseCourseActivity::class.java).apply {
             putExtra(LESSON_ID, lessonId)
@@ -52,7 +52,8 @@ class DayWiseCourseActivity : AppCompatActivity() {
         if (intent.hasExtra(CHAT_ITEMS).not())
             finish()
 
-        lessonId = intent.getStringExtra(LESSON_ID)
+        lessonId = intent.getIntExtra(LESSON_ID, 0)
+        viewModel.lessonId = lessonId
         chatList = intent.getParcelableArrayListExtra(CHAT_ITEMS)!!
 
         val titleView: TextView = findViewById(R.id.text_message_title)
@@ -64,24 +65,27 @@ class DayWiseCourseActivity : AppCompatActivity() {
             onBackPressed()
         }
 
-        val adapter = LessonPagerAdapter(chatList, supportFragmentManager, this.lifecycle)
-        binding.lessonViewpager.adapter = adapter
-        TabLayoutMediator(
-            binding.lessonTabLayout,
-            binding.lessonViewpager,
-            object : TabLayoutMediator.TabConfigurationStrategy {
-                override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {
-                    when (position) {
-                        0 -> tab.text = getString(R.string.grammar)
-                        1 -> tab.text = getString(R.string.vocabulary)
-                        2 -> tab.text = getString(R.string.reading)
-                        3 -> tab.text = getString(R.string.speaking)
-                    }
-                }
-            }).attach()
 
 //        viewModel.syncQuestions(lessonId)
-//        viewModel.getQuestions(lessonId)
+        viewModel.getQuestions(chatList)
+
+        viewModel.chatObservableLiveData.observe(this, {
+            val adapter = LessonPagerAdapter(chatList, supportFragmentManager, this.lifecycle)
+            binding.lessonViewpager.adapter = adapter
+            TabLayoutMediator(
+                binding.lessonTabLayout,
+                binding.lessonViewpager,
+                object : TabLayoutMediator.TabConfigurationStrategy {
+                    override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {
+                        when (position) {
+                            0 -> tab.text = getString(R.string.grammar)
+                            1 -> tab.text = getString(R.string.vocabulary)
+                            2 -> tab.text = getString(R.string.reading)
+                            3 -> tab.text = getString(R.string.speaking)
+                        }
+                    }
+                }).attach()
+        })
 
     }
 }

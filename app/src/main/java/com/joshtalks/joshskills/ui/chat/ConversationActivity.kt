@@ -156,6 +156,9 @@ import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 import java.util.Date
 import java.util.Locale
@@ -164,9 +167,6 @@ import java.util.TimerTask
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.concurrent.scheduleAtFixedRate
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -1441,7 +1441,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         startActivity(
             DayWiseCourseActivity.getDayWiseCourseActivityIntent(
                 this,
-                "${lessonId}",
+                lessonId,
                 lessonChats
             )
         )

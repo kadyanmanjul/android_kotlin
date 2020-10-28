@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.ResponseChatMessage
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
+import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
@@ -114,4 +115,11 @@ interface ChatNetworkService {
         @Query("mentor_id") mentorId: String,
         @Query("lesson_id") lessonId: String
     ): BaseResponse<List<Question>>
+
+
+    @POST("$DIR/chat/update_lesson/")
+    suspend fun updateQuestionStatus(
+        @Body questionStatus: UpdateQuestionStatus
+    )
+
 }

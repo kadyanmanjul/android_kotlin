@@ -10,6 +10,7 @@ import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
@@ -23,7 +24,9 @@ import com.joshtalks.joshskills.databinding.FragmentGrammarLayoutBinding
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.ui.day_wise_course.CapsuleViewModel
 import com.joshtalks.joshskills.ui.day_wise_course.practice.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
@@ -191,13 +194,13 @@ class GrammarFragment : Fragment() {
     private fun addObserValbles() {
 //        viewModel.getQuestions()
         assessmentQuestions.clear()
-        viewModel.assessmentLiveData.observe(viewLifecycleOwner, { assessmentRelations ->
+        viewModel.assessmentLiveData.observe(viewLifecycleOwner) { assessmentRelations ->
             assessmentRelations.questionList.sortedBy { it.question.sortOrder }
                 .forEach { item -> assessmentQuestions.add(item) }
 
             if (assessmentQuestions.size > 0)
                 updateQuiz(assessmentQuestions.get(0))
-        })
+        }
     }
 
     private fun updateQuiz(question: AssessmentQuestionWithRelations) {
@@ -255,49 +258,6 @@ class GrammarFragment : Fragment() {
 //            .addParam("ChatId", message.chatId)
     }
 
-    fun onQuestionSubmit() {
-        binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.tag as Int)
-            .setBackgroundColor(
-                ContextCompat.getColor(requireContext(), R.color.bg_green_80)
-            )
-
-        binding.continueBtn.visibility = View.VISIBLE
-        binding.showExplanationBtn.isEnabled = true
-        /*if (binding.quizRadioGroup.tag == binding.quizRadioGroup.checkedRadioButtonId) {
-            binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.checkedRadioButtonId)
-                .setBackgroundColor(
-                    ContextCompat.getColor(requireContext(), R.color.bg_green_80)
-                )
-        }else{
-            binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.checkedRadioButtonId)
-                .setBackgroundColor(
-                    ContextCompat.getColor(requireContext(), R.color.wrong_answer)
-                )
-        }*/
-    }
-
-    fun onContinueClick() {
-        if (assessmentQuestions.size - 1 > currentQuizQuestion)
-            updateQuiz(assessmentQuestions.get(++currentQuizQuestion))
-        else {
-
-        }
-    }
-
-
-    fun hideExplanation() {
-        binding.explanationLbl.visibility = View.GONE
-        binding.explanationTv.visibility = View.GONE
-    }
-
-    fun showExplanation() {
-        binding.showExplanationBtn.isEnabled = false
-        binding.explanationLbl.visibility = View.VISIBLE
-        binding.explanationTv.visibility = View.VISIBLE
-        binding.explanationTv.requestFocus()
-        binding.explanationTv.parent.requestChildFocus(binding.explanationTv, binding.explanationTv)
-//        binding.grammarScrollView.scrollTo(0, binding.explanationTv.y.toInt())
-    }
 
     fun setupUi(chatModel: ChatModel) {
         chatModel.question?.run {
@@ -377,6 +337,56 @@ class GrammarFragment : Fragment() {
              }*/
 
         }
+    }
+
+    fun onQuestionSubmit() {
+        if (binding.quizRadioGroup.tag is Int) {
+
+            val question = assessmentQuestions.get(currentQuizQuestion)
+            question.question.isAttempted = true
+            question.question.status =
+                evaluateQuestionStatus((binding.quizRadioGroup.tag as Int) == binding.quizRadioGroup.checkedRadioButtonId)
+
+            viewModel.saveAssessmentQuestion(question)
+            viewModel.updateQuestionStatus(QUESTION_STATUS.AT.name, question.question.remoteId)
+
+            binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.tag as Int)
+                .setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.bg_green_80)
+                )
+
+            binding.continueBtn.visibility = View.VISIBLE
+            binding.showExplanationBtn.isEnabled = true
+        }
+    }
+
+    private fun evaluateQuestionStatus(status: Boolean): QuestionStatus {
+        return if (status) QuestionStatus.CORRECT
+        else QuestionStatus.WRONG
+
+    }
+
+    fun onContinueClick() {
+        if (assessmentQuestions.size - 1 > currentQuizQuestion) {
+            updateQuiz(assessmentQuestions.get(++currentQuizQuestion))
+        } else {
+
+        }
+    }
+
+
+    fun hideExplanation() {
+        binding.explanationLbl.visibility = View.GONE
+        binding.explanationTv.visibility = View.GONE
+    }
+
+    fun showExplanation() {
+        binding.showExplanationBtn.isEnabled = false
+        binding.explanationLbl.visibility = View.VISIBLE
+        binding.explanationTv.visibility = View.VISIBLE
+        binding.explanationTv.requestFocus()
+        binding.explanationTv.parent.requestChildFocus(binding.explanationTv, binding.explanationTv)
+//        binding.grammarScrollView.scrollTo(0, binding.explanationTv.y.toInt())
     }
 
     private fun setUpPdfView(message: ChatModel) {
@@ -459,21 +469,6 @@ class GrammarFragment : Fragment() {
     }
 
     private fun openPdf() {
-        /*  message?.question?.pdfList?.getOrNull(0)?.let { pdfObj ->
-              if (pdfObj.url.isBlank()) {
-                  appAnalytics?.addParam(AnalyticsEvent.PDF_VIEW_STATUS.NAME, "pdf url Blank")?.push()
-                  return
-              }
-              if (message?.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED && AppDirectory.isFileExist(
-                      AppDirectory.docsReceivedFile(pdfObj.url).absolutePath
-                  )
-              ) {
-                  RxBus2.publish(PdfOpenEventBus(message?.chatId!!, pdfObj))
-              } else {
-  //                RxBus2.publish(DownloadMediaEventBus(pdfViewHolder, message?))
-              }
-          }*/
-
         message?.question?.pdfList?.getOrNull(0)?.let { pdfType ->
             binding.additionalMaterialTv.setOnClickListener {
                 PdfViewerActivity.startPdfActivity(
@@ -500,7 +495,38 @@ class GrammarFragment : Fragment() {
         download(message?.url)
     }
 
+    fun askStoragePermission() {
+
+        PermissionUtils.storageReadAndWritePermission(
+            requireActivity(),
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.permissionPermanentlyDeniedDialog(
+                                requireActivity(),
+                                R.string.record_permission_message
+                            )
+                            return
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            })
+    }
+
     private fun download(url: String?) {
+
+        if (PermissionUtils.isStoragePermissionEnabled(requireContext()).not()) {
+            askStoragePermission()
+            return
+        }
         message?.question?.pdfList?.let {
             if (it.size > 0) {
                 DownloadUtils.downloadFile(
