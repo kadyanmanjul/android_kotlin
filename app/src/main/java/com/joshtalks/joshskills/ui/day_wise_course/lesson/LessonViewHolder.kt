@@ -43,7 +43,7 @@ class LessonViewHolder(
     override fun onViewInflated() {
         super.onViewInflated()
         message.lessons?.let { lessonQuestions ->
-            lessonQuestions.get(0).question?.lesson?.let { lessonModel ->
+            lessonQuestions.getOrNull(0)?.question?.lesson?.let { lessonModel ->
                 lessonNameTv.text = getAppContext().getString(
                     R.string.lesson_name,
                     lessonModel.lessonNo,
