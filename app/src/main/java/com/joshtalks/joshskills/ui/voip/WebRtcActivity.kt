@@ -32,6 +32,7 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import java.util.HashMap
+import timber.log.Timber
 
 const val IS_INCOMING_CALL = "is_incoming_call"
 const val INCOMING_CALL_JSON_OBJECT = "incoming_json_call_object"
@@ -56,6 +57,8 @@ class WebRtcActivity : BaseActivity() {
             Intent(activity, WebRtcActivity::class.java).apply {
                 putExtra(CALL_USER_OBJ, mapForOutgoing)
                 putExtra(CALL_TYPE, CallType.OUTGOING)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             }.run {
                 activity.startActivityForResult(this, 9999)
             }
@@ -78,10 +81,11 @@ class WebRtcActivity : BaseActivity() {
 
     private var callback: WebRtcCallback = object : WebRtcCallback {
         override fun onRinging() {
-
+            Timber.tag("SearchingUserActivity").e("onRinging")
         }
 
         override fun onConnect() {
+            Timber.tag("SearchingUserActivity").e("onConnect")
             AppObjectController.uiHandler.post {
                 try {
                     countUpTimer.lap()
@@ -91,32 +95,39 @@ class WebRtcActivity : BaseActivity() {
                     ex.printStackTrace()
                 }
             }
-
         }
 
         override fun onDisconnect() {
+            Timber.tag("SearchingUserActivity").e("onDisconnect")
+            onStopCall()
             AppObjectController.uiHandler.post {
                 countUpTimer.pause()
             }
         }
 
         override fun onCallDisconnect(id: String?) {
+            Timber.tag("SearchingUserActivity").e("onCallDisconnect")
             checkAndShowRating(id)
         }
 
         override fun onCallReject(id: String?) {
+            Timber.tag("SearchingUserActivity").e("onCallReject")
             checkAndShowRating(id)
         }
 
         override fun onSelfDisconnect(id: String?) {
+            Timber.tag("SearchingUserActivity").e("onSelfDisconnect")
             checkAndShowRating(id)
         }
 
         override fun onIncomingCallHangup(id: String?) {
+            Timber.tag("SearchingUserActivity").e("onIncomingCallHangup")
             checkAndShowRating(id)
         }
 
         private fun checkAndShowRating(id: String?) {
+            Timber.tag("SearchingUserActivity").e("checkAndShowRating   " + id)
+
             if (id.isNullOrEmpty().not() && countUpTimer.time > 0) {
                 VoipRatingFragment.newInstance(id)
                     .show(supportFragmentManager, "voip_rating_dialog_fragment")
@@ -124,7 +135,15 @@ class WebRtcActivity : BaseActivity() {
             }
             this@WebRtcActivity.finish()
         }
+    }
 
+    fun onStopCall() {
+        AudioPlayer.getInstance().stopProgressTone()
+        SoundPoolManager.getInstance(this).release()
+        AppAnalytics.create(AnalyticsEvent.DISCONNECT_CALL_VOIP.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -167,6 +186,12 @@ class WebRtcActivity : BaseActivity() {
                 } else {
                     binding.groupForIncoming.visibility = View.VISIBLE
                 }
+            } else {
+                countUpTimer.lap()
+                countUpTimer.resume()
+                startCallTimer()
+                binding.groupForIncoming.visibility = View.GONE
+                binding.groupForOutgoing.visibility = View.VISIBLE
             }
         }
     }
@@ -264,15 +289,6 @@ class WebRtcActivity : BaseActivity() {
         }
     }
 
-    private fun stopCall() {
-        try {
-            AudioPlayer.getInstance().stopProgressTone()
-            SoundPoolManager.getInstance(this).release()
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-    }
-
     override fun onStart() {
         super.onStart()
         bindService(
@@ -288,13 +304,5 @@ class WebRtcActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        stopCall()
-        AppAnalytics.create(AnalyticsEvent.DISCONNECT_CALL_VOIP.NAME)
-            .addBasicParam()
-            .addUserDetails()
-            .push()
-        val resultIntent = Intent()
-        setResult(RESULT_OK, resultIntent)
-        finishAndRemoveTask()
     }
 }

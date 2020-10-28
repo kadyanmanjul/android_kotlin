@@ -19,6 +19,8 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.speaking_practise_fragment.btn_start
+import kotlinx.android.synthetic.main.speaking_practise_fragment.group_one
+import kotlinx.android.synthetic.main.speaking_practise_fragment.group_two
 import kotlinx.android.synthetic.main.speaking_practise_fragment.progress_bar
 import kotlinx.android.synthetic.main.speaking_practise_fragment.text_view
 import kotlinx.android.synthetic.main.speaking_practise_fragment.tv_practise_time
@@ -31,15 +33,17 @@ const val LESSON_ID = "lesson_id"
 
 class SpeakingPractiseFragment : DialogFragment() {
     private var lessonId: String = EMPTY
-    private var courseId: String = "10"
-
+    private var courseId: String = EMPTY
     private val speakingTopicModelLiveData: MutableLiveData<SpeakingTopicModel> = MutableLiveData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NO_FRAME, R.style.full_dialog)
-        savedInstanceState?.getString(LAST_VOIP_CALL_ID)?.run {
+        arguments?.getString(LAST_VOIP_CALL_ID)?.run {
             lessonId = this
+        }
+        arguments?.getString(COURSE_ID)?.run {
+            courseId = this
         }
     }
 
@@ -51,7 +55,6 @@ class SpeakingPractiseFragment : DialogFragment() {
             window?.setLayout(width, height)
         }
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -80,6 +83,8 @@ class SpeakingPractiseFragment : DialogFragment() {
                     getString(R.string.pp_message, response.duration.toString())
             } catch (ex: Exception) {
             }
+            group_two.visibility = View.VISIBLE
+            group_one.visibility = View.GONE
         })
         getTopicDetail()
     }
@@ -143,9 +148,10 @@ class SpeakingPractiseFragment : DialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(lessonId: String?) = SpeakingPractiseFragment()
+        fun newInstance(courseId: String = "10", lessonId: String?) = SpeakingPractiseFragment()
             .apply {
                 arguments = Bundle().apply {
+                    putString(COURSE_ID, courseId)
                     putString(LESSON_ID, lessonId)
                 }
             }

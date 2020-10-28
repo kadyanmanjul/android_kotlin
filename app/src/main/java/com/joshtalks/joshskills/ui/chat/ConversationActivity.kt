@@ -51,7 +51,6 @@ import com.joshtalks.joshskills.core.CERTIFICATE_GENERATE
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
-import com.joshtalks.joshskills.core.IS_PRACTISE_PARTNER_VIEWED
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.MESSAGE_CHAT_SIZE_LIMIT
@@ -143,8 +142,6 @@ import com.joshtalks.joshskills.ui.view_holders.TextViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TimeViewHolder
 import com.joshtalks.joshskills.ui.view_holders.UnlockNextClassViewHolder
 import com.joshtalks.joshskills.ui.view_holders.VideoViewHolder
-import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
-import com.joshtalks.joshskills.ui.voip.extra.PractisePartnerDialogFragment
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
@@ -1119,7 +1116,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    if (PrefManager.hasKey(IS_PRACTISE_PARTNER_VIEWED)) {
+                    /*   if (PrefManager.hasKey(IS_PRACTISE_PARTNER_VIEWED)) {
                         SearchingUserActivity.startUserForPractiseOnPhoneActivity(
                             this,
                             inboxEntity.courseId
@@ -1128,6 +1125,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                         PractisePartnerDialogFragment.newInstance()
                             .show(supportFragmentManager, "PractisePartnerDialogFragment")
                     }
+                    */
                 }, {
                     it.printStackTrace()
                 })
@@ -2038,7 +2036,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     }
 
     override fun onSuccessDismiss() {
-        SearchingUserActivity.startUserForPractiseOnPhoneActivity(this, inboxEntity.courseId)
+        //SearchingUserActivity.startUserForPractiseOnPhoneActivity(this, inboxEntity.courseId)
     }
 
     override fun onDismiss() {

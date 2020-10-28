@@ -76,6 +76,8 @@ import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivit
 import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
+import com.joshtalks.joshskills.ui.voip.SpeakingPractiseFragment
+import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -139,6 +141,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
+        WebRtcService.loginUserClient()
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         super.onCreate(savedInstanceState)
         AppObjectController.isSettingUpdate = false
@@ -152,6 +155,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         handelIntentAction()
         initNewUserTip()
         viewModel.getTotalWatchTime()
+        SpeakingPractiseFragment.newInstance(courseId = "10", lessonId = "2")
+            .show(supportFragmentManager, "voip_rating_dialog_fragment")
+
     }
 
     private fun initNewUserTip() {

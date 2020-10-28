@@ -514,9 +514,8 @@
         <activity
             android:name=".ui.voip.WebRtcActivity"
             android:autoRemoveFromRecents="true"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:taskAffinity=""
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
@@ -527,7 +526,7 @@
         <service
             android:name=".ui.voip.WebRtcService"
             android:enabled="true"
-            android:exported="true"
+            android:exported="false"
             android:foregroundServiceType="phoneCall"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 

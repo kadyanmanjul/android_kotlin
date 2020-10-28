@@ -28,75 +28,13 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import java.util.HashMap
 import java.util.UUID
+import timber.log.Timber
 
 const val COURSE_ID = "course_id"
 const val TOPIC_ID = "topic_id"
 const val TOPIC_NAME = "topic_name"
 
 class SearchingUserActivity : BaseActivity() {
-
-    private var courseId: String? = null
-    private var topicId: Int? = null
-    private var topicName: String? = null
-
-    private var timer: CountDownTimer? = null
-    private lateinit var binding: ActivitySearchingUserBinding
-    private val viewModel: VoipCallingViewModel by lazy {
-        ViewModelProvider(this).get(VoipCallingViewModel::class.java)
-    }
-    private var mBoundService: WebRtcService? = null
-    private var appAnalytics: AppAnalytics? = null
-    private var mServiceBound = false
-
-    private var myConnection: ServiceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            val myBinder = service as WebRtcService.MyBinder
-            mBoundService = myBinder.getService()
-            mServiceBound = true
-            mBoundService?.addListener(callback)
-            addRequesting()
-        }
-
-        override fun onServiceDisconnected(name: ComponentName) {
-            mServiceBound = false
-        }
-    }
-
-    private var callback: WebRtcCallback = object : WebRtcCallback {
-        override fun onRinging() {
-
-        }
-
-        override fun onConnect() {
-            WebRtcActivity.startOutgoingCallActivity(
-                this@SearchingUserActivity,
-                getMapForOutgoing(viewModel.voipDetailsLiveData.value)
-            )
-        }
-
-        override fun onDisconnect() {
-
-        }
-
-        override fun onCallDisconnect(id: String?) {
-        }
-
-        override fun onCallReject(id: String?) {
-        }
-
-        override fun onSelfDisconnect(id: String?) {
-        }
-
-        override fun onIncomingCallHangup(id: String?) {
-        }
-
-        private fun checkAndShowRating() {
-
-        }
-
-    }
-
-
     companion object {
         fun startUserForPractiseOnPhoneActivity(
             activity: Activity,
@@ -114,6 +52,68 @@ class SearchingUserActivity : BaseActivity() {
                 activity.startActivity(this)
             }
         }
+    }
+
+    private var courseId: String? = null
+    private var topicId: Int? = null
+    private var topicName: String? = null
+    private var timer: CountDownTimer? = null
+    private lateinit var binding: ActivitySearchingUserBinding
+    private var mBoundService: WebRtcService? = null
+    private var appAnalytics: AppAnalytics? = null
+    private var mServiceBound = false
+    private val viewModel: VoipCallingViewModel by lazy {
+        ViewModelProvider(this).get(VoipCallingViewModel::class.java)
+    }
+
+    private var myConnection: ServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            val myBinder = service as WebRtcService.MyBinder
+            mBoundService = myBinder.getService()
+            mServiceBound = true
+            mBoundService?.addListener(callback)
+            addRequesting()
+        }
+
+        override fun onServiceDisconnected(name: ComponentName) {
+            mServiceBound = false
+        }
+    }
+
+    private var callback: WebRtcCallback = object : WebRtcCallback {
+        override fun onRinging() {
+            Timber.tag("SearchingUserActivity").e("onRinging")
+        }
+
+        override fun onConnect() {
+            Timber.tag("SearchingUserActivity").e("onConnect")
+
+            WebRtcActivity.startOutgoingCallActivity(
+                this@SearchingUserActivity,
+                getMapForOutgoing(viewModel.voipDetailsLiveData.value)
+            )
+        }
+
+        override fun onDisconnect() {
+            Timber.tag("SearchingUserActivity").e("onDisconnect")
+        }
+
+        override fun onCallDisconnect(id: String?) {
+            Timber.tag("SearchingUserActivity").e("onCallDisconnect")
+        }
+
+        override fun onCallReject(id: String?) {
+            Timber.tag("SearchingUserActivity").e("onCallReject")
+        }
+
+        override fun onSelfDisconnect(id: String?) {
+            Timber.tag("SearchingUserActivity").e("onSelfDisconnect")
+        }
+
+        override fun onIncomingCallHangup(id: String?) {
+            Timber.tag("SearchingUserActivity").e("onIncomingCallHangup")
+        }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -230,6 +230,7 @@ class SearchingUserActivity : BaseActivity() {
     }
 
     fun stopCalling() {
+        mBoundService?.endCall()
         AppAnalytics.create(AnalyticsEvent.STOP_USER_FOR_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -245,7 +246,11 @@ class SearchingUserActivity : BaseActivity() {
         window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         appAnalytics?.addParam(AnalyticsEvent.BACK_PRESSED.NAME, true)
         appAnalytics?.push()
+    }
 
+    override fun onBackPressed() {
+        stopCalling()
+        super.onBackPressed()
     }
 
     override fun onActivityResult(
