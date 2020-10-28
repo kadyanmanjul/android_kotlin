@@ -69,7 +69,7 @@
             android:layout_marginTop="@dimen/_16sdp"
             android:gravity="start|center"
             android:text="@string/speaking_time_msz"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

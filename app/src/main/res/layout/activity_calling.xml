@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_8sdp"
             android:padding="@dimen/_4sdp"
-            android:onClick="@{()->handler.onDeclineCall()}"
+            android:onClick="@{()->handler.onDisconnectCall()}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_arrow_back_2" />
@@ -127,7 +127,6 @@
             android:id="@+id/btn_speaker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:alpha="0.5"
             android:background="@drawable/circle2"
             android:backgroundTint="@color/transparent"
             android:clickable="true"
@@ -147,7 +146,6 @@
             android:id="@+id/btn_mute"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:alpha="0.5"
             android:background="@drawable/circle2"
             android:backgroundTint="@color/transparent"
             android:clickable="true"
@@ -204,7 +202,6 @@
             android:id="@+id/group_for_incoming"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="visible"
             app:constraint_referenced_ids="btn_incoming_disconnect,btn_incoming_connect" />
 
         <androidx.constraintlayout.widget.Group
@@ -212,6 +209,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="invisible"
+            tools:visibility="visible"
             app:constraint_referenced_ids="btn_mute,btn_speaker,btn_action" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -313,11 +313,9 @@ class WebRtcActivity : BaseActivity() {
 
     private fun updateStatus(view: View, enable: Boolean) {
         if (enable) {
-            view.alpha = 1.0F
             view.backgroundTintList =
-                ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.blue33)
+                ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.blue49)
         } else {
-            view.alpha = 0.5F
             view.backgroundTintList = ContextCompat.getColorStateList(
                 AppObjectController.joshApplication,
                 R.color.transparent

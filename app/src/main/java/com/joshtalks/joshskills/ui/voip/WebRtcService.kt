@@ -547,7 +547,6 @@ class WebRtcService : Service() {
         isSpeakerEnable = false
         isMicEnable = true
         //   endpoint?.resetEndpoint()
-        callData = null
     }
 
     private fun removeNotifications() {

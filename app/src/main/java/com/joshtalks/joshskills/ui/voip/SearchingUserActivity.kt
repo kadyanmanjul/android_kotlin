@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivitySearchingUserBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.karumi.dexter.MultiplePermissionsReport
@@ -93,6 +94,7 @@ class SearchingUserActivity : BaseActivity() {
                 this@SearchingUserActivity,
                 getMapForOutgoing(viewModel.voipDetailsLiveData.value)
             )
+            this@SearchingUserActivity.finish()
         }
 
         override fun onDisconnect() {
@@ -164,6 +166,7 @@ class SearchingUserActivity : BaseActivity() {
                     requestForSearchUser()
                 }, 1000)
             } else if (ApiCallStatus.FAILED_PERMANENT == it) {
+                showToast("Yaar na mila 5 baar try kar ke")
                 stopCalling()
             }
         })
