@@ -16,6 +16,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.PermissionUtils
@@ -87,7 +88,6 @@ class SearchingUserActivity : BaseActivity() {
 
         override fun onConnect() {
             Timber.tag("SearchingUserActivity").e("onConnect")
-
             WebRtcActivity.startOutgoingCallActivity(
                 this@SearchingUserActivity,
                 getMapForOutgoing(viewModel.voipDetailsLiveData.value)
@@ -155,6 +155,15 @@ class SearchingUserActivity : BaseActivity() {
         viewModel.voipDetailsLiveData.observe(this, {
             if (it != null) {
                 WebRtcService.startOutgoingCall(getMapForOutgoing(it))
+            }
+        })
+        viewModel.apiCallStatusLiveData.observe(this, {
+            if (ApiCallStatus.RETRY == it) {
+                AppObjectController.uiHandler.postDelayed({
+                    requestForSearchUser()
+                }, 1000)
+            } else if (ApiCallStatus.FAILED_PERMANENT == it) {
+                stopCalling()
             }
         })
     }
@@ -250,7 +259,6 @@ class SearchingUserActivity : BaseActivity() {
 
     override fun onBackPressed() {
         stopCalling()
-        super.onBackPressed()
     }
 
     override fun onActivityResult(
@@ -277,6 +285,7 @@ class SearchingUserActivity : BaseActivity() {
 
     override fun onStop() {
         super.onStop()
+        AppObjectController.uiHandler.removeCallbacksAndMessages(null)
         unbindService(myConnection)
     }
 
