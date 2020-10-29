@@ -29,7 +29,9 @@ import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
+import com.joshtalks.joshskills.core.printAll
 import com.joshtalks.joshskills.repository.local.model.UserPlivoDetailsModel
+import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CONNECTED_CALL_CHANNEL_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CONNECTED_CALL_NOTIFICATION_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_CHANNEL_ID
@@ -188,7 +190,11 @@ class WebRtcService : Service() {
 
     private var eventListener = object : EventListener {
         override fun onLogin() {
-            endpoint?.keepAlive()
+            try {
+                endpoint?.keepAlive()
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
             Timber.tag(TAG).e("LoginUser")
             Timber.tag(TAG).e("= %s", endpoint?.registered.toString())
         }
@@ -214,8 +220,9 @@ class WebRtcService : Service() {
 
         override fun onIncomingCallHangup(incoming: Incoming) {
             callData = incoming
-            Timber.tag(TAG).e("%s%s", "onIncomingCallHangup" + " ", getCallId())
+            Timber.tag(TAG).e("%s%s", "onIncomingCallHangup ", getCallId())
             callCallback?.get()?.onCallDisconnect(getCallId())
+            onDisconnectAndRemove()
         }
 
         //end user ne phone kaat diya
@@ -224,10 +231,13 @@ class WebRtcService : Service() {
             callCallback?.get()?.onDisconnect()
             callData = incoming
             callCallback?.get()?.onIncomingCallHangup(getCallId())
+            onDisconnectAndRemove()
         }
 
         override fun onIncomingCallInvalid(p0: Incoming) {
             Timber.tag(TAG).e("onIncomingCallInvalid")
+            onDisconnectAndRemove()
+
         }
 
         override fun onOutgoingCall(outgoing: Outgoing) {
@@ -276,8 +286,8 @@ class WebRtcService : Service() {
         super.onCreate()
         Timber.tag(TAG).e("onCreate")
         mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
+        endpoint = Endpoint.newInstance(BuildConfig.DEBUG, eventListener, options)
         executor.execute {
-            endpoint = Endpoint.newInstance(BuildConfig.DEBUG, eventListener, options)
             userPlivo = UserPlivoDetailsModel.getPlivoUser()
         }
     }
@@ -292,66 +302,66 @@ class WebRtcService : Service() {
                 userPlivo = UserPlivoDetailsModel.getPlivoUser()
             }
             intent.action?.run {
-                Timber.tag(TAG).e(intent.getStringExtra(INCOMING_CALL_JSON_OBJECT))
-                when {
-                    this == LoginUser().action -> {
-                        loginUser()
-                    }
-                    this == LogoutUser().action -> {
-                        logoutUser()
-                    }
-                    this == NotificationIncomingCall().action -> {
-                        if (loginUser()) {
+                try {
+                    Timber.tag(TAG).e(intent.getStringExtra(INCOMING_CALL_JSON_OBJECT))
+                    when {
+                        this == LoginUser().action -> {
+                            loginUser()
+                        }
+                        this == LogoutUser().action -> {
+                            logoutUser()
+                        }
+                        this == NotificationIncomingCall().action -> {
+                            if (loginUser()) {
+                                val incomingData: HashMap<String, String>? =
+                                    intent.getSerializableExtra(INCOMING_CALL_USER_OBJ) as HashMap<String, String>?
+                                endpoint?.relayVoipPushNotification(incomingData)
+                            }
+                        }
+                        this == IncomingCall().action -> {
+                            SoundPoolManager.getInstance(applicationContext).playRinging()
                             val incomingData: HashMap<String, String>? =
                                 intent.getSerializableExtra(INCOMING_CALL_USER_OBJ) as HashMap<String, String>?
-                            endpoint?.relayVoipPushNotification(incomingData)
-                        }
-                    }
-                    this == IncomingCall().action -> {
-                        SoundPoolManager.getInstance(applicationContext).playRinging()
-                        val incomingData: HashMap<String, String>? =
-                            intent.getSerializableExtra(INCOMING_CALL_USER_OBJ) as HashMap<String, String>?
-                        processIncomingCall(incomingData)
-                        showNotificationOnIncomingCall(incomingData)
-                    }
-                    this == OutgoingCall().action -> {
-                        if (loginUser()) {
+                            incomingData?.printAll()
+                            processIncomingCall(incomingData)
+                            showNotificationOnIncomingCall(incomingData)
 
-                            val extraHeaders: HashMap<String, String>? =
-                                intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String>
-                            endpoint?.createOutgoingCall()?.callH(userPlivo?.username, extraHeaders)
-                            showNotificationOnOutgoingCall(extraHeaders)
-                            callUUID = extraHeaders?.get("X-PH-MOBILEUUID")
-                            Timber.tag(TAG).e("Outgoing")
                         }
-                    }
-                    this == CallConnect().action -> {
-                        mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
-                        mNotificationManager?.cancel(OUTGOING_CALL_NOTIFICATION_ID)
-                        val incomingData: HashMap<String, String>? =
-                            intent.getSerializableExtra(INCOMING_CALL_USER_OBJ) as HashMap<String, String>?
+                        this == OutgoingCall().action -> {
+                            if (loginUser()) {
 
-                        val sIntent =
-                            Intent(
-                                AppObjectController.joshApplication,
-                                WebRtcActivity::class.java
-                            ).apply {
-                                putExtra(CALL_TYPE, CallType.INCOMING)
-                                putExtra(AUTO_PICKUP_CALL, true)
-                                putExtra(CALL_USER_OBJ, incomingData)
-                                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                val extraHeaders: HashMap<String, String>? =
+                                    intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String>
+                                endpoint?.createOutgoingCall()
+                                    ?.callH(userPlivo?.username, extraHeaders)
+                                showNotificationOnOutgoingCall(extraHeaders)
+                                callUUID = extraHeaders?.get("X-PH-MOBILEUUID")
+                                Timber.tag(TAG).e("Outgoing")
                             }
-                        startActivity(sIntent)
+                        }
+                        this == CallConnect().action -> {
+                            mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
+                            mNotificationManager?.cancel(OUTGOING_CALL_NOTIFICATION_ID)
+                            val incomingData: HashMap<String, String>? =
+                                intent.getSerializableExtra(INCOMING_CALL_USER_OBJ) as HashMap<String, String>?
+                            val callActivityIntent =
+                                Intent(this@WebRtcService, WebRtcActivity::class.java).apply {
+                                    putExtra(CALL_TYPE, CallType.INCOMING)
+                                    putExtra(AUTO_PICKUP_CALL, true)
+                                    putExtra(CALL_USER_OBJ, incomingData)
+                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                }
+                            startActivities(arrayOf(getBackIntent(), callActivityIntent))
+                        }
+                        this == CallDisconnect().action -> {
+                            endCall()
+                        }
+                        this == CallStop().action -> {
+                            endCall()
+                        }
                     }
-                    this == CallDisconnect().action -> {
-                        mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
-                        mNotificationManager?.cancel(OUTGOING_CALL_NOTIFICATION_ID)
-                        stopForeground(true)
-                    }
-                    this == CallStop().action -> {
-                        endCall()
-                    }
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
                 }
             }
         }
@@ -384,18 +394,24 @@ class WebRtcService : Service() {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && JoshApplication.isAppVisible.not()
     }
 
+
+    private fun getBackIntent(): Intent {
+        return Intent(this, InboxActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+    }
+
     private fun processIncomingCall(incomingData: HashMap<String, String>?) {
         val callActivityIntent =
-            Intent(AppObjectController.joshApplication, WebRtcActivity::class.java).apply {
+            Intent(this, WebRtcActivity::class.java).apply {
                 putExtra(IS_INCOMING_CALL, true)
                 putExtra(CALL_TYPE, CallType.INCOMING)
                 putExtra(CALL_USER_OBJ, incomingData)
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             }
-
+        val activityArray = arrayOf(getBackIntent(), callActivityIntent)
         if (isAppVisible()) {
-            startActivity(callActivityIntent)
+            startActivities(activityArray)
         }
     }
 
@@ -432,25 +448,33 @@ class WebRtcService : Service() {
 
     fun answerCall() {
         callData?.run {
-            if (this is Incoming) {
-                SoundPoolManager.getInstance(applicationContext).stopRinging()
-                this.answer()
-                showNotificationConnectedCall(this.headerDict as HashMap<String, String>)
-                callCallback?.get()?.onConnect()
-                return
+            try {
+                if (this is Incoming) {
+                    SoundPoolManager.getInstance(applicationContext).stopRinging()
+                    this.answer()
+                    showNotificationConnectedCall(this.headerDict as HashMap<String, String>)
+                    callCallback?.get()?.onConnect()
+                    return
+                }
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
             }
         }
     }
 
     fun endCall() {
         callData?.run {
-            if (this is Outgoing) {
-                this.hangup()
-                return@run
-            }
-            if (this is Incoming) {
-                this.hangup()
-                return@run
+            try {
+                if (this is Outgoing) {
+                    this.hangup()
+                    return@run
+                }
+                if (this is Incoming) {
+                    this.hangup()
+                    return@run
+                }
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
             }
         }
         onDisconnectAndRemove()
@@ -458,9 +482,13 @@ class WebRtcService : Service() {
 
     fun rejectCall() {
         callData?.run {
-            if (this is Incoming) {
-                this.reject()
-                return@run
+            try {
+                if (this is Incoming) {
+                    this.reject()
+                    return@run
+                }
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
             }
         }
         onDisconnectAndRemove()
@@ -494,26 +522,34 @@ class WebRtcService : Service() {
 
     private fun muteCall() {
         callData?.run {
-            if (this is Outgoing) {
-                this.mute()
-                return
-            }
-            if (this is Incoming) {
-                this.mute()
-                return
+            try {
+                if (this is Outgoing) {
+                    this.mute()
+                    return
+                }
+                if (this is Incoming) {
+                    this.mute()
+                    return
+                }
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
             }
         }
     }
 
     private fun unMuteCall() {
         callData?.run {
-            if (this is Outgoing) {
-                this.unmute()
-                return
-            }
-            if (this is Incoming) {
-                this.unmute()
-                return
+            try {
+                if (this is Outgoing) {
+                    this.unmute()
+                    return
+                }
+                if (this is Incoming) {
+                    this.unmute()
+                    return
+                }
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
             }
         }
     }
@@ -531,11 +567,15 @@ class WebRtcService : Service() {
     }
 
     fun switchSpeck() {
-        isMicEnable = !isMicEnable
-        if (isMicEnable) {
-            unMuteCall()
-        } else {
-            muteCall()
+        try {
+            isMicEnable = !isMicEnable
+            if (isMicEnable) {
+                unMuteCall()
+            } else {
+                muteCall()
+            }
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
         }
     }
 
@@ -546,7 +586,6 @@ class WebRtcService : Service() {
         isCallWasOnGoing = false
         isSpeakerEnable = false
         isMicEnable = true
-        //   endpoint?.resetEndpoint()
     }
 
     private fun removeNotifications() {
@@ -556,7 +595,6 @@ class WebRtcService : Service() {
 
     fun getSpeaker() = isSpeakerEnable
     fun getMic() = isMicEnable
-
 
     override fun onDestroy() {
         Timber.tag(TAG).e("onDestroy")
@@ -620,7 +658,7 @@ class WebRtcService : Service() {
 
         val lNotificationBuilder = NotificationCompat.Builder(this, INCOMING_CALL_CHANNEL_ID)
             .setChannelId(INCOMING_CALL_CHANNEL_ID)
-            .setContentTitle(incomingData?.get("X-PH-NAME"))
+            .setContentTitle(incomingData?.get("X-PH-CALLERNAME"))
             .setContentText("Incoming voice call")
             .setSmallIcon(R.drawable.ic_status_bar_notification)
             .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
@@ -683,7 +721,7 @@ class WebRtcService : Service() {
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
         val lNotificationBuilder = NotificationCompat.Builder(this, OUTGOING_CALL_CHANNEL_ID)
-            .setContentTitle(extraHeaders?.get("X-PH-NAME"))
+            .setContentTitle(extraHeaders?.get("X-PH-CALLIENAME"))
             .setContentText("Outgoing voice call")
             .setSmallIcon(R.drawable.ic_status_bar_notification)
             .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
@@ -735,7 +773,7 @@ class WebRtcService : Service() {
 
         val lNotificationBuilder = NotificationCompat.Builder(this, CONNECTED_CALL_CHANNEL_ID)
             .setChannelId(CONNECTED_CALL_CHANNEL_ID)
-            .setContentTitle(incomingData?.get("X-PH-NAME"))
+            .setContentTitle(incomingData?.get("X-PH-CALLERNAME"))
             .setContentText("Ongoing voice call")
             .setSmallIcon(R.drawable.ic_status_bar_notification)
             .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))

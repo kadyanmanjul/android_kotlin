@@ -22,13 +22,14 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.CallType
 import com.joshtalks.joshskills.core.CountUpTimer
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.TAG
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
+import com.joshtalks.joshskills.core.printAll
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.ActivityCallingBinding
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.voip.util.AudioPlayer
 import com.joshtalks.joshskills.ui.voip.util.SoundPoolManager
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipRatingFragment
@@ -37,6 +38,9 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import java.util.HashMap
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 const val IS_INCOMING_CALL = "is_incoming_call"
@@ -84,12 +88,12 @@ class WebRtcActivity : BaseActivity() {
 
     private var callback: WebRtcCallback = object : WebRtcCallback {
         override fun onRinging() {
-            Timber.tag("SearchingUserActivity").e("onRinging")
+            Timber.tag(TAG).e("onRinging")
         }
 
         override fun onConnect() {
-            Timber.tag("SearchingUserActivity").e("onConnect")
-            AppObjectController.uiHandler.post {
+            Timber.tag(TAG).e("onConnect")
+            runOnUiThread {
                 try {
                     countUpTimer.lap()
                     countUpTimer.resume()
@@ -101,7 +105,7 @@ class WebRtcActivity : BaseActivity() {
         }
 
         override fun onDisconnect() {
-            Timber.tag("SearchingUserActivity").e("onDisconnect")
+            Timber.tag(TAG).e("onDisconnect")
             onStopCall()
             AppObjectController.uiHandler.post {
                 countUpTimer.pause()
@@ -109,28 +113,27 @@ class WebRtcActivity : BaseActivity() {
         }
 
         override fun onCallDisconnect(id: String?) {
-            Timber.tag("SearchingUserActivity").e("onCallDisconnect")
+            Timber.tag(TAG).e("onCallDisconnect")
             checkAndShowRating(id)
         }
 
         override fun onCallReject(id: String?) {
-            Timber.tag("SearchingUserActivity").e("onCallReject")
+            Timber.tag(TAG).e("onCallReject")
             checkAndShowRating(id)
         }
 
         override fun onSelfDisconnect(id: String?) {
-            Timber.tag("SearchingUserActivity").e("onSelfDisconnect")
+            Timber.tag(TAG).e("onSelfDisconnect")
             checkAndShowRating(id)
         }
 
         override fun onIncomingCallHangup(id: String?) {
-            Timber.tag("SearchingUserActivity").e("onIncomingCallHangup")
+            Timber.tag(TAG).e("onIncomingCallHangup")
             checkAndShowRating(id)
         }
 
         private fun checkAndShowRating(id: String?) {
-            Timber.tag("SearchingUserActivity").e("checkAndShowRating   " + id)
-
+            Timber.tag(TAG).e("checkAndShowRating   %s", id)
             if (id.isNullOrEmpty().not() && countUpTimer.time > 0) {
                 VoipRatingFragment.newInstance(id, countUpTimer.time)
                     .show(supportFragmentManager, "voip_rating_dialog_fragment")
@@ -180,18 +183,21 @@ class WebRtcActivity : BaseActivity() {
         val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
         callType?.run {
             val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
-            setUserInfo(this, map)
-            setImageInIV(this, map)
+            map.printAll()
             if (CallType.INCOMING == this) {
+                setUserInfoForIncomingCal(map.get("X-PH-MOBILEUUID"))
                 val autoPickUp = intent.getBooleanExtra(AUTO_PICKUP_CALL, false)
                 if (autoPickUp) {
                     acceptCall()
                     callDisViewEnable()
+                    startCallTimer()
                 } else {
                     binding.callStatus.visibility = View.VISIBLE
                     binding.groupForIncoming.visibility = View.VISIBLE
                 }
             } else {
+                setUserInfoForOutgoing(map)
+                setImageInIV(map["X-PH-IMAGE_URL"])
                 countUpTimer.lap()
                 countUpTimer.resume()
                 startCallTimer()
@@ -201,23 +207,31 @@ class WebRtcActivity : BaseActivity() {
         }
     }
 
-    private fun setUserInfo(callType: CallType, map: HashMap<String, String?>) {
-        binding.topic.text = map["X-PH-TOPICNAME"]
-        binding.userDetail.text = if (CallType.INCOMING == callType) {
-            map["X-PH-NAME"] + " \n" + map["X-PH-LOCATION"]
-        } else {
-            map["X-PH-CALLIENAME"] + " \n" + map["X-PH-LOCATION"]
+    private fun setUserInfoForIncomingCal(uuid: String?) {
+        if (uuid.isNullOrEmpty())
+            return
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = AppObjectController.commonNetworkService.callMentorInfo(uuid)
+                CoroutineScope(Dispatchers.Main).launch {
+                    binding.topic.text = response["topic_name"]
+                    binding.userDetail.text =
+                        response["name"]?.plus(" \n")?.plus(response["locality"])
+                    setImageInIV(response["profile_pic"])
+                }
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
         }
     }
 
-    private fun setImageInIV(callType: CallType, map: HashMap<String, String?>) {
-        val url: String? = if (CallType.INCOMING == callType) {
-            map["X-PH-PICTURE"]
-        } else {
-            Mentor.getInstance().getUser()?.photo
-        }
+    private fun setUserInfoForOutgoing(map: HashMap<String, String?>) {
+        binding.topic.text = map["X-PH-TOPICNAME"]
+        binding.userDetail.text = map["X-PH-CALLIENAME"]?.plus(" \n")?.plus(map["X-PH-LOCALITY"])
+    }
 
-        if (url.isNullOrEmpty()) {
+    private fun setImageInIV(imageUrl: String?) {
+        if (imageUrl.isNullOrEmpty()) {
             val image = TextDrawable.builder()
                 .beginConfig()
                 .textColor(Color.WHITE)
@@ -229,14 +243,14 @@ class WebRtcActivity : BaseActivity() {
                     ContextCompat.getColor(this, R.color.red)
                 )
             binding.cImage.background = image
-            binding.cImage.setImageDrawable(image)
         } else {
-            binding.cImage.setImage(url)
+            binding.cImage.setImage(imageUrl)
         }
 
     }
 
     private fun startCallTimer() {
+        binding.callTime.visibility = View.VISIBLE
         binding.callTime.base = SystemClock.elapsedRealtime()
         binding.callTime.start()
     }
@@ -304,7 +318,7 @@ class WebRtcActivity : BaseActivity() {
         binding.groupForIncoming.visibility = View.GONE
         binding.groupForOutgoing.visibility = View.VISIBLE
         mBoundService?.answerCall()
-        startCallTimer()
+//        startCallTimer()
         AppAnalytics.create(AnalyticsEvent.ANSWER_CALL_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()

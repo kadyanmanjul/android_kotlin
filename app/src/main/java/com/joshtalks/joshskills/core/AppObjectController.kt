@@ -388,7 +388,7 @@ class AppObjectController {
 
         private fun configureCrashlytics() {
             if (BuildConfig.DEBUG) {
-                FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
+                FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
             } else {
                 FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
             }

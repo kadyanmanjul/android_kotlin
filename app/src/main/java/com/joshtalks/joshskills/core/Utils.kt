@@ -97,6 +97,9 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import timber.log.Timber
 
 
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
@@ -1011,6 +1014,12 @@ fun Context.changeLocale(language: String) {
     resources.updateConfiguration(config, resources.displayMetrics)
 }
 
+fun Map<String, String?>.printAll() {
+    forEach {
+        Timber.tag("Hashmap").e(it.key + "    " + it.value)
+    }
+}
+
 
 fun Intent.serviceStart() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -1020,6 +1029,5 @@ fun Intent.serviceStart() {
     } else {
         AppObjectController.joshApplication.startService(this)
     }
-
 }
 

@@ -513,10 +513,10 @@
 
         <activity
             android:name=".ui.voip.WebRtcActivity"
-            android:autoRemoveFromRecents="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <service
@@ -525,7 +525,6 @@
             android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
             android:name=".ui.voip.WebRtcService"
-            android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="phoneCall"
             android:permission="android.permission.BIND_JOB_SERVICE" />

@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivitySearchingUserBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -50,7 +51,6 @@ class SearchingUserActivity : BaseActivity() {
                 putExtra(TOPIC_ID, topicId)
                 putExtra(TOPIC_NAME, topicName)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             }.run {
                 activity.startActivity(this)
             }
@@ -294,18 +294,21 @@ class SearchingUserActivity : BaseActivity() {
     }
 
     private fun getMapForOutgoing(
-        hashMap: HashMap<String, String?>?
+        voipCallDetailModel: VoipCallDetailModel?
     ): HashMap<String, String?> {
+        voipCallDetailModel?.topic = topicId?.toString()
+        voipCallDetailModel?.topicName = topicName
+        voipCallDetailModel?.callieName = getCallieName()
         return object : HashMap<String, String?>() {
             init {
                 put("X-PH-MOBILEUUID", UUID.randomUUID().toString())
-                put("X-PH-Destination", hashMap?.get("plivo_username"))
+                put("X-PH-Destination", voipCallDetailModel?.plivoUserName)
                 put("X-PH-TOPIC", topicId?.toString())
                 put("X-PH-TOPICNAME", topicName)
-                put("X-PH-NAME", hashMap?.get("name"))
-                put("X-PH-LOCATION", hashMap?.get("locality"))
-                put("X-PH-PICTURE", hashMap?.get("profile_pic"))
-                put("X-PH-CALLIENAME", getCallieName())
+                put("X-PH-CALLERNAME", getCallieName())
+                put("X-PH-CALLIENAME", voipCallDetailModel?.name)
+                put("X-PH-IMAGE_URL", voipCallDetailModel?.profilePic)
+                put("X-PH-LOCALITY", voipCallDetailModel?.locality)
             }
         }
     }

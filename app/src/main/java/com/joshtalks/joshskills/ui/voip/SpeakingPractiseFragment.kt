@@ -74,7 +74,7 @@ class SpeakingPractiseFragment : DialogFragment() {
         }
         speakingTopicModelLiveData.observe(viewLifecycleOwner, { response ->
             try {
-                tv_today_topic.text = response.name
+                tv_today_topic.text = response.topicName
                 tv_practise_time.text =
                     response.alreadyTalked.toString() + "/" + response.duration.toString()
                 progress_bar.progress = response.alreadyTalked.toFloat()
@@ -82,6 +82,7 @@ class SpeakingPractiseFragment : DialogFragment() {
                 text_view.text =
                     getString(R.string.pp_message, response.duration.toString())
             } catch (ex: Exception) {
+                ex.printStackTrace()
             }
             group_two.visibility = View.VISIBLE
             group_one.visibility = View.GONE
@@ -126,9 +127,9 @@ class SpeakingPractiseFragment : DialogFragment() {
         speakingTopicModelLiveData.value?.run {
             SearchingUserActivity.startUserForPractiseOnPhoneActivity(
                 requireActivity(),
-                courseId,
-                id,
-                name
+                courseId = courseId,
+                topicId = id,
+                topicName = topicName
             )
         }
 

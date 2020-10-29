@@ -7,14 +7,14 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.RETRY_COUNT
+import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import java.net.ProtocolException
-import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class VoipCallingViewModel(application: Application) : AndroidViewModel(application) {
-    val voipDetailsLiveData: MutableLiveData<HashMap<String, String?>?> = MutableLiveData()
+    val voipDetailsLiveData: MutableLiveData<VoipCallDetailModel> = MutableLiveData()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     var retryCount = 0
 

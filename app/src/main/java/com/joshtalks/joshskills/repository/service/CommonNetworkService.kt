@@ -165,7 +165,11 @@ interface CommonNetworkService {
     suspend fun getTopicDetail(@Path("id") id: String): SpeakingTopicModel
 
     @GET("$DIR/voicecall/recipient_mentor")
-    suspend fun getP2PUser(@Query("course_id") id: String): HashMap<String, String?>?
+    suspend fun getP2PUser(@Query("course_id") id: String): VoipCallDetailModel
+
+    @GET("$DIR/voicecall/mentor_topicinfo")
+    suspend fun callMentorInfo(@Query("mobileuuid") id: String): HashMap<String, String?>
+
 
     @GET("$DIR/certificateexam/{id}/")
     suspend fun getCertificateExamDetails(@Path("id") id: Int): CertificationQuestionModel

@@ -88,7 +88,7 @@ class VoipRatingFragment : DialogFragment() {
     }
 
     fun close() {
-        requireActivity().finishAndRemoveTask()
+        requireActivity().finish()
     }
 
     fun submitFeedback() {
@@ -110,7 +110,7 @@ class VoipRatingFragment : DialogFragment() {
             try {
                 AppObjectController.commonNetworkService.feedbackVoipCall(request)
                 FullScreenProgressDialog.hideProgressBar(requireActivity())
-                requireActivity().finishAndRemoveTask()
+                requireActivity().finish()
             } catch (ex: Throwable) {
                 FullScreenProgressDialog.hideProgressBar(requireActivity())
                 ex.showAppropriateMsg()

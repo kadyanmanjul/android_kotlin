@@ -15,7 +15,6 @@ import androidx.multidex.MultiDexApplication
 import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.engage_notification.UsageStatsService
 import com.yariksoffice.lingver.Lingver
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
@@ -147,7 +146,7 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
         isAppVisible = true
         WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
-        UsageStatsService.activeUserService(this)
+      //  UsageStatsService.activeUserService(this)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
@@ -156,7 +155,7 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
         isAppVisible = false
         WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
-        UsageStatsService.inactiveUserService(this)
+        //  UsageStatsService.inactiveUserService(this)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
