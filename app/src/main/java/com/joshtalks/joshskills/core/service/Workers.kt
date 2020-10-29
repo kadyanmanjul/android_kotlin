@@ -801,11 +801,11 @@ class GetPlivoUserWorker(context: Context, workerParams: WorkerParameters) :
                 AppObjectController.commonNetworkService.getPlivoUserDetails().run {
                     this.savePlivoUser()
                 }
+                WebRtcService.loginUserClient()
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
-        WebRtcService.loginUserClient()
         return Result.success()
     }
 }

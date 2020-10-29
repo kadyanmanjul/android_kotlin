@@ -80,6 +80,9 @@ class WebRtcService : Service() {
         var isCallWasOnGoing: Boolean = false
 
         fun loginUserClient() {
+            if (UserPlivoDetailsModel.getPlivoUser() == null) {
+                return
+            }
             val serviceIntent = Intent(
                 AppObjectController.joshApplication,
                 WebRtcService::class.java
@@ -595,6 +598,13 @@ class WebRtcService : Service() {
 
     fun getSpeaker() = isSpeakerEnable
     fun getMic() = isMicEnable
+
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        endpoint?.logout()
+        super.onTaskRemoved(rootIntent)
+        Timber.tag(TAG).e("OnTaskRemoved")
+    }
 
     override fun onDestroy() {
         Timber.tag(TAG).e("onDestroy")

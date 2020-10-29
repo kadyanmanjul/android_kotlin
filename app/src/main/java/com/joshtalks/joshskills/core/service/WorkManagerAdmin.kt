@@ -67,9 +67,9 @@ object WorkManagerAdmin {
     fun requiredTaskInLandingPage() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .beginWith(OneTimeWorkRequestBuilder<WorkerInLandingScreen>().build())
+            .then(OneTimeWorkRequestBuilder<UserActiveWorker>().build())
             .then(
                 mutableListOf(
-                    OneTimeWorkRequestBuilder<UserActiveWorker>().build(),
                     OneTimeWorkRequestBuilder<ReferralCodeRefreshWorker>().build(),
                     OneTimeWorkRequestBuilder<SyncEngageVideo>().build(),
                     OneTimeWorkRequestBuilder<FeedbackRatingWorker>().build(),
@@ -249,12 +249,7 @@ object WorkManagerAdmin {
     }
 
     private fun getPalioWorkRequest(): OneTimeWorkRequest {
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
         return OneTimeWorkRequestBuilder<GetPlivoUserWorker>()
-            .setConstraints(constraints)
-            .setInitialDelay(30, TimeUnit.SECONDS)
             .build()
     }
 }
