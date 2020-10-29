@@ -6,16 +6,16 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 
-class DayWiseCourseActivity : AppCompatActivity() {
+class DayWiseCourseActivity : CoreJoshActivity() {
 
     private lateinit var binding: DaywiseCourseActivityBinding
     var lessonId: Int = 0
