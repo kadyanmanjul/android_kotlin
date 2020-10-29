@@ -324,6 +324,7 @@ class PracticeAdapter(
         //============================================================================
         fun setPracticeInfoView(chatModel: ChatModel) {
             chatModel.question?.run {
+                binding.practiceTitleTv.text = this.practiceWord
                 when (this.material_type) {
                     BASE_MESSAGE_TYPE.AU -> {
                         binding.audioViewContainer.visibility = View.VISIBLE

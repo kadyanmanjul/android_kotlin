@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
+import android.widget.RadioGroup
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
@@ -26,6 +27,7 @@ import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.ui.day_wise_course.CapsuleViewModel
 import com.joshtalks.joshskills.ui.day_wise_course.practice.PRACTISE_OBJECT
@@ -198,88 +200,14 @@ class GrammarFragment : Fragment() {
             assessmentRelations.questionList.sortedBy { it.question.sortOrder }
                 .forEach { item -> assessmentQuestions.add(item) }
 
-            if (assessmentQuestions.size > 0)
+            if (assessmentQuestions.size > 0) {
+                binding.quizRadioGroup.setOnCheckedChangeListener { radioGroup: RadioGroup, checkedId: Int ->
+                    binding.submitAnswerBtn.visibility = View.VISIBLE
+                    requestFocus(binding.submitAnswerBtn)
+                }
                 updateQuiz(assessmentQuestions.get(0))
-        }
-    }
-
-    private fun updateQuiz(question: AssessmentQuestionWithRelations) {
-        binding.quizQuestionTv.text = getString(
-            R.string.question_lbl,
-            currentQuizQuestion + 1,
-            assessmentQuestions.size,
-            question.question.text
-        )
-
-        hideExplanation()
-        binding.explanationTv.text = question.reviseConcept?.description
-        binding.quizRadioGroup.check(-1)
-        question.choiceList.forEachIndexed { index, choice ->
-            if (question.question.isAttempted)
-                binding.quizRadioGroup.isEnabled = false
-            when (index) {
-                0 -> {
-                    binding.option1.text = choice.text
-                    if (question.choiceList.get(0).userSelectedOrder == 1)
-                        binding.option1.isSelected = true
-                    if (question.choiceList.get(0).isCorrect && question.question.isAttempted)
-                        binding.option1.setBackgroundColor(
-                            ContextCompat.getColor(requireContext(), R.color.bg_green_80)
-                        ) else
-                        binding.option1.setBackgroundColor(
-                            ContextCompat.getColor(requireContext(), R.color.white)
-                        )
-                    if (choice.isCorrect)
-                        binding.quizRadioGroup.tag = binding.option1.id
-                }
-                1 -> {
-                    binding.option2.text = choice.text
-                    if (question.choiceList.get(1).userSelectedOrder == 1)
-                        binding.option2.isSelected = true
-                    if (question.choiceList.get(1).isCorrect && question.question.isAttempted)
-                        binding.option2.setBackgroundColor(
-                            ContextCompat.getColor(requireContext(), R.color.bg_green_80)
-                        ) else
-                        binding.option2.setBackgroundColor(
-                            ContextCompat.getColor(requireContext(), R.color.white)
-                        )
-                    if (choice.isCorrect)
-                        binding.quizRadioGroup.tag = binding.option2.id
-                }
-                2 -> {
-                    binding.option3.text = choice.text
-                    if (question.choiceList.get(2).userSelectedOrder == 1)
-                        binding.option3.isSelected = true
-                    if (question.choiceList.get(2).isCorrect && question.question.isAttempted)
-                        binding.option3.setBackgroundColor(
-                            ContextCompat.getColor(requireContext(), R.color.bg_green_80)
-                        ) else
-                        binding.option3.setBackgroundColor(
-                            ContextCompat.getColor(requireContext(), R.color.white)
-                        )
-                    if (choice.isCorrect)
-                        binding.quizRadioGroup.tag = binding.option3.id
-                }
-                3 -> {
-                    binding.option4.text = choice.text
-                    if (question.choiceList.get(3).userSelectedOrder == 1)
-                        binding.option4.isSelected = true
-                    if (question.choiceList.get(3).isCorrect && question.question.isAttempted)
-                        binding.option4.setBackgroundColor(
-                            ContextCompat.getColor(requireContext(), R.color.bg_green_80)
-                        ) else
-                        binding.option4.setBackgroundColor(
-                            ContextCompat.getColor(requireContext(), R.color.white)
-                        )
-                    if (choice.isCorrect)
-                        binding.quizRadioGroup.tag = binding.option4.id
-                }
             }
         }
-
-        binding.submitAnswerBtn.visibility = View.VISIBLE
-        binding.continueBtn.visibility = View.GONE
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -371,6 +299,86 @@ class GrammarFragment : Fragment() {
         }
     }
 
+
+    private fun updateQuiz(question: AssessmentQuestionWithRelations) {
+        binding.quizQuestionTv.text = getString(
+            R.string.question_lbl,
+            currentQuizQuestion + 1,
+            assessmentQuestions.size,
+            question.question.text
+        )
+
+        if (currentQuizQuestion == 0)
+            binding.previousQuestionIv.visibility = View.GONE
+        else
+            binding.previousQuestionIv.visibility = View.VISIBLE
+
+        if (assessmentQuestions.size - 1 == currentQuizQuestion)
+            binding.nextQuestionIv.visibility = View.GONE
+        else
+            binding.nextQuestionIv.visibility = View.VISIBLE
+
+        hideExplanation()
+        binding.explanationTv.text = question.reviseConcept?.description
+        binding.quizRadioGroup.check(-1)
+        question.choiceList.forEachIndexed { index, choice ->
+            when (index) {
+                0 -> {
+                    setupOption(binding.option1, choice, question)
+                }
+                1 -> {
+                    setupOption(binding.option2, choice, question)
+                }
+                2 -> {
+                    setupOption(binding.option3, choice, question)
+                }
+                3 -> {
+                    setupOption(binding.option4, choice, question)
+                }
+            }
+        }
+
+        binding.submitAnswerBtn.visibility = View.GONE
+        binding.continueBtn.visibility = View.GONE
+        if (question.question.isAttempted) {
+            binding.showExplanationBtn.visibility = View.VISIBLE
+        } else {
+            binding.showExplanationBtn.visibility = View.GONE
+        }
+
+    }
+
+    private fun setupOption(
+        radioButton: RadioButton,
+        choice: Choice,
+        question: AssessmentQuestionWithRelations
+    ) {
+        radioButton.text = choice.text
+        if (question.question.isAttempted) {
+            radioButton.isClickable = false
+            if (choice.userSelectedOrder == 1)
+                radioButton.isChecked = true
+            if (choice.isCorrect)
+                radioButton.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.bg_green_80)
+                ) else
+                radioButton.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.white)
+                )
+        } else {
+            radioButton.isClickable = true
+        }
+        if (choice.isCorrect)
+            binding.quizRadioGroup.tag = radioButton.id
+    }
+
+    private fun showQuizUi() {
+        binding.questionNavigateRl.visibility = View.VISIBLE
+        binding.quizTv.visibility = View.VISIBLE
+        binding.quizQuestionTv.visibility = View.VISIBLE
+        binding.quizRadioGroup.visibility = View.VISIBLE
+    }
+
     fun onQuestionSubmit() {
         if (binding.quizRadioGroup.tag is Int) {
 
@@ -392,7 +400,8 @@ class GrammarFragment : Fragment() {
                 )
 
             binding.continueBtn.visibility = View.VISIBLE
-            binding.showExplanationBtn.isEnabled = true
+            binding.showExplanationBtn.visibility = View.VISIBLE
+            requestFocus(binding.showExplanationBtn)
         }
     }
 
@@ -414,15 +423,21 @@ class GrammarFragment : Fragment() {
     fun hideExplanation() {
         binding.explanationLbl.visibility = View.GONE
         binding.explanationTv.visibility = View.GONE
+        binding.showExplanationBtn.text = getString(R.string.show_explanation)
     }
 
     fun showExplanation() {
-        binding.showExplanationBtn.isEnabled = false
-        binding.explanationLbl.visibility = View.VISIBLE
-        binding.explanationTv.visibility = View.VISIBLE
-        binding.explanationTv.requestFocus()
-        binding.explanationTv.parent.requestChildFocus(binding.explanationTv, binding.explanationTv)
-//        binding.grammarScrollView.scrollTo(0, binding.explanationTv.y.toInt())
+        if (binding.explanationLbl.visibility == View.VISIBLE) {
+            binding.showExplanationBtn.text = getString(R.string.show_explanation)
+            binding.explanationLbl.visibility = View.GONE
+            binding.explanationTv.visibility = View.GONE
+        } else {
+            binding.showExplanationBtn.text = getString(R.string.hide_explanation)
+            binding.explanationLbl.visibility = View.VISIBLE
+            binding.explanationTv.visibility = View.VISIBLE
+            binding.explanationTv.requestFocus()
+            requestFocus(binding.explanationTv)
+        }
     }
 
     private fun setUpPdfView(message: ChatModel) {
@@ -466,6 +481,21 @@ class GrammarFragment : Fragment() {
         binding.ivCancelDownload.visibility = android.view.View.VISIBLE
     }
 
+
+    private fun requestFocus(view: View) {
+        view.parent.requestChildFocus(
+            view,
+            view
+        )
+    }
+
+    fun showNextQuestion() {
+        updateQuiz(assessmentQuestions.get(++currentQuizQuestion))
+    }
+
+    fun showPreviousQuestion() {
+        updateQuiz(assessmentQuestions.get(--currentQuizQuestion))
+    }
 
     fun onClickPdfContainer() {
         if (PermissionUtils.isStoragePermissionEnabled(requireActivity())) {

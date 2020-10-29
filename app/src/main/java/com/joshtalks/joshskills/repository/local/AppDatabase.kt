@@ -326,6 +326,7 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN lesson INTEGER NOT NULL DEFAULT 0")
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN status TEXT NOT NULL DEFAULT 'NA'")
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN chat_type TEXT NOT NULL DEFAULT 'NA'")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN practice_word TEXT NOT NULL DEFAULT 'NA'")
             }
         }
 

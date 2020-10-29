@@ -24,10 +24,10 @@ import com.joshtalks.joshskills.repository.local.ConvectorForEngagement
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
 import com.joshtalks.joshskills.util.RandomString
-import java.io.Serializable
-import java.util.Date
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
+import java.io.Serializable
+import java.util.Date
 
 @Parcelize
 @Entity(tableName = "chat_table", indices = [Index(value = ["chat_id", "conversation_id"])])
@@ -196,6 +196,9 @@ data class Question(
 
     @ColumnInfo
     @SerializedName("title") var title: String? = "",
+
+    @ColumnInfo
+    @SerializedName("practice_word") var practiceWord: String? = "",
 
     @ColumnInfo(name = "question_type") var questionType: String = "",
 
