@@ -204,41 +204,73 @@ class GrammarFragment : Fragment() {
     }
 
     private fun updateQuiz(question: AssessmentQuestionWithRelations) {
-        binding.quizQuestionTv.text = question.question.text
+        binding.quizQuestionTv.text = getString(
+            R.string.question_lbl,
+            currentQuizQuestion + 1,
+            assessmentQuestions.size,
+            question.question.text
+        )
+
         hideExplanation()
         binding.explanationTv.text = question.reviseConcept?.description
         binding.quizRadioGroup.check(-1)
         question.choiceList.forEachIndexed { index, choice ->
+            if (question.question.isAttempted)
+                binding.quizRadioGroup.isEnabled = false
             when (index) {
                 0 -> {
                     binding.option1.text = choice.text
-                    binding.option1.setBackgroundColor(
-                        ContextCompat.getColor(requireContext(), R.color.white)
-                    )
+                    if (question.choiceList.get(0).userSelectedOrder == 1)
+                        binding.option1.isSelected = true
+                    if (question.choiceList.get(0).isCorrect && question.question.isAttempted)
+                        binding.option1.setBackgroundColor(
+                            ContextCompat.getColor(requireContext(), R.color.bg_green_80)
+                        ) else
+                        binding.option1.setBackgroundColor(
+                            ContextCompat.getColor(requireContext(), R.color.white)
+                        )
                     if (choice.isCorrect)
                         binding.quizRadioGroup.tag = binding.option1.id
                 }
                 1 -> {
                     binding.option2.text = choice.text
-                    binding.option2.setBackgroundColor(
-                        ContextCompat.getColor(requireContext(), R.color.white)
-                    )
+                    if (question.choiceList.get(1).userSelectedOrder == 1)
+                        binding.option2.isSelected = true
+                    if (question.choiceList.get(1).isCorrect && question.question.isAttempted)
+                        binding.option2.setBackgroundColor(
+                            ContextCompat.getColor(requireContext(), R.color.bg_green_80)
+                        ) else
+                        binding.option2.setBackgroundColor(
+                            ContextCompat.getColor(requireContext(), R.color.white)
+                        )
                     if (choice.isCorrect)
                         binding.quizRadioGroup.tag = binding.option2.id
                 }
                 2 -> {
                     binding.option3.text = choice.text
-                    binding.option3.setBackgroundColor(
-                        ContextCompat.getColor(requireContext(), R.color.white)
-                    )
+                    if (question.choiceList.get(2).userSelectedOrder == 1)
+                        binding.option3.isSelected = true
+                    if (question.choiceList.get(2).isCorrect && question.question.isAttempted)
+                        binding.option3.setBackgroundColor(
+                            ContextCompat.getColor(requireContext(), R.color.bg_green_80)
+                        ) else
+                        binding.option3.setBackgroundColor(
+                            ContextCompat.getColor(requireContext(), R.color.white)
+                        )
                     if (choice.isCorrect)
                         binding.quizRadioGroup.tag = binding.option3.id
                 }
                 3 -> {
                     binding.option4.text = choice.text
-                    binding.option4.setBackgroundColor(
-                        ContextCompat.getColor(requireContext(), R.color.white)
-                    )
+                    if (question.choiceList.get(3).userSelectedOrder == 1)
+                        binding.option4.isSelected = true
+                    if (question.choiceList.get(3).isCorrect && question.question.isAttempted)
+                        binding.option4.setBackgroundColor(
+                            ContextCompat.getColor(requireContext(), R.color.bg_green_80)
+                        ) else
+                        binding.option4.setBackgroundColor(
+                            ContextCompat.getColor(requireContext(), R.color.white)
+                        )
                     if (choice.isCorrect)
                         binding.quizRadioGroup.tag = binding.option4.id
                 }
@@ -348,7 +380,11 @@ class GrammarFragment : Fragment() {
                 evaluateQuestionStatus((binding.quizRadioGroup.tag as Int) == binding.quizRadioGroup.checkedRadioButtonId)
 
             viewModel.saveAssessmentQuestion(question)
-            viewModel.updateQuestionStatus(QUESTION_STATUS.AT.name, question.question.remoteId)
+            if (currentQuizQuestion == assessmentQuestions.size)
+                viewModel.updateQuestionStatus(
+                    QUESTION_STATUS.AT.name,
+                    question.reviseConcept?.questionId ?: 0
+                )
 
             binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.tag as Int)
                 .setBackgroundColor(
@@ -370,7 +406,7 @@ class GrammarFragment : Fragment() {
         if (assessmentQuestions.size - 1 > currentQuizQuestion) {
             updateQuiz(assessmentQuestions.get(++currentQuizQuestion))
         } else {
-
+            showToast("Congratulations you completed the Grammar part")
         }
     }
 

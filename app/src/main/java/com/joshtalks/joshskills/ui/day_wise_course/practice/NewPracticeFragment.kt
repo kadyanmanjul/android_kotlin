@@ -145,14 +145,12 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
                             currentChatModel
                         )
                     }
-                    currentChatModel = null
-                    binding.progressLayout.visibility = View.GONE
                 }
 
-            } else {
-                currentChatModel = null
-                binding.progressLayout.visibility = View.GONE
             }
+
+            currentChatModel = null
+            binding.progressLayout.visibility = View.GONE
         })
     }
 

@@ -47,6 +47,7 @@
                 android:layout_gravity="center"
                 android:background="#000"
                 android:focusable="true"
+                android:paddingHorizontal="@dimen/_4sdp"
                 android:minHeight="@dimen/_160sdp"
                 app:controller_layout_id="@layout/layout_live_player_controller"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -186,12 +186,21 @@ class PracticeAdapter(
         override fun complete() {
             audioManager?.onPause()
             audioManager?.setProgressUpdateListener(null)
+
+            audioManager?.seekTo(0)
+            binding.progressBarImageView.progress = 0
+            binding.practiseSeekbar.progress = 0
+            binding.submitPractiseSeekbar.progress = 0
+            binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
         }
 
         override fun onProgressUpdate(progress: Long) {
             currentChatModel?.playProgress = progress.toInt()
             if (currentPlayingPosition != -1) {
                 binding.progressBarImageView.progress = progress.toInt()
+                binding.practiseSeekbar.progress = progress.toInt()
+                binding.submitPractiseSeekbar.progress = progress.toInt()
+//                notifyItemChanged(layoutPosition)
             }
         }
 
@@ -272,6 +281,9 @@ class PracticeAdapter(
                     Utils.getDurationOfMedia(context, filePath!!)?.toInt() ?: 0
                 audioType.id = nextInt().toString()
 
+                binding.progressBarImageView.max = audioType.duration
+                binding.practiseSeekbar.max = audioType.duration
+                binding.submitPractiseSeekbar.max = audioType.duration
                 if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
                     StyleableToast.Builder(AppObjectController.joshApplication)
                         .gravity(Gravity.BOTTOM)
@@ -288,7 +300,7 @@ class PracticeAdapter(
                             audioManager?.setProgressUpdateListener(this)
                             chatModel.isPlaying = chatModel.isPlaying.not()
                             audioManager?.resumeOrPause()
-                            notifyItemChanged(layoutPosition)
+//                            notifyItemChanged(layoutPosition)
                         } else {
                             onPlayAudio(chatModel, audioType, position)
                         }

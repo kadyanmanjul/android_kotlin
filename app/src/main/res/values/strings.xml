@@ -473,5 +473,6 @@
     <string name="start_lesson">Start Lesson</string>
     <string name="show_explanation">Show Explanation</string>
     <string name="explanation">Explanation</string>
+    <string name="question_lbl">Ques. %1$d/%2$d %3$s</string>
 
 </resources>

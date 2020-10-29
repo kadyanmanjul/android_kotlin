@@ -40,7 +40,6 @@
                 android:orientation="vertical"
                 android:paddingTop="@dimen/_8sdp"
                 android:paddingBottom="@dimen/_8sdp"
-                android:visibility="gone"
                 tools:visibility="visible">
 
                 <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
@@ -67,7 +66,7 @@
                     android:visibility="gone"
                     app:controller_layout_id="@layout/layout_live_player_controller" />
 
-
+<!--
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/audio_rv"
                     android:layout_width="match_parent"
@@ -75,7 +74,7 @@
                     android:paddingHorizontal="@dimen/_16sdp"
                     android:paddingVertical="@dimen/_4sdp"
                     android:visibility="gone"
-                    tools:visibility="visible" />
+                    tools:visibility="visible" />-->
 
                 <FrameLayout
                     android:layout_width="match_parent"

@@ -32,14 +32,13 @@ import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
-import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import java.util.ArrayList
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
+import java.util.ArrayList
 
 class ReadingFragment : Fragment() {
 
@@ -117,16 +116,16 @@ class ReadingFragment : Fragment() {
                     this.videoList?.getOrNull(0)?.video_url?.let {
                         binding.videoPlayer.setUrl(it)
                         binding.videoPlayer.fitToScreen()
-                        binding.videoPlayer.setPlayListener {
-                            val videoId = this.videoList?.getOrNull(0)?.id
-                            val videoUrl = this.videoList?.getOrNull(0)?.video_url
-                            VideoPlayerActivity.startVideoActivity(
-                                requireContext(),
-                                "",
-                                videoId,
-                                videoUrl
-                            )
-                        }
+                        /* binding.videoPlayer.setPlayListener {
+                             val videoId = this.videoList?.getOrNull(0)?.id
+                             val videoUrl = this.videoList?.getOrNull(0)?.video_url
+                             VideoPlayerActivity.startVideoActivity(
+                                 requireContext(),
+                                 "",
+                                 videoId,
+                                 videoUrl
+                             )
+                         }*/
                         binding.videoPlayer.downloadStreamButNotPlay()
                     }
                 }

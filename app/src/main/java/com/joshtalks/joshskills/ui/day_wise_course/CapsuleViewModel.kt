@@ -16,7 +16,9 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQues
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -113,6 +115,47 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
 
     fun fetchAssessmentDetails(assessmentId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
+            try {
+                var assessmentWithRelations = getAssessmentFromDB(assessmentId)
+
+                if (assessmentWithRelations != null) {
+                    if (assessmentWithRelations.assessment.type == AssessmentType.TEST) {
+                        when (assessmentWithRelations.assessment.status) {
+                            AssessmentStatus.COMPLETED -> {
+                                assessmentStatus.postValue(assessmentWithRelations.assessment.status)
+                            }
+                            AssessmentStatus.NOT_STARTED, AssessmentStatus.STARTED -> {
+                                assessmentLiveData.postValue(
+                                    assessmentWithRelations
+                                )
+                                assessmentStatus.postValue(assessmentWithRelations.assessment.status)
+                            }
+                        }
+                    } else {
+                        assessmentLiveData.postValue(assessmentWithRelations)
+                    }
+                } else {
+                    val response = getAssessmentFromServer(assessmentId)
+                    if (response.isSuccessful) {
+//                        apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
+                        response.body()?.let {
+                            if (it.status == AssessmentStatus.COMPLETED) {
+                                assessmentStatus.postValue(it.status)
+                            } else {
+                                insertAssessmentToDB(it)
+                                assessmentWithRelations = getAssessmentFromDB(assessmentId)
+                                assessmentLiveData.postValue(assessmentWithRelations)
+                            }
+                        }
+                        return@launch
+                    }
+                }
+
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
+//            apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+            /*
             val response = getAssessmentFromServer(assessmentId)
             if (response.isSuccessful) {
 //                apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
@@ -126,7 +169,7 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
                     }
                 }
 
-            }
+            }*/
         }
     }
 
@@ -149,11 +192,15 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
 
     fun updateQuestionStatus(status: String, questionId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            AppObjectController.chatNetworkService.updateQuestionStatus(
-                UpdateQuestionStatus(
-                    status, lessonId, Mentor.getInstance().getId(), questionId
+            try {
+                AppObjectController.chatNetworkService.updateQuestionStatus(
+                    UpdateQuestionStatus(
+                        status, lessonId, Mentor.getInstance().getId(), questionId
+                    )
                 )
-            )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
