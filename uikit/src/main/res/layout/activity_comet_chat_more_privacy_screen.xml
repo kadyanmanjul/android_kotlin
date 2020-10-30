@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="screen.CometChatMorePrivacyScreenActivity">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/privacy_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="@string/privacy_security" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:clickable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:onClick="blockUserList"
+        android:paddingLeft="16dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp">
+
+        <TextView
+            android:id="@+id/blocked_user_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/blocked_user"
+            android:textColor="@color/primaryTextColor"
+            android:textSize="@dimen/name"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_blocked_user_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:drawableEnd="@drawable/ic_arrow_right_24dp"
+            android:drawablePadding="8dp"
+            android:gravity="center" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_grey" />
+
+</LinearLayout>

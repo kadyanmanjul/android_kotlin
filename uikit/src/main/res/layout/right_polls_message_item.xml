@@ -1,0 +1,93 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:gravity="end"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/cv_message_container"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/cc_message_bubble_right"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_question"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:maxWidth="240dp"
+                android:paddingLeft="8dp"
+                android:paddingTop="16dp"
+                android:textColor="@color/textColorWhite"
+                android:textStyle="bold"
+                tools:text="What color is rose ?" />
+
+            <ProgressBar
+                android:id="@+id/loading_progressBar"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="end"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/options_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical"
+                android:paddingLeft="8dp"
+                android:paddingTop="8dp"
+                android:paddingRight="8dp"></LinearLayout>
+
+            <TextView
+                android:id="@+id/total_votes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="0 Votes"
+                android:textColor="@color/textColorWhite"
+                android:textStyle="italic"
+                tools:text="2 Votes" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txt_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/cv_message_container"
+            android:layout_marginBottom="8dp"
+            android:layout_toLeftOf="@+id/cv_message_container"
+            android:gravity="center_vertical"
+            android:textColor="@color/secondaryTextColor"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:text="11:00 PM" />
+
+        <TextView
+            android:id="@+id/thread_reply_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cv_message_container"
+            android:layout_alignEnd="@id/cv_message_container"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:foreground="?selectableItemBackground"
+            android:textColor="@color/colorPrimary"
+            tools:text="2 replies" />
+    </RelativeLayout>
+</LinearLayout>

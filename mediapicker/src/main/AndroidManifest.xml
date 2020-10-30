@@ -1,23 +1,29 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.greentoad.turtlebody.mediapicker" >
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.greentoad.turtlebody.mediapicker">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application>
-        <activity android:name=".ui.ActivityLibMain"
-            android:theme="@style/TbMediaPickerTheme"
-            android:exported="false"/>
+        <activity
+            android:name=".ui.ActivityLibMain"
+            android:exported="false"
+            android:theme="@style/TbMediaPickerTheme" />
 
 
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.greentoad.turtlebody.mediaprovider"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/paths" />
+                android:resource="@xml/paths"
+                tools:replace="android:resource" />
         </provider>
-    </application>
-</manifest>
 
+    </application>
+
+</manifest>

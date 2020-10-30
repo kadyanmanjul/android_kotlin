@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/blocked_user_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:background="@color/bottom"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:visibility="gone">
+
+    <TextView
+        android:id="@+id/tv_blocked_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/primaryTextColor"
+        android:textStyle="bold"
+        tools:text="You've blocked Aaron Castro" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:text="@string/you_won_t_be_able_send_or_receive_messages"
+        android:textColor="@color/secondaryTextColor" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_unblock_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/unblock"
+        app:cornerRadius="8dp" />
+</LinearLayout>

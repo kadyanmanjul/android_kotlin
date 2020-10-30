@@ -1,3 +1,4 @@
+include ':uikit'
 include ':app', ':joshlibrary', ':recordview', ':mediapicker',  ':joshcamerax', ':dialogflowchatlibrary'
 
 //':animationlibrary', ':emojiBase',  ':emoji-google',':pixeditor',

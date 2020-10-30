@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="screen.CometChatCallActivity">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/incoming_call_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:cardBackgroundColor="@color/primaryTextColor"
+        app:cardCornerRadius="16dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/caller_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="@color/textColorWhite"
+                tools:text="@tools:sample/full_names" />
+
+            <TextView
+                android:id="@+id/call_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/caller_name"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:drawablePadding="8dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/light_grey"
+                tools:text="@tools:sample/full_names" />
+
+            <com.cometchat.pro.uikit.Avatar
+                android:id="@+id/caller_av"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="16dp"
+                tools:src="@tools:sample/avatars" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/call_type"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/decline_incoming"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:paddingLeft="32dp"
+                    android:paddingRight="32dp"
+                    android:text="Decline"
+                    app:backgroundTint="@color/red"
+                    app:cornerRadius="8dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/accept_incoming"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:paddingLeft="32dp"
+                    android:paddingRight="32dp"
+                    android:text="Answer"
+                    app:backgroundTint="@color/colorPrimary"
+                    app:cornerRadius="8dp" />
+            </LinearLayout>
+        </RelativeLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <RelativeLayout
+        android:id="@+id/outgoing_call_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/primaryTextColor">
+
+        <FrameLayout
+            android:id="@+id/camera_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/calling_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="36dp"
+            android:layout_marginBottom="36dp"
+            android:text="@string/calling"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/textColorWhite"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_dots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/calling_tv"
+            android:layout_toEndOf="@id/calling_tv"
+            android:text="..."
+            android:textColor="@color/textColorWhite" />
+
+        <com.cometchat.pro.uikit.Avatar
+            android:id="@+id/user_av"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_below="@+id/calling_tv"
+            android:layout_centerHorizontal="true"
+            app:avatar_shape="circle"
+            app:border_color="@color/textColorWhite"
+            app:border_width="16dp"
+            tools:src="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/user_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/user_av"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/textColorWhite"
+            tools:text="Andrew Kotziew" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/call_hang_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="48dp"
+            android:src="@drawable/ic_call_end_white_24dp"
+            app:fabSize="normal" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/main_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </RelativeLayout>
+</RelativeLayout>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/message_actions"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="4dp"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/polls_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:drawableStart="@drawable/ic_poll_24dp"
+        android:drawablePadding="16dp"
+        android:drawableTint="@color/grey"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:text="@string/add_a_poll"
+        android:textColor="@color/grey"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/gallery_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:drawableStart="@drawable/ic_photo"
+        android:drawablePadding="16dp"
+        android:drawableTint="@color/grey"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:text="@string/send_files_from_gallery"
+        android:textColor="@color/grey"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/camera_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:drawableStart="@drawable/ic_camera"
+        android:drawablePadding="16dp"
+        android:drawableTint="@color/grey"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:text="@string/send_from_camera"
+        android:textColor="@color/grey"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/file_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:drawableStart="@drawable/ic_insert_drive_file_black_24dp"
+        android:drawablePadding="16dp"
+        android:drawableTint="@color/grey"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:text="@string/send_files"
+        android:textColor="@color/grey"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/audio_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:drawableStart="@drawable/ic_library_music_24dp"
+        android:drawablePadding="16dp"
+        android:drawableTint="@color/grey"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:text="@string/send_audio_files"
+        android:textColor="@color/grey"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/location_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:drawableStart="@drawable/ic_near_me_24dp"
+        android:drawablePadding="16dp"
+        android:drawableTint="@color/grey"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:text="@string/share_location"
+        android:textColor="@color/grey"
+        android:textStyle="bold" />
+</LinearLayout>
+

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="call"
+            type="com.cometchat.pro.core.Call" />
+
+    </data>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp">
+
+        <RelativeLayout
+            android:id="@+id/callView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/user_detail_vw"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toLeftOf="@id/call_iv"
+                android:clickable="true"
+                android:foreground="?attr/selectableItemBackground">
+
+                <com.cometchat.pro.uikit.Avatar
+                    android:id="@+id/call_sender_avatar"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="4dp"
+                    tools:src="@tools:sample/avatars" />
+
+                <TextView
+                    android:id="@+id/call_sender_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@id/call_sender_avatar"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_toStartOf="@+id/calltime_tv"
+                    android:layout_toEndOf="@id/call_sender_avatar"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textSize="@dimen/name"
+                    android:textStyle="bold"
+                    tools:text="@tools:sample/full_names" />
+
+                <TextView
+                    android:id="@+id/call_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/call_sender_name"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_toStartOf="@+id/calltime_tv"
+                    android:layout_toEndOf="@id/call_sender_avatar"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:textSize="@dimen/twelve"
+                    android:visibility="visible"
+                    tools:text="@string/online" />
+
+
+                <TextView
+                    android:id="@+id/tvSeprator"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.8dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginEnd="16dp"
+                    android:layout_toEndOf="@id/call_sender_avatar"
+                    android:background="@color/light_grey" />
+
+                <TextView
+                    android:id="@+id/calltime_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="16dp"
+                    android:textSize="@dimen/twelve"
+                    tools:text="MON" />
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/call_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="16dp"
+                android:clickable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:src="@drawable/ic_call_24dp"
+                app:tint="@color/colorPrimary" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</layout>

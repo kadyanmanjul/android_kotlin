@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="16dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/reply_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:drawableLeft="@drawable/ic_reply_24dp"
+        android:drawablePadding="8dp"
+        android:drawableTint="@color/colorPrimary"
+        android:foreground="?selectableItemBackground"
+        android:padding="16dp"
+        android:text="@string/reply_message"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <TextView
+        android:id="@+id/start_thread"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:drawableLeft="@drawable/ic_nav_chat"
+        android:drawablePadding="8dp"
+        android:drawableTint="@color/colorPrimary"
+        android:foreground="?selectableItemBackground"
+        android:padding="16dp"
+        android:text="@string/reply_thread"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+</LinearLayout>

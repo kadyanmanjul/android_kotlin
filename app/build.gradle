@@ -32,8 +32,10 @@ android {
         buildConfigField "String", "SINCH_SERVER", "\"clientapi.sinch.com\""
         buildConfigField "String", "WX_CAM_KEY", "\"300rqcct068ggy3\""
         buildConfigField "String", "COMETCHAT_REGION", "\"us\""
-        buildConfigField "String", "COMETCHAT_APP_ID", "\"249541bd45edaca\""
-        buildConfigField "String", "COMETCHAT_API_KEY", "\"31c49381b0ff1866dfa541af2c791df59ab83c7d\""
+        buildConfigField "String", "COMETCHAT_APP_ID", "\"25039c54194d899\""
+        buildConfigField "String", "COMETCHAT_API_KEY", "\"eb53131bce1b40ffb7007d74729337ee8d29625b\""
+
+        manifestPlaceholders = [file_provider: "com.joshtalks.joshskills"]
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -133,6 +135,10 @@ android {
         exclude 'META-INF/ASL2.0'
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/main.kotlin_module'
+        exclude 'META-INF/*.kotlin_module'
+        pickFirst '**/librsjni.so'
+        pickFirst '**/libRSSupport.so'
+        pickFirst '**/librsjni_androidx.so'
     }
 
     lintOptions {
@@ -190,6 +196,7 @@ dependencies {
         exclude group: 'com.bumptech.glide'
     })
     implementation project(path: ':joshcamerax')
+    implementation project(path: ':uikit')
     implementation project(path: ':dialogflowchatlibrary')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"

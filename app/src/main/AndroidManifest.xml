@@ -73,7 +73,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
-        tools:replace="android:allowBackup,android:supportsRtl">
+        tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
         <activity android:name=".ui.userprofile.UserProfileActivity"></activity>
         <activity android:name=".ui.leaderboard.LeaderBoardViewPagerActivity" />
 
