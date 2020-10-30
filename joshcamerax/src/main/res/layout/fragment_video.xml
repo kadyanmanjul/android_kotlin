@@ -69,7 +69,7 @@
             android:backgroundTint="@android:color/white"
             android:padding="@dimen/medium_margin"
             android:src="@drawable/ic_video_record"
-            android:tint="@color/colorButtonRedBg"
+            app:tint="@color/colorButtonRedBg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

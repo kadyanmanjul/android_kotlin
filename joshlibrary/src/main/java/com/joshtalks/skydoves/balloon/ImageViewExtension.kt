@@ -24,7 +24,7 @@ import androidx.appcompat.widget.AppCompatImageView
 internal fun AppCompatImageView.applyIconForm(iconForm: IconForm) {
   iconForm.drawable?.let {
     setImageDrawable(it)
-    supportImageTintList = ColorStateList.valueOf(iconForm.iconColor)
+    imageTintList = ColorStateList.valueOf(iconForm.iconColor)
     layoutParams = LinearLayout.LayoutParams(iconForm.iconSize, iconForm.iconSize)
       .apply { setMargins(0, 0, iconForm.iconSpace, 0) }
     visible(true)
