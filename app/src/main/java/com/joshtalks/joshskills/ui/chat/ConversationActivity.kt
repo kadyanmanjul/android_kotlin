@@ -35,6 +35,9 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
+import com.cometchat.pro.core.AppSettings
+import com.cometchat.pro.core.CometChat
+import com.cometchat.pro.exceptions.CometChatException
 import com.facebook.share.internal.ShareConstants
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.exoplayer2.Player
@@ -45,6 +48,7 @@ import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshcamerax.utils.ImageQuality
 import com.joshtalks.joshcamerax.utils.Options
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CERTIFICATE_GENERATE
@@ -167,6 +171,10 @@ import java.util.TimerTask
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.concurrent.scheduleAtFixedRate
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -414,6 +422,9 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             conversationBinding.toolbar.inflateMenu(R.menu.conversation_menu)
             conversationBinding.toolbar.setOnMenuItemClickListener {
                 when (it?.itemId) {
+                    R.id.groupChat -> {
+                        initCometChat()
+                    }
                     R.id.menu_referral -> {
                         ReferralActivity.startReferralActivity(
                             this@ConversationActivity,
@@ -1698,7 +1709,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             when (ExploreCardType.valueOf(exploreTypeStr)) {
                 ExploreCardType.FREETRIAL -> {
                     val remainingDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS, false)
-                    val isSubscriptionEnded = PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED, false)
+                    val isSubscriptionEnded =
+                        PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED, false)
                     val isSubscriptionStarted =
                         PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED, false)
                     if (remainingDays < 0 && isSubscriptionStarted.not()) {
@@ -1992,6 +2004,31 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             null
         }
 
+    }
+
+    private fun initCometChat() {
+
+        val appSettings = AppSettings.AppSettingsBuilder()
+            .subscribePresenceForAllUsers()
+            .setRegion(BuildConfig.COMETCHAT_REGION)
+            .build()
+
+        CometChat.init(
+            AppObjectController.joshApplication,
+            BuildConfig.COMETCHAT_APP_ID,
+            appSettings,
+            object : CometChat.CallbackListener<String>() {
+                override fun onSuccess(p0: String?) {
+                    Timber.d("Initialization completed successfully")
+                    conversationViewModel.initChat()
+                }
+
+                override fun onError(p0: CometChatException?) {
+                    Timber.d("Initialization failed with exception: %s", p0?.message)
+                    showToast(getString(R.string.generic_message_for_error), Toast.LENGTH_SHORT)
+                }
+
+            })
     }
 
     override fun onProgressUpdate(progress: Long) {

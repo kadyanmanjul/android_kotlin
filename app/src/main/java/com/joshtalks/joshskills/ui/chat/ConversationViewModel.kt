@@ -8,6 +8,10 @@ import android.content.IntentFilter
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.cometchat.pro.core.CometChat
+import com.cometchat.pro.exceptions.CometChatException
+import com.cometchat.pro.models.User
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.PrefManager
@@ -48,6 +52,7 @@ import java.io.File
 import java.util.ConcurrentModificationException
 import java.util.Date
 import java.util.concurrent.TimeUnit
+import timber.log.Timber
 
 
 class ConversationViewModel(application: Application) :
@@ -559,6 +564,33 @@ class ConversationViewModel(application: Application) :
             }
         } catch (ex: Throwable) {
             ex.printStackTrace()
+        }
+    }
+
+    fun initChat() {
+        // TODO - Call API to add user to group
+        loginUser()
+    }
+
+    fun loginUser() {
+        val UID: String = "user1" // Replace with the UID of the user to login
+
+        if (CometChat.getLoggedInUser() == null) {
+            CometChat.login(
+                UID,
+                BuildConfig.COMETCHAT_API_KEY,
+                object : CometChat.CallbackListener<User>() {
+                    override fun onSuccess(p0: User?) {
+                        Timber.d("Login Successful : %s", p0?.toString())
+                    }
+
+                    override fun onError(p0: CometChatException?) {
+                        Timber.d("Login failed with exception: %s", p0?.message)
+                    }
+
+                })
+        } else {
+            // User already logged in
         }
     }
 
