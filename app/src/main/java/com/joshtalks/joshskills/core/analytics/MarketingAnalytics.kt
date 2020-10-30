@@ -51,7 +51,7 @@ object MarketingAnalytics {
     fun viewContentEvent(context: Context, courseExploreModel: CourseExploreModel) {
         JoshSkillExecutors.BOUNDED.submit {
             //Fb view event
-            val params = Bundle()
+        /*    val params = Bundle()
             params.putString(AppEventsConstants.EVENT_PARAM_CONTENT_TYPE, "E-learning")
             params.putString(AppEventsConstants.EVENT_PARAM_CONTENT, courseExploreModel.toString())
             params.putString(
@@ -61,7 +61,7 @@ object MarketingAnalytics {
             params.putString(AppEventsConstants.EVENT_PARAM_CURRENCY, CurrencyType.INR.name)
             val facebookEventLogger = AppEventsLogger.newLogger(context)
             facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_VIEWED_CONTENT, params)
-
+*/
             //Branch view event
             val buo = BranchUniversalObject()
                 .setCanonicalIdentifier(courseExploreModel.id?.toString() ?: "")
@@ -70,7 +70,6 @@ object MarketingAnalytics {
                 .setContentImageUrl(courseExploreModel.imageUrl)
                 .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
                 .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-
             BranchEvent(BRANCH_STANDARD_EVENT.VIEW_ITEM).addContentItems(buo).logEvent(context)
         }
     }

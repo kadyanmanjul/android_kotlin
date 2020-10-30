@@ -27,15 +27,12 @@ import androidx.core.widget.TextViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.facebook.appevents.AppEventsConstants
-import com.facebook.appevents.AppEventsLogger
 import com.flurry.android.FlurryAgent
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.CredentialsOptions
 import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
@@ -84,7 +81,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
-import java.util.Currency
 import java.util.HashMap
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -812,27 +808,27 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             bundle.putString(FirebaseAnalytics.Param.CURRENCY, CurrencyType.INR.name)
             AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
 
-            try {
-                val params = Bundle().apply {
-                    putString(
-                        AppEventsConstants.EVENT_PARAM_CONTENT_ID,
-                        viewModel.getPaymentTestId()
-                    )
-                    putString(
-                        AppEventsConstants.EVENT_PARAM_SUCCESS,
-                        AppEventsConstants.EVENT_PARAM_VALUE_YES
-                    )
-                    putString(AppEventsConstants.EVENT_PARAM_CURRENCY, CurrencyType.INR.name)
-                }
-                AppEventsLogger.newLogger(this).logPurchase(
-                    viewModel.getCourseDiscountedAmount().toBigDecimal(),
-                    Currency.getInstance(viewModel.getCurrency().trim()),
-                    params
-                )
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                FirebaseCrashlytics.getInstance().recordException(ex)
-            }
+            /* try {
+                 val params = Bundle().apply {
+                     putString(
+                         AppEventsConstants.EVENT_PARAM_CONTENT_ID,
+                         viewModel.getPaymentTestId()
+                     )
+                     putString(
+                         AppEventsConstants.EVENT_PARAM_SUCCESS,
+                         AppEventsConstants.EVENT_PARAM_VALUE_YES
+                     )
+                     putString(AppEventsConstants.EVENT_PARAM_CURRENCY, CurrencyType.INR.name)
+                 }
+                 AppEventsLogger.newLogger(this).logPurchase(
+                     viewModel.getCourseDiscountedAmount().toBigDecimal(),
+                     Currency.getInstance(viewModel.getCurrency().trim()),
+                     params
+                 )
+             } catch (ex: Exception) {
+                 ex.printStackTrace()
+                 FirebaseCrashlytics.getInstance().recordException(ex)
+             }*/
             val extras: HashMap<String, String> = HashMap()
             extras["test_id"] = viewModel.getPaymentTestId()
             extras["payment_id"] = razorpayPaymentId

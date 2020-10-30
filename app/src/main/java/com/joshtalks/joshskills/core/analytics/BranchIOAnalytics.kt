@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.core.analytics
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
@@ -18,11 +19,12 @@ object BranchIOAnalytics {
                         println("$k = $v")
                     }
                     branchEvent.setTransactionID(extras["payment_id"])
-                    branchEvent.setCurrency(CurrencyType.INR)
                     extras["amount"]?.toDouble()?.run {
                         branchEvent.setRevenue(this)
                     }
                 }
+                branchEvent.addCustomDataProperty("app_version", BuildConfig.VERSION_NAME)
+                branchEvent.setCurrency(CurrencyType.INR)
                 branchEvent.logEvent(AppObjectController.joshApplication)
             } catch (ex: Exception) {
                 FirebaseCrashlytics.getInstance().recordException(ex)
