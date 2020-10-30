@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 
 class DayWiseCourseActivity : CoreJoshActivity() {
 
@@ -59,6 +60,9 @@ class DayWiseCourseActivity : CoreJoshActivity() {
         val titleView: TextView = findViewById(R.id.text_message_title)
         val helpIv: ImageView = findViewById(R.id.iv_help)
         titleView.text = chatList.get(0).question?.lesson?.lessonName
+        titleView.setOnClickListener {
+            startActivity(Intent(this, CourseProgressActivityNew::class.java))
+        }
         helpIv.visibility = View.GONE
         findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
         findViewById<View>(R.id.iv_back).setOnClickListener {

@@ -572,6 +572,7 @@
                     android:scheme="joshskills" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.course_progress_new.CourseProgressActivityNew" />
 
     </application>
 
