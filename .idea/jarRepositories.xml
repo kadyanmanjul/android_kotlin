@@ -56,5 +56,10 @@
       <option name="name" value="maven5" />
       <option name="url" value="https://sdk.uxcam.com/android/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven6" />
+      <option name="name" value="maven6" />
+      <option name="url" value="https://dl.bintray.com/cometchat/pro" />
+    </remote-repository>
   </component>
 </project>

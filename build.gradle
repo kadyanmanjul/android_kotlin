@@ -57,6 +57,9 @@ allprojects {
         maven{
             url 'https://sdk.uxcam.com/android/'
         }
+        maven {
+            url "https://dl.bintray.com/cometchat/pro"
+        }
     }
 }
 
