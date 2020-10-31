@@ -3,6 +3,8 @@ package com.joshtalks.joshskills.repository.service
 import com.joshtalks.joshskills.repository.local.entity.Course
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
+import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback
+import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.BaseResponse
@@ -78,6 +80,10 @@ interface ChatNetworkService {
 
     @POST("$DIR/practice/engagement/")
     suspend fun submitPracticeAsync(@Body requestEngage: RequestEngage): Response<PracticeEngagement>
+
+    //http://staging.joshtalks.org/api/skill/v1/practice/audio_practice_feedback/'
+    @POST("$DIR/practice/audio_practice_feedback/")
+    suspend fun getAudioFeedback(@Body params: Map<String, String>): PracticeFeedback2
 
     @FormUrlEncoded
     @PATCH("$DIR/mentor/gaid/{id}/")

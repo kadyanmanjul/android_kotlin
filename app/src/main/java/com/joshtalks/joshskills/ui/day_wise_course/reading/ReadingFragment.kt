@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
@@ -27,10 +28,15 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.widget.TextViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
@@ -55,6 +61,7 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.decorator.GridSpacingItemDecoration
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -66,10 +73,13 @@ import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
+import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
+import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
 import com.joshtalks.joshskills.repository.local.eventbus.SeekBarProgressEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
+import com.joshtalks.joshskills.ui.help.viewholder.FaqCategoryViewHolder
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
@@ -93,7 +103,6 @@ import kotlin.random.Random
 
 class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEventListener,
     ProgressUpdateListener {
-    private var compositeDisposable = CompositeDisposable()
 
     private lateinit var binding: ReadingPracticeFragmentBinding
     private lateinit var chatModel: ChatModel
@@ -187,8 +196,8 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                 appAnalytics.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Not Submitted")
                 setViewAccordingExpectedAnswer()
             } else {
-                hidePracticeInputLayout()
                 binding.submitAnswerBtn.visibility = GONE
+                binding.improveAnswerBtn.visibility = VISIBLE
                 appAnalytics.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
                 appAnalytics.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Already Submitted")
                 setViewUserSubmitAnswer()
@@ -223,7 +232,6 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
 
     override fun onResume() {
         super.onResume()
-        subscribeRXBus()
         /*requireActivity().requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {
@@ -266,7 +274,6 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     override fun onStop() {
         appAnalytics.push()
         super.onStop()
-        compositeDisposable.clear()
         try {
             binding.videoPlayer.onStop()
 
@@ -343,34 +350,6 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
         }
 
         super.onActivityResult(requestCode, resultCode, data)
-    }
-
-    private fun subscribeRXBus() {
-        compositeDisposable.add(
-            RxBus2.listen(SeekBarProgressEventBus::class.java)
-                .subscribeOn(Schedulers.computation())
-                .subscribe({
-                    Handler(Looper.getMainLooper()).post {
-                        if (filePath.isNullOrEmpty()
-                                .not() && coreJoshActivity?.currentAudio == filePath
-                        ) {
-                            binding.submitPractiseSeekbar.progress = it.progress
-                        } else {
-                            if (chatModel.question?.practiceEngagement != null && chatModel.question?.practiceEngagement?.getOrNull(
-                                    0
-                                ) != null
-                            ) {
-                                binding.submitPractiseSeekbar.progress = it.progress
-                            } else {
-                                binding.practiseSeekbar.progress = it.progress
-
-                            }
-                        }
-                    }
-                }, {
-                    it.printStackTrace()
-                })
-        )
     }
 
     private fun setPracticeInfoView() {
@@ -544,6 +523,16 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                 binding.progressLayout.visibility = GONE
             }
         })
+
+        practiceViewModel.practiceFeedback2LiveData.observe(viewLifecycleOwner, Observer {
+            setFeedBackLayout(it)
+        })
+    }
+
+    fun setFeedBackLayout(feedback2: PracticeFeedback2){
+        binding.feedbackLayout.visibility=VISIBLE
+        binding.feedbackGrade.text=feedback2.grade
+        binding.feedbackDescription.text=feedback2.text
     }
 
     private fun setViewUserSubmitAnswer() {
@@ -566,27 +555,11 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                         binding.etSubmitText.isEnabled = false
                     }
                     EXPECTED_ENGAGE_TYPE.AU == it -> {
-                        binding.submitAudioViewContainer.visibility = VISIBLE
+                        initRV()
+                        addAudioListRV(this.practiceEngagement)
                         filePath = practiseEngagement?.answerUrl
-                        if (PermissionUtils.isStoragePermissionEnabled(requireActivity()) && AppDirectory.isFileExist(
-                                practiseEngagement?.localPath
-                            )
-                        ) {
-                            filePath = practiseEngagement?.localPath
-                            binding.submitPractiseSeekbar.max =
-                                Utils.getDurationOfMedia(requireActivity(), filePath!!)
-                                    ?.toInt() ?: 0
-                        } else {
-                            if (practiseEngagement?.duration != null) {
-                                binding.submitPractiseSeekbar.max = practiseEngagement.duration
-                            } else {
-                                binding.submitPractiseSeekbar.max = 1_00_000
-                            }
-                        }
 
-
-                        initializePractiseSeekBar()
-                        binding.ivCancel.visibility = GONE
+                        //initializePractiseSeekBar()
                     }
                     EXPECTED_ENGAGE_TYPE.VI == it -> {
                         filePath = practiseEngagement?.answerUrl
@@ -626,6 +599,48 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                     }
                     else -> {
 
+                    }
+                }
+            }
+        }
+    }
+
+    private fun initRV() {
+        val linearLayoutManager = LinearLayoutManager(activity)
+        linearLayoutManager.isSmoothScrollbarEnabled = true
+        binding.audioList.builder.setHasFixedSize(true)
+            .setLayoutManager(linearLayoutManager)
+        val divider = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
+        divider.setDrawable(
+            ColorDrawable(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.seek_bar_background
+                )
+            )
+        )
+        binding.audioList.addItemDecoration(divider)
+    }
+
+    private fun addAudioListRV(practiceEngagement: List<PracticeEngagement>?) {
+        showPracticeSubmitLayout()
+        binding.yourSubAnswerTv.visibility = View.VISIBLE
+        binding.practiseSubmitLayout.visibility = VISIBLE
+        binding.subPractiseSubmitLayout.visibility = VISIBLE
+        binding.audioList.visibility = VISIBLE
+        practiceEngagement?.let { practiceList ->
+            if (practiceList.isNullOrEmpty().not()) {
+                practiceList.forEach { practice ->
+                    binding.audioList.addView(
+                        PraticeAudioViewHolder(
+                            practice,
+                            context,
+                            audioManager
+                        ))
+                    if(practice.practiceFeedback!=null){
+                        binding.feedbackLayout.visibility=VISIBLE
+                        binding.feedbackGrade.text= practice.practiceFeedback!!.grade
+                        binding.feedbackDescription.text= practice.practiceFeedback!!.text
                     }
                 }
             }
@@ -692,24 +707,15 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                     audioManager?.seekTo(userSelectedPosition.toLong())
                 }
             })
-        binding.submitPractiseSeekbar.setOnSeekBarChangeListener(
-            object : SeekBar.OnSeekBarChangeListener {
-                var userSelectedPosition = 0
-                override fun onStartTrackingTouch(seekBar: SeekBar) {
-                    mUserIsSeeking = true
+        val viewHolders = binding.audioList.allViewResolvers as List<*>
+        viewHolders.forEach {
+            it?.let {
+                if (it is PraticeAudioViewHolder && it.isSeekBaarInitialized()) {
+                    it.initializePractiseSeekBar()
+                    //it.setSeekToZero()
                 }
-
-                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                    if (fromUser) {
-                        userSelectedPosition = progress
-                    }
-                }
-
-                override fun onStopTrackingTouch(seekBar: SeekBar) {
-                    mUserIsSeeking = false
-                    audioManager?.seekTo(userSelectedPosition.toLong())
-                }
-            })
+            }
+        }
     }
 
 
@@ -865,10 +871,9 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
         showPracticeSubmitLayout()
         binding.practiseSubmitLayout.visibility = VISIBLE
         binding.subPractiseSubmitLayout.visibility = VISIBLE
-        binding.submitAudioViewContainer.visibility = VISIBLE
+        binding.audioList.visibility = VISIBLE
+        binding.audioList.addView(PraticeAudioViewHolder(null,context,audioManager))
         initializePractiseSeekBar()
-        binding.submitPractiseSeekbar.max =
-            Utils.getDurationOfMedia(requireActivity(), filePath!!)?.toInt() ?: 0
         enableSubmitButton()
     }
 
@@ -968,16 +973,6 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
         }
     }
 
-    private fun setAudioPlayerStateDefault() {
-        AppObjectController.uiHandler.post {
-            binding.practiseSeekbar.progress = 0
-            binding.submitPractiseSeekbar.progress = 0
-            binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
-            binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
-        }
-    }
-
-
     fun playPracticeAudio() {
         if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
             StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
@@ -1004,58 +999,8 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
 
     }
 
-    fun playSubmitPracticeAudio() {
-        try {
-            val audioType = AudioType()
-            audioType.audio_url = filePath!!
-            audioType.downloadedLocalPath = filePath!!
-            audioType.duration =
-                Utils.getDurationOfMedia(requireContext(), filePath!!)?.toInt() ?: 0
-            audioType.id = Random.nextInt().toString()
-            appAnalytics.addParam(
-                AnalyticsEvent.PRACTICE_EXTRA.NAME,
-                "Already Submitted audio Played"
-            )
-
-            val state =
-                if (binding.submitBtnPlayInfo.state == MaterialPlayPauseDrawable.State.Pause && audioManager!!.isPlaying()) {
-                    audioManager?.setProgressUpdateListener(this)
-                    MaterialPlayPauseDrawable.State.Play
-                } else {
-                    MaterialPlayPauseDrawable.State.Pause
-                }
-            binding.submitBtnPlayInfo.state = state
-
-            if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
-                StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
-                    .text(getString(R.string.volume_up_message)).cornerRadius(16)
-                    .length(Toast.LENGTH_LONG)
-                    .solidBackground().show()
-            }
-
-            if (coreJoshActivity?.currentAudio == null) {
-                onPlayAudio(chatModel, audioType)
-            } else {
-                if (coreJoshActivity?.currentAudio == audioType.audio_url) {
-                    if (checkIsPlayer()) {
-                        audioManager?.setProgressUpdateListener(this)
-                        audioManager?.resumeOrPause()
-                    } else {
-                        onPlayAudio(chatModel, audioType)
-                    }
-                } else {
-                    onPlayAudio(chatModel, audioType)
-
-                }
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-
-    }
-
     fun removeAudioPractise() {
-        filePath = null
+        /*filePath = null
         coreJoshActivity?.currentAudio = null
         hidePracticeSubmitLayout()
         binding.submitAudioViewContainer.visibility = GONE
@@ -1067,7 +1012,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
             audioManager?.resumeOrPause()
         }
         disableSubmitButton()
-        appAnalytics.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio practise removed")
+        appAnalytics.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio practise removed")*/
 
     }
 
@@ -1110,7 +1055,13 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
         audioManager?.play(coreJoshActivity?.currentAudio!!)
         audioManager?.setProgressUpdateListener(this)
         if (filePath.isNullOrEmpty().not() && coreJoshActivity?.currentAudio == filePath) {
-            binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
+
+            val viewHolders = binding.audioList.allViewResolvers as List<*>
+            viewHolders.forEach {
+                if (it is PraticeAudioViewHolder) {
+                    it.playPauseBtn.state=MaterialPlayPauseDrawable.State.Pause
+                }
+            }
         } else {
             binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
         }
@@ -1159,6 +1110,23 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                     R.color.button_color
                 )
             )
+        }
+    }
+
+    fun improvePractice() {
+        if (chatModel.question != null && chatModel.question!!.expectedEngageType != null) {
+            val engageType = chatModel.question?.expectedEngageType
+            chatModel.question?.expectedEngageType?.let {
+                if (EXPECTED_ENGAGE_TYPE.AU == it) {
+                    showPracticeInputLayout()
+                    setViewAccordingExpectedAnswer()
+                    binding.improveAnswerBtn.visibility= GONE
+                    binding.submitAnswerBtn.visibility= VISIBLE
+                    return
+                } else{
+                    return
+                }
+            }
         }
     }
 
@@ -1218,11 +1186,11 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
 */
 
     override fun onPlayerPause() {
-        binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+        //binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
     }
 
     override fun onPlayerResume() {
-        binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
+        //binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
     }
 
     override fun onCurrentTimeUpdated(lastPosition: Long) {
@@ -1244,19 +1212,19 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     }
 
     override fun complete() {
-        binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
-        binding.submitPractiseSeekbar.progress = 0
+       // binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+        //binding.submitPractiseSeekbar.progress = 0
         audioManager?.seekTo(0)
         audioManager?.onPause()
         audioManager?.setProgressUpdateListener(null)
     }
 
     override fun onProgressUpdate(progress: Long) {
-        binding.submitPractiseSeekbar.progress = progress.toInt()
+       // binding.submitPractiseSeekbar.progress = progress.toInt()
     }
 
     override fun onDurationUpdate(duration: Long?) {
-        duration?.toInt()?.let { binding.submitPractiseSeekbar.max = it }
+      //  duration?.toInt()?.let { binding.submitPractiseSeekbar.max = it }
     }
 
 }

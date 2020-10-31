@@ -1,9 +1,11 @@
 package com.joshtalks.joshskills.ui.practise
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
@@ -15,6 +17,8 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
+import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback
+import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.util.AudioRecording
@@ -23,6 +27,7 @@ import io.reactivex.disposables.CompositeDisposable
 import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -36,6 +41,7 @@ class PracticeViewModel(application: Application) :
     var context: JoshApplication = getApplication()
     var recordFile: File? = null
     val requestStatusLiveData: MutableLiveData<Boolean> = MutableLiveData()
+    val practiceFeedback2LiveData: MutableLiveData<PracticeFeedback2> = MutableLiveData()
 
 
     fun startRecord(): Boolean {
@@ -95,17 +101,74 @@ class PracticeViewModel(application: Application) :
                 if (resp.isSuccessful && resp.body() != null) {
                     resp.body()?.localPath = localPath
                     val list: MutableList<PracticeEngagement> = mutableListOf()
+                    chatModel.question?.let {
+                        val list2=AppObjectController.appDatabase.chatDao()
+                            .getPractiseObject(it.questionId)
+                        list2?.let { it1 -> list.addAll(it1) }
+                    }
                     list.add(resp.body()!!)
                     chatModel.question?.let {
                         AppObjectController.appDatabase.chatDao()
                             .updatePractiseObject(it.questionId, list)
                     }
+                    getAudioFeedback(chatModel,resp.body()?.id!!, resp.body()?.transcriptId!!, engageType, resp.body())
                     requestStatusLiveData.postValue(true)
                 } else {
                     requestStatusLiveData.postValue(false)
                     if (resp.code() == 400) {
                         showToast(context.getString(R.string.generic_message_for_error))
                     }
+                }
+            } catch (ex: Exception) {
+                requestStatusLiveData.postValue(false)
+                ex.showAppropriateMsg()
+            }
+        }
+    }
+
+    fun getAudioFeedback(
+        chatModel: ChatModel,
+        engagement_id: Int,
+        transcript_id: String,
+        engageType: EXPECTED_ENGAGE_TYPE?,
+        pracEngagement: PracticeEngagement?
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (engageType != null) {
+                    when {
+                        EXPECTED_ENGAGE_TYPE.AU == engageType -> {
+                            AppAnalytics.create(AnalyticsEvent.AUDIO_SUBMITTED.NAME).push()
+                        }
+                        else -> return@launch
+                    }
+                }
+
+                val data = mapOf(
+                    "engagement_id" to engagement_id.toString(),
+                    "transcript_id" to transcript_id
+                )
+
+                val resp = AppObjectController.chatNetworkService.getAudioFeedback(data)
+                if (resp.status != "completed") {
+                    delay(10_000)
+                    //Thread.sleep(1_000)
+                    getAudioFeedback(chatModel,engagement_id, transcript_id, engageType, pracEngagement)
+                    Log.d("Manjul", "IF getAudioFeedback() called $resp")
+                    requestStatusLiveData.postValue(true)
+                } else {
+                    val list: MutableList<PracticeEngagement> = mutableListOf()
+                    pracEngagement?.practiceFeedback= PracticeFeedback(resp.score,resp.grade,resp.text,resp.status)
+                    pracEngagement?.let {
+                        list.add(it)
+                        chatModel.question?.let {
+                            AppObjectController.appDatabase.chatDao()
+                                .updatePractiseObject(it.questionId, list)
+                        }
+                    }
+                    Log.d("Manjul", "ELSE getAudioFeedback() called $resp")
+                    practiceFeedback2LiveData.postValue(resp)
+
                 }
             } catch (ex: Exception) {
                 requestStatusLiveData.postValue(false)

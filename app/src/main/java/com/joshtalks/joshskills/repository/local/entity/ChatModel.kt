@@ -21,6 +21,7 @@ import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.ConvectorForEngagement
+import com.joshtalks.joshskills.repository.local.ConvectorForPracticeFeedback
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
 import com.joshtalks.joshskills.util.RandomString
@@ -417,10 +418,21 @@ data class Sender(
 
 
 data class PracticeEngagement(
-    @SerializedName("answer_url") val answerUrl: String?,
-    @SerializedName("id") val id: Int?,
-    @SerializedName("text") val text: String?,
-    @SerializedName("duration") val duration: Int?,
+    @ColumnInfo
+    @SerializedName("answer_url") val answerUrl: String?=null,
+    @ColumnInfo
+    @SerializedName("id") val id: Int?=null,
+    @ColumnInfo
+    @SerializedName("text") val text: String?=null,
+    @ColumnInfo
+    @SerializedName("duration") val duration: Int?=null,
+    @Ignore
+    @SerializedName("feedback") var practiceFeedback: PracticeFeedback?=null,
+    @ColumnInfo
+    @SerializedName("practice_date") val practiceDate: String?=null,
+    @ColumnInfo
+    @SerializedName("transcript_id") val transcriptId: String?=null,
+    @ColumnInfo
     @Expose var localPath: String? = null
 
 ) : Serializable {
@@ -428,7 +440,40 @@ data class PracticeEngagement(
         answerUrl = null,
         id = null,
         text = null,
-        duration = null
+        duration = null,
+        practiceFeedback=null,
+        practiceDate=null,
+        transcriptId=null
+    )
+}
+
+data class PracticeFeedback(
+    @SerializedName("title") val title: String?,
+    @SerializedName("grade") val grade: String?,
+    @SerializedName("text") val text: String?,
+    @SerializedName("gif_url") var gifUrl: String?,
+) : Serializable {
+    constructor() : this(
+        title = null,
+        grade = null,
+        text = null,
+        gifUrl = null
+    )
+}
+
+data class PracticeFeedback2(
+    @SerializedName("status") val status: String?,
+    @SerializedName("engagement") val engagementId: Int?,
+    @SerializedName("text") val text: String?,
+    @SerializedName("grade") val grade: String?,
+    @SerializedName("score") var score: String?,
+) : Serializable {
+    constructor() : this(
+        status = null,
+        engagementId = null,
+        text = null,
+        score = null,
+        grade = null
     )
 }
 
@@ -722,6 +767,11 @@ interface ChatDao {
         questionId: String,
         practiseEngagement: List<PracticeEngagement>
     )
+
+    @Query("SELECT practice_engagements FROM question_table  WHERE questionId= :questionId")
+    suspend fun getPractiseObject(
+        questionId: String
+    ) : List<PracticeEngagement>
 
     @Query(value = "SELECT message_time_in_milliSeconds FROM chat_table where question_id IS NOT NULL AND conversation_id= :conversationId ORDER BY created DESC LIMIT 1; ")
     suspend fun getLastChatDate(conversationId: String): String?

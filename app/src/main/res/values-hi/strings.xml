@@ -80,10 +80,12 @@
     <string name="payment_process_success">आपकी पेमेंट सफलतापूर्वक हो गयी है!</string>
     <string name="status_with_colon">स्थिति :</string>
     <string name="submit_answer">उत्तर सबमिट करें</string>
+    <string name="improve_answer">उत्तर में सुधार करें</string>
     <string name="today_practise">आज की प्रैक्टिस</string>
     <string name="hold_to_record_msz">ऑडियो रिकॉर्ड करने के लिए होल्ड करें</string>
     <string name="upload_file_msz">एक फाइल अपलोड करें</string>
     <string name="your_answer">आपका जवाब</string>
+    <string name="your_feedback">आपकी प्रतिक्रिया</string>
     <string name="your_submitted_answer">आपका सबमिट किया गया जवाब</string>
     <string name="type_your_answer_hint">अपना जवाब यहाँ टाइप करें</string>
     <string name="viewing_support_app_not_exist">इस कंटेंट को देखने के लिए आपके पास उचित ऐप नहीं है</string>

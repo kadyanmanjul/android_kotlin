@@ -5,7 +5,7 @@
 
         <variable
             name="hanlder"
-            type="com.joshtalks.joshskills.ui.day_wise_course.reading.AudioListAdapter" />
+            type="com.joshtalks.joshskills.ui.day_wise_course.reading.PraticeAudioViewHolder" />
     </data>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -14,9 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="@dimen/_16sdp"
-        android:paddingVertical="@dimen/_4sdp"
-        android:visibility="gone"
-        tools:visibility="visible">
+        android:paddingVertical="@dimen/_4sdp">
 
         <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
             android:id="@+id/btn_play_info"
@@ -46,6 +44,24 @@
             android:progressDrawable="@drawable/seek_bar_draw"
             android:thumb="@drawable/seek_thumb" />
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center|end"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{()->hanlder.removeAudioPractise()}"
+            android:paddingTop="@dimen/_4sdp"
+            android:paddingEnd="@dimen/_4sdp"
+            android:paddingBottom="@dimen/_4sdp"
+            android:tint="#878A91"
+            android:visibility="visible"
+            app:srcCompat="@drawable/ic_cross" />
+
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txt_info_duration"
@@ -56,6 +72,18 @@
             android:layout_marginTop="@dimen/_20sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
             android:textColor="@color/red_color"
+            app:layout_goneMarginTop="@dimen/spacing_large" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/submit_txt_info_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/practise_seekbar"
+            android:layout_alignRight="@+id/practise_seekbar"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:text="10/12/2020 "
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+            android:textColor="@color/gray_9E"
             app:layout_goneMarginTop="@dimen/spacing_large" />
     </RelativeLayout>
 

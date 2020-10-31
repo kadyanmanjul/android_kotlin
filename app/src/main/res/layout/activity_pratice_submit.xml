@@ -196,7 +196,7 @@
                     android:layout_marginStart="@dimen/_6sdp"
                     android:layout_marginTop="@dimen/_6sdp"
                     android:layout_marginEnd="@dimen/_6sdp"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:contentPadding="@dimen/_8sdp"
                     card_view:cardCornerRadius="@dimen/_4sdp"
                     card_view:cardElevation="0dp"
@@ -239,7 +239,7 @@
                             android:textColor="@color/black"
                             android:textColorHint="@color/emoji_bg_color"
                             android:textCursorDrawable="@drawable/cursor_drawable"
-                            android:visibility="gone" />
+                            android:visibility="visible" />
 
 
                         <androidx.appcompat.widget.AppCompatImageView
@@ -253,7 +253,7 @@
                             android:backgroundTint="@color/button_color"
                             android:scaleType="centerInside"
                             android:tint="@color/white"
-                            android:visibility="gone"
+                            android:visibility="visible"
                             app:srcCompat="@drawable/ic_rec_mic_big" />
 
                         <androidx.appcompat.widget.AppCompatTextView

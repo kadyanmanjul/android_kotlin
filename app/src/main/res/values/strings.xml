@@ -124,6 +124,7 @@
     <string name="payment_process_success">Your payment has been processed successfully!</string>
     <string name="status_with_colon">Status : </string>
     <string name="submit_answer">Submit Answer</string>
+    <string name="improve_answer">Improve Answer</string>
 
     <!-- Help Screen  -->
     <string name="today_practise">Today\'s Practice</string>
@@ -131,6 +132,7 @@
     <string name="hold_to_record_msz">Hold to record audio</string>
     <string name="upload_file_msz">Upload a file</string>
     <string name="your_answer">Your Answer</string>
+    <string name="your_feedback">Your Feedback</string>
     <string name="your_submitted_answer">Your Submitted Answer</string>
 
     <string name="type_your_answer_hint">Type your answer here&#8230;&#8230;&#8230;</string>

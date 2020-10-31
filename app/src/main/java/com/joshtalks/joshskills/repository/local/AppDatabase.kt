@@ -37,6 +37,7 @@ import com.joshtalks.joshskills.repository.local.entity.NPSEventModelDao
 import com.joshtalks.joshskills.repository.local.entity.OptionType
 import com.joshtalks.joshskills.repository.local.entity.PdfType
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
+import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.entity.User
 import com.joshtalks.joshskills.repository.local.entity.VideoEngage
@@ -66,7 +67,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         AudioType::class, OptionType::class, PdfType::class, ImageType::class, VideoEngage::class,
         FeedbackEngageModel::class, NPSEventModel::class, Assessment::class, AssessmentQuestion::class,
         Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class, LessonModel::class],
-    version = 23,
+    version = 24,
     exportSchema = true
 )
 @TypeConverters(
@@ -87,7 +88,8 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     TypeConverterAssessmentType::class,
     TypeConverterAssessmentMediaType::class,
     ChatTypeConverters::class,
-    LessonStatus::class
+    LessonStatus::class,
+    ConvectorForPracticeFeedback::class
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -126,6 +128,7 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_20_21,
                                 MIGRATION_21_22,
                                 MIGRATION_22_23,
+                                MIGRATION_23_24,
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -329,6 +332,10 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN practice_word TEXT NOT NULL DEFAULT 'NA'")
             }
         }
+        private val MIGRATION_23_24: Migration = object : Migration(23, 24) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+            }
+        }
 
 
         fun clearDatabase() {
@@ -521,6 +528,22 @@ class ConvectorForGraph {
         return AppObjectController.gsonMapper.fromJson(value, type)
     }
 }
+
+
+class ConvectorForPracticeFeedback {
+    @TypeConverter
+    fun fromPracticeFeedback(value: PracticeFeedback?): String {
+        val type = object : TypeToken<PracticeFeedback>() {}.type
+        return AppObjectController.gsonMapper.toJson(value, type)
+    }
+
+    @TypeConverter
+    fun toPracticeFeedback(value: String?): PracticeFeedback {
+        val type = object : TypeToken<PracticeFeedback>() {}.type
+        return AppObjectController.gsonMapper.fromJson(value, type)
+    }
+}
+
 
 class ConvectorForNPSEvent {
     @TypeConverter

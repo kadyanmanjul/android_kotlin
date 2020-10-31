@@ -5,6 +5,7 @@ import android.content.ComponentCallbacks2
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.StrictMode
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -12,6 +13,7 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.MultiDexApplication
 import com.freshchat.consumer.sdk.Freshchat
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.yariksoffice.lingver.Lingver
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
@@ -33,6 +35,39 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         base.let { ViewPumpContextWrapper.wrap(it) }
+    }
+
+    fun turnOnStrictMode() {
+        if (BuildConfig.DEBUG) {
+            StrictMode.setThreadPolicy(
+                StrictMode.ThreadPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .penaltyDeath().build()
+            )
+            StrictMode.setVmPolicy(
+                StrictMode.VmPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .penaltyDeath().build()
+            )
+        }
+    }
+
+    fun permitDiskReads(func: () -> Any): Any {
+        if (BuildConfig.DEBUG) {
+            val oldThreadPolicy = StrictMode.getThreadPolicy()
+            StrictMode.setThreadPolicy(
+                StrictMode.ThreadPolicy.Builder(oldThreadPolicy)
+                    .permitDiskReads().build()
+            )
+            val anyValue = func()
+            StrictMode.setThreadPolicy(oldThreadPolicy)
+
+            return anyValue
+        } else {
+            return func()
+        }
     }
 
     override fun onCreate() {
