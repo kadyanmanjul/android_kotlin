@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
-
-        <variable
-            name="hanlder"
-            type="com.joshtalks.joshskills.ui.day_wise_course.reading.PraticeAudioViewHolder" />
-    </data>
-
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/audio_view_container"
@@ -41,6 +34,7 @@
             android:layout_toEndOf="@id/btn_play_info"
             android:paddingStart="@dimen/_6sdp"
             android:paddingEnd="@dimen/_6sdp"
+            android:layout_marginEnd="@dimen/_16ssp"
             android:progressDrawable="@drawable/seek_bar_draw"
             android:thumb="@drawable/seek_thumb" />
 
@@ -54,9 +48,7 @@
             android:layout_gravity="center|end"
             android:clickable="true"
             android:focusable="true"
-            android:onClick="@{()->hanlder.removeAudioPractise()}"
             android:paddingTop="@dimen/_4sdp"
-            android:paddingEnd="@dimen/_4sdp"
             android:paddingBottom="@dimen/_4sdp"
             android:tint="#878A91"
             android:visibility="visible"
@@ -67,9 +59,9 @@
             android:id="@+id/txt_info_duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/practise_seekbar"
-            android:layout_alignEnd="@id/practise_seekbar"
-            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_below="@id/practise_seekbar"
+            android:layout_toLeftOf="@id/submit_txt_info_date"
+            android:text="@string/your_feedback"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
             android:textColor="@color/red_color"
             app:layout_goneMarginTop="@dimen/spacing_large" />

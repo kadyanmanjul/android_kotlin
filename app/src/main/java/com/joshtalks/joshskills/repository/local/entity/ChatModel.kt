@@ -418,21 +418,13 @@ data class Sender(
 
 
 data class PracticeEngagement(
-    @ColumnInfo
-    @SerializedName("answer_url") val answerUrl: String?=null,
-    @ColumnInfo
-    @SerializedName("id") val id: Int?=null,
-    @ColumnInfo
-    @SerializedName("text") val text: String?=null,
-    @ColumnInfo
-    @SerializedName("duration") val duration: Int?=null,
-    @Ignore
-    @SerializedName("feedback") var practiceFeedback: PracticeFeedback?=null,
-    @ColumnInfo
-    @SerializedName("practice_date") val practiceDate: String?=null,
-    @ColumnInfo
-    @SerializedName("transcript_id") val transcriptId: String?=null,
-    @ColumnInfo
+    @SerializedName("answer_url") val answerUrl: String?,
+    @SerializedName("id") val id: Int?,
+    @SerializedName("text") val text: String?,
+    @SerializedName("duration") val duration: Int?,
+    @SerializedName("feedback") var practiceFeedback: PracticeFeedback?,
+    @SerializedName("practice_date") val practiceDate: String?,
+    @SerializedName("transcript_id") val transcriptId: String?,
     @Expose var localPath: String? = null
 
 ) : Serializable {
@@ -771,7 +763,7 @@ interface ChatDao {
     @Query("SELECT practice_engagements FROM question_table  WHERE questionId= :questionId")
     suspend fun getPractiseObject(
         questionId: String
-    ) : List<PracticeEngagement>
+    ) : String?
 
     @Query(value = "SELECT message_time_in_milliSeconds FROM chat_table where question_id IS NOT NULL AND conversation_id= :conversationId ORDER BY created DESC LIMIT 1; ")
     suspend fun getLastChatDate(conversationId: String): String?
@@ -802,7 +794,6 @@ interface ChatDao {
     suspend fun getChatFromQuestionId(chatId: String): ChatModel? {
         return getUpdatedChatObjectViaId(chatId)
     }
-
 
     @Query("SELECT * FROM  PdfTable  WHERE id= :pdfId")
     suspend fun getPdfById(pdfId: String): PdfType

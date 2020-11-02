@@ -14,11 +14,13 @@ import android.os.SystemClock
 import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -75,6 +77,7 @@ import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
 import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
+import com.joshtalks.joshskills.repository.local.eventbus.RemovePracticeAudioEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.SeekBarProgressEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
@@ -103,6 +106,8 @@ import kotlin.random.Random
 
 class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEventListener,
     ProgressUpdateListener {
+
+    private var compositeDisposable = CompositeDisposable()
 
     private lateinit var binding: ReadingPracticeFragmentBinding
     private lateinit var chatModel: ChatModel
@@ -229,9 +234,22 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
         binding.subPractiseSubmitLayout.visibility = View.GONE
     }
 
+    fun showImproveButton() {
+        binding.feedbackLayout.visibility = VISIBLE
+        binding.improveAnswerBtn.visibility = VISIBLE
+        binding.submitAnswerBtn.visibility = GONE
+    }
+
+    fun hideImproveButton() {
+        binding.feedbackLayout.visibility = GONE
+        binding.improveAnswerBtn.visibility = GONE
+        binding.submitAnswerBtn.visibility = VISIBLE
+    }
+
 
     override fun onResume() {
         super.onResume()
+        subscribeRXBus()
         /*requireActivity().requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {
@@ -274,6 +292,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     override fun onStop() {
         appAnalytics.push()
         super.onStop()
+        compositeDisposable.clear()
         try {
             binding.videoPlayer.onStop()
 
@@ -352,6 +371,31 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
         super.onActivityResult(requestCode, resultCode, data)
     }
 
+    private fun subscribeRXBus() {
+        compositeDisposable.add(
+            RxBus2.listen(RemovePracticeAudioEventBus::class.java)
+                .subscribeOn(Schedulers.computation())
+                .subscribe({
+                    Handler(Looper.getMainLooper()).post {
+                        binding.audioList.removeView(it.praticeAudioViewHolder)
+                        chatModel.question?.run {
+                            if (this.practiceEngagement.isNullOrEmpty()) {
+                                showPracticeInputLayout()
+                                binding.feedbackLayout.visibility= GONE
+                                hidePracticeSubmitLayout()
+                                disableSubmitButton()
+                            } else {
+                                hidePracticeInputLayout()
+                                showImproveButton()
+                            }
+                        }
+                    }
+                }, {
+                    it.printStackTrace()
+                })
+        )
+    }
+
     private fun setPracticeInfoView() {
         chatModel.question?.run {
             appAnalytics.addParam(
@@ -428,6 +472,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
             }
             if ((this.material_type == BASE_MESSAGE_TYPE.TX).not()) {
                 if (this.qText.isNullOrEmpty().not()) {
+                    binding.practiseTextInfoLayout.visibility = VISIBLE
                     binding.infoTv2.visibility = VISIBLE
                     binding.infoTv2.text =
                         HtmlCompat.fromHtml(this.qText!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
@@ -526,13 +571,37 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
 
         practiceViewModel.practiceFeedback2LiveData.observe(viewLifecycleOwner, Observer {
             setFeedBackLayout(it)
+            hideCancelButtonInRV()
+            binding.progressLayout.visibility = GONE
+            binding.submitAnswerBtn.visibility = GONE
+            binding.improveAnswerBtn.visibility = VISIBLE
+            hidePracticeInputLayout()
         })
     }
 
-    fun setFeedBackLayout(feedback2: PracticeFeedback2){
-        binding.feedbackLayout.visibility=VISIBLE
-        binding.feedbackGrade.text=feedback2.grade
-        binding.feedbackDescription.text=feedback2.text
+    private fun hideCancelButtonInRV() {
+        val viewHolders = binding.audioList.allViewResolvers as List<PraticeAudioViewHolder>
+        viewHolders.forEach { it ->
+            it?.let {
+                it.hideCancelButtons()
+                //it.setSeekToZero()
+            }
+        }
+    }
+
+    fun setFeedBackLayout(feedback2: PracticeFeedback2?, isProcessing: Boolean = false) {
+        binding.feedbackLayout.visibility = VISIBLE
+        if (isProcessing) {
+            binding.progressLayout2.visibility = VISIBLE
+            binding.feedbackGrade.visibility = GONE
+            binding.feedbackDescription.visibility = GONE
+        } else if (feedback2 != null) {
+            binding.feedbackGrade.visibility = VISIBLE
+            binding.feedbackDescription.visibility = VISIBLE
+            binding.progressLayout2.visibility = GONE
+            binding.feedbackGrade.text = feedback2.grade
+            binding.feedbackDescription.text = feedback2.text
+        }
     }
 
     private fun setViewUserSubmitAnswer() {
@@ -546,6 +615,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                 params.topMargin = Utils.dpToPx(20)
                 binding.subPractiseSubmitLayout.layoutParams = params
                 binding.yourSubAnswerTv.text = getString(R.string.your_submitted_answer)
+                Log.d("Manjul", "practiceEngagement called ${this.practiceEngagement}")
                 val practiseEngagement = this.practiceEngagement?.get(0)
                 when {
                     EXPECTED_ENGAGE_TYPE.TX == it -> {
@@ -635,12 +705,14 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                         PraticeAudioViewHolder(
                             practice,
                             context,
-                            audioManager
-                        ))
-                    if(practice.practiceFeedback!=null){
-                        binding.feedbackLayout.visibility=VISIBLE
-                        binding.feedbackGrade.text= practice.practiceFeedback!!.grade
-                        binding.feedbackDescription.text= practice.practiceFeedback!!.text
+                            audioManager,
+                            practice.answerUrl
+                        )
+                    )
+                    if (practice.practiceFeedback != null) {
+                        binding.feedbackLayout.visibility = VISIBLE
+                        binding.feedbackGrade.text = practice.practiceFeedback!!.grade
+                        binding.feedbackDescription.text = practice.practiceFeedback!!.text
                     }
                 }
             }
@@ -872,7 +944,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
         binding.practiseSubmitLayout.visibility = VISIBLE
         binding.subPractiseSubmitLayout.visibility = VISIBLE
         binding.audioList.visibility = VISIBLE
-        binding.audioList.addView(PraticeAudioViewHolder(null,context,audioManager))
+        binding.audioList.addView(PraticeAudioViewHolder(null, context, audioManager,filePath))
         initializePractiseSeekBar()
         enableSubmitButton()
     }
@@ -1059,7 +1131,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
             val viewHolders = binding.audioList.allViewResolvers as List<*>
             viewHolders.forEach {
                 if (it is PraticeAudioViewHolder) {
-                    it.playPauseBtn.state=MaterialPlayPauseDrawable.State.Pause
+                    it.playPauseBtn.state = MaterialPlayPauseDrawable.State.Pause
                 }
             }
         } else {
@@ -1120,10 +1192,9 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                 if (EXPECTED_ENGAGE_TYPE.AU == it) {
                     showPracticeInputLayout()
                     setViewAccordingExpectedAnswer()
-                    binding.improveAnswerBtn.visibility= GONE
-                    binding.submitAnswerBtn.visibility= VISIBLE
+                    hideImproveButton()
                     return
-                } else{
+                } else {
                     return
                 }
             }
@@ -1172,7 +1243,8 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                 if (it == EXPECTED_ENGAGE_TYPE.AU || it == EXPECTED_ENGAGE_TYPE.VI || it == EXPECTED_ENGAGE_TYPE.DX) {
                     requestEngage.answerUrl = filePath
                 }
-                binding.progressLayout.visibility = VISIBLE
+                binding.progressLayout.visibility = INVISIBLE
+                setFeedBackLayout(null, true)
                 practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
             }
         }
@@ -1212,7 +1284,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     }
 
     override fun complete() {
-       // binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+        // binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
         //binding.submitPractiseSeekbar.progress = 0
         audioManager?.seekTo(0)
         audioManager?.onPause()
@@ -1220,11 +1292,11 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     }
 
     override fun onProgressUpdate(progress: Long) {
-       // binding.submitPractiseSeekbar.progress = progress.toInt()
+        // binding.submitPractiseSeekbar.progress = progress.toInt()
     }
 
     override fun onDurationUpdate(duration: Long?) {
-      //  duration?.toInt()?.let { binding.submitPractiseSeekbar.max = it }
+        //  duration?.toInt()?.let { binding.submitPractiseSeekbar.max = it }
     }
 
 }

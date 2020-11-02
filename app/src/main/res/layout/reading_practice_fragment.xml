@@ -67,7 +67,7 @@
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                             android:textColor="@color/black"
                             android:visibility="gone"
-                            tools:visibility="visible" />
+                            tools:visibility="gone" />
 
 
                         <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
@@ -82,7 +82,7 @@
                             android:visibility="gone"
 
                             app:controller_layout_id="@layout/layout_live_player_controller"
-                            tools:visibility="visible" />
+                            tools:visibility="gone" />
 
 
                         <RelativeLayout
@@ -148,7 +148,7 @@
                                 android:clickable="true"
                                 android:focusable="true"
                                 android:visibility="gone"
-                                tools:visibility="visible" />
+                                tools:visibility="gone" />
 
                             <ProgressBar
                                 android:id="@+id/progress_bar_image_view"
@@ -176,7 +176,6 @@
                     android:layout_marginEnd="@dimen/_6sdp"
                     android:visibility="gone"
                     app:contentPadding="@dimen/_10sdp"
-
                     card_view:cardCornerRadius="@dimen/_4sdp"
                     card_view:cardElevation="0dp"
                     card_view:cardUseCompatPadding="false"
@@ -207,7 +206,7 @@
                     card_view:cardCornerRadius="@dimen/_4sdp"
                     card_view:cardElevation="0dp"
                     card_view:cardUseCompatPadding="false"
-                    tools:visibility="visible">
+                    tools:visibility="gone">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/practise_input_header"
@@ -217,7 +216,7 @@
                         android:text="@string/your_answer"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                         android:textColor="@color/black"
-                        android:visibility="visible" />
+                        android:visibility="gone" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -348,7 +347,7 @@
                     card_view:cardCornerRadius="@dimen/_4sdp"
                     card_view:cardElevation="0dp"
                     card_view:cardUseCompatPadding="false"
-                    tools:visibility="visible">
+                    tools:visibility="gone">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/your_sub_answer_tv"
@@ -474,6 +473,7 @@
                     android:layout_marginStart="@dimen/_6sdp"
                     android:layout_marginTop="@dimen/_6sdp"
                     android:layout_marginEnd="@dimen/_6sdp"
+                    android:minHeight="@dimen/_100ssp"
                     android:visibility="gone"
                     app:contentPadding="@dimen/_8sdp"
                     card_view:cardCornerRadius="@dimen/_4sdp"
@@ -490,6 +490,39 @@
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                         android:textColor="@color/black"
                         android:visibility="visible" />
+
+                    <RelativeLayout
+                        android:id="@+id/progress_layout2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:background="@color/overlay"
+                        android:visibility="gone">
+
+                        <com.pnikosis.materialishprogress.ProgressWheel
+                            android:id="@+id/progress_bar2"
+                            android:layout_width="@dimen/_40sdp"
+                            android:layout_height="@dimen/_40sdp"
+                            android:layout_centerInParent="true"
+                            android:layout_gravity="center"
+                            wheel:matProg_barColor="@color/button_color"
+                            wheel:matProg_fillRadius="true"
+                            wheel:matProg_linearProgress="false"
+                            wheel:matProg_progressIndeterminate="true"
+                            wheel:matProg_rimColor="#33128C7E"
+                            wheel:matProg_rimWidth="@dimen/_2sdp" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/progress_bar2"
+                            android:layout_centerInParent="true"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:text="@string/plz_wait_feedback"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                            android:textColor="@color/white" />
+                    </RelativeLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -556,19 +589,19 @@
                     android:layout_marginTop="@dimen/_8sdp"
                     android:background="@drawable/round_rectangle"
                     android:backgroundTint="@color/seek_bar_background"
-                    android:gravity="center"
                     android:clickable="true"
                     android:focusable="true"
+                    android:gravity="center"
                     android:onClick="@{()->handler.improvePractice()}"
                     android:paddingStart="@dimen/_24sdp"
                     android:paddingTop="@dimen/_12sdp"
                     android:paddingEnd="@dimen/_24sdp"
                     android:paddingBottom="@dimen/_12sdp"
-                    android:visibility="gone"
                     android:text="@string/improve_answer"
                     android:textAllCaps="false"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                     android:textColor="@color/white"
+                    android:visibility="gone"
                     app:rippleColor="@color/white" />
 
             </LinearLayout>

@@ -9,7 +9,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity" />
+            type="com.joshtalks.joshskills.ui.day_wise_course.reading.ReadingFragment" />
     </data>
 
     <ScrollView
@@ -28,8 +28,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/_16sdp">
-
-                <include layout="@layout/base_toolbar" />
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/practise_info_layout"
@@ -155,7 +153,8 @@
                                 android:layout_gravity="center"
                                 android:indeterminate="true"
                                 android:indeterminateTint="@color/button_color"
-                                android:visibility="gone" />
+                                android:visibility="gone"
+                                tools:visibility="visible" />
 
                         </FrameLayout>
 
@@ -171,11 +170,12 @@
                     android:layout_marginStart="@dimen/_6sdp"
                     android:layout_marginTop="@dimen/_6sdp"
                     android:layout_marginEnd="@dimen/_6sdp"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:contentPadding="@dimen/_10sdp"
                     card_view:cardCornerRadius="@dimen/_4sdp"
                     card_view:cardElevation="0dp"
-                    card_view:cardUseCompatPadding="false">
+                    card_view:cardUseCompatPadding="false"
+                    tools:visibility="visible">
 
 
                     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
@@ -185,110 +185,6 @@
                         android:gravity="start|center"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/black" />
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/practise_input_layout"
-                    style="@style/Widget.MaterialComponents.CardView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_6sdp"
-                    android:layout_marginTop="@dimen/_6sdp"
-                    android:layout_marginEnd="@dimen/_6sdp"
-                    android:visibility="visible"
-                    app:contentPadding="@dimen/_8sdp"
-                    card_view:cardCornerRadius="@dimen/_4sdp"
-                    card_view:cardElevation="0dp"
-                    card_view:cardUseCompatPadding="false">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/practise_input_header"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="start|center"
-                        android:text="@string/your_answer"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                        android:textColor="@color/black"
-                        android:visibility="visible" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_16sdp"
-                        android:orientation="vertical"
-                        android:padding="@dimen/_8sdp">
-
-                        <androidx.appcompat.widget.AppCompatEditText
-                            android:id="@+id/et_practise"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_16sdp"
-                            android:autoSizeMaxTextSize="@dimen/font_16"
-                            android:background="@drawable/rect_with_bound"
-                            android:gravity="start|top"
-                            android:hint="@string/type_your_answer_hint"
-                            android:imeOptions="actionDone"
-                            android:inputType="textCapSentences|textMultiLine"
-                            android:lines="8"
-                            android:maxLength="500"
-                            android:maxLines="8"
-                            android:padding="@dimen/_4sdp"
-                            android:singleLine="false"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                            android:textColor="@color/black"
-                            android:textColorHint="@color/emoji_bg_color"
-                            android:textCursorDrawable="@drawable/cursor_drawable"
-                            android:visibility="visible" />
-
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/upload_practise_view"
-                            android:layout_width="@dimen/_52sdp"
-                            android:layout_height="@dimen/_52sdp"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="@dimen/_16sdp"
-                            android:adjustViewBounds="true"
-                            android:background="@drawable/recv_bg_mic"
-                            android:backgroundTint="@color/button_color"
-                            android:scaleType="centerInside"
-                            android:tint="@color/white"
-                            android:visibility="visible"
-                            app:srcCompat="@drawable/ic_rec_mic_big" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/audio_practise_hint"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:padding="@dimen/_4sdp"
-                            android:text="@string/hold_to_record_msz"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-                            android:textColor="@color/gray_9E"
-                            android:visibility="gone" />
-
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/upload_file_view"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="@dimen/_8sdp"
-                            android:drawablePadding="@dimen/_2sdp"
-                            android:gravity="center"
-                            android:onClick="@{()->handler.chooseFile()}"
-                            android:paddingStart="@dimen/_4sdp"
-                            android:paddingTop="@dimen/_4sdp"
-                            android:paddingEnd="@dimen/_4sdp"
-                            android:text="@string/upload_file_msz"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                            android:textColor="@color/gray_9E"
-                            android:visibility="gone"
-                            app:drawableStartCompat="@drawable/ic_file_upload"
-                            app:drawableTint="@color/emoji_icon_color" />
-
-                    </LinearLayout>
 
                 </com.google.android.material.card.MaterialCardView>
 
@@ -305,7 +201,8 @@
                     app:contentPadding="@dimen/_8sdp"
                     card_view:cardCornerRadius="@dimen/_4sdp"
                     card_view:cardElevation="0dp"
-                    card_view:cardUseCompatPadding="false">
+                    card_view:cardUseCompatPadding="false"
+                    tools:visibility="visible">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/your_sub_answer_tv"
@@ -334,73 +231,12 @@
                             android:visibility="gone"
                             app:controller_layout_id="@layout/layout_live_player_controller" />
 
-                        <RelativeLayout
-                            android:id="@+id/submit_audio_view_container"
-                            android:layout_width="match_parent"
+                        <com.mindorks.placeholderview.PlaceHolderView
+                            android:id="@+id/audio_list"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:visibility="gone">
-
-                            <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
-                                android:id="@+id/submit_btn_play_info"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentStart="true"
-                                android:layout_centerInParent="true"
-                                android:layout_centerVertical="true"
-                                android:layout_gravity="center"
-                                android:background="@drawable/play_pause_button_background"
-                                android:backgroundTint="@color/button_color"
-                                android:contentDescription="@string/play_button_description"
-                                android:elevation="@dimen/_4sdp"
-                                android:onClick="@{()->handler.playSubmitPracticeAudio()}"
-                                android:padding="@dimen/_4sdp"
-                                android:theme="?actionBarTheme"
-                                android:tint="?colorControlNormal" />
-
-                            <SeekBar
-                                android:id="@+id/submit_practise_seekbar"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_alignBaseline="@id/submit_btn_play_info"
-                                android:layout_centerInParent="true"
-                                android:layout_toStartOf="@id/iv_cancel"
-                                android:layout_toEndOf="@id/submit_btn_play_info"
-                                android:max="0"
-                                android:paddingStart="@dimen/_12sdp"
-                                android:paddingEnd="@dimen/_12sdp"
-                                android:progressDrawable="@drawable/seek_bar_draw"
-                                android:thumb="@drawable/seek_thumb" />
-
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/iv_cancel"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentEnd="true"
-                                android:layout_centerInParent="true"
-                                android:layout_centerVertical="true"
-                                android:layout_gravity="center|end"
-                                android:clickable="true"
-                                android:focusable="true"
-                                android:onClick="@{()->handler.removeAudioPractise()}"
-                                android:paddingTop="@dimen/_4sdp"
-                                android:paddingEnd="@dimen/_4sdp"
-                                android:paddingBottom="@dimen/_4sdp"
-                                android:tint="#878A91"
-                                android:visibility="visible"
-                                app:srcCompat="@drawable/ic_cross" />
-
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/submit_txt_info_duration"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/submit_practise_seekbar"
-                                android:layout_alignEnd="@id/submit_practise_seekbar"
-                                android:layout_marginTop="@dimen/_20sdp"
-                                android:paddingEnd="@dimen/_12sdp"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-                                android:textColor="@color/gray_9E"
-                                app:layout_goneMarginTop="@dimen/spacing_large" />
-                        </RelativeLayout>
+                            android:visibility="gone"
+                            tools:listitem="@layout/choice_fib_item"/>
 
                         <RelativeLayout
                             android:id="@+id/submit_file_view_container"
@@ -479,6 +315,177 @@
 
                 </com.google.android.material.card.MaterialCardView>
 
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/practise_input_layout"
+                    style="@style/Widget.MaterialComponents.CardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_6sdp"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:layout_marginEnd="@dimen/_6sdp"
+                    android:visibility="gone"
+                    app:contentPadding="@dimen/_8sdp"
+                    card_view:cardCornerRadius="@dimen/_4sdp"
+                    card_view:cardElevation="0dp"
+                    card_view:cardUseCompatPadding="false"
+                    tools:visibility="visible">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/practise_input_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start|center"
+                        android:text="@string/your_answer"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textColor="@color/black"
+                        android:visibility="visible" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_16sdp"
+                        android:orientation="vertical"
+                        android:padding="@dimen/_8sdp">
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/et_practise"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_16sdp"
+                            android:autoSizeMaxTextSize="@dimen/font_16"
+                            android:background="@drawable/rect_with_bound"
+                            android:gravity="start|top"
+                            android:hint="@string/type_your_answer_hint"
+                            android:imeOptions="actionDone"
+                            android:inputType="textCapSentences|textMultiLine"
+                            android:lines="8"
+                            android:maxLength="500"
+                            android:maxLines="8"
+                            android:padding="@dimen/_4sdp"
+                            android:singleLine="false"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/emoji_bg_color"
+                            android:textCursorDrawable="@drawable/cursor_drawable"
+                            android:visibility="gone" />
+
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/upload_practise_view"
+                            android:layout_width="@dimen/_52sdp"
+                            android:layout_height="@dimen/_52sdp"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="@dimen/_16sdp"
+                            android:adjustViewBounds="true"
+                            android:background="@drawable/recv_bg_mic"
+                            android:backgroundTint="@color/button_color"
+                            android:scaleType="centerInside"
+                            android:tint="@color/white"
+                            android:visibility="gone"
+                            app:srcCompat="@drawable/ic_rec_mic_big"
+                            tools:visibility="visible" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/audio_practise_hint"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:padding="@dimen/_4sdp"
+                            android:text="@string/hold_to_record_msz"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                            android:textColor="@color/gray_9E"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/upload_file_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="@dimen/_8sdp"
+                            android:drawablePadding="@dimen/_2sdp"
+                            android:gravity="center"
+                            android:onClick="@{()->handler.chooseFile()}"
+                            android:paddingStart="@dimen/_4sdp"
+                            android:paddingTop="@dimen/_4sdp"
+                            android:paddingEnd="@dimen/_4sdp"
+                            android:text="@string/upload_file_msz"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                            android:textColor="@color/gray_9E"
+                            android:visibility="gone"
+                            app:drawableStartCompat="@drawable/ic_file_upload"
+                            app:drawableTint="@color/emoji_icon_color"
+                            tools:visibility="visible" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/feedback_layout"
+                    style="@style/Widget.MaterialComponents.CardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_6sdp"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:layout_marginEnd="@dimen/_6sdp"
+                    android:visibility="gone"
+                    app:contentPadding="@dimen/_8sdp"
+                    card_view:cardCornerRadius="@dimen/_4sdp"
+                    card_view:cardElevation="0dp"
+                    card_view:cardUseCompatPadding="false"
+                    tools:visibility="visible">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/feedback_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start|center"
+                        android:text="@string/your_feedback"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textColor="@color/black"
+                        android:visibility="visible" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_16sdp"
+                        android:orientation="vertical"
+                        android:padding="@dimen/_8sdp">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/feedback_grade"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:adjustViewBounds="true"
+                            android:scaleType="centerInside"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_bold"
+                            android:textColor="@color/black"
+                            app:srcCompat="@drawable/ic_rec_mic_big"
+                            tools:text="B+"
+                            tools:visibility="visible" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/feedback_description"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:padding="@dimen/_4sdp"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                            android:textColor="@color/gray_9E"
+                            tools:text="@string/hold_to_record_msz"
+                            tools:visibility="visible" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/submit_answer_btn"
                     android:layout_width="wrap_content"
@@ -494,6 +501,26 @@
                     android:paddingEnd="@dimen/_24sdp"
                     android:paddingBottom="@dimen/_12sdp"
                     android:text="@string/submit_answer"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textColor="@color/white"
+                    app:rippleColor="@color/white" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/improve_answer_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:background="@drawable/round_rectangle"
+                    android:backgroundTint="@color/seek_bar_background"
+                    android:gravity="center"
+                    android:onClick="@{()->handler.improvePractice()}"
+                    android:paddingStart="@dimen/_24sdp"
+                    android:paddingTop="@dimen/_12sdp"
+                    android:paddingEnd="@dimen/_24sdp"
+                    android:paddingBottom="@dimen/_12sdp"
+                    android:text="@string/improve_answer"
                     android:textAllCaps="false"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                     android:textColor="@color/white"
