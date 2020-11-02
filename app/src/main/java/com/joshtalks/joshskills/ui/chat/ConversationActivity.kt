@@ -35,9 +35,6 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
-import com.cometchat.pro.core.AppSettings
-import com.cometchat.pro.core.CometChat
-import com.cometchat.pro.exceptions.CometChatException
 import com.facebook.share.internal.ShareConstants
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.exoplayer2.Player
@@ -48,7 +45,6 @@ import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshcamerax.utils.ImageQuality
 import com.joshtalks.joshcamerax.utils.Options
-import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CERTIFICATE_GENERATE
@@ -123,6 +119,7 @@ import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
 import com.joshtalks.joshskills.ui.day_wise_course.lesson.LessonViewHolder
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
+import com.joshtalks.joshskills.ui.groupchat.GroupChatActivity
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
@@ -174,7 +171,6 @@ import kotlin.concurrent.scheduleAtFixedRate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -423,7 +419,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             conversationBinding.toolbar.setOnMenuItemClickListener {
                 when (it?.itemId) {
                     R.id.groupChat -> {
-                        initCometChat()
+                        conversationViewModel.initCometChat()
                     }
                     R.id.menu_referral -> {
                         ReferralActivity.startReferralActivity(
@@ -826,6 +822,11 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             hideProgressBar()
             notificationActionProcess()
         })
+
+        conversationViewModel.userLoginLiveData.observe(this, {
+            GroupChatActivity.startGroupChatActivity(this)
+        })
+
     }
 
     private fun subscribeRXBus() {
@@ -2004,31 +2005,6 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             null
         }
 
-    }
-
-    private fun initCometChat() {
-
-        val appSettings = AppSettings.AppSettingsBuilder()
-            .subscribePresenceForAllUsers()
-            .setRegion(BuildConfig.COMETCHAT_REGION)
-            .build()
-
-        CometChat.init(
-            AppObjectController.joshApplication,
-            BuildConfig.COMETCHAT_APP_ID,
-            appSettings,
-            object : CometChat.CallbackListener<String>() {
-                override fun onSuccess(p0: String?) {
-                    Timber.d("Initialization completed successfully")
-                    conversationViewModel.initChat()
-                }
-
-                override fun onError(p0: CometChatException?) {
-                    Timber.d("Initialization failed with exception: %s", p0?.message)
-                    showToast(getString(R.string.generic_message_for_error), Toast.LENGTH_SHORT)
-                }
-
-            })
     }
 
     override fun onProgressUpdate(progress: Long) {

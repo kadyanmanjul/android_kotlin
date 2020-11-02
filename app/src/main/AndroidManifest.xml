@@ -77,6 +77,8 @@
         <activity android:name=".ui.userprofile.UserProfileActivity"></activity>
         <activity android:name=".ui.leaderboard.LeaderBoardViewPagerActivity" />
 
+        <activity android:name=".ui.groupchat.GroupChatActivity" />
+
         <meta-data
             android:name="CLEVERTAP_ACCOUNT_ID"
             android:value="844-6K5-865Z" />

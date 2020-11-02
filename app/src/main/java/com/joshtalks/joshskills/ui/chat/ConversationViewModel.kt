@@ -5,13 +5,16 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.cometchat.pro.core.AppSettings
 import com.cometchat.pro.core.CometChat
 import com.cometchat.pro.exceptions.CometChatException
 import com.cometchat.pro.models.User
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.PrefManager
@@ -20,6 +23,7 @@ import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
@@ -33,6 +37,7 @@ import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
+import com.joshtalks.joshskills.repository.server.groupchat.GroupChatAddMemberResponse
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import id.zelory.compressor.Compressor
@@ -72,6 +77,7 @@ class ConversationViewModel(application: Application) :
     private val mAudioRecording: AudioRecording = AudioRecording()
     private var isRecordingStarted = false
     private val jobs = arrayListOf<Job>()
+    val userLoginLiveData: MutableLiveData<GroupChatAddMemberResponse> = MutableLiveData()
 
     init {
         addObserver()
@@ -567,30 +573,78 @@ class ConversationViewModel(application: Application) :
         }
     }
 
-    fun initChat() {
-        // TODO - Call API to add user to group
-        loginUser()
+    fun initCometChat() {
+
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+
+            val appSettings = AppSettings.AppSettingsBuilder()
+                .subscribePresenceForAllUsers()
+                .setRegion(BuildConfig.COMETCHAT_REGION)
+                .build()
+
+            CometChat.init(
+                AppObjectController.joshApplication,
+                BuildConfig.COMETCHAT_APP_ID,
+                appSettings,
+                object : CometChat.CallbackListener<String>() {
+                    override fun onSuccess(p0: String?) {
+                        Timber.d("Initialization completed successfully")
+                        getGroupId(inboxEntity.conversation_id)
+                    }
+
+                    override fun onError(p0: CometChatException?) {
+                        Timber.d("Initialization failed with exception: %s", p0?.message)
+                        showToast(
+                            context.getString(R.string.generic_message_for_error),
+                            Toast.LENGTH_SHORT
+                        )
+                    }
+
+                })
+
+        }
     }
 
-    fun loginUser() {
-        val UID: String = "user1" // Replace with the UID of the user to login
+    private fun getGroupId(conversationId: String) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val params = mapOf(Pair("conversation_id", conversationId))
+                val response =
+                    AppObjectController.chatNetworkService.getGroupId(params)
+
+                loginUser(response)
+
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                showToast(context.getString(R.string.generic_message_for_error), Toast.LENGTH_SHORT)
+            }
+        }
+    }
+
+    private fun loginUser(groupChatAddMemberResponse: GroupChatAddMemberResponse) {
 
         if (CometChat.getLoggedInUser() == null) {
             CometChat.login(
-                UID,
+                groupChatAddMemberResponse.userId,
                 BuildConfig.COMETCHAT_API_KEY,
                 object : CometChat.CallbackListener<User>() {
                     override fun onSuccess(p0: User?) {
                         Timber.d("Login Successful : %s", p0?.toString())
+                        userLoginLiveData.postValue(groupChatAddMemberResponse)
                     }
 
                     override fun onError(p0: CometChatException?) {
                         Timber.d("Login failed with exception: %s", p0?.message)
+                        showToast(
+                            context.getString(R.string.generic_message_for_error),
+                            Toast.LENGTH_SHORT
+                        )
                     }
 
                 })
         } else {
             // User already logged in
+            userLoginLiveData.postValue(groupChatAddMemberResponse)
         }
     }
 
