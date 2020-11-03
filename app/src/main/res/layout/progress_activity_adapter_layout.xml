@@ -7,44 +7,38 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew" />
+            type="com.joshtalks.joshskills.ui.course_progress_new.ProgressActivityAdapter" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="#000"
         android:padding="@dimen/_8sdp">
 
-        <include
-            android:id="@+id/include"
-            layout="@layout/progress_toolbar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/progress_title_tv"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/lessons"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/include" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Beginer" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/progress_rv"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="@dimen/_8sdp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/progress_title_tv"
-            tools:listitem="@layout/progress_activity_adapter_layout" />
+            app:spanCount="7"
+            tools:listitem="@layout/course_progress_item" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

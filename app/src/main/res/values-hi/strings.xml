@@ -410,4 +410,6 @@
     <string name="show_explanation">व्याख्या दिखाएँ</string>
     <string name="hide_explanation">व्याख्या छिपाएं</string>
     <string name="explanation">व्याख्या</string>
+    <string name="lessons">पाठ</string>
+    <string name="exam">परीक्षा</string>
 </resources>

@@ -398,6 +398,13 @@
             android:parentActivityName=".ui.inbox.InboxActivity"
             android:theme="@style/AppNoBarTheme" />
 
+        <activity
+            android:name=".ui.course_progress_new.CourseProgressActivityNew"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:launchMode="singleTask"
+            android:parentActivityName=".ui.inbox.InboxActivity"
+            android:theme="@style/AppNoBarTheme" />
+
         <service
             android:name=".core.service.video_download.VideoDownloadService"
             android:enabled="true"
@@ -572,7 +579,6 @@
                     android:scheme="joshskills" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.course_progress_new.CourseProgressActivityNew" />
 
     </application>
 

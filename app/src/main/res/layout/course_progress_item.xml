@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:maxLines="2"
-            android:text="Certification Exam"
+            android:text="1"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"

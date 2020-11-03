@@ -22,7 +22,7 @@ class CourseProgressAdapter(val context: Context) :
     }
 
     override fun getItemCount(): Int {
-        return 10
+        return 30
     }
 
     inner class CourseProgressViewHolder(val binding: CourseProgressItemBinding) :
@@ -30,15 +30,15 @@ class CourseProgressAdapter(val context: Context) :
         fun bind(position: Int) {
             binding.progressIndexTv.text = "${position + 1}"
 
-            if (position > 7)
+            if (position > 17)
                 binding.progressIv.alpha = 0.5f
 
-            if (position == 9) {
-                binding.progressIndexTv.text = "Certification Exam"
+            if (position == 29) {
+                binding.progressIndexTv.text = context.getString(R.string.exam)
                 binding.progressIv.setImageDrawable(
                     ContextCompat.getDrawable(
                         context,
-                        R.drawable.ic_certificate
+                        R.drawable.gold_medal
                     )
                 )
             } else {
