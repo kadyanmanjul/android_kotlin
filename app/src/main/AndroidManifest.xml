@@ -485,7 +485,8 @@
             android:name=".repository.service.GenericFileProvider"
             android:authorities="com.joshtalks.joshskills.provider"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />

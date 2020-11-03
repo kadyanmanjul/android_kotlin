@@ -35,6 +35,8 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
+import com.cometchat.pro.constants.CometChatConstants
+import com.cometchat.pro.core.CometChat
 import com.facebook.share.internal.ShareConstants
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.exoplayer2.Player
@@ -119,7 +121,6 @@ import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
 import com.joshtalks.joshskills.ui.day_wise_course.lesson.LessonViewHolder
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
-import com.joshtalks.joshskills.ui.groupchat.GroupChatActivity
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
@@ -154,6 +155,7 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
+import constant.StringContract
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -171,6 +173,7 @@ import kotlin.concurrent.scheduleAtFixedRate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import screen.messagelist.CometChatMessageListActivity
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -824,7 +827,27 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         })
 
         conversationViewModel.userLoginLiveData.observe(this, {
-            GroupChatActivity.startGroupChatActivity(this)
+            Intent(
+                this,
+                CometChatMessageListActivity::class.java
+            ).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                putExtra(StringContract.IntentStrings.GUID, "josh_esg")
+                putExtra(StringContract.IntentStrings.AVATAR, CometChat.getLoggedInUser().avatar)
+                putExtra(StringContract.IntentStrings.GROUP_OWNER, CometChat.getLoggedInUser().uid)
+                putExtra(StringContract.IntentStrings.NAME, "English Speaking Group")
+                putExtra(StringContract.IntentStrings.TYPE, CometChatConstants.RECEIVER_TYPE_GROUP)
+                putExtra(StringContract.IntentStrings.MEMBER_COUNT, 5)
+                putExtra(StringContract.IntentStrings.GROUP_DESC, "oohh laa laa le lo..")
+                putExtra(StringContract.IntentStrings.GROUP_PASSWORD, "abcd")
+                putExtra(
+                    StringContract.IntentStrings.GROUP_TYPE,
+                    CometChatConstants.GROUP_TYPE_PRIVATE
+                )
+            }.run {
+                startActivity(this)
+            }
         })
 
     }
