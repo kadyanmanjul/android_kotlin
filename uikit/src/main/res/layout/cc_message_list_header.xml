@@ -1,27 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:minWidth="@dimen/_300sdp"
     android:paddingTop="5dp">
 
-    <TextView
-        android:id="@+id/txt_message_date"
+    <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_margin="4dp"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:maxWidth="300dp"
-        android:maxLines="2"
-        android:minHeight="35dp"
-        android:paddingLeft="10dp"
-        android:paddingTop="3dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="4dp"
-        android:textColor="@color/secondaryTextColor"
-        android:textSize="12sp"
-        android:textStyle="bold" />
+        android:layout_gravity="center"
+        android:animateLayoutChanges="true"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:dividerHeight="0.0px"
+        android:elevation="@dimen/_4sdp"
+        app:cardBackgroundColor="@color/light_blue"
+        app:cardCornerRadius="@dimen/_4sdp"
+        app:cardElevation="0dp"
+        app:contentPaddingBottom="@dimen/_4sdp"
+        app:contentPaddingLeft="@dimen/_8sdp"
+        app:contentPaddingRight="@dimen/_8sdp"
+        app:contentPaddingTop="@dimen/_4sdp">
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/txt_message_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10ssp"
+            tools:text="Yesterday" />
+
+    </androidx.cardview.widget.CardView>
+
+</FrameLayout>

@@ -149,11 +149,11 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
         etComposeBox = this.findViewById(R.id.etComposeBox);
         rlActionContainer = this.findViewById(R.id.rlActionContainers);
 
-        ivArrow.setImageTintList(ColorStateList.valueOf(color));
-        ivCamera.setImageTintList(ColorStateList.valueOf(color));
-        ivGallery.setImageTintList(ColorStateList.valueOf(color));
-        ivFile.setImageTintList(ColorStateList.valueOf(color));
-        ivSend.setImageTintList(ColorStateList.valueOf(color));
+//        ivArrow.setImageTintList(ColorStateList.valueOf(color));
+//        ivCamera.setImageTintList(ColorStateList.valueOf(color));
+//        ivGallery.setImageTintList(ColorStateList.valueOf(color));
+//        ivFile.setImageTintList(ColorStateList.valueOf(color));
+//        ivSend.setImageTintList(ColorStateList.valueOf(color));
 
         ivAudio.setOnClickListener(this);
         ivArrow.setOnClickListener(this);
@@ -232,28 +232,28 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
 //                new String [] {"image/png","image/gif"});
 
 
-        if (Utils.isDarkMode(context)) {
-            composeBox.setBackgroundColor(getResources().getColor(R.color.darkModeBackground));
-            ivAudio.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textColorWhite)));
-            ivMic.setImageDrawable(getResources().getDrawable(R.drawable.ic_mic_white_24dp));
-            flBox.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.textColorWhite)));
-            etComposeBox.setTextColor(getResources().getColor(R.color.textColorWhite));
-            ivArrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textColorWhite)));
-            ivSend.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textColorWhite)));
-            ivCamera.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textColorWhite)));
-            ivGallery.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textColorWhite)));
-            ivFile.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textColorWhite)));
-        } else {
-            composeBox.setBackgroundColor(getResources().getColor(R.color.textColorWhite));
-            ivAudio.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary)));
-            ivMic.setImageDrawable(getResources().getDrawable(R.drawable.ic_mic_grey_24dp));
-            etComposeBox.setTextColor(getResources().getColor(R.color.primaryTextColor));
-            ivSend.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary)));
-            flBox.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.grey)));
-            ivArrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.grey)));
-            ivCamera.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary)));
-            ivFile.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary)));
-        }
+//        if (Utils.isDarkMode(context)) {
+//            composeBox.setBackgroundColor(getResources().getColor(R.color.darkModeBackground));
+//            ivAudio.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textColorWhite)));
+//            ivMic.setImageDrawable(getResources().getDrawable(R.drawable.ic_mic_white_24dp));
+//            flBox.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.textColorWhite)));
+//            etComposeBox.setTextColor(getResources().getColor(R.color.textColorWhite));
+//            ivArrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textColorWhite)));
+//            ivSend.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textColorWhite)));
+//            ivCamera.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textColorWhite)));
+//            ivGallery.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textColorWhite)));
+//            ivFile.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.textColorWhite)));
+//        } else {
+//            composeBox.setBackgroundColor(getResources().getColor(R.color.textColorWhite));
+//            ivAudio.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary)));
+//            ivMic.setImageDrawable(getResources().getDrawable(R.drawable.ic_mic_grey_24dp));
+//            etComposeBox.setTextColor(getResources().getColor(R.color.primaryTextColor));
+//            ivSend.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary)));
+//            flBox.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.grey)));
+//            ivArrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.grey)));
+//            ivCamera.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary)));
+//            ivFile.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimary)));
+//        }
         a.recycle();
     }
 

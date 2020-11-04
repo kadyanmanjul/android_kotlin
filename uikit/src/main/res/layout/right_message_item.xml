@@ -42,11 +42,11 @@
                 android:layout_marginEnd="8dp"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                android:maxWidth="250dp"
+                android:maxWidth="@dimen/_190sdp"
                 android:textColor="@color/black"
                 android:textColorHighlight="@color/zblack"
                 android:textColorLink="@color/dark_blue"
-                tools:text="sergsgrth ertherh erthert hertthe rtherh erhterh erthy 35etrh er" />
+                tools:text="This is a text message. This is a text message.This is a text message. This is a text message." />
 
             <TextView
                 android:id="@+id/txt_time"

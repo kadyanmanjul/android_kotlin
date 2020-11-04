@@ -13,7 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:animateLayoutChanges="true"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <ImageView
             android:id="@+id/ivAudio"
@@ -130,8 +131,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginLeft="8dp"
-            android:layout_toRightOf="@+id/delete_voice_message"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@+id/delete_voice_message"
             android:elevation="8dp"
             android:textSize="12sp" />
     </RelativeLayout>
@@ -146,21 +147,26 @@
 
         <ImageView
             android:id="@+id/ivMic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:background="@drawable/recv_bg_mic"
+            android:backgroundTint="@color/colorPrimary"
             android:clickable="true"
+            android:focusable="true"
             android:foreground="?selectableItemBackground"
             android:padding="8dp"
-            android:src="@drawable/ic_mic_grey_24dp" />
+            android:src="@drawable/ic_mic_white_24dp" />
 
         <ImageView
             android:id="@+id/ivSend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:background="@drawable/recv_bg_mic"
+            android:backgroundTint="@color/colorPrimary"
+            android:padding="10dp"
             android:src="@drawable/ic_send"
             android:visibility="gone"
             tools:visibility="visible" />
     </LinearLayout>
+
 </RelativeLayout>

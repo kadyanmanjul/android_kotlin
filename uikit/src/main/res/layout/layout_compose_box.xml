@@ -5,7 +5,8 @@
     android:id="@+id/message_box"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:animateLayoutChanges="true">
+    android:animateLayoutChanges="true"
+    android:background="@android:color/transparent">
 
     <RelativeLayout
         android:id="@+id/rlActionContainers"
@@ -59,17 +60,22 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:padding="8dp"
-        android:src="@drawable/ic_add_circle_grey_32dp" />
+        android:src="@drawable/ic_add_circle_grey_32dp"
+        android:visibility="gone" />
 
     <RelativeLayout
         android:id="@+id/flBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginHorizontal="@dimen/_4sdp"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:layout_marginBottom="@dimen/_4sdp"
         android:layout_toStartOf="@+id/boxEndLayout"
         android:layout_toEndOf="@id/ivArrow"
-        android:background="@drawable/compose_box">
+        android:background="@drawable/compose_box"
+        android:paddingHorizontal="@dimen/_14sdp"
+        android:paddingVertical="@dimen/_2sdp"
+        tools:visibility="gone">
 
         <com.cometchat.pro.uikit.ComposeBox.CometChatEditText
             android:id="@+id/etComposeBox"
@@ -80,9 +86,10 @@
             android:imeOptions="actionSend"
             android:inputType="textMultiLine"
             android:maxLines="3"
-            android:padding="8dp"
-            android:paddingStart="16dp"
-            android:singleLine="false" />
+            android:paddingVertical="8dp"
+            android:singleLine="false"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_12ssp" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -91,7 +98,8 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/boxEndLayout"
         android:layout_toStartOf="@+id/boxEndLayout"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <ImageView
             android:id="@+id/ivDelete"
@@ -100,8 +108,7 @@
             android:layout_alignBottom="@+id/record_time"
             android:padding="8dp"
             android:src="@drawable/ic_delete_24dp"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            android:visibility="gone" />
 
         <SeekBar
             android:id="@+id/voice_message_seekbar"
@@ -109,8 +116,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/record_time"
             android:layout_toEndOf="@+id/ivDelete"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            android:visibility="gone" />
 
         <utils.AudioVisualizer.AudioRecordView
             android:id="@+id/record_audio_visualizer"
@@ -130,8 +136,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginLeft="8dp"
-            android:layout_toRightOf="@+id/ivDelete"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@+id/ivDelete"
             android:elevation="8dp"
             android:textSize="12sp" />
     </RelativeLayout>
@@ -147,21 +153,27 @@
 
         <ImageView
             android:id="@+id/ivMic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:background="@drawable/recv_bg_mic"
+            android:backgroundTint="@color/colorPrimary"
             android:clickable="true"
+            android:focusable="true"
             android:foreground="?selectableItemBackground"
             android:padding="8dp"
-            android:src="@drawable/ic_mic_grey_24dp" />
+            android:src="@drawable/ic_mic_white_24dp" />
 
         <ImageView
             android:id="@+id/ivSend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:background="@drawable/recv_bg_mic"
+            android:backgroundTint="@color/colorPrimary"
+            android:padding="@dimen/_8sdp"
             android:src="@drawable/ic_send"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            android:visibility="gone" />
     </LinearLayout>
+
 </RelativeLayout>

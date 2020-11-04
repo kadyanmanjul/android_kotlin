@@ -22,21 +22,6 @@
             app:srcCompat="@drawable/ic_arrow_back"
             tools:visibility="visible" />
 
-        <ImageView
-            android:id="@+id/iv_copy_message_action"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:paddingStart="16dp"
-            android:paddingTop="8dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="8dp"
-            android:src="@drawable/ic_content_copy_black_24dp"
-            android:visibility="gone"
-            app:tint="@color/textColorWhite"
-            tools:visibility="visible" />
-
         <com.cometchat.pro.uikit.Avatar
             android:id="@+id/iv_chat_avatar"
             android:layout_width="40dp"
@@ -52,8 +37,9 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@id/iv_chat_avatar"
             android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/_8sdp"
             android:layout_toStartOf="@id/iv_copy_message_action"
             android:layout_toEndOf="@id/iv_chat_avatar">
 
@@ -79,6 +65,21 @@
                 tools:text="Harsh is typing..." />
 
         </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/iv_copy_message_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp"
+            android:src="@drawable/ic_content_copy_black_24dp"
+            android:visibility="gone"
+            app:tint="@color/textColorWhite"
+            tools:visibility="visible" />
 
     </RelativeLayout>
 

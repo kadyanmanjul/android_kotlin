@@ -1455,7 +1455,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         viewHolder.replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_photo, 0, 0, 0);
                     } else if (messageType.equals(CometChatConstants.MESSAGE_TYPE_AUDIO)) {
                         viewHolder.replyMessage.setText(String.format(context.getResources().getString(R.string.shared_a_audio), ""));
-                        viewHolder.replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_library_music_24dp, 0, 0, 0);
+                        viewHolder.replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_grey_24dp, 0, 0, 0);
                     } else if (messageType.equals(CometChatConstants.MESSAGE_TYPE_VIDEO)) {
                         viewHolder.replyMessage.setText(context.getResources().getString(R.string.shared_a_video));
                         viewHolder.replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_videocam_24dp, 0, 0, 0);
@@ -1532,6 +1532,20 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             Utils.setHyperLinkSupport(context, viewHolder.txtMessage);
 
             viewHolder.txtMessage.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if (!isImageMessageClick) {
+                        isLongClickEnabled = true;
+                        isTextMessageClick = true;
+                        setLongClickSelectedItem(baseMessage);
+                        messageLongClick.setLongMessageClick(longselectedItemList);
+                        notifyDataSetChanged();
+                    }
+                    return true;
+                }
+            });
+
+            viewHolder.rlMessageBubble.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
                     if (!isImageMessageClick) {
@@ -1870,7 +1884,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         BaseMessage baseMessage = messageList.get(var2);
         Date date = new Date(baseMessage.getSentAt() * 1000L);
         String formattedDate = Utils.getDate(date.getTime());
-        var1.txtMessageDate.setBackground(context.getResources().getDrawable(R.drawable.cc_rounded_date_button));
+        // var1.txtMessageDate.setBackground(context.getResources().getDrawable(R.drawable.cc_rounded_date_button));
         var1.txtMessageDate.setText(formattedDate);
     }
 

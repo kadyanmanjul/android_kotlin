@@ -97,9 +97,9 @@
                 android:autoLink="web|all"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                android:maxWidth="250dp"
+                android:maxWidth="@dimen/_190sdp"
                 android:textColor="@color/primaryTextColor"
-                tools:text="message" />
+                tools:text="This is a text message. This is a text message.This is a text message. This is a text message." />
 
             <TextView
                 android:id="@+id/txt_time"
@@ -111,6 +111,7 @@
                 android:layout_marginBottom="2dp"
                 android:gravity="end"
                 android:paddingStart="@dimen/_6sdp"
+                android:paddingEnd="0dp"
                 android:textColor="@color/gray_9E"
                 android:textSize="@dimen/_8ssp"
                 android:visibility="gone"

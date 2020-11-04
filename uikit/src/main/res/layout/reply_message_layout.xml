@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_above="@+id/bottom_layout"
-    android:layout_marginLeft="8dp"
+    android:layout_marginStart="8dp"
     android:background="@drawable/left_border"
     android:padding="16dp"
     android:visibility="gone"
@@ -22,6 +22,7 @@
             android:id="@+id/tv_reply_layout_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimary"
             android:textStyle="bold"
             tools:text="@tools:sample/full_names" />
 
@@ -31,6 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:drawablePadding="8dp"
+            android:textColor="@color/black"
             android:textStyle="italic"
             tools:text="Perfect! I've been waiting to go" />
     </LinearLayout>
@@ -48,6 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:clickable="true"
+        android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
         android:src="@drawable/ic_close_24dp" />
 </RelativeLayout>

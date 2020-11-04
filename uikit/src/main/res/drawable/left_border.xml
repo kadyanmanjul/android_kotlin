@@ -8,8 +8,8 @@
         <shape android:shape="rectangle">
             <stroke
                 android:width="5dp"
-                android:color="#FFDDDDDD" />
-            <solid android:color="#FFF" />
+                android:color="@color/colorPrimary" />
+            <solid android:color="@color/sent_msg_background" />
         </shape>
     </item>
 </layer-list>

@@ -165,6 +165,7 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
     private StickyHeaderDecoration stickyHeaderDecoration;
     private String avatarUrl;
     private Toolbar toolbar;
+    private ImageView imgClose;
     private String type;
     private String groupType;
     private boolean isBlockedByMe;
@@ -285,6 +286,8 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
         tvStatus = view.findViewById(R.id.tv_status);
         userAvatar = view.findViewById(R.id.iv_chat_avatar);
         toolbar = view.findViewById(R.id.chatList_toolbar);
+        imgClose = view.findViewById(R.id.iv_close_message_action);
+        imgClose.setOnClickListener(this);
         toolbar.setOnClickListener(this);
         linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         tvName.setTypeface(fontUtils.getTypeFace(FontUtils.robotoMedium));
@@ -1842,19 +1845,21 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
                 intent.putExtra(StringContract.IntentStrings.TYPE, type);
                 startActivity(intent);
             } else {
-                Intent intent = new Intent(getContext(), CometChatGroupDetailScreenActivity.class);
-                intent.putExtra(StringContract.IntentStrings.GUID, Id);
-                intent.putExtra(StringContract.IntentStrings.NAME, name);
-                intent.putExtra(StringContract.IntentStrings.AVATAR, avatarUrl);
-                intent.putExtra(StringContract.IntentStrings.TYPE, type);
-                intent.putExtra(StringContract.IntentStrings.GROUP_TYPE, groupType);
-                intent.putExtra(StringContract.IntentStrings.MEMBER_SCOPE, loggedInUserScope);
-                intent.putExtra(StringContract.IntentStrings.GROUP_OWNER, groupOwnerId);
-                intent.putExtra(StringContract.IntentStrings.MEMBER_COUNT, memberCount);
-                intent.putExtra(StringContract.IntentStrings.GROUP_DESC, groupDesc);
-                intent.putExtra(StringContract.IntentStrings.GROUP_PASSWORD, groupPassword);
-                startActivity(intent);
+//                Intent intent = new Intent(getContext(), CometChatGroupDetailScreenActivity.class);
+//                intent.putExtra(StringContract.IntentStrings.GUID, Id);
+//                intent.putExtra(StringContract.IntentStrings.NAME, name);
+//                intent.putExtra(StringContract.IntentStrings.AVATAR, avatarUrl);
+//                intent.putExtra(StringContract.IntentStrings.TYPE, type);
+//                intent.putExtra(StringContract.IntentStrings.GROUP_TYPE, groupType);
+//                intent.putExtra(StringContract.IntentStrings.MEMBER_SCOPE, loggedInUserScope);
+//                intent.putExtra(StringContract.IntentStrings.GROUP_OWNER, groupOwnerId);
+//                intent.putExtra(StringContract.IntentStrings.MEMBER_COUNT, memberCount);
+//                intent.putExtra(StringContract.IntentStrings.GROUP_DESC, groupDesc);
+//                intent.putExtra(StringContract.IntentStrings.GROUP_PASSWORD, groupPassword);
+//                startActivity(intent);
             }
+        } else if (id == R.id.iv_close_message_action) {
+            requireActivity().onBackPressed();
         }
     }
 
