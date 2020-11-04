@@ -17,37 +17,54 @@
             android:id="@+id/cv_message_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="10dp"
-            android:background="@drawable/cc_message_bubble_right">
+            android:background="@drawable/outgoing_message_normal_bg">
 
             <include
+                android:id="@+id/replyLayout"
                 layout="@layout/right_reply_message_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/go_txt_message"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="6dp" />
 
             <TextView
                 android:id="@+id/go_txt_message"
                 style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginEnd="10dp"
+                android:layout_below="@+id/replyLayout"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="8dp"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                android:maxEms="12"
-                android:padding="10dp"
-                android:textColor="@color/textColorWhite"
-                android:textColorHighlight="@color/colorSecondary"
+                android:maxWidth="250dp"
+                android:textColor="@color/black"
+                android:textColorHighlight="@color/zblack"
                 android:textColorLink="@color/dark_blue"
-                tools:text="@tools:sample/lorem/random" />
+                tools:text="sergsgrth ertherh erthert hertthe rtherh erhterh erthy 35etrh er" />
+
+            <TextView
+                android:id="@+id/txt_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/go_txt_message"
+                android:layout_alignEnd="@id/replyLayout"
+                android:layout_marginBottom="8dp"
+                android:gravity="end"
+                android:maxLines="1"
+                android:minWidth="@dimen/_32sdp"
+                android:paddingHorizontal="@dimen/_6sdp"
+                android:textColor="@color/gray_9E"
+                android:textSize="@dimen/_8ssp"
+                android:visibility="gone"
+                tools:text="11:00 PM"
+                tools:visibility="visible" />
+
         </RelativeLayout>
 
         <LinearLayout
@@ -69,26 +86,15 @@
                 android:id="@+id/thread_reply_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="16dp"
                 android:clickable="true"
+                android:focusable="true"
                 android:foreground="?selectableItemBackground"
                 android:textColor="@color/colorPrimary"
                 tools:text="2 replies" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/txt_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/cv_message_container"
-            android:layout_marginBottom="8dp"
-            android:layout_toLeftOf="@+id/cv_message_container"
-            android:gravity="center_vertical"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:visibility="gone"
-            tools:text="11:00 PM"
-            tools:visibility="visible" />
     </RelativeLayout>
+
 </LinearLayout>

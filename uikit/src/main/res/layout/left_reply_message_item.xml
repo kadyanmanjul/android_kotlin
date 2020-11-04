@@ -4,10 +4,11 @@
     android:id="@+id/replyLayout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:alpha="0.7"
     android:background="@drawable/left_border_lmessage"
     android:orientation="vertical"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
     android:visibility="gone"
     tools:visibility="visible">
 
@@ -30,11 +31,10 @@
 
         <ImageView
             android:id="@+id/reply_media"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="8dp"
-            android:layout_toRightOf="@+id/reply_user"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
             tools:src="@tools:sample/avatars" />
     </LinearLayout>
 
@@ -46,7 +46,8 @@
         android:ellipsize="end"
         android:maxWidth="200dp"
         android:maxLines="3"
-        android:textColor="@color/secondaryTextColor"
+        android:textColor="@color/black"
         android:textStyle="italic"
         tools:text="@string/replyTxt" />
+
 </RelativeLayout>

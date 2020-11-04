@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/message_actions"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:elevation="4dp"
+    android:layout_gravity="bottom"
+    android:background="@drawable/rectangle_top_rounded"
+    android:elevation="8dp"
+    android:gravity="bottom"
     android:orientation="vertical"
     android:padding="8dp">
 
@@ -12,106 +16,113 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:drawableStart="@drawable/ic_info"
         android:drawablePadding="16dp"
+        android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:padding="16dp"
         android:text="@string/message_info"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:drawableStartCompat="@drawable/ic_info" />
 
     <TextView
         android:id="@+id/start_thread"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:drawableStart="@drawable/ic_thread_24dp"
         android:drawablePadding="16dp"
+        android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:padding="16dp"
         android:text="@string/reply_thread"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:drawableStartCompat="@drawable/ic_thread_24dp" />
 
     <TextView
         android:id="@+id/reply_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:drawableStart="@drawable/ic_reply"
         android:drawablePadding="16dp"
+        android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:padding="16dp"
         android:text="@string/reply"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:drawableStartCompat="@drawable/ic_reply" />
 
     <TextView
         android:id="@+id/forward_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:drawableStart="@drawable/ic_forward"
         android:drawablePadding="16dp"
+        android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:padding="16dp"
         android:text="@string/forward"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:drawableStartCompat="@drawable/ic_forward_24" />
 
     <TextView
         android:id="@+id/copy_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:drawableStart="@drawable/ic_content_copy_black_24dp"
         android:drawablePadding="16dp"
+        android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:padding="16dp"
         android:text="@string/copy_message"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:drawableStartCompat="@drawable/ic_content_copy_black_24dp" />
 
     <TextView
         android:id="@+id/share_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:drawableStart="@drawable/ic_share_24dp"
         android:drawablePadding="16dp"
+        android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:padding="16dp"
         android:text="@string/share_message"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:drawableStartCompat="@drawable/ic_share_24dp" />
 
     <TextView
         android:id="@+id/edit_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:drawableStart="@drawable/ic_baseline_edit_24"
         android:drawablePadding="16dp"
+        android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:padding="16dp"
         android:text="@string/edit"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:drawableStartCompat="@drawable/ic_baseline_edit_24" />
 
     <TextView
         android:id="@+id/delete_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:drawableStart="@drawable/ic_delete_24dp"
         android:drawablePadding="16dp"
-        android:drawableTint="@color/red"
+        android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
         android:gravity="center_vertical"
         android:padding="16dp"
         android:text="@string/delete"
         android:textColor="@color/red"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:drawableStartCompat="@drawable/ic_delete_24dp"
+        app:drawableTint="@color/red" />
 
 </LinearLayout>
-

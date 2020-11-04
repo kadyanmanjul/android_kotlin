@@ -51,14 +51,22 @@ public class MessageActionFragment extends BottomSheetDialogFragment {
 
     private void fetchArguments() {
         if (getArguments() != null) {
-            isCopyVisible = getArguments().getBoolean("copyVisible");
-            isThreadVisible = getArguments().getBoolean("threadVisible");
-            isEditVisible = getArguments().getBoolean("editVisible");
-            isDeleteVisible = getArguments().getBoolean("deleteVisible");
-            isReplyVisible = getArguments().getBoolean("replyVisible");
-            isForwardVisible = getArguments().getBoolean("forwardVisible");
-            isShareVisible = getArguments().getBoolean("shareVisible");
-            isMessageInfoVisible = getArguments().getBoolean("messageInfoVisible");
+//            isCopyVisible = getArguments().getBoolean("copyVisible");
+//            isThreadVisible = getArguments().getBoolean("threadVisible");
+//            isEditVisible = getArguments().getBoolean("editVisible");
+//            isDeleteVisible = getArguments().getBoolean("deleteVisible");
+//            isReplyVisible = getArguments().getBoolean("replyVisible");
+//            isForwardVisible = getArguments().getBoolean("forwardVisible");
+//            isShareVisible = getArguments().getBoolean("shareVisible");
+//            isMessageInfoVisible = getArguments().getBoolean("messageInfoVisible");
+            isCopyVisible = true;
+            isThreadVisible = false;
+            isEditVisible = false;
+            isDeleteVisible = false;
+            isReplyVisible = true;
+            isForwardVisible = true;
+            isShareVisible = false;
+            isMessageInfoVisible = false;
             type = getArguments().getString("type");
         }
     }
@@ -203,7 +211,7 @@ public class MessageActionFragment extends BottomSheetDialogFragment {
     public void onDismiss(@NonNull DialogInterface dialog) {
         Activity activity = getActivity();
         if (activity != null)
-            if (type != null && type == CometChatMessageListActivity.class.getName())
+            if (type != null && type.equals(CometChatMessageListActivity.class.getName()))
                 ((CometChatMessageListActivity) activity).handleDialogClose(dialog);
             else
                 ((CometChatThreadMessageActivity) activity).handleDialogClose(dialog);

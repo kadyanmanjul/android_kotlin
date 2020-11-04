@@ -1544,10 +1544,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     return true;
                 }
             });
-            if (baseMessage.getSender().getUid().equals(loggedInUser.getUid()))
-                viewHolder.txtMessage.setTextColor(context.getResources().getColor(R.color.textColorWhite));
-            else
-                viewHolder.txtMessage.setTextColor(context.getResources().getColor(R.color.primaryTextColor));
+//            if (baseMessage.getSender().getUid().equals(loggedInUser.getUid()))
+//                viewHolder.txtMessage.setTextColor(context.getResources().getColor(R.color.textColorWhite));
+//            else
+//                viewHolder.txtMessage.setTextColor(context.getResources().getColor(R.color.primaryTextColor));
 
             showMessageTime(viewHolder, baseMessage);
 //             if (messageList.get(messageList.size()-1).equals(baseMessage))
@@ -1559,7 +1559,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //             else
 //                 viewHolder.txtTime.setVisibility(View.GONE);
 
-            setColorFilter(baseMessage, viewHolder.cardView);
+            // setColorFilter(baseMessage, viewHolder.cardView);
 
 //             viewHolder.rlMessageBubble.setOnClickListener(view -> {
 //                 if (isLongClickEnabled && !isImageMessageClick) {
@@ -2415,8 +2415,4 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-
 }
-
-
-

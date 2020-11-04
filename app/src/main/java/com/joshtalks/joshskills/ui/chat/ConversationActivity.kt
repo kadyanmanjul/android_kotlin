@@ -36,7 +36,6 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.cometchat.pro.constants.CometChatConstants
-import com.cometchat.pro.core.CometChat
 import com.facebook.share.internal.ShareConstants
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.exoplayer2.Player
@@ -113,6 +112,7 @@ import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TUnlockClassMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
+import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.chat.extra.CallingFeatureShowcaseView
@@ -827,29 +827,33 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         })
 
         conversationViewModel.userLoginLiveData.observe(this, {
-            Intent(
-                this,
-                CometChatMessageListActivity::class.java
-            ).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                putExtra(StringContract.IntentStrings.GUID, "josh_esg")
-                putExtra(StringContract.IntentStrings.AVATAR, CometChat.getLoggedInUser().avatar)
-                putExtra(StringContract.IntentStrings.GROUP_OWNER, CometChat.getLoggedInUser().uid)
-                putExtra(StringContract.IntentStrings.NAME, "English Speaking Group")
-                putExtra(StringContract.IntentStrings.TYPE, CometChatConstants.RECEIVER_TYPE_GROUP)
-                putExtra(StringContract.IntentStrings.MEMBER_COUNT, 5)
-                putExtra(StringContract.IntentStrings.GROUP_DESC, "oohh laa laa le lo..")
-                putExtra(StringContract.IntentStrings.GROUP_PASSWORD, "abcd")
-                putExtra(
-                    StringContract.IntentStrings.GROUP_TYPE,
-                    CometChatConstants.GROUP_TYPE_PRIVATE
-                )
-            }.run {
-                startActivity(this)
-            }
+            showGroupChatScreen(it)
         })
 
+    }
+
+    private fun showGroupChatScreen(groupDetails: GroupDetails) {
+        Intent(
+            this,
+            CometChatMessageListActivity::class.java
+        ).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            putExtra(StringContract.IntentStrings.GUID, groupDetails.groupId)
+            putExtra(StringContract.IntentStrings.AVATAR, groupDetails.groupIconUrl)
+            putExtra(StringContract.IntentStrings.GROUP_OWNER, groupDetails.groupOwnerUid)
+            putExtra(StringContract.IntentStrings.NAME, groupDetails.groupName)
+            putExtra(StringContract.IntentStrings.TYPE, CometChatConstants.RECEIVER_TYPE_GROUP)
+            putExtra(StringContract.IntentStrings.MEMBER_COUNT, groupDetails.groupMemberCount)
+            putExtra(StringContract.IntentStrings.GROUP_DESC, groupDetails.groupDescription)
+            putExtra(StringContract.IntentStrings.GROUP_PASSWORD, groupDetails.groupPassword)
+            putExtra(
+                StringContract.IntentStrings.GROUP_TYPE,
+                groupDetails.groupType
+            )
+        }.run {
+            startActivity(this)
+        }
     }
 
     private fun subscribeRXBus() {

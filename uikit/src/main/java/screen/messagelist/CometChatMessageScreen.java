@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
@@ -295,24 +294,15 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
         rvChatListView.setLayoutManager(linearLayoutManager);
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        if (Utils.isDarkMode(context)) {
-            bottomLayout.setBackgroundColor(getResources().getColor(R.color.darkModeBackground));
-            toolbar.setBackgroundColor(getResources().getColor(R.color.grey));
-            editMessageLayout.setBackground(getResources().getDrawable(R.drawable.left_border_dark));
-            replyMessageLayout.setBackground(getResources().getDrawable(R.drawable.left_border_dark));
-            composeBox.setBackgroundColor(getResources().getColor(R.color.darkModeBackground));
-            rvChatListView.setBackgroundColor(getResources().getColor(R.color.darkModeBackground));
-            tvName.setTextColor(getResources().getColor(R.color.textColorWhite));
-        } else {
-            bottomLayout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.textColorWhite)));
-            toolbar.setBackgroundColor(getResources().getColor(R.color.textColorWhite));
-            editMessageLayout.setBackground(getResources().getDrawable(R.drawable.left_border));
-            replyMessageLayout.setBackground(getResources().getDrawable(R.drawable.left_border));
-            composeBox.setBackgroundColor(getResources().getColor(R.color.textColorWhite));
-            rvChatListView.setBackgroundColor(getResources().getColor(R.color.textColorWhite));
-            tvName.setTextColor(getResources().getColor(R.color.primaryTextColor));
-        }
+        // ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // bottomLayout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.textColorWhite)));
+        // toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        editMessageLayout.setBackground(getResources().getDrawable(R.drawable.left_border));
+        replyMessageLayout.setBackground(getResources().getDrawable(R.drawable.left_border));
+        // composeBox.setBackgroundColor(getResources().getColor(R.color.textColorWhite));
+        // rvChatListView.setBackgroundColor(getResources().getColor(R.color.textColorWhite));
+        tvName.setTextColor(getResources().getColor(R.color.textColorWhite));
+
 
         KeyBoardUtils.setKeyboardVisibilityListener(getActivity(), (View) rvChatListView.getParent(), keyboardVisible -> {
             if (keyboardVisible) {

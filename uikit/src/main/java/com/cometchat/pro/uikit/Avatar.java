@@ -282,10 +282,11 @@ public class Avatar extends AppCompatImageView {
                 }
             } else {
                 if (user.getName() != null && !user.getName().isEmpty()) {
-                    if (user.getName().length() > 2) {
-                        text = user.getName().substring(0, 2);
+                    String[] nameSplitArray = user.getName().split(" ");
+                    if (nameSplitArray.length > 1) {
+                        text = nameSplitArray[0].substring(0, 1) + nameSplitArray[1].substring(0, 1);
                     } else {
-                        text = user.getName();
+                        text = user.getName().substring(0, 1);
                     }
                 } else {
                     text = "??";
@@ -315,10 +316,11 @@ public class Avatar extends AppCompatImageView {
                     init();
                 setValues();
             } else {
-                if (group.getName().length() > 2)
-                    text = group.getName().substring(0, 2);
-                else {
-                    text = group.getName();
+                String[] nameSplitArray = group.getName().split(" ");
+                if (nameSplitArray.length > 1) {
+                    text = nameSplitArray[0].substring(0, 1) + nameSplitArray[1].substring(0, 1);
+                } else {
+                    text = group.getName().substring(0, 1);
                 }
 
                 init();
@@ -367,10 +369,11 @@ public class Avatar extends AppCompatImageView {
      */
     public void setInitials(@NonNull String name) {
 
-        if (name.length() >= 2) {
-            text = name.substring(0, 2);
+        String[] nameSplitArray = name.split(" ");
+        if (nameSplitArray.length > 1) {
+            text = nameSplitArray[0].substring(0, 1) + nameSplitArray[1].substring(0, 1);
         } else {
-            text = name;
+            text = name.substring(0, 1);
         }
         setDrawable();
         setImageDrawable(drawable);
@@ -411,8 +414,8 @@ public class Avatar extends AppCompatImageView {
             @Override
             public void draw(@NonNull Canvas canvas) {
 
-                int centerX = Math.round(canvas.getWidth() * 0.5f);
-                int centerY = Math.round(canvas.getHeight() * 0.5f);
+                int centerX = Math.round(getBounds().width() * 0.5f);
+                int centerY = Math.round(getBounds().height() * 0.5f);
 
                 /*
                  * To draw text
@@ -429,7 +432,7 @@ public class Avatar extends AppCompatImageView {
                     } else {
                         canvas.drawCircle(centerX,
                                 centerY,
-                                Math.max(canvas.getHeight() / 2, textWidth / 2),
+                                Math.max(getBounds().height() / 2, textWidth / 2),
                                 paint);
                     }
 

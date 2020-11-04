@@ -37,7 +37,7 @@ import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
-import com.joshtalks.joshskills.repository.server.groupchat.GroupChatAddMemberResponse
+import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import id.zelory.compressor.Compressor
@@ -77,7 +77,7 @@ class ConversationViewModel(application: Application) :
     private val mAudioRecording: AudioRecording = AudioRecording()
     private var isRecordingStarted = false
     private val jobs = arrayListOf<Job>()
-    val userLoginLiveData: MutableLiveData<GroupChatAddMemberResponse> = MutableLiveData()
+    val userLoginLiveData: MutableLiveData<GroupDetails> = MutableLiveData()
 
     init {
         addObserver()
@@ -589,7 +589,7 @@ class ConversationViewModel(application: Application) :
                 object : CometChat.CallbackListener<String>() {
                     override fun onSuccess(p0: String?) {
                         Timber.d("Initialization completed successfully")
-                        getGroupId(inboxEntity.conversation_id)
+                        getGroupDetails(inboxEntity.conversation_id)
                     }
 
                     override fun onError(p0: CometChatException?) {
@@ -605,12 +605,12 @@ class ConversationViewModel(application: Application) :
         }
     }
 
-    private fun getGroupId(conversationId: String) {
+    private fun getGroupDetails(conversationId: String) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 val params = mapOf(Pair("conversation_id", conversationId))
                 val response =
-                    AppObjectController.chatNetworkService.getGroupId(params)
+                    AppObjectController.chatNetworkService.getGroupDetails(params)
 
                 loginUser(response)
 
@@ -621,16 +621,16 @@ class ConversationViewModel(application: Application) :
         }
     }
 
-    private fun loginUser(groupChatAddMemberResponse: GroupChatAddMemberResponse) {
+    private fun loginUser(groupDetails: GroupDetails) {
 
         if (CometChat.getLoggedInUser() == null) {
             CometChat.login(
-                groupChatAddMemberResponse.userId,
+                groupDetails.userId,
                 BuildConfig.COMETCHAT_API_KEY,
                 object : CometChat.CallbackListener<User>() {
                     override fun onSuccess(p0: User?) {
                         Timber.d("Login Successful : %s", p0?.toString())
-                        userLoginLiveData.postValue(groupChatAddMemberResponse)
+                        userLoginLiveData.postValue(groupDetails)
                     }
 
                     override fun onError(p0: CometChatException?) {
@@ -644,7 +644,7 @@ class ConversationViewModel(application: Application) :
                 })
         } else {
             // User already logged in
-            userLoginLiveData.postValue(groupChatAddMemberResponse)
+            userLoginLiveData.postValue(groupDetails)
         }
     }
 

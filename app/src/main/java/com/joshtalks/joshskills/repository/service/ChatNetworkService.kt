@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewBaseResponse
 import com.joshtalks.joshskills.repository.server.groupchat.GroupChatAddMemberResponse
+import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
@@ -138,6 +139,6 @@ interface ChatNetworkService {
 
 
     @POST("$DIR/group/cometchat_add_member/")
-    suspend fun getGroupId(@Body params: Map<String, String>): GroupChatAddMemberResponse
+    suspend fun getGroupDetails(@Body params: Map<String, String>): GroupDetails
 
 }
