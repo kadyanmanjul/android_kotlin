@@ -7,8 +7,14 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.CourseProgressItemBinding
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewItem
 
-class CourseProgressAdapter(val context: Context) :
+class CourseProgressAdapter(
+    val context: Context,
+    val itemList: List<CourseOverviewItem>,
+    val onItemClickListener: ProgressItemClickListener
+) :
     RecyclerView.Adapter<CourseProgressAdapter.CourseProgressViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseProgressViewHolder {
@@ -22,18 +28,15 @@ class CourseProgressAdapter(val context: Context) :
     }
 
     override fun getItemCount(): Int {
-        return 30
+        return itemList.size + 1
     }
 
     inner class CourseProgressViewHolder(val binding: CourseProgressItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(position: Int) {
-            binding.progressIndexTv.text = "${position + 1}"
 
-            if (position > 17)
-                binding.progressIv.alpha = 0.5f
 
-            if (position == 29) {
+            if (position == itemList.size) {
                 binding.progressIndexTv.text = context.getString(R.string.exam)
                 binding.progressIv.setImageDrawable(
                     ContextCompat.getDrawable(
@@ -41,17 +44,34 @@ class CourseProgressAdapter(val context: Context) :
                         R.drawable.gold_medal
                     )
                 )
+                binding.root.setOnClickListener {
+                    onItemClickListener.onCertificateExamClick()
+                }
+
             } else {
+                if (itemList[position].status == QUESTION_STATUS.AT.name)
+                    binding.progressIv.alpha = 0.5f
+
+                binding.progressIndexTv.text = "${position + 1}"
+
                 binding.progressIv.setImageDrawable(
                     ContextCompat.getDrawable(
                         context,
                         R.drawable.ic_progress
                     )
                 )
+
+                binding.root.setOnClickListener {
+                    onItemClickListener.onProgressItemClick(itemList[position])
+                }
             }
         }
 
     }
 
+    interface ProgressItemClickListener {
+        fun onProgressItemClick(item: CourseOverviewItem)
+        fun onCertificateExamClick()
+    }
 
 }

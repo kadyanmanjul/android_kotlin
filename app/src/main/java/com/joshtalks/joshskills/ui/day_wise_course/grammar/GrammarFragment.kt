@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
@@ -45,6 +46,7 @@ import java.util.ArrayList
 
 class GrammarFragment : Fragment() {
 
+    private var quizQuestion: Question? = null
     private var currentQuizQuestion: Int = 0
     private var desExpanded: Boolean = false
     private var appAnalytics: AppAnalytics? = null
@@ -202,7 +204,7 @@ class GrammarFragment : Fragment() {
 
             if (assessmentQuestions.size > 0) {
                 binding.quizRadioGroup.setOnCheckedChangeListener { radioGroup: RadioGroup, checkedId: Int ->
-                    binding.submitAnswerBtn.visibility = View.VISIBLE
+                    showQuizUi()
                     requestFocus(binding.submitAnswerBtn)
                 }
                 updateQuiz(assessmentQuestions.get(0))
@@ -223,6 +225,7 @@ class GrammarFragment : Fragment() {
         chatModel.question?.run {
             if (this.type == BASE_MESSAGE_TYPE.QUIZ) {
                 this.assessmentId?.let {
+                    quizQuestion = this
                     viewModel.fetchAssessmentDetails(it)
                 }
             } else
@@ -279,26 +282,25 @@ class GrammarFragment : Fragment() {
                     }
                 }
 
-            /* if ((this.material_type == BASE_MESSAGE_TYPE.TX).not() && this.qText.isNullOrEmpty()
-                     .not()
-             ) {
-                 binding.infoTv2.text =
-                     HtmlCompat.fromHtml(this.qText!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
-                 binding.infoTv2.visibility = View.VISIBLE
-             }
+            if ((this.material_type == BASE_MESSAGE_TYPE.TX).not() && this.qText.isNullOrEmpty()
+                    .not()
+            ) {
+                binding.grammarDescTv.text =
+                    HtmlCompat.fromHtml(this.qText!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                binding.grammarDescTv.visibility = View.VISIBLE
+            }
 
-             if (this.practiceEngagement.isNullOrEmpty()) {
+            /* if (this.practiceEngagement.isNullOrEmpty()) {
                  binding.submitAnswerBtn.visibility = View.VISIBLE
                  setViewAccordingExpectedAnswer(chatModel)
              } else {
                  hidePracticeInputLayout()
                  binding.submitAnswerBtn.visibility = View.GONE
                  setViewUserSubmitAnswer(chatModel)
-             }*/
-
+             }
+*/
         }
     }
-
 
     private fun updateQuiz(question: AssessmentQuestionWithRelations) {
         binding.quizQuestionTv.text = getString(
@@ -367,6 +369,9 @@ class GrammarFragment : Fragment() {
                 )
         } else {
             radioButton.isClickable = true
+            radioButton.setBackgroundColor(
+                ContextCompat.getColor(requireContext(), R.color.white)
+            )
         }
         if (choice.isCorrect)
             binding.quizRadioGroup.tag = radioButton.id
@@ -377,6 +382,7 @@ class GrammarFragment : Fragment() {
         binding.quizTv.visibility = View.VISIBLE
         binding.quizQuestionTv.visibility = View.VISIBLE
         binding.quizRadioGroup.visibility = View.VISIBLE
+        binding.submitAnswerBtn.visibility = View.VISIBLE
     }
 
     fun onQuestionSubmit() {
@@ -387,11 +393,18 @@ class GrammarFragment : Fragment() {
             question.question.status =
                 evaluateQuestionStatus((binding.quizRadioGroup.tag as Int) == binding.quizRadioGroup.checkedRadioButtonId)
 
+            val selectedChoice = question.choiceList[binding.quizRadioGroup.indexOfChild(
+                binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
+            )]
+            selectedChoice.isSelectedByUser = true
+            selectedChoice.userSelectedOrder = 1
+
             viewModel.saveAssessmentQuestion(question)
-            if (currentQuizQuestion == assessmentQuestions.size)
+            if (currentQuizQuestion == assessmentQuestions.size - 1)
                 viewModel.updateQuestionStatus(
                     QUESTION_STATUS.AT.name,
-                    question.reviseConcept?.questionId ?: 0
+                    quizQuestion?.questionId?.toIntOrNull() ?: 0,
+                    quizQuestion?.course_id ?: 0
                 )
 
             binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.tag as Int)

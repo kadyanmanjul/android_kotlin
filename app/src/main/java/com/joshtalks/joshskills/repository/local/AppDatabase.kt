@@ -38,6 +38,7 @@ import com.joshtalks.joshskills.repository.local.entity.OptionType
 import com.joshtalks.joshskills.repository.local.entity.PdfType
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
 import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.entity.User
 import com.joshtalks.joshskills.repository.local.entity.VideoEngage
@@ -89,7 +90,8 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     TypeConverterAssessmentMediaType::class,
     ChatTypeConverters::class,
     LessonStatus::class,
-    ConvectorForPracticeFeedback::class
+    ConvectorForPracticeFeedback::class,
+    QuestionStatus::class
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -330,6 +332,7 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN status TEXT NOT NULL DEFAULT 'NA'")
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN chat_type TEXT NOT NULL DEFAULT 'NA'")
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN practice_word TEXT NOT NULL DEFAULT 'NA'")
+                database.execSQL("ALTER TABLE `chat_table` ADD COLUMN lesson_id INTEGER NOT NULL DEFAULT 0")
             }
         }
         private val MIGRATION_23_24: Migration = object : Migration(23, 24) {
@@ -606,5 +609,29 @@ class LessonStatus {
         return AppObjectController.gsonMapper.toJson(LESSON_STATUS.NO)
     }
 }
+
+class QuestionStatus {
+    @TypeConverter
+    fun fromString(value: String?): QUESTION_STATUS? {
+        return try {
+            val matType = object : TypeToken<QUESTION_STATUS>() {}.type
+            AppObjectController.gsonMapper.fromJson(
+                value ?: QUESTION_STATUS.NA.name, matType
+            )
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            QUESTION_STATUS.NA
+        }
+    }
+
+    @TypeConverter
+    fun fromMatType(enumVal: QUESTION_STATUS?): String? {
+        if (null != enumVal) {
+            return AppObjectController.gsonMapper.toJson(enumVal)
+        }
+        return AppObjectController.gsonMapper.toJson(QUESTION_STATUS.NA)
+    }
+}
+
 
 

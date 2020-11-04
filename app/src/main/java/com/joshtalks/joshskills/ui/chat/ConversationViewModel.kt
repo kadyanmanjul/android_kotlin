@@ -212,7 +212,7 @@ class ConversationViewModel(application: Application) :
                         addNewLesson(lessonModel, chatList, chat)
                     } else {
                         // it means last chat and current chat belong to same lesson. add current chat to last lesson
-                        lastChatModelInList.lessons?.add(chat)
+//                        lastChatModelInList.lessons?.add(chat)
                         lastChatModelInList.lessonStatus = lessonModel.status //chat.question.status
 
 //                        chatList.set(chatList.size - 1, lastChatModelInList)
@@ -244,7 +244,7 @@ class ConversationViewModel(application: Application) :
         val list = ArrayList<ChatModel>()
         list.add(chat)
 
-        lessonChat.lessons = list
+        lessonChat.lessons = lessonModel
         chatList.add(lessonChat)
     }
 

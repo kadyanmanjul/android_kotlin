@@ -19,12 +19,14 @@ import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
 import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback
 import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.RequestEngage
+import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
 import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import io.reactivex.disposables.CompositeDisposable
-import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -34,6 +36,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Response
+import java.io.File
 import java.lang.reflect.Type
 
 
@@ -102,7 +105,17 @@ class PracticeViewModel(application: Application) :
                 val resp = AppObjectController.chatNetworkService.submitPracticeAsync(requestEngage)
                 if (resp.isSuccessful && resp.body() != null) {
                     resp.body()?.localPath = localPath
-                    getAudioFeedback(chatModel,resp, engageType,false,mutableListOf())
+                    getAudioFeedback(chatModel, resp, engageType, false, mutableListOf())
+
+                    chatModel.question?.let {
+                        updateQuestionStatus(
+                            QUESTION_STATUS.AT.name,
+                            it.questionId,
+                            it.lesson_id,
+                            it.course_id
+                        )
+                    }
+
                     requestStatusLiveData.postValue(true)
                 } else {
                     requestStatusLiveData.postValue(false)
@@ -121,12 +134,12 @@ class PracticeViewModel(application: Application) :
         chatModel: ChatModel,
         response: Response<PracticeEngagement>,
         engageType: EXPECTED_ENGAGE_TYPE?,
-        isRetry:Boolean,
+        isRetry: Boolean,
         list: MutableList<PracticeEngagement>
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                if(isRetry.not()) {
+                if (isRetry.not()) {
                     chatModel.question?.let {
                         val list2 = AppObjectController.appDatabase.chatDao()
                             .getPractiseObject(it.questionId)
@@ -157,7 +170,8 @@ class PracticeViewModel(application: Application) :
                 val resp = AppObjectController.chatNetworkService.getAudioFeedback(data)
                 if (resp.status == "completed" || resp.status == "error") {
                     Log.d("Manjul", "if practiceEngagement called ${list}")
-                    response.body()?.practiceFeedback= PracticeFeedback(resp.score,resp.grade,resp.text,resp.status)
+                    response.body()?.practiceFeedback =
+                        PracticeFeedback(resp.score, resp.grade, resp.text, resp.status)
                     response.body()?.let {
                         list.add(it)
                         chatModel.question?.let {
@@ -171,7 +185,7 @@ class PracticeViewModel(application: Application) :
                 } else {
                     delay(10_000)
                     //Thread.sleep(1_000)
-                    getAudioFeedback(chatModel, response,engageType, true,list)
+                    getAudioFeedback(chatModel, response, engageType, true, list)
                     Log.d("Manjul", "else getAudioFeedback() called $resp")
                     requestStatusLiveData.postValue(true)
 
@@ -213,4 +227,20 @@ class PracticeViewModel(application: Application) :
             return@async responseUpload.code()
         }.await()
     }
+
+
+    fun updateQuestionStatus(status: String, questionId: String, lessonId: Int, courseId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                AppObjectController.chatNetworkService.updateQuestionStatus(
+                    UpdateQuestionStatus(
+                        status, lessonId, Mentor.getInstance().getId(), questionId.toInt(), courseId
+                    )
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
 }

@@ -21,7 +21,6 @@ import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.ConvectorForEngagement
-import com.joshtalks.joshskills.repository.local.ConvectorForPracticeFeedback
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
 import com.joshtalks.joshskills.util.RandomString
@@ -105,14 +104,15 @@ data class ChatModel(
     @Expose
     var lastUseTime: Date? = null,
 
+    @ColumnInfo(name = "lesson_id")
+    @SerializedName("lesson_id")
+    var lessonId: Int = 0,
+
     @Ignore
     var playProgress: Int = 0,
 
     @Ignore
-    var lessons: ArrayList<ChatModel>? = null,
-
-    @Ignore
-    var lessonId: Int? = null,
+    var lessons: LessonModel? = null,
 
     @Ignore
     var lessonStatus: LESSON_STATUS? = LESSON_STATUS.NO
@@ -251,6 +251,10 @@ data class Question(
     @ColumnInfo(name = "chat_type")
     @SerializedName("chat_type")
     @Expose var chatType: CHAT_TYPE = CHAT_TYPE.OTHER,
+
+    @ColumnInfo(name = "status")
+    @SerializedName("status")
+    @Expose var status: QUESTION_STATUS = QUESTION_STATUS.NA,
 
     @Ignore
     @Expose var vAssessmentCount: Int = -1
@@ -504,6 +508,9 @@ interface ChatDao {
 
     @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND is_delete_message=0 ORDER BY created ASC,question_id ASC ")
     suspend fun getLastChats(conversationId: String): List<ChatModel>
+
+    @Query(value = "SELECT * FROM chat_table where lesson_id= :lessonId AND is_delete_message=0 ORDER BY created ASC,question_id ASC ")
+    suspend fun getChatsForLessonId(lessonId: Int): List<ChatModel>
 
     @Query(value = "SELECT * FROM chat_table  where chat_id=:chatId")
     suspend fun getChatObject(chatId: String): ChatModel

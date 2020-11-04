@@ -30,14 +30,11 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.HtmlCompat
-import androidx.core.widget.TextViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
@@ -63,7 +60,6 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.custom_ui.decorator.GridSpacingItemDecoration
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -78,11 +74,9 @@ import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
 import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
 import com.joshtalks.joshskills.repository.local.eventbus.RemovePracticeAudioEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.SeekBarProgressEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
-import com.joshtalks.joshskills.ui.help.viewholder.FaqCategoryViewHolder
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
@@ -102,7 +96,6 @@ import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import java.util.ArrayList
 import java.util.concurrent.TimeUnit
-import kotlin.random.Random
 
 class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEventListener,
     ProgressUpdateListener {
@@ -121,7 +114,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     private var startTime: Long = 0
     private var totalTimeSpend: Long = 0
     private var filePath: String? = null
-    private lateinit var appAnalytics: AppAnalytics
+    private var appAnalytics: AppAnalytics? = null
     private var audioManager: ExoAudioPlayer? = null
 
 
@@ -188,23 +181,25 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
         binding.lifecycleOwner = this
         binding.handler = this
         scaleAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale)
+
         appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTICE_SCREEN.NAME)
             .addBasicParam()
             .addUserDetails()
             .addParam("chatId", chatModel.chatId)
+
         setPracticeInfoView()
         addObserver()
         chatModel.question?.run {
             if (this.practiceEngagement.isNullOrEmpty()) {
                 binding.submitAnswerBtn.visibility = VISIBLE
-                appAnalytics.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, false)
-                appAnalytics.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Not Submitted")
+                appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, false)
+                appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Not Submitted")
                 setViewAccordingExpectedAnswer()
             } else {
                 binding.submitAnswerBtn.visibility = GONE
                 binding.improveAnswerBtn.visibility = VISIBLE
-                appAnalytics.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
-                appAnalytics.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Already Submitted")
+                appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
+                appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Already Submitted")
                 setViewUserSubmitAnswer()
             }
         }
@@ -290,7 +285,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     }
 
     override fun onStop() {
-        appAnalytics.push()
+        appAnalytics?.push()
         super.onStop()
         compositeDisposable.clear()
         try {
@@ -398,7 +393,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
 
     private fun setPracticeInfoView() {
         chatModel.question?.run {
-            appAnalytics.addParam(
+            appAnalytics?.addParam(
                 AnalyticsEvent.PRACTICE_TYPE_PRESENT.NAME,
                 "${this.material_type} Practice present"
             )
@@ -582,7 +577,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     private fun hideCancelButtonInRV() {
         val viewHolders = binding.audioList.allViewResolvers as List<PraticeAudioViewHolder>
         viewHolders.forEach { it ->
-            it?.let {
+            it.let {
                 it.hideCancelButtons()
                 //it.setSeekToZero()
             }
@@ -1003,8 +998,8 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                     binding.counterContainer.visibility = VISIBLE
                     binding.uploadPractiseView.startAnimation(scaleAnimation)
                     requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                    appAnalytics.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
-                    //AppAnalytics.create(AnalyticsEvent.AUDIO_RECORD.NAME).push()
+                    appAnalytics?.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
+                    //appAnalytics?.create(AnalyticsEvent.AUDIO_RECORD.NAME).push()
                     binding.counterTv.base = SystemClock.elapsedRealtime()
                     startTime = System.currentTimeMillis()
                     binding.counterTv.start()
@@ -1052,7 +1047,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                 .length(Toast.LENGTH_LONG)
                 .solidBackground().show()
         }
-        appAnalytics.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio Played")
+        appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio Played")
 
         if (coreJoshActivity?.currentAudio == null) {
             onPlayAudio(chatModel, chatModel.question?.audioList?.getOrNull(0)!!)
@@ -1084,7 +1079,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
             audioManager?.resumeOrPause()
         }
         disableSubmitButton()
-        appAnalytics.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio practise removed")*/
+        appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio practise removed")*/
 
     }
 
@@ -1220,17 +1215,17 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                 }
 
 
-                appAnalytics.addParam(
+                appAnalytics?.addParam(
                     AnalyticsEvent.PRACTICE_SCREEN_TIME.NAME,
                     System.currentTimeMillis() - totalTimeSpend
                 )
-                appAnalytics.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
-                appAnalytics.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Submitted")
-                appAnalytics.addParam(
+                appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
+                appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Submitted")
+                appAnalytics?.addParam(
                     AnalyticsEvent.PRACTICE_TYPE_SUBMITTED.NAME,
                     "$it Practice Submitted"
                 )
-                appAnalytics.addParam(AnalyticsEvent.PRACTICE_SUBMITTED.NAME, "Submit Practice $")
+                appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SUBMITTED.NAME, "Submit Practice $")
 
                 val requestEngage = RequestEngage()
                 requestEngage.text = binding.etPractise.text.toString()

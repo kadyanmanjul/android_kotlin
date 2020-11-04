@@ -18,7 +18,7 @@ class LessonViewHolder(
     activityRef: WeakReference<FragmentActivity>,
     message: ChatModel,
     previousMessage: ChatModel?,
-    private val onItemClick: ((lessonChats: ArrayList<ChatModel>, lessonId: Int) -> Unit)? = null
+    private val onItemClick: ((lessonId: Int) -> Unit)? = null
 ) :
     BaseChatViewHolder(activityRef, message, previousMessage) {
 
@@ -42,18 +42,16 @@ class LessonViewHolder(
     @Resolve
     override fun onViewInflated() {
         super.onViewInflated()
-        message.lessons?.let { lessonQuestions ->
-            lessonQuestions.getOrNull(0)?.question?.lesson?.let { lessonModel ->
-                lessonNameTv.text = getAppContext().getString(
-                    R.string.lesson_name,
-                    lessonModel.lessonNo,
-                    lessonModel.lessonName
-                )
-                Utils.setImage(imageView, lessonModel.varthumbnail)
+        message.lessons?.let { lessonModel ->
+            lessonNameTv.text = getAppContext().getString(
+                R.string.lesson_name,
+                lessonModel.lessonNo,
+                lessonModel.lessonName
+            )
+            Utils.setImage(imageView, lessonModel.varthumbnail)
 
-                rootView.setOnClickListener {
-                    onItemClick?.invoke(lessonQuestions, lessonModel.id)
-                }
+            rootView.setOnClickListener {
+                onItemClick?.invoke(lessonModel.id)
             }
         }
 

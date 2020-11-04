@@ -147,6 +147,8 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
                     }
                 }
 
+                adapter.notifyDataSetChanged()
+
             }
 
             currentChatModel = null

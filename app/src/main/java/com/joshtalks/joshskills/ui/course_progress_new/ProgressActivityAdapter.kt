@@ -5,8 +5,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.databinding.ProgressActivityAdapterLayoutBinding
+import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewResponse
 
-class ProgressActivityAdapter(val context: Context) :
+class ProgressActivityAdapter(
+    val context: Context,
+    val list: List<CourseOverviewResponse>,
+    val onItemClickListener: CourseProgressAdapter.ProgressItemClickListener
+) :
     RecyclerView.Adapter<ProgressActivityAdapter.ProgressViewHolder>() {
 
     override fun onCreateViewHolder(
@@ -26,19 +31,19 @@ class ProgressActivityAdapter(val context: Context) :
         holder: ProgressActivityAdapter.ProgressViewHolder,
         position: Int
     ) {
-        holder.bind(position)
+        holder.bind(position, list[position])
     }
 
     override fun getItemCount(): Int {
-        return 3
+        return list.size
     }
 
     inner class ProgressViewHolder(val binding: ProgressActivityAdapterLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
         lateinit var adapter: CourseProgressAdapter
-        fun bind(position: Int) {
+        fun bind(position: Int, item: CourseOverviewResponse) {
             binding.progressTitleTv.text = "Beginer"
-            adapter = CourseProgressAdapter(context)
+            adapter = CourseProgressAdapter(context, item.data, onItemClickListener)
             binding.progressRv.adapter = adapter
 
         }

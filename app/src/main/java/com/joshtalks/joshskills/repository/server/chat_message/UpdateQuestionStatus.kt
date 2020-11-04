@@ -15,5 +15,8 @@ data class UpdateQuestionStatus(
     private var mentorId: String,
     @SerializedName("question_id")
     @Expose
-    private var questionId: Int
+    private var questionId: Int,
+    @SerializedName("course_id")
+    @Expose
+    private var courseId: Int
 )

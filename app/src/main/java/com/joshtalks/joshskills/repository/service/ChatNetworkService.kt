@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.repository.service
 import com.joshtalks.joshskills.repository.local.entity.Course
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
-import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback
 import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
@@ -15,6 +14,7 @@ import com.joshtalks.joshskills.repository.server.ResponseChatMessage
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
+import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewResponse
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
@@ -119,7 +119,7 @@ interface ChatNetworkService {
     @GET("$DIR/chat/lesson_questions/")
     suspend fun getQuestionsForLesson(
         @Query("mentor_id") mentorId: String,
-        @Query("lesson_id") lessonId: String
+        @Query("lesson_id") lessonId: Int
     ): BaseResponse<List<Question>>
 
 
@@ -127,5 +127,13 @@ interface ChatNetworkService {
     suspend fun updateQuestionStatus(
         @Body questionStatus: UpdateQuestionStatus
     )
+
+
+    @GET("$DIR/course/course_overview/")
+    suspend fun getCourseOverview(
+        @Query("mentor_id") mentorId: String,
+        @Query("course_id") courseId: String
+    ): BaseResponse<List<CourseOverviewResponse>>
+
 
 }

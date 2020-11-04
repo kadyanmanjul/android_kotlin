@@ -40,11 +40,12 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
     val assessmentStatus: MutableLiveData<AssessmentStatus> =
         MutableLiveData(AssessmentStatus.NOT_STARTED)
 
-    fun getQuestions(listOfChat: ArrayList<ChatModel>) {
+    fun getQuestions(lessonId: Int) {
 //        syncQuestions(lessonId)
         val chatList: MutableList<ChatModel> = mutableListOf()
 
         viewModelScope.launch(Dispatchers.IO) {
+            val listOfChat = appDatabase.chatDao().getChatsForLessonId(lessonId)
             listOfChat.forEach { chat ->
                 val question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
                 question?.run {
@@ -100,15 +101,12 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
         }
     }*/
 
-    fun syncQuestions(lessonId: String) {
+    fun syncQuestions(lessonId: Int) {
+        //Note: it is required to be called for some backend logic reason.
         viewModelScope.launch {
-            val response = AppObjectController.chatNetworkService.getQuestionsForLesson(
+            AppObjectController.chatNetworkService.getQuestionsForLesson(
                 Mentor.getInstance().getId(), lessonId
             )
-            if (response.success) {
-                questions.postValue(response.responseData)
-                chatDao.insertChatQuestions(response.responseData)
-            }
             return@launch
         }
     }
@@ -190,12 +188,12 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun updateQuestionStatus(status: String, questionId: Int) {
+    fun updateQuestionStatus(status: String, questionId: Int, courseId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 AppObjectController.chatNetworkService.updateQuestionStatus(
                     UpdateQuestionStatus(
-                        status, lessonId, Mentor.getInstance().getId(), questionId
+                        status, lessonId, Mentor.getInstance().getId(), questionId, courseId
                     )
                 )
             } catch (e: Exception) {

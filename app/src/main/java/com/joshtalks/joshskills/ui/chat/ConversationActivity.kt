@@ -1437,12 +1437,11 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    fun onLessonItemClick(lessonChats: ArrayList<ChatModel>, lessonId: Int) {
+    fun onLessonItemClick(lessonId: Int) {
         startActivity(
             DayWiseCourseActivity.getDayWiseCourseActivityIntent(
                 this,
-                lessonId,
-                lessonChats
+                lessonId
             )
         )
     }

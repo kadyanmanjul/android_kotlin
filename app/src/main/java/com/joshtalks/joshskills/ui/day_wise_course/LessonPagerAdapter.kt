@@ -11,7 +11,7 @@ import com.joshtalks.joshskills.ui.day_wise_course.practice.NewPracticeFragment
 import com.joshtalks.joshskills.ui.day_wise_course.reading.ReadingFragment
 
 class LessonPagerAdapter(
-    val chatList: ArrayList<ChatModel>,
+    val chatList: List<ChatModel>,
     fragmentManager: FragmentManager,
     val lifecycle: Lifecycle
 ) :

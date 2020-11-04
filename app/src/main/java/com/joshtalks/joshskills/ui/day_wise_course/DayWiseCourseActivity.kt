@@ -13,7 +13,6 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 
 class DayWiseCourseActivity : CoreJoshActivity() {
@@ -22,7 +21,7 @@ class DayWiseCourseActivity : CoreJoshActivity() {
     var lessonId: Int = 0
 //    val questionList: ArrayList<Question> = ArrayList()
 
-    lateinit var chatList: ArrayList<ChatModel>
+//    lateinit var chatList: ArrayList<ChatModel>
 
     private val viewModel: CapsuleViewModel by lazy {
         ViewModelProvider(this).get(CapsuleViewModel::class.java)
@@ -33,11 +32,10 @@ class DayWiseCourseActivity : CoreJoshActivity() {
         private val CHAT_ITEMS = "chat_items"
         fun getDayWiseCourseActivityIntent(
             context: Context,
-            lessonId: Int,
-            chatList: ArrayList<ChatModel>
+            lessonId: Int
         ) = Intent(context, DayWiseCourseActivity::class.java).apply {
             putExtra(LESSON_ID, lessonId)
-            putExtra(CHAT_ITEMS, chatList)
+//            putExtra(CHAT_ITEMS, chatList)
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         }
 
@@ -50,16 +48,16 @@ class DayWiseCourseActivity : CoreJoshActivity() {
             R.layout.daywise_course_activity
         )
 
-        if (intent.hasExtra(CHAT_ITEMS).not())
+        if (intent.hasExtra(LESSON_ID).not())
             finish()
 
         lessonId = intent.getIntExtra(LESSON_ID, 0)
         viewModel.lessonId = lessonId
-        chatList = intent.getParcelableArrayListExtra(CHAT_ITEMS)!!
+//        chatList = intent.getParcelableArrayListExtra(CHAT_ITEMS)!!
 
         val titleView: TextView = findViewById(R.id.text_message_title)
         val helpIv: ImageView = findViewById(R.id.iv_help)
-        titleView.text = chatList.get(0).question?.lesson?.lessonName
+
         titleView.setOnClickListener {
             startActivity(Intent(this, CourseProgressActivityNew::class.java))
         }
@@ -70,11 +68,12 @@ class DayWiseCourseActivity : CoreJoshActivity() {
         }
 
 
-//        viewModel.syncQuestions(lessonId)
-        viewModel.getQuestions(chatList)
+        viewModel.syncQuestions(lessonId)
+        viewModel.getQuestions(lessonId)
 
         viewModel.chatObservableLiveData.observe(this, {
-            val adapter = LessonPagerAdapter(chatList, supportFragmentManager, this.lifecycle)
+            titleView.text = it.getOrNull(0)?.question?.lesson?.lessonName
+            val adapter = LessonPagerAdapter(it, supportFragmentManager, this.lifecycle)
             binding.lessonViewpager.adapter = adapter
             TabLayoutMediator(
                 binding.lessonTabLayout,
