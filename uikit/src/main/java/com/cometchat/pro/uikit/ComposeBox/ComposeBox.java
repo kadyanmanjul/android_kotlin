@@ -286,9 +286,9 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
             stopPlayingAudio();
             voiceMessageLayout.setVisibility(GONE);
             etComposeBox.setVisibility(View.VISIBLE);
-            ivArrow.setVisibility(View.VISIBLE);
+            // ivArrow.setVisibility(View.VISIBLE);
             ivMic.setVisibility(View.VISIBLE);
-            ivMic.setImageDrawable(getResources().getDrawable(R.drawable.ic_mic_grey_24dp));
+            ivMic.setImageDrawable(getResources().getDrawable(R.drawable.ic_mic_white_24dp));
             isPlaying = false;
             isRecording = false;
             voiceMessage = false;
@@ -311,12 +311,12 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
                 etComposeBox.setVisibility(View.VISIBLE);
                 ivDelete.setVisibility(GONE);
                 ivSend.setVisibility(GONE);
-                ivArrow.setVisibility(View.VISIBLE);
+                // ivArrow.setVisibility(View.VISIBLE);
                 ivMic.setVisibility(View.VISIBLE);
                 isRecording = false;
                 isPlaying = false;
                 voiceMessage = false;
-                ivMic.setImageResource(R.drawable.ic_mic_grey_24dp);
+                ivMic.setImageResource(R.drawable.ic_mic_white_24dp);
             }
 
         }
@@ -360,7 +360,8 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
                         stopRecording(false);
                         recordTime.stop();
                     }
-                    ivMic.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_24dp));
+                    ivMic.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow_black_24dp));
+                    ivMic.setVisibility(View.GONE);
                     audioRecordView.setVisibility(GONE);
                     ivSend.setVisibility(View.VISIBLE);
                     ivDelete.setVisibility(View.VISIBLE);
@@ -407,8 +408,8 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
         ivArrow.setVisibility(GONE);
         voiceSeekbar.setVisibility(GONE);
         voiceMessageLayout.setVisibility(View.VISIBLE);
-        audioRecordView.recreate();
-        audioRecordView.setVisibility(View.VISIBLE);
+        // audioRecordView.recreate();
+        // audioRecordView.setVisibility(View.VISIBLE);
         startRecording();
     }
 
@@ -499,7 +500,7 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
                     int currentMaxAmp = 0;
                     try {
                         currentMaxAmp = mediaRecorder != null ? mediaRecorder.getMaxAmplitude() : 0;
-                        audioRecordView.update(currentMaxAmp);
+                        // audioRecordView.update(currentMaxAmp);
                         if (mediaRecorder == null)
                             timer = null;
                     } catch (Exception e) {

@@ -397,7 +397,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     }
                     if (!mediaPlayer.isPlaying()) {
                         mediaPlayer.start();
-                        viewHolder.playBtn.setImageResource(R.drawable.ic_pause_24dp);
+                        viewHolder.playBtn.setImageResource(R.drawable.ic_pause_white_24dp);
                     } else {
                         mediaPlayer.pause();
                         viewHolder.playBtn.setImageResource(R.drawable.ic_play_arrow_black_24dp);

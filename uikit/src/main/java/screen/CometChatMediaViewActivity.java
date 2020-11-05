@@ -84,7 +84,7 @@ public class CometChatMediaViewActivity extends AppCompatActivity {
                     }
                     if (!mediaPlayer.isPlaying()) {
                         mediaPlayer.start();
-                        playBtn.setImageResource(R.drawable.ic_pause_24dp);
+                        playBtn.setImageResource(R.drawable.ic_pause_white_24dp);
                     } else {
                         mediaPlayer.pause();
                         playBtn.setImageResource(R.drawable.ic_play_arrow_black_24dp);

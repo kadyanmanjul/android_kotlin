@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
-    android:background="@android:color/transparent">
+    android:background="@android:color/transparent"
+    tools:background="@color/black">
 
     <RelativeLayout
         android:id="@+id/rlActionContainers"
@@ -98,6 +99,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/boxEndLayout"
         android:layout_toStartOf="@+id/boxEndLayout"
+        android:background="@drawable/compose_box"
         android:visibility="gone"
         tools:visibility="visible">
 
@@ -106,40 +108,44 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/record_time"
+            android:layout_centerVertical="true"
             android:padding="8dp"
             android:src="@drawable/ic_delete_24dp"
-            android:visibility="gone" />
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <SeekBar
             android:id="@+id/voice_message_seekbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/record_time"
-            android:layout_toEndOf="@+id/ivDelete"
-            android:visibility="gone" />
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/record_time"
+            android:visibility="visible" />
 
         <utils.AudioVisualizer.AudioRecordView
             android:id="@+id/record_audio_visualizer"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_toEndOf="@+id/ivDelete"
+            android:visibility="gone"
             app:chunkAlignTo="bottom"
             app:chunkColor="@color/colorPrimary"
             app:chunkMaxHeight="150dp"
             app:chunkMinHeight="1dp"
             app:chunkSpace="1dp"
             app:chunkWidth="2dp"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
         <Chronometer
             android:id="@+id/record_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
             android:layout_toEndOf="@+id/ivDelete"
             android:elevation="8dp"
-            android:textSize="12sp" />
+            android:textSize="@dimen/_14ssp" />
     </RelativeLayout>
 
     <LinearLayout

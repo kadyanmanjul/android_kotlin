@@ -33,4 +33,5 @@
     <color name="gray_9E">#9E9E9E</color>
     <color name="light_blue">#E1F3FB</color>
     <color name="sent_msg_background">#E2FFC7</color>
+    <color name="red_mic">#E10717</color>
 </resources>
