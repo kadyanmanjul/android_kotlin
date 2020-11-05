@@ -14,14 +14,20 @@ class CourseOverviewViewModel(application: Application) : AndroidViewModel(appli
 
     var progressLiveData: MutableLiveData<CourseOverviewBaseResponse> = MutableLiveData()
 
+    var postResponse: MutableLiveData<Boolean> = MutableLiveData()
     fun getCourseOverview(courseId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val response = AppObjectController.chatNetworkService.getCourseOverview(
-                Mentor.getInstance().getId(),
-                courseId
-            )
-            if (response.success) {
-                progressLiveData.postValue(response)
+            try {
+                val response = AppObjectController.chatNetworkService.getCourseOverview(
+                    Mentor.getInstance().getId(),
+                    courseId
+                )
+                if (response.success) {
+                    progressLiveData.postValue(response)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+//                postResponse.postValue(true)
             }
         }
     }

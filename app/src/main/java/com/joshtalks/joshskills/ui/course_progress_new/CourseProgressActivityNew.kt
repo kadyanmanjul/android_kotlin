@@ -8,8 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.databinding.CourseProgressActivityNewBinding
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
@@ -26,6 +26,7 @@ import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
 import com.tonyodev.fetch2core.DownloadBlock
+import java.io.File
 
 class CourseProgressActivityNew : AppCompatActivity(),
     CourseProgressAdapter.ProgressItemClickListener {
@@ -145,19 +146,38 @@ class CourseProgressActivityNew : AppCompatActivity(),
         viewModel.getCourseOverview(courseId)
         viewModel.progressLiveData.observe(this, {
             binding.pdfNameTv.text = it.pdfInfo.coursePdfName
-            binding.sizeTv.text = it.pdfInfo.coursePdfSize
-            binding.pageCountTv.text = it.pdfInfo.coursePdfPageCount
+            binding.sizeTv.text = "${it.pdfInfo.coursePdfSize} kB"
+            binding.pageCountTv.text = "${it.pdfInfo.coursePdfPageCount} pages"
             pdfInfo = it.pdfInfo
 
+            pdfInfo?.let {
+                if (File(AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath).exists()) {
+                    fileDownloadSuccess()
+                } else {
+                    fileNotDownloadView()
+                }
+
+            }
             adapter = ProgressActivityAdapter(this, it.responseData!!, this)
             binding.progressRv.adapter = adapter
 
         })
 
+        /*viewModel.postResponse.observe(this, {
+            DownloadUtils.downloadFile(
+                "https://file-examples-com.github.io/uploads/2017/10/file-sample_150kB.pdf",
+                AppDirectory.docsReceivedFile("https://file-examples-com.github.io/uploads/2017/10/file-sample_150kB.pdf").absolutePath,
+                "$courseId",
+                downloadListener
+            )
+        })*/
         setupUi()
     }
 
     private fun setupUi() {
+        binding.pdfView.setOnClickListener {
+            openPdf()
+        }
         binding.downloadContainer.setOnClickListener {
             onClickPdfContainer()
         }
@@ -248,11 +268,15 @@ class CourseProgressActivityNew : AppCompatActivity(),
     }
 
     private fun openPdf() {
-        PdfViewerActivity.startPdfActivity(
-            this,
-            "$courseId",
-            EMPTY
-        )
+        pdfInfo?.let {
+            PdfViewerActivity.startPdfActivity(
+                this,
+                "$courseId",
+                it.coursePdfName,
+                pdfPath = AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath
+
+            )
+        }
     }
 
     private fun fileDownloadSuccess() {
@@ -290,16 +314,16 @@ class CourseProgressActivityNew : AppCompatActivity(),
             askStoragePermission()
             return
         }
-/*
         pdfInfo?.let {
             DownloadUtils.downloadFile(
                 it.coursePdfUrl,
                 AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath,
                 "$courseId",
-                message!!,
                 downloadListener
             )
-        }*/
+
+
+        }
     }
 
 }

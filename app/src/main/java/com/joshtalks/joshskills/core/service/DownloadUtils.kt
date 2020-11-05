@@ -79,6 +79,37 @@ object DownloadUtils {
         }
     }
 
+
+    fun downloadFile(
+        url: String,
+        filePath: String,
+        tag: String,
+        fetchListener: FetchListener
+    ) {
+        executor.execute {
+            val request = Request(url, filePath)
+            request.priority = Priority.HIGH
+            request.networkType = NetworkType.ALL
+            request.tag = tag
+
+            AppObjectController.getFetchObject().addListener(fetchListener)
+            objectFetchListener[tag] = fetchListener
+            AppObjectController.getFetchObject().remove(request.id)
+            AppObjectController.getFetchObject().enqueue(
+                request, Func {
+                    updateDownloadStatus(it.file, it.extras)
+                },
+                Func {
+                    it.throwable?.printStackTrace()
+                    request.tag?.let { tag ->
+                        objectFetchListener[tag]?.let { it1 ->
+                            AppObjectController.getFetchObject().removeListener(it1)
+                        }
+                    }
+                })
+        }
+    }
+
     fun removeCallbackListener(tag: String?) {
         tag?.let { tagg ->
             objectFetchListener[tagg]?.let { it1 ->

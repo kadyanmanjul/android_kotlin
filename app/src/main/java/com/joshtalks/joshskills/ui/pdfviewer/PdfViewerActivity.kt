@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityPdfViewerBinding
@@ -24,6 +25,7 @@ import kotlinx.coroutines.launch
 const val PDF_ID = "pdf_id"
 const val COURSE_NAME = "course_name"
 const val MESSAGE_ID = "message_id"
+const val PDF_PATH = "pdf_path"
 
 class PdfViewerActivity : BaseActivity() {
     private lateinit var conversationBinding: ActivityPdfViewerBinding
@@ -48,15 +50,25 @@ class PdfViewerActivity : BaseActivity() {
             conversationBinding.titleTv.text = it
         }
     }
+
     private fun showPdf() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                pdfObject =
-                    AppObjectController.appDatabase.chatDao()
-                        .getPdfById(intent.getStringExtra(PDF_ID)!!)
+                var path: String = EMPTY
+
+
+                path = if (intent.hasExtra(PDF_PATH)) {
+                    intent.getStringExtra(PDF_PATH)!!
+                } else {
+
+                    pdfObject =
+                        AppObjectController.appDatabase.chatDao()
+                            .getPdfById(intent.getStringExtra(PDF_ID)!!)
+
+                    pdfObject?.downloadedLocalPath!!
+                }
                 AppObjectController.uiHandler.post {
                     try {
-                        val path: String = pdfObject?.downloadedLocalPath!!
                         conversationBinding.pdfView.fromFile(path)
                         conversationBinding.pdfView.show()
                         AppAnalytics.create(AnalyticsEvent.PDF_OPENED.NAME)
@@ -88,13 +100,16 @@ class PdfViewerActivity : BaseActivity() {
             context: Context,
             pdfId: String,
             courseName: String,
-            messageId: String? = null
+            messageId: String? = null,
+            pdfPath: String = EMPTY
 
         ) {
             Intent(context, PdfViewerActivity::class.java).apply {
                 putExtra(PDF_ID, pdfId)
                 putExtra(COURSE_NAME, courseName)
                 putExtra(MESSAGE_ID, messageId)
+                if (pdfPath.isNotEmpty())
+                    putExtra(PDF_PATH, pdfPath)
             }.run {
                 context.startActivity(this)
             }

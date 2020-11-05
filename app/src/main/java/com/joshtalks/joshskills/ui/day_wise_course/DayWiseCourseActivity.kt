@@ -148,7 +148,7 @@ class DayWiseCourseActivity : CoreJoshActivity() {
     private fun setUnselectedColor(tab: TabLayout.Tab?) {
         tab?.let {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                tab.view.setBackgroundColor(AppObjectController.joshApplication.getColor(R.color.grey_7A))
+                tab.view.setBackgroundColor(AppObjectController.joshApplication.getColor(R.color.grey_E8))
             }
         }
     }
@@ -161,10 +161,10 @@ class DayWiseCourseActivity : CoreJoshActivity() {
                     tab.view.setBackgroundColor(AppObjectController.joshApplication.getColor(R.color.quantum_pink))
                 }
                 1 -> {
-                    tab.view.setBackgroundColor(AppObjectController.joshApplication.getColor(R.color.colorPrimary))
+                    tab.view.setBackgroundColor(AppObjectController.joshApplication.getColor(R.color.green))
                 }
                 2 -> {
-                    tab.view.setBackgroundColor(AppObjectController.joshApplication.getColor(R.color.green))
+                    tab.view.setBackgroundColor(AppObjectController.joshApplication.getColor(R.color.colorPrimary))
                 }
                 3 -> {
                     tab.view.setBackgroundColor(AppObjectController.joshApplication.getColor(R.color.yellow))
