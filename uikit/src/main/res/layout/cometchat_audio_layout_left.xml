@@ -6,62 +6,90 @@
 
     <com.cometchat.pro.uikit.Avatar
         android:id="@+id/iv_user"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_alignTop="@id/cv_message_container"
+        android:layout_width="@dimen/_28sdp"
+        android:layout_height="@dimen/_28sdp"
         android:layout_marginStart="4dp"
         android:layout_marginBottom="4dp"
         tools:src="@tools:sample/avatars" />
 
-    <TextView
-        android:id="@+id/tv_user"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="8dp"
-        android:layout_toEndOf="@+id/iv_user"
-        android:textSize="12sp"
-        tools:text="Iron Man" />
-
     <RelativeLayout
         android:id="@+id/cv_message_container"
-        android:layout_width="250dp"
+        android:layout_width="@dimen/_190sdp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_user"
-        android:layout_marginStart="4dp"
-        android:layout_marginBottom="1dp"
+        android:layout_alignTop="@id/iv_user"
+        android:layout_marginEnd="@dimen/_6sdp"
         android:layout_toEndOf="@id/iv_user"
-        android:background="@drawable/cc_message_bubble_left"
-        android:padding="8dp">
+        android:background="@drawable/incoming_message_normal_bg"
+        android:paddingStart="@dimen/_8sdp"
+        android:paddingTop="@dimen/_6sdp"
+        android:paddingEnd="@dimen/_8sdp"
+        android:paddingBottom="@dimen/_6sdp">
+
+        <TextView
+            android:id="@+id/tv_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:paddingStart="8dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="0dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:text="Iron Man" />
 
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_user"
             android:layout_margin="8dp"
-            android:layout_toLeftOf="@+id/playBtn"
+            android:layout_toStartOf="@+id/playBtn"
             android:gravity="center_vertical"
-            android:text="Audio File"
+            android:text="@string/audio_file"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/primaryTextColor" />
+            android:textColor="@color/black" />
 
         <ImageView
             android:id="@+id/playBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignTop="@id/title"
             android:layout_alignParentEnd="true"
+            android:layout_marginTop="-8dp"
             android:background="@drawable/ic_circle_grey_32dp"
             android:padding="8dp"
             android:src="@drawable/ic_play_arrow_black_24dp" />
 
         <TextView
             android:id="@+id/audiolength_tv"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:textColor="@color/secondaryTextColor"
             tools:text="125 KB" />
+
+        <TextView
+            android:id="@+id/txt_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/playBtn"
+            android:layout_alignEnd="@id/playBtn"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="end"
+            android:maxLines="1"
+            android:minWidth="@dimen/_32sdp"
+            android:paddingHorizontal="@dimen/_6sdp"
+            android:textColor="@color/gray_9E"
+            android:textSize="@dimen/_8ssp"
+            android:visibility="gone"
+            tools:text="11:00 PM"
+            tools:visibility="visible" />
+
     </RelativeLayout>
 
     <LinearLayout
@@ -91,18 +119,4 @@
             tools:text="2 replies" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/txt_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/cv_message_container"
-        android:layout_gravity="center"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_toRightOf="@id/cv_message_container"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:visibility="gone"
-        tools:text="11:00 PM"
-        tools:visibility="visible" />
 </RelativeLayout>

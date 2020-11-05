@@ -78,6 +78,7 @@ class ConversationViewModel(application: Application) :
     private var isRecordingStarted = false
     private val jobs = arrayListOf<Job>()
     val userLoginLiveData: MutableLiveData<GroupDetails> = MutableLiveData()
+    val isLoading: MutableLiveData<Boolean> = MutableLiveData()
 
     init {
         addObserver()
@@ -574,8 +575,9 @@ class ConversationViewModel(application: Application) :
     }
 
     fun initCometChat() {
-
         jobs += viewModelScope.launch(Dispatchers.IO) {
+
+            isLoading.postValue(true)
 
             val appSettings = AppSettings.AppSettingsBuilder()
                 .subscribePresenceForAllUsers()
@@ -594,6 +596,7 @@ class ConversationViewModel(application: Application) :
 
                     override fun onError(p0: CometChatException?) {
                         Timber.d("Initialization failed with exception: %s", p0?.message)
+                        isLoading.postValue(false)
                         showToast(
                             context.getString(R.string.generic_message_for_error),
                             Toast.LENGTH_SHORT
@@ -616,6 +619,7 @@ class ConversationViewModel(application: Application) :
 
             } catch (ex: Exception) {
                 ex.printStackTrace()
+                isLoading.postValue(false)
                 showToast(context.getString(R.string.generic_message_for_error), Toast.LENGTH_SHORT)
             }
         }
@@ -630,11 +634,13 @@ class ConversationViewModel(application: Application) :
                 object : CometChat.CallbackListener<User>() {
                     override fun onSuccess(p0: User?) {
                         Timber.d("Login Successful : %s", p0?.toString())
+                        isLoading.postValue(false)
                         userLoginLiveData.postValue(groupDetails)
                     }
 
                     override fun onError(p0: CometChatException?) {
                         Timber.d("Login failed with exception: %s", p0?.message)
+                        isLoading.postValue(false)
                         showToast(
                             context.getString(R.string.generic_message_for_error),
                             Toast.LENGTH_SHORT
@@ -644,6 +650,7 @@ class ConversationViewModel(application: Application) :
                 })
         } else {
             // User already logged in
+            isLoading.postValue(false)
             userLoginLiveData.postValue(groupDetails)
         }
     }

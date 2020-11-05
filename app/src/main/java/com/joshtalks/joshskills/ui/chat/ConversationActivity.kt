@@ -830,6 +830,14 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             showGroupChatScreen(it)
         })
 
+        conversationViewModel.isLoading.observe(this) { isLoading ->
+            if (isLoading) {
+                showProgressBar()
+            } else {
+                hideProgressBar()
+            }
+        }
+
     }
 
     private fun showGroupChatScreen(groupDetails: GroupDetails) {

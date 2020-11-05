@@ -7,12 +7,11 @@
 
     <RelativeLayout
         android:id="@+id/cv_message_container"
-        android:layout_width="250dp"
+        android:layout_width="@dimen/_190sdp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_user"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="10dp"
-        android:background="@drawable/cc_message_bubble_right"
+        android:background="@drawable/outgoing_message_normal_bg"
         android:padding="8dp">
 
         <TextView
@@ -20,9 +19,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:text="Audio File"
+            android:text="@string/audio_file"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/textColorWhite" />
+            android:textColor="@color/black" />
 
         <ImageView
             android:id="@+id/playBtn"
@@ -30,19 +29,39 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:background="@drawable/ic_circle_grey_32dp"
-            android:backgroundTint="@color/textColorWhite"
+            android:backgroundTint="@color/gray_9E"
             android:padding="8dp"
             android:src="@drawable/ic_play_arrow_black_24dp"
-            app:tint="@color/colorPrimary" />
+            app:tint="@color/textColorWhite" />
 
         <TextView
             android:id="@+id/audiolength_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
-            android:layout_marginLeft="8dp"
-            android:textColor="@color/textColorWhite"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/black"
             tools:text="125 KB" />
+
+        <TextView
+            android:id="@+id/txt_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/playBtn"
+            android:layout_alignEnd="@id/playBtn"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="end"
+            android:maxLines="1"
+            android:minWidth="@dimen/_32sdp"
+            android:paddingHorizontal="@dimen/_6sdp"
+            android:textColor="@color/gray_9E"
+            android:textSize="@dimen/_8ssp"
+            android:visibility="gone"
+            tools:text="11:00 PM"
+            tools:visibility="visible" />
+
     </RelativeLayout>
 
     <LinearLayout
@@ -72,20 +91,5 @@
             android:textColor="@color/colorPrimary"
             tools:text="2 replies" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/txt_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/cv_message_container"
-        android:layout_gravity="center"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_toStartOf="@id/cv_message_container"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:visibility="gone"
-        tools:text="11:00 PM"
-        tools:visibility="visible" />
 
 </RelativeLayout>

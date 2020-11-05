@@ -28,6 +28,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.emoji.text.EmojiCompat;
 import androidx.emoji.text.EmojiSpan;
 import androidx.recyclerview.widget.RecyclerView;
@@ -772,12 +773,22 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     if (isUserDetailVisible) {
                         viewHolder.tvUser.setVisibility(View.VISIBLE);
                         viewHolder.ivUser.setVisibility(View.VISIBLE);
+                        viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_normal_bg));
                     } else {
                         viewHolder.tvUser.setVisibility(View.GONE);
                         viewHolder.ivUser.setVisibility(View.INVISIBLE);
+                        viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_same_bg));
                     }
                     setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName());
                     viewHolder.tvUser.setText(baseMessage.getSender().getName());
+                }
+            } else {
+                if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_GROUP)) {
+                    if (isUserDetailVisible) {
+                        viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_normal_bg));
+                    } else {
+                        viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_same_bg));
+                    }
                 }
             }
 
@@ -838,17 +849,14 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     context.startActivity(intent);
                 }
             });
-            viewHolder.rlMessageBubble.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    if (!isLongClickEnabled && !isTextMessageClick) {
-                        isImageMessageClick = true;
-                        setLongClickSelectedItem(baseMessage);
-                        messageLongClick.setLongMessageClick(longselectedItemList);
-                        notifyDataSetChanged();
-                    }
-                    return true;
+            viewHolder.rlMessageBubble.setOnLongClickListener(v -> {
+                if (!isLongClickEnabled && !isTextMessageClick) {
+                    isImageMessageClick = true;
+                    setLongClickSelectedItem(baseMessage);
+                    messageLongClick.setLongMessageClick(longselectedItemList);
+                    notifyDataSetChanged();
                 }
+                return true;
             });
         }
     }
@@ -1402,9 +1410,11 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     if (isUserDetailVisible) {
                         viewHolder.tvUser.setVisibility(View.VISIBLE);
                         viewHolder.ivUser.setVisibility(View.VISIBLE);
+                        viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_normal_bg));
                     } else {
                         viewHolder.tvUser.setVisibility(View.GONE);
                         viewHolder.ivUser.setVisibility(View.INVISIBLE);
+                        viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_same_bg));
                     }
                     setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName());
                     viewHolder.tvUser.setText(baseMessage.getSender().getName());
@@ -1417,28 +1427,33 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     viewHolder.txtMessage.setVisibility(View.VISIBLE);
                     viewHolder.sentimentVw.setVisibility(View.GONE);
                 }
-                viewHolder.viewSentimentMessage.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        AlertDialog.Builder sentimentAlert = new AlertDialog.Builder(context)
-                                .setTitle(context.getResources().getString(R.string.sentiment_alert))
-                                .setMessage(context.getResources().getString(R.string.sentiment_alert_message))
-                                .setPositiveButton(context.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        viewHolder.txtMessage.setVisibility(View.VISIBLE);
-                                        viewHolder.sentimentVw.setVisibility(View.GONE);
-                                    }
-                                })
-                                .setNegativeButton(context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        sentimentAlert.create().show();
-                    }
+                viewHolder.viewSentimentMessage.setOnClickListener(v -> {
+                    AlertDialog.Builder sentimentAlert = new AlertDialog.Builder(context)
+                            .setTitle(context.getResources().getString(R.string.sentiment_alert))
+                            .setMessage(context.getResources().getString(R.string.sentiment_alert_message))
+                            .setPositiveButton(context.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    viewHolder.txtMessage.setVisibility(View.VISIBLE);
+                                    viewHolder.sentimentVw.setVisibility(View.GONE);
+                                }
+                            })
+                            .setNegativeButton(context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    sentimentAlert.create().show();
                 });
+            } else {
+                if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_GROUP)) {
+                    if (isUserDetailVisible) {
+                        viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_normal_bg));
+                    } else {
+                        viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_same_bg));
+                    }
+                }
             }
             if (baseMessage.getMetadata() != null && baseMessage.getMetadata().has("reply")) {
                 try {
@@ -1446,7 +1461,12 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     String messageType = metaData.getString("type");
                     String message = metaData.getString("message");
                     viewHolder.replyLayout.setVisibility(View.VISIBLE);
-                    viewHolder.replyUser.setText(metaData.getString("name"));
+                    String replyUserName = metaData.getString("name");
+                    if (replyUserName.equals(loggedInUser.getName())) {
+                        viewHolder.replyUser.setText(context.getString(R.string.you));
+                    } else {
+                        viewHolder.replyUser.setText(replyUserName);
+                    }
                     if (messageType.equals(CometChatConstants.MESSAGE_TYPE_TEXT)) {
                         viewHolder.replyMessage.setText(message);
                         viewHolder.replyMessage.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);

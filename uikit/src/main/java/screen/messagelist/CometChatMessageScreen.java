@@ -85,6 +85,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -96,7 +97,6 @@ import listeners.OnItemClickListener;
 import listeners.OnMessageLongClick;
 import listeners.StickyHeaderDecoration;
 import screen.CometChatForwardMessageScreenActivity;
-import screen.CometChatGroupDetailScreenActivity;
 import screen.CometChatMessageInfoScreenActivity;
 import screen.CometChatUserDetailScreenActivity;
 import screen.threadconversation.CometChatThreadMessageActivity;
@@ -185,6 +185,8 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
     private String groupOwnerId;
     private int memberCount;
     private String memberNames;
+    private int totalMembers;
+    private int onlineMembers;
     private String groupDesc;
     private String groupPassword;
     private Timer typingTimer = new Timer();
@@ -898,8 +900,13 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
             }
 
             memberNames = stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
-
-            tvStatus.setText(memberNames);
+            totalMembers = users.length;
+            // Random Number between 10%-30% of totalMembers
+            onlineMembers = (int) ((new Random().nextInt((30 - 10) + 1) + 10) / 100.0) * totalMembers;
+            if (onlineMembers == 0) {
+                onlineMembers++;
+            }
+            tvStatus.setText(String.format("%d Members, %d Online", totalMembers, onlineMembers));
         }
 
     }
@@ -1455,8 +1462,12 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
             @Override
             public void onGroupMemberJoined(Action action, User joinedUser, Group joinedGroup) {
                 super.onGroupMemberJoined(action, joinedUser, joinedGroup);
-                if (joinedGroup.getGuid().equals(Id))
-                    tvStatus.setText(memberNames + "," + joinedUser.getName());
+                if (joinedGroup.getGuid().equals(Id)) {
+                    totalMembers++;
+                    onlineMembers++;
+                    memberNames += "," + joinedUser.getName();
+                    tvStatus.setText(String.format("%d Members, %d Online", totalMembers, onlineMembers));
+                }
                 onMessageReceived(action);
             }
 
@@ -1465,8 +1476,16 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
                 super.onGroupMemberLeft(action, leftUser, leftGroup);
                 Log.d(TAG, "onGroupMemberLeft: " + leftUser.getName());
                 if (leftGroup.getGuid().equals(Id)) {
-                    if (memberNames != null)
-                        tvStatus.setText(memberNames.replace("," + leftUser.getName(), ""));
+                    if (totalMembers > 1) {
+                        totalMembers--;
+                    }
+                    if (onlineMembers > 1) {
+                        onlineMembers--;
+                    }
+                    if (memberNames != null) {
+                        memberNames = memberNames.replace("," + leftUser.getName(), "");
+                    }
+                    tvStatus.setText(String.format("%d Members, %d Online", totalMembers, onlineMembers));
                 }
                 onMessageReceived(action);
             }
@@ -1480,8 +1499,18 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
                         getActivity().finish();
 
                 }
-                if (kickedFrom.getGuid().equals(Id))
-                    tvStatus.setText(memberNames.replace("," + kickedUser.getName(), ""));
+                if (kickedFrom.getGuid().equals(Id)) {
+                    if (totalMembers > 1) {
+                        totalMembers--;
+                    }
+                    if (onlineMembers > 1) {
+                        onlineMembers--;
+                    }
+                    if (memberNames != null) {
+                        memberNames = memberNames.replace("," + kickedUser.getName(), "");
+                    }
+                    tvStatus.setText(String.format("%d Members, %d Online", totalMembers, onlineMembers));
+                }
                 onMessageReceived(action);
             }
 
@@ -1509,8 +1538,11 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
 
             @Override
             public void onMemberAddedToGroup(Action action, User addedby, User userAdded, Group addedTo) {
-                if (addedTo.getGuid().equals(Id))
-                    tvStatus.setText(memberNames + "," + userAdded.getName());
+                if (addedTo.getGuid().equals(Id)) {
+                    totalMembers++;
+                    onlineMembers++;
+                    tvStatus.setText(String.format("%d Members, %d Online", totalMembers, onlineMembers));
+                }
                 onMessageReceived(action);
             }
         });
@@ -1729,10 +1761,11 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
                 else
                     tvStatus.setText(typingIndicator.getSender().getName() + " is Typing...");
             } else {
-                if (typingIndicator.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_USER))
+                if (typingIndicator.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_USER)) {
                     tvStatus.setText(status);
-                else
-                    tvStatus.setText(memberNames);
+                } else {
+                    tvStatus.setText(String.format("%d Members, %d Online", totalMembers, onlineMembers));
+                }
             }
 
         }
