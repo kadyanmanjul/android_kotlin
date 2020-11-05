@@ -16,8 +16,8 @@ import com.joshtalks.joshskills.core.custom_ui.decorator.GridSpacingItemDecorati
 import com.joshtalks.joshskills.core.interfaces.CertificationExamListener
 import com.joshtalks.joshskills.databinding.BottomsheetQuestionListBinding
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestion
-import com.joshtalks.joshskills.ui.certification_exam.examview.CERTIFICATION_EXAM_QUESTION
-import com.joshtalks.joshskills.ui.certification_exam.examview.CURRENT_QUESTION
+import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTION
+import com.joshtalks.joshskills.ui.certification_exam.CURRENT_QUESTION
 
 
 class QuestionListBottomSheet : BottomSheetDialogFragment(), Callback {

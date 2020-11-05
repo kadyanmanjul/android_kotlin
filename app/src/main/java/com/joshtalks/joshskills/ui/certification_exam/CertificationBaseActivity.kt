@@ -13,12 +13,15 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.ui.certification_exam.examview.CExamMainActivity
+import com.joshtalks.joshskills.ui.certification_exam.report.CExamReportActivity
 import com.joshtalks.joshskills.ui.certification_exam.view.InstructionFragment
 import kotlinx.android.synthetic.main.activity_certification_base.progress_bar
 import kotlinx.android.synthetic.main.inbox_toolbar.iv_back
 import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
 
 const val CERTIFICATION_EXAM_ID = "certification_exam_ID"
+const val CERTIFICATION_EXAM_QUESTION = "certification_exam_question"
+const val CURRENT_QUESTION = "current_question"
 
 class CertificationBaseActivity : BaseActivity() {
 
@@ -43,6 +46,13 @@ class CertificationBaseActivity : BaseActivity() {
             viewModel.openResumeExam(certificateExamId)
         }
     }
+
+    private var examReportActivityResult: ActivityResultLauncher<Intent> =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+
+        }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,7 +93,15 @@ class CertificationBaseActivity : BaseActivity() {
             }
         })
         viewModel.previousExamsResultLiveData.observe(this, {
-
+            viewModel.certificationQuestionLiveData.value?.let {
+                examReportActivityResult.launch(
+                    CExamReportActivity.getExamResultActivityIntent(
+                        this,
+                        certificateExamId,
+                        it
+                    )
+                )
+            }
         })
     }
 

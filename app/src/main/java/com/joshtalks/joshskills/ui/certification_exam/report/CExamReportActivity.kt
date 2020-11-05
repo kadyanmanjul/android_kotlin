@@ -1,24 +1,28 @@
-package com.joshtalks.joshskills.ui.certification_exam.result
+package com.joshtalks.joshskills.ui.certification_exam.report
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.widget.LinearLayout
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.MarginPageTransformer
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
-import com.joshtalks.joshcamerax.utils.onPageSelected
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.databinding.ActivityCexamReportBinding
+import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
 import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_ID
+import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTION
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
-import com.joshtalks.joshskills.ui.certification_exam.examview.CERTIFICATION_EXAM_QUESTION
-import kotlinx.android.synthetic.main.activity_cexam_result.result_viewpager
-import kotlinx.android.synthetic.main.activity_cexam_result.tab_layout
 
-class CExamResultActivity : BaseActivity() {
+class CExamReportActivity : BaseActivity() {
 
     companion object {
         fun getExamResultActivityIntent(
@@ -26,7 +30,7 @@ class CExamResultActivity : BaseActivity() {
             certificateExamId: Int,
             certificationQuestionModel: CertificationQuestionModel,
         ): Intent {
-            return Intent(context, CExamResultActivity::class.java).apply {
+            return Intent(context, CExamReportActivity::class.java).apply {
                 putExtra(CERTIFICATION_EXAM_ID, certificateExamId)
                 putExtra(CERTIFICATION_EXAM_QUESTION, certificationQuestionModel)
             }
@@ -38,10 +42,19 @@ class CExamResultActivity : BaseActivity() {
     }
     private var certificateExamId: Int = -1
     private var certificationQuestionModel: CertificationQuestionModel? = null
+    private lateinit var binding: ActivityCexamReportBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
+            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_cexam_result)
+        binding =
+            DataBindingUtil.setContentView(this, R.layout.activity_cexam_report)
+        binding.lifecycleOwner = this
+        binding.handler = this
         certificateExamId = intent.getIntExtra(CERTIFICATION_EXAM_ID, -1)
         if (certificateExamId == -1) {
             this.finish()
@@ -49,25 +62,28 @@ class CExamResultActivity : BaseActivity() {
         }
         certificationQuestionModel =
             intent.getParcelableExtra(CERTIFICATION_EXAM_QUESTION) as CertificationQuestionModel?
-
         addObserver()
+        viewModel.getUserAllExamReports(certificateExamId)
     }
 
     private fun addObserver() {
-
+        viewModel.apiStatus.observe(this, {
+            binding.progressBar.visibility = View.GONE
+        })
+        viewModel.examReportLiveData.observe(this, {
+            it?.run {
+                setUpExamViewPager(this)
+            }
+        })
     }
 
-    private fun getPreviousResult() {
-
-    }
-
-    private fun add() {
-        result_viewpager.adapter = CExamResultAdapter(this)
-        TabLayoutMediator(tab_layout, result_viewpager) { tab, position ->
-            /*Do Nothing*/
+    private fun setUpExamViewPager(list: List<CertificateExamReportModel>) {
+        binding.examReportList.adapter = CExamReportAdapter(this, list)
+        TabLayoutMediator(binding.tabLayout, binding.examReportList) { tab, position ->
+            tab.text = "Attempt" + (position + 1)
         }.attach()
 
-        result_viewpager.setPageTransformer(
+        binding.examReportList.setPageTransformer(
             MarginPageTransformer(
                 Utils.dpToPx(
                     applicationContext,
@@ -75,16 +91,13 @@ class CExamResultActivity : BaseActivity() {
                 )
             )
         )
-        val tabStrip: LinearLayout = tab_layout.getChildAt(0) as LinearLayout
+        val tabStrip: LinearLayout = binding.tabLayout.getChildAt(0) as LinearLayout
         for (i in 0 until tabStrip.childCount) {
             tabStrip.getChildAt(i).setOnTouchListener { _, _ -> true }
         }
+        binding.examReportList.registerOnPageChangeCallback(object :
+            ViewPager2.OnPageChangeCallback() {
 
-        result_viewpager.onPageSelected { position ->
-
-        }
-
+        })
     }
-
-
 }

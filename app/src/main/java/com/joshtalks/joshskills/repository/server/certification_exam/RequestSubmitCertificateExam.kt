@@ -9,10 +9,10 @@ data class RequestSubmitCertificateExam(
     @SerializedName("attempt_no")
     var attemptNo: Int = 0,
     @SerializedName("answers")
-    var answers: List<UserSelectedAnswer> = emptyList(),
+    var answers: List<RequestSubmitAnswer> = emptyList(),
 )
 
-data class UserSelectedAnswer(
+data class RequestSubmitAnswer(
     @SerializedName("answer")
     val answerId: Int?,
     @SerializedName("is_answer_correct")

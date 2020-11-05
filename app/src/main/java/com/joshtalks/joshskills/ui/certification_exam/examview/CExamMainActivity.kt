@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.core.interfaces.CertificationExamListener
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationExamView
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestion
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
+import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTION
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
 import com.joshtalks.joshskills.ui.certification_exam.questionlistbottom.QuestionListBottomSheet
 import java.util.concurrent.TimeUnit
@@ -32,8 +33,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-const val CERTIFICATION_EXAM_QUESTION = "certification_exam_question"
-const val CURRENT_QUESTION = "current_question"
 
 class CExamMainActivity : BaseActivity(), CertificationExamListener {
 

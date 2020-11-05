@@ -9,9 +9,10 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.repository.server.certification_exam.Answer
+import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
+import com.joshtalks.joshskills.repository.server.certification_exam.RequestSubmitAnswer
 import com.joshtalks.joshskills.repository.server.certification_exam.RequestSubmitCertificateExam
-import com.joshtalks.joshskills.repository.server.certification_exam.UserSelectedAnswer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -27,6 +28,8 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
     val previousExamsResultLiveData: MutableLiveData<Unit> = MutableLiveData()
     val resumeExamLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
+    val examReportLiveData: MutableLiveData<List<CertificateExamReportModel>> =
+        MutableLiveData()
 
 
     fun startExam() {
@@ -51,7 +54,7 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
                     responseObj.certificateExamId = certificateExamId
                     resumeExamLiveData.postValue(false)
                     _certificationQuestionLiveData.postValue(responseObj)
-                } catch (ex: Exception) {
+                } catch (ex: Throwable) {
                     ex.printStackTrace()
                 }
             }
@@ -95,7 +98,7 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
                 } else {
                     apiStatus.postValue(ApiCallStatus.RETRY)
                 }
-            } catch (ex: Exception) {
+            } catch (ex: Throwable) {
                 apiStatus.postValue(ApiCallStatus.FAILED)
                 ex.printStackTrace()
             }
@@ -107,12 +110,12 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
         certificateExamId: Int,
         obj: CertificationQuestionModel
     ): RequestSubmitCertificateExam {
-        val userSelectedAnswerList: ArrayList<UserSelectedAnswer> =
+        val userSelectedAnswerList: ArrayList<RequestSubmitAnswer> =
             ArrayList(obj.questions.size)
-        var userSelectedAnswer: UserSelectedAnswer
+        var userSelectedAnswer: RequestSubmitAnswer
         obj.questions.forEach {
             if (it.userSelectedOption != null) {
-                userSelectedAnswer = UserSelectedAnswer(
+                userSelectedAnswer = RequestSubmitAnswer(
                     it.userSelectedOption,
                     isUserGiveCorrectAnswer(it.userSelectedOption!!, it.answers),
                     it.questionId
@@ -130,6 +133,20 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
 
     private fun isUserGiveCorrectAnswer(userSelectedOption: Int, answers: List<Answer>): Boolean {
         return answers.find { it.id == userSelectedOption }?.isCorrect ?: false
+    }
+
+    fun getUserAllExamReports(certificateExamId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val resp =
+                    AppObjectController.commonNetworkService.getExamReports(certificateExamId)
+                apiStatus.postValue(ApiCallStatus.SUCCESS)
+                examReportLiveData.postValue(resp)
+            } catch (ex: Throwable) {
+                apiStatus.postValue(ApiCallStatus.FAILED)
+                ex.printStackTrace()
+            }
+        }
     }
 
 }
