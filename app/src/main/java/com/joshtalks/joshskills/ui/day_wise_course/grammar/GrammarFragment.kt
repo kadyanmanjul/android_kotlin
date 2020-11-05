@@ -34,6 +34,7 @@ import com.joshtalks.joshskills.ui.day_wise_course.CapsuleViewModel
 import com.joshtalks.joshskills.ui.day_wise_course.practice.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.joshtalks.joshskills.util.CustomDialog
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -429,7 +430,12 @@ class GrammarFragment : Fragment() {
         if (assessmentQuestions.size - 1 > currentQuizQuestion) {
             updateQuiz(assessmentQuestions.get(++currentQuizQuestion))
         } else {
-            showToast("Congratulations you completed the Grammar part")
+            CustomDialog(
+                requireContext(),
+                "Congratulations",
+                "Congratulations!!! you have completed grammar part."
+            ).show()
+
         }
     }
 
@@ -550,11 +556,11 @@ class GrammarFragment : Fragment() {
 
     private fun openPdf() {
         message?.question?.pdfList?.getOrNull(0)?.let { pdfType ->
-                PdfViewerActivity.startPdfActivity(
-                    requireContext(),
-                    pdfType.id,
-                    message!!.question!!.title!!
-                )
+            PdfViewerActivity.startPdfActivity(
+                requireContext(),
+                pdfType.id,
+                message!!.question!!.title!!
+            )
         }
 
     }
