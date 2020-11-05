@@ -42,7 +42,7 @@ class ProgressActivityAdapter(
         RecyclerView.ViewHolder(binding.root) {
         lateinit var adapter: CourseProgressAdapter
         fun bind(position: Int, item: CourseOverviewResponse) {
-            binding.progressTitleTv.text = "Beginer"
+            binding.progressTitleTv.text = item.title
             adapter = CourseProgressAdapter(context, item.data, onItemClickListener)
             binding.progressRv.adapter = adapter
 

@@ -36,15 +36,35 @@
                 card_view:cardElevation="8dp"
                 card_view:cardUseCompatPadding="false">
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/practice_title_tv"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/title_view"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="start|center"
-                    android:text="@string/today_practise"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                    android:textColor="@color/black"
-                    app:drawableEndCompat="@drawable/ic_add" />
+                    android:layout_height="wrap_content">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/practice_title_tv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="@dimen/_6sdp"
+                        android:gravity="start|center"
+                        android:text="@string/today_practise"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textColor="@color/black"
+                        app:drawableStartCompat="@drawable/ic_check_grey"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/expand_iv"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/expand_iv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_add" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
                     android:id="@+id/practice_content_ll"
@@ -54,6 +74,7 @@
                     android:orientation="vertical"
                     android:paddingTop="@dimen/_8sdp"
                     android:paddingBottom="@dimen/_8sdp"
+                    android:visibility="gone"
                     tools:visibility="visible">
 
                     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
@@ -162,9 +183,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_16sdp"
                         android:gravity="start|center"
+                        android:text="slkdfjweo sdf"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/black"
-                        android:text="slkdfjweo sdf"
                         android:visibility="gone"
                         tools:visibility="visible" />
 

@@ -31,8 +31,6 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
     val appDatabase = AppObjectController.appDatabase
     val chatDao = appDatabase.chatDao()
 
-    var lessonId: Int = 0
-
     val chatObservableLiveData: MutableLiveData<List<ChatModel>> = MutableLiveData()
 
     val assessmentLiveData: MutableLiveData<AssessmentWithRelations> = MutableLiveData()
@@ -41,7 +39,6 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
         MutableLiveData(AssessmentStatus.NOT_STARTED)
 
     fun getQuestions(lessonId: Int) {
-//        syncQuestions(lessonId)
         val chatList: MutableList<ChatModel> = mutableListOf()
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -103,7 +100,7 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
 
     fun syncQuestions(lessonId: Int) {
         //Note: it is required to be called for some backend logic reason.
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             AppObjectController.chatNetworkService.getQuestionsForLesson(
                 Mentor.getInstance().getId(), lessonId
             )
@@ -188,7 +185,7 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun updateQuestionStatus(status: String, questionId: Int, courseId: Int) {
+    fun updateQuestionStatus(status: String, questionId: Int, courseId: Int, lessonId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 AppObjectController.chatNetworkService.updateQuestionStatus(

@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.day_wise_course.practice
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -41,7 +40,6 @@ import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.ArrayList
 import java.util.concurrent.TimeUnit
@@ -138,20 +136,13 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
                     currentChatModel?.question?.interval?.run {
                         WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
                     }
-                    delay(250)
-                    val resultIntent = Intent().apply {
-                        putExtra(
-                            com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT,
-                            currentChatModel
-                        )
-                    }
-                }
 
-                adapter.notifyDataSetChanged()
+                    currentChatModel = null
+                    adapter.notifyDataSetChanged()
+                }
 
             }
 
-            currentChatModel = null
             binding.progressLayout.visibility = View.GONE
         })
     }

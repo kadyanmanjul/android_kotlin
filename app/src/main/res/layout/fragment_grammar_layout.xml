@@ -191,7 +191,9 @@
                     android:layout_height="@dimen/_24sdp"
                     android:layout_alignParentStart="true"
                     android:onClick="@{()->handler.showPreviousQuestion()}"
-                    android:padding="@dimen/_4sdp"
+                    android:paddingStart="@dimen/_4sdp"
+                    android:paddingTop="@dimen/_4sdp"
+                    android:paddingBottom="@dimen/_4sdp"
                     android:rotation="180"
                     app:srcCompat="@drawable/ic_double_arrow" />
 
@@ -201,7 +203,9 @@
                     android:layout_height="@dimen/_24sdp"
                     android:layout_alignParentEnd="true"
                     android:onClick="@{()->handler.showNextQuestion()}"
-                    android:padding="@dimen/_4sdp"
+                    android:paddingStart="@dimen/_4sdp"
+                    android:paddingTop="@dimen/_4sdp"
+                    android:paddingBottom="@dimen/_4sdp"
                     app:srcCompat="@drawable/ic_double_arrow" />
             </RelativeLayout>
 

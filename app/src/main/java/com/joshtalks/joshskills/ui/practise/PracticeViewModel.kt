@@ -104,6 +104,14 @@ class PracticeViewModel(application: Application) :
 
                 val resp = AppObjectController.chatNetworkService.submitPracticeAsync(requestEngage)
                 if (resp.isSuccessful && resp.body() != null) {
+
+                    val engangementList = List(1) { resp.body()!! }
+                    chatModel.question?.practiceEngagement = engangementList
+                    chatModel.question?.status = QUESTION_STATUS.AT
+
+                    AppObjectController.appDatabase.chatDao()
+                        .updateQuestionObject(chatModel.question!!)
+                    requestStatusLiveData.postValue(true)
                     resp.body()?.localPath = localPath
                     getAudioFeedback(chatModel, resp, engageType, false, mutableListOf())
 
@@ -116,7 +124,6 @@ class PracticeViewModel(application: Application) :
                         )
                     }
 
-                    requestStatusLiveData.postValue(true)
                 } else {
                     requestStatusLiveData.postValue(false)
                     if (resp.code() == 400) {
@@ -187,11 +194,11 @@ class PracticeViewModel(application: Application) :
                     //Thread.sleep(1_000)
                     getAudioFeedback(chatModel, response, engageType, true, list)
                     Log.d("Manjul", "else getAudioFeedback() called $resp")
-                    requestStatusLiveData.postValue(true)
+//                    requestStatusLiveData.postValue(true)
 
                 }
             } catch (ex: Exception) {
-                requestStatusLiveData.postValue(false)
+//                requestStatusLiveData.postValue(false)
                 ex.showAppropriateMsg()
             }
         }

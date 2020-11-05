@@ -50,6 +50,23 @@ class LessonViewHolder(
             )
             Utils.setImage(imageView, lessonModel.varthumbnail)
 
+            /*
+            if (message.question?.lessonStatus == LESSON_STATUS.CO) {
+                rootView.setForeground(
+                    ContextCompat.getDrawable(
+                        AppObjectController.joshApplication,
+                        R.color.bg_green_10
+                    )
+                )
+            } else {
+                rootView.setForeground(
+                    ContextCompat.getDrawable(
+                        AppObjectController.joshApplication,
+                        R.color.white
+                    )
+                )
+
+            }*/
             rootView.setOnClickListener {
                 onItemClick?.invoke(lessonModel.id)
             }

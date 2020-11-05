@@ -21,6 +21,8 @@ class ExoAudioPlayer {
     var context: Context? = AppObjectController.joshApplication
     private val playerEventListener: Player.EventListener
 
+    var currentPlayingUrl = EMPTY
+
     init {
         playerEventListener = object : Player.EventListener {
             override fun onSeekProcessed() {
@@ -91,6 +93,7 @@ class ExoAudioPlayer {
     }
 
     fun play(audioUrl: String, id: String = "") {
+        currentPlayingUrl = audioUrl
         val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(
             context,
             Util.getUserAgent(context!!, "joshskills")
@@ -136,6 +139,7 @@ class ExoAudioPlayer {
         player?.playWhenReady = false
         progressTracker?.let { it.handler.removeCallbacks(it) }
         LAST_ID = EMPTY
+        currentPlayingUrl = EMPTY
         if (playerListener != null)
             playerListener = null
     }

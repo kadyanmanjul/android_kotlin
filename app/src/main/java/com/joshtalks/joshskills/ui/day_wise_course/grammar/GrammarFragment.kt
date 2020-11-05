@@ -404,7 +404,8 @@ class GrammarFragment : Fragment() {
                 viewModel.updateQuestionStatus(
                     QUESTION_STATUS.AT.name,
                     quizQuestion?.questionId?.toIntOrNull() ?: 0,
-                    quizQuestion?.course_id ?: 0
+                    quizQuestion?.course_id ?: 0,
+                    quizQuestion?.lesson_id ?: 0
                 )
 
             binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.tag as Int)

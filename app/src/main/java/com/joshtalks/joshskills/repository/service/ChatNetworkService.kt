@@ -132,7 +132,7 @@ interface ChatNetworkService {
     @GET("$DIR/course/course_overview/")
     suspend fun getCourseOverview(
         @Query("mentor_id") mentorId: String,
-        @Query("course_id") courseId: String
+        @Query("course_id") courseId: Int
     ): BaseResponse<List<CourseOverviewResponse>>
 
 

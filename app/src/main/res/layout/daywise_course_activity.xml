@@ -22,39 +22,70 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.tabs.TabLayout
+        <com.joshtalks.joshskills.ui.newonboarding.CustomTabLayout
             android:id="@+id/lesson_tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/_6sdp"
+            android:background="@color/white"
+            android:clipToPadding="true"
+            android:gravity="center"
+            android:minHeight="0dp"
+            android:tabStripEnabled="false"
+            android:textAlignment="center"
+            app:elevation="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            app:tabIndicatorColor="@color/quantum_pink"
-            app:tabMode="auto"
-            app:tabTextColor="@color/white">
+            app:tabBackground="@drawable/course_selection_tab_bg"
+            app:tabGravity="center"
+            app:tabIndicatorHeight="0dp"
+            app:tabMinWidth="@dimen/_30sdp"
+            app:tabMode="scrollable"
+            app:tabPaddingBottom="@dimen/_6sdp"
+            app:tabPaddingEnd="@dimen/_10sdp"
+            app:tabPaddingStart="@dimen/_10sdp"
+            app:tabPaddingTop="@dimen/_6sdp"
+            app:tabSelectedTextColor="@color/white"
+            app:tabTextAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+            app:tabTextColor="@color/dark_grey" />
+        <!--
+         <com.google.android.material.tabs.TabLayout
+             android:id="@+id/lesson_tab_layout"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@color/colorPrimary"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintStart_toStartOf="parent"
+             app:layout_constraintTop_toBottomOf="@+id/toolbar"
+             app:tabIndicatorColor="@color/quantum_pink"
+             app:tabMode="auto"
+             app:tabTextColor="@color/white">
 
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/grammar" />
+             <com.google.android.material.tabs.TabItem
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:background="@color/quantum_pink"
+                 android:backgroundTint="@color/quantum_pink"
+                 android:text="@string/grammar" />
 
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/vocabulary" />
+             <com.google.android.material.tabs.TabItem
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:text="@string/vocabulary" />
 
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/reading" />
+             <com.google.android.material.tabs.TabItem
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:text="@string/reading" />
 
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/speaking" />
-        </com.google.android.material.tabs.TabLayout>
-
+             <com.google.android.material.tabs.TabItem
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:text="@string/speaking" />
+         </com.google.android.material.tabs.TabLayout>
+ -->
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/lesson_viewpager"
             android:layout_width="match_parent"

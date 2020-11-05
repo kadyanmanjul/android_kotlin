@@ -7,7 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.CourseProgressItemBinding
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewItem
 
 class CourseProgressAdapter(
@@ -44,13 +44,17 @@ class CourseProgressAdapter(
                         R.drawable.gold_medal
                     )
                 )
+                binding.progressIv.alpha = 0.5f
+
                 binding.root.setOnClickListener {
                     onItemClickListener.onCertificateExamClick()
                 }
 
             } else {
-                if (itemList[position].status == QUESTION_STATUS.AT.name)
+                if (itemList[position].status == LESSON_STATUS.NO.name)
                     binding.progressIv.alpha = 0.5f
+                else
+                    binding.progressIv.alpha = 1f
 
                 binding.progressIndexTv.text = "${position + 1}"
 

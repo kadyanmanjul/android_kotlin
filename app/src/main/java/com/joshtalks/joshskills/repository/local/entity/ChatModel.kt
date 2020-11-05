@@ -114,10 +114,6 @@ data class ChatModel(
     @Ignore
     var lessons: LessonModel? = null,
 
-    @Ignore
-    var lessonStatus: LESSON_STATUS? = LESSON_STATUS.NO
-
-
 ) : DataBaseClass(), Parcelable {
     @IgnoredOnParcel
     @Ignore
@@ -253,8 +249,12 @@ data class Question(
     @Expose var chatType: CHAT_TYPE = CHAT_TYPE.OTHER,
 
     @ColumnInfo(name = "status")
-    @SerializedName("status")
+    @SerializedName("mentor_que_status")
     @Expose var status: QUESTION_STATUS = QUESTION_STATUS.NA,
+
+    @ColumnInfo(name = "lesson_status")
+    @SerializedName("mentor_lesson_status")
+    var lessonStatus: LESSON_STATUS? = LESSON_STATUS.NO,
 
     @Ignore
     @Expose var vAssessmentCount: Int = -1
@@ -858,7 +858,7 @@ enum class QUESTION_STATUS(val type: String) {
 }
 
 enum class LESSON_STATUS(val type: String) {
-    NO("NO"), AT("AT"), Co("CO")
+    NO("NO"), AT("AT"), CO("CO")
 }
 
 enum class CHAT_TYPE(val type: String) {

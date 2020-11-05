@@ -41,6 +41,7 @@ import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
@@ -88,24 +89,25 @@ class PracticeAdapter(
                 .addBasicParam()
                 .addUserDetails()
                 .addParam("chatId", chatModel.chatId)
+
             setPracticeInfoView(chatModel)
 
-            binding.practiceTitleTv.setOnClickListener {
+            binding.titleView.setOnClickListener {
                 if (binding.practiceContentLl.visibility == View.GONE) {
                     binding.practiceContentLl.visibility = View.VISIBLE
-                    binding.practiceTitleTv.setCompoundDrawablesWithIntrinsicBounds(
-                        null,
-                        null,
-                        ContextCompat.getDrawable(context, R.drawable.ic_remove),
-                        null
+                    binding.expandIv.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            context,
+                            R.drawable.ic_remove
+                        )
                     )
                 } else {
                     binding.practiceContentLl.visibility = View.GONE
-                    binding.practiceTitleTv.setCompoundDrawablesWithIntrinsicBounds(
-                        null,
-                        null,
-                        ContextCompat.getDrawable(context, R.drawable.ic_add),
-                        null
+                    binding.expandIv.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            context,
+                            R.drawable.ic_add
+                        )
                     )
                 }
             }
@@ -120,11 +122,12 @@ class PracticeAdapter(
                     "Already Submitted audio Played"
                 )
                 playSubmitPracticeAudio(chatModel, layoutPosition)
+//                filePath = chatModel.downloadedLocalPath
                 val state =
                     if (chatModel.isPlaying) {
-                        MaterialPlayPauseDrawable.State.Play
-                    } else {
                         MaterialPlayPauseDrawable.State.Pause
+                    } else {
+                        MaterialPlayPauseDrawable.State.Play
                     }
                 binding.submitBtnPlayInfo.state = state
             }
@@ -186,7 +189,6 @@ class PracticeAdapter(
         override fun complete() {
             audioManager?.onPause()
             audioManager?.setProgressUpdateListener(null)
-
             audioManager?.seekTo(0)
             binding.progressBarImageView.progress = 0
             binding.practiseSeekbar.progress = 0
@@ -205,7 +207,7 @@ class PracticeAdapter(
         }
 
         override fun onDurationUpdate(duration: Long?) {
-            currentChatModel?.playProgress = duration?.toInt() ?: 0
+            duration?.toInt()?.let { binding.submitPractiseSeekbar.max = it }
         }
 
         private fun checkIsPlayer(): Boolean {
@@ -217,6 +219,7 @@ class PracticeAdapter(
         }
 
         private fun onPlayAudio(chatModel: ChatModel, audioObject: AudioType, position: Int) {
+
             currentPlayingPosition = position
             if (currentChatModel != null && currentChatModel?.isPlaying == true) {
                 audioManager?.onPause()
@@ -245,29 +248,21 @@ class PracticeAdapter(
                 chatModel.question?.audioList?.getOrNull(0)
                     ?.let {
                         onPlayAudio(chatModel, it, position)
-                        binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
                     }
             } else {
                 if (currentChatModel == chatModel) {
                     if (checkIsPlayer()) {
                         audioManager?.setProgressUpdateListener(this)
                         audioManager?.resumeOrPause()
-                        if (audioManager?.isPlaying() == true) {
-
-                            binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
-                        } else
-                            binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
                     } else {
                         onPlayAudio(
                             chatModel,
                             chatModel.question?.audioList?.getOrNull(0)!!,
                             position
                         )
-                        binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
                     }
                 } else {
                     onPlayAudio(chatModel, chatModel.question?.audioList?.getOrNull(0)!!, position)
-                    binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
                 }
             }
         }
@@ -295,8 +290,9 @@ class PracticeAdapter(
                 if (currentChatModel == null) {
                     onPlayAudio(chatModel, audioType, position)
                 } else {
-                    if (currentChatModel == chatModel) {
+                    if (audioManager?.currentPlayingUrl?.isNotEmpty() == true && audioManager?.currentPlayingUrl == audioType.audio_url) {
                         if (checkIsPlayer()) {
+                            currentPlayingPosition = position
                             audioManager?.setProgressUpdateListener(this)
                             chatModel.isPlaying = chatModel.isPlaying.not()
                             audioManager?.resumeOrPause()
@@ -325,6 +321,21 @@ class PracticeAdapter(
         fun setPracticeInfoView(chatModel: ChatModel) {
             chatModel.question?.run {
                 binding.practiceTitleTv.text = this.practiceWord
+                if (this.status == QUESTION_STATUS.AT) {
+                    binding.practiceTitleTv.setCompoundDrawablesWithIntrinsicBounds(
+                        R.drawable.ic_check,
+                        0,
+                        0,
+                        0
+                    )
+                } else {
+                    binding.practiceTitleTv.setCompoundDrawablesWithIntrinsicBounds(
+                        R.drawable.ic_check_grey,
+                        0,
+                        0,
+                        0
+                    )
+                }
                 when (this.material_type) {
                     BASE_MESSAGE_TYPE.AU -> {
                         binding.audioViewContainer.visibility = View.VISIBLE

@@ -213,7 +213,7 @@ class ConversationViewModel(application: Application) :
                     } else {
                         // it means last chat and current chat belong to same lesson. add current chat to last lesson
 //                        lastChatModelInList.lessons?.add(chat)
-                        lastChatModelInList.lessonStatus = lessonModel.status //chat.question.status
+//                        lastChatModelInList.lessonStatus = lessonModel.status //chat.question.status
 
 //                        chatList.set(chatList.size - 1, lastChatModelInList)
                     }
@@ -231,21 +231,19 @@ class ConversationViewModel(application: Application) :
         chatList: MutableList<ChatModel>,
         chat: ChatModel
     ) {
-        val lessonChat = ChatModel()
-        lessonChat.created = chat.created
+//        val lessonChat = ChatModel()
+        /*lessonChat.created = chat.created
         lessonChat.chatId = chat.chatId
         lessonChat.conversationId = chat.conversationId
         lessonChat.isSync = chat.isSync
         lessonChat.lastUseTime = chat.lastUseTime
-        lessonChat.type = BASE_MESSAGE_TYPE.LESSON
-        lessonChat.lessonStatus = lessonModel.status //chat.question.status
-        lessonChat.lessonId = lessonModel.id
+        lessonChat.lessonId = lessonModel.id*/
+        chat.type = BASE_MESSAGE_TYPE.LESSON
+//        lessonModel.status = lessonChat.question?.lessonStatus
 
-        val list = ArrayList<ChatModel>()
-        list.add(chat)
+        chat.lessons = lessonModel
 
-        lessonChat.lessons = lessonModel
-        chatList.add(lessonChat)
+        chatList.add(chat)
     }
 
     private fun updateAllMessageReadByUser() {
