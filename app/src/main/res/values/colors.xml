@@ -89,5 +89,8 @@
     <color name="right_answer_color">#5525D366</color>
 
     <color name="grey_61">#616161</color>
+    <color name="green_3d">#3DD2B5</color>
+    <color name="red_f6">#F6595A</color>
+    <color name="grey_68">#687C90</color>
 
 </resources>

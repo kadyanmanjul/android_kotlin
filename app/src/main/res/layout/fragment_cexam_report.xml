@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -10,192 +8,16 @@
             type="com.joshtalks.joshskills.ui.certification_exam.report.CExamReportFragment" />
     </data>
 
-    <androidx.core.widget.NestedScrollView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:transitionGroup="true">
+        android:background="#E5E5E5">
 
-        <LinearLayout
+        <com.mindorks.placeholderview.PlaceHolderView
+            android:id="@+id/chatRv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/header_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:text="@string/instructions"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/_20ssp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.05" />
-
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/score_tv"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@drawable/rect_round_16"
-                    android:backgroundTint="#E5F2FF"
-                    android:gravity="center"
-                    android:paddingVertical="@dimen/_24sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                    android:textColor="@color/black"
-                    android:visibility="visible"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/header_tv"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.16"
-                    app:layout_constraintWidth_percent="0.85"
-                    tools:text="your score \n 45/60" />
-
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/result_info"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:text="@string/instructions"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                    android:textColor="@color/black"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/score_tv"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.42"
-                    app:layout_constraintWidth_percent="0.8" />
-
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_award"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_24sdp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.1"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/result_info"
-                    app:srcCompat="@drawable/gold_medal"
-                    tools:src="@drawable/gold_medal"
-                    tools:visibility="visible" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_download_certificate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/_32sdp"
-                    android:layout_marginHorizontal="@dimen/_12sdp"
-                    android:backgroundTint="@color/button_color"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:text="@string/download_certificate_2"
-                    android:textAlignment="center"
-                    android:textAllCaps="false"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/_13ssp"
-                    app:cornerRadius="@dimen/_24sdp"
-                    app:elevation="0dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/iv_award"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/iv_award"
-                    app:layout_constraintTop_toTopOf="@+id/iv_award"
-                    app:rippleColor="@color/white" />
-
-                <androidx.constraintlayout.widget.Group
-                    android:id="@+id/group_certificate_download"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="invisible"
-                    app:constraint_referenced_ids="iv_award,btn_download_certificate"
-                    tools:visibility="visible" />
-
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/check_exam_details"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/_32sdp"
-                    android:layout_marginTop="@dimen/_12sdp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:backgroundTint="@color/colorAccent"
-                    android:textAlignment="center"
-                    android:textAllCaps="false"
-                    android:text="@string/check_exam_details"
-                    android:textColor="@color/white"
-                    android:visibility="invisible"
-                    app:cornerRadius="@dimen/_24sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
-                    app:elevation="0dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/iv_award"
-                    app:rippleColor="@color/white"
-                    tools:visibility="visible" />
-
-
-                <!--  <androidx.constraintlayout.widget.ConstraintLayout
-                      android:id="@+id/overview_view"
-                      android:layout_width="0dp"
-                      android:visibility="gone"
-                      android:layout_height="wrap_content"
-                      android:background="@drawable/rect_round_16"
-                      android:backgroundTint="#E5F2FF"
-                      app:layout_constraintBottom_toBottomOf="parent"
-                      app:layout_constraintEnd_toEndOf="parent"
-                      app:layout_constraintStart_toStartOf="parent">
-
-                      <androidx.appcompat.widget.AppCompatTextView
-                          android:id="@+id/text_view"
-                          android:layout_width="match_parent"
-                          android:layout_height="wrap_content"
-                          android:layout_gravity="start"
-                          android:gravity="start"
-                          tools:text="@string/download_certificate"
-                          android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                          android:textColor="@color/black"
-                          app:layout_constraintEnd_toEndOf="parent"
-                          app:layout_constraintStart_toStartOf="parent"
-                          app:layout_constraintTop_toTopOf="parent" />
-
-                      <androidx.appcompat.widget.AppCompatTextView
-                          android:id="@+id/tv_correct"
-                          android:layout_width="match_parent"
-                          android:layout_height="wrap_content"
-                          android:layout_gravity="start"
-                          android:drawableStart="@drawable/circle_for_q_item"
-                          android:gravity="start"
-                          android:text="@string/instructions"
-                          android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                          android:textColor="#3DD2B5"
-                          app:layout_constraintEnd_toEndOf="parent"
-                          app:layout_constraintStart_toStartOf="parent"
-                          app:layout_constraintTop_toTopOf="parent" />
-
-
-                  </androidx.constraintlayout.widget.ConstraintLayout>-->
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+            android:layout_height="match_parent"
+            android:clipToPadding="true"
+            android:scrollbars="vertical" />
+    </FrameLayout>
 </layout>

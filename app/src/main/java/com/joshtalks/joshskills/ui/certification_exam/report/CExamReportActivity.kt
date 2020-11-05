@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
@@ -21,7 +22,6 @@ import com.joshtalks.joshskills.repository.server.certification_exam.Certificati
 import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_ID
 import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTION
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
-
 class CExamReportActivity : BaseActivity() {
 
     companion object {
@@ -78,7 +78,8 @@ class CExamReportActivity : BaseActivity() {
     }
 
     private fun setUpExamViewPager(list: List<CertificateExamReportModel>) {
-        binding.examReportList.adapter = CExamReportAdapter(this, list)
+        binding.examReportList.adapter =
+            CExamReportAdapter(this, list, certificationQuestionModel?.questions)
         TabLayoutMediator(binding.tabLayout, binding.examReportList) { tab, position ->
             tab.text = "Attempt" + (position + 1)
         }.attach()
@@ -91,13 +92,26 @@ class CExamReportActivity : BaseActivity() {
                 )
             )
         )
+
         val tabStrip: LinearLayout = binding.tabLayout.getChildAt(0) as LinearLayout
         for (i in 0 until tabStrip.childCount) {
             tabStrip.getChildAt(i).setOnTouchListener { _, _ -> true }
         }
         binding.examReportList.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
+        })
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                //    binding.examReportList.currentItem = tab.position
+            }
 
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+            }
         })
     }
+
+
 }

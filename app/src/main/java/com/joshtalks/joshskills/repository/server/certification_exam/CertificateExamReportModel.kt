@@ -7,8 +7,6 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class CertificateExamReportModel(
-    @SerializedName("answers")
-    val answers: List<UserSelectedAnswer>,
     @SerializedName("heading")
     val heading: String,
     @SerializedName("is_exam_pass")
@@ -18,15 +16,30 @@ data class CertificateExamReportModel(
     @SerializedName("score")
     val score: Double,
     @SerializedName("text")
-    val text: String
+    val text: String,
+    @SerializedName("answers")
+    val answers: List<UserSelectedAnswer>? = emptyList(),
+    @SerializedName("certificate_url")
+    val certificateURL: String?,
+    @SerializedName("correct")
+    val correct: Short,
+    @SerializedName("wrong")
+    val wrong: Short,
+    @SerializedName("unanswered")
+    val unanswered: Short,
+    @SerializedName("correct_question_percent")
+    val percent: Float,
+    @SerializedName("total_question")
+    val totalQuestion: Int = 0,
 ) : Parcelable
 
 @Parcelize
 data class UserSelectedAnswer(
-    @SerializedName("answer")
-    val answerId: Int?,
+    @SerializedName("question_id")
+    val question: Int,
+    @SerializedName("answer_id")
+    val answerId: Int,
     @SerializedName("is_answer_correct")
     val isAnswerCorrect: Boolean,
-    @SerializedName("question")
-    val question: Int
+    val isNotAttempt: Boolean? = false
 ) : Parcelable

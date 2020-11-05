@@ -106,7 +106,7 @@ data class CertificationQuestion(
     var userSelectedOption: Int? = null,
     var isAttempted: Boolean = false,
     var isBookmarked: Boolean = false,
-    var isViewed: Boolean = false,
+    var isViewed: Boolean = false
 ) : Parcelable {
     constructor() : this(
         questionId = -1,
@@ -158,6 +158,10 @@ data class UserSubmittedAnswer(
 enum class CertificationExamView {
     EXAM_VIEW, RESULT_VIEW
 
+}
+
+enum class QuestionStatus {
+    CORRECT, WRONG, NOT_ATTEMPTED
 }
 
 private class CertificationQuestionInstanceCreator : InstanceCreator<CertificationQuestionModel> {

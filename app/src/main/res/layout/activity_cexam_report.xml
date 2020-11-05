@@ -72,11 +72,11 @@
                         android:layout_toStartOf="@id/iv_help"
                         android:layout_toEndOf="@id/iv_back"
                         android:gravity="start"
+                        android:text="@string/examination_result"
                         android:padding="@dimen/_4sdp"
                         android:singleLine="true"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
-                        android:textColor="@color/white"
-                        tools:text="Spoken English Course" />
+                        android:textColor="@color/white" />
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/iv_help"
@@ -108,10 +108,12 @@
                 app:tabIndicatorHeight="@dimen/_2sdp"
                 app:tabMinWidth="@dimen/_78sdp"
                 app:tabMode="scrollable"
+                android:clickable="true"
                 app:tabPaddingEnd="@dimen/_8sdp"
                 app:tabPaddingStart="@dimen/_8sdp"
                 app:tabSelectedTextColor="@color/black"
                 app:tabTextAppearance="@style/TabLayoutStyle"
+                android:focusable="true"
                 app:tabTextColor="@color/light_grey" />
         </com.google.android.material.appbar.AppBarLayout>
 
