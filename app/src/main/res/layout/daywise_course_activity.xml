@@ -27,7 +27,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="@dimen/_6sdp"
             android:background="@color/white"
             android:clipToPadding="true"
             android:gravity="center"
@@ -38,18 +37,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            app:tabBackground="@drawable/course_selection_tab_bg"
+            app:tabBackground="@drawable/capsule_selection_tab"
             app:tabGravity="center"
             app:tabIndicatorHeight="0dp"
             app:tabMinWidth="@dimen/_30sdp"
             app:tabMode="scrollable"
-            app:tabPaddingBottom="@dimen/_6sdp"
-            app:tabPaddingEnd="@dimen/_10sdp"
-            app:tabPaddingStart="@dimen/_10sdp"
-            app:tabPaddingTop="@dimen/_6sdp"
-            app:tabSelectedTextColor="@color/white"
+            app:tabSelectedTextColor="@color/black"
             app:tabTextAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-            app:tabTextColor="@color/dark_grey" />
+            app:tabTextColor="@color/black" />
         <!--
          <com.google.android.material.tabs.TabLayout
              android:id="@+id/lesson_tab_layout"

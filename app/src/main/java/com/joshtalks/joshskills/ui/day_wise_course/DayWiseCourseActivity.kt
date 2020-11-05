@@ -119,29 +119,6 @@ class DayWiseCourseActivity : CoreJoshActivity() {
                         }
                     }
                 }).attach()
-            val tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
-
-
-            val layoutParam: LinearLayout.LayoutParams =
-                LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT
-                )
-
-            for (i in 0 until tabs.childCount) {
-                val tab = tabs.getChildAt(i)
-                tab.layoutParams = layoutParam
-                val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
-
-                layoutParams.weight = 0f
-                layoutParams.topMargin = 0
-                layoutParams.marginStart = 0
-                layoutParams.marginEnd = 0
-//                binding.lessonTabLayout.layoutParams = layoutParams
-                tab.layoutParams = layoutParams
-                tab.setBackgroundColor(ContextCompat.getColor(this, R.color.quantum_pink))
-                binding.lessonTabLayout.requestLayout()
-            }
 
         })
 
