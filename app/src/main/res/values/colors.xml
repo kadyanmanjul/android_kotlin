@@ -88,5 +88,6 @@
     <color name="checkbox_color">#ff0000</color>
     <color name="right_answer_color">#5525D366</color>
 
+    <color name="grey_61">#616161</color>
 
 </resources>

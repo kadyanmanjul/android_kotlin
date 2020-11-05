@@ -33,3 +33,11 @@ interface OnDismissWithDialog : OnDismissDialog {
 interface OnDismissWithSuccess : OnDismissDialog {
     fun onSuccessDismiss()
 }
+
+
+interface CertificationExamListener {
+    fun onPauseExit()
+    fun onFinishExam()
+    fun onClose()
+    fun onGoToQuestion(position: Int)
+}

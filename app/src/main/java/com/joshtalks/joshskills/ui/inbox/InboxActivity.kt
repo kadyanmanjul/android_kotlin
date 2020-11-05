@@ -12,7 +12,6 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModelProvider
@@ -104,6 +103,9 @@ import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip
 import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip2
 import kotlinx.android.synthetic.main.find_more_layout.bb_tip_below_find_btn
 import kotlinx.android.synthetic.main.find_more_layout.find_more
+import kotlinx.android.synthetic.main.inbox_toolbar.iv_reminder
+import kotlinx.android.synthetic.main.inbox_toolbar.iv_setting
+import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
 import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.expiry_tool_tip_text
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -407,8 +409,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun setToolbar() {
-        val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
-        titleView.text = getString(R.string.inbox_header)
+        iv_reminder.visibility = View.VISIBLE
+        iv_setting.visibility = View.VISIBLE
+        text_message_title.text = getString(R.string.inbox_header)
         findMoreLayout = findViewById(R.id.parent_layout)
         if (isGuestUser()) {
             if (VersionResponse.getInstance().hasVersion()) {

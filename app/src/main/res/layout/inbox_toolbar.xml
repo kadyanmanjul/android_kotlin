@@ -89,10 +89,11 @@
             android:layout_centerVertical="true"
             android:padding="@dimen/_4sdp"
             android:tint="@color/white"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/iv_setting"
             app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible"
             app:srcCompat="@drawable/ic_bell" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -103,7 +104,8 @@
             android:layout_centerVertical="true"
             android:padding="@dimen/_4sdp"
             android:tint="@color/white"
-            android:visibility="visible"
+            android:visibility="gone"
+            tools:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

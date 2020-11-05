@@ -58,7 +58,6 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
@@ -968,8 +967,8 @@ fun ImageView.setVectorImage(
         .init()
         .with(context)
         .requestBuilder.load(Uri.parse(url))
-        .transition(DrawableTransitionOptions.withCrossFade())
-        .apply(RequestOptions().centerCrop())
+        // .transition(DrawableTransitionOptions.withCrossFade())
+        //    .apply(RequestOptions().centerCrop())
         .listener(object : RequestListener<PictureDrawable> {
             override fun onLoadFailed(
                 e: GlideException?,

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.AppCompatRadioButton xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/radio_button_selector"
+    android:button="@drawable/radio_button_inset"
+    android:checked="false"
+    android:drawablePadding="@dimen/_8sdp"
+    android:enabled="true"
+    android:paddingEnd="@dimen/_8sdp"
+    android:textAlignment="viewStart"
+    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+    android:textColor="@color/rb_text_color_state"
+    app:useMaterialThemeColors="true"
+    tools:text="We all want to improve our englis dwd w d wd wd dw dwh" />

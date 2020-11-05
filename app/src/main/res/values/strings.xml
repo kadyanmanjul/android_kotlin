@@ -489,5 +489,16 @@
     <string name="unlock_next_lesson">Unlock next lesson</string>
     <string name="lesson_completed">Lesson Completed</string>
     <string name="redo_quiz">Redo Quizuiz</string>
+    <string name="instructions">Instructions</string>
+    <string name="start_examination">Start Examination</string>
+    <string name="previous_results">Previous Results</string>
+    <string name="questions">Questions</string>
+    <string name="minutes">Minutes</string>
+    <string name="marks">Marks</string>
+    <string name="ce_header">Certification Examination</string>
+    <string name="explanation">Explanation:</string>
+    <string name="pause_amp_exit"><![CDATA[Pause & exit]]></string>
+    <string name="finish_exam">Finish exam</string>
+    <string name="resume_examination">Resume Examination</string>
 
 </resources>

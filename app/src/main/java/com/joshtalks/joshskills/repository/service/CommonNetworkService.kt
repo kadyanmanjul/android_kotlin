@@ -15,6 +15,8 @@ import com.joshtalks.joshskills.repository.server.RequestCertificateGenerate
 import com.joshtalks.joshskills.repository.server.RequestComplaint
 import com.joshtalks.joshskills.repository.server.SuccessResponse
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
+import com.joshtalks.joshskills.repository.server.certification_exam.RequestSubmitCertificateExam
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmitConversationPractiseRequest
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmittedConversationPractiseModel
@@ -148,6 +150,13 @@ interface CommonNetworkService {
 
     @POST("$DIR/version/onboarding/")
     suspend fun getOnBoardingVersionDetails(@Body params: Map<String, String>): VersionResponse
+
+    @GET("$DIR/certificateexam/{id}/")
+    suspend fun getCertificateExamDetails(@Path("id") id: Int): CertificationQuestionModel
+
+    @POST("$DIR/certificateexam/report")
+    suspend fun submitExam(@Body params: RequestSubmitCertificateExam): Response<Any>
+
 
     @GET("$DIR/group/user_profile/{mentor_id}/")
     suspend fun getUserProfileData(

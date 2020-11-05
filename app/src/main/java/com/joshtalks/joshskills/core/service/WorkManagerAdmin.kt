@@ -41,7 +41,6 @@ object WorkManagerAdmin {
                 )
             )
             .then(OneTimeWorkRequestBuilder<GenerateRestoreIdWorker>().build())
-
             .enqueue()
 
     }

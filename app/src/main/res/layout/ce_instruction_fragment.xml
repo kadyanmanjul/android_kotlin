@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.mindorks.placeholderview.PlaceHolderView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_16sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:itemCount="2"
+            tools:listitem="@layout/instruction_top_view_holder"
+            tools:orientation="horizontal" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/header_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:gravity="center"
+            android:text="@string/instructions"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recycler_view" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="@dimen/_28sdp"
+            android:layout_height="@dimen/_3sdp"
+            android:background="#FED428"
+            app:layout_constraintEnd_toEndOf="@id/header_tv"
+            app:layout_constraintStart_toStartOf="@id/header_tv"
+            app:layout_constraintTop_toBottomOf="@id/header_tv" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/instruction_tv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginVertical="@dimen/_16sdp"
+            android:gravity="top|center_vertical"
+            android:lineSpacingExtra="@dimen/_1sdp"
+            android:lineSpacingMultiplier="0.9"
+            android:scrollbars="vertical"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+            android:textColor="@color/grey_61"
+            app:layout_constraintBottom_toTopOf="@id/btn_start_exam"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider"
+            app:layout_constraintWidth_percent="0.85" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_start_exam"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_12sdp"
+            android:backgroundTint="@color/button_color"
+            android:clickable="true"
+            android:focusable="true"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:maxLines="1"
+            android:onClick="@{()->handler.startExam()}"
+            android:paddingVertical="@dimen/_10sdp"
+            android:text="@string/start_examination"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+            android:textColor="@color/white"
+            app:cornerRadius="@dimen/_28sdp"
+            app:elevation="0dp"
+            app:layout_constraintBottom_toTopOf="@id/btn_previous_result"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.85"
+            app:rippleColor="@color/white" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_previous_result"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_16sdp"
+            android:gravity="center"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:onClick="@{()->handler.previousResult()}"
+            android:paddingVertical="@dimen/_10sdp"
+            android:text="@string/previous_results"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+            android:textColor="@color/colorAccent"
+            android:visibility="gone"
+            app:cornerRadius="@dimen/_28sdp"
+            app:icon="@drawable/ic_baseline_arrow_right"
+            app:iconGravity="textStart"
+            app:iconPadding="@dimen/_4sdp"
+            app:iconTint="@color/red"
+            app:iconTintMode="multiply"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.85"
+            app:rippleColor="@color/white"
+            app:strokeColor="@color/colorAccent"
+            tools:visibility="visible" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

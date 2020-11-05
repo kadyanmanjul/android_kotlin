@@ -583,7 +583,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
             .observe(this, observer)
     }
 
-    private fun reCreateActivity() {
+    protected fun reCreateActivity() {
         finish()
         overridePendingTransition(0, 0)
         startActivity(intent)
