@@ -2,21 +2,22 @@ package com.joshtalks.joshskills.ui.day_wise_course
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
+import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
+
 
 class DayWiseCourseActivity : CoreJoshActivity() {
 
@@ -120,7 +121,56 @@ class DayWiseCourseActivity : CoreJoshActivity() {
                     }
                 }).attach()
 
+            binding.lessonTabLayout.addOnTabSelectedListener(object :
+                TabLayout.OnTabSelectedListener {
+
+                override fun onTabSelected(tab: TabLayout.Tab?) {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                        setColor(tab)
+                    }
+                }
+
+                override fun onTabReselected(tab: TabLayout.Tab?) {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                        setColor(tab)
+                    }
+                }
+
+                override fun onTabUnselected(tab: TabLayout.Tab?) {
+                    setUnselectedColor(tab)
+                }
+            })
+
         })
 
+    }
+
+    private fun setUnselectedColor(tab: TabLayout.Tab?) {
+        tab?.let {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                tab.view.setBackgroundColor(AppObjectController.joshApplication.getColor(R.color.grey_7A))
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun setColor(tab: TabLayout.Tab?) {
+        tab?.let {
+            when (tab.position) {
+                0 -> {
+                    tab.view.setBackgroundColor(AppObjectController.joshApplication.getColor(R.color.quantum_pink))
+                }
+                1 -> {
+                    tab.view.setBackgroundColor(AppObjectController.joshApplication.getColor(R.color.colorPrimary))
+                }
+                2 -> {
+                    tab.view.setBackgroundColor(AppObjectController.joshApplication.getColor(R.color.green))
+                }
+                3 -> {
+                    tab.view.setBackgroundColor(AppObjectController.joshApplication.getColor(R.color.yellow))
+
+                }
+            }
+        }
     }
 }
