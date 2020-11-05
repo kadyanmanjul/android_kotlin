@@ -60,6 +60,9 @@ class PracticeAdapter(
     RecyclerView.Adapter<PracticeAdapter.PracticeViewHolder>() {
 
     var audioManager = ExoAudioPlayer.getInstance()
+    var currentChatModel: ChatModel? = null
+    private var currentPlayingPosition: Int = 0
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PracticeViewHolder {
         val binding = PracticeItemLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
 
@@ -77,12 +80,10 @@ class PracticeAdapter(
     inner class PracticeViewHolder(val binding: PracticeItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root), AudioPlayerEventListener,
         ExoAudioPlayer.ProgressUpdateListener {
-        private var currentPlayingPosition: Int = 0
         private var startTime: Long = 0L
         var filePath: String? = null
         var appAnalytics: AppAnalytics? = null
 
-        var currentChatModel: ChatModel? = null
         fun bind(chatModel: ChatModel) {
 
             appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTICE_SCREEN.NAME)
@@ -125,12 +126,37 @@ class PracticeAdapter(
 //                filePath = chatModel.downloadedLocalPath
                 val state =
                     if (chatModel.isPlaying) {
+                        currentChatModel?.isPlaying = true
                         MaterialPlayPauseDrawable.State.Pause
                     } else {
+                        currentChatModel?.isPlaying = false
                         MaterialPlayPauseDrawable.State.Play
                     }
                 binding.submitBtnPlayInfo.state = state
             }
+
+            binding.submitPractiseSeekbar.setOnSeekBarChangeListener(
+                object : SeekBar.OnSeekBarChangeListener {
+                    var userSelectedPosition = 0
+                    override fun onStartTrackingTouch(seekBar: SeekBar) {
+                    }
+
+                    override fun onProgressChanged(
+                        seekBar: SeekBar,
+                        progress: Int,
+                        fromUser: Boolean
+                    ) {
+                        if (fromUser) {
+                            userSelectedPosition = progress
+                        }
+                    }
+
+                    override fun onStopTrackingTouch(seekBar: SeekBar) {
+                        if (currentPlayingPosition == layoutPosition)
+                            audioManager?.seekTo(userSelectedPosition.toLong())
+                    }
+                })
+
 
             binding.ivCancel.setOnClickListener {
                 chatModel.filePath = null
@@ -194,6 +220,7 @@ class PracticeAdapter(
             binding.practiseSeekbar.progress = 0
             binding.submitPractiseSeekbar.progress = 0
             binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+            currentChatModel?.isPlaying = false
         }
 
         override fun onProgressUpdate(progress: Long) {
@@ -221,17 +248,14 @@ class PracticeAdapter(
         private fun onPlayAudio(chatModel: ChatModel, audioObject: AudioType, position: Int) {
 
             currentPlayingPosition = position
-            if (currentChatModel != null && currentChatModel?.isPlaying == true) {
-                audioManager?.onPause()
-            } else {
-                currentChatModel = chatModel
-                val audioList = java.util.ArrayList<AudioType>()
-                audioList.add(audioObject)
-                audioManager = ExoAudioPlayer.getInstance()
-                audioManager?.playerListener = this
-                audioManager?.play(audioObject.audio_url)
-                audioManager?.setProgressUpdateListener(this)
-            }
+
+            currentChatModel = chatModel
+            val audioList = java.util.ArrayList<AudioType>()
+            audioList.add(audioObject)
+            audioManager = ExoAudioPlayer.getInstance()
+            audioManager?.playerListener = this
+            audioManager?.play(audioObject.audio_url)
+            audioManager?.setProgressUpdateListener(this)
 
             chatModel.isPlaying = chatModel.isPlaying.not()
         }

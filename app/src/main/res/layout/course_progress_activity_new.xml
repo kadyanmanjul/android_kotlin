@@ -23,6 +23,97 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/pdf_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_8sdp"
+            android:layout_marginVertical="@dimen/_16sdp"
+            app:layout_constraintBottom_toTopOf="@+id/progress_title_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/include">
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/pdf_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:padding="@dimen/_6sdp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_pdf" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/pdf_name_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:text="Pdf name will be shown here"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/pdf_icon"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/download_iv"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:background="@drawable/download_rounded_bg"
+                android:backgroundTint="@color/text_light_ac"
+                android:padding="@dimen/_6sdp"
+                app:layout_constraintStart_toEndOf="@+id/pdf_icon"
+                app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv"
+                app:srcCompat="@drawable/ic_download"
+                app:tint="@color/white" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/page_count_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:text="238 pages"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textColor="@color/text_light_ac"
+                app:layout_constraintStart_toEndOf="@+id/download_iv"
+                app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/size_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:drawableStart="@drawable/ct_unselected_dot"
+                android:drawablePadding="@dimen/_8sdp"
+                android:text="24Kb"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textColor="@color/text_light_ac"
+                app:layout_constraintStart_toEndOf="@+id/page_count_tv"
+                app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:drawableStart="@drawable/ct_unselected_dot"
+                android:drawablePadding="@dimen/_8sdp"
+                android:text="PDF"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textColor="@color/text_light_ac"
+                app:layout_constraintStart_toEndOf="@+id/size_tv"
+                app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/progress_title_tv"
             android:layout_width="wrap_content"
@@ -31,8 +122,9 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/_16sdp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/include" />
+            app:layout_constraintTop_toBottomOf="@+id/pdf_view" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/progress_rv"
@@ -40,9 +132,9 @@
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/_8sdp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/progress_title_tv"
             tools:listitem="@layout/progress_activity_adapter_layout" />
 

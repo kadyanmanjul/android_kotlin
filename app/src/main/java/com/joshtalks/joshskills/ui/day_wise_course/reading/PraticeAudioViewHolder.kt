@@ -63,10 +63,10 @@ class PraticeAudioViewHolder(
     fun onResolved() {
 
         if (practiceEngagement != null) {
-            date.text=practiceEngagement!!.practiceDate
-            time.text= practiceEngagement!!.id.toString()
+            date.text = practiceEngagement!!.practiceDate
+            time.text = practiceEngagement!!.id.toString()
             practiceEngagement?.answerUrl?.let {
-                filePath=it
+                filePath = it
             }
 
             if (PermissionUtils.isStoragePermissionEnabled(context!!) && AppDirectory.isFileExist(
@@ -74,14 +74,14 @@ class PraticeAudioViewHolder(
                 )
             ) {
                 filePath = practiceEngagement?.localPath
-                seekBar?.max =
+                seekBar.max =
                     Utils.getDurationOfMedia(context!!, filePath!!)
                         ?.toInt() ?: 0
             } else {
                 if (practiceEngagement?.duration != null) {
-                    seekBar?.max = practiceEngagement!!.duration!!
+                    seekBar.max = practiceEngagement!!.duration!!
                 } else {
-                    seekBar?.max = 1_00_000
+                    seekBar.max = 1_00_000
                 }
             }
             ivCancel.visibility = android.view.View.GONE
@@ -93,7 +93,7 @@ class PraticeAudioViewHolder(
     }
 
     fun initializePractiseSeekBar() {
-        seekBar?.setOnSeekBarChangeListener(
+        seekBar.setOnSeekBarChangeListener(
             object : SeekBar.OnSeekBarChangeListener {
                 var userSelectedPosition = 0
                 override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -108,13 +108,14 @@ class PraticeAudioViewHolder(
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
                     mUserIsSeeking = false
-                    audioManager?.seekTo(userSelectedPosition.toLong())
+                    if (audioManager?.currentPlayingUrl == filePath)
+                        audioManager?.seekTo(userSelectedPosition.toLong())
                 }
             })
     }
 
     fun setSeekToZero() {
-        seekBar?.max =
+        seekBar.max =
             Utils.getDurationOfMedia(context!!, filePath!!)?.toInt() ?: 0
     }
 
@@ -137,35 +138,40 @@ class PraticeAudioViewHolder(
     @Click(R.id.btn_play_info)
     fun playSubmitPracticeAudio() {
         try {
-                val audioType = AudioType()
-                audioType.audio_url = filePath!!
-                audioType.downloadedLocalPath = filePath!!
-                audioType.duration =
-                    Utils.getDurationOfMedia(context!!, filePath!!)?.toInt() ?: 0
-                audioType.id = Random.nextInt().toString()
+            val audioType = AudioType()
+            audioType.audio_url = filePath!!
+            audioType.downloadedLocalPath = filePath!!
+            audioType.duration =
+                Utils.getDurationOfMedia(context!!, filePath!!)?.toInt() ?: 0
+            audioType.id = Random.nextInt().toString()
 
-                val state =
-                    if (playPauseBtn.state == MaterialPlayPauseDrawable.State.Pause && audioManager!!.isPlaying()) {
-                        audioManager?.setProgressUpdateListener(this)
-                        MaterialPlayPauseDrawable.State.Play
-                    } else {
-                        MaterialPlayPauseDrawable.State.Pause
-                    }
-                playPauseBtn.state = state
-
-                if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
-                    StyleableToast.Builder(AppObjectController.joshApplication)
-                        .gravity(Gravity.BOTTOM)
-                        .text(context!!.getString(R.string.volume_up_message)).cornerRadius(16)
-                        .length(Toast.LENGTH_LONG)
-                        .solidBackground().show()
+            val state =
+                if (playPauseBtn.state == MaterialPlayPauseDrawable.State.Pause && audioManager!!.isPlaying()) {
+                    audioManager?.setProgressUpdateListener(this)
+                    MaterialPlayPauseDrawable.State.Play
+                } else {
+                    MaterialPlayPauseDrawable.State.Pause
                 }
+            playPauseBtn.state = state
+
+            if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
+                StyleableToast.Builder(AppObjectController.joshApplication)
+                    .gravity(Gravity.BOTTOM)
+                    .text(context!!.getString(R.string.volume_up_message)).cornerRadius(16)
+                    .length(Toast.LENGTH_LONG)
+                    .solidBackground().show()
+            }
+            if (audioManager?.currentPlayingUrl?.isNotEmpty() == true && audioManager?.currentPlayingUrl == audioType.audio_url) {
+
                 if (checkIsPlayer()) {
                     audioManager?.setProgressUpdateListener(this)
                     audioManager?.resumeOrPause()
                 } else {
                     onPlayAudio(audioType)
                 }
+            } else {
+                onPlayAudio(audioType)
+            }
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -173,7 +179,7 @@ class PraticeAudioViewHolder(
 
     @Click(R.id.iv_cancel)
     fun removeAudioPractise() {
-        RxBus2.publish(RemovePracticeAudioEventBus(practiceEngagement?.id,this))
+        RxBus2.publish(RemovePracticeAudioEventBus(practiceEngagement?.id, this))
         /*filePath = null
         //currentAudio = null
         //binding.practiseSubmitLayout.visibility = android.view.View.GONE
@@ -189,7 +195,7 @@ class PraticeAudioViewHolder(
         //disableSubmitButton()
     }
 
-    public fun isSeekBaarInitialized(): Boolean {
+    fun isSeekBaarInitialized(): Boolean {
         return ::seekBar.isInitialized
     }
 
@@ -202,13 +208,13 @@ class PraticeAudioViewHolder(
     }
 
     override fun onPlayerPause() {
-        if(audioManager?.isPlaying()!!)
-        playPauseBtn.state = MaterialPlayPauseDrawable.State.Play
+        if (audioManager?.isPlaying()!!)
+            playPauseBtn.state = MaterialPlayPauseDrawable.State.Play
     }
 
     override fun onPlayerResume() {
-        if(audioManager?.isPlaying()!!)
-        playPauseBtn.state = MaterialPlayPauseDrawable.State.Pause
+        if (audioManager?.isPlaying()!!)
+            playPauseBtn.state = MaterialPlayPauseDrawable.State.Pause
     }
 
     override fun onCurrentTimeUpdated(lastPosition: Long) {
@@ -237,17 +243,17 @@ class PraticeAudioViewHolder(
 
     override fun complete() {
         playPauseBtn.state = MaterialPlayPauseDrawable.State.Play
-        seekBar?.progress = 0
+        seekBar.progress = 0
         audioManager?.seekTo(0)
         audioManager?.onPause()
         audioManager?.setProgressUpdateListener(null)
     }
 
     override fun onProgressUpdate(progress: Long) {
-        seekBar?.progress = progress.toInt()
+        seekBar.progress = progress.toInt()
     }
 
     override fun onDurationUpdate(duration: Long?) {
-        duration?.toInt()?.let { seekBar?.max = it }
+        duration?.toInt()?.let { seekBar.max = it }
     }
 }

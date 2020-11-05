@@ -550,14 +550,11 @@ class GrammarFragment : Fragment() {
 
     private fun openPdf() {
         message?.question?.pdfList?.getOrNull(0)?.let { pdfType ->
-            binding.additionalMaterialTv.setOnClickListener {
                 PdfViewerActivity.startPdfActivity(
                     requireContext(),
                     pdfType.id,
-                    EMPTY
+                    message!!.question!!.title!!
                 )
-
-            }
         }
 
     }

@@ -10,10 +10,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.databinding.CourseProgressActivityNewBinding
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewItem
 import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 
 class CourseProgressActivityNew : AppCompatActivity(),
     CourseProgressAdapter.ProgressItemClickListener {
@@ -55,6 +60,14 @@ class CourseProgressActivityNew : AppCompatActivity(),
             binding.progressRv.adapter = adapter
 
         })
+
+        setupUi()
+    }
+
+    private fun setupUi() {
+        binding.downloadIv.setOnClickListener {
+
+        }
     }
 
     private fun setupToolbar() {
@@ -82,4 +95,114 @@ class CourseProgressActivityNew : AppCompatActivity(),
             }
             .show()
     }
+
+
+    fun askStoragePermission() {
+
+        PermissionUtils.storageReadAndWritePermission(
+            this,
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.permissionPermanentlyDeniedDialog(
+                                this@CourseProgressActivityNew,
+                                R.string.record_permission_message
+                            )
+                            return
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            })
+    }
+
+    /*
+    fun onClickPdfContainer() {
+        if (PermissionUtils.isStoragePermissionEnabled(this)) {
+            PermissionUtils.storageReadAndWritePermission(
+                this,
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (flag) {
+                                openPdf()
+                                return
+
+                            }
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.permissionPermanentlyDeniedDialog(
+                                    this@CourseProgressActivityNew
+                                )
+                                return
+                            }
+                        }
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
+                })
+            return
+        }
+        openPdf()
+    }
+
+    private fun openPdf() {
+        message?.question?.pdfList?.getOrNull(0)?.let { pdfType ->
+            binding.additionalMaterialTv.setOnClickListener {
+                PdfViewerActivity.startPdfActivity(
+                    this,
+                    pdfType.id,
+                    message!!.question!!.title!!
+                )
+
+            }
+        }
+
+    }
+
+    fun downloadCancel() {
+        fileNotDownloadView()
+        message?.downloadStatus = DOWNLOAD_STATUS.NOT_START
+
+    }
+
+    fun downloadStart() {
+        if (message?.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
+            return
+        }
+        download(message?.url)
+    }
+
+    private fun download(url: String?) {
+
+        if (PermissionUtils.isStoragePermissionEnabled(this).not()) {
+            askStoragePermission()
+            return
+        }
+        message?.question?.pdfList?.let {
+            if (it.size > 0) {
+                DownloadUtils.downloadFile(
+                    it.get(0).url,
+                    AppDirectory.docsReceivedFile(it.get(0).url).absolutePath,
+                    message!!.chatId,
+                    message!!,
+                    downloadListener
+                )
+            } else if (BuildConfig.DEBUG) {
+                showToast("Pdf size is 0")
+            }
+        }
+    }*/
+
 }
