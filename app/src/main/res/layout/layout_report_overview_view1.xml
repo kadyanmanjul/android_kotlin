@@ -9,35 +9,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="@dimen/_20sdp"
         android:gravity="center"
         android:text="@string/instructions"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
         android:textColor="@color/black"
-        android:textSize="@dimen/_20ssp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/score_tv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="@dimen/_20sdp"
         android:background="@drawable/rect_round_16"
         android:backgroundTint="#E5F2FF"
         android:gravity="center"
-        android:paddingVertical="@dimen/_24sdp"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+        android:lineSpacingMultiplier="1.3"
+        android:paddingVertical="@dimen/_18sdp"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
         android:textColor="@color/black"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_tv"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.16"
         app:layout_constraintWidth_percent="0.85"
         tools:text="your score \n 45/60" />
 
@@ -46,16 +43,15 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="@dimen/_20sdp"
         android:gravity="center"
-        android:text="@string/instructions"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
         android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:lineSpacingExtra="@dimen/_2sdp"
         app:layout_constraintTop_toBottomOf="@+id/score_tv"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.42"
+        tools:text="@string/otp_wait_message"
         app:layout_constraintWidth_percent="0.8" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -126,48 +122,5 @@
         app:layout_constraintTop_toBottomOf="@+id/iv_award"
         app:rippleColor="@color/white"
         tools:visibility="visible" />
-
-
-    <!--  <androidx.constraintlayout.widget.ConstraintLayout
-          android:id="@+id/overview_view"
-          android:layout_width="0dp"
-          android:visibility="gone"
-          android:layout_height="wrap_content"
-          android:background="@drawable/rect_round_16"
-          android:backgroundTint="#E5F2FF"
-          app:layout_constraintBottom_toBottomOf="parent"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintStart_toStartOf="parent">
-
-          <androidx.appcompat.widget.AppCompatTextView
-              android:id="@+id/text_view"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_gravity="start"
-              android:gravity="start"
-              tools:text="@string/download_certificate"
-              android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-              android:textColor="@color/black"
-              app:layout_constraintEnd_toEndOf="parent"
-              app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintTop_toTopOf="parent" />
-
-          <androidx.appcompat.widget.AppCompatTextView
-              android:id="@+id/tv_correct"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_gravity="start"
-              android:drawableStart="@drawable/circle_for_q_item"
-              android:gravity="start"
-              android:text="@string/instructions"
-              android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-              android:textColor="#3DD2B5"
-              app:layout_constraintEnd_toEndOf="parent"
-              app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintTop_toTopOf="parent" />
-
-
-      </androidx.constraintlayout.widget.ConstraintLayout>-->
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

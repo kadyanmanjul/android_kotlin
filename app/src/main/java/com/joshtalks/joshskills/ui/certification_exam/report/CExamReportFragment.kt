@@ -104,7 +104,7 @@ class CExamReportFragment : Fragment() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun updateRvScrolling(flag: Boolean) {
-        binding.chatRv.setOnTouchListener({ v, event -> flag })
+        binding.chatRv.setOnTouchListener { _, _ -> flag }
     }
 
 
