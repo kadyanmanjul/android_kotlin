@@ -14,10 +14,6 @@ public class BaseResponse<T> {
     @Expose
     private Boolean success;
 
-    @SerializedName("course_pdf")
-    @Expose
-    private String coursePdf;
-
     public String getMessage() {
         return message;
     }
@@ -40,13 +36,5 @@ public class BaseResponse<T> {
 
     public void setSuccess(Boolean success) {
         this.success = success;
-    }
-
-    public String getCoursePdf() {
-        return coursePdf;
-    }
-
-    public void setCoursePdf(String coursePdf) {
-        this.coursePdf = coursePdf;
     }
 }

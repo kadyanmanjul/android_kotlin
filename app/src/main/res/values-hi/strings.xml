@@ -412,4 +412,6 @@
     <string name="explanation">व्याख्या</string>
     <string name="lessons">पाठ</string>
     <string name="exam">परीक्षा</string>
+    <string name="congratulations">बधाई हो</string>
+    <string name="grammer_completions_message">बहुत बढ़िया !!! आपने व्याकरण भाग पूरा कर लिया है</string>
 </resources>

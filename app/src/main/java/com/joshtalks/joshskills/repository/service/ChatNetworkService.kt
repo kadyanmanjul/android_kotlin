@@ -14,7 +14,7 @@ import com.joshtalks.joshskills.repository.server.ResponseChatMessage
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
-import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewResponse
+import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewBaseResponse
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
@@ -133,7 +133,7 @@ interface ChatNetworkService {
     suspend fun getCourseOverview(
         @Query("mentor_id") mentorId: String,
         @Query("course_id") courseId: Int
-    ): BaseResponse<List<CourseOverviewResponse>>
+    ): CourseOverviewBaseResponse
 
 
 }

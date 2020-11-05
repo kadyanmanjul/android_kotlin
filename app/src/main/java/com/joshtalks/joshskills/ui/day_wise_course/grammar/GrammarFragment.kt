@@ -432,8 +432,8 @@ class GrammarFragment : Fragment() {
         } else {
             CustomDialog(
                 requireContext(),
-                "Congratulations",
-                "Congratulations!!! you have completed grammar part."
+                getString(R.string.congratulations),
+                getString(R.string.grammer_completions_message)
             ).show()
 
         }

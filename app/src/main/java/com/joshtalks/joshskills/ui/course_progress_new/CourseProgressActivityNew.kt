@@ -8,16 +8,24 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.databinding.CourseProgressActivityNewBinding
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewItem
+import com.joshtalks.joshskills.repository.server.course_overview.PdfInfo
 import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
+import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.util.CustomDialog
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.tonyodev.fetch2.Download
+import com.tonyodev.fetch2.Error
+import com.tonyodev.fetch2.FetchListener
+import com.tonyodev.fetch2core.DownloadBlock
 
 class CourseProgressActivityNew : AppCompatActivity(),
     CourseProgressAdapter.ProgressItemClickListener {
@@ -25,7 +33,87 @@ class CourseProgressActivityNew : AppCompatActivity(),
     lateinit var binding: CourseProgressActivityNewBinding
     lateinit var adapter: ProgressActivityAdapter
     var courseId: Int = 0
+    var pdfInfo: PdfInfo? = null
 //    var courseOverviewResponse: CourseOverviewResponse? = null
+
+
+    private var downloadListener = object : FetchListener {
+        override fun onAdded(download: Download) {
+
+        }
+
+        override fun onCancelled(download: Download) {
+            DownloadUtils.removeCallbackListener(download.tag)
+//            message?.downloadStatus = DOWNLOAD_STATUS.FAILED
+            fileNotDownloadView()
+
+        }
+
+        override fun onCompleted(download: Download) {
+            DownloadUtils.removeCallbackListener(download.tag)
+//            message?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
+            fileDownloadSuccess()
+        }
+
+        override fun onDeleted(download: Download) {
+
+        }
+
+        override fun onDownloadBlockUpdated(
+            download: Download,
+            downloadBlock: DownloadBlock,
+            totalBlocks: Int
+        ) {
+
+        }
+
+        override fun onError(download: Download, error: Error, throwable: Throwable?) {
+            DownloadUtils.removeCallbackListener(download.tag)
+//            message?.downloadStatus = DOWNLOAD_STATUS.FAILED
+            fileNotDownloadView()
+
+        }
+
+        override fun onPaused(download: Download) {
+
+        }
+
+        override fun onProgress(
+            download: Download,
+            etaInMilliSeconds: Long,
+            downloadedBytesPerSecond: Long
+        ) {
+
+        }
+
+        override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
+
+        }
+
+        override fun onRemoved(download: Download) {
+
+        }
+
+        override fun onResumed(download: Download) {
+
+        }
+
+        override fun onStarted(
+            download: Download,
+            downloadBlocks: List<DownloadBlock>,
+            totalBlocks: Int
+        ) {
+//            message?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
+            fileDownloadingInProgressView()
+
+        }
+
+        override fun onWaitingNetwork(download: Download) {
+
+        }
+
+    }
+
 
     private val viewModel: CourseOverviewViewModel by lazy {
         ViewModelProvider(this).get(CourseOverviewViewModel::class.java)
@@ -56,8 +144,12 @@ class CourseProgressActivityNew : AppCompatActivity(),
 
         viewModel.getCourseOverview(courseId)
         viewModel.progressLiveData.observe(this, {
-//            courseOverviewResponse = it
-            adapter = ProgressActivityAdapter(this, it, this)
+            binding.pdfNameTv.text = it.pdfInfo.coursePdfName
+            binding.sizeTv.text = it.pdfInfo.coursePdfSize
+            binding.pageCountTv.text = it.pdfInfo.coursePdfPageCount
+            pdfInfo = it.pdfInfo
+
+            adapter = ProgressActivityAdapter(this, it.responseData!!, this)
             binding.progressRv.adapter = adapter
 
         })
@@ -66,8 +158,8 @@ class CourseProgressActivityNew : AppCompatActivity(),
     }
 
     private fun setupUi() {
-        binding.downloadIv.setOnClickListener {
-
+        binding.downloadContainer.setOnClickListener {
+            onClickPdfContainer()
         }
     }
 
@@ -122,82 +214,92 @@ class CourseProgressActivityNew : AppCompatActivity(),
             })
     }
 
-    /* fun onClickPdfContainer() {
-         if (PermissionUtils.isStoragePermissionEnabled(this)) {
-             PermissionUtils.storageReadAndWritePermission(
-                 this,
-                 object : MultiplePermissionsListener {
-                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                         report?.areAllPermissionsGranted()?.let { flag ->
-                             if (flag) {
-                                 openPdf()
-                                 return
+    fun onClickPdfContainer() {
+        if (PermissionUtils.isStoragePermissionEnabled(this)) {
+            PermissionUtils.storageReadAndWritePermission(
+                this,
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (flag) {
+                                openPdf()
+                                return
 
-                             }
-                             if (report.isAnyPermissionPermanentlyDenied) {
-                                 PermissionUtils.permissionPermanentlyDeniedDialog(
-                                     this@CourseProgressActivityNew
-                                 )
-                                 return
-                             }
-                         }
-                     }
+                            }
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.permissionPermanentlyDeniedDialog(
+                                    this@CourseProgressActivityNew
+                                )
+                                return
+                            }
+                        }
+                    }
 
-                     override fun onPermissionRationaleShouldBeShown(
-                         permissions: MutableList<PermissionRequest>?,
-                         token: PermissionToken?
-                     ) {
-                         token?.continuePermissionRequest()
-                     }
-                 })
-             return
-         }
-         openPdf()
-     }
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
+                })
+            return
+        }
+        openPdf()
+    }
 
-     private fun openPdf() {
-         message?.question?.pdfList?.getOrNull(0)?.let { pdfType ->
-             PdfViewerActivity.startPdfActivity(
-                 this,
-                 pdfType.id,
-                 EMPTY
-             )
-         }
+    private fun openPdf() {
+        PdfViewerActivity.startPdfActivity(
+            this,
+            "$courseId",
+            EMPTY
+        )
+    }
 
-     }
+    private fun fileDownloadSuccess() {
+        binding.ivStartDownload.visibility = android.view.View.GONE
+        binding.progressDialog.visibility = android.view.View.GONE
+        binding.ivCancelDownload.visibility = android.view.View.GONE
+    }
 
-     fun downloadCancel() {
-         fileNotDownloadView()
-         message?.downloadStatus = DOWNLOAD_STATUS.NOT_START
+    private fun fileNotDownloadView() {
+        binding.ivStartDownload.visibility = android.view.View.VISIBLE
+        binding.progressDialog.visibility = android.view.View.GONE
+        binding.ivCancelDownload.visibility = android.view.View.GONE
+    }
 
-     }
+    private fun fileDownloadingInProgressView() {
+        binding.ivStartDownload.visibility = android.view.View.GONE
+        binding.progressDialog.visibility = android.view.View.VISIBLE
+        binding.ivCancelDownload.visibility = android.view.View.VISIBLE
+    }
 
-     fun downloadStart() {
-         if (message?.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
-             return
-         }
-         download()
-     }
 
-     private fun download() {
+    fun downloadCancel() {
+        fileNotDownloadView()
+//        message?.downloadStatus = DOWNLOAD_STATUS.NOT_START
 
-         if (PermissionUtils.isStoragePermissionEnabled(this).not()) {
-             askStoragePermission()
-             return
-         }
-         message?.question?.pdfList?.let {
-             if (it.size > 0) {
-                 DownloadUtils.downloadFile(
-                     it.get(0).url,
-                     AppDirectory.docsReceivedFile(it.get(0).url).absolutePath,
-                     message!!.chatId,
-                     message!!,
-                     downloadListener
-                 )
-             } else if (BuildConfig.DEBUG) {
-                 showToast("Pdf size is 0")
-             }
-         }
-     }*/
+    }
+
+    fun downloadStart() {
+        download()
+    }
+
+    private fun download() {
+
+        if (PermissionUtils.isStoragePermissionEnabled(this).not()) {
+            askStoragePermission()
+            return
+        }
+/*
+        pdfInfo?.let {
+            DownloadUtils.downloadFile(
+                it.coursePdfUrl,
+                AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath,
+                "$courseId",
+                message!!,
+                downloadListener
+            )
+        }*/
+    }
 
 }

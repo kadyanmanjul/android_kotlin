@@ -6,13 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewResponse
+import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewBaseResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class CourseOverviewViewModel(application: Application) : AndroidViewModel(application) {
 
-    var progressLiveData: MutableLiveData<List<CourseOverviewResponse>> = MutableLiveData()
+    var progressLiveData: MutableLiveData<CourseOverviewBaseResponse> = MutableLiveData()
 
     fun getCourseOverview(courseId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -21,7 +21,7 @@ class CourseOverviewViewModel(application: Application) : AndroidViewModel(appli
                 courseId
             )
             if (response.success) {
-                progressLiveData.postValue(response.responseData)
+                progressLiveData.postValue(response)
             }
         }
     }

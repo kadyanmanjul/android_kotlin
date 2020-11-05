@@ -2,7 +2,23 @@ package com.joshtalks.joshskills.repository.server.course_overview
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.EMPTY
 
+data class CourseOverviewBaseResponse(
+    @SerializedName("message") @Expose
+    var message: String? = null,
+    @SerializedName("response_data")
+    @Expose
+    val responseData: List<CourseOverviewResponse>? = null,
+
+    @SerializedName("Success")
+    @Expose
+    val success: Boolean,
+    @SerializedName("pdf_info")
+    @Expose
+    val pdfInfo: PdfInfo,
+
+    )
 
 data class CourseOverviewResponse(
 
@@ -40,4 +56,20 @@ data class CourseOverviewItem(
     @SerializedName("speaking_percentage")
     @Expose
     var speakingPercentage: String
+)
+
+data class PdfInfo(
+
+    @SerializedName("course_pdf_url")
+    @Expose
+    val coursePdfUrl: String = EMPTY,
+    @SerializedName("pdf_name")
+    @Expose
+    val coursePdfName: String = EMPTY,
+    @SerializedName("pdf_page_count")
+    @Expose
+    val coursePdfPageCount: String = EMPTY,
+    @SerializedName("pdf_size")
+    @Expose
+    val coursePdfSize: String = EMPTY,
 )
