@@ -16,15 +16,21 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.ui.chat.LESSON_REQUEST_CODE
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
+import com.joshtalks.joshskills.ui.day_wise_course.unlock_next_class.ActivityUnlockNextClass
+import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 
 
 class DayWiseCourseActivity : CoreJoshActivity(),
-    OnFragmentNavigationListener {
+    CapsuleActivityCallback {
 
+    lateinit var titleView: TextView
     private var courseId: Int? = null
     private lateinit var binding: DaywiseCourseActivityBinding
     var lessonId: Int = 0
+    var conversastionId: String? = null
 //    val questionList: ArrayList<Question> = ArrayList()
 
 //    lateinit var chatList: ArrayList<ChatModel>
@@ -71,7 +77,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         lessonId = intent.getIntExtra(LESSON_ID, 0)
 //        chatList = intent.getParcelableArrayListExtra(CHAT_ITEMS)!!
 
-        val titleView: TextView = findViewById(R.id.text_message_title)
+        titleView = findViewById(R.id.text_message_title)
         val helpIv: ImageView = findViewById(R.id.iv_help)
 
         helpIv.visibility = View.GONE
@@ -84,8 +90,15 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         viewModel.syncQuestions(lessonId)
         viewModel.getQuestions(lessonId)
 
+        setObservers()
+
+    }
+
+    private fun setObservers() {
         viewModel.chatObservableLiveData.observe(this, {
             courseId = it.getOrNull(0)?.question?.course_id
+            conversastionId = it.getOrNull(0)?.conversationId
+
             courseId?.let { courseId ->
                 titleView.setOnClickListener {
                     startActivity(
@@ -150,6 +163,18 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
         })
 
+        viewModel.lessonStatusLiveData.observe(this, {
+            if (it == LESSON_STATUS.CO.name) {
+                conversastionId?.let { id ->
+                    startActivityForResult(
+                        ActivityUnlockNextClass.getActivityUnlockNextClassIntent(
+                            this,
+                            id
+                        ), LESSON_REQUEST_CODE
+                    )
+                }
+            }
+        })
     }
 
     private fun setUnselectedColor(tab: TabLayout.Tab?) {
@@ -185,6 +210,18 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == LESSON_REQUEST_CODE && resultCode == RESULT_OK && data?.hasExtra(
+                IS_BATCH_CHANGED
+            ) == true
+        ) {
+            setResult(RESULT_OK, Intent().apply { putExtra(IS_BATCH_CHANGED, true) })
+            finish()
+        }
+
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
     override fun onNextTabCall(view: View?) {
         try {
             binding.lessonViewpager.currentItem = ++binding.lessonViewpager.currentItem
@@ -193,9 +230,14 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         }
     }
 
+    override fun onQuestionStatusUpdate(status: String, questionId: Int) {
+        viewModel.updateQuestionStatus(status, questionId, courseId!!, lessonId)
+    }
+
 
 }
 
-interface OnFragmentNavigationListener {
+interface CapsuleActivityCallback {
     fun onNextTabCall(view: View?)
+    fun onQuestionStatusUpdate(status: String, questionId: Int)
 }

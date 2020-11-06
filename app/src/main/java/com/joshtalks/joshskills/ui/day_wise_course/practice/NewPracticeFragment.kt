@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.day_wise_course.practice
 
+import android.content.Context
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -27,8 +28,10 @@ import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
+import com.joshtalks.joshskills.ui.day_wise_course.CapsuleActivityCallback
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.ExoAudioPlayer.ProgressUpdateListener
@@ -69,6 +72,7 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
     private var audioManager: ExoAudioPlayer? = null
     private var currentChatModel: ChatModel? = null
 
+    var activityCallback: CapsuleActivityCallback? = null
 
     private val DOCX_FILE_MIME_TYPE = arrayOf(
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -94,6 +98,13 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
             }
         }
     }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is CapsuleActivityCallback)
+            activityCallback = context
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -136,6 +147,11 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
                     currentChatModel?.question?.interval?.run {
                         WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
                     }
+
+                    activityCallback?.onQuestionStatusUpdate(
+                        QUESTION_STATUS.AT.name,
+                        currentChatModel?.question?.questionId?.toIntOrNull() ?: 0
+                    )
 
                     currentChatModel = null
                     adapter.notifyDataSetChanged()
@@ -293,7 +309,7 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
         }
     }
 
-    override fun submitPractise(chatModel: ChatModel): Boolean {
+    override fun submitPractice(chatModel: ChatModel): Boolean {
         if (chatModel.question != null && chatModel.question!!.expectedEngageType != null) {
             val engageType = chatModel.question?.expectedEngageType
             chatModel.question?.expectedEngageType?.let {

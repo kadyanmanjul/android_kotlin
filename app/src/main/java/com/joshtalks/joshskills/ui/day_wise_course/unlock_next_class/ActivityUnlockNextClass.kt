@@ -22,7 +22,7 @@ class ActivityUnlockNextClass : AppCompatActivity() {
         private val CONVERSATION_ID = "course_id"
         fun getActivityUnlockNextClassIntent(
             context: Context,
-            conversationId: Int
+            conversationId: String
         ) = Intent(context, ActivityUnlockNextClass::class.java).apply {
             putExtra(CONVERSATION_ID, conversationId)
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)

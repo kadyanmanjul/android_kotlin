@@ -171,7 +171,7 @@ class PracticeAdapter(
                     return@setOnClickListener
                 }
 
-                if (clickListener.submitPractise(chatModel)) {
+                if (clickListener.submitPractice(chatModel)) {
                     appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
                     appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Submitted")
                     appAnalytics?.addParam(
@@ -737,7 +737,7 @@ class PracticeAdapter(
         fun playPracticeAudio(chatModel: ChatModel, position: Int)
         fun playSubmitPracticeAudio(chatModel: ChatModel, position: Int)
         fun removeAudioPractise(chatModel: ChatModel)
-        fun submitPractise(chatModel: ChatModel): Boolean
+        fun submitPractice(chatModel: ChatModel): Boolean
         fun onSeekChange(seekTo: Long)
         fun startRecording(chatModel: ChatModel, position: Int, startTimeUnit: Long)
         fun stopRecording(chatModel: ChatModel, position: Int, stopTime: Long)

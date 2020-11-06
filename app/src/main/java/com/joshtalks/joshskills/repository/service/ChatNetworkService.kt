@@ -127,7 +127,7 @@ interface ChatNetworkService {
     @POST("$DIR/chat/update_lesson/")
     suspend fun updateQuestionStatus(
         @Body questionStatus: UpdateQuestionStatus
-    )
+    ): BaseResponse<String>
 
 
     @GET("$DIR/course/course_overview/")

@@ -37,6 +37,7 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
 
     val assessmentStatus: MutableLiveData<AssessmentStatus> =
         MutableLiveData(AssessmentStatus.NOT_STARTED)
+    val lessonStatusLiveData: MutableLiveData<String> = MutableLiveData()
 
     fun getQuestions(lessonId: Int) {
         val chatList: MutableList<ChatModel> = mutableListOf()
@@ -188,13 +189,18 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
     fun updateQuestionStatus(status: String, questionId: Int, courseId: Int, lessonId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                AppObjectController.chatNetworkService.updateQuestionStatus(
+                val resp = AppObjectController.chatNetworkService.updateQuestionStatus(
                     UpdateQuestionStatus(
                         status, lessonId, Mentor.getInstance().getId(), questionId, courseId
                     )
                 )
+                if (resp.success) {
+                    lessonStatusLiveData.postValue(resp.responseData)
+                    return@launch
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
+                return@launch
             }
         }
     }

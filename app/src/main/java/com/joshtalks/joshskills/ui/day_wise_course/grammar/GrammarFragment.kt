@@ -31,8 +31,8 @@ import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
+import com.joshtalks.joshskills.ui.day_wise_course.CapsuleActivityCallback
 import com.joshtalks.joshskills.ui.day_wise_course.CapsuleViewModel
-import com.joshtalks.joshskills.ui.day_wise_course.OnFragmentNavigationListener
 import com.joshtalks.joshskills.ui.day_wise_course.practice.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
@@ -55,7 +55,7 @@ class GrammarFragment : Fragment() {
     private var chatModelList: ArrayList<ChatModel>? = null
     lateinit var binding: FragmentGrammarLayoutBinding
     private var correctAns = 0
-    var tabNavigationListener: OnFragmentNavigationListener? = null
+    var activityCallback: CapsuleActivityCallback? = null
     var assessmentQuestions: ArrayList<AssessmentQuestionWithRelations> = ArrayList()
 
     private val viewModel: CapsuleViewModel by lazy {
@@ -164,8 +164,8 @@ class GrammarFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnFragmentNavigationListener)
-            tabNavigationListener = context
+        if (context is CapsuleActivityCallback)
+            activityCallback = context
     }
 
     override fun onCreateView(
@@ -412,11 +412,9 @@ class GrammarFragment : Fragment() {
 
             viewModel.saveAssessmentQuestion(question)
             if (currentQuizQuestion == assessmentQuestions.size - 1)
-                viewModel.updateQuestionStatus(
+                activityCallback?.onQuestionStatusUpdate(
                     QUESTION_STATUS.AT.name,
-                    quizQuestion?.questionId?.toIntOrNull() ?: 0,
-                    quizQuestion?.course_id ?: 0,
-                    quizQuestion?.lesson_id ?: 0
+                    quizQuestion?.questionId?.toIntOrNull() ?: 0
                 )
 
             binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.tag as Int)
@@ -449,7 +447,7 @@ class GrammarFragment : Fragment() {
     }
 
     fun onGrammarContinueClick() {
-        tabNavigationListener?.onNextTabCall(binding.continueBtn)
+        activityCallback?.onNextTabCall(binding.continueBtn)
     }
 
     fun onRedoQuizClick() {
