@@ -19,5 +19,11 @@
         <item>@string/c_practise_tab_4</item>
     </string-array>
 
+    <string-array name="leaderboard_tab">
+        <item>@string/leaderboard_1</item>
+        <item>@string/leaderboard_2</item>
+        <item>@string/leaderboard_3</item>
+    </string-array>
+
 
 </resources>

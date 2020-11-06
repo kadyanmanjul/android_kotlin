@@ -66,6 +66,7 @@ import com.joshtalks.joshskills.ui.extra.SignUpPermissionDialogFragment
 import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.IS_FROM_NEW_ONBOARDING
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
@@ -160,8 +161,9 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
     }
 
     fun openHelpActivity() {
-        val i = Intent(this, HelpActivity::class.java)
-        startActivityForResult(i, HELP_ACTIVITY_REQUEST_CODE)
+        val i = Intent(this, LeaderBoardViewPagerActivity::class.java)
+        startActivity(i)
+       // startActivityForResult(i, HELP_ACTIVITY_REQUEST_CODE)
     }
 
     fun getActivityType(act: Activity): ActivityEnum {

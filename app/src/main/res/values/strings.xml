@@ -459,6 +459,10 @@
     <string name="earn_upto">\Earn upto ₹10,000 \</string>
     <string name="no_conditions_apply">No Conditions Apply</string>
 
+    <string name="leaderboard_1">Today</string>
+    <string name="leaderboard_2">Week</string>
+    <string name="leaderboard_3">Month</string>
+
     <string name="c_practise_tab_1">Listen</string>
     <string name="c_practise_tab_2">Quiz</string>
     <string name="c_practise_tab_3">Practice</string>

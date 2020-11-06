@@ -9,10 +9,12 @@ import com.joshtalks.joshskills.repository.server.ComplaintResponse
 import com.joshtalks.joshskills.repository.server.FAQ
 import com.joshtalks.joshskills.repository.server.FAQCategory
 import com.joshtalks.joshskills.repository.server.FreshChatRestoreIDResponse
+import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.repository.server.NPSByUserRequest
 import com.joshtalks.joshskills.repository.server.RequestCertificateGenerate
 import com.joshtalks.joshskills.repository.server.RequestComplaint
 import com.joshtalks.joshskills.repository.server.SuccessResponse
+import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmitConversationPractiseRequest
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmittedConversationPractiseModel
@@ -138,7 +140,18 @@ interface CommonNetworkService {
     @GET("$DIR/mentor/voicecall/initiate/")
     suspend fun voipInitDetails(@QueryMap params: Map<String, String>): VoipCallDetailModel
 
+    @GET("$DIR/leaderboard/get_leaderboard/")
+    suspend fun getLeaderBoardData(
+        @Query("mentor_id") mentorId: String,
+        @Query("interval_type") interval: String
+    ): Response<LeaderboardResponse>
+
     @POST("$DIR/version/onboarding/")
     suspend fun getOnBoardingVersionDetails(@Body params: Map<String, String>): VersionResponse
+
+    @GET("$DIR/group/user_profile/{mentor_id}/")
+    suspend fun getUserProfileData(
+        @Path("mentor_id") id: String
+    ): Response<UserProfileResponse>
 
 }
