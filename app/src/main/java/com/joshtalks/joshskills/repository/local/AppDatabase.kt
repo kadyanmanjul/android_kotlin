@@ -28,7 +28,6 @@ import com.joshtalks.joshskills.repository.local.entity.FeedbackEngageModel
 import com.joshtalks.joshskills.repository.local.entity.FeedbackEngageModelDao
 import com.joshtalks.joshskills.repository.local.entity.ImageType
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -130,8 +129,6 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_20_21,
                                 MIGRATION_21_22,
                                 MIGRATION_22_23
-                                MIGRATION_22_23,
-                                MIGRATION_23_24,
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -329,10 +326,6 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_22_23: Migration = object : Migration(21, 22) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE question_table ADD COLUMN certificate_exam_id INTEGER  ")
-            }
-        }
-        private val MIGRATION_22_23: Migration = object : Migration(22, 23) {
-            override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `lessonmodel` (`lesson_id` INTEGER PRIMARY KEY NOT NULL, `lesson_no` INTEGER NOT NULL, `lesson_name` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, `status` TEXT NOT NULL)")
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN lesson INTEGER NOT NULL DEFAULT 0")
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN status TEXT NOT NULL DEFAULT 'NA'")
@@ -342,11 +335,6 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE `chat_table` ADD COLUMN lesson_id INTEGER NOT NULL DEFAULT 0")
             }
         }
-        private val MIGRATION_23_24: Migration = object : Migration(23, 24) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-            }
-        }
-
 
         fun clearDatabase() {
             INSTANCE?.clearAllTables()
