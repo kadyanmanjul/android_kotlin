@@ -31,7 +31,6 @@ import kotlin.random.Random
 class PraticeAudioViewHolder(
     private var practiceEngagement: PracticeEngagement?,
     private var context: Context?,
-    private var audioManager2: ExoAudioPlayer?,
     private var filePath: String?
 ) : AudioPlayerEventListener, ExoAudioPlayer.ProgressUpdateListener {
 
@@ -129,6 +128,11 @@ class PraticeAudioViewHolder(
         audioManager = ExoAudioPlayer.getInstance()
         audioManager?.playerListener = this
         audioManager?.play(filePath!!)
+        filePath?.let {
+            if(it!=audioManager?.currentPlayingUrl){
+                audioManager?.play(filePath!!)
+            }
+        }
         audioManager?.setProgressUpdateListener(this)
         if (filePath.isNullOrEmpty().not()) {
             playPauseBtn.state = MaterialPlayPauseDrawable.State.Pause
@@ -164,6 +168,11 @@ class PraticeAudioViewHolder(
             if (audioManager?.currentPlayingUrl?.isNotEmpty() == true && audioManager?.currentPlayingUrl == audioType.audio_url) {
 
                 if (checkIsPlayer()) {
+                    filePath?.let {
+                        if(it!=audioManager?.currentPlayingUrl){
+                            audioType.audio_url=filePath!!
+                        }
+                    }
                     audioManager?.setProgressUpdateListener(this)
                     audioManager?.resumeOrPause()
                 } else {

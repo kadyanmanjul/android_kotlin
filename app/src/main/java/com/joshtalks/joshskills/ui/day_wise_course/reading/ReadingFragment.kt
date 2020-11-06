@@ -700,7 +700,6 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                         PraticeAudioViewHolder(
                             practice,
                             context,
-                            audioManager,
                             practice.answerUrl
                         )
                     )
@@ -939,7 +938,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
         binding.practiseSubmitLayout.visibility = VISIBLE
         binding.subPractiseSubmitLayout.visibility = VISIBLE
         binding.audioList.visibility = VISIBLE
-        binding.audioList.addView(PraticeAudioViewHolder(null, context, audioManager,filePath))
+        binding.audioList.addView(PraticeAudioViewHolder(null, context,filePath))
         initializePractiseSeekBar()
         enableSubmitButton()
     }
@@ -1240,7 +1239,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                 }
                 binding.progressLayout.visibility = INVISIBLE
                 setFeedBackLayout(null, true)
-                practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
+                practiceViewModel.submitAudioPractise(chatModel, requestEngage, engageType)
             }
         }
     }
