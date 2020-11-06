@@ -76,7 +76,6 @@ import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivit
 import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
-import com.joshtalks.joshskills.ui.voip.SpeakingPractiseFragment
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -89,7 +88,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 import kotlinx.android.synthetic.main.activity_inbox.expiry_tool_tip
 import kotlinx.android.synthetic.main.activity_inbox.hint_text
 import kotlinx.android.synthetic.main.activity_inbox.new_user_layout
@@ -112,6 +110,7 @@ import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.ex
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -155,8 +154,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         handelIntentAction()
         initNewUserTip()
         viewModel.getTotalWatchTime()
-        SpeakingPractiseFragment.newInstance(courseId = "10", lessonId = "2")
-            .show(supportFragmentManager, "voip_rating_dialog_fragment")
 
     }
 

@@ -162,6 +162,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import screen.messagelist.CometChatMessageListActivity
 import java.lang.ref.WeakReference
 import java.util.Date
 import java.util.Locale
@@ -170,10 +171,6 @@ import java.util.TimerTask
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.concurrent.scheduleAtFixedRate
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import screen.messagelist.CometChatMessageListActivity
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"

@@ -15,7 +15,6 @@ import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewBaseResponse
-import com.joshtalks.joshskills.repository.server.groupchat.GroupChatAddMemberResponse
 import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
