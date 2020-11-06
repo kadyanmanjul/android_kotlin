@@ -9,9 +9,9 @@ if (!project.hasProperty("devBuild")) {
     apply plugin: 'newrelic'
 }
 
-def majorVersion = 2
-def minorVersion = 3
-def patchVersion = 3
+def majorVersion = 3
+def minorVersion = 0
+def patchVersion = 0
 
 android {
     compileSdkVersion 29

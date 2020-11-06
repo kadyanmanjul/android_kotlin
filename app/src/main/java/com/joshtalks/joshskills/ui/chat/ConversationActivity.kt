@@ -101,6 +101,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.P2PStartEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.PdfOpenEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEvent
 import com.joshtalks.joshskills.repository.local.eventbus.PractiseSubmitEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.StartCertificationExamEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.UnlockNextClassEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -112,6 +113,7 @@ import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TUnlockClassMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
+import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.chat.extra.CallingFeatureShowcaseView
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
@@ -131,6 +133,7 @@ import com.joshtalks.joshskills.ui.view_holders.AssessmentViewHolder
 import com.joshtalks.joshskills.ui.view_holders.AudioPlayerViewHolder
 import com.joshtalks.joshskills.ui.view_holders.BaseCell
 import com.joshtalks.joshskills.ui.view_holders.BaseChatViewHolder
+import com.joshtalks.joshskills.ui.view_holders.CertificationExamViewHolder
 import com.joshtalks.joshskills.ui.view_holders.ConversationPractiseViewHolder
 import com.joshtalks.joshskills.ui.view_holders.ImageViewHolder
 import com.joshtalks.joshskills.ui.view_holders.NewMessageViewHolder
@@ -1136,6 +1139,23 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     it.printStackTrace()
                 })
         )
+
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(StartCertificationExamEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .subscribe({
+                    startActivity(
+                        CertificationBaseActivity.certificationExamIntent(
+                            this,
+                            it.certificationExamId
+                        )
+                    )
+                }, {
+                    it.printStackTrace()
+                })
+        )
+
+
     }
 
     private fun setCurrentItemPosition(chatId: String) {
@@ -1293,6 +1313,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     BASE_MESSAGE_TYPE.OTHER,
                     BASE_MESSAGE_TYPE.QUIZ,
                     BASE_MESSAGE_TYPE.TEST,
+                    BASE_MESSAGE_TYPE.CE,
                     BASE_MESSAGE_TYPE.CP -> {
                         getGenericView(chatModel.question?.type, chatModel)
                     }
@@ -1331,12 +1352,15 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             BASE_MESSAGE_TYPE.UNLOCK -> {
                 unlockViewHolder = UnlockNextClassViewHolder(activityRef, chatModel, lastMessage)
                 unlockViewHolder
+                unlockViewHolder
             }
             BASE_MESSAGE_TYPE.LESSON -> {
                 LessonViewHolder(activityRef, chatModel, lastMessage, this::onLessonItemClick)
             }
 
             BASE_MESSAGE_TYPE.P2P -> P2PViewHolder(activityRef, chatModel, lastMessage)
+            BASE_MESSAGE_TYPE.CE -> CertificationExamViewHolder(activityRef, chatModel, lastMessage)
+
             else -> return null
         }
     }

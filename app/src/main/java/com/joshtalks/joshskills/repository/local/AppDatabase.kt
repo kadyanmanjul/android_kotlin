@@ -67,8 +67,8 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     entities = [Course::class, ChatModel::class, Question::class, VideoType::class,
         AudioType::class, OptionType::class, PdfType::class, ImageType::class, VideoEngage::class,
         FeedbackEngageModel::class, NPSEventModel::class, Assessment::class, AssessmentQuestion::class,
-        Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class, LessonModel::class],
-    version = 24,
+        Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class],
+    version = 23,
     exportSchema = true
 )
 @TypeConverters(
@@ -129,6 +129,7 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_19_20,
                                 MIGRATION_20_21,
                                 MIGRATION_21_22,
+                                MIGRATION_22_23
                                 MIGRATION_22_23,
                                 MIGRATION_23_24,
                             )
@@ -323,6 +324,11 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE video_watch_table ADD COLUMN is_sync INTEGER NOT NULL DEFAULT 0 ")
                 database.execSQL("ALTER TABLE video_watch_table ADD COLUMN course_id INTEGER NOT NULL DEFAULT -1 ")
+            }
+        }
+        private val MIGRATION_22_23: Migration = object : Migration(21, 22) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE question_table ADD COLUMN certificate_exam_id INTEGER  ")
             }
         }
         private val MIGRATION_22_23: Migration = object : Migration(22, 23) {

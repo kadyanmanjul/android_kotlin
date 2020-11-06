@@ -1,22 +1,19 @@
 package com.joshtalks.joshskills.ui.certification_exam.report.vh
 
-
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.text.style.AbsoluteSizeSpan
-import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
-import android.text.style.StyleSpan
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.animation.Easing.EaseInOutQuad
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.Legend
-import com.github.mikephil.charting.utils.ColorTemplate
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
@@ -46,8 +43,6 @@ class ReportOverviewView2(
     lateinit var questionRecyclerView: RecyclerView
 
     private val context: Context = AppObjectController.joshApplication
-
-
     @Resolve
     fun onViewInflated() {
         certificateExamReport.run {
@@ -93,86 +88,52 @@ class ReportOverviewView2(
     }
 
     private fun setChart() {
-        chart.setUsePercentValues(true)
-        chart.description.isEnabled = false
-        chart.setExtraOffsets(5f, 10f, 5f, 5f)
+        CoroutineScope(Dispatchers.Main).launch {
+            chart.centerText = generateCenterSpannableText(certificateExamReport.percent)
+            chart.setCenterTextColor(Color.parseColor("#38B099"))
+            chart.setCenterTextTypeface(
+                Typeface.createFromAsset(
+                    context.assets,
+                    "fonts/OpenSans-SemiBold.ttf"
+                )
+            )
+            chart.setCenterTextSize(14F)
+            chart.setExtraOffsets(0F, 0F, 0F, -10F)
+            chart.holeRadius = 58f
+            chart.transparentCircleRadius = 58F
+            chart.isDrawHoleEnabled = true
+            chart.setHoleColor(Color.WHITE)
+            chart.setTransparentCircleColor(Color.WHITE)
+            chart.animateY(500, EaseInOutQuad)
+            chart.isRotationEnabled = true
+            chart.isHighlightPerTapEnabled = true
+            chart.setDrawEntryLabels(false)
+            chart.description.isEnabled = false
+            val legend: Legend = chart.legend
+            legend.formSize = 0F
 
-        chart.dragDecelerationFrictionCoef = 0.95f
+            val percentData = arrayListOf<PieEntry>()
+            percentData.add(PieEntry(certificateExamReport.correct.toFloat(), 0))
+            percentData.add(PieEntry(certificateExamReport.wrong.toFloat(), 1))
 
-        //    chart.setCenterTextTypeface(tfLight)
-        chart.centerText = generateCenterSpannableText()
+            val dataSet = PieDataSet(percentData, "")
+            val colorCorrect = Color.parseColor("#3DD2B5")
+            val colorInCorrect = Color.parseColor("#F6595A")
+            dataSet.colors = mutableListOf(colorCorrect, colorInCorrect)
+            dataSet.setDrawValues(false)
+            dataSet.sliceSpace = 0f
 
-        chart.isDrawHoleEnabled = true
-        chart.setHoleColor(Color.WHITE)
-
-        chart.setTransparentCircleColor(Color.WHITE)
-        chart.setTransparentCircleAlpha(110)
-
-        chart.holeRadius = 58f
-        chart.transparentCircleRadius = 61f
-
-        chart.setDrawCenterText(true)
-
-        chart.rotationAngle = 0f
-        // enable rotation of the chart by touch
-        // enable rotation of the chart by touch
-        chart.isRotationEnabled = true
-        chart.isHighlightPerTapEnabled = true
-
-        // chart.setUnit(" €");
-        // chart.setDrawUnitsInChart(true);
-
-        // add a selection listener
-
-        // chart.setUnit(" €");
-        // chart.setDrawUnitsInChart(true);
-
-        chart.animateY(1400, EaseInOutQuad)
-        // chart.spin(2000, 0, 360);
-
-        // chart.spin(2000, 0, 360);
-        val l = chart.legend
-        l.verticalAlignment = Legend.LegendVerticalAlignment.TOP
-        l.horizontalAlignment = Legend.LegendHorizontalAlignment.RIGHT
-        l.orientation = Legend.LegendOrientation.VERTICAL
-        l.setDrawInside(false)
-        l.xEntrySpace = 7f
-        l.yEntrySpace = 0f
-        l.yOffset = 0f
-
-        // entry label styling
-
-        // entry label styling
-        chart.setEntryLabelColor(Color.WHITE)
-        //       chart.setEntryLabelTypeface(tfRegular)
-        chart.setEntryLabelTextSize(12f)
+            val data = PieData(dataSet)
+            chart.data = data
+            data.setDrawValues(false)
+            //chart.highlightValue(0f, 0, false)
+        }
     }
 
-
-    private fun getScoreText(score: Double, maxScore: Int): SpannableStringBuilder {
-        val spannableStringBuilder = SpannableStringBuilder()
-        val string1 = context.getString(R.string.your_score)
-        val span1 = SpannableString(string1)
-        span1.setSpan(AbsoluteSizeSpan(R.dimen._14ssp), 0, string1.length, 0)
-        spannableStringBuilder.append(span1)
-
-        val string2 = score.toString().plus(maxScore.toString())
-
-        val span2 = SpannableString(string2)
-        span2.setSpan(AbsoluteSizeSpan(R.dimen._20ssp), 0, string2.length, 0)
-        spannableStringBuilder.append(span2)
-        return spannableStringBuilder
-    }
-
-
-    private fun generateCenterSpannableText(): SpannableString? {
-        val s = SpannableString("MPAndroidChart\ndeveloped by Philipp Jahoda")
-        s.setSpan(RelativeSizeSpan(1.7f), 0, 14, 0)
-        s.setSpan(StyleSpan(Typeface.NORMAL), 14, s.length - 15, 0)
-        s.setSpan(ForegroundColorSpan(Color.GRAY), 14, s.length - 15, 0)
-        s.setSpan(RelativeSizeSpan(.8f), 14, s.length - 15, 0)
-        s.setSpan(StyleSpan(Typeface.ITALIC), s.length - 14, s.length, 0)
-        s.setSpan(ForegroundColorSpan(ColorTemplate.getHoloBlue()), s.length - 14, s.length, 0)
-        return s
+    private fun generateCenterSpannableText(percent: Float): SpannableString? {
+        val s0 = "$percent%"
+        val span = SpannableString("$s0 Correct")
+        span.setSpan(RelativeSizeSpan(1.65f), 0, s0.length, 0)
+        return span
     }
 }

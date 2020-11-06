@@ -103,6 +103,7 @@ private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
 private val DD_MMM = SimpleDateFormat("dd-MMM hh:mm aa")
 private val MMM_DD_YYYY = SimpleDateFormat("MMM DD, yyyy")
 val YYYY_MM_DD = SimpleDateFormat("yyyy-MM-dd")
+val DD_MM_YYYY = SimpleDateFormat("dd/MM/yyyy")
 
 
 object Utils {

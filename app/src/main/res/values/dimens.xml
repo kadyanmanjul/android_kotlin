@@ -36,4 +36,9 @@
     <dimen name="roundedBottomSheetCornerRadiusRightPadding">6dp</dimen>
     <dimen name="course_padding_dimen">@dimen/_12sdp</dimen>
 
+    <dimen name="path_origin">40dp</dimen>
+    <dimen name="path_radius">30dp</dimen>
+    <dimen name="path_bound">80dp</dimen>
+
+    <dimen name="layer_inset">16dp</dimen>
 </resources>

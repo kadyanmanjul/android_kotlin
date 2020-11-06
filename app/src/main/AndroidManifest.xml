@@ -154,11 +154,11 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme">
-         <!--   <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -547,13 +547,7 @@
             android:name=".ui.certification_exam.CertificationBaseActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/AppNoBarTheme"></activity>
 
         <activity
             android:name=".ui.certification_exam.examview.CExamMainActivity"

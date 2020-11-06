@@ -25,6 +25,8 @@ import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
 import com.joshtalks.joshskills.util.RandomString
 import kotlinx.android.parcel.IgnoredOnParcel
+import java.io.Serializable
+import java.util.Date
 import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 import java.util.Date
@@ -257,10 +259,13 @@ data class Question(
     var lessonStatus: LESSON_STATUS? = LESSON_STATUS.NO,
 
     @Ignore
-    @Expose var vAssessmentCount: Int = -1
+    @Expose var vAssessmentCount: Int = -1,
+
+    @ColumnInfo(name = "certificate_exam_id")
+    @SerializedName("certificateexam_id") var certificateExamId: Int? = null,
 
 
-) : Parcelable
+    ) : Parcelable
 
 
 data class User(
@@ -830,6 +835,8 @@ enum class OPTION_TYPE(val type: String) {
 enum class BASE_MESSAGE_TYPE(val type: String) {
     A("A"), TX("TX"), VI("VI"), AU("AU"), IM("IM"), Q("Q"), PD("PD"), PR("PR"), AR("AR"),
     CP("CP"), QUIZ("QUIZ"), TEST("TEST"), OTHER("OTHER"), UNLOCK("UN"), P2P("P2P"), LESSON("LESSON")
+    CP("CP"), QUIZ("QUIZ"), TEST("TEST"), OTHER("OTHER"), UNLOCK("UN"), P2P("P2P"),
+    CE("CE")
 
 }
 

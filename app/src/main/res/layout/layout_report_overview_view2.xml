@@ -9,19 +9,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_8sdp"
+        android:paddingHorizontal="@dimen/_4sdp"
         android:background="@drawable/grey_rounded_bg"
         android:backgroundTint="@color/white"
-        android:paddingHorizontal="@dimen/_12sdp"
         android:paddingVertical="@dimen/_8sdp">
 
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/chart"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_130sdp"
+            android:layout_height="@dimen/_130sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.4" />
+            app:layout_constraintTop_toTopOf="parent" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
