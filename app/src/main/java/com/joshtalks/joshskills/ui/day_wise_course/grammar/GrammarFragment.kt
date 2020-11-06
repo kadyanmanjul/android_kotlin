@@ -248,6 +248,12 @@ class GrammarFragment : Fragment() {
                             }
                             binding.videoPlayer.downloadStreamButNotPlay()
                         }
+
+                        this.qText?.let {
+                            binding.grammarDescTv.visibility = View.VISIBLE
+                            binding.grammarDescTv.text =
+                                HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                        }
                     }
                     BASE_MESSAGE_TYPE.PD -> {
                         message = chatModel
@@ -265,14 +271,14 @@ class GrammarFragment : Fragment() {
                         }
                         setUpPdfView(chatModel)
                     }
-
+/*
                     BASE_MESSAGE_TYPE.TX -> {
                         this.qText?.let {
                             binding.grammarDescTv.visibility = View.VISIBLE
                             binding.grammarDescTv.text =
                                 HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
                         }
-                    }
+                    }*/
                     BASE_MESSAGE_TYPE.QUIZ -> {
                         this.assessmentId?.let {
                             viewModel.fetchAssessmentDetails(it)
@@ -282,14 +288,6 @@ class GrammarFragment : Fragment() {
 
                     }
                 }
-
-            if ((this.material_type == BASE_MESSAGE_TYPE.TX).not() && this.qText.isNullOrEmpty()
-                    .not()
-            ) {
-                binding.grammarDescTv.text =
-                    HtmlCompat.fromHtml(this.qText!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
-                binding.grammarDescTv.visibility = View.VISIBLE
-            }
 
             /* if (this.practiceEngagement.isNullOrEmpty()) {
                  binding.submitAnswerBtn.visibility = View.VISIBLE
@@ -363,7 +361,7 @@ class GrammarFragment : Fragment() {
                 radioButton.isChecked = true
             if (choice.isCorrect)
                 radioButton.setBackgroundColor(
-                    ContextCompat.getColor(requireContext(), R.color.bg_green_80)
+                    ContextCompat.getColor(requireContext(), R.color.wa_color)
                 ) else
                 radioButton.setBackgroundColor(
                     ContextCompat.getColor(requireContext(), R.color.white)

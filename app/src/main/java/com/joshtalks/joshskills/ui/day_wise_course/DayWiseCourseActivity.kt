@@ -5,15 +5,17 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
@@ -103,18 +105,26 @@ class DayWiseCourseActivity : CoreJoshActivity() {
                 binding.lessonViewpager,
                 object : TabLayoutMediator.TabConfigurationStrategy {
                     override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {
-
+                        tab.view.layoutParams = LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        )
+                        tab.view.setPadding(16, 0, 16, 0)
                         when (position) {
                             0 -> {
+//                                setColor(tab)
                                 tab.text = getString(R.string.grammar)
                             }
                             1 -> {
+                                setUnselectedColor(tab)
                                 tab.text = getString(R.string.vocabulary)
                             }
                             2 -> {
+                                setUnselectedColor(tab)
                                 tab.text = getString(R.string.reading)
                             }
                             3 -> {
+                                setUnselectedColor(tab)
                                 tab.text = getString(R.string.speaking)
                             }
                         }
@@ -125,13 +135,13 @@ class DayWiseCourseActivity : CoreJoshActivity() {
                 TabLayout.OnTabSelectedListener {
 
                 override fun onTabSelected(tab: TabLayout.Tab?) {
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         setColor(tab)
                     }
                 }
 
                 override fun onTabReselected(tab: TabLayout.Tab?) {
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         setColor(tab)
                     }
                 }
@@ -147,8 +157,8 @@ class DayWiseCourseActivity : CoreJoshActivity() {
 
     private fun setUnselectedColor(tab: TabLayout.Tab?) {
         tab?.let {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                tab.view.setBackgroundColor(AppObjectController.joshApplication.getColor(R.color.grey_E8))
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                tab.view.background = ContextCompat.getDrawable(this, R.drawable.unselected_tab_bg)
             }
         }
     }
@@ -156,18 +166,22 @@ class DayWiseCourseActivity : CoreJoshActivity() {
     @RequiresApi(Build.VERSION_CODES.M)
     private fun setColor(tab: TabLayout.Tab?) {
         tab?.let {
+
             when (tab.position) {
                 0 -> {
-                    tab.view.setBackgroundColor(AppObjectController.joshApplication.getColor(R.color.quantum_pink))
+                    tab.view.background =
+                        ContextCompat.getDrawable(this, R.drawable.capsule_selection_tab)
                 }
                 1 -> {
-                    tab.view.setBackgroundColor(AppObjectController.joshApplication.getColor(R.color.green))
+                    tab.view.background =
+                        ContextCompat.getDrawable(this, R.drawable.vocabulary_tab_bg)
                 }
                 2 -> {
-                    tab.view.setBackgroundColor(AppObjectController.joshApplication.getColor(R.color.colorPrimary))
+                    tab.view.background = ContextCompat.getDrawable(this, R.drawable.reading_tab_bg)
                 }
                 3 -> {
-                    tab.view.setBackgroundColor(AppObjectController.joshApplication.getColor(R.color.yellow))
+                    tab.view.background =
+                        ContextCompat.getDrawable(this, R.drawable.speaking_tab_bg)
 
                 }
             }
