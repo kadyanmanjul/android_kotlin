@@ -199,4 +199,9 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    fun updateQuestionInLocal(question: Question) {
+        viewModelScope.launch(Dispatchers.IO) {
+            chatDao.updateQuestionObject(question)
+        }
+    }
 }

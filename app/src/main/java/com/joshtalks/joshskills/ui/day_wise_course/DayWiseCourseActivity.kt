@@ -19,7 +19,8 @@ import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 
 
-class DayWiseCourseActivity : CoreJoshActivity() {
+class DayWiseCourseActivity : CoreJoshActivity(),
+    OnFragmentNavigationListener {
 
     private var courseId: Int? = null
     private lateinit var binding: DaywiseCourseActivityBinding
@@ -183,4 +184,18 @@ class DayWiseCourseActivity : CoreJoshActivity() {
             }
         }
     }
+
+    override fun onNextTabCall(view: View?) {
+        try {
+            binding.lessonViewpager.currentItem = ++binding.lessonViewpager.currentItem
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+
+}
+
+interface OnFragmentNavigationListener {
+    fun onNextTabCall(view: View?)
 }

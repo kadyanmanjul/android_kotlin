@@ -262,6 +262,11 @@ class CourseProgressActivityNew : AppCompatActivity(),
     }
 
     private fun openPdf() {
+        if (PermissionUtils.isStoragePermissionEnabled(this).not()) {
+            askStoragePermission()
+            return
+        }
+
         pdfInfo?.let {
             PdfViewerActivity.startPdfActivity(
                 context = this,
@@ -304,7 +309,6 @@ class CourseProgressActivityNew : AppCompatActivity(),
     }
 
     private fun download() {
-
         if (PermissionUtils.isStoragePermissionEnabled(this).not()) {
             askStoragePermission()
             return

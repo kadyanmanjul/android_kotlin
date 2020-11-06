@@ -416,4 +416,9 @@
     <string name="grammer_completions_message">बहुत बढ़िया !!! आपने व्याकरण भाग पूरा कर लिया है</string>
     <string name="today_reading_practise">आज का पठन अभ्यास</string>
 
+    <string name="unlock_next_lesson">अगले पाठ को अनलॉक करें</string>
+    <string name="lesson_completed">पाठ पूरा हुआ</string>
+    <string name="redo_quiz">फिर से करें</string>
+    <string name="quiz_completed">प्रश्नोत्तरी पूरी की!!</string>
+    <string name="marks_text">आपको %1$d/%2$d सही मिले</string>
 </resources>

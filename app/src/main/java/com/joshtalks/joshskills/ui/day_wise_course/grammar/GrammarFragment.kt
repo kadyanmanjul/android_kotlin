@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.day_wise_course.grammar
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -31,10 +32,10 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQues
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.ui.day_wise_course.CapsuleViewModel
+import com.joshtalks.joshskills.ui.day_wise_course.OnFragmentNavigationListener
 import com.joshtalks.joshskills.ui.day_wise_course.practice.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
-import com.joshtalks.joshskills.util.CustomDialog
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -54,7 +55,7 @@ class GrammarFragment : Fragment() {
     private var chatModelList: ArrayList<ChatModel>? = null
     lateinit var binding: FragmentGrammarLayoutBinding
     private var correctAns = 0
-
+    var tabNavigationListener: OnFragmentNavigationListener? = null
     var assessmentQuestions: ArrayList<AssessmentQuestionWithRelations> = ArrayList()
 
     private val viewModel: CapsuleViewModel by lazy {
@@ -161,6 +162,12 @@ class GrammarFragment : Fragment() {
 
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnFragmentNavigationListener)
+            tabNavigationListener = context
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -209,7 +216,11 @@ class GrammarFragment : Fragment() {
                     showQuizUi()
                     requestFocus(binding.submitAnswerBtn)
                 }
+
                 updateQuiz(assessmentQuestions.get(0))
+                if (quizQuestion?.status == QUESTION_STATUS.AT) {
+                    showQuizCompleteLayout()
+                }
             }
         }
     }
@@ -433,17 +444,51 @@ class GrammarFragment : Fragment() {
         if (assessmentQuestions.size - 1 > currentQuizQuestion) {
             updateQuiz(assessmentQuestions.get(++currentQuizQuestion))
         } else {
-            CustomDialog(
-                requireContext(),
-                getString(R.string.congratulations),
-                getString(R.string.grammer_completions_message)
-            ).show()
-
+            showQuizCompleteLayout()
         }
     }
 
+    fun onGrammarContinueClick() {
+        tabNavigationListener?.onNextTabCall(binding.continueBtn)
+    }
 
-    fun hideExplanation() {
+    fun onRedoQuizClick() {
+        assessmentQuestions.forEach { question ->
+            question.question.isAttempted = false
+            question.question.status = QuestionStatus.NONE
+            viewModel.saveAssessmentQuestion(question)
+        }
+        currentQuizQuestion = 0
+        updateQuiz(assessmentQuestions[0])
+        binding.grammarCompleteLayout.visibility = View.GONE
+
+        quizQuestion?.let {
+
+            it.status = QUESTION_STATUS.NA
+            viewModel.updateQuestionInLocal(it)
+
+            viewModel.updateQuestionStatus(
+                QUESTION_STATUS.NA.name,
+                it.questionId.toInt(),
+                it.course_id,
+                it.lesson_id
+            )
+        }
+
+
+    }
+
+
+    private fun showQuizCompleteLayout() {
+        binding.grammarCompleteLayout.visibility = View.VISIBLE
+        binding.submitAnswerBtn.visibility = View.GONE
+        binding.continueBtn.visibility = View.GONE
+        binding.showExplanationBtn.visibility = View.GONE
+        hideExplanation()
+        binding.marksTv.text = getString(R.string.marks_text, correctAns, assessmentQuestions.size)
+    }
+
+    private fun hideExplanation() {
         binding.explanationLbl.visibility = View.GONE
         binding.explanationTv.visibility = View.GONE
         binding.showExplanationBtn.text = getString(R.string.show_explanation)
