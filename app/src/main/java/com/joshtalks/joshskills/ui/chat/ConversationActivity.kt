@@ -179,6 +179,7 @@ const val COURSE_PROGRESS_REQUEST_CODE = 1101
 const val VIDEO_OPEN_REQUEST_CODE = 1102
 const val CONVERSATION_PRACTISE_REQUEST_CODE = 1105
 const val ASSESSMENT_REQUEST_CODE = 1106
+const val LESSON_REQUEST_CODE = 1107
 
 const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
 const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
@@ -1428,6 +1429,13 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                         refreshViewAtPos(chatObj)
                     }
                 }
+            } else if (requestCode == LESSON_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null && data.hasExtra(
+                    IS_BATCH_CHANGED
+                )
+            ) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    fetchMessage()
+                }
             }
 
         } catch (ex: Exception) {
@@ -1438,11 +1446,11 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     }
 
     fun onLessonItemClick(lessonId: Int) {
-        startActivity(
+        startActivityForResult(
             DayWiseCourseActivity.getDayWiseCourseActivityIntent(
                 this,
                 lessonId
-            )
+            ), LESSON_REQUEST_CODE
         )
     }
 

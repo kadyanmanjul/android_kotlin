@@ -53,6 +53,7 @@ class GrammarFragment : Fragment() {
     private var appAnalytics: AppAnalytics? = null
     private var chatModelList: ArrayList<ChatModel>? = null
     lateinit var binding: FragmentGrammarLayoutBinding
+    private var correctAns = 0
 
     var assessmentQuestions: ArrayList<AssessmentQuestionWithRelations> = ArrayList()
 
@@ -361,7 +362,7 @@ class GrammarFragment : Fragment() {
                 radioButton.isChecked = true
             if (choice.isCorrect)
                 radioButton.setBackgroundColor(
-                    ContextCompat.getColor(requireContext(), R.color.wa_color)
+                    ContextCompat.getColor(requireContext(), R.color.right_answer_color)
                 ) else
                 radioButton.setBackgroundColor(
                     ContextCompat.getColor(requireContext(), R.color.white)
@@ -409,8 +410,12 @@ class GrammarFragment : Fragment() {
 
             binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.tag as Int)
                 .setBackgroundColor(
-                    ContextCompat.getColor(requireContext(), R.color.bg_green_80)
+                    ContextCompat.getColor(requireContext(), R.color.right_answer_color)
                 )
+
+            if (binding.quizRadioGroup.tag as Int == binding.quizRadioGroup.checkedRadioButtonId) {
+                correctAns++
+            }
 
             binding.continueBtn.visibility = View.VISIBLE
             binding.showExplanationBtn.visibility = View.VISIBLE
@@ -465,8 +470,8 @@ class GrammarFragment : Fragment() {
                     if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
                         fileDownloadingInProgressView()
                         download(pdfObj.url)
-                    } else if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED && AppDirectory.isFileExist(
-                            pdfObj.downloadedLocalPath
+                    } else if (AppDirectory.isFileExist(
+                            AppDirectory.docsReceivedFile(pdfObj.url).absolutePath
                         )
                     ) {
                         fileDownloadSuccess()
@@ -553,11 +558,16 @@ class GrammarFragment : Fragment() {
     }
 
     private fun openPdf() {
+        if (PermissionUtils.isStoragePermissionEnabled(requireContext()).not()) {
+            askStoragePermission()
+            return
+        }
         message?.question?.pdfList?.getOrNull(0)?.let { pdfType ->
             PdfViewerActivity.startPdfActivity(
-                requireContext(),
-                pdfType.id,
-                message!!.question!!.title!!
+                context = requireContext(),
+                pdfId = pdfType.id,
+                courseName = message!!.question!!.title!!,
+                pdfPath = AppDirectory.docsReceivedFile(pdfType.url).absolutePath
             )
         }
 

@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.course_progress_new
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -151,6 +152,7 @@ class CourseProgressActivityNew : AppCompatActivity(),
             pdfInfo = it.pdfInfo
 
             pdfInfo?.let {
+                binding.pdfView.visibility = View.VISIBLE
                 if (File(AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath).exists()) {
                     fileDownloadSuccess()
                 } else {
@@ -163,14 +165,6 @@ class CourseProgressActivityNew : AppCompatActivity(),
 
         })
 
-        /*viewModel.postResponse.observe(this, {
-            DownloadUtils.downloadFile(
-                "https://file-examples-com.github.io/uploads/2017/10/file-sample_150kB.pdf",
-                AppDirectory.docsReceivedFile("https://file-examples-com.github.io/uploads/2017/10/file-sample_150kB.pdf").absolutePath,
-                "$courseId",
-                downloadListener
-            )
-        })*/
         setupUi()
     }
 
@@ -270,9 +264,9 @@ class CourseProgressActivityNew : AppCompatActivity(),
     private fun openPdf() {
         pdfInfo?.let {
             PdfViewerActivity.startPdfActivity(
-                this,
-                "$courseId",
-                it.coursePdfName,
+                context = this,
+                pdfId = "$courseId",
+                courseName = it.coursePdfName,
                 pdfPath = AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath
 
             )
@@ -280,6 +274,7 @@ class CourseProgressActivityNew : AppCompatActivity(),
     }
 
     private fun fileDownloadSuccess() {
+        binding.downloadContainer.visibility = View.GONE
         binding.ivStartDownload.visibility = android.view.View.GONE
         binding.progressDialog.visibility = android.view.View.GONE
         binding.ivCancelDownload.visibility = android.view.View.GONE

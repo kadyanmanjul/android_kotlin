@@ -5,9 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -105,14 +103,12 @@ class DayWiseCourseActivity : CoreJoshActivity() {
                 binding.lessonViewpager,
                 object : TabLayoutMediator.TabConfigurationStrategy {
                     override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {
-                        tab.view.layoutParams = LinearLayout.LayoutParams(
-                            ViewGroup.LayoutParams.WRAP_CONTENT,
-                            ViewGroup.LayoutParams.MATCH_PARENT
-                        )
-                        tab.view.setPadding(16, 0, 16, 0)
+
                         when (position) {
                             0 -> {
-//                                setColor(tab)
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    setColor(tab)
+                                }
                                 tab.text = getString(R.string.grammar)
                             }
                             1 -> {

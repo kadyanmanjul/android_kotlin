@@ -64,7 +64,6 @@ class PdfViewerActivity : BaseActivity() {
                     pdfObject =
                         AppObjectController.appDatabase.chatDao()
                             .getPdfById(intent.getStringExtra(PDF_ID)!!)
-
                     pdfObject?.downloadedLocalPath!!
                 }
                 AppObjectController.uiHandler.post {
