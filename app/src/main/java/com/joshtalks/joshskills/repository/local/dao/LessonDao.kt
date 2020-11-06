@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.repository.local.dao
 
-import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -9,8 +8,8 @@ import com.joshtalks.joshskills.repository.local.entity.LessonModel
 
 @Dao
 interface LessonDao {
-    @Query("SELECT * FROM lessonmodel ORDER BY lesson_no DESC")
-    fun getLessons(): DataSource.Factory<Int, LessonModel>
+  //  @Query("SELECT * FROM lessonmodel ORDER BY lesson_no DESC")
+   // fun getLessons(): DataSource.Factory<Int, LessonModel>
 
     @Query("SELECT * FROM lessonmodel WHERE lesson_id=:lessonId ORDER BY lesson_no DESC")
     fun getLesson(lessonId: Int): LessonModel?
