@@ -51,10 +51,10 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/black" />
 
-        <com.cometchat.pro.uikit.audioplayer.AudioPlayerView
+        <!-- <com.cometchat.pro.uikit.audioplayer.AudioPlayerView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/title" />
+            android:layout_below="@id/title" /> -->
 
         <ImageView
             android:id="@+id/playBtn"
