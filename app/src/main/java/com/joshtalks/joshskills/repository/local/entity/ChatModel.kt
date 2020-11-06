@@ -25,10 +25,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
 import com.joshtalks.joshskills.util.RandomString
 import kotlinx.android.parcel.IgnoredOnParcel
-import java.io.Serializable
-import java.util.Date
 import kotlinx.android.parcel.Parcelize
-import java.io.Serializable
 import java.util.Date
 
 @Parcelize
@@ -116,7 +113,7 @@ data class ChatModel(
     @Ignore
     var lessons: LessonModel? = null,
 
-) : DataBaseClass(), Parcelable {
+    ) : DataBaseClass(), Parcelable {
     @IgnoredOnParcel
     @Ignore
     var isPlaying: Boolean = false
@@ -260,7 +257,6 @@ data class Question(
 
     @Ignore
     @Expose var vAssessmentCount: Int = -1,
-    @Expose var vAssessmentCount: Int = -1,
 
     @ColumnInfo(name = "certificate_exam_id")
     @SerializedName("certificateexam_id") var certificateExamId: Int? = null,
@@ -281,7 +277,7 @@ data class User(
     @SerializedName("photo_url") var photo_url: String? = "",
 
     @SerializedName("user_type") var user_type: String = ""
-) : Serializable
+) : java.io.Serializable
 
 
 @Entity(tableName = "VideoTable")
@@ -426,7 +422,7 @@ data class Sender(
     @SerializedName("id") var id: String = "",
     @SerializedName("user") var user: User? = User(),
     @SerializedName("user_type") var user_type: String = ""
-) : Serializable
+) : java.io.Serializable
 
 
 data class PracticeEngagement(
@@ -439,15 +435,15 @@ data class PracticeEngagement(
     @SerializedName("transcript_id") val transcriptId: String?,
     @Expose var localPath: String? = null
 
-) : Serializable {
+) : java.io.Serializable {
     constructor() : this(
         answerUrl = null,
         id = null,
         text = null,
         duration = null,
-        practiceFeedback=null,
-        practiceDate=null,
-        transcriptId=null
+        practiceFeedback = null,
+        practiceDate = null,
+        transcriptId = null
     )
 }
 
@@ -456,7 +452,7 @@ data class PracticeFeedback(
     @SerializedName("grade") val grade: String?,
     @SerializedName("text") val text: String?,
     @SerializedName("gif_url") var gifUrl: String?,
-) : Serializable {
+) : java.io.Serializable {
     constructor() : this(
         title = null,
         grade = null,
@@ -471,7 +467,7 @@ data class PracticeFeedback2(
     @SerializedName("text") val text: String?,
     @SerializedName("grade") val grade: String?,
     @SerializedName("score") var score: String?,
-) : Serializable {
+) : java.io.Serializable {
     constructor() : this(
         status = null,
         engagementId = null,
@@ -778,7 +774,7 @@ interface ChatDao {
     @Query("SELECT practice_engagements FROM question_table  WHERE questionId= :questionId")
     suspend fun getPractiseObject(
         questionId: String
-    ) : String?
+    ): String?
 
     @Query(value = "SELECT message_time_in_milliSeconds FROM chat_table where question_id IS NOT NULL AND conversation_id= :conversationId ORDER BY created DESC LIMIT 1; ")
     suspend fun getLastChatDate(conversationId: String): String?
@@ -837,10 +833,8 @@ enum class OPTION_TYPE(val type: String) {
 
 enum class BASE_MESSAGE_TYPE(val type: String) {
     A("A"), TX("TX"), VI("VI"), AU("AU"), IM("IM"), Q("Q"), PD("PD"), PR("PR"), AR("AR"),
-    CP("CP"), QUIZ("QUIZ"), TEST("TEST"), OTHER("OTHER"), UNLOCK("UN"), P2P("P2P"), LESSON("LESSON")
     CP("CP"), QUIZ("QUIZ"), TEST("TEST"), OTHER("OTHER"), UNLOCK("UN"), P2P("P2P"),
-    CE("CE")
-
+    LESSON("LESSON"), CE("CE")
 }
 
 

@@ -76,8 +76,8 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -97,9 +97,6 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.math.roundToInt
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import timber.log.Timber
 
 
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
@@ -169,7 +166,7 @@ object Utils {
     }
 
 
-    fun createPartFromString(descriptionString: String): RequestBody {
+    fun createPartFromString(descriptionString: String): okhttp3.RequestBody {
         return descriptionString.toRequestBody(okhttp3.MultipartBody.FORM)
     }
 

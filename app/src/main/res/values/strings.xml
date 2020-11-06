@@ -496,7 +496,6 @@
     <string name="minutes">Minutes</string>
     <string name="marks">Marks</string>
     <string name="ce_header">Certification Examination</string>
-    <string name="explanation">Explanation:</string>
     <string name="pause_amp_exit"><![CDATA[Pause & exit]]></string>
     <string name="finish_exam">Finish exam</string>
     <string name="resume_examination">Resume Examination</string>
@@ -514,7 +513,6 @@
     <string name="rating">Rating</string>
     <string name="rate_your_practise_partner">Rate Your  Practice Partner</string>
     <string name="confidence">Confidence:</string>
-    <string name="grammar">Grammar:</string>
     <string name="pronunciation">Pronunciation: </string>
     <string name="eagerness_to_learn">Eagerness to Learn:</string>
     <string name="was_the_respect_fullness">Was the Respect fullness: </string>
@@ -525,5 +523,8 @@
     <string name="pp_message">In this practice you have to speak to your practice partner for %s minute</string>
     <string name="pp_calling">Practice Partner Calling</string>
     <string name="speaking_time_msz">Speaking time\n %s minutes</string>
+    <string name="leaderboard_1">leaderboard</string>
+    <string name="leaderboard_2">leaderboard</string>
+    <string name="leaderboard_3">leaderboard_1</string>
 
 </resources>

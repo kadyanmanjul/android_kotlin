@@ -237,17 +237,6 @@ object WorkManagerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
 
-
-    fun startVersionAndFlowWorker() {
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-        val workRequest = OneTimeWorkRequestBuilder<GetVersionAndFlowDataWorker>()
-            .setConstraints(constraints)
-            .build()
-        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
-    }
-
     private fun getPalioWorkRequest(): OneTimeWorkRequest {
         return OneTimeWorkRequestBuilder<GetPlivoUserWorker>()
             .build()

@@ -32,6 +32,7 @@ import com.joshtalks.joshskills.repository.local.entity.FeedbackEngageModel
 import com.joshtalks.joshskills.repository.local.entity.FeedbackEngageModelDao
 import com.joshtalks.joshskills.repository.local.entity.ImageType
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -71,7 +72,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         AudioType::class, OptionType::class, PdfType::class, ImageType::class, VideoEngage::class,
         FeedbackEngageModel::class, NPSEventModel::class, Assessment::class, AssessmentQuestion::class,
         Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class,
-        AppUsageModel::class, AppActivityModel::class
+        AppUsageModel::class, AppActivityModel::class, LessonModel::class
     ],
     version = 23,
     exportSchema = true
@@ -332,11 +333,6 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_22_23: Migration = object : Migration(23, 23) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE question_table ADD COLUMN topic_id INTEGER ")
-            }
-        }
-
-        private val MIGRATION_22_23: Migration = object : Migration(21, 22) {
-            override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE question_table ADD COLUMN certificate_exam_id INTEGER  ")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `lessonmodel` (`lesson_id` INTEGER PRIMARY KEY NOT NULL, `lesson_no` INTEGER NOT NULL, `lesson_name` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, `status` TEXT NOT NULL)")
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN lesson INTEGER NOT NULL DEFAULT 0")
@@ -378,7 +374,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun reminderDao(): ReminderDao
     abstract fun appUsageDao(): AppUsageDao
     abstract fun appActivityDao(): AppActivityDao
-
     abstract fun lessonDao(): LessonDao
 
 }

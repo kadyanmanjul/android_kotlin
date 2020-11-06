@@ -132,6 +132,7 @@ import com.joshtalks.joshskills.ui.view_holders.AssessmentViewHolder
 import com.joshtalks.joshskills.ui.view_holders.AudioPlayerViewHolder
 import com.joshtalks.joshskills.ui.view_holders.BaseCell
 import com.joshtalks.joshskills.ui.view_holders.BaseChatViewHolder
+import com.joshtalks.joshskills.ui.view_holders.CertificationExamViewHolder
 import com.joshtalks.joshskills.ui.view_holders.ConversationPractiseViewHolder
 import com.joshtalks.joshskills.ui.view_holders.ImageViewHolder
 import com.joshtalks.joshskills.ui.view_holders.NewMessageViewHolder
@@ -179,7 +180,6 @@ const val VIDEO_OPEN_REQUEST_CODE = 1102
 const val CONVERSATION_PRACTISE_REQUEST_CODE = 1105
 const val ASSESSMENT_REQUEST_CODE = 1106
 const val LESSON_REQUEST_CODE = 1107
-const val ASSESSMENT_REQUEST_CODE = 1106
 
 const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
 const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
@@ -1073,7 +1073,11 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     logAssessmentEvent(it.assessmentId)
-                    AssessmentActivity.startAssessmentActivity(this, it.assessmentId)
+                    AssessmentActivity.startAssessmentActivity(
+                        this,
+                        requestCode = ASSESSMENT_REQUEST_CODE,
+                        assessmentId = it.assessmentId
+                    )
                 }, {
                     it.printStackTrace()
                 })
