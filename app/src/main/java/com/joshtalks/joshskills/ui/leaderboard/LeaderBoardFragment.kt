@@ -7,9 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.setImage
@@ -74,14 +73,18 @@ class LeaderBoardFragment private constructor() : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRV()
         addObserver()
-        //setListener()
+        setListener()
         //viewModel.getLeaderBoardData(Mentor.getInstance().getId(), type)
     }
 
     private fun setListener() {
-        val firstposition = linearLayoutManager.findFirstCompletelyVisibleItemPosition()
-        val lastposition = linearLayoutManager.findLastCompletelyVisibleItemPosition()
+        binding.userLayout.setOnClickListener {
+            scrollToUserPosition()
+        }
+    }
 
+    private fun scrollToUserPosition() {
+        linearLayoutManager.scrollToPositionWithOffset(userPosition, 0)
     }
 
     private fun initRV() {
@@ -89,6 +92,22 @@ class LeaderBoardFragment private constructor() : Fragment() {
         linearLayoutManager.isSmoothScrollbarEnabled = true
         binding.recyclerView.builder.setHasFixedSize(true)
             .setLayoutManager(linearLayoutManager)
+
+        binding.recyclerView.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+            }
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() < userPosition && linearLayoutManager.findLastCompletelyVisibleItemPosition() > userPosition) {
+                    binding.userLayout.visibility = View.GONE
+                } else {
+                    binding.userLayout.visibility = View.VISIBLE
+                }
+            }
+        })
     }
 
     private fun addObserver() {
@@ -106,13 +125,20 @@ class LeaderBoardFragment private constructor() : Fragment() {
             } else if (userRank in 48..50) {
                 userPosition = userRank
             } else {
+                userPosition = 53
                 binding.recyclerView.addView(EmptyItemViewHolder())
 
                 it.below_three_mentor_list?.forEach {
                     binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
                 }
                 it.current_mentor?.let {
-                    binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext(),true))
+                    binding.recyclerView.addView(
+                        LeaderBoardItemViewHolder(
+                            it,
+                            requireContext(),
+                            true
+                        )
+                    )
                 }
                 it.above_three_mentor_list?.forEach {
                     binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))

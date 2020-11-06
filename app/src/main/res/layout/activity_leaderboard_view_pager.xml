@@ -52,6 +52,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:background="@color/overlay"
+            wheel:visibility="visible"
             android:visibility="gone">
 
             <com.pnikosis.materialishprogress.ProgressWheel
