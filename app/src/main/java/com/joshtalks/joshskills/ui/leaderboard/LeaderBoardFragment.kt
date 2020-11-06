@@ -112,7 +112,7 @@ class LeaderBoardFragment private constructor() : Fragment() {
                     binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
                 }
                 it.current_mentor?.let {
-                    binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
+                    binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext(),true))
                 }
                 it.above_three_mentor_list?.forEach {
                     binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))

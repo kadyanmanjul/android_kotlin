@@ -610,7 +610,6 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                 params.topMargin = Utils.dpToPx(20)
                 binding.subPractiseSubmitLayout.layoutParams = params
                 binding.yourSubAnswerTv.text = getString(R.string.your_submitted_answer)
-                Log.d("Manjul", "practiceEngagement called ${this.practiceEngagement}")
                 val practiseEngagement = this.practiceEngagement?.get(0)
                 when {
                     EXPECTED_ENGAGE_TYPE.TX == it -> {

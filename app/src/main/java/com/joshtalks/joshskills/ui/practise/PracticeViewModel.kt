@@ -213,7 +213,6 @@ class PracticeViewModel(application: Application) :
                         val listPrac: List<PracticeEngagement> =
                             AppObjectController.gsonMapper.fromJson(list2, practiceEngagement)
                         list.addAll(listPrac)
-                        Log.d("Manjul", "if practiceEngagement called ${list}")
 
                         //list2?.let { it1 -> list.addAll(it1) }
                     }
@@ -233,7 +232,6 @@ class PracticeViewModel(application: Application) :
 
                 val resp = AppObjectController.chatNetworkService.getAudioFeedback(data)
                 if (resp.status == "completed" || resp.status == "error") {
-                    Log.d("Manjul", "if practiceEngagement called ${list}")
                     response.body()?.practiceFeedback =
                         PracticeFeedback(resp.score, resp.grade, resp.text, resp.status)
                     response.body()?.let {
@@ -243,14 +241,12 @@ class PracticeViewModel(application: Application) :
                                 .updatePractiseObject(it.questionId, list)
                         }
                     }
-                    Log.d("Manjul", "if practiceEngagement called ${list}")
                     practiceFeedback2LiveData.postValue(resp)
 
                 } else {
                     delay(10_000)
                     //Thread.sleep(1_000)
                     getAudioFeedback(chatModel, response, engageType, true, list)
-                    Log.d("Manjul", "else getAudioFeedback() called $resp")
 //                    requestStatusLiveData.postValue(true)
 
                 }

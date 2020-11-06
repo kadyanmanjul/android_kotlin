@@ -61,6 +61,7 @@
     <!-- ______________New App Colors_______________-->
     <color name="button_color">#107BE5</color>
     <color name="light_blue">#E1F3FB</color>
+    <color name="lightest_blue">#EDF2F8</color>
     <color name="black">#172344</color>
     <color name="dark_grey">#596273</color>
     <color name="light_grey">#9098B1</color>

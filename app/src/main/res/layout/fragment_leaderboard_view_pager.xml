@@ -85,26 +85,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/_8sdp"
-                android:text="1"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="1222" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/user_pic"
                 android:layout_width="@dimen/_40sdp"
                 android:layout_height="@dimen/_40sdp"
-                android:layout_marginHorizontal="@dimen/_8sdp"
                 android:layout_marginVertical="@dimen/_6sdp"
-                android:layout_marginStart="@dimen/_6sdp"
+                android:layout_marginStart="@dimen/_48sdp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:gravity="center_vertical|start"
-                android:src="@color/checkmark_blue"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/rank"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                tools:src="@color/checkmark_blue"
                 tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -130,12 +129,12 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="@dimen/_12sdp"
                 android:layout_marginBottom="4dp"
-                android:text="500"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="500" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

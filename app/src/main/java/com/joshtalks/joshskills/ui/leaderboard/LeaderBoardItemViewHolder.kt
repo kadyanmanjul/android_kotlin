@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.leaderboard
 
 import android.content.Context
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -15,10 +16,17 @@ import com.mindorks.placeholderview.annotations.View
 import de.hdodenhof.circleimageview.CircleImageView
 
 @Layout(R.layout.list_item)
-class LeaderBoardItemViewHolder(var response: LeaderboardMentor, var context: Context) {
+class LeaderBoardItemViewHolder(
+    var response: LeaderboardMentor,
+    var context: Context,
+    var currentUser: Boolean = false
+) {
 
     @View(R.id.rank)
     lateinit var rank: AppCompatTextView
+
+    @View(R.id.container)
+    lateinit var container: ConstraintLayout
 
     @View(R.id.name)
     lateinit var name: AppCompatTextView
@@ -33,6 +41,11 @@ class LeaderBoardItemViewHolder(var response: LeaderboardMentor, var context: Co
 
     @Resolve
     fun onViewInflated() {
+        if (currentUser) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                container.setBackgroundColor(context.getColor(R.color.lightest_blue))
+            }
+        }
         rank.text = response.ranking.toString()
         name.text = response.name.toString()
         points.text = response.points.toString()
