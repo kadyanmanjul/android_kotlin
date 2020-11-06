@@ -374,10 +374,10 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
         if (getIntent().hasExtra(StringContract.IntentStrings.MEMBER_SCOPE)) {
             loggedInUserScope = getIntent().getStringExtra(StringContract.IntentStrings.MEMBER_SCOPE);
             if (loggedInUserScope != null && loggedInUserScope.equals(CometChatConstants.SCOPE_ADMIN)) {
-                rlAddMemberView.setVisibility(View.VISIBLE);
+                // rlAddMemberView.setVisibility(View.VISIBLE);
                 rlBanMembers.setVisibility(View.VISIBLE);
                 rlModeratorView.setVisibility(View.VISIBLE);
-                tvDelete.setVisibility(View.VISIBLE);
+                // tvDelete.setVisibility(View.VISIBLE);
             } else if (loggedInUserScope != null && loggedInUserScope.equals(CometChatConstants.SCOPE_MODERATOR)) {
                 rlAddMemberView.setVisibility(View.GONE);
                 rlBanMembers.setVisibility(View.VISIBLE);
@@ -740,9 +740,9 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
                     adminCount = adminCount + 1;
 //                    tvAdminCount.setText(String.valueOf(adminCount));
                     if (user.getUid().equals(loggedInUser.getUid())) {
-                        rlAddMemberView.setVisibility(View.VISIBLE);
+                        // rlAddMemberView.setVisibility(View.VISIBLE);
                         loggedInUserScope = CometChatConstants.SCOPE_ADMIN;
-                        tvDelete.setVisibility(View.VISIBLE);
+                        // tvDelete.setVisibility(View.VISIBLE);
                     }
                 } else if (action.getNewScope().equals(CometChatConstants.SCOPE_MODERATOR)) {
                     moderatorCount = moderatorCount + 1;

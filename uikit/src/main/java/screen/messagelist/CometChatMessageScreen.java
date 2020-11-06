@@ -97,6 +97,7 @@ import listeners.OnItemClickListener;
 import listeners.OnMessageLongClick;
 import listeners.StickyHeaderDecoration;
 import screen.CometChatForwardMessageScreenActivity;
+import screen.CometChatGroupDetailScreenActivity;
 import screen.CometChatMessageInfoScreenActivity;
 import screen.CometChatUserDetailScreenActivity;
 import screen.threadconversation.CometChatThreadMessageActivity;
@@ -498,10 +499,10 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
             }
 
             @Override
-            public void onVoiceNoteComplete(String string) {
+            public void onVoiceNoteComplete(String string, JSONObject metadata) {
                 if (string != null) {
                     File audioFile = new File(string);
-                    sendMediaMessage(audioFile, CometChatConstants.MESSAGE_TYPE_AUDIO);
+                    sendMediaMessage(audioFile, CometChatConstants.MESSAGE_TYPE_AUDIO, metadata);
                 }
             }
 
@@ -1092,7 +1093,7 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
                 if (data != null) {
                     File file = MediaUtils.getRealPath(getContext(), data.getData());
                     ContentResolver cr = getActivity().getContentResolver();
-                    sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_AUDIO);
+                    sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_AUDIO, null);
                 }
                 break;
             case StringContract.RequestCode.GALLERY:
@@ -1103,12 +1104,12 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
                     String mimeType = cr.getType(data.getData());
                     if (mimeType != null && mimeType.contains("image")) {
                         if (file.exists())
-                            sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_IMAGE);
+                            sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_IMAGE, null);
                         else
                             Snackbar.make(rvChatListView, R.string.file_not_exist, Snackbar.LENGTH_LONG).show();
                     } else {
                         if (file.exists())
-                            sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_VIDEO);
+                            sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_VIDEO, null);
                         else
                             Snackbar.make(rvChatListView, R.string.file_not_exist, Snackbar.LENGTH_LONG).show();
                     }
@@ -1123,14 +1124,14 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
                     file = new File(MediaUtils.pictureImagePath);
                 }
                 if (file.exists())
-                    sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_IMAGE);
+                    sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_IMAGE, null);
                 else
                     Snackbar.make(rvChatListView, R.string.file_not_exist, Snackbar.LENGTH_LONG).show();
 
                 break;
             case StringContract.RequestCode.FILE:
                 if (data != null)
-                    sendMediaMessage(MediaUtils.getRealPath(getActivity(), data.getData()), CometChatConstants.MESSAGE_TYPE_FILE);
+                    sendMediaMessage(MediaUtils.getRealPath(getActivity(), data.getData()), CometChatConstants.MESSAGE_TYPE_FILE, null);
                 break;
             case StringContract.RequestCode.BLOCK_USER:
                 name = data.getStringExtra("");
@@ -1156,7 +1157,7 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
      * @see CometChat#sendMediaMessage(MediaMessage, CometChat.CallbackListener)
      * @see MediaMessage
      */
-    private void sendMediaMessage(File file, String filetype) {
+    private void sendMediaMessage(File file, String filetype, JSONObject metadata) {
         ProgressDialog progressDialog;
         progressDialog = ProgressDialog.show(context, "", getResources().getString(R.string.sending_media_message));
         MediaMessage mediaMessage;
@@ -1166,13 +1167,15 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
         else
             mediaMessage = new MediaMessage(Id, file, filetype, CometChatConstants.RECEIVER_TYPE_GROUP);
 
-        JSONObject jsonObject = new JSONObject();
+        if (metadata == null) {
+            metadata = new JSONObject();
+        }
         try {
-            jsonObject.put("path", file.getAbsolutePath());
+            metadata.put("path", file.getAbsolutePath());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mediaMessage.setMetadata(jsonObject);
+        mediaMessage.setMetadata(metadata);
 
         CometChat.sendMediaMessage(mediaMessage, new CometChat.CallbackListener<MediaMessage>() {
             @Override
@@ -1878,18 +1881,18 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
                 intent.putExtra(StringContract.IntentStrings.TYPE, type);
                 startActivity(intent);
             } else {
-//                Intent intent = new Intent(getContext(), CometChatGroupDetailScreenActivity.class);
-//                intent.putExtra(StringContract.IntentStrings.GUID, Id);
-//                intent.putExtra(StringContract.IntentStrings.NAME, name);
-//                intent.putExtra(StringContract.IntentStrings.AVATAR, avatarUrl);
-//                intent.putExtra(StringContract.IntentStrings.TYPE, type);
-//                intent.putExtra(StringContract.IntentStrings.GROUP_TYPE, groupType);
-//                intent.putExtra(StringContract.IntentStrings.MEMBER_SCOPE, loggedInUserScope);
-//                intent.putExtra(StringContract.IntentStrings.GROUP_OWNER, groupOwnerId);
-//                intent.putExtra(StringContract.IntentStrings.MEMBER_COUNT, memberCount);
-//                intent.putExtra(StringContract.IntentStrings.GROUP_DESC, groupDesc);
-//                intent.putExtra(StringContract.IntentStrings.GROUP_PASSWORD, groupPassword);
-//                startActivity(intent);
+                Intent intent = new Intent(getContext(), CometChatGroupDetailScreenActivity.class);
+                intent.putExtra(StringContract.IntentStrings.GUID, Id);
+                intent.putExtra(StringContract.IntentStrings.NAME, name);
+                intent.putExtra(StringContract.IntentStrings.AVATAR, avatarUrl);
+                intent.putExtra(StringContract.IntentStrings.TYPE, type);
+                intent.putExtra(StringContract.IntentStrings.GROUP_TYPE, groupType);
+                intent.putExtra(StringContract.IntentStrings.MEMBER_SCOPE, loggedInUserScope);
+                intent.putExtra(StringContract.IntentStrings.GROUP_OWNER, groupOwnerId);
+                intent.putExtra(StringContract.IntentStrings.MEMBER_COUNT, memberCount);
+                intent.putExtra(StringContract.IntentStrings.GROUP_DESC, groupDesc);
+                intent.putExtra(StringContract.IntentStrings.GROUP_PASSWORD, groupPassword);
+                startActivity(intent);
             }
         } else if (id == R.id.iv_close_message_action) {
             requireActivity().onBackPressed();

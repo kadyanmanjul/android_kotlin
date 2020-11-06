@@ -16,6 +16,7 @@ import com.cometchat.pro.uikit.R;
 import com.cometchat.pro.uikit.databinding.UserListRowBinding;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import utils.FontUtils;
@@ -61,7 +62,7 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
         this.groupOwnerId = groupOwnerId;
         this.context = context;
         fontUtils = FontUtils.getInstance(context);
-
+        sortMemberList();
     }
 
     @NonNull
@@ -147,6 +148,7 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
         for (GroupMember groupMember : groupMembers) {
             if (!groupMemberList.contains(groupMember)) {
                 groupMemberList.add(groupMember);
+                sortMemberList();
             }
         }
         notifyDataSetChanged();
@@ -159,6 +161,7 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
      */
     public void searchGroupMembers(List<GroupMember> filterlist) {
         this.groupMemberList = filterlist;
+        sortMemberList();
         notifyDataSetChanged();
     }
 
@@ -170,6 +173,7 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
      */
     public void addGroupMember(GroupMember joinedUser) {
         groupMemberList.add(joinedUser);
+        sortMemberList();
         notifyDataSetChanged();
     }
 
@@ -198,6 +202,7 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
             int index = groupMemberList.indexOf(groupMember);
             groupMemberList.remove(groupMember);
             groupMemberList.add(index, groupMember);
+            sortMemberList();
             notifyItemChanged(index);
         }
     }
@@ -222,7 +227,21 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
                 groupMemberList.add(groupMembers.get(i));
             }
         }
+        sortMemberList();
         notifyDataSetChanged();
+    }
+
+    private void sortMemberList() {
+        Collections.sort(this.groupMemberList, (member1, member2) -> member1.getName().toUpperCase().compareTo(member2.getName().toUpperCase()));
+        GroupMember member = null;
+        for (int i = 0; i < this.groupMemberList.size(); i++) {
+            member = groupMemberList.get(i);
+            if (member.getUid().equals(CometChat.getLoggedInUser().getUid())) {
+                groupMemberList.remove(member);
+                groupMemberList.add(0, member);
+                break;
+            }
+        }
     }
 
     class GroupMemberViewHolder extends RecyclerView.ViewHolder {

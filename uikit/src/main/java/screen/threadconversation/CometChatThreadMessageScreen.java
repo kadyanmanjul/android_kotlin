@@ -660,10 +660,10 @@ public class CometChatThreadMessageScreen extends Fragment implements View.OnCli
             }
 
             @Override
-            public void onVoiceNoteComplete(String string) {
+            public void onVoiceNoteComplete(String string, JSONObject metadata) {
                 if (string != null) {
                     File audioFile = new File(string);
-                    sendMediaMessage(audioFile, CometChatConstants.MESSAGE_TYPE_AUDIO);
+                    sendMediaMessage(audioFile, CometChatConstants.MESSAGE_TYPE_AUDIO, metadata);
                 }
             }
 
@@ -1059,7 +1059,7 @@ public class CometChatThreadMessageScreen extends Fragment implements View.OnCli
                 if (data != null) {
                     File file = MediaUtils.getRealPath(getContext(), data.getData());
                     ContentResolver cr = getActivity().getContentResolver();
-                    sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_AUDIO);
+                    sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_AUDIO, null);
                 }
                 break;
             case StringContract.RequestCode.GALLERY:
@@ -1070,12 +1070,12 @@ public class CometChatThreadMessageScreen extends Fragment implements View.OnCli
                     String mimeType = cr.getType(data.getData());
                     if (mimeType != null && mimeType.contains("image")) {
                         if (file.exists())
-                            sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_IMAGE);
+                            sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_IMAGE, null);
                         else
                             Snackbar.make(rvChatListView, R.string.file_not_exist, Snackbar.LENGTH_LONG).show();
                     } else {
                         if (file.exists())
-                            sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_VIDEO);
+                            sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_VIDEO, null);
                         else
                             Snackbar.make(rvChatListView, R.string.file_not_exist, Snackbar.LENGTH_LONG).show();
                     }
@@ -1090,14 +1090,14 @@ public class CometChatThreadMessageScreen extends Fragment implements View.OnCli
                     file = new File(MediaUtils.pictureImagePath);
                 }
                 if (file.exists())
-                    sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_IMAGE);
+                    sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_IMAGE, null);
                 else
                     Snackbar.make(rvChatListView, R.string.file_not_exist, Snackbar.LENGTH_LONG).show();
 
                 break;
             case StringContract.RequestCode.FILE:
                 if (data != null)
-                    sendMediaMessage(MediaUtils.getRealPath(getActivity(), data.getData()), CometChatConstants.MESSAGE_TYPE_FILE);
+                    sendMediaMessage(MediaUtils.getRealPath(getActivity(), data.getData()), CometChatConstants.MESSAGE_TYPE_FILE, null);
                 break;
             case StringContract.RequestCode.BLOCK_USER:
                 name = data.getStringExtra("");
@@ -1123,7 +1123,7 @@ public class CometChatThreadMessageScreen extends Fragment implements View.OnCli
      * @see CometChat#sendMediaMessage(MediaMessage, CometChat.CallbackListener)
      * @see MediaMessage
      */
-    private void sendMediaMessage(File file, String filetype) {
+    private void sendMediaMessage(File file, String filetype, JSONObject metadata) {
         MediaMessage mediaMessage;
 
         if (type.equalsIgnoreCase(CometChatConstants.RECEIVER_TYPE_USER))
@@ -1131,13 +1131,15 @@ public class CometChatThreadMessageScreen extends Fragment implements View.OnCli
         else
             mediaMessage = new MediaMessage(Id, file, filetype, CometChatConstants.RECEIVER_TYPE_GROUP);
 
-        JSONObject jsonObject = new JSONObject();
+        if (metadata == null) {
+            metadata = new JSONObject();
+        }
         try {
-            jsonObject.put("path", file.getAbsolutePath());
+            metadata.put("path", file.getAbsolutePath());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mediaMessage.setMetadata(jsonObject);
+        mediaMessage.setMetadata(metadata);
         mediaMessage.setParentMessageId(parentId);
         CometChat.sendMediaMessage(mediaMessage, new CometChat.CallbackListener<MediaMessage>() {
             @Override

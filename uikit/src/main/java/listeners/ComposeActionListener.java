@@ -7,6 +7,8 @@ import android.widget.ImageView;
 
 import androidx.core.view.inputmethod.InputContentInfoCompat;
 
+import org.json.JSONObject;
+
 public abstract class ComposeActionListener {
 
     public void onMoreActionClicked(ImageView moreIcon) {
@@ -33,7 +35,7 @@ public abstract class ComposeActionListener {
     public void onSendActionClicked(EditText editText) {
     }
 
-    public void onVoiceNoteComplete(String string) {
+    public void onVoiceNoteComplete(String string, JSONObject metadata) {
     }
 
     public abstract void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2);

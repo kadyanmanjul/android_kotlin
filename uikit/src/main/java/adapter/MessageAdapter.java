@@ -1283,12 +1283,12 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      */
     private void setActionData(ActionMessageViewHolder viewHolder, int i) {
         BaseMessage baseMessage = messageList.get(i);
-        if (Utils.isDarkMode(context))
-            viewHolder.textView.setTextColor(context.getResources().getColor(R.color.textColorWhite));
-        else
-            viewHolder.textView.setTextColor(context.getResources().getColor(R.color.primaryTextColor));
+//        if (Utils.isDarkMode(context))
+//            viewHolder.textView.setTextColor(context.getResources().getColor(R.color.textColorWhite));
+//        else
+//            viewHolder.textView.setTextColor(context.getResources().getColor(R.color.primaryTextColor));
 
-        viewHolder.textView.setTypeface(fontUtils.getTypeFace(FontUtils.robotoMedium));
+        viewHolder.textView.setTypeface(fontUtils.getTypeFace(FontUtils.robotoRegular));
         if (baseMessage instanceof Action)
             viewHolder.textView.setText(((Action) baseMessage).getMessage());
         else if (baseMessage instanceof Call) {

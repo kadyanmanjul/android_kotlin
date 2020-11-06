@@ -32,6 +32,9 @@ import androidx.fragment.app.FragmentManager;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.uikit.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
@@ -305,7 +308,14 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
             if (!voiceMessage) {
                 composeActionListener.onSendActionClicked(etComposeBox);
             } else {
-                composeActionListener.onVoiceNoteComplete(audioFileNameWithPath);
+                long audioDurationInMs = SystemClock.elapsedRealtime() - recordTime.getBase();
+                JSONObject metadata = new JSONObject();
+                try {
+                    metadata.put("audioDurationInMs", audioDurationInMs);
+                } catch (JSONException exception) {
+                    exception.printStackTrace();
+                }
+                composeActionListener.onVoiceNoteComplete(audioFileNameWithPath, metadata);
                 audioFileNameWithPath = "";
                 voiceMessageLayout.setVisibility(GONE);
                 etComposeBox.setVisibility(View.VISIBLE);

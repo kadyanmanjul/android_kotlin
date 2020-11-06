@@ -24,6 +24,9 @@ import android.widget.Toast;
 
 import com.cometchat.pro.uikit.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
@@ -127,7 +130,14 @@ public class AudioPlayerView extends RelativeLayout implements View.OnClickListe
         }
 
         if (view.getId() == R.id.ivSend) {
-            composeActionListener.onVoiceNoteComplete(audioFileNameWithPath);
+            long audioDurationInMs = SystemClock.elapsedRealtime() - recordTime.getBase();
+            JSONObject metadata = new JSONObject();
+            try {
+                metadata.put("audioDurationInMs", audioDurationInMs);
+            } catch (JSONException exception) {
+                exception.printStackTrace();
+            }
+            composeActionListener.onVoiceNoteComplete(audioFileNameWithPath, metadata);
             audioFileNameWithPath = "";
             voiceMessageLayout.setVisibility(GONE);
             ivDelete.setVisibility(GONE);
