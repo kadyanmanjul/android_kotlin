@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.MarginPageTransformer
@@ -21,9 +22,12 @@ import com.joshtalks.joshskills.repository.server.certification_exam.Certificati
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
 import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTION
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
+import com.joshtalks.joshskills.ui.certification_exam.questionlistbottom.Callback
 import com.joshtalks.joshskills.ui.certification_exam.questionlistbottom.QuestionListBottomSheet
 import java.util.concurrent.TimeUnit
+import kotlinx.android.synthetic.main.activity_cexam_main.bottom_bar
 import kotlinx.android.synthetic.main.activity_cexam_main.iv_all_question
+import kotlinx.android.synthetic.main.activity_cexam_main.iv_back
 import kotlinx.android.synthetic.main.activity_cexam_main.iv_bookmark
 import kotlinx.android.synthetic.main.activity_cexam_main.question_view_pager
 import kotlinx.android.synthetic.main.activity_cexam_main.tv_question
@@ -34,15 +38,22 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
+const val ARG_EXAM_VIEW = "exam_view"
+const val ARG_OPEN_QUESTION_ID = "open_question_id"
+
 class CExamMainActivity : BaseActivity(), CertificationExamListener {
 
     companion object {
         fun startExamActivity(
             context: Context,
-            certificationQuestionModel: CertificationQuestionModel
+            certificationQuestionModel: CertificationQuestionModel,
+            examView: CertificationExamView = CertificationExamView.EXAM_VIEW,
+            openQuestionId: Int = -1
         ): Intent {
             return Intent(context, CExamMainActivity::class.java).apply {
                 putExtra(CERTIFICATION_EXAM_QUESTION, certificationQuestionModel)
+                putExtra(ARG_EXAM_VIEW, examView)
+                putExtra(ARG_OPEN_QUESTION_ID, openQuestionId)
             }
         }
     }
@@ -52,6 +63,8 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
     }
     private var certificationQuestionModel: CertificationQuestionModel? = null
     private var countdownTimerBack: CountdownTimerBack? = null
+    private var examView: CertificationExamView = CertificationExamView.EXAM_VIEW
+    private var openQuestionId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +72,11 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
         setupUI()
         certificationQuestionModel =
             intent.getParcelableExtra(CERTIFICATION_EXAM_QUESTION) as CertificationQuestionModel?
+        examView =
+            (intent.getSerializableExtra(ARG_EXAM_VIEW) as CertificationExamView?)
+                ?: CertificationExamView.EXAM_VIEW
+        openQuestionId = intent.getIntExtra(ARG_OPEN_QUESTION_ID, 0)
+
         certificationQuestionModel?.run {
             questions.sortedBy { it.sortOrder }
             setupViewPager(questions)
@@ -103,6 +121,9 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
             iv_all_question.setOnClickListener {
                 openQuestionListBottomSheet()
             }
+            iv_back.setOnClickListener {
+                onBackPressed()
+            }
         }
     }
 
@@ -119,10 +140,11 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
     private fun setupViewPager(questions: List<CertificationQuestion>) {
         CoroutineScope(Dispatchers.Main).launch {
             delay(150)
-            val adapter =
-                CExamQuestionAdapter(
-                    questions, CertificationExamView.EXAM_VIEW
-                )
+            val adapter = CExamQuestionAdapter(questions, examView, object : Callback {
+                override fun onGoToQuestion(position: Int) {
+                    question_view_pager.currentItem = position
+                }
+            })
             question_view_pager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
             question_view_pager.offscreenPageLimit = questions.size
             question_view_pager.setPageTransformer(MarginPageTransformer(Utils.dpToPx(40)))
@@ -136,9 +158,24 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
                 }
             })
             question_view_pager.adapter = adapter
+            setupUIAsExamView()
+        }
+    }
+
+    private fun setupUIAsExamView() {
+        if (CertificationExamView.EXAM_VIEW == examView) {
+            bottom_bar.visibility = View.VISIBLE
             startExamTimer()
             question_view_pager.currentItem =
                 certificationQuestionModel?.lastQuestionOfExit ?: 0
+        } else {
+            certificationQuestionModel?.questions
+                ?.indexOfLast { it.questionId == openQuestionId }
+                ?.let {
+                    question_view_pager.currentItem = it
+
+                }
+            tv_timer.visibility = View.GONE
         }
     }
 
@@ -216,7 +253,11 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
     }
 
     override fun onBackPressed() {
-        openQuestionListBottomSheet()
+        if (CertificationExamView.EXAM_VIEW == examView) {
+            openQuestionListBottomSheet()
+            return
+        }
+        this.finish()
     }
 
 

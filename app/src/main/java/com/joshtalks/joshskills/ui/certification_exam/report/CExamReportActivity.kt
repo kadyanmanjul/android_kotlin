@@ -17,11 +17,18 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.ActivityCexamReportBinding
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.GotoCEQuestionEventBus
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
+import com.joshtalks.joshskills.repository.server.certification_exam.CertificationExamView
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
 import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_ID
 import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTION
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
+import com.joshtalks.joshskills.ui.certification_exam.examview.CExamMainActivity
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+
 class CExamReportActivity : BaseActivity() {
 
     companion object {
@@ -43,6 +50,7 @@ class CExamReportActivity : BaseActivity() {
     private var certificateExamId: Int = -1
     private var certificationQuestionModel: CertificationQuestionModel? = null
     private lateinit var binding: ActivityCexamReportBinding
+    private var compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
@@ -111,6 +119,38 @@ class CExamReportActivity : BaseActivity() {
             override fun onTabReselected(tab: TabLayout.Tab?) {
             }
         })
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        addRxbusObserver()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        compositeDisposable.clear()
+    }
+
+    private fun addRxbusObserver() {
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(GotoCEQuestionEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .subscribe({
+                    certificationQuestionModel?.run {
+                        startActivity(
+                            CExamMainActivity.startExamActivity(
+                                this@CExamReportActivity,
+                                this,
+                                examView = CertificationExamView.RESULT_VIEW,
+                                openQuestionId = it.questionId
+                            )
+                        )
+                    }
+                }, {
+                    it.printStackTrace()
+                })
+        )
     }
 
 

@@ -22,7 +22,6 @@ import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
 const val CERTIFICATION_EXAM_ID = "certification_exam_ID"
 const val CERTIFICATION_EXAM_QUESTION = "certification_exam_question"
 const val CURRENT_QUESTION = "current_question"
-
 class CertificationBaseActivity : BaseActivity() {
 
     companion object {

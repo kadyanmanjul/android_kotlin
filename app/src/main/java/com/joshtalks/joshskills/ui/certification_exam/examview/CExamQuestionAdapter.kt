@@ -17,9 +17,11 @@ import com.joshtalks.joshskills.databinding.CexamListItemBinding
 import com.joshtalks.joshskills.repository.server.certification_exam.Answer
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationExamView
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestion
+import com.joshtalks.joshskills.ui.certification_exam.questionlistbottom.Callback
 
 class CExamQuestionAdapter(
-    var questionList: List<CertificationQuestion>, var examView: CertificationExamView
+    var questionList: List<CertificationQuestion>, var examView: CertificationExamView,
+    private val listener: Callback? = null
 ) : RecyclerView.Adapter<CExamQuestionAdapter.ViewHolder>() {
 
     private var context = AppObjectController.joshApplication
@@ -45,13 +47,13 @@ class CExamQuestionAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        return holder.bind(questionList[position])
+        return holder.bind(questionList[position], position)
     }
 
     inner class ViewHolder(val binding: CexamListItemBinding, val context: Context) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(certificationQuestion: CertificationQuestion) {
+        fun bind(certificationQuestion: CertificationQuestion, position: Int) {
             with(binding) {
                 tvQuestion.text = certificationQuestion.questionText
                 if (radioGroup.childCount == 0) {
@@ -73,6 +75,10 @@ class CExamQuestionAdapter(
                     groupRoot.visibility = View.VISIBLE
                     tvExplanation.text = certificationQuestion.explanation
                     btnNextQuestion.setOnClickListener {
+                        listener?.onGoToQuestion(position + 1)
+                    }
+                    if (position == questionList.size) {
+                        btnNextQuestion.visibility = View.GONE
                     }
                 }
             }
@@ -93,7 +99,7 @@ class CExamQuestionAdapter(
             radioButton.tag = answer.id
             //radio_button_unselect_bg.xml
             if (CertificationExamView.RESULT_VIEW == examView) {
-
+                radioButton.isClickable = false
             } else {
                 radioButton.setBackgroundResource(R.drawable.radio_button_selector)
                 val colorStateList = ColorStateList(
@@ -115,4 +121,9 @@ class CExamQuestionAdapter(
         }
     }
 
+}
+
+
+interface Callback {
+    fun onGoToQuestion(position: Int)
 }

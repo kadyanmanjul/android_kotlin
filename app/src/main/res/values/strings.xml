@@ -505,5 +505,6 @@
     <string name="check_exam_details">Check exam details</string>
     <string name="examination_result">Examination Result</string>
     <string name="check_answer">Check Answer</string>
+    <string name="next_question">Next Question</string>
 
 </resources>
