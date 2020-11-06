@@ -40,6 +40,7 @@ import kotlinx.coroutines.launch
 
 const val ARG_EXAM_VIEW = "exam_view"
 const val ARG_OPEN_QUESTION_ID = "open_question_id"
+const val ARG_ATTEMPT_SEQUENCE = "attempt_sequence"
 
 class CExamMainActivity : BaseActivity(), CertificationExamListener {
 
@@ -48,12 +49,14 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
             context: Context,
             certificationQuestionModel: CertificationQuestionModel,
             examView: CertificationExamView = CertificationExamView.EXAM_VIEW,
-            openQuestionId: Int = -1
+            openQuestionId: Int = -1,
+            attemptSequence: Int = -1
         ): Intent {
             return Intent(context, CExamMainActivity::class.java).apply {
                 putExtra(CERTIFICATION_EXAM_QUESTION, certificationQuestionModel)
                 putExtra(ARG_EXAM_VIEW, examView)
                 putExtra(ARG_OPEN_QUESTION_ID, openQuestionId)
+                putExtra(ARG_ATTEMPT_SEQUENCE, attemptSequence)
             }
         }
     }
@@ -65,6 +68,8 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
     private var countdownTimerBack: CountdownTimerBack? = null
     private var examView: CertificationExamView = CertificationExamView.EXAM_VIEW
     private var openQuestionId: Int = 0
+    private var attemptSequence: Int = -1
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +81,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
             (intent.getSerializableExtra(ARG_EXAM_VIEW) as CertificationExamView?)
                 ?: CertificationExamView.EXAM_VIEW
         openQuestionId = intent.getIntExtra(ARG_OPEN_QUESTION_ID, 0)
+        attemptSequence = intent.getIntExtra(ARG_ATTEMPT_SEQUENCE, -1)
 
         certificationQuestionModel?.run {
             questions.sortedBy { it.sortOrder }
@@ -140,6 +146,16 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
     private fun setupViewPager(questions: List<CertificationQuestion>) {
         CoroutineScope(Dispatchers.Main).launch {
             delay(150)
+
+            //This logic for  reduce complexity result screen
+            if (CertificationExamView.RESULT_VIEW == examView) {
+                questions.forEach { cq ->
+                    cq.correctOptionId = cq.answers.find { it.isCorrect }?.id ?: -1
+                    cq.userSelectedOption =
+                        cq.userSubmittedAnswer?.find { it.attemptSeq == attemptSequence }?.answerId
+                            ?: -1
+                }
+            }
             val adapter = CExamQuestionAdapter(questions, examView, object : Callback {
                 override fun onGoToQuestion(position: Int) {
                     question_view_pager.currentItem = position

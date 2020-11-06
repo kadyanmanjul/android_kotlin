@@ -25,8 +25,26 @@ class CExamQuestionAdapter(
 ) : RecyclerView.Adapter<CExamQuestionAdapter.ViewHolder>() {
 
     private var context = AppObjectController.joshApplication
-    val accentColor =
+    private val accentColor =
         ContextCompat.getColor(context, R.color.colorAccent)
+    private val colorStateList = ColorStateList(
+        arrayOf(
+            intArrayOf(android.R.attr.state_checked),
+            intArrayOf(-android.R.attr.state_checked)
+        ), intArrayOf(
+            accentColor,
+            Color.parseColor("#70107BE5")
+        )
+    )
+    private val resultColorStateList = ColorStateList(
+        arrayOf(
+            intArrayOf(android.R.attr.state_focused),
+            intArrayOf(-android.R.attr.state_focused)
+        ), intArrayOf(
+            accentColor,
+            Color.parseColor("#70107BE5")
+        )
+    )
 
     init {
         setHasStableIds(true)
@@ -61,7 +79,8 @@ class CExamQuestionAdapter(
                         radioGroup.addView(
                             getRadioButton(
                                 it,
-                                certificationQuestion.userSelectedOption
+                                certificationQuestion.userSelectedOption,
+                                certificationQuestion.correctOptionId
                             )
                         )
                     }
@@ -84,7 +103,11 @@ class CExamQuestionAdapter(
             }
         }
 
-        private fun getRadioButton(answer: Answer, userSelectedOption: Int?): AppCompatRadioButton {
+        private fun getRadioButton(
+            answer: Answer,
+            userSelectedOption: Int,
+            correctOptionId: Int
+        ): AppCompatRadioButton {
             val radioButton: AppCompatRadioButton = LayoutInflater.from(context)
                 .inflate(R.layout.radio_button_view, null, false) as AppCompatRadioButton
             val params: RadioGroup.LayoutParams = RadioGroup.LayoutParams(
@@ -97,33 +120,28 @@ class CExamQuestionAdapter(
             radioButton.text = answer.text
             radioButton.isChecked = false
             radioButton.tag = answer.id
-            //radio_button_unselect_bg.xml
+            radioButton.buttonTintList = colorStateList
+            radioButton.isFocusable = false
+
+            if (userSelectedOption == answer.id) {
+                radioButton.isChecked = true
+            }
             if (CertificationExamView.RESULT_VIEW == examView) {
                 radioButton.isClickable = false
+                if (correctOptionId == answer.id) {
+                    radioButton.isFocusable = true
+                    radioButton.setBackgroundResource(R.drawable.rb_selector_result)
+                    radioButton.setCompoundDrawablesWithIntrinsicBounds(
+                        0,
+                        0,
+                        R.drawable.ic_tick_extra_smallest,
+                        0
+                    )
+                }
             } else {
                 radioButton.setBackgroundResource(R.drawable.radio_button_selector)
-                val colorStateList = ColorStateList(
-                    arrayOf(
-                        intArrayOf(android.R.attr.state_checked),
-                        intArrayOf(-android.R.attr.state_checked)
-                    ), intArrayOf(
-                        accentColor,
-                        Color.parseColor("#70107BE5")
-                    )
-                )
-                radioButton.buttonTintList = colorStateList
-
-                if (userSelectedOption != null && userSelectedOption == answer.id) {
-                    radioButton.isChecked = true
-                }
             }
             return radioButton
         }
     }
-
-}
-
-
-interface Callback {
-    fun onGoToQuestion(position: Int)
 }

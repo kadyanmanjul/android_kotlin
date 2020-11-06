@@ -143,7 +143,8 @@ class CExamReportActivity : BaseActivity() {
                                 this@CExamReportActivity,
                                 this,
                                 examView = CertificationExamView.RESULT_VIEW,
-                                openQuestionId = it.questionId
+                                openQuestionId = it.questionId,
+                                attemptSequence = (binding.examReportList.currentItem + 1)
                             )
                         )
                     }

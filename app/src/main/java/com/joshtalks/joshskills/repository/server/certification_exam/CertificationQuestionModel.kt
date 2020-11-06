@@ -103,7 +103,8 @@ data class CertificationQuestion(
     val answers: List<Answer> = emptyList(),
     @SerializedName("user_submitted_answer")
     val userSubmittedAnswer: List<UserSubmittedAnswer>? = null,
-    var userSelectedOption: Int? = null,
+    var userSelectedOption: Int = -1,
+    var correctOptionId: Int = -1,
     var isAttempted: Boolean = false,
     var isBookmarked: Boolean = false,
     var isViewed: Boolean = false
@@ -115,7 +116,7 @@ data class CertificationQuestion(
         explanation = EMPTY,
         answers = emptyList(),
         userSubmittedAnswer = emptyList(),
-        userSelectedOption = null,
+        userSelectedOption = -1,
         isAttempted = false,
         isBookmarked = false,
         isViewed = false
@@ -145,7 +146,7 @@ data class Answer(
 data class UserSubmittedAnswer(
     @SerializedName("answer_id")
     val answerId: Int = -1,
-    @SerializedName("attempt_seq")
+    @SerializedName("attempt_no")
     val attemptSeq: Int = -1
 ) : Parcelable {
     constructor() : this(

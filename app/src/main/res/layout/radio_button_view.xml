@@ -10,6 +10,7 @@
     android:drawablePadding="@dimen/_8sdp"
     android:enabled="true"
     android:paddingEnd="@dimen/_8sdp"
+    android:drawableTint="@color/black"
     android:textAlignment="viewStart"
     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
     android:textColor="@color/rb_text_color_state"
