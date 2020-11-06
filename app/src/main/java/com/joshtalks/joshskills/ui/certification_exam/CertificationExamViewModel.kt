@@ -114,10 +114,10 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
             ArrayList(obj.questions.size)
         var userSelectedAnswer: RequestSubmitAnswer
         obj.questions.forEach {
-            if (it.userSelectedOption != null) {
+            if (it.userSelectedOption > -1) {
                 userSelectedAnswer = RequestSubmitAnswer(
                     it.userSelectedOption,
-                    isUserGiveCorrectAnswer(it.userSelectedOption!!, it.answers),
+                    isUserGiveCorrectAnswer(it.userSelectedOption, it.answers),
                     it.questionId
                 )
                 userSelectedAnswerList.add(userSelectedAnswer)

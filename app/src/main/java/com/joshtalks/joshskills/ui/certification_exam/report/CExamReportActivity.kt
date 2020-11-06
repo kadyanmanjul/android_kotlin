@@ -88,9 +88,6 @@ class CExamReportActivity : BaseActivity() {
     private fun setUpExamViewPager(list: List<CertificateExamReportModel>) {
         binding.examReportList.adapter =
             CExamReportAdapter(this, list, certificationQuestionModel?.questions)
-        TabLayoutMediator(binding.tabLayout, binding.examReportList) { tab, position ->
-            tab.text = "Attempt" + (position + 1)
-        }.attach()
 
         binding.examReportList.setPageTransformer(
             MarginPageTransformer(
@@ -108,6 +105,9 @@ class CExamReportActivity : BaseActivity() {
         binding.examReportList.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
         })
+        TabLayoutMediator(binding.tabLayout, binding.examReportList) { tab, position ->
+            tab.text = "Attempt" + (position + 1)
+        }.attach()
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 //    binding.examReportList.currentItem = tab.position

@@ -38,7 +38,7 @@
         app:layout_constraintWidth_percent="0.85"
         tools:text="your score \n 45/60" />
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
         android:id="@+id/result_info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

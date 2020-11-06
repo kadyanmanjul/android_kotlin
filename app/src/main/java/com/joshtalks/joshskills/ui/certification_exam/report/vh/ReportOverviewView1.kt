@@ -10,9 +10,11 @@ import android.text.style.AbsoluteSizeSpan
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import com.google.android.material.button.MaterialButton
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
@@ -31,7 +33,7 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
     lateinit var scoreTv: AppCompatTextView
 
     @com.mindorks.placeholderview.annotations.View(R.id.result_info)
-    lateinit var resultInfo: AppCompatTextView
+    lateinit var resultInfo: JoshTextView
 
     @com.mindorks.placeholderview.annotations.View(R.id.check_exam_details)
     lateinit var checkExamDetails: MaterialButton
@@ -45,7 +47,7 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
     fun onViewInflated() {
         certificateExamReport.run {
             headerTv.text = heading
-            resultInfo.text = text
+            resultInfo.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
             if (isExamPass) {
                 cDownloadGroup.visibility = View.VISIBLE
                 checkExamDetails.setTextColor(

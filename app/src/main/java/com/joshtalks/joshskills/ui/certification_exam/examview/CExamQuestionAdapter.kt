@@ -120,7 +120,6 @@ class CExamQuestionAdapter(
             radioButton.text = answer.text
             radioButton.isChecked = false
             radioButton.tag = answer.id
-            radioButton.buttonTintList = colorStateList
             radioButton.isFocusable = false
 
             if (userSelectedOption == answer.id) {
@@ -140,6 +139,7 @@ class CExamQuestionAdapter(
                 }
             } else {
                 radioButton.setBackgroundResource(R.drawable.radio_button_selector)
+                radioButton.buttonTintList = colorStateList
             }
             return radioButton
         }

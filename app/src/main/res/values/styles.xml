@@ -175,6 +175,7 @@
         <item name="fontPath">fonts/OpenSans-SemiBold.ttf</item>
         <item name="android:lineSpacingMultiplier">1.5</item>
         <item name="android:letterSpacing">0.05</item>
+
     </style>
 
     <style name="FullDialogWithAnimationV2" parent="@android:style/Theme.Holo.Light.Dialog">
