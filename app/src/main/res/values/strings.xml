@@ -530,5 +530,6 @@
     <string name="redo_quiz">Redo Quiz</string>
     <string name="quiz_completed">Quiz Completed!!</string>
     <string name="marks_text">You got %1$d/%2$d correct</string>
+    <string name="attempts_over">Attempts Over</string>
 
 </resources>
