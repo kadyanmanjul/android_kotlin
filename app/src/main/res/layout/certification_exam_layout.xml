@@ -7,8 +7,8 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/_2sdp"
     android:layout_marginBottom="@dimen/_2sdp"
-    android:paddingStart="@dimen/_16sdp"
-    android:paddingEnd="@dimen/_16sdp">
+    android:paddingStart="@dimen/_12sdp"
+    android:paddingEnd="@dimen/_12sdp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/message_view"

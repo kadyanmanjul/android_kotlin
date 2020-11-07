@@ -53,7 +53,10 @@ class CertificationExamViewHolder(
         message.question?.run {
             tvTitle.text = title
         }
-        eligibilityDate.text = DD_MM_YYYY.format(message.created).toLowerCase(Locale.getDefault())
+        eligibilityDate.text = getAppContext().getString(
+            R.string.cexam_date,
+            DD_MM_YYYY.format(message.created).toLowerCase(Locale.getDefault())
+        )
     }
 
     @Click(R.id.message_view)
