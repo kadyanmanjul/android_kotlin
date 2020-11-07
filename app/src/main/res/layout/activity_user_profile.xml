@@ -234,43 +234,5 @@
                     app:layout_constraintTop_toBottomOf="@id/multi_line_ll" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
-
-        <RelativeLayout
-            android:id="@+id/progress_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:background="@color/overlay"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <com.pnikosis.materialishprogress.ProgressWheel
-                android:id="@+id/progress_bar"
-                android:layout_width="@dimen/_60sdp"
-                android:layout_height="@dimen/_60sdp"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center"
-                tools:matProg_barColor="@color/button_color"
-                tools:matProg_fillRadius="true"
-                tools:matProg_linearProgress="false"
-                tools:matProg_progressIndeterminate="true"
-                tools:matProg_rimColor="#33128C7E"
-                tools:matProg_rimWidth="@dimen/_2sdp" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/progress_bar"
-                android:layout_centerInParent="true"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:text="@string/plz_wait"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                android:textColor="@color/white" />
-        </RelativeLayout>
     </FrameLayout>
 </layout>

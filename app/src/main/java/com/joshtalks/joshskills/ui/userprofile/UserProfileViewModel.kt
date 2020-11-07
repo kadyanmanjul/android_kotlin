@@ -4,9 +4,10 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.repository.server.Award
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +21,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
 
     fun getProfileData(mentorId: String) {
+        apiCallStatusLiveData.postValue(ApiCallStatus.START)
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = AppObjectController.commonNetworkService.getUserProfileData(mentorId)
@@ -30,6 +32,9 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                     }
                     userData.postValue(response.body()!!)
                     return@launch
+                } else {
+                    apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+                    showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
                 }
 
             } catch (ex: Throwable) {

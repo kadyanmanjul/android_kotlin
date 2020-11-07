@@ -859,19 +859,11 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 return true;
             });
 
-            viewHolder.ivUser.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Utils.moveToUserProfile(baseMessage.getSender().getUid(), context);
-                }
-            });
+            if (viewHolder.ivUser != null)
+                viewHolder.ivUser.setOnClickListener(view -> Utils.moveToUserProfile(baseMessage.getSender().getUid(), context));
 
-            viewHolder.tvUser.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Utils.moveToUserProfile(baseMessage.getSender().getUid(), context);
-                }
-            });
+            if (viewHolder.tvUser != null)
+                viewHolder.tvUser.setOnClickListener(view -> Utils.moveToUserProfile(baseMessage.getSender().getUid(), context));
         }
     }
 
@@ -1593,19 +1585,12 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             });
 
-            viewHolder.ivUser.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Utils.moveToUserProfile(baseMessage.getSender().getUid(),context);
-                }
-            });
+            if (viewHolder.ivUser != null)
+                viewHolder.ivUser.setOnClickListener(view -> Utils.moveToUserProfile(baseMessage.getSender().getUid(), context));
 
-            viewHolder.tvUser.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Utils.moveToUserProfile(baseMessage.getSender().getUid(),context);
-                }
-            });
+            if (viewHolder.tvUser != null)
+                viewHolder.tvUser.setOnClickListener(view -> Utils.moveToUserProfile(baseMessage.getSender().getUid(), context));
+
 //            if (baseMessage.getSender().getUid().equals(loggedInUser.getUid()))
 //                viewHolder.txtMessage.setTextColor(context.getResources().getColor(R.color.textColorWhite));
 //            else

@@ -62,6 +62,7 @@
             android:layout_below="@id/practise_seekbar"
             android:layout_toLeftOf="@id/submit_txt_info_date"
             android:text="@string/your_feedback"
+            android:visibility="gone"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
             android:textColor="@color/red_color"
             app:layout_goneMarginTop="@dimen/spacing_large" />

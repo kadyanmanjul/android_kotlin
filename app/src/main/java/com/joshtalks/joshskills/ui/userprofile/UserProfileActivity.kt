@@ -7,14 +7,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.ActivityUserProfileBinding
@@ -24,7 +25,7 @@ import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.mindorks.placeholderview.PlaceHolderView
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 
-class UserProfileActivity : AppCompatActivity() {
+class UserProfileActivity : BaseActivity() {
 
     lateinit var binding: ActivityUserProfileBinding
     private var mentorId: String = EMPTY
@@ -67,10 +68,21 @@ class UserProfileActivity : AppCompatActivity() {
     private fun addObserver() {
         viewModel.userData.observe(this, Observer {
             it?.let {
-                binding.progressLayout.visibility = View.GONE
+                hideProgressBar()
                 initView(it)
             }
         })
+
+        viewModel.apiCallStatusLiveData.observe(this) {
+            if (it == ApiCallStatus.SUCCESS) {
+                hideProgressBar()
+            } else if (it == ApiCallStatus.FAILED) {
+                hideProgressBar()
+                this.finish()
+            } else if (it == ApiCallStatus.START) {
+                showProgressBar()
+            }
+        }
 
     }
 
@@ -145,7 +157,7 @@ class UserProfileActivity : AppCompatActivity() {
         awardCategory.awards?.forEach {
             recyclerView.addView(AwardItemViewHolder(it, this))
         }
-        recyclerView.getLayoutManager()?.scrollToPosition(0);
+        recyclerView.layoutManager?.scrollToPosition(0)
         if (view != null) {
             viewCount = viewCount.plus(1)
         }
