@@ -1,6 +1,7 @@
 package screen;
 
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -202,7 +203,7 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
             @Override
             public void onClick(View var1, int var2) {
                 GroupMember user = (GroupMember) var1.getTag(R.string.user);
-                if (loggedInUserScope != null && (loggedInUserScope.equals(CometChatConstants.SCOPE_ADMIN) || loggedInUserScope.equals(CometChatConstants.SCOPE_MODERATOR))) {
+                /*if (loggedInUserScope != null && (loggedInUserScope.equals(CometChatConstants.SCOPE_ADMIN) || loggedInUserScope.equals(CometChatConstants.SCOPE_MODERATOR))) {
                     groupMember = user;
                     boolean isAdmin = user.getScope().equals(CometChatConstants.SCOPE_ADMIN);
                     boolean isSelf = loggedInUser.getUid().equals(user.getUid());
@@ -213,7 +214,12 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
                             openContextMenu(var1);
                         }
                     }
-                }
+                }*/
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName("com.joshtalks.joshskills", "com.joshtalks.joshskills.ui.userprofile.UserProfileActivity"));
+                intent.putExtra("leaderboard-mentor-id", user.getUid());
+                startActivity(intent);
+                //finish();
             }
 
             @Override
