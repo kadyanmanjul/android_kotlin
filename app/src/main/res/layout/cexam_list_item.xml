@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -47,6 +47,7 @@
                 android:focusable="true"
                 android:text="@string/next_question"
                 android:textAlignment="center"
+                android:visibility="gone"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
                 android:textColor="@color/white"
@@ -54,6 +55,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/radio_group"
+                tools:visibility="visible"
                 app:rippleColor="@color/white" />
 
 
@@ -82,7 +84,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_view"
-                app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="dwdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d " />
 
             <androidx.constraintlayout.widget.Group
@@ -90,8 +91,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                app:constraint_referenced_ids="btn_next_question,text_view,tv_explanation"
+                app:constraint_referenced_ids="text_view,tv_explanation"
                 tools:visibility="visible" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </FrameLayout>
+    </LinearLayout>
 </layout>

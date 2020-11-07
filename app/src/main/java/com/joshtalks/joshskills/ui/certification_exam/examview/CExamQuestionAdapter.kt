@@ -96,7 +96,8 @@ class CExamQuestionAdapter(
                     btnNextQuestion.setOnClickListener {
                         listener?.onGoToQuestion(position + 1)
                     }
-                    if (position == questionList.size) {
+                    btnNextQuestion.visibility = View.VISIBLE
+                    if (position == (questionList.size - 1)) {
                         btnNextQuestion.visibility = View.GONE
                     }
                 }

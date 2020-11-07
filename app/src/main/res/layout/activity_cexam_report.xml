@@ -101,8 +101,9 @@
                 app:tabMode="fixed"
                 app:tabSelectedTextColor="@color/black"
                 app:tabTextAppearance="@style/TabLayoutStyle"
+
                 android:focusable="true"
-                app:tabTextColor="@color/light_grey"></com.google.android.material.tabs.TabLayout>
+                app:tabTextColor="@color/light_grey" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.viewpager2.widget.ViewPager2
