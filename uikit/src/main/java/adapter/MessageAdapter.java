@@ -858,6 +858,20 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
                 return true;
             });
+
+            viewHolder.ivUser.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Utils.moveToUserProfile(baseMessage.getSender().getUid(), context);
+                }
+            });
+
+            viewHolder.tvUser.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Utils.moveToUserProfile(baseMessage.getSender().getUid(), context);
+                }
+            });
         }
     }
 
@@ -1576,6 +1590,20 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         notifyDataSetChanged();
                     }
                     return true;
+                }
+            });
+
+            viewHolder.ivUser.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Utils.moveToUserProfile(baseMessage.getSender().getUid(),context);
+                }
+            });
+
+            viewHolder.tvUser.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Utils.moveToUserProfile(baseMessage.getSender().getUid(),context);
                 }
             });
 //            if (baseMessage.getSender().getUid().equals(loggedInUser.getUid()))

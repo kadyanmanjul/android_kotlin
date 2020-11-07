@@ -215,10 +215,7 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
                         }
                     }
                 }*/
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName("com.joshtalks.joshskills", "com.joshtalks.joshskills.ui.userprofile.UserProfileActivity"));
-                intent.putExtra("leaderboard-mentor-id", user.getUid());
-                startActivity(intent);
+                Utils.moveToUserProfile(user.getUid(),CometChatGroupDetailScreenActivity.this);
                 //finish();
             }
 

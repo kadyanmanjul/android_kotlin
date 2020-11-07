@@ -1,5 +1,6 @@
 package utils;
 
+import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -694,5 +695,12 @@ public class Utils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void moveToUserProfile(String uuid, Context context) {
+        Intent intent = new Intent();
+        intent.setComponent(new ComponentName("com.joshtalks.joshskills", "com.joshtalks.joshskills.ui.userprofile.UserProfileActivity"));
+        intent.putExtra("leaderboard-mentor-id", uuid);
+        context.startActivity(intent);
     }
 }
