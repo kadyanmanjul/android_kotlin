@@ -46,7 +46,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="start|center"
-                        android:text="@string/today_practise"
+                        android:text="@string/today_reading_practise"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
                         android:textColor="@color/black" />
 
@@ -485,44 +485,11 @@
                         android:id="@+id/feedback_header"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="start|center"
+                        android:gravity="center"
                         android:text="@string/your_feedback"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                         android:textColor="@color/black"
                         android:visibility="visible" />
-
-                    <RelativeLayout
-                        android:id="@+id/progress_layout2"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:background="@color/overlay"
-                        android:visibility="gone">
-
-                        <com.pnikosis.materialishprogress.ProgressWheel
-                            android:id="@+id/progress_bar2"
-                            android:layout_width="@dimen/_40sdp"
-                            android:layout_height="@dimen/_40sdp"
-                            android:layout_centerInParent="true"
-                            android:layout_gravity="center"
-                            wheel:matProg_barColor="@color/button_color"
-                            wheel:matProg_fillRadius="true"
-                            wheel:matProg_linearProgress="false"
-                            wheel:matProg_progressIndeterminate="true"
-                            wheel:matProg_rimColor="#33128C7E"
-                            wheel:matProg_rimWidth="@dimen/_2sdp" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@+id/progress_bar2"
-                            android:layout_centerInParent="true"
-                            android:layout_centerHorizontal="true"
-                            android:layout_centerVertical="true"
-                            android:text="@string/plz_wait_feedback"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                            android:textColor="@color/white" />
-                    </RelativeLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"

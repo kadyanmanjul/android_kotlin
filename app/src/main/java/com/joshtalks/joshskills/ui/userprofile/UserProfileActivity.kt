@@ -28,6 +28,7 @@ class UserProfileActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityUserProfileBinding
     private var mentorId: String = EMPTY
+    private var viewCount: Int = 0
 
     private val viewModel by lazy {
         ViewModelProvider(this).get(
@@ -98,8 +99,12 @@ class UserProfileActivity : AppCompatActivity() {
             )
         }
         binding.awardRv.addView(AwardViewHolder(listAwardss, this))*/
-        userData.awardCategory?.forEach { awardCategory ->
-            binding.multiLineLl.addView(addLinerLayout(awardCategory))
+        userData.awardCategory?.let {
+            binding.awardsHeading.visibility = View.VISIBLE
+            binding.moreInfo.visibility = View.VISIBLE
+            it.forEach { awardCategory ->
+                binding.multiLineLl.addView(addLinerLayout(awardCategory))
+            }
         }
         val listAwardss: ArrayList<Award> = ArrayList()
         userData.certificates?.map { certificate ->
@@ -113,7 +118,6 @@ class UserProfileActivity : AppCompatActivity() {
             )
         }
         binding.multiLineLl.addView(addLinerLayout(AwardCategory(null, null, null, listAwardss)))
-
     }
 
     @SuppressLint("WrongViewCast")
@@ -140,7 +144,13 @@ class UserProfileActivity : AppCompatActivity() {
         awardCategory.awards?.forEach {
             recyclerView.addView(AwardItemViewHolder(it, this))
         }
-        recyclerView.getLayoutManager()?.scrollToPosition(awardCategory.awards?.size ?: 0);
+        recyclerView.getLayoutManager()?.scrollToPosition(0);
+        if (view != null) {
+            viewCount = viewCount.plus(1)
+        }
+        if (viewCount > 3) {
+            view.visibility = View.GONE
+        }
         return view
     }
 
@@ -149,7 +159,13 @@ class UserProfileActivity : AppCompatActivity() {
     }
 
     fun showAllAwards() {
-        viewModel.getProfileData(mentorId)
+        binding.moreInfo.visibility = View.GONE
+        //viewModel.getProfileData(mentorId)
+        for (i in 0 until binding.multiLineLl.childCount) {
+            val view: View = binding.multiLineLl.getChildAt(i)
+            view.visibility = View.VISIBLE
+        }
+        binding.multiLineLl
     }
 
     companion object {

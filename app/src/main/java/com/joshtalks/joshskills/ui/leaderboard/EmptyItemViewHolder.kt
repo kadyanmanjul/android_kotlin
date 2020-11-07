@@ -9,7 +9,6 @@ class EmptyItemViewHolder() {
 
     @Resolve
     fun onViewInflated() {
-
     }
 
 }

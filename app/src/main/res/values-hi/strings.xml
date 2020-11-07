@@ -50,7 +50,7 @@
     <string name="find_more_courses">और कोर्स ढूंढें</string>
     <string name="internet_not_available_msz">ऐसा लगता है कि आपका इंटरनेट बहुत धीमा है या उपलब्ध नहीं है।</string>
     <string name="plz_wait">कृपया इंतजार करें</string>
-    <string name="plz_wait_feedback">कृपया प्रतीक्षा करें, जबकि प्रतिक्रिया उत्पन्न हो रही हैं</string>
+    <string name="plz_wait_feedback">कृपया प्रतीक्षा करें,\n जबकि प्रतिक्रिया उत्पन्न हो रही हैं</string>
     <string name="your_mobile_number">"आपका मोबाइल नंबर "</string>
     <string name="please_enter_otp">कृपया ओटीपी डालें</string>
     <string name="please_enter_name">कृपया नाम डालें</string>
@@ -414,4 +414,6 @@
     <string name="exam">परीक्षा</string>
     <string name="congratulations">बधाई हो</string>
     <string name="grammer_completions_message">बहुत बढ़िया !!! आपने व्याकरण भाग पूरा कर लिया है</string>
+    <string name="today_reading_practise">आज का पठन अभ्यास</string>
+
 </resources>

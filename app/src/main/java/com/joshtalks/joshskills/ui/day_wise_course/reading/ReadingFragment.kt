@@ -14,7 +14,6 @@ import android.os.SystemClock
 import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -376,7 +375,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                         chatModel.question?.run {
                             if (this.practiceEngagement.isNullOrEmpty()) {
                                 showPracticeInputLayout()
-                                binding.feedbackLayout.visibility= GONE
+                                binding.feedbackLayout.visibility = GONE
                                 hidePracticeSubmitLayout()
                                 disableSubmitButton()
                             } else {
@@ -587,13 +586,13 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     fun setFeedBackLayout(feedback2: PracticeFeedback2?, isProcessing: Boolean = false) {
         binding.feedbackLayout.visibility = VISIBLE
         if (isProcessing) {
-            binding.progressLayout2.visibility = VISIBLE
+            binding.progressLayout.visibility = VISIBLE
             binding.feedbackGrade.visibility = GONE
             binding.feedbackDescription.visibility = GONE
         } else if (feedback2 != null) {
             binding.feedbackGrade.visibility = VISIBLE
             binding.feedbackDescription.visibility = VISIBLE
-            binding.progressLayout2.visibility = GONE
+            binding.progressLayout.visibility = GONE
             binding.feedbackGrade.text = feedback2.grade
             binding.feedbackDescription.text = feedback2.text
         }
@@ -937,7 +936,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
         binding.practiseSubmitLayout.visibility = VISIBLE
         binding.subPractiseSubmitLayout.visibility = VISIBLE
         binding.audioList.visibility = VISIBLE
-        binding.audioList.addView(PraticeAudioViewHolder(null, context,filePath))
+        binding.audioList.addView(PraticeAudioViewHolder(null, context, filePath))
         initializePractiseSeekBar()
         enableSubmitButton()
     }
