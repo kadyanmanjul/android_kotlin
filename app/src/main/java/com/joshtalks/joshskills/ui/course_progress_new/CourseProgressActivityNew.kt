@@ -187,7 +187,12 @@ class CourseProgressActivityNew : AppCompatActivity(),
         if (item.status == LESSON_STATUS.NO.name) {
             showAlertMessage()
         } else
-            startActivity(DayWiseCourseActivity.getDayWiseCourseActivityIntent(this, item.lessonId))
+            startActivity(
+                DayWiseCourseActivity.getDayWiseCourseActivityIntent(
+                    this, item.lessonId,
+                    courseId = courseId.toString()
+                )
+            )
     }
 
     override fun onCertificateExamClick() {

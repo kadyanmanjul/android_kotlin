@@ -30,9 +30,9 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import timber.log.Timber
 import java.util.HashMap
 import java.util.UUID
-import timber.log.Timber
 
 const val COURSE_ID = "course_id"
 const val TOPIC_ID = "topic_id"
@@ -166,7 +166,7 @@ class SearchingUserActivity : BaseActivity() {
                     requestForSearchUser()
                 }, 1000)
             } else if (ApiCallStatus.FAILED_PERMANENT == it) {
-                showToast("Yaar na mila 5 baar try kar ke")
+                showToast("We did not find any user, please retry")
                 stopCalling()
             }
         })

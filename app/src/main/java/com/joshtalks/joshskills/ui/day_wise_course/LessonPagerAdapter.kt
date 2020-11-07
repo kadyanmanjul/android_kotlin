@@ -9,11 +9,15 @@ import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.ui.day_wise_course.grammar.GrammarFragment
 import com.joshtalks.joshskills.ui.day_wise_course.practice.NewPracticeFragment
 import com.joshtalks.joshskills.ui.day_wise_course.reading.ReadingFragment
+import com.joshtalks.joshskills.ui.day_wise_course.spaking.SpeakingPractiseFragment
 
 class LessonPagerAdapter(
-    val chatList: List<ChatModel>,
     fragmentManager: FragmentManager,
-    val lifecycle: Lifecycle
+    val lifecycle: Lifecycle,
+    val chatList: List<ChatModel>,
+    val courseId: String,
+    val lessonId: Int
+
 ) :
     FragmentStateAdapter(fragmentManager, lifecycle) {
 
@@ -42,6 +46,7 @@ class LessonPagerAdapter(
     }
 
     override fun createFragment(position: Int): Fragment {
+
         return when (position) {
             0 -> GrammarFragment.instance(grammarQuestions)
 
@@ -49,7 +54,7 @@ class LessonPagerAdapter(
 
             2 -> ReadingFragment.instance(readingQuestions)
 
-            else -> ReadingFragment.instance(readingQuestions)
+            else -> SpeakingPractiseFragment.newInstance(courseId = courseId, lessonId = lessonId)
         }
     }
 }

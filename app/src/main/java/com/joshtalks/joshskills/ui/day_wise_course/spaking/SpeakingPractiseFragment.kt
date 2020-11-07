@@ -1,17 +1,19 @@
-package com.joshtalks.joshskills.ui.voip
+package com.joshtalks.joshskills.ui.day_wise_course.spaking
 
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopicModel
+import com.joshtalks.joshskills.ui.voip.COURSE_ID
+import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.voip_rating.LAST_VOIP_CALL_ID
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.karumi.dexter.MultiplePermissionsReport
@@ -31,28 +33,18 @@ import kotlinx.coroutines.launch
 
 const val LESSON_ID = "lesson_id"
 
-class SpeakingPractiseFragment : DialogFragment() {
+class SpeakingPractiseFragment : CoreJoshFragment() {
     private var lessonId: String = EMPTY
     private var courseId: String = EMPTY
     private val speakingTopicModelLiveData: MutableLiveData<SpeakingTopicModel> = MutableLiveData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(STYLE_NO_FRAME, R.style.full_dialog)
         arguments?.getString(LAST_VOIP_CALL_ID)?.run {
             lessonId = this
         }
         arguments?.getString(COURSE_ID)?.run {
             courseId = this
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        dialog?.run {
-            val width = ViewGroup.LayoutParams.MATCH_PARENT
-            val height = ViewGroup.LayoutParams.MATCH_PARENT
-            window?.setLayout(width, height)
         }
     }
 
@@ -149,11 +141,11 @@ class SpeakingPractiseFragment : DialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(courseId: String = "10", lessonId: String?) = SpeakingPractiseFragment()
+        fun newInstance(courseId: String, lessonId: Int) = SpeakingPractiseFragment()
             .apply {
                 arguments = Bundle().apply {
                     putString(COURSE_ID, courseId)
-                    putString(LESSON_ID, lessonId)
+                    putString(LESSON_ID, lessonId.toString())
                 }
             }
     }

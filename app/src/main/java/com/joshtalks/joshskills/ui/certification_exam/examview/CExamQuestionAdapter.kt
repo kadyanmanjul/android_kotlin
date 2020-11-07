@@ -38,10 +38,10 @@ class CExamQuestionAdapter(
     )
     private val resultColorStateList = ColorStateList(
         arrayOf(
-            intArrayOf(android.R.attr.state_focused),
-            intArrayOf(-android.R.attr.state_focused)
+            intArrayOf(android.R.attr.state_checked),
+            intArrayOf(-android.R.attr.state_checked)
         ), intArrayOf(
-            accentColor,
+            Color.parseColor("#70107BE5"),
             Color.parseColor("#70107BE5")
         )
     )
@@ -106,7 +106,7 @@ class CExamQuestionAdapter(
         private fun getRadioButton(
             answer: Answer,
             userSelectedOption: Int,
-            correctOptionId: Int
+            correctOptionId: Int,
         ): AppCompatRadioButton {
             val radioButton: AppCompatRadioButton = LayoutInflater.from(context)
                 .inflate(R.layout.radio_button_view, null, false) as AppCompatRadioButton
@@ -136,6 +136,14 @@ class CExamQuestionAdapter(
                         R.drawable.ic_tick_extra_smallest,
                         0
                     )
+                    radioButton.buttonTintList = colorStateList
+                } else {
+                    radioButton.setBackgroundResource(R.drawable.rb_selector_disable)
+                    radioButton.buttonTintList = resultColorStateList
+                }
+                if (correctOptionId == answer.id && correctOptionId != userSelectedOption) {
+                    radioButton.backgroundTintList =
+                        ColorStateList.valueOf(Color.parseColor("#B3DFC4"))
                 }
             } else {
                 radioButton.setBackgroundResource(R.drawable.radio_button_selector)

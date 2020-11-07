@@ -1506,7 +1506,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         startActivityForResult(
             DayWiseCourseActivity.getDayWiseCourseActivityIntent(
                 this,
-                lessonId
+                lessonId,
+                courseId = inboxEntity.courseId
             ), LESSON_REQUEST_CODE
         )
     }

@@ -782,14 +782,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    /* if (it.inboxEntity.courseId.contentEquals("123")) {
-                        startActivity(
-                            DailyLessonsActivity.startDailyLessonsActivity(
-                                this,
-                                it.inboxEntity.courseId
-                            )
-                        )
-                    } else*/
                     ConversationActivity.startConversionActivity(this, it.inboxEntity)
                 }, {
                     it.printStackTrace()

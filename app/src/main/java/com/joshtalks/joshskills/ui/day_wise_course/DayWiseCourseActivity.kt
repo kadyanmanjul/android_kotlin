@@ -14,7 +14,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.ui.chat.LESSON_REQUEST_CODE
@@ -43,9 +45,12 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         private val LESSON_ID = "lesson_id"
         fun getDayWiseCourseActivityIntent(
             context: Context,
-            lessonId: Int
+            lessonId: Int,
+            courseId: String
         ) = Intent(context, DayWiseCourseActivity::class.java).apply {
             putExtra(LESSON_ID, lessonId)
+            putExtra(COURSE_ID, courseId)
+
 //            putExtra(CHAT_ITEMS, chatList)
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         }
@@ -110,7 +115,11 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                 }
             }
             titleView.text = it.getOrNull(0)?.question?.lesson?.lessonName
-            val adapter = LessonPagerAdapter(it, supportFragmentManager, this.lifecycle)
+            val adapter = LessonPagerAdapter(
+                supportFragmentManager, this.lifecycle, it,
+                courseId = courseId?.toString() ?: EMPTY,
+                lessonId = lessonId
+            )
             binding.lessonViewpager.adapter = adapter
             TabLayoutMediator(
                 binding.lessonTabLayout,
