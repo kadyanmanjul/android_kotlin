@@ -45,41 +45,5 @@
                 app:layout_constraintTop_toBottomOf="@id/tab_layout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <RelativeLayout
-            android:id="@+id/progress_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:background="@color/overlay"
-            wheel:visibility="visible"
-            android:visibility="gone">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/progress_bar_leaderboard"
-                android:layout_centerInParent="true"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:text="@string/plz_wait"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                android:textColor="@color/white" />
-
-
-            <com.pnikosis.materialishprogress.ProgressWheel
-                android:id="@+id/progress_bar_leaderboard"
-                android:layout_width="@dimen/_60sdp"
-                android:layout_height="@dimen/_60sdp"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center"
-                wheel:matProg_barColor="@color/white"
-                wheel:matProg_fillRadius="true"
-                wheel:matProg_linearProgress="false"
-                wheel:matProg_progressIndeterminate="true"
-                wheel:matProg_rimColor="#00F3EDED"
-                wheel:matProg_rimWidth="@dimen/_6sdp" />
-        </RelativeLayout>
     </FrameLayout>
 </layout>

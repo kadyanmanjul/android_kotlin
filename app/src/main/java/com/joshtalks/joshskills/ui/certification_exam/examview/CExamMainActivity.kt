@@ -105,14 +105,6 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
 
     }
 
-    private fun showProgressBar() {
-        FullScreenProgressDialog.showProgressBar(this)
-    }
-
-    private fun hideProgressBar() {
-        FullScreenProgressDialog.hideProgressBar(this)
-    }
-
     private fun setupUI() {
         CoroutineScope(Dispatchers.Main).launch {
             delay(100)

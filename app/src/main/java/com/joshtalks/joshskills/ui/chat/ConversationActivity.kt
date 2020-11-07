@@ -353,14 +353,6 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         }, 5000)
     }
 
-    private fun showProgressBar() {
-        FullScreenProgressDialog.showProgressBar(this)
-    }
-
-    private fun hideProgressBar() {
-        FullScreenProgressDialog.hideProgressBar(this)
-    }
-
     private fun fetchMessage() {
         showProgressBar()
         conversationViewModel.getAllUserMessage()

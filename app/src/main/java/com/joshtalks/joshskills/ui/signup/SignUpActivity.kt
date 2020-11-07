@@ -458,14 +458,6 @@ class SignUpActivity : BaseActivity() {
         )
     }
 
-    private fun showProgressBar() {
-        FullScreenProgressDialog.showProgressBar(this)
-    }
-
-    private fun hideProgressBar() {
-        FullScreenProgressDialog.hideProgressBar(this)
-    }
-
     override fun onBackPressed() {
         supportFragmentManager.popBackStackImmediate()
         if (supportFragmentManager.backStackEntryCount == 0) {

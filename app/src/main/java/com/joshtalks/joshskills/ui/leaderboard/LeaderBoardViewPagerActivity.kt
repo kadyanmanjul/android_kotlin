@@ -10,12 +10,13 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.databinding.ActivityLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import java.util.HashMap
 
-class LeaderBoardViewPagerActivity : AppCompatActivity() {
+class LeaderBoardViewPagerActivity : BaseActivity() {
     lateinit var binding: ActivityLeaderboardViewPagerBinding
     private val viewModel by lazy { ViewModelProvider(this).get(LeaderBoardViewModel::class.java) }
 
@@ -28,6 +29,7 @@ class LeaderBoardViewPagerActivity : AppCompatActivity() {
         initViewPager()
         addObserver()
         viewModel.getFullLeaderBoardData(Mentor.getInstance().getId())
+        showProgressBar()
     }
 
     private fun addObserver() {
@@ -43,10 +45,10 @@ class LeaderBoardViewPagerActivity : AppCompatActivity() {
             it?.let {
                 when (it) {
                     ApiCallStatus.FAILED, ApiCallStatus.SUCCESS -> {
-                        binding.progressLayout.visibility = View.GONE
+                        hideProgressBar()
                     }
                     ApiCallStatus.START -> {
-                        binding.progressLayout.visibility = View.VISIBLE
+                        showProgressBar()
                     }
                 }
             }

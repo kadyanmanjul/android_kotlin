@@ -531,5 +531,6 @@
     <string name="quiz_completed">Quiz Completed!!</string>
     <string name="marks_text">You got %1$d/%2$d correct</string>
     <string name="attempts_over">Attempts Over</string>
+    <string name="leaderboard">Leaderboard</string>
 
 </resources>

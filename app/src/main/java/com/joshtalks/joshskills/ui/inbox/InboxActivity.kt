@@ -531,6 +531,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 R.id.menu_help -> {
                     openHelpActivity()
                 }
+                R.id.menu_leaderboard -> {
+                    openLeaderBoard()
+                }
                 R.id.menu_settings ->
                     openSettingActivity()
             }

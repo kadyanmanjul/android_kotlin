@@ -46,6 +46,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -161,9 +162,13 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
     }
 
     fun openHelpActivity() {
+        val i = Intent(this, HelpActivity::class.java)
+        startActivityForResult(i, HELP_ACTIVITY_REQUEST_CODE)
+    }
+
+    fun openLeaderBoard() {
         val i = Intent(this, LeaderBoardViewPagerActivity::class.java)
         startActivity(i)
-       // startActivityForResult(i, HELP_ACTIVITY_REQUEST_CODE)
     }
 
     fun getActivityType(act: Activity): ActivityEnum {
@@ -589,4 +594,13 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
         startActivity(intent)
         overridePendingTransition(0, 0)
     }
+
+    protected fun showProgressBar() {
+        FullScreenProgressDialog.showProgressBar(this)
+    }
+
+    protected fun hideProgressBar() {
+        FullScreenProgressDialog.hideProgressBar(this)
+    }
+
 }

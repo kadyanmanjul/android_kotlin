@@ -211,7 +211,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
             try {
                 val cprponnse =
                     AppObjectController.chatNetworkService.getCourseProgressDetailsAsync(inboxEntity.conversation_id)
-                hideProgressBar()
+                hideProgressBar2()
                 if (cprponnse.code() == 200) {
                     var cpr = cprponnse.body()!!
                     CoroutineScope(Dispatchers.Main).launch {
@@ -343,7 +343,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
                         FirebaseCrashlytics.getInstance().recordException(ex)
                     }
                 }
-                hideProgressBar()
+                hideProgressBar2()
             }
         }
     }
@@ -380,7 +380,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
     }
 
 
-    private fun hideProgressBar() {
+    private fun hideProgressBar2() {
         CoroutineScope(Dispatchers.Main).launch {
             binding.progressBar.visibility = View.GONE
         }

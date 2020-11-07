@@ -2,6 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/menu_leaderboard"
+        android:actionLayout="@layout/base_toolbar"
+        android:orderInCategory="100"
+        android:title="@string/leaderboard"
+        app:showAsAction="collapseActionView" />
+
+    <item
         android:id="@+id/menu_referral"
         android:actionLayout="@layout/base_toolbar"
         android:orderInCategory="100"
