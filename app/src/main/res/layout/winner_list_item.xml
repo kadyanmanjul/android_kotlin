@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/_12sdp"
+    android:layout_marginVertical="@dimen/_6sdp"
+    android:background="@drawable/winner_rect_background"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_4sdp"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.1"
+        tools:text="Yesterday ‘s Student of the Day" />
+
+    <ImageView
+        android:id="@+id/award"
+        android:layout_width="@dimen/_36sdp"
+        android:layout_height="@dimen/_45ssp"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+        android:textColor="@color/white"
+        android:scaleType="fitXY"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        tools:src="@drawable/josh_skill"
+        tools:text="1222" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_pic"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:gravity="center_vertical|start"
+        android:src="@color/checkmark_blue"
+        app:layout_constraintStart_toEndOf="@id/award"
+        app:layout_constraintTop_toTopOf="@id/award"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_12sdp"
+        android:layout_marginEnd="@dimen/_4sdp"
+        android:layout_marginBottom="4dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/user_pic"
+        app:layout_constraintTop_toTopOf="@id/user_pic"
+        tools:text="@string/improve_answer" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/points_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="@dimen/_12sdp"
+        android:layout_marginBottom="4dp"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="@id/name"
+        app:layout_constraintTop_toBottomOf="@id/name"
+        android:text="with" />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/points"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="@dimen/_4sdp"
+        android:layout_marginEnd="@dimen/_12sdp"
+        android:layout_marginBottom="4dp"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toEndOf="@id/points_text"
+        app:layout_constraintTop_toBottomOf="@id/name"
+        tools:text="with points" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/view_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_12sdp"
+        android:layout_marginBottom="4dp"
+        android:text="View Profile"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/points" />
+</androidx.constraintlayout.widget.ConstraintLayout>

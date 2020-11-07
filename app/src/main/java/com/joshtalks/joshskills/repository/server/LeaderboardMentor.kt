@@ -12,6 +12,10 @@ data class LeaderboardMentor(
     val name: String?,
     @SerializedName("photo_url")
     val photoUrl: String?,
+    @SerializedName("award_url")
+    val award_url: String?,
+    @SerializedName("title")
+    val title: String?,
     @SerializedName("points")
     val points: Int,
     @SerializedName("ranking")

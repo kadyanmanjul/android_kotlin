@@ -117,6 +117,9 @@ class LeaderBoardFragment private constructor() : Fragment() {
             it.current_mentor?.let {
                 setCurrentUserDetails(it)
             }
+            it.lastWinner?.let {
+                binding.recyclerView.addView(LeaderBoardWinnerItemViewHolder(it, requireContext()))
+            }
             it.top_50_mentor_list?.forEach {
                 binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
             }

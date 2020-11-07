@@ -70,7 +70,7 @@
     <string name="internet_not_available_msz">Seems like your Internet is too slow or not available.</string>
 
     <string name="plz_wait">Please wait&#8230;</string>
-    <string name="plz_wait_feedback">Please wait,\n While feedback is generating&#8230;</string>
+    <string name="plz_wait_feedback">Please be patient \n Your feedback will be available in a few minutes.</string>
     <string name="your_mobile_number">Your Mobile Number </string>
     <string name="please_enter_otp">Please enter OTP</string>
     <string name="please_enter_name">Please enter name</string>
