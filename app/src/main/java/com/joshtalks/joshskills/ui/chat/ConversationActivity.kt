@@ -1482,9 +1482,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     IS_BATCH_CHANGED
                 )
             ) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    fetchMessage()
-                }
+                fetchMessage()
+
             }
 
         } catch (ex: Exception) {

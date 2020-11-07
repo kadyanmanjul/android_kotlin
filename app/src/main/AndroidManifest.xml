@@ -399,6 +399,12 @@
             android:launchMode="singleTask"
             android:parentActivityName=".ui.inbox.InboxActivity"
             android:theme="@style/AppNoBarTheme" />
+        <activity
+            android:name=".ui.day_wise_course.unlock_next_class.ActivityUnlockNextClass"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:launchMode="singleTask"
+            android:parentActivityName=".ui.chat.ConversationActivity"
+            android:theme="@style/AppNoBarTheme" />
 
         <service
             android:name=".core.service.video_download.VideoDownloadService"
@@ -516,10 +522,10 @@
 
         <activity
             android:name=".ui.voip.WebRtcActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <service

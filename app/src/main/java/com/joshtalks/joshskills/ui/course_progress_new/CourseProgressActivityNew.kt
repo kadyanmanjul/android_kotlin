@@ -153,7 +153,12 @@ class CourseProgressActivityNew : AppCompatActivity(),
 
             pdfInfo?.let {
                 binding.pdfView.visibility = View.VISIBLE
-                if (File(AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath).exists()) {
+                if (PermissionUtils.isStoragePermissionEnabled(this) && AppDirectory.getFileSize(
+                        File(
+                            AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath
+                        )
+                    ) > 0
+                ) {
                     fileDownloadSuccess()
                 } else {
                     fileNotDownloadView()
@@ -169,11 +174,11 @@ class CourseProgressActivityNew : AppCompatActivity(),
     }
 
     private fun setupUi() {
-        binding.pdfView.setOnClickListener {
+        binding.pdfNameTv.setOnClickListener {
             openPdf()
         }
         binding.downloadContainer.setOnClickListener {
-            onClickPdfContainer()
+            download()
         }
     }
 
@@ -284,22 +289,28 @@ class CourseProgressActivityNew : AppCompatActivity(),
     }
 
     private fun fileDownloadSuccess() {
+        binding.pdfNameTv.isClickable = true
+        binding.downloadContainer.isClickable = false
         binding.downloadContainer.visibility = View.GONE
-        binding.ivStartDownload.visibility = android.view.View.GONE
-        binding.progressDialog.visibility = android.view.View.GONE
-        binding.ivCancelDownload.visibility = android.view.View.GONE
+        binding.ivStartDownload.visibility = View.GONE
+        binding.progressDialog.visibility = View.GONE
+        binding.ivCancelDownload.visibility = View.GONE
+        binding.pdfView.isClickable = false
     }
 
     private fun fileNotDownloadView() {
-        binding.ivStartDownload.visibility = android.view.View.VISIBLE
-        binding.progressDialog.visibility = android.view.View.GONE
-        binding.ivCancelDownload.visibility = android.view.View.GONE
+        binding.pdfNameTv.isClickable = false
+        binding.downloadContainer.isClickable = true
+        binding.downloadContainer.visibility = View.VISIBLE
+        binding.ivStartDownload.visibility = View.VISIBLE
+        binding.progressDialog.visibility = View.GONE
+        binding.ivCancelDownload.visibility = View.GONE
     }
 
     private fun fileDownloadingInProgressView() {
-        binding.ivStartDownload.visibility = android.view.View.GONE
-        binding.progressDialog.visibility = android.view.View.VISIBLE
-        binding.ivCancelDownload.visibility = android.view.View.VISIBLE
+        binding.ivStartDownload.visibility = View.GONE
+        binding.progressDialog.visibility = View.VISIBLE
+        binding.ivCancelDownload.visibility = View.VISIBLE
     }
 
 

@@ -38,6 +38,9 @@ data class CourseOverviewItem(
     @SerializedName("lesson_id")
     @Expose
     var lessonId: Int,
+    @SerializedName("lesson_no")
+    @Expose
+    var lessonNo: Int,
     @SerializedName("lesson_name")
     @Expose
     var lessonName: String,

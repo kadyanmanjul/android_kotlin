@@ -44,6 +44,7 @@ import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
 import com.tonyodev.fetch2core.DownloadBlock
+import java.io.File
 import java.util.ArrayList
 
 class GrammarFragment : Fragment() {
@@ -513,9 +514,11 @@ class GrammarFragment : Fragment() {
                     if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
                         fileDownloadingInProgressView()
                         download(pdfObj.url)
-                    } else if (AppDirectory.isFileExist(
-                            AppDirectory.docsReceivedFile(pdfObj.url).absolutePath
-                        )
+                    } else if (PermissionUtils.isStoragePermissionEnabled(requireContext()) && AppDirectory.getFileSize(
+                            File(
+                                AppDirectory.docsReceivedFile(pdfObj.url).absolutePath
+                            )
+                        ) > 0
                     ) {
                         fileDownloadSuccess()
                     } else {
