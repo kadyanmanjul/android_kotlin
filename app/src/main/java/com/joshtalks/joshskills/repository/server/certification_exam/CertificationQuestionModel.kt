@@ -11,8 +11,8 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.RESUME_CERTIFICATION_EXAM
-import java.lang.reflect.Type
 import kotlinx.android.parcel.Parcelize
+import java.lang.reflect.Type
 
 @Parcelize
 data class CertificationQuestionModel(
@@ -24,6 +24,8 @@ data class CertificationQuestionModel(
     val totalMinutes: Int = 0,
     @SerializedName("total_question")
     val totalQuestion: Int = 0,
+    @SerializedName("max_attempt")
+    val max_attempt: Int = 0,
     @SerializedName("attempted_count")
     val attemptCount: Int = 0,
     @SerializedName("instructions")

@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.text.SpannableString
 import android.text.style.RelativeSizeSpan
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.animation.Easing.EaseInOutQuad
@@ -23,10 +24,10 @@ import com.joshtalks.joshskills.repository.server.certification_exam.Certificati
 import com.joshtalks.joshskills.repository.server.certification_exam.UserSelectedAnswer
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
-import java.util.ArrayList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.ArrayList
 
 
 @SuppressLint("NonConstantResourceId")
@@ -43,6 +44,7 @@ class ReportOverviewView2(
     lateinit var questionRecyclerView: RecyclerView
 
     private val context: Context = AppObjectController.joshApplication
+
     @Resolve
     fun onViewInflated() {
         certificateExamReport.run {
@@ -116,10 +118,19 @@ class ReportOverviewView2(
             percentData.add(PieEntry(certificateExamReport.correct.toFloat(), 0))
             percentData.add(PieEntry(certificateExamReport.wrong.toFloat(), 1))
 
+            if (certificateExamReport.correct == 0 && certificateExamReport.wrong == 0) {
+                percentData.clear()
+                percentData.add(PieEntry(certificateExamReport.unanswered.toFloat(), 0))
+            }
             val dataSet = PieDataSet(percentData, "")
             val colorCorrect = Color.parseColor("#3DD2B5")
             val colorInCorrect = Color.parseColor("#F6595A")
             dataSet.colors = mutableListOf(colorCorrect, colorInCorrect)
+
+            if (certificateExamReport.correct == 0 && certificateExamReport.wrong == 0) {
+                dataSet.color = ContextCompat.getColor(context, R.color.grey_68)
+            }
+
             dataSet.setDrawValues(false)
             dataSet.sliceSpace = 0f
 

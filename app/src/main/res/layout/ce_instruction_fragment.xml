@@ -128,5 +128,34 @@
             app:rippleColor="@color/white"
             app:strokeColor="@color/colorAccent"
             tools:visibility="visible" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_attempt_over"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_16sdp"
+            android:alpha="0.4"
+            android:backgroundTint="@color/button_color"
+            android:clickable="true"
+            android:focusable="true"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:maxLines="1"
+            android:paddingVertical="@dimen/_10sdp"
+            android:text="@string/attempts_over"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+            android:textColor="@color/black"
+            android:visibility="gone"
+            app:cornerRadius="@dimen/_28sdp"
+            app:elevation="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.85"
+            app:rippleColor="@color/white" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

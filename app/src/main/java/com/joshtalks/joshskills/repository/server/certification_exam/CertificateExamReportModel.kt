@@ -22,11 +22,11 @@ data class CertificateExamReportModel(
     @SerializedName("certificate_url")
     val certificateURL: String?,
     @SerializedName("correct")
-    val correct: Short,
+    val correct: Int,
     @SerializedName("wrong")
-    val wrong: Short,
+    val wrong: Int,
     @SerializedName("unanswered")
-    val unanswered: Short,
+    val unanswered: Int,
     @SerializedName("correct_question_percent")
     val percent: Float,
     @SerializedName("total_question")

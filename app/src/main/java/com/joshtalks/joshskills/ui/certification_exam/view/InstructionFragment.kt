@@ -64,7 +64,6 @@ class InstructionFragment : Fragment() {
         updateView(viewModel.certificationQuestionLiveData.value)
         binding.instructionTv.movementMethod = ScrollingMovementMethod()
 
-
     }
 
     private fun updateView(certificationQuestionModel: CertificationQuestionModel?) {
@@ -76,7 +75,17 @@ class InstructionFragment : Fragment() {
                 binding.btnPreviousResult.visibility = View.VISIBLE
             }
             initRV(this)
+            updateAttempt(this)
         }
+    }
+
+    private fun updateAttempt(obj: CertificationQuestionModel) {
+        if (obj.max_attempt == obj.attemptCount) {
+            binding.btnPreviousResult.visibility = View.GONE
+            binding.btnStartExam.visibility = View.GONE
+
+        }
+
     }
 
     private fun isExamResume(flag: Boolean) {
