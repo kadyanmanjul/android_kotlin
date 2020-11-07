@@ -11,226 +11,266 @@
 
     </data>
 
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:scrollbarThumbHorizontal="@null"
-        android:scrollbarThumbVertical="@null">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/root_view"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:scrollbarThumbHorizontal="@null"
+            android:scrollbarThumbVertical="@null">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/user_pic"
-                android:layout_width="@dimen/_86sdp"
-                android:layout_height="@dimen/_86sdp"
-                android:layout_margin="@dimen/_16sdp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:src="@drawable/bot_bg_bubble" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/user_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_16sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-                android:textColor="@color/black"
-                app:layout_constraintStart_toEndOf="@id/user_pic"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="User Name" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/user_age_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/_4sdp"
-                android:text="Age:"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
-                android:textColor="@color/black"
-                app:layout_constraintStart_toStartOf="@id/user_name"
-                app:layout_constraintTop_toBottomOf="@id/user_name" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/user_age"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_4sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                android:textColor="@color/grey_7A"
-                app:layout_constraintStart_toEndOf="@id/user_age_text"
-                app:layout_constraintTop_toTopOf="@id/user_age_text"
-                tools:text="22" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/joined_on_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/_4sdp"
-                android:text="Joined on:"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
-                android:textColor="@color/black"
-                app:layout_constraintStart_toStartOf="@id/user_age_text"
-                app:layout_constraintTop_toBottomOf="@id/user_age_text" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/joined_on"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_4sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                android:textColor="@color/grey_7A"
-                app:layout_constraintStart_toEndOf="@id/joined_on_text"
-                app:layout_constraintTop_toTopOf="@id/joined_on_text"
-                tools:text="22 Oct 2020" />
-
-            <View
-                android:id="@+id/divider"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/root_view"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_1sdp"
-                android:layout_margin="@dimen/_8sdp"
-                android:background="@color/grey"
-                app:layout_constraintTop_toBottomOf="@id/user_pic" />
+                android:layout_height="match_parent">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/user_pic"
+                    android:layout_width="@dimen/_86sdp"
+                    android:layout_height="@dimen/_86sdp"
+                    android:layout_margin="@dimen/_16sdp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@drawable/bot_bg_bubble" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_16sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toEndOf="@id/user_pic"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="User Name" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/user_age_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_4sdp"
+                    android:text="Age:"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="@id/user_name"
+                    app:layout_constraintTop_toBottomOf="@id/user_name" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/user_age"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_4sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textColor="@color/grey_7A"
+                    app:layout_constraintStart_toEndOf="@id/user_age_text"
+                    app:layout_constraintTop_toTopOf="@id/user_age_text"
+                    tools:text="22" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/joined_on_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_4sdp"
+                    android:text="Joined on:"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="@id/user_age_text"
+                    app:layout_constraintTop_toBottomOf="@id/user_age_text" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/joined_on"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_4sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textColor="@color/grey_7A"
+                    app:layout_constraintStart_toEndOf="@id/joined_on_text"
+                    app:layout_constraintTop_toTopOf="@id/joined_on_text"
+                    tools:text="22 Oct 2020" />
+
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_margin="@dimen/_8sdp"
+                    android:background="@color/grey"
+                    app:layout_constraintTop_toBottomOf="@id/user_pic" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/highlight_heading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_16sdp"
+                    android:text="Highlights"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/divider" />
+
+                <LinearLayout
+                    android:id="@+id/point_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_64sdp"
+                    android:layout_marginVertical="@dimen/_16sdp"
+                    android:background="@drawable/rect_with_bound"
+                    android:backgroundTint="#E57610"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/highlight_heading"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.42">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/point_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_6sdp"
+                        android:gravity="center"
+                        android:text="Points"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                        android:textColor="@color/white" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/points"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/_1sdp"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
+                        android:textColor="@color/white"
+                        tools:text="22234" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_64sdp"
+                    android:layout_marginVertical="@dimen/_16sdp"
+                    android:background="@drawable/rect_with_bound"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.9"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/highlight_heading"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.42">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/streaks_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_6sdp"
+                        android:gravity="center"
+                        android:text="Streaks"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                        android:textColor="@color/white" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/streaks"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/_1sdp"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
+                        android:textColor="@color/white"
+                        tools:text="22234" />
+
+                </LinearLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/awards_heading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_16sdp"
+                    android:text="Awards"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                    android:textColor="@color/black"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/point_layout" />
+
+                <!--<com.mindorks.placeholderview.PlaceHolderView
+                    android:id="@+id/award_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8ssp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/awards_heading" />-->
+
+                <LinearLayout
+                    android:id="@+id/multi_line_ll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_4sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:orientation="vertical"
+                    android:padding="@dimen/_2sdp"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/awards_heading" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/more_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/arrow_down"
+                    android:drawableTint="@color/black"
+                    android:onClick="@{()->handler.showAllAwards()}"
+                    android:text="More Info "
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textColor="@color/black"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/multi_line_ll" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+        <RelativeLayout
+            android:id="@+id/progress_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@color/overlay"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.pnikosis.materialishprogress.ProgressWheel
+                android:id="@+id/progress_bar"
+                android:layout_width="@dimen/_60sdp"
+                android:layout_height="@dimen/_60sdp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                tools:matProg_barColor="@color/button_color"
+                tools:matProg_fillRadius="true"
+                tools:matProg_linearProgress="false"
+                tools:matProg_progressIndeterminate="true"
+                tools:matProg_rimColor="#33128C7E"
+                tools:matProg_rimWidth="@dimen/_2sdp" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/highlight_heading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_16sdp"
-                android:text="Highlights"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-                android:textColor="@color/black"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider" />
-
-            <LinearLayout
-                android:id="@+id/point_layout"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_64sdp"
-                android:layout_marginVertical="@dimen/_16sdp"
-                android:background="@drawable/rect_with_bound"
-                android:backgroundTint="#E57610"
-                android:orientation="vertical"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/highlight_heading"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.42">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/point_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_6sdp"
-                    android:gravity="center"
-                    android:text="Points"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                    android:textColor="@color/white" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/points"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/_1sdp"
-                    android:gravity="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
-                    android:textColor="@color/white"
-                    tools:text="22234" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_64sdp"
-                android:layout_marginVertical="@dimen/_16sdp"
-                android:background="@drawable/rect_with_bound"
-                android:backgroundTint="@color/colorPrimary"
-                android:orientation="vertical"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.9"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/highlight_heading"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.42">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/streaks_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_6sdp"
-                    android:gravity="center"
-                    android:text="Streaks"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                    android:textColor="@color/white" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/streaks"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/_1sdp"
-                    android:gravity="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
-                    android:textColor="@color/white"
-                    tools:text="22234" />
-
-            </LinearLayout>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/awards_heading"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_16sdp"
-                android:text="Awards"
-                android:visibility="gone"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-                android:textColor="@color/black"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/point_layout" />
-
-            <!--<com.mindorks.placeholderview.PlaceHolderView
-                android:id="@+id/award_rv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8ssp"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/awards_heading" />-->
-
-            <LinearLayout
-                android:id="@+id/multi_line_ll"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_4sdp"
-                android:layout_marginTop="@dimen/_2sdp"
-                android:orientation="vertical"
-                android:visibility="visible"
-                android:padding="@dimen/_2sdp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/awards_heading"/>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/more_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="More Info "
-                android:drawableEnd="@drawable/arrow_down"
-                android:drawableTint="@color/black"
-                android:visibility="gone"
-                android:textColor="@color/black"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/multi_line_ll"
-                android:onClick="@{()->handler.showAllAwards()}"
-                />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+                android:layout_below="@+id/progress_bar"
+                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="@string/plz_wait"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                android:textColor="@color/white" />
+        </RelativeLayout>
+    </FrameLayout>
 </layout>

@@ -67,6 +67,7 @@ class UserProfileActivity : AppCompatActivity() {
     private fun addObserver() {
         viewModel.userData.observe(this, Observer {
             it?.let {
+                binding.progressLayout.visibility = View.GONE
                 initView(it)
             }
         })
