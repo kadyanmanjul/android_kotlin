@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -9,9 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_8sdp"
-        android:paddingHorizontal="@dimen/_4sdp"
         android:background="@drawable/grey_rounded_bg"
         android:backgroundTint="@color/white"
+        android:paddingHorizontal="@dimen/_4sdp"
         android:paddingVertical="@dimen/_8sdp">
 
         <com.github.mikephil.charting.charts.PieChart
@@ -21,6 +22,123 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_8sdp"
+            android:background="@drawable/round_rectangle_for_course_expo"
+            android:backgroundTint="#303DD2B5"
+            app:layout_constraintBottom_toTopOf="@id/ll_incorrect"
+            app:layout_constraintEnd_toEndOf="@id/ll_incorrect"
+            app:layout_constraintStart_toStartOf="@id/ll_incorrect">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_correct"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/round_rectangle_for_course_expo"
+                android:backgroundTint="#3DD2B5"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:paddingVertical="@dimen/_6sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_10ssp"
+                tools:text="11" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:gravity="center"
+                android:text="@string/correct"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                android:textColor="#3DD2B5"
+                android:textSize="@dimen/_10ssp"
+                tools:text="Correct" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_incorrect"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_rectangle_for_course_expo"
+            android:backgroundTint="#30F6595A"
+            app:layout_constraintBottom_toBottomOf="@id/chart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/chart"
+            app:layout_constraintTop_toTopOf="@id/chart"
+            app:layout_constraintWidth_percent="0.4">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_incorrect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/round_rectangle_for_course_expo"
+                android:backgroundTint="#F6595A"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:paddingVertical="@dimen/_6sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_10ssp"
+                tools:text="11" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:gravity="center"
+                android:text="@string/incorrect"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                android:textColor="#F6595A"
+                android:textSize="@dimen/_10ssp"
+                tools:text="Correct" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:background="@drawable/round_rectangle_for_course_expo"
+            android:backgroundTint="#30687C90"
+            app:layout_constraintEnd_toEndOf="@id/ll_incorrect"
+            app:layout_constraintStart_toStartOf="@id/ll_incorrect"
+            app:layout_constraintTop_toBottomOf="@id/ll_incorrect">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_unanswered"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/round_rectangle_for_course_expo"
+                android:backgroundTint="#687C90"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:paddingVertical="@dimen/_6sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_10ssp"
+                tools:text="11" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:gravity="center"
+                android:text="@string/unanswered"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                android:textColor="#687C90"
+                android:textSize="@dimen/_10ssp"
+                tools:text="Correct" />
+        </LinearLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

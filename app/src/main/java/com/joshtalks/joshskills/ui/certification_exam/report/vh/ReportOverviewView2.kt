@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.text.SpannableString
 import android.text.style.RelativeSizeSpan
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -43,11 +44,24 @@ class ReportOverviewView2(
     @com.mindorks.placeholderview.annotations.View(R.id.recycler_view)
     lateinit var questionRecyclerView: RecyclerView
 
+    @com.mindorks.placeholderview.annotations.View(R.id.tv_correct)
+    lateinit var tvCorrect: AppCompatTextView
+
+    @com.mindorks.placeholderview.annotations.View(R.id.tv_incorrect)
+    lateinit var tvIncorrect: AppCompatTextView
+
+    @com.mindorks.placeholderview.annotations.View(R.id.tv_unanswered)
+    lateinit var tvUnanswered: AppCompatTextView
+
+
     private val context: Context = AppObjectController.joshApplication
 
     @Resolve
     fun onViewInflated() {
         certificateExamReport.run {
+            tvCorrect.text = correct.toString()
+            tvIncorrect.text = wrong.toString()
+            tvUnanswered.text = unanswered.toString()
             setChart()
             setQuestionRV()
         }
@@ -100,7 +114,7 @@ class ReportOverviewView2(
                 )
             )
             chart.setCenterTextSize(14F)
-            chart.setExtraOffsets(0F, 0F, 0F, -10F)
+            chart.setExtraOffsets(0F, 0F, 0F, -15F)
             chart.holeRadius = 58f
             chart.transparentCircleRadius = 58F
             chart.isDrawHoleEnabled = true

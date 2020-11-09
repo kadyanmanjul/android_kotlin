@@ -533,5 +533,7 @@
     <string name="attempts_over">Attempts Over</string>
     <string name="leaderboard">Leaderboard</string>
     <string name="cexam_date">Eligibility date - %s </string>
+    <string name="correct">Correct</string>
+    <string name="unanswered">Unanswered</string>
 
 </resources>
