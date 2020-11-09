@@ -12,7 +12,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#000">
+        android:background="#FFF">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/progress_index_tv"
@@ -22,7 +22,6 @@
             android:maxLines="2"
             android:text="1"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-            android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -32,11 +31,41 @@
             android:layout_width="@dimen/_24sdp"
             android:layout_height="@dimen/_24sdp"
             android:layout_marginTop="@dimen/_4sdp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/progress_index_tv"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/progress_index_tv"
+            app:layout_constraintStart_toStartOf="@+id/progress_index_tv"
+            app:srcCompat="@drawable/gold_medal" />
+
+        <com.joshtalks.joshskills.core.custom_ui.RadialProgressBar
+            android:id="@+id/radial_progress_view"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            app:centerEmptyProgressColor="@color/right_answer_color"
+            app:centerMaxProgress="100"
+            app:centerProgress="30"
+            app:centerProgressColor="@color/colorPrimary"
+            app:circlePadding="2"
+            app:hasEmptyProgressBar="true"
+            app:hasOneProgressView="false"
+            app:hasTwoProgressView="false"
+            app:innerEmptyProgressColor="@color/light_blue"
+            app:innerMaxProgress="100"
+            app:innerMostEmptyProgressColor="@color/quantum_purple200"
+            app:innerProgress="70"
+            app:innerProgressColor="@color/green_3d"
+            app:isAnimationOn="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/progress_index_tv"
             app:layout_constraintStart_toStartOf="@+id/progress_index_tv"
             app:layout_constraintTop_toBottomOf="@+id/progress_index_tv"
-            app:srcCompat="@drawable/ic_progress" />
+            app:outerEmptyProgressColor="@color/quantum_purple100"
+            app:outerMaxProgress="100"
+            app:outerProgress="50"
+            app:outerProgressColor="@color/purple"
+            app:useRoundedCorner="true" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
