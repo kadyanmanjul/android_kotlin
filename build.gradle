@@ -15,10 +15,10 @@ buildscript {
         }
         maven { url 'http://developer.huawei.com/repo/' }
         mavenCentral()
-        maven{
+        maven {
             url 'https://sdk.uxcam.com/android/'
         }
-        maven{
+        maven {
             url 'https://kotlin.bintray.com/kotlinx/'
         }
 
@@ -54,7 +54,7 @@ allprojects {
         }
         maven { url 'http://developer.huawei.com/repo/' }
         mavenCentral()
-        maven{
+        maven {
             url 'https://sdk.uxcam.com/android/'
         }
         maven {

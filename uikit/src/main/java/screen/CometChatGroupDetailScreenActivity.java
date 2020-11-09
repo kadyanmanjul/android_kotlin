@@ -1,7 +1,6 @@
 package screen;
 
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -215,7 +214,7 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
                         }
                     }
                 }*/
-                Utils.moveToUserProfile(user.getUid(),CometChatGroupDetailScreenActivity.this);
+                Utils.moveToUserProfile(user.getUid(), CometChatGroupDetailScreenActivity.this);
                 //finish();
             }
 
@@ -509,7 +508,7 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String s) {
                 Log.e(TAG, "onSuccess: " + s);
-                tvMemberCount.setText((groupMemberCount - 1) + " Members");
+                tvMemberCount.setText((--groupMemberCount) + " Members");
                 groupMemberUids.remove(groupMember.getUid());
                 groupMemberAdapter.removeGroupMember(groupMember);
             }
@@ -532,7 +531,7 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String s) {
                 Log.e(TAG, "onSuccess: " + s);
-                tvMemberCount.setText((groupMemberCount - 1) + " Members");
+                tvMemberCount.setText((--groupMemberCount) + " Members");
 //                int count = Integer.parseInt(tvBanMemberCount.getText().toString());
 //                tvBanMemberCount.setText(String.valueOf(++count));
                 groupMemberUids.remove(groupMember.getUid());
@@ -933,7 +932,7 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
                 tvGroupName.setText(gName);
                 groupIcon.setAvatar(group.getIcon());
                 loggedInUserScope = group.getScope();
-                groupMemberCount = group.getMembersCount();
+                // groupMemberCount = group.getMembersCount();
                 groupType = group.getGroupType();
                 gDesc = group.getDescription();
                 tvGroupDesc.setText(gDesc);

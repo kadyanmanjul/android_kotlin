@@ -74,12 +74,16 @@ open class TimeLineView @JvmOverloads constructor(context: Context, attrs: Attri
                     mediaMetadataRetriever.setDataSource(context, videoUri)
                     // Retrieve media data
                     val videoLengthInMs =
-                        mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong() * 1000L
+                        mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)!!
+                            .toLong() * 1000L
                     val interval = videoLengthInMs / numThumbs
                     for (i in 0 until numThumbs) {
                         var bitmap: Bitmap? = if (VERSION.SDK_INT >= VERSION_CODES.O_MR1)
                             mediaMetadataRetriever.getScaledFrameAtTime(
-                                i * interval, MediaMetadataRetriever.OPTION_CLOSEST_SYNC, thumbSize, thumbSize
+                                i * interval,
+                                MediaMetadataRetriever.OPTION_CLOSEST_SYNC,
+                                thumbSize,
+                                thumbSize
                             )
                         else mediaMetadataRetriever.getFrameAtTime(
                             i * interval,

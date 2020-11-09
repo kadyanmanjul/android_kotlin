@@ -189,8 +189,8 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
                 dstFile!!, startPosition.toLong(),
                 endPosition.toLong()
             )
-        }catch (ex:Exception){
-            videoTrimmingListener!!.onErrorWhileViewingVideo(0,0)
+        } catch (ex: Exception) {
+            videoTrimmingListener!!.onErrorWhileViewingVideo(0, 0)
         }
 
 
@@ -391,7 +391,7 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
         timeLineView.setVideo(src!!)
     }
 
-    private class MessageHandler internal constructor(view: BaseVideoTrimmerView) : Handler() {
+    private class MessageHandler(view: BaseVideoTrimmerView) : Handler() {
         private val mView: WeakReference<BaseVideoTrimmerView> = WeakReference(view)
 
         override fun handleMessage(msg: Message?) {

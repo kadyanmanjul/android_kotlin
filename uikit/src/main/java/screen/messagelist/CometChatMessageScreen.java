@@ -233,7 +233,7 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
             type = getArguments().getString(StringContract.IntentStrings.TYPE);
             if (type != null && type.equals(CometChatConstants.RECEIVER_TYPE_GROUP)) {
                 Id = getArguments().getString(StringContract.IntentStrings.GUID);
-                memberCount = getArguments().getInt(StringContract.IntentStrings.MEMBER_COUNT);
+                totalMembers = getArguments().getInt(StringContract.IntentStrings.MEMBER_COUNT);
                 groupDesc = getArguments().getString(StringContract.IntentStrings.GROUP_DESC);
                 groupPassword = getArguments().getString(StringContract.IntentStrings.GROUP_PASSWORD);
                 groupType = getArguments().getString(StringContract.IntentStrings.GROUP_TYPE);
@@ -1889,7 +1889,7 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
                 intent.putExtra(StringContract.IntentStrings.GROUP_TYPE, groupType);
                 intent.putExtra(StringContract.IntentStrings.MEMBER_SCOPE, loggedInUserScope);
                 intent.putExtra(StringContract.IntentStrings.GROUP_OWNER, groupOwnerId);
-                intent.putExtra(StringContract.IntentStrings.MEMBER_COUNT, memberCount);
+                intent.putExtra(StringContract.IntentStrings.MEMBER_COUNT, totalMembers);
                 intent.putExtra(StringContract.IntentStrings.GROUP_DESC, groupDesc);
                 intent.putExtra(StringContract.IntentStrings.GROUP_PASSWORD, groupPassword);
                 startActivity(intent);
