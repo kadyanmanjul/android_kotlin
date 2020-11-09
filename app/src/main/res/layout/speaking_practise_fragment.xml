@@ -16,11 +16,10 @@
         android:text="@string/speak_practise_title"
         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
         android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.1" />
+        android:layout_marginTop="@dimen/_12sdp" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_view_2"

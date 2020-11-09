@@ -347,7 +347,7 @@ dependencies {
     api 'io.grpc:grpc-okhttp:1.32.1'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
-    implementation 'com.plivo.endpoint:endpoint:2.0.17'
+    implementation 'com.plivo.endpoint:endpoint:2.0.15'
 
     // CometChat for Group Chat
     implementation('com.cometchat:pro-android-chat-sdk:2.1.3', {

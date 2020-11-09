@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopicModel
 import com.joshtalks.joshskills.ui.voip.COURSE_ID
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+import com.joshtalks.joshskills.ui.voip.TOPIC_ID
 import com.joshtalks.joshskills.ui.voip.voip_rating.LAST_VOIP_CALL_ID
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.karumi.dexter.MultiplePermissionsReport
@@ -36,6 +37,8 @@ const val LESSON_ID = "lesson_id"
 class SpeakingPractiseFragment : CoreJoshFragment() {
     private var lessonId: String = EMPTY
     private var courseId: String = EMPTY
+    private var topicId: String? = null
+
     private val speakingTopicModelLiveData: MutableLiveData<SpeakingTopicModel> = MutableLiveData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +49,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         arguments?.getString(COURSE_ID)?.run {
             courseId = this
         }
+        arguments?.getString(TOPIC_ID)?.run {
+            topicId = this
+        }
+
     }
 
     override fun onCreateView(
@@ -79,7 +86,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             group_two.visibility = View.VISIBLE
             group_one.visibility = View.GONE
         })
-        getTopicDetail()
+        topicId?.let {
+            getTopicDetail(it)
+        }
+
     }
 
     private fun startPractise() {
@@ -128,10 +138,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
 
-    private fun getTopicDetail() {
+    private fun getTopicDetail(topicId: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = AppObjectController.commonNetworkService.getTopicDetail("2")
+                val response = AppObjectController.commonNetworkService.getTopicDetail(topicId)
                 speakingTopicModelLiveData.postValue(response)
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
@@ -141,12 +151,14 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(courseId: String, lessonId: Int) = SpeakingPractiseFragment()
-            .apply {
-                arguments = Bundle().apply {
-                    putString(COURSE_ID, courseId)
-                    putString(LESSON_ID, lessonId.toString())
+        fun newInstance(courseId: String, lessonId: Int, topicId: String?) =
+            SpeakingPractiseFragment()
+                .apply {
+                    arguments = Bundle().apply {
+                        putString(COURSE_ID, courseId)
+                        putString(LESSON_ID, lessonId.toString())
+                        putString(TOPIC_ID, topicId)
+                    }
                 }
-            }
     }
 }

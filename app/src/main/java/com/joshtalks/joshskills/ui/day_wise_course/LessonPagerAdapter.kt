@@ -54,7 +54,15 @@ class LessonPagerAdapter(
 
             2 -> ReadingFragment.instance(readingQuestions)
 
-            else -> SpeakingPractiseFragment.newInstance(courseId = courseId, lessonId = lessonId)
+            else -> SpeakingPractiseFragment.newInstance(
+                courseId = courseId,
+                lessonId = lessonId,
+                topicId = getTopicId()
+            )
         }
+    }
+
+    private fun getTopicId(): String? {
+        return chatList.find { obj -> obj.question?.topicId != null }?.question?.topicId
     }
 }

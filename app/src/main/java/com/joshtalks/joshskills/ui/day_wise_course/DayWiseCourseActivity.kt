@@ -115,6 +115,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                 }
             }
             titleView.text = it.getOrNull(0)?.question?.lesson?.lessonName
+
             val adapter = LessonPagerAdapter(
                 supportFragmentManager, this.lifecycle, it,
                 courseId = courseId?.toString() ?: EMPTY,
