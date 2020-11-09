@@ -15,7 +15,6 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
-import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.interfaces.CertificationExamListener
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationExamView
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestion
@@ -24,7 +23,6 @@ import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTIO
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
 import com.joshtalks.joshskills.ui.certification_exam.questionlistbottom.Callback
 import com.joshtalks.joshskills.ui.certification_exam.questionlistbottom.QuestionListBottomSheet
-import java.util.concurrent.TimeUnit
 import kotlinx.android.synthetic.main.activity_cexam_main.bottom_bar
 import kotlinx.android.synthetic.main.activity_cexam_main.iv_all_question
 import kotlinx.android.synthetic.main.activity_cexam_main.iv_back
@@ -36,6 +34,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 
 const val ARG_EXAM_VIEW = "exam_view"
@@ -150,7 +149,16 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
             }
             val adapter = CExamQuestionAdapter(questions, examView, object : Callback {
                 override fun onGoToQuestion(position: Int) {
-                    question_view_pager.currentItem = position
+                    CoroutineScope(Dispatchers.Main).launch {
+                        delay(250)
+                        if (position == question_view_pager.adapter?.itemCount) {
+                            if (CertificationExamView.EXAM_VIEW == examView) {
+                                openQuestionListBottomSheet()
+                            }
+                        } else {
+                            question_view_pager.currentItem = position
+                        }
+                    }
                 }
             })
             question_view_pager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
@@ -163,6 +171,13 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
                     updateBookmarkIV(questions, position)
                     val cPage = position + 1
                     tv_question.text = "$cPage/${questions.size}"
+
+                    if (CertificationExamView.EXAM_VIEW == examView) {
+                        val obj = questions.findLast { it.isAttempted.not() }
+                        if (obj == null && cPage == question_view_pager.adapter?.itemCount) {
+                            openQuestionListBottomSheet()
+                        }
+                    }
                 }
             })
             question_view_pager.adapter = adapter
@@ -239,20 +254,22 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
     }
 
     private fun openQuestionListBottomSheet() {
-        val prev =
-            supportFragmentManager.findFragmentByTag(QuestionListBottomSheet::class.java.name)
-        if (prev != null) {
-            return
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(150)
+            val prev =
+                supportFragmentManager.findFragmentByTag(QuestionListBottomSheet::class.java.name)
+            if (prev != null) {
+                return@launch
+            }
+            certificationQuestionModel?.questions?.run {
+                val bottomSheetFragment =
+                    QuestionListBottomSheet.newInstance(this, question_view_pager.currentItem)
+                bottomSheetFragment.show(
+                    supportFragmentManager,
+                    QuestionListBottomSheet::class.java.name
+                )
+            }
         }
-        certificationQuestionModel?.questions?.run {
-            val bottomSheetFragment =
-                QuestionListBottomSheet.newInstance(this, question_view_pager.currentItem)
-            bottomSheetFragment.show(
-                supportFragmentManager,
-                QuestionListBottomSheet::class.java.name
-            )
-        }
-
     }
 
     override fun onDestroy() {

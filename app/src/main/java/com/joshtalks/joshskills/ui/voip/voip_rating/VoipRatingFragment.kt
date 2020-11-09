@@ -39,13 +39,12 @@ class VoipRatingFragment : DialogFragment() {
             plivoId = this
         }
         lastCallTime = arguments?.getLong(LAST_VOIP_CALL_TIME) ?: 0
-
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return object : Dialog(requireActivity(), R.style.full_dialog) {
             override fun onBackPressed() {
-                requireActivity().finish()
+                exitDialog()
             }
         }
     }
@@ -89,10 +88,6 @@ class VoipRatingFragment : DialogFragment() {
         )
     }
 
-    fun close() {
-        requireActivity().finish()
-    }
-
     fun submitFeedback() {
         FullScreenProgressDialog.showProgressBar(requireActivity())
         val request = RequestVoipRating(
@@ -112,14 +107,18 @@ class VoipRatingFragment : DialogFragment() {
             try {
                 AppObjectController.commonNetworkService.feedbackVoipCall(request)
                 FullScreenProgressDialog.hideProgressBar(requireActivity())
-                val intent = Intent()
-                requireActivity().setResult(Activity.RESULT_OK, intent)
-                requireActivity().finish()
+                exitDialog()
             } catch (ex: Throwable) {
                 FullScreenProgressDialog.hideProgressBar(requireActivity())
                 ex.showAppropriateMsg()
             }
         }
+    }
+
+    fun exitDialog() {
+        val intent = Intent()
+        requireActivity().setResult(Activity.RESULT_OK, intent)
+        requireActivity().finish()
     }
 
     companion object {

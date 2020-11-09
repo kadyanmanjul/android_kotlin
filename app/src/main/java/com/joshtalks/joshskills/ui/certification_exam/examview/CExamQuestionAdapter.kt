@@ -89,6 +89,7 @@ class CExamQuestionAdapter(
                     certificationQuestion.userSelectedOption =
                         (group.findViewById(checkedId) as AppCompatRadioButton).id
                     certificationQuestion.isAttempted = true
+                    listener?.onGoToQuestion(position + 1)
                 }
                 if (CertificationExamView.RESULT_VIEW == examView) {
                     groupRoot.visibility = View.VISIBLE
