@@ -1377,7 +1377,6 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             BASE_MESSAGE_TYPE.UNLOCK -> {
                 unlockViewHolder = UnlockNextClassViewHolder(activityRef, chatModel, lastMessage)
                 unlockViewHolder
-                unlockViewHolder
             }
             BASE_MESSAGE_TYPE.LESSON -> {
                 LessonViewHolder(activityRef, chatModel, lastMessage, this::onLessonItemClick)
@@ -1444,6 +1443,33 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     scrollToPosition(data.getStringExtra(FOCUS_ON_CHAT_ID)!!)
                 }
             } else if (requestCode == VIDEO_OPEN_REQUEST_CODE && data != null && data.hasExtra(
+                    IS_BATCH_CHANGED
+                )
+            ) {
+                if (data.getBooleanExtra(
+                        IS_BATCH_CHANGED,
+                        false
+                    )
+                ) {
+                    AppObjectController.uiHandler.post {
+                        conversationViewModel.deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
+                        if (unlockViewHolder != null) {
+                            conversationBinding.chatRv.removeView(unlockViewHolder)
+                        }
+                        fetchNewUnlockClasses(data)
+                    }
+                } else {
+                    addUnlockNextClassCard(data)
+                }
+                uiHandler.postDelayed({
+                    try {
+                        conversationViewModel.setMRefreshControl(true)
+                    } catch (ex: Exception) {
+                        FirebaseCrashlytics.getInstance().recordException(ex)
+                        ex.printStackTrace()
+                    }
+                }, 5000)
+            } else if (requestCode == LESSON_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null && data.hasExtra(
                     IS_BATCH_CHANGED
                 )
             ) {

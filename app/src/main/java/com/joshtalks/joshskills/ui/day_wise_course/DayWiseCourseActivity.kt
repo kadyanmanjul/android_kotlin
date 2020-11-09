@@ -33,6 +33,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
     private lateinit var binding: DaywiseCourseActivityBinding
     var lessonId: Int = 0
     var conversastionId: String? = null
+    var isBatchChanged: Boolean = false
 //    val questionList: ArrayList<Question> = ArrayList()
 
 //    lateinit var chatList: ArrayList<ChatModel>
@@ -244,7 +245,11 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         viewModel.updateQuestionStatus(status, questionId, courseId!!, lessonId)
     }
 
-
+    override fun onBackPressed() {
+        //super.onBackPressed()
+        setResult(RESULT_OK, Intent().apply { putExtra(IS_BATCH_CHANGED, isBatchChanged) })
+        this@DayWiseCourseActivity.finish()
+    }
 }
 
 interface CapsuleActivityCallback {
