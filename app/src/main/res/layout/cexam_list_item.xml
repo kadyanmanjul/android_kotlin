@@ -3,96 +3,81 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rect_round_16"
+            android:orientation="vertical"
             android:paddingHorizontal="@dimen/_12sdp"
             android:paddingVertical="@dimen/_8sdp">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_question"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start|center"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                 android:textColor="@color/black"
                 android:visibility="visible"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 tools:text="What is the correct translation of “Hum sab apni english sudharna chahte hai”?" />
 
             <RadioGroup
                 android:id="@+id/radio_group"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="@dimen/_16sdp"
-                app:layout_constraintEnd_toEndOf="@id/tv_question"
-                app:layout_constraintStart_toStartOf="@id/tv_question"
-                app:layout_constraintTop_toBottomOf="@+id/tv_question" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_next_question"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_42sdp"
-                android:layout_marginTop="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_12sdp"
                 android:backgroundTint="@color/button_color"
                 android:clickable="true"
                 android:focusable="true"
                 android:text="@string/next_question"
                 android:textAlignment="center"
-                android:visibility="gone"
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
                 android:textColor="@color/white"
+                android:visibility="gone"
                 app:cornerRadius="@dimen/_4sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/radio_group"
-                tools:visibility="visible"
-                app:rippleColor="@color/white" />
+                app:rippleColor="@color/white"
+                tools:visibility="visible" />
 
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_view"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_12sdp"
                 android:gravity="start"
                 android:text="@string/explanation"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                 android:textColor="@color/black"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btn_next_question" />
+                app:layout_constraintTop_toBottomOf="@id/btn_next_question"
+                tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_explanation"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="start"
-                android:paddingVertical="@dimen/_6sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:gravity="center_vertical"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/black"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_view"
-                tools:text="dwdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d " />
-
-            <androidx.constraintlayout.widget.Group
-                android:id="@+id/group_root"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:visibility="gone"
-                app:constraint_referenced_ids="text_view,tv_explanation"
+                tools:text="wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d  wd  wd  wd  wd w dw d w d wd w d  dwdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d "
                 tools:visibility="visible" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </LinearLayout>
+
+        </LinearLayout>
+    </FrameLayout>
 </layout>

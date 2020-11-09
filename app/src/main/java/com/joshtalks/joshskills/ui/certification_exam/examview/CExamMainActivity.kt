@@ -150,7 +150,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
             val adapter = CExamQuestionAdapter(questions, examView, object : Callback {
                 override fun onGoToQuestion(position: Int) {
                     CoroutineScope(Dispatchers.Main).launch {
-                        delay(250)
+                        delay(350)
                         if (position == question_view_pager.adapter?.itemCount) {
                             if (CertificationExamView.EXAM_VIEW == examView) {
                                 openQuestionListBottomSheet()

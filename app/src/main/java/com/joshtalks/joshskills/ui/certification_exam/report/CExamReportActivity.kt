@@ -88,7 +88,6 @@ class CExamReportActivity : BaseActivity() {
     private fun setUpExamViewPager(list: List<CertificateExamReportModel>) {
         binding.examReportList.adapter =
             CExamReportAdapter(this, list, certificationQuestionModel?.questions)
-
         binding.examReportList.setPageTransformer(
             MarginPageTransformer(
                 Utils.dpToPx(
@@ -119,6 +118,8 @@ class CExamReportActivity : BaseActivity() {
             override fun onTabReselected(tab: TabLayout.Tab?) {
             }
         })
+        binding.examReportList.currentItem = list.size - 1
+
     }
 
 

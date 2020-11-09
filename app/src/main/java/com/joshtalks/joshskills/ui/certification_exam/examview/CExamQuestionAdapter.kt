@@ -92,15 +92,18 @@ class CExamQuestionAdapter(
                     listener?.onGoToQuestion(position + 1)
                 }
                 if (CertificationExamView.RESULT_VIEW == examView) {
-                    groupRoot.visibility = View.VISIBLE
                     tvExplanation.text = certificationQuestion.explanation
                     btnNextQuestion.setOnClickListener {
                         listener?.onGoToQuestion(position + 1)
                     }
                     btnNextQuestion.visibility = View.VISIBLE
+                    textView.visibility = View.VISIBLE
+                    tvExplanation.visibility = View.VISIBLE
                     if (position == (questionList.size - 1)) {
                         btnNextQuestion.visibility = View.GONE
                     }
+
+
                 }
             }
         }

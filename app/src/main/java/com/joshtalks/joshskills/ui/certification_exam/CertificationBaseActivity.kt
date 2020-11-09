@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
 const val CERTIFICATION_EXAM_ID = "certification_exam_ID"
 const val CERTIFICATION_EXAM_QUESTION = "certification_exam_question"
 const val CURRENT_QUESTION = "current_question"
+
 class CertificationBaseActivity : BaseActivity() {
 
     companion object {
@@ -36,10 +37,13 @@ class CertificationBaseActivity : BaseActivity() {
     private val viewModel: CertificationExamViewModel by lazy {
         ViewModelProvider(this).get(CertificationExamViewModel::class.java)
     }
+    private var isSubmittedExamTest = false
+
     private var openExamActivityResult: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
+            isSubmittedExamTest = true
             viewModel.getQuestions(certificateExamId)
         } else if (result.resultCode == Activity.RESULT_CANCELED) {
             viewModel.openResumeExam(certificateExamId)
@@ -85,6 +89,10 @@ class CertificationBaseActivity : BaseActivity() {
         viewModel.certificationQuestionLiveData.observe(this, {
             progress_bar.visibility = View.GONE
             openExamInstructionScreen()
+            if (isSubmittedExamTest) {
+                isSubmittedExamTest = false
+                viewModel.previousResult()
+            }
         })
         viewModel.startExamLiveData.observe(this, {
             viewModel.certificationQuestionLiveData.value?.let {

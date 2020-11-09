@@ -9,6 +9,7 @@
     android:checked="false"
     android:drawablePadding="@dimen/_8sdp"
     android:enabled="true"
+    android:elevation="@dimen/_2sdp"
     android:paddingEnd="@dimen/_8sdp"
     android:drawableTint="@color/black"
     android:textAlignment="viewStart"
