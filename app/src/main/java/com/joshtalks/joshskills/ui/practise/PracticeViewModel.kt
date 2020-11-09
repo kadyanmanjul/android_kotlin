@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.practise
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -20,10 +19,8 @@ import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
 import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback
 import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.RequestEngage
-import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
 import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import io.reactivex.disposables.CompositeDisposable
@@ -116,15 +113,6 @@ class PracticeViewModel(application: Application) :
                     resp.body()?.localPath = localPath
                     if(isAudioPractice)
                         getAudioFeedback(chatModel, resp, engageType, false, mutableListOf())
-
-                    chatModel.question?.let {
-                        updateQuestionStatus(
-                            QUESTION_STATUS.AT.name,
-                            it.questionId,
-                            it.lesson_id,
-                            it.course_id
-                        )
-                    }
 
                 } else {
                     requestStatusLiveData.postValue(false)
@@ -231,21 +219,6 @@ class PracticeViewModel(application: Application) :
             ).execute()
             return@async responseUpload.code()
         }.await()
-    }
-
-
-    fun updateQuestionStatus(status: String, questionId: String, lessonId: Int, courseId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                AppObjectController.chatNetworkService.updateQuestionStatus(
-                    UpdateQuestionStatus(
-                        status, lessonId, Mentor.getInstance().getId(), questionId.toInt(), courseId
-                    )
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
     }
 
 }
