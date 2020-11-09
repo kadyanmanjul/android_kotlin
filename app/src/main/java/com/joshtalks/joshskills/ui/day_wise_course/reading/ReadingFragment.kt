@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.day_wise_course.reading
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
@@ -72,9 +73,11 @@ import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
 import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.RemovePracticeAudioEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
+import com.joshtalks.joshskills.ui.day_wise_course.CapsuleActivityCallback
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
@@ -115,6 +118,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     private var filePath: String? = null
     private var appAnalytics: AppAnalytics? = null
     private var audioManager: ExoAudioPlayer? = null
+    var activityCallback: CapsuleActivityCallback? = null
 
 
     private val DOCX_FILE_MIME_TYPE = arrayOf(
@@ -197,6 +201,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
             } else {
                 binding.submitAnswerBtn.visibility = GONE
                 binding.improveAnswerBtn.visibility = VISIBLE
+                binding.continueBtn.visibility = View.VISIBLE
                 appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
                 appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Already Submitted")
                 setViewUserSubmitAnswer()
@@ -231,6 +236,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     fun showImproveButton() {
         binding.feedbackLayout.visibility = VISIBLE
         binding.improveAnswerBtn.visibility = VISIBLE
+        binding.continueBtn.visibility = View.VISIBLE
         binding.submitAnswerBtn.visibility = GONE
     }
 
@@ -238,6 +244,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
         binding.feedbackLayout.visibility = GONE
         binding.improveAnswerBtn.visibility = GONE
         binding.submitAnswerBtn.visibility = VISIBLE
+        binding.continueBtn.visibility = View.GONE
     }
 
 
@@ -569,6 +576,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
             binding.progressLayout.visibility = GONE
             binding.submitAnswerBtn.visibility = GONE
             binding.improveAnswerBtn.visibility = VISIBLE
+            binding.continueBtn.visibility = View.VISIBLE
             hidePracticeInputLayout()
         })
     }
@@ -1193,6 +1201,12 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
         }
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is CapsuleActivityCallback)
+            activityCallback = context
+    }
+
     fun submitPractise() {
         if (chatModel.question != null && chatModel.question!!.expectedEngageType != null) {
             val engageType = chatModel.question?.expectedEngageType
@@ -1210,7 +1224,10 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                     showToast(getString(R.string.submit_practise_msz))
                     return
                 }
-
+                activityCallback?.onQuestionStatusUpdate(
+                    QUESTION_STATUS.AT.name,
+                    chatModel?.question?.questionId?.toIntOrNull() ?: 0
+                )
 
                 appAnalytics?.addParam(
                     AnalyticsEvent.PRACTICE_SCREEN_TIME.NAME,
@@ -1237,10 +1254,15 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                 }
                 binding.progressLayout.visibility = INVISIBLE
                 setFeedBackLayout(null, true)
-                practiceViewModel.submitAudioPractise(chatModel, requestEngage, engageType)
+                practiceViewModel.submitPractise(chatModel, requestEngage, engageType,true)
             }
         }
     }
+
+    fun onReadingContinueClick() {
+        activityCallback?.onNextTabCall(binding.continueBtn)
+    }
+
 /*
 
     override fun onBackPressed() {

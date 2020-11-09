@@ -555,7 +555,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:background="@drawable/round_rectangle"
-                    android:backgroundTint="@color/seek_bar_background"
+                    android:backgroundTint="@color/colorPrimary"
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center"
@@ -569,6 +569,28 @@
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                     android:textColor="@color/white"
                     android:visibility="gone"
+                    app:rippleColor="@color/white" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/continue_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:background="@drawable/round_rectangle"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:gravity="center"
+                    android:onClick="@{()->handler.onReadingContinueClick()}"
+                    android:paddingStart="@dimen/_24sdp"
+                    android:paddingTop="@dimen/_12sdp"
+                    android:paddingEnd="@dimen/_24sdp"
+                    android:paddingBottom="@dimen/_12sdp"
+                    android:text="@string/continue_label"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textColor="@color/white"
+                    android:visibility="gone"
+                    tools:visibility="visible"
                     app:rippleColor="@color/white" />
 
             </LinearLayout>
