@@ -45,6 +45,10 @@ class LeaderBoardItemViewHolder(
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                 container.setBackgroundColor(context.getColor(R.color.lightest_blue))
             }
+        } else {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                container.setBackgroundColor(context.getColor(R.color.white))
+            }
         }
         rank.text = response.ranking.toString()
         name.text = response.name.toString()
@@ -56,7 +60,7 @@ class LeaderBoardItemViewHolder(
 
     @Click(R.id.user_pic)
     fun onClick() {
-        response?.id?.let {
+        response.id?.let {
             RxBus2.publish(OpenUserProfile(it))
         }
     }

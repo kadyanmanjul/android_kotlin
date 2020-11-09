@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.leaderboard
 
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -17,10 +18,17 @@ class LeaderBoardViewPagerAdapter(
     }
 
     override fun createFragment(position: Int): Fragment {
-        return LeaderBoardFragment.newInstance(
-            hashMap.keys.elementAt(position),
-            hashMap.get(hashMap.keys.elementAt(position))
-        )
-    }
+        return when (position) {
+            0 -> {
+                LeaderBoardFragment.newInstance("TODAY", hashMap.get("TODAY"))
+            }
+            1 -> {
+                LeaderBoardFragment.newInstance("WEEK", hashMap.get("WEEK"))
+            }
+            else -> {
+                LeaderBoardFragment.newInstance("MONTH", hashMap.get("MONTH"))
+            }
+        }
 
+    }
 }
