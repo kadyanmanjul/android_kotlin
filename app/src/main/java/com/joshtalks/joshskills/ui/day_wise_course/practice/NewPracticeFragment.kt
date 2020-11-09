@@ -154,7 +154,9 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
                     )
 
                     currentChatModel = null
-                    adapter.notifyDataSetChanged()
+                    CoroutineScope(Dispatchers.Main).launch {
+                        adapter.notifyDataSetChanged()
+                    }
                 }
 
             }
