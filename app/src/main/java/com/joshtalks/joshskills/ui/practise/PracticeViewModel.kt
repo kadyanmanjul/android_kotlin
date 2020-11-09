@@ -66,7 +66,8 @@ class PracticeViewModel(application: Application) :
     fun submitPractise(
         chatModel: ChatModel,
         requestEngage: RequestEngage,
-        engageType: EXPECTED_ENGAGE_TYPE?
+        engageType: EXPECTED_ENGAGE_TYPE?,
+        isAudioPractice:Boolean=false
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -113,7 +114,8 @@ class PracticeViewModel(application: Application) :
                         .updateQuestionObject(chatModel.question!!)
                     requestStatusLiveData.postValue(true)
                     resp.body()?.localPath = localPath
-                    getAudioFeedback(chatModel, resp, engageType, false, mutableListOf())
+                    if(isAudioPractice)
+                        getAudioFeedback(chatModel, resp, engageType, false, mutableListOf())
 
                     chatModel.question?.let {
                         updateQuestionStatus(
@@ -124,63 +126,6 @@ class PracticeViewModel(application: Application) :
                         )
                     }
 
-                } else {
-                    requestStatusLiveData.postValue(false)
-                    if (resp.code() == 400) {
-                        showToast(context.getString(R.string.generic_message_for_error))
-                    }
-                }
-            } catch (ex: Exception) {
-                requestStatusLiveData.postValue(false)
-                ex.showAppropriateMsg()
-            }
-        }
-    }
-
-    fun submitAudioPractise(
-        chatModel: ChatModel,
-        requestEngage: RequestEngage,
-        engageType: EXPECTED_ENGAGE_TYPE?
-    ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val localPath = requestEngage.localPath
-                if (requestEngage.localPath.isNullOrEmpty().not()) {
-                    val obj = mapOf("media_path" to File(requestEngage.localPath!!).name)
-                    val responseObj =
-                        AppObjectController.chatNetworkService.requestUploadMediaAsync(obj).await()
-                    val statusCode: Int = uploadOnS3Server(responseObj, requestEngage.localPath!!)
-                    if (statusCode in 200..210) {
-                        val url =
-                            responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
-                        requestEngage.answerUrl = url
-                    } else {
-                        requestStatusLiveData.postValue(false)
-                        return@launch
-                    }
-                }
-                if (requestEngage.answerUrl.isNullOrEmpty().not() && engageType != null) {
-                    when {
-                        EXPECTED_ENGAGE_TYPE.TX == engageType -> {
-                            AppAnalytics.create(AnalyticsEvent.TEXT_SUBMITTED.NAME).push()
-                        }
-                        EXPECTED_ENGAGE_TYPE.AU == engageType -> {
-                            AppAnalytics.create(AnalyticsEvent.AUDIO_SUBMITTED.NAME).push()
-                        }
-                        EXPECTED_ENGAGE_TYPE.VI == engageType -> {
-                            AppAnalytics.create(AnalyticsEvent.VIDEO_SUBMITTED.NAME).push()
-                        }
-                        EXPECTED_ENGAGE_TYPE.DX == engageType -> {
-                            AppAnalytics.create(AnalyticsEvent.DOCUMENT_SUBMITTED.NAME).push()
-                        }
-                    }
-                }
-
-                val resp = AppObjectController.chatNetworkService.submitPracticeAsync(requestEngage)
-                if (resp.isSuccessful && resp.body() != null) {
-                    resp.body()?.localPath = localPath
-                    getAudioFeedback(chatModel,resp, engageType,false,mutableListOf())
-                    requestStatusLiveData.postValue(true)
                 } else {
                     requestStatusLiveData.postValue(false)
                     if (resp.code() == 400) {
