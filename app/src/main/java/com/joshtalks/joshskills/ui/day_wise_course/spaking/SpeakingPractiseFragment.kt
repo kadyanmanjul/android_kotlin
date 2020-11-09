@@ -1,10 +1,14 @@
 package com.joshtalks.joshskills.ui.day_wise_course.spaking
 
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -38,8 +42,16 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private var lessonId: String = EMPTY
     private var courseId: String = EMPTY
     private var topicId: String? = null
-
     private val speakingTopicModelLiveData: MutableLiveData<SpeakingTopicModel> = MutableLiveData()
+    var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            topicId?.let {
+                getTopicDetail(it)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,7 +101,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         topicId?.let {
             getTopicDetail(it)
         }
-
     }
 
     private fun startPractise() {
@@ -127,11 +138,14 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private fun startPractiseSearchScreen() {
         speakingTopicModelLiveData.value?.run {
-            SearchingUserActivity.startUserForPractiseOnPhoneActivity(
-                requireActivity(),
-                courseId = courseId,
-                topicId = id,
-                topicName = topicName
+
+            openCallActivity.launch(
+                SearchingUserActivity.startUserForPractiseOnPhoneActivity(
+                    requireActivity(),
+                    courseId = courseId,
+                    topicId = id,
+                    topicName = topicName
+                )
             )
         }
 

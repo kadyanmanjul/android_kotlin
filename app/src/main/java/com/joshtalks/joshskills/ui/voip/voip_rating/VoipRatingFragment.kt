@@ -1,7 +1,9 @@
 package com.joshtalks.joshskills.ui.voip.voip_rating
 
 
+import android.app.Activity
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,10 +18,10 @@ import com.joshtalks.joshskills.databinding.VoipRatingFragmentBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 const val LAST_VOIP_CALL_ID = "last_call_id"
 const val LAST_VOIP_CALL_TIME = "last_call_time"
@@ -110,6 +112,8 @@ class VoipRatingFragment : DialogFragment() {
             try {
                 AppObjectController.commonNetworkService.feedbackVoipCall(request)
                 FullScreenProgressDialog.hideProgressBar(requireActivity())
+                val intent = Intent()
+                requireActivity().setResult(Activity.RESULT_OK, intent)
                 requireActivity().finish()
             } catch (ex: Throwable) {
                 FullScreenProgressDialog.hideProgressBar(requireActivity())

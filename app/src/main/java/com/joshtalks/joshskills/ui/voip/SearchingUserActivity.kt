@@ -45,14 +45,12 @@ class SearchingUserActivity : BaseActivity() {
             courseId: String,
             topicId: Int,
             topicName: String
-        ) {
-            Intent(activity, SearchingUserActivity::class.java).apply {
+        ): Intent {
+            return Intent(activity, SearchingUserActivity::class.java).apply {
                 putExtra(COURSE_ID, courseId)
                 putExtra(TOPIC_ID, topicId)
                 putExtra(TOPIC_NAME, topicName)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }.run {
-                activity.startActivity(this)
             }
         }
     }
