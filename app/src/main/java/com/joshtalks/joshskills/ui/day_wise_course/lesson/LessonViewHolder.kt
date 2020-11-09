@@ -18,7 +18,7 @@ class LessonViewHolder(
     activityRef: WeakReference<FragmentActivity>,
     message: ChatModel,
     previousMessage: ChatModel?,
-    private val onItemClick: ((lessonId: Int) -> Unit)? = null
+    private val onItemClick: ((lessonId: Int, lessonInterval: Int) -> Unit)? = null
 ) :
     BaseChatViewHolder(activityRef, message, previousMessage) {
 
@@ -68,7 +68,7 @@ class LessonViewHolder(
 
             }*/
             rootView.setOnClickListener {
-                onItemClick?.invoke(lessonModel.id)
+                onItemClick?.invoke(lessonModel.id, message.lessons?.interval ?: -1)
             }
         }
 

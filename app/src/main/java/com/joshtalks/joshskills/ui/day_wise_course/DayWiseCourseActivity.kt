@@ -17,12 +17,14 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.LESSON_INTERVAL
 import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.ui.chat.LESSON_REQUEST_CODE
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.day_wise_course.unlock_next_class.ActivityUnlockNextClass
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
+import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 
 
 class DayWiseCourseActivity : CoreJoshActivity(),
@@ -32,6 +34,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
     private var courseId: Int? = null
     private lateinit var binding: DaywiseCourseActivityBinding
     var lessonId: Int = 0
+    var lessonInterval: Int = -1
     var conversastionId: String? = null
     var isBatchChanged: Boolean = false
 //    val questionList: ArrayList<Question> = ArrayList()
@@ -47,11 +50,12 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         fun getDayWiseCourseActivityIntent(
             context: Context,
             lessonId: Int,
-            courseId: String
+            courseId: String,
+            interval: Int = -1
         ) = Intent(context, DayWiseCourseActivity::class.java).apply {
             putExtra(LESSON_ID, lessonId)
             putExtra(COURSE_ID, courseId)
-
+            putExtra(LESSON_INTERVAL, interval)
 //            putExtra(CHAT_ITEMS, chatList)
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         }
@@ -65,6 +69,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                 finish()
 
             lessonId = intent.getIntExtra(LESSON_ID, 0)
+            lessonInterval = intent.getIntExtra(LESSON_INTERVAL, -1)
             viewModel.syncQuestions(lessonId)
             viewModel.getQuestions(lessonId)
         }
@@ -82,6 +87,9 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
         lessonId = intent.getIntExtra(LESSON_ID, 0)
 //        chatList = intent.getParcelableArrayListExtra(CHAT_ITEMS)!!
+
+
+        lessonInterval = intent.getIntExtra(LESSON_INTERVAL, -1)
 
         titleView = findViewById(R.id.text_message_title)
         val helpIv: ImageView = findViewById(R.id.iv_help)
@@ -247,7 +255,11 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
     override fun onBackPressed() {
         //super.onBackPressed()
-        setResult(RESULT_OK, Intent().apply { putExtra(IS_BATCH_CHANGED, isBatchChanged) })
+        val resultIntent = Intent()
+        resultIntent.putExtra(IS_BATCH_CHANGED, isBatchChanged)
+        resultIntent.putExtra(LAST_LESSON_INTERVAL, lessonInterval)
+
+        setResult(RESULT_OK, resultIntent)
         this@DayWiseCourseActivity.finish()
     }
 }

@@ -127,6 +127,7 @@ import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
+import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.LAST_VIDEO_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.NEXT_VIDEO_AVAILABLE
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
@@ -1459,7 +1460,10 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                         fetchNewUnlockClasses(data)
                     }
                 } else {
-                    addUnlockNextClassCard(data)
+
+                    val interval = data.getIntExtra(LAST_VIDEO_INTERVAL, -1)
+                    val isNextVideoAvailable = data.getBooleanExtra(NEXT_VIDEO_AVAILABLE, false)
+                    addUnlockNextClassCard(interval,isNextVideoAvailable)
                 }
                 uiHandler.postDelayed({
                     try {
@@ -1486,7 +1490,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                         fetchNewUnlockClasses(data)
                     }
                 } else {
-                    addUnlockNextClassCard(data)
+                    val interval = data.getIntExtra(LAST_LESSON_INTERVAL, -1)
+                    addUnlockNextClassCard(interval)
                 }
                 uiHandler.postDelayed({
                     try {
@@ -1519,14 +1524,16 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    fun onLessonItemClick(lessonId: Int) {
+    fun onLessonItemClick(lessonId: Int, interval: Int) {
         startActivityForResult(
             DayWiseCourseActivity.getDayWiseCourseActivityIntent(
                 this,
                 lessonId,
-                courseId = inboxEntity.courseId
-            ), LESSON_REQUEST_CODE
-        )
+                courseId = inboxEntity.courseId,
+                interval
+            ),
+            LESSON_REQUEST_CODE
+            )
     }
 
     private fun fetchNewUnlockClasses(data: Intent) {
@@ -1557,9 +1564,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         }
     }
 
-    private fun addUnlockNextClassCard(data: Intent) {
-        val interval = data.getIntExtra(LAST_VIDEO_INTERVAL, -1)
-        val isNextVideoAvailable = data.getBooleanExtra(NEXT_VIDEO_AVAILABLE, false)
+    private fun addUnlockNextClassCard(interval:Int,isNextVideoAvailable:Boolean=false) {
         CoroutineScope(Dispatchers.IO).launch {
             val maxInterval =
                 AppObjectController.appDatabase.chatDao()
