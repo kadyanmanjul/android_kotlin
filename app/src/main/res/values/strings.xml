@@ -535,5 +535,6 @@
     <string name="cexam_date">Eligibility date - %s </string>
     <string name="correct">Correct</string>
     <string name="unanswered">Unanswered</string>
+    <string name="user_does_not_exist">This user does not exist anymore</string>
 
 </resources>

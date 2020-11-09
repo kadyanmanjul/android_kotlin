@@ -53,11 +53,11 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import timber.log.Timber
 import java.io.File
 import java.util.ConcurrentModificationException
 import java.util.Date
 import java.util.concurrent.TimeUnit
-import timber.log.Timber
 
 
 class ConversationViewModel(application: Application) :
@@ -628,6 +628,7 @@ class ConversationViewModel(application: Application) :
     private fun loginUser(groupDetails: GroupDetails) {
 
         if (CometChat.getLoggedInUser() == null) {
+            // User not logged in
             CometChat.login(
                 groupDetails.userId,
                 BuildConfig.COMETCHAT_API_KEY,
@@ -648,6 +649,23 @@ class ConversationViewModel(application: Application) :
                     }
 
                 })
+        } else if (CometChat.getLoggedInUser().uid != groupDetails.userId) {
+            // Any other user is logged in. So we have to logout first
+            CometChat.logout(object : CometChat.CallbackListener<String>() {
+                override fun onSuccess(p0: String?) {
+                    loginUser(groupDetails)
+                }
+
+                override fun onError(p0: CometChatException?) {
+                    Timber.d("Logout previous user failed with exception: %s", p0?.message)
+                    isLoading.postValue(false)
+                    showToast(
+                        context.getString(R.string.generic_message_for_error),
+                        Toast.LENGTH_SHORT
+                    )
+                }
+
+            })
         } else {
             // User already logged in
             isLoading.postValue(false)

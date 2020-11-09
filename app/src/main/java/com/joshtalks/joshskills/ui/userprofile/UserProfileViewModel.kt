@@ -32,6 +32,11 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                     }
                     userData.postValue(response.body()!!)
                     return@launch
+                } else if (response.errorBody() != null
+                    && response.errorBody()!!.string().contains("mentor_id is not valid")
+                ) {
+                    apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+                    showToast(AppObjectController.joshApplication.getString(R.string.user_does_not_exist))
                 } else {
                     apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
                     showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
