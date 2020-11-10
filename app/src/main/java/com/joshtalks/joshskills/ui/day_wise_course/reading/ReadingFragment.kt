@@ -560,12 +560,10 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                     chatModel.question?.interval?.run {
                         WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
                     }
-                    delay(250)
-                    val resultIntent = Intent().apply {
-                        putExtra(PRACTISE_OBJECT, chatModel)
-                    }
-                    /* setResult(RESULT_OK, resultIntent)
-                     finishAndRemoveTask()*/
+                    activityCallback?.onQuestionStatusUpdate(
+                        QUESTION_STATUS.AT.name,
+                        chatModel?.question?.questionId?.toIntOrNull() ?: 0
+                    )
                 }
 
             } else {
@@ -1227,10 +1225,6 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                     showToast(getString(R.string.submit_practise_msz))
                     return
                 }
-                activityCallback?.onQuestionStatusUpdate(
-                    QUESTION_STATUS.AT.name,
-                    chatModel?.question?.questionId?.toIntOrNull() ?: 0
-                )
 
                 appAnalytics?.addParam(
                     AnalyticsEvent.PRACTICE_SCREEN_TIME.NAME,
