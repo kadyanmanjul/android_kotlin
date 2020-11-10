@@ -56,6 +56,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -523,13 +524,15 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
 
                     }
                     EXPECTED_ENGAGE_TYPE.AU == it -> {
-                        binding.practiseInputHeader.text = getString(R.string.record_answer_label)
+                        binding.practiseInputHeader.text = AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
                         binding.uploadPractiseView.setImageResource(R.drawable.recv_ic_mic_white)
                         audioRecordTouchListener()
                         binding.audioPractiseHint.visibility = VISIBLE
                     }
                     EXPECTED_ENGAGE_TYPE.VI == it -> {
-                        binding.practiseInputHeader.text = getString(R.string.record_answer_label)
+                        binding.practiseInputHeader.text = AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
                         binding.uploadPractiseView.setImageResource(R.drawable.ic_videocam)
                         setupFileUploadListener(it)
                     }

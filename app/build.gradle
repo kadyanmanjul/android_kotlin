@@ -264,8 +264,8 @@ dependencies {
 
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     implementation 'com.facebook.android:facebook-android-sdk:7.1.0'
-    devImplementation 'com.facebook.stetho:stetho:1.5.1'
-    devImplementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
+    implementation 'com.facebook.stetho:stetho:1.5.1'
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
     implementation 'com.facebook.android:facebook-login:7.1.0'
 
     implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
