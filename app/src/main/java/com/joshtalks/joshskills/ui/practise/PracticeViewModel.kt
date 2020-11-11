@@ -184,7 +184,7 @@ class PracticeViewModel(application: Application) :
 
                 }
             } catch (ex: Exception) {
-                requestStatusLiveData.postValue(false)
+                //requestStatusLiveData.postValue(false)
                 ex.showAppropriateMsg()
             }
         }

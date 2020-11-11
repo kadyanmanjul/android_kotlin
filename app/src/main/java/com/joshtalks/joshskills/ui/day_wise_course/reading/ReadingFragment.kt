@@ -94,7 +94,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import java.util.ArrayList
@@ -556,6 +555,22 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     private fun addObserver() {
         practiceViewModel.requestStatusLiveData.observe(viewLifecycleOwner, Observer {
             if (it) {
+                binding.progressLayout.visibility = GONE
+                binding.feedbackResultProgressLl.visibility = VISIBLE
+                binding.feedbackLayout.setCardBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.lightest_blue
+                    )
+                )
+                binding.rootView.postDelayed(Runnable {
+                    binding.rootView.smoothScrollTo(
+                        0,
+                        binding.rootView.getHeight()
+                    )
+                }, 100)
+
+                binding.feedbackResultLinearLl.visibility = GONE
                 CoroutineScope(Dispatchers.IO).launch {
                     chatModel.question?.interval?.run {
                         WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
@@ -574,6 +589,14 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
         practiceViewModel.practiceFeedback2LiveData.observe(viewLifecycleOwner, Observer {
             setFeedBackLayout(it)
             hideCancelButtonInRV()
+            binding.feedbackLayout.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.white
+                )
+            )
+            binding.feedbackResultProgressLl.visibility = GONE
+            binding.feedbackResultLinearLl.visibility = VISIBLE
             binding.progressLayout.visibility = GONE
             binding.submitAnswerBtn.visibility = GONE
             binding.improveAnswerBtn.visibility = VISIBLE
@@ -1251,7 +1274,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                 }
                 binding.progressLayout.visibility = INVISIBLE
                 setFeedBackLayout(null, true)
-                practiceViewModel.submitPractise(chatModel, requestEngage, engageType,true)
+                practiceViewModel.submitPractise(chatModel, requestEngage, engageType, true)
             }
         }
     }
