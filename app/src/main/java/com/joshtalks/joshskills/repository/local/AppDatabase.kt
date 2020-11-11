@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.repository.local.dao.LessonDao
 import com.joshtalks.joshskills.repository.local.dao.reminder.ReminderDao
 import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatDao
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
@@ -97,7 +98,8 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     ChatTypeConverters::class,
     LessonStatus::class,
     ConvectorForPracticeFeedback::class,
-    QuestionStatus::class
+    QuestionStatus::class,
+    CExamStatusTypeConverter::class
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -637,6 +639,21 @@ class QuestionStatus {
         return AppObjectController.gsonMapper.toJson(QUESTION_STATUS.NA)
     }
 }
+
+class CExamStatusTypeConverter {
+    @TypeConverter
+    fun fromString(value: String): CExamStatus {
+        val type = object : TypeToken<CExamStatus>() {}.type
+        return AppObjectController.gsonMapper.fromJson(value, type)
+    }
+
+    @TypeConverter
+    fun fromMatType(enumVal: CExamStatus): String {
+        return AppObjectController.gsonMapper.toJson(enumVal)
+    }
+}
+
+
 
 
 

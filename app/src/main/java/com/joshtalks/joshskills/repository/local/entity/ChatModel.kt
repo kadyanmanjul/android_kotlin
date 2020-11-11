@@ -264,6 +264,11 @@ data class Question(
     @ColumnInfo(name = "topic_id")
     @SerializedName("topic_id") var topicId: String? = null,
 
+
+    @Embedded(prefix = "cexam_")
+    @Expose
+    var cexamDetail: CertificationExamDetailModel? = null,
+
     ) : Parcelable
 
 
@@ -825,6 +830,21 @@ interface ChatDao {
     suspend fun getAllRecentDownloadMedia(): List<ChatModel>
 
 
+    @Query("SELECT * FROM  question_table  WHERE certificate_exam_id= :certificateExamId")
+    suspend fun getQuestionUsingCExamId(certificateExamId: Int): Question?
+
+
+    @Transaction
+    suspend fun insertCertificateExamDetail(
+        certificateExamId: Int,
+        obj: CertificationExamDetailModel
+    ) {
+        val question: Question? = getQuestionUsingCExamId(certificateExamId)
+        if (question != null) {
+            question.cexamDetail = obj
+            updateQuestionObject(question)
+        }
+    }
 }
 
 enum class OPTION_TYPE(val type: String) {
