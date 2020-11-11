@@ -544,5 +544,7 @@
     <string name="cexam_attempt_left">Attempts left - %1$d </string>
     <string name="cexam_reattempt">Reattempt</string>
     <string name="cexam_check_results">Check Results</string>
+    <string name="completed">Completed</string>
+
 
 </resources>

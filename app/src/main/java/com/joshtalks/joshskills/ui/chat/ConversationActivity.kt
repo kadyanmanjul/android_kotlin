@@ -84,6 +84,7 @@ import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.entity.Question
@@ -120,6 +121,7 @@ import com.joshtalks.joshskills.ui.chat.extra.CallingFeatureShowcaseView
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
+import com.joshtalks.joshskills.ui.day_wise_course.lesson.LessonCompleteViewHolder
 import com.joshtalks.joshskills.ui.day_wise_course.lesson.LessonViewHolder
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.pdfviewer.MESSAGE_ID
@@ -795,6 +797,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                             conversationBinding.chatRv.addView(cell)
                             lastMessage = chatModel
                         }
+                        if(chatModel.type==BASE_MESSAGE_TYPE.LESSON)
+                        addLessonCompleteCard(chatModel)
                     }
                 }
                 if (isNewChatViewAdd) {
@@ -830,6 +834,16 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             }
         }
 
+    }
+
+    private fun addLessonCompleteCard(chatModel: ChatModel) {
+        if (isLessonCompleted(chatModel)) {
+            conversationBinding.chatRv.addView(LessonCompleteViewHolder(activityRef, chatModel, lastMessage))
+        }
+    }
+
+    private fun isLessonCompleted(chatModel:ChatModel): Boolean {
+        return chatModel.lessons?.status==LESSON_STATUS.CO
     }
 
     private fun showGroupChatScreen(groupDetails: GroupDetails) {
