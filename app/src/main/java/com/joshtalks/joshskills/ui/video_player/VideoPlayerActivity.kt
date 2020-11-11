@@ -544,4 +544,5 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     override fun onUsbDisconnect() {
         usbConnected = false
     }
+
 }

@@ -205,6 +205,12 @@ class GrammarFragment : Fragment() {
         return binding.root
     }
 
+
+    override fun onPause() {
+        binding.videoPlayer.onPause()
+        super.onPause()
+    }
+
     private fun addObserValbles() {
 //        viewModel.getQuestions()
         assessmentQuestions.clear()
@@ -258,8 +264,22 @@ class GrammarFragment : Fragment() {
                                     videoId,
                                     videoUrl
                                 )
+
+                                updateVideoQuestionStatus(this)
+
                             }
                             binding.videoPlayer.downloadStreamButNotPlay()
+                        }
+
+                        if (this.status == QUESTION_STATUS.NA) {
+                            binding.videoPlayer.setVideoPositionUpdateListener {
+                                println("position = $it")
+                                if (it > 3000) {
+                                    updateVideoQuestionStatus(this)
+                                }
+                            }
+                        } else {
+                            binding.quizShader.visibility = View.GONE
                         }
 
                         this.qText?.let {
@@ -284,14 +304,7 @@ class GrammarFragment : Fragment() {
                         }
                         setUpPdfView(chatModel)
                     }
-/*
-                    BASE_MESSAGE_TYPE.TX -> {
-                        this.qText?.let {
-                            binding.grammarDescTv.visibility = View.VISIBLE
-                            binding.grammarDescTv.text =
-                                HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
-                        }
-                    }*/
+
                     BASE_MESSAGE_TYPE.QUIZ -> {
                         this.assessmentId?.let {
                             viewModel.fetchAssessmentDetails(it)
@@ -301,16 +314,6 @@ class GrammarFragment : Fragment() {
 
                     }
                 }
-
-            /* if (this.practiceEngagement.isNullOrEmpty()) {
-                 binding.submitAnswerBtn.visibility = View.VISIBLE
-                 setViewAccordingExpectedAnswer(chatModel)
-             } else {
-                 hidePracticeInputLayout()
-                 binding.submitAnswerBtn.visibility = View.GONE
-                 setViewUserSubmitAnswer(chatModel)
-             }
-*/
         }
     }
 
@@ -677,6 +680,15 @@ class GrammarFragment : Fragment() {
                 showToast("Pdf size is 0")
             }
         }
+    }
+
+    private fun updateVideoQuestionStatus(question: Question) {
+        activityCallback?.onQuestionStatusUpdate(
+            QUESTION_STATUS.AT.name,
+            question.questionId.toIntOrNull() ?: 0
+        )
+        question.status = QUESTION_STATUS.AT
+        viewModel.updateQuestionInLocal(question)
     }
 
 }

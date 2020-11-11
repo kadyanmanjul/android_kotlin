@@ -14,7 +14,9 @@ import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -42,6 +44,7 @@ import com.joshtalks.joshskills.core.service.video_download.VideoDownloadControl
 import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
 
 public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener, View.OnClickListener {
+    private final Handler timeHandler = new Handler();
     private Uri uri;
     private long lastPosition = 0;
     private long currentPosition = 0;
@@ -56,10 +59,10 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     private int startWindow;
     private GestureDetector gestureDetector;
     private PlayerControlViewVisibilityListener playerControlViewVisibilityListener;
-    private Handler timeHandler = new Handler();
+    VideoPositionUpdateListener postionUpdateListener;
     private PlayerFullScreenListener playerFullScreenListener;
     private PlayerEventCallback playerEventCallback;
-    private Runnable timeRunnable = new Runnable() {
+    private final Runnable timeRunnable = new Runnable() {
         @Override
         public void run() {
             timeHandler.postDelayed(this, 1000);
@@ -69,6 +72,8 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             }
 
             long currentPosition = player.getCurrentPosition();
+            if (postionUpdateListener != null)
+                postionUpdateListener.onVideoPositionUpdate((int) currentPosition);
 
             if (!(getContext() instanceof PlayerListener)) {
                 return;
@@ -88,6 +93,29 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     public JoshVideoPlayer(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
+    }
+
+    public JoshVideoPlayer(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    public JoshVideoPlayer(Context context) {
+        super(context);
+        init();
+    }
+
+    public static AppCompatActivity getActivityFromView(View view) {
+        if (null != view) {
+            Context context = view.getContext();
+            while (context instanceof ContextWrapper) {
+                if (context instanceof AppCompatActivity) {
+                    return (AppCompatActivity) context;
+                }
+                context = ((ContextWrapper) context).getBaseContext();
+            }
+        }
+        return null;
     }
 
     public void init() {
@@ -128,21 +156,13 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                             listener.onPlayerReady();
                         }
 
-                        if (playbackState == com.google.android.exoplayer2.Player.STATE_BUFFERING) {
-                            listener.onBufferingUpdated(true);
-                        } else {
-                            listener.onBufferingUpdated(false);
-                        }
+                        listener.onBufferingUpdated(playbackState == Player.STATE_BUFFERING);
 
                     }
 
-                    if (playbackState == com.google.android.exoplayer2.Player.STATE_IDLE
-                            || playbackState == com.google.android.exoplayer2.Player.STATE_ENDED
-                            || !playWhenReady) {
-                        setKeepScreenOn(false);
-                    } else {
-                        setKeepScreenOn(true);
-                    }
+                    setKeepScreenOn(playbackState != Player.STATE_IDLE
+                            && playbackState != Player.STATE_ENDED
+                            && playWhenReady);
 
                 }
 
@@ -152,6 +172,9 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 @Override
                 public void onScrubStart(TimeBar timeBar, long position) {
                     try {
+                        if (postionUpdateListener != null)
+                            postionUpdateListener.onVideoPositionUpdate((int) position);
+
                         PlayerListener listener = (PlayerListener) getContext();
                         listener.onPositionDiscontinuity(1, player.getCurrentPosition());
                     } catch (Exception e) {
@@ -202,29 +225,6 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
     }
 
-    public JoshVideoPlayer(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
-    }
-
-    public JoshVideoPlayer(Context context) {
-        super(context);
-        init();
-    }
-
-    public static AppCompatActivity getActivityFromView(View view) {
-        if (null != view) {
-            Context context = view.getContext();
-            while (context instanceof ContextWrapper) {
-                if (context instanceof AppCompatActivity) {
-                    return (AppCompatActivity) context;
-                }
-                context = ((ContextWrapper) context).getBaseContext();
-            }
-        }
-        return null;
-    }
-
     private void setupAudioFocus() {
         AudioAttributes audioAttributes = new AudioAttributes.Builder()
                 .setUsage(C.USAGE_MEDIA)
@@ -273,7 +273,6 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     public SimpleExoPlayer getExoPlayer() {
         return player;
     }
-
 
     public void onStart() {
         if (Util.SDK_INT > 23) {
@@ -430,15 +429,23 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         }
     }
 
+    public void setVideoPositionUpdateListener(VideoPositionUpdateListener positionListener) {
+        postionUpdateListener = positionListener;
+    }
+
+    public void removeVideoPositionListener() {
+        postionUpdateListener = null;
+    }
+
     enum ScreenOrientation {
         PORTRAIT,
         LANDSCAPE
     }
 
+
     public interface PlayerControlViewVisibilityListener {
         void onVisibilityChange(int visibility);
     }
-
 
     public interface PlayerFullScreenListener {
         void onFullScreen();
@@ -448,6 +455,9 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         void onReceiveEvent(int event, boolean playbackState);
     }
 
+    public interface VideoPositionUpdateListener {
+        void onVideoPositionUpdate(int position);
+    }
 
     private class PlayerEventListener implements Player.EventListener {
 
@@ -484,6 +494,5 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
         }
     }
-
 
 }

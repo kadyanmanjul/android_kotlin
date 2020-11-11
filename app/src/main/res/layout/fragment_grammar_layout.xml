@@ -370,7 +370,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:alpha="0.92"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/quiz_radio_group"
                 app:layout_constraintTop_toTopOf="@+id/quiz_tv"
                 app:srcCompat="@color/white" />
