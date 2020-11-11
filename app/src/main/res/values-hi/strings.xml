@@ -83,7 +83,7 @@
     <string name="submit_answer">उत्तर सबमिट करें</string>
     <string name="improve_answer">उत्तर में सुधार करें</string>
     <string name="today_practise">आज की प्रैक्टिस</string>
-    <string name="hold_to_record_msz">ऑडियो रिकॉर्ड करने के लिए होल्ड करें</string>
+    <string name="hold_to_record_msz">उत्तर रिकॉर्ड करने के लिए दबाकर रखें</string>
     <string name="upload_file_msz">एक फाइल अपलोड करें</string>
     <string name="your_answer">आपका जवाब</string>
     <string name="your_feedback">आपकी प्रतिक्रिया</string>

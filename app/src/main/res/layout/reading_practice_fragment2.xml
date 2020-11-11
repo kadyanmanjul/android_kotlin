@@ -394,8 +394,8 @@
                             android:gravity="center"
                             android:padding="@dimen/_4sdp"
                             android:text="@string/hold_to_record_msz"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-                            android:textColor="@color/gray_9E"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                            android:textColor="@color/black"
                             android:visibility="gone"
                             tools:visibility="visible" />
 
@@ -477,8 +477,8 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:padding="@dimen/_4sdp"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                            android:textColor="@color/gray_9E"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                            android:textColor="@color/black"
                             tools:text="@string/hold_to_record_msz"
                             tools:visibility="visible" />
 

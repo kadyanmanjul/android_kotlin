@@ -56,6 +56,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -93,7 +94,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import java.util.ArrayList
@@ -523,13 +523,15 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
 
                     }
                     EXPECTED_ENGAGE_TYPE.AU == it -> {
-                        binding.practiseInputHeader.text = getString(R.string.record_answer_label)
+                        binding.practiseInputHeader.text = AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
                         binding.uploadPractiseView.setImageResource(R.drawable.recv_ic_mic_white)
                         audioRecordTouchListener()
                         binding.audioPractiseHint.visibility = VISIBLE
                     }
                     EXPECTED_ENGAGE_TYPE.VI == it -> {
-                        binding.practiseInputHeader.text = getString(R.string.record_answer_label)
+                        binding.practiseInputHeader.text = AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
                         binding.uploadPractiseView.setImageResource(R.drawable.ic_videocam)
                         setupFileUploadListener(it)
                     }
@@ -553,16 +555,30 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     private fun addObserver() {
         practiceViewModel.requestStatusLiveData.observe(viewLifecycleOwner, Observer {
             if (it) {
+                binding.progressLayout.visibility = GONE
+                binding.feedbackResultProgressLl.visibility = VISIBLE
+                binding.feedbackLayout.setCardBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.lightest_blue
+                    )
+                )
+                binding.rootView.postDelayed(Runnable {
+                    binding.rootView.smoothScrollTo(
+                        0,
+                        binding.rootView.getHeight()
+                    )
+                }, 100)
+
+                binding.feedbackResultLinearLl.visibility = GONE
                 CoroutineScope(Dispatchers.IO).launch {
                     chatModel.question?.interval?.run {
                         WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
                     }
-                    delay(250)
-                    val resultIntent = Intent().apply {
-                        putExtra(PRACTISE_OBJECT, chatModel)
-                    }
-                    /* setResult(RESULT_OK, resultIntent)
-                     finishAndRemoveTask()*/
+                    activityCallback?.onQuestionStatusUpdate(
+                        QUESTION_STATUS.AT.name,
+                        chatModel?.question?.questionId?.toIntOrNull() ?: 0
+                    )
                 }
 
             } else {
@@ -573,6 +589,14 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
         practiceViewModel.practiceFeedback2LiveData.observe(viewLifecycleOwner, Observer {
             setFeedBackLayout(it)
             hideCancelButtonInRV()
+            binding.feedbackLayout.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.white
+                )
+            )
+            binding.feedbackResultProgressLl.visibility = GONE
+            binding.feedbackResultLinearLl.visibility = VISIBLE
             binding.progressLayout.visibility = GONE
             binding.submitAnswerBtn.visibility = GONE
             binding.improveAnswerBtn.visibility = VISIBLE
@@ -1224,10 +1248,6 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                     showToast(getString(R.string.submit_practise_msz))
                     return
                 }
-                activityCallback?.onQuestionStatusUpdate(
-                    QUESTION_STATUS.AT.name,
-                    chatModel?.question?.questionId?.toIntOrNull() ?: 0
-                )
 
                 appAnalytics?.addParam(
                     AnalyticsEvent.PRACTICE_SCREEN_TIME.NAME,
@@ -1254,7 +1274,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                 }
                 binding.progressLayout.visibility = INVISIBLE
                 setFeedBackLayout(null, true)
-                practiceViewModel.submitPractise(chatModel, requestEngage, engageType,true)
+                practiceViewModel.submitPractise(chatModel, requestEngage, engageType, true)
             }
         }
     }

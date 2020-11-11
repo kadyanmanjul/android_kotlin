@@ -508,5 +508,9 @@
         <key>SUBSCRIPTION_TEST_ID</key>
         <value>122</value>
     </entry>
+    <entry>
+        <key>READING_PRACTICE_TITLE</key>
+        <value>Please, Record your answer</value>
+    </entry>
 
 </defaultsMap>

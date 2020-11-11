@@ -130,7 +130,7 @@
     <!-- Help Screen  -->
     <string name="today_practise">Today\'s Practice</string>
 
-    <string name="hold_to_record_msz">Hold to record audio</string>
+    <string name="hold_to_record_msz">Press and hold to record a answer</string>
     <string name="upload_file_msz">Upload a file</string>
     <string name="your_answer">Your Answer</string>
     <string name="your_feedback">Your Feedback</string>
@@ -519,7 +519,7 @@
     <string name="speak_practise_title">Welcome to \n Practice with Partner</string>
     <string name="today_topic">Today Topic</string>
     <string name="call_practice_partner">Call Practice Partner</string>
-    <string name="pp_message">In this practice you have to speak to your practice partner for %s minute</string>
+    <string name="pp_message">In this practice you have to speak to a practice partner for %s minute</string>
     <string name="pp_calling">Practice Partner Calling</string>
     <string name="speaking_time_msz">Speaking time\n %s minutes</string>
     <string name="leaderboard_1">leaderboard</string>

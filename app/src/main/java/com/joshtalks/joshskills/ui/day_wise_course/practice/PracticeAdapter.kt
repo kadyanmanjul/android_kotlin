@@ -29,6 +29,7 @@ import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -62,15 +63,15 @@ class PracticeAdapter(
     var audioManager = ExoAudioPlayer.getInstance()
     var currentChatModel: ChatModel? = null
     private var currentPlayingPosition: Int = 0
+    private var isFirstTime: Boolean = true
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PracticeViewHolder {
         val binding = PracticeItemLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
-
         return PracticeViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: PracticeViewHolder, position: Int) {
-        holder.bind(itemList.get(position))
+        holder.bind(itemList.get(position), position)
     }
 
     override fun getItemCount(): Int {
@@ -84,8 +85,17 @@ class PracticeAdapter(
         var filePath: String? = null
         var appAnalytics: AppAnalytics? = null
 
-        fun bind(chatModel: ChatModel) {
-
+        fun bind(chatModel: ChatModel, position: Int) {
+            if (position == 0 && isFirstTime && currentChatModel?.question?.status != QUESTION_STATUS.AT) {
+                isFirstTime = false
+                binding.practiceContentLl.visibility = View.VISIBLE
+                binding.expandIv.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        context,
+                        R.drawable.ic_remove
+                    )
+                )
+            }
             appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTICE_SCREEN.NAME)
                 .addBasicParam()
                 .addUserDetails()
@@ -489,8 +499,8 @@ class PracticeAdapter(
                 this.expectedEngageType?.let {
                     binding.uploadPractiseView.visibility = VISIBLE
 
-                    binding.practiseInputHeader.text =
-                        context.getString(R.string.record_answer_label)
+                    binding.practiseInputHeader.text = AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
                     binding.uploadPractiseView.setImageResource(R.drawable.recv_ic_mic_white)
                     audioRecordTouchListener(chatModel)
                     binding.audioPractiseHint.visibility = VISIBLE
