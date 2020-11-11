@@ -1,3 +1,10 @@
 package com.joshtalks.joshskills.repository.local.eventbus
 
-class StartCertificationExamEventBus(var certificationExamId: Int)
+import com.joshtalks.joshskills.repository.local.entity.CExamStatus
+
+class StartCertificationExamEventBus(
+    var conversationId: String,
+    var messageId: String,
+    var certificationExamId: Int,
+    var examStatus: CExamStatus
+)

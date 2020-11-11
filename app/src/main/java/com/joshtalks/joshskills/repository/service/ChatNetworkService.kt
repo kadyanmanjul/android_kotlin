@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.repository.service
 
+import com.joshtalks.joshskills.repository.local.entity.CertificationExamDetailModel
 import com.joshtalks.joshskills.repository.local.entity.Course
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
@@ -139,5 +140,8 @@ interface ChatNetworkService {
 
     @POST("$DIR/group/cometchat_add_member/")
     suspend fun getGroupDetails(@Body params: Map<String, String>): GroupDetails
+
+    @GET("$DIR/certificateexam/chatcard-report")
+    suspend fun getCertificateExamCardDetails(@QueryMap params: Map<String, String>): CertificationExamDetailModel
 
 }

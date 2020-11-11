@@ -74,6 +74,10 @@ class InstructionFragment : Fragment() {
             if (attemptCount > 0) {
                 binding.btnPreviousResult.visibility = View.VISIBLE
             }
+            if (attemptCount == max_attempt) {
+                binding.btnAttemptOver.visibility = View.VISIBLE
+            }
+
             initRV(this)
             updateAttempt(this)
         }

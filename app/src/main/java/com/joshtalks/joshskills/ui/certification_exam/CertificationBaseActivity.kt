@@ -12,9 +12,12 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.service.CONVERSATION_ID
+import com.joshtalks.joshskills.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.ui.certification_exam.examview.CExamMainActivity
 import com.joshtalks.joshskills.ui.certification_exam.report.CExamReportActivity
 import com.joshtalks.joshskills.ui.certification_exam.view.InstructionFragment
+import com.joshtalks.joshskills.ui.pdfviewer.MESSAGE_ID
 import kotlinx.android.synthetic.main.activity_certification_base.progress_bar
 import kotlinx.android.synthetic.main.inbox_toolbar.iv_back
 import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
@@ -22,22 +25,34 @@ import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
 const val CERTIFICATION_EXAM_ID = "certification_exam_ID"
 const val CERTIFICATION_EXAM_QUESTION = "certification_exam_question"
 const val CURRENT_QUESTION = "current_question"
+const val EXAM_STATUS = "current_question"
 
 class CertificationBaseActivity : BaseActivity() {
 
     companion object {
-        fun certificationExamIntent(activity: Activity, certificationId: Int): Intent {
+        fun certificationExamIntent(
+            activity: Activity,
+            conversationId: String,
+            chatMessageId: String,
+            certificationId: Int,
+            cExamStatus: CExamStatus = CExamStatus.FRESH
+        ): Intent {
             return Intent(activity, CertificationBaseActivity::class.java).apply {
+                putExtra(CONVERSATION_ID, conversationId)
+                putExtra(MESSAGE_ID, chatMessageId)
+                putExtra(CONVERSATION_ID, conversationId)
                 putExtra(CERTIFICATION_EXAM_ID, certificationId)
+                putExtra(EXAM_STATUS, cExamStatus)
             }
         }
     }
 
-    private var certificateExamId: Int = 1
+    private var certificateExamId: Int = -1
     private val viewModel: CertificationExamViewModel by lazy {
         ViewModelProvider(this).get(CertificationExamViewModel::class.java)
     }
     private var isSubmittedExamTest = false
+    private var cExamStatus: CExamStatus = CExamStatus.FRESH
 
     private var openExamActivityResult: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -45,6 +60,7 @@ class CertificationBaseActivity : BaseActivity() {
         if (result.resultCode == Activity.RESULT_OK) {
             isSubmittedExamTest = true
             viewModel.getQuestions(certificateExamId)
+            viewModel.isUserSubmitExam.postValue(true)
         } else if (result.resultCode == Activity.RESULT_CANCELED) {
             viewModel.openResumeExam(certificateExamId)
         }
@@ -71,7 +87,11 @@ class CertificationBaseActivity : BaseActivity() {
         intent.getIntExtra(CERTIFICATION_EXAM_ID, -1).let {
             certificateExamId = it
         }
-        certificateExamId = 1
+        cExamStatus = intent.getSerializableExtra(EXAM_STATUS) as CExamStatus
+        intent.getStringExtra(CONVERSATION_ID)?.let {
+            viewModel.conversationId = it
+        }
+
         viewModel.getQuestions(certificateExamId)
     }
 
@@ -91,7 +111,14 @@ class CertificationBaseActivity : BaseActivity() {
             openExamInstructionScreen()
             if (isSubmittedExamTest) {
                 isSubmittedExamTest = false
-                viewModel.previousResult()
+                viewModel.showPreviousResult()
+            }
+            if (CExamStatus.REATTEMPTED == cExamStatus) {
+                viewModel.startExam()
+                cExamStatus = CExamStatus.NIL
+            } else if (CExamStatus.CHECK_RESULT == cExamStatus) {
+                viewModel.showPreviousResult()
+                cExamStatus = CExamStatus.NIL
             }
         })
         viewModel.startExamLiveData.observe(this, {
@@ -129,6 +156,14 @@ class CertificationBaseActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        this.finish()
+        if (viewModel.isUserSubmitExam.value != null && viewModel.isUserSubmitExam.value!!) {
+            val resultIntent = Intent().apply {
+                putExtra(MESSAGE_ID, intent.getStringExtra(MESSAGE_ID))
+            }
+            setResult(RESULT_OK, resultIntent)
+            this.finish()
+        } else {
+            this.finish()
+        }
     }
 }

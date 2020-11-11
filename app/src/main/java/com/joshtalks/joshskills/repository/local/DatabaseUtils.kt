@@ -2,13 +2,15 @@ package com.joshtalks.joshskills.repository.local
 
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshSkillExecutors
+import com.joshtalks.joshskills.repository.local.entity.CertificationExamDetailModel
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 import java.util.concurrent.ExecutorService
 
 object DatabaseUtils {
@@ -83,5 +85,28 @@ object DatabaseUtils {
             AppObjectController.appDatabase.chatDao().lastUsedBy(conversationId)
         }
     }
+
+    fun getCExamDetails(
+        conversationId: String,
+        certificationId: Int,
+        callback: ((CertificationExamDetailModel) -> Unit)? = null
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val params = mapOf(
+                    "conversation_id" to conversationId,
+                    "certificateexam_id" to certificationId.toString()
+                )
+                val response =
+                    AppObjectController.chatNetworkService.getCertificateExamCardDetails(params)
+                callback?.invoke(response)
+                AppObjectController.appDatabase.chatDao()
+                    .insertCertificateExamDetail(certificationId, response)
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
 
 }

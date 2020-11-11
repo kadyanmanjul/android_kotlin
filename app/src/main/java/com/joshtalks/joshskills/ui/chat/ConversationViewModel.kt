@@ -390,14 +390,6 @@ class ConversationViewModel(application: Application) :
                 val arguments = mutableMapOf<String, String>()
                 val (key, value) = PrefManager.getLastSyncTime(inboxEntity.conversation_id)
                 arguments[key] = value
-                val lastQuestionTime =
-                    appDatabase.chatDao().getLastChatDate(inboxEntity.conversation_id)
-
-                if (lastQuestionTime.isNullOrEmpty().not()) {
-                    arguments.remove(key)
-                    arguments["createdmilisecond"] = lastQuestionTime!!
-                }
-
                 NetworkRequestHelper.getUpdatedChat(
                     inboxEntity.conversation_id,
                     queryMap = arguments

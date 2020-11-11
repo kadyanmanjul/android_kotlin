@@ -98,12 +98,11 @@
                 android:clickable="true"
                 app:tabPaddingEnd="@dimen/_8sdp"
                 app:tabPaddingStart="@dimen/_8sdp"
-                app:tabMode="fixed"
+                app:tabMode="scrollable"
                 app:tabSelectedTextColor="@color/black"
                 app:tabTextAppearance="@style/TabLayoutStyle"
-
                 android:focusable="true"
-                app:tabTextColor="@color/light_grey" />
+                app:tabTextColor="@color/light_grey"></com.google.android.material.tabs.TabLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.viewpager2.widget.ViewPager2

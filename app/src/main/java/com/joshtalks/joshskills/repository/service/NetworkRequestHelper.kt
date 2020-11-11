@@ -6,6 +6,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
@@ -70,7 +71,7 @@ object NetworkRequestHelper {
                         question.audioList?.let {
                             it.listIterator().forEach { audioType ->
                                 audioType.questionId = question.questionId
-                              //  DownloadUtils.downloadAudioFile(it)
+                                //  DownloadUtils.downloadAudioFile(it)
                             }
 
                             AppObjectController.appDatabase.chatDao().insertAudioMessageList(it)
@@ -112,7 +113,14 @@ object NetworkRequestHelper {
                             AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
 
                         }
-
+                        if (question.type == BASE_MESSAGE_TYPE.CE) {
+                            question.certificateExamId?.run {
+                                DatabaseUtils.getCExamDetails(
+                                    conversationId = conversationId,
+                                    certificationId = this
+                                )
+                            }
+                        }
                     }
                 }
                 RxBus2.publish(DBInsertion("Chat"))
@@ -135,100 +143,100 @@ object NetworkRequestHelper {
         conversationId: String,
         queryMap: Map<String, String> = emptyMap()
     ): VideoType? {
-        var videoType1:VideoType?=null
-            try {
-                val resp = AppObjectController.chatNetworkService.getUnReceivedMessageAsync(
-                    conversationId,
-                    queryMap
+        var videoType1: VideoType? = null
+        try {
+            val resp = AppObjectController.chatNetworkService.getUnReceivedMessageAsync(
+                conversationId,
+                queryMap
+            )
+            if (resp.chatModelList.isNullOrEmpty()) {
+            } else {
+                PrefManager.put(
+                    conversationId.trim(),
+                    resp.chatModelList.last().messageTimeInMilliSeconds
                 )
-                if (resp.chatModelList.isNullOrEmpty()) {
-                } else {
-                    PrefManager.put(
-                        conversationId.trim(),
-                        resp.chatModelList.last().messageTimeInMilliSeconds
-                    )
-                }
-
-                for (chatModel in resp.chatModelList) {
-                    val chatObj =
-                        AppObjectController.appDatabase.chatDao()
-                            .getNullableChatObject(chatModel.chatId)
-                    if (chatObj == null) {
-                        chatModel.downloadStatus = DOWNLOAD_STATUS.NOT_START
-                        AppObjectController.appDatabase.chatDao().insertAMessage(chatModel)
-                    } else {
-                        chatObj.chatId = chatModel.chatId
-                        chatObj.url = chatModel.url
-                        chatObj.isSeen = true
-                        chatObj.conversationId = chatModel.conversationId
-                        chatObj.created = chatModel.created
-                        chatObj.messageDeliverStatus = chatModel.messageDeliverStatus
-                        chatObj.type = chatModel.type
-                        AppObjectController.appDatabase.chatDao().updateChatMessage(chatObj)
-                    }
-                    chatModel.question?.let { question ->
-                        question.chatId = chatModel.chatId
-                        AppObjectController.appDatabase.chatDao().insertChatQuestion(question)
-                        question.audioList?.let {
-                            it.listIterator().forEach { audioType ->
-                                audioType.questionId = question.questionId
-                                // DownloadUtils.downloadAudioFile(it)
-                            }
-
-                            AppObjectController.appDatabase.chatDao().insertAudioMessageList(it)
-                        }
-
-                        question.imageList?.let {
-                            it.listIterator().forEach { imageType ->
-                                imageType.questionId = question.questionId
-                            }
-                            AppObjectController.appDatabase.chatDao().insertImageTypeMessageList(it)
-                        }
-
-                        question.optionsList?.let {
-                            it.listIterator().forEach { optionType ->
-                                optionType.questionId = question.questionId
-                            }
-                            AppObjectController.appDatabase.chatDao()
-                                .insertOptionTypeMessageList(it)
-
-                        }
-
-                        question.pdfList?.let {
-                            it.listIterator().forEach { pdfType ->
-                                pdfType.questionId = question.questionId
-                            }
-                            AppObjectController.appDatabase.chatDao().insertPdfMessageList(it)
-
-                        }
-
-                        question.lesson?.let {
-                            AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
-
-                        }
-
-                        question.videoList?.let {
-                            it.listIterator().forEach { videoType ->
-                                videoType.questionId = question.questionId
-                                videoType.downloadStatus = DOWNLOAD_STATUS.NOT_START
-                                videoType.interval = question.interval
-                                videoType1 = videoType
-                            }
-                            AppObjectController.appDatabase.chatDao().insertVideoMessageList(it)
-                        }
-                    }
-                }
-
-                resp.next?.let {
-                    val arguments = mutableMapOf<String, String>()
-                    PrefManager.getLastSyncTime(conversationId).let { keys ->
-                        arguments[keys.first] = keys.second
-                    }
-                    videoType1=isVideoPresentInUpdatedChat(conversationId, queryMap = arguments)
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
             }
+
+            for (chatModel in resp.chatModelList) {
+                val chatObj =
+                    AppObjectController.appDatabase.chatDao()
+                        .getNullableChatObject(chatModel.chatId)
+                if (chatObj == null) {
+                    chatModel.downloadStatus = DOWNLOAD_STATUS.NOT_START
+                    AppObjectController.appDatabase.chatDao().insertAMessage(chatModel)
+                } else {
+                    chatObj.chatId = chatModel.chatId
+                    chatObj.url = chatModel.url
+                    chatObj.isSeen = true
+                    chatObj.conversationId = chatModel.conversationId
+                    chatObj.created = chatModel.created
+                    chatObj.messageDeliverStatus = chatModel.messageDeliverStatus
+                    chatObj.type = chatModel.type
+                    AppObjectController.appDatabase.chatDao().updateChatMessage(chatObj)
+                }
+                chatModel.question?.let { question ->
+                    question.chatId = chatModel.chatId
+                    AppObjectController.appDatabase.chatDao().insertChatQuestion(question)
+                    question.audioList?.let {
+                        it.listIterator().forEach { audioType ->
+                            audioType.questionId = question.questionId
+                            // DownloadUtils.downloadAudioFile(it)
+                        }
+
+                        AppObjectController.appDatabase.chatDao().insertAudioMessageList(it)
+                    }
+
+                    question.imageList?.let {
+                        it.listIterator().forEach { imageType ->
+                            imageType.questionId = question.questionId
+                        }
+                        AppObjectController.appDatabase.chatDao().insertImageTypeMessageList(it)
+                    }
+
+                    question.optionsList?.let {
+                        it.listIterator().forEach { optionType ->
+                            optionType.questionId = question.questionId
+                        }
+                        AppObjectController.appDatabase.chatDao()
+                            .insertOptionTypeMessageList(it)
+
+                    }
+
+                    question.pdfList?.let {
+                        it.listIterator().forEach { pdfType ->
+                            pdfType.questionId = question.questionId
+                        }
+                        AppObjectController.appDatabase.chatDao().insertPdfMessageList(it)
+
+                    }
+
+                    question.lesson?.let {
+                        AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
+
+                    }
+
+                    question.videoList?.let {
+                        it.listIterator().forEach { videoType ->
+                            videoType.questionId = question.questionId
+                            videoType.downloadStatus = DOWNLOAD_STATUS.NOT_START
+                            videoType.interval = question.interval
+                            videoType1 = videoType
+                        }
+                        AppObjectController.appDatabase.chatDao().insertVideoMessageList(it)
+                    }
+                }
+            }
+
+            resp.next?.let {
+                val arguments = mutableMapOf<String, String>()
+                PrefManager.getLastSyncTime(conversationId).let { keys ->
+                    arguments[keys.first] = keys.second
+                }
+                videoType1 = isVideoPresentInUpdatedChat(conversationId, queryMap = arguments)
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
 
         return videoType1
     }

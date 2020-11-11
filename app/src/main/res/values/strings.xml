@@ -537,4 +537,12 @@
     <string name="unanswered">Unanswered</string>
     <string name="user_does_not_exist">This user does not exist anymore</string>
 
+    <string name="cexam_marks">%1$d%% Marks</string>
+    <string name="cexam_code">Code no.: %s</string>
+    <string name="cexam_passed_on">Passed on- %s</string>
+    <string name="cexam_attempted_on">Attempted on - %s</string>
+    <string name="cexam_attempt_left">Attempts left - %1$d </string>
+    <string name="cexam_reattempt">Reattempt</string>
+    <string name="cexam_check_results">Check Results</string>
+
 </resources>

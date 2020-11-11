@@ -20,6 +20,8 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
@@ -63,7 +65,6 @@ import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.alphaAnimation
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.custom_ui.JoshSnackBar
 import com.joshtalks.joshskills.core.custom_ui.SnappingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
@@ -121,6 +122,7 @@ import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
 import com.joshtalks.joshskills.ui.day_wise_course.lesson.LessonViewHolder
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
+import com.joshtalks.joshskills.ui.pdfviewer.MESSAGE_ID
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
@@ -1176,19 +1178,31 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             RxBus2.listenWithoutDelay(StartCertificationExamEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .subscribe({
-                    startActivity(
+                    val cExamActivityListener: ActivityResultLauncher<Intent> =
+                        registerForActivityResult(
+                            ActivityResultContracts.StartActivityForResult()
+                        ) { result ->
+                            if (result.resultCode == Activity.RESULT_OK) {
+                                result.data?.getStringExtra(MESSAGE_ID)?.let { chatId ->
+                                    refreshView(chatId)
+                                }
+                            }
+                        }
+                    cExamActivityListener.launch(
                         CertificationBaseActivity.certificationExamIntent(
                             this,
-                            it.certificationExamId
+                            conversationId = it.conversationId,
+                            chatMessageId = it.messageId,
+                            certificationId = it.certificationExamId,
+                            cExamStatus = it.examStatus
                         )
                     )
                 }, {
                     it.printStackTrace()
                 })
         )
-
-
     }
+
 
     private fun setCurrentItemPosition(chatId: String) {
         val currentChatid = chatId.toLowerCase(Locale.getDefault())
@@ -1463,7 +1477,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
 
                     val interval = data.getIntExtra(LAST_VIDEO_INTERVAL, -1)
                     val isNextVideoAvailable = data.getBooleanExtra(NEXT_VIDEO_AVAILABLE, false)
-                    addUnlockNextClassCard(interval,isNextVideoAvailable)
+                    addUnlockNextClassCard(interval, isNextVideoAvailable)
                 }
                 uiHandler.postDelayed({
                     try {
@@ -1533,7 +1547,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 interval
             ),
             LESSON_REQUEST_CODE
-            )
+        )
     }
 
     private fun fetchNewUnlockClasses(data: Intent) {
@@ -1564,7 +1578,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         }
     }
 
-    private fun addUnlockNextClassCard(interval:Int,isNextVideoAvailable:Boolean=false) {
+    private fun addUnlockNextClassCard(interval: Int, isNextVideoAvailable: Boolean = false) {
         CoroutineScope(Dispatchers.IO).launch {
             val maxInterval =
                 AppObjectController.appDatabase.chatDao()
@@ -2059,7 +2073,18 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         } catch (ex: java.lang.Exception) {
             null
         }
+    }
 
+    private fun refreshView(chatId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val chatObj = AppObjectController.appDatabase.chatDao()
+                    .getUpdatedChatObjectViaId(chatId)
+                refreshViewAtPos(chatObj)
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
+        }
     }
 
     override fun onProgressUpdate(progress: Long) {

@@ -7,7 +7,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshApplication
+import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.server.certification_exam.Answer
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
@@ -20,6 +22,7 @@ import kotlinx.coroutines.launch
 class CertificationExamViewModel(application: Application) : AndroidViewModel(application) {
     private var context: JoshApplication = getApplication()
 
+    var conversationId: String = EMPTY
     private val _certificationQuestionLiveData: MutableLiveData<CertificationQuestionModel> =
         MutableLiveData()
     val certificationQuestionLiveData: LiveData<CertificationQuestionModel> =
@@ -30,13 +33,14 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val examReportLiveData: MutableLiveData<List<CertificateExamReportModel>> =
         MutableLiveData()
+    val isUserSubmitExam: MutableLiveData<Boolean> = MutableLiveData()
 
 
     fun startExam() {
         startExamLiveData.postValue(Unit)
     }
 
-    fun previousResult() {
+    fun showPreviousResult() {
         previousExamsResultLiveData.postValue(Unit)
     }
 
@@ -94,6 +98,10 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
                 val responseObj =
                     AppObjectController.commonNetworkService.submitExam(request)
                 if (responseObj.isSuccessful) {
+                    DatabaseUtils.getCExamDetails(
+                        conversationId = conversationId,
+                        certificationId = certificateExamId
+                    )
                     apiStatus.postValue(ApiCallStatus.SUCCESS)
                 } else {
                     apiStatus.postValue(ApiCallStatus.RETRY)
