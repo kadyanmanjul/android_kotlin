@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <RelativeLayout
         android:id="@+id/audio_view_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,29 +28,28 @@
 
         <SeekBar
             android:id="@+id/practise_seekbar"
-            android:layout_width="match_parent"
+            android:layout_width="294dp"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/btn_play_info"
             android:layout_centerInParent="true"
+            android:layout_marginStart="@dimen/_8ssp"
+            android:layout_marginEnd="@dimen/_20ssp"
             android:layout_toEndOf="@id/btn_play_info"
             android:paddingStart="@dimen/_6sdp"
             android:paddingEnd="@dimen/_6sdp"
-            android:layout_marginEnd="@dimen/_16ssp"
             android:progressDrawable="@drawable/seek_bar_draw"
             android:thumb="@drawable/seek_thumb" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_16sdp"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:layout_centerVertical="true"
             android:layout_gravity="center|end"
             android:clickable="true"
             android:focusable="true"
-            android:paddingTop="@dimen/_4sdp"
-            android:paddingBottom="@dimen/_4sdp"
             android:tint="#878A91"
             android:visibility="visible"
             app:srcCompat="@drawable/ic_cross" />
@@ -74,7 +74,7 @@
             android:layout_below="@+id/practise_seekbar"
             android:layout_alignRight="@+id/practise_seekbar"
             android:layout_marginTop="@dimen/_20sdp"
-            android:text="10/12/2020 "
+            tools:text="just now"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
             android:textColor="@color/gray_9E"
             app:layout_goneMarginTop="@dimen/spacing_large" />

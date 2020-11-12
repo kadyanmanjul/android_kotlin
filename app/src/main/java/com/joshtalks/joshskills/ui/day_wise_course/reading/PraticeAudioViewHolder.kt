@@ -9,6 +9,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.DD_MM_YYYY
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
@@ -25,6 +26,8 @@ import com.mindorks.placeholderview.annotations.View
 import com.muddzdev.styleabletoast.StyleableToast
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
+import java.util.Date
+import java.util.Locale
 import kotlin.random.Random
 
 @Layout(R.layout.practice_audio_item)
@@ -85,6 +88,7 @@ class PraticeAudioViewHolder(
             }
             ivCancel.visibility = android.view.View.GONE
         } else {
+            date.text = DD_MM_YYYY.format(Date()).toLowerCase(Locale.getDefault())
             ivCancel.visibility = android.view.View.VISIBLE
         }
         initializePractiseSeekBar()
@@ -120,6 +124,10 @@ class PraticeAudioViewHolder(
 
     fun hideCancelButtons() {
         ivCancel.visibility = android.view.View.GONE
+    }
+
+    fun isEmpty() :Boolean {
+        return practiceEngagement==null
     }
 
     fun onPlayAudio(audioObject: AudioType) {

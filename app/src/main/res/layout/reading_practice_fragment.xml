@@ -313,7 +313,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="top|center"
-                                android:layout_marginTop="?attr/actionBarSize"
+                                android:layout_margin="@dimen/_4sdp"
                                 android:background="@drawable/bg_timer"
                                 android:drawableStart="@drawable/timer_drawable"
                                 android:drawablePadding="@dimen/_4sdp"
