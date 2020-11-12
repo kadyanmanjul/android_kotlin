@@ -74,6 +74,13 @@ class CertificationExamViewHolder(
     override fun onViewInflated() {
         super.onViewInflated()
         viewHolder = this
+        ivAward.visibility = android.view.View.INVISIBLE
+        tvCEamCode.visibility = android.view.View.GONE
+        eligibilityDateTV.visibility = android.view.View.GONE
+        tvMarks.visibility = android.view.View.GONE
+        tvAttemptLeft.visibility = android.view.View.GONE
+        tvAttemptedDate.visibility = android.view.View.GONE
+
         message.question?.run {
             tvTitle.text = title
         }
