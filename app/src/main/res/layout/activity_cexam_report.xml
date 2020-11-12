@@ -100,7 +100,7 @@
                 app:tabPaddingStart="@dimen/_8sdp"
                 app:tabMode="scrollable"
                 app:tabSelectedTextColor="@color/black"
-                app:tabTextAppearance="@style/TabLayoutStyle"
+                app:tabTextAppearance="@style/TabLayoutStyleReport"
                 android:focusable="true"
                 app:tabTextColor="@color/light_grey"></com.google.android.material.tabs.TabLayout>
         </com.google.android.material.appbar.AppBarLayout>

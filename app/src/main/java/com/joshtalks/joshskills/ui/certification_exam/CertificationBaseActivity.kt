@@ -118,11 +118,13 @@ class CertificationBaseActivity : BaseActivity() {
                 cExamStatus = CExamStatus.NIL
             } else if (CExamStatus.CHECK_RESULT == cExamStatus) {
                 viewModel.showPreviousResult()
-                cExamStatus = CExamStatus.NIL
             }
         })
         viewModel.startExamLiveData.observe(this, {
             viewModel.certificationQuestionLiveData.value?.let {
+                if (it.attemptCount == it.max_attempt) {
+                    return@observe
+                }
                 openExamActivityResult.launch(CExamMainActivity.startExamActivity(this, it))
             }
         })
@@ -135,6 +137,10 @@ class CertificationBaseActivity : BaseActivity() {
                         it
                     )
                 )
+                if (CExamStatus.CHECK_RESULT == cExamStatus) {
+                    cExamStatus = CExamStatus.NIL
+                    this.finish()
+                }
             }
         })
     }

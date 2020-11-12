@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.repository.server.certification_exam.Certificate
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
 import com.joshtalks.joshskills.repository.server.certification_exam.RequestSubmitAnswer
 import com.joshtalks.joshskills.repository.server.certification_exam.RequestSubmitCertificateExam
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -59,7 +60,7 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
                     resumeExamLiveData.postValue(false)
                     _certificationQuestionLiveData.postValue(responseObj)
                 } catch (ex: Throwable) {
-                    ex.printStackTrace()
+                    ex.showAppropriateMsg()
                 }
             }
         }
@@ -107,10 +108,9 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
                     apiStatus.postValue(ApiCallStatus.RETRY)
                 }
             } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
                 apiStatus.postValue(ApiCallStatus.FAILED)
-                ex.printStackTrace()
             }
-
         }
     }
 
@@ -151,6 +151,7 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
                 apiStatus.postValue(ApiCallStatus.SUCCESS)
                 examReportLiveData.postValue(resp)
             } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
                 apiStatus.postValue(ApiCallStatus.FAILED)
                 ex.printStackTrace()
             }
