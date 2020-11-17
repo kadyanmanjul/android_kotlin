@@ -11,6 +11,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.ActivityLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
@@ -75,13 +76,24 @@ class LeaderBoardViewPagerActivity : BaseActivity() {
     }
 
     private fun setTabText(map: HashMap<String, LeaderboardResponse>) {
-        val list = map.keys
+        var list = EMPTY
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            if (map.get(list.elementAt(position))?.intervalTabText.isNullOrBlank()) {
-                tab.text = map.get(list.elementAt(position))?.intervalType
+            when(position){
+                0->{
+                    list = "TODAY"
+                }
+                1->{
+                    list = "WEEK"
+                }
+                2->{
+                    list = "MONTH"
+                }
+            }
+            if (map.get(list)?.intervalTabText.isNullOrBlank()) {
+                tab.text = map.get(list)?.intervalType
             } else {
-                tab.text = map.get(list.elementAt(position))?.intervalType.plus('\n')
-                    .plus(map.get(list.elementAt(position))?.intervalTabText)
+                tab.text = map.get(list)?.intervalType.plus('\n')
+                    .plus(map.get(list)?.intervalTabText)
             }
 
         }.attach()
