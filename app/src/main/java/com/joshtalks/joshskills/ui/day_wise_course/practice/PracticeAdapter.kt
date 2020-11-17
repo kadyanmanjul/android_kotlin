@@ -354,7 +354,8 @@ class PracticeAdapter(
         //============================================================================
         fun setPracticeInfoView(chatModel: ChatModel) {
             chatModel.question?.run {
-                binding.practiceTitleTv.text = this.practiceWord
+                binding.practiceTitleTv.text =
+                    context.getString(R.string.word_tag, layoutPosition + 1, 5, this.practiceWord)
                 if (this.status == QUESTION_STATUS.AT) {
                     binding.practiceTitleTv.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_check,

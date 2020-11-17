@@ -250,7 +250,6 @@ class DayWiseCourseActivity : CoreJoshActivity(),
     }
 
     override fun onBackPressed() {
-        //super.onBackPressed()
         val resultIntent = Intent()
         resultIntent.putExtra(IS_BATCH_CHANGED, isBatchChanged)
         resultIntent.putExtra(LAST_LESSON_INTERVAL, lessonInterval)

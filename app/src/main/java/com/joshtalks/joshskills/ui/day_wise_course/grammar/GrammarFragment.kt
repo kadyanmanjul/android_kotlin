@@ -23,11 +23,13 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentGrammarLayoutBinding
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.entity.Question
+import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
@@ -44,6 +46,9 @@ import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
 import com.tonyodev.fetch2core.DownloadBlock
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.util.ArrayList
 
@@ -55,6 +60,7 @@ class GrammarFragment : Fragment() {
     private var appAnalytics: AppAnalytics? = null
     private var chatModelList: ArrayList<ChatModel>? = null
     lateinit var binding: FragmentGrammarLayoutBinding
+    private val compositeDisposable = CompositeDisposable()
     private var correctAns = 0
     var activityCallback: CapsuleActivityCallback? = null
     var assessmentQuestions: ArrayList<AssessmentQuestionWithRelations> = ArrayList()
@@ -237,7 +243,6 @@ class GrammarFragment : Fragment() {
         appAnalytics = AppAnalytics.create(AnalyticsEvent.PDF_VH.NAME)
             .addBasicParam()
             .addUserDetails()
-//            .addParam("ChatId", message.chatId)
     }
 
 
@@ -272,12 +277,21 @@ class GrammarFragment : Fragment() {
                         }
 
                         if (this.status == QUESTION_STATUS.NA) {
-                            binding.videoPlayer.setVideoPositionUpdateListener {
-                                println("position = $it")
-                                if (it > 3000) {
-                                    updateVideoQuestionStatus(this)
-                                }
-                            }
+
+                            compositeDisposable.add(
+                                RxBus2.listen(MediaProgressEventBus::class.java)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe({ eventBus ->
+                                        println("eventbus progress ${eventBus.progress}")
+                                        if (eventBus.progress >= this.videoList?.getOrNull(0)?.duration ?: 0) {
+                                            updateVideoQuestionStatus(this)
+                                        }
+                                    }, {
+                                        it.printStackTrace()
+                                    })
+                            )
+
                         } else {
                             binding.quizShader.visibility = View.GONE
                         }
@@ -377,6 +391,12 @@ class GrammarFragment : Fragment() {
                 radioButton.isChecked = true
                 if (choice.isCorrect) {
                     radioButton.setBackgroundResource(R.drawable.rb_correct_rect_bg)
+                    radioButton.setCompoundDrawablesWithIntrinsicBounds(
+                        0,
+                        0,
+                        R.drawable.ic_green_tick,
+                        0
+                    )
                     radioButton.elevation = 8F
                 } else
                     radioButton.setBackgroundColor(
@@ -384,6 +404,12 @@ class GrammarFragment : Fragment() {
                     )
             } else if (choice.isCorrect) {
                 radioButton.setBackgroundResource(R.drawable.rb_correct_rect_bg)
+                radioButton.setCompoundDrawablesWithIntrinsicBounds(
+                    0,
+                    0,
+                    R.drawable.ic_green_tick,
+                    0
+                )
                 radioButton.elevation = 8F
             } else
                 radioButton.setBackgroundColor(
@@ -405,6 +431,7 @@ class GrammarFragment : Fragment() {
         binding.quizQuestionTv.visibility = View.VISIBLE
         binding.quizRadioGroup.visibility = View.VISIBLE
         binding.submitAnswerBtn.isEnabled = true
+        binding.quizShader.visibility = View.GONE
     }
 
     fun onQuestionSubmit() {
@@ -435,10 +462,17 @@ class GrammarFragment : Fragment() {
                 correctAns++
             }
 
+            updateQuiz(question)
             binding.continueBtn.visibility = View.VISIBLE
             binding.showExplanationBtn.visibility = View.VISIBLE
+            binding.nextQuestionIv.visibility = View.GONE
+            binding.previousQuestionIv.visibility = View.GONE
             requestFocus(binding.showExplanationBtn)
         }
+    }
+
+    fun onStartQuizClick() {
+        showQuizUi()
     }
 
     private fun evaluateQuestionStatus(status: Boolean): QuestionStatus {
@@ -484,7 +518,6 @@ class GrammarFragment : Fragment() {
 
 
     }
-
 
     private fun showQuizCompleteLayout() {
         binding.grammarCompleteLayout.visibility = View.VISIBLE
@@ -694,6 +727,11 @@ class GrammarFragment : Fragment() {
         )
         question.status = QUESTION_STATUS.AT
         viewModel.updateQuestionInLocal(question)
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 
 }

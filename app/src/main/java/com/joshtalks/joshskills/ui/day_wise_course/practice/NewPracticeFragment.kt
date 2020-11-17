@@ -378,11 +378,6 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
-                        /*if (flag) {
-                            binding.uploadPractiseView.setOnClickListener(null)
-                            audioRecordTouchListener()
-                            return
-                        }*/
                         if (report.isAnyPermissionPermanentlyDenied) {
                             PermissionUtils.permissionPermanentlyDeniedDialog(
                                 requireActivity(),
