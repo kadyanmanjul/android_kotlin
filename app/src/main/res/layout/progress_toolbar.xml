@@ -21,6 +21,7 @@
         android:layout_marginStart="@dimen/_8sdp"
         android:gravity="center"
         android:text="@string/course_overview"
+        android:textColor="@color/black"
         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
         app:layout_constraintBottom_toBottomOf="@+id/back_iv"
         app:layout_constraintEnd_toEndOf="parent"

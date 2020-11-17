@@ -15,7 +15,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -249,6 +251,8 @@ class GrammarFragment : Fragment() {
     fun setupUi(chatModel: ChatModel) {
         chatModel.question?.run {
             if (this.type == BASE_MESSAGE_TYPE.QUIZ) {
+                binding.quizTv.text = AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.TODAYS_QUIZ_TITLE)
                 this.assessmentId?.let {
                     quizQuestion = this
                     viewModel.fetchAssessmentDetails(it)
@@ -278,14 +282,22 @@ class GrammarFragment : Fragment() {
 
                         if (this.status == QUESTION_STATUS.NA) {
 
+                            binding.quizShader.visibility = View.VISIBLE
                             compositeDisposable.add(
                                 RxBus2.listen(MediaProgressEventBus::class.java)
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({ eventBus ->
-                                        println("eventbus progress ${eventBus.progress}")
+                                        println(
+                                            "eventbus progress ${eventBus.progress} duration ${
+                                                this.videoList?.getOrNull(
+                                                    0
+                                                )?.duration ?: 0
+                                            }"
+                                        )
                                         if (eventBus.progress >= this.videoList?.getOrNull(0)?.duration ?: 0) {
                                             updateVideoQuestionStatus(this)
+                                            binding.startQuizBtn.alpha = 1f
                                         }
                                     }, {
                                         it.printStackTrace()
@@ -332,14 +344,10 @@ class GrammarFragment : Fragment() {
     }
 
     private fun updateQuiz(question: AssessmentQuestionWithRelations) {
-        binding.questionCountTv.text = getString(
-            R.string.question_number_lbl,
-            currentQuizQuestion + 1,
-            assessmentQuestions.size
-        )
         binding.quizQuestionTv.text = getString(
             R.string.ques_short_form,
-            question.question.text
+            currentQuizQuestion + 1,
+            assessmentQuestions.size, question.question.text
         )
 
         if (currentQuizQuestion == 0)
@@ -375,9 +383,11 @@ class GrammarFragment : Fragment() {
         binding.submitAnswerBtn.isEnabled = false
         binding.continueBtn.visibility = View.GONE
         if (question.question.isAttempted) {
+            binding.submitAnswerBtn.visibility = View.GONE
             binding.showExplanationBtn.visibility = View.VISIBLE
         } else {
             binding.showExplanationBtn.visibility = View.GONE
+            binding.submitAnswerBtn.visibility = View.VISIBLE
         }
 
     }
@@ -401,10 +411,11 @@ class GrammarFragment : Fragment() {
                         0
                     )
                     radioButton.elevation = 8F
-                } else
+                } else {
                     radioButton.setBackgroundColor(
                         ContextCompat.getColor(requireContext(), R.color.received_bg_BC)
                     )
+                }
             } else if (choice.isCorrect) {
                 radioButton.setBackgroundResource(R.drawable.rb_correct_rect_bg)
                 radioButton.setCompoundDrawablesWithIntrinsicBounds(
@@ -414,14 +425,29 @@ class GrammarFragment : Fragment() {
                     0
                 )
                 radioButton.elevation = 8F
-            } else
+            } else {
                 radioButton.setBackgroundColor(
                     ContextCompat.getColor(requireContext(), R.color.white)
                 )
+                radioButton.setCompoundDrawablesWithIntrinsicBounds(
+                    0,
+                    0,
+                    0,
+                    0
+                )
+                radioButton.elevation = 0F
+            }
         } else {
             radioButton.isClickable = true
             radioButton.setBackgroundColor(
                 ContextCompat.getColor(requireContext(), R.color.white)
+            )
+            radioButton.elevation = 0F
+            radioButton.setCompoundDrawablesWithIntrinsicBounds(
+                0,
+                0,
+                0,
+                0
             )
         }
         if (choice.isCorrect)
@@ -434,7 +460,7 @@ class GrammarFragment : Fragment() {
         binding.quizQuestionTv.visibility = View.VISIBLE
         binding.quizRadioGroup.visibility = View.VISIBLE
         binding.submitAnswerBtn.isEnabled = true
-        binding.quizShader.visibility = View.GONE
+        binding.submitAnswerBtn.visibility = View.VISIBLE
     }
 
     fun onQuestionSubmit() {
@@ -468,13 +494,12 @@ class GrammarFragment : Fragment() {
             updateQuiz(question)
             binding.continueBtn.visibility = View.VISIBLE
             binding.showExplanationBtn.visibility = View.VISIBLE
-            binding.nextQuestionIv.visibility = View.GONE
-            binding.previousQuestionIv.visibility = View.GONE
             requestFocus(binding.showExplanationBtn)
         }
     }
 
     fun onStartQuizClick() {
+        binding.quizShader.visibility = View.GONE
         showQuizUi()
     }
 

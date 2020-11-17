@@ -14,9 +14,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.LESSON_INTERVAL
 import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
@@ -138,19 +140,23 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                     setColor(tab)
                                 }
-                                tab.text = getString(R.string.grammar)
+                                tab.text = AppObjectController.getFirebaseRemoteConfig()
+                                    .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
                             }
                             1 -> {
                                 setUnselectedColor(tab)
-                                tab.text = getString(R.string.vocabulary)
+                                tab.text = AppObjectController.getFirebaseRemoteConfig()
+                                    .getString(FirebaseRemoteConfigKey.VOCABULARY_TITLE)
                             }
                             2 -> {
                                 setUnselectedColor(tab)
-                                tab.text = getString(R.string.reading)
+                                tab.text = AppObjectController.getFirebaseRemoteConfig()
+                                    .getString(FirebaseRemoteConfigKey.READING_TITLE)
                             }
                             3 -> {
                                 setUnselectedColor(tab)
-                                tab.text = getString(R.string.speaking)
+                                tab.text = AppObjectController.getFirebaseRemoteConfig()
+                                    .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
                             }
                         }
                     }

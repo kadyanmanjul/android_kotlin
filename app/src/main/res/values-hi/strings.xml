@@ -425,8 +425,7 @@
     <string name="user_does_not_exist">यह यूजर अब मौजूद नहीं है</string>
     <string name="start_quiz_camel">"क्विज शुरू करें "</string>
     <string name="word_tag">शब्द %1$d/%2$d - %3$s</string>
-    <string name="ques_short_form">प्र- %1$s</string>
-    <string name="question_number_lbl">प्रश्न %1$d/%2$d</string>
+    <string name="ques_short_form">प्रश्न- %1$d/%2$d %3$s</string>
     <string name="completed">पूर्ण</string>
     <string name="profile">प्रोफ़ाइल</string>
     <string name="age">आयु:</string>

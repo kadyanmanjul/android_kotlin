@@ -517,5 +517,28 @@
         <value>60</value>
     </entry>
 
+    <entry>
+        <key>GRAMMAR_TITLE</key>
+        <value>Grammar</value>
+    </entry>
+
+    <entry>
+        <key>VOCABULARY_TITLE</key>
+        <value>Vocabulary</value>
+    </entry>
+
+    <entry>
+        <key>READING_TITLE</key>
+        <value>Reading</value>
+    </entry>
+
+    <entry>
+        <key>SPEAKING_TITLE</key>
+        <value>Speaking</value>
+    </entry>
+    <entry>
+        <key>TODAYS_QUIZ_TITLE</key>
+        <value>Today's Quiz</value>
+    </entry>
 
 </defaultsMap>

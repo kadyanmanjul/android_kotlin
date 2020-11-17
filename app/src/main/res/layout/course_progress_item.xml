@@ -63,7 +63,7 @@
             app:layout_constraintTop_toBottomOf="@+id/progress_index_tv"
             app:outerEmptyProgressColor="@color/quantum_purple100"
             app:outerMaxProgress="100"
-            app:outerProgressColor="@color/purple"
+            app:outerProgressColor="@color/quantum_pink"
             app:useRoundedCorner="true" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

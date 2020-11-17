@@ -169,21 +169,6 @@
 
             </FrameLayout>
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/quiz_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:background="@color/white"
-                android:paddingHorizontal="@dimen/_8sdp"
-                android:text="Today's quiz"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/additional_material_tv"
-                tools:visibility="visible" />
-
             <RelativeLayout
                 android:id="@+id/question_navigate_rl"
                 android:layout_width="match_parent"
@@ -193,7 +178,7 @@
                 android:paddingTop="@dimen/_4sdp"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/quiz_tv"
+                app:layout_constraintTop_toBottomOf="@+id/additional_material_tv"
                 tools:visibility="visible">
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -209,13 +194,13 @@
                     app:srcCompat="@drawable/ic_double_arrow" />
 
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/question_count_tv"
+                    android:id="@+id/quiz_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    android:text="Ques 1/5"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular" />
+                    android:text="Todays Quiz"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/next_question_iv"
@@ -391,42 +376,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <RelativeLayout
-                android:id="@+id/quiz_shader"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:alpha="0.95"
-                android:background="@color/white"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@+id/quiz_radio_group"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/quiz_tv"
-                tools:visibility="gone">
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/start_quiz_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_gravity="center"
-                    android:layout_marginHorizontal="@dimen/_16sdp"
-                    android:layout_marginVertical="@dimen/_8sdp"
-                    android:layout_marginBottom="@dimen/_16sdp"
-                    android:alpha="0.5"
-                    android:background="@drawable/rounded_state_button_bg"
-                    android:gravity="center"
-                    android:onClick="@{()->handler.onStartQuizClick()}"
-                    android:paddingHorizontal="@dimen/_16sdp"
-                    android:paddingVertical="@dimen/_8sdp"
-                    android:text="@string/start_quiz_camel"
-                    android:textAllCaps="false"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                    android:textColor="@color/white"
-                    android:visibility="visible"
-                    app:rippleColor="@color/white" />
-            </RelativeLayout>
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/submit_answer_btn"
@@ -495,7 +444,7 @@
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/submit_answer_btn"
+                app:layout_constraintTop_toBottomOf="@id/barrier2"
                 app:rippleColor="@color/white"
                 tools:visibility="visible" />
 
@@ -525,6 +474,52 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintEnd_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/explanation_lbl" />
+
+            <RelativeLayout
+                android:id="@+id/quiz_shader"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:alpha="0.95"
+                android:background="@color/white"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/show_explanation_btn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/question_navigate_rl"
+                tools:visibility="gone">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/start_quiz_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="@dimen/_16sdp"
+                    android:layout_marginVertical="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_16sdp"
+                    android:alpha="0.5"
+                    android:background="@drawable/rounded_state_button_bg"
+                    android:gravity="center"
+                    android:onClick="@{()->handler.onStartQuizClick()}"
+                    android:paddingHorizontal="@dimen/_16sdp"
+                    android:paddingVertical="@dimen/_8sdp"
+                    android:text="@string/start_quiz_camel"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                    android:textColor="@color/white"
+                    android:visibility="visible"
+                    app:rippleColor="@color/white" />
+            </RelativeLayout>
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="continue_btn,submit_answer_btn" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </ScrollView>
 </layout>

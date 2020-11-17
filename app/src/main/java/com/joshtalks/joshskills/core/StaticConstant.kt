@@ -182,6 +182,13 @@ class FirebaseRemoteConfigKey {
         const val INTERVAL_TO_FIRE_ACTIVE_API = "INTERVAL_TO_FIRE_ACTIVE_API"
 
 
+        //Capsule
+        const val GRAMMAR_TITLE = "GRAMMAR_TITLE"
+        const val VOCABULARY_TITLE = "VOCABULARY_TITLE"
+        const val READING_TITLE = "READING_TITLE"
+        const val SPEAKING_TITLE = "SPEAKING_TITLE"
+        const val TODAYS_QUIZ_TITLE = "TODAYS_QUIZ_TITLE"
+
     }
 }
 
