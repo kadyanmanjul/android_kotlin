@@ -174,8 +174,13 @@ class FirebaseRemoteConfigKey {
 
         //Free trial ids
         const val FREE_TRIAL_COURSE_IDS = "FREE_TRIAL_COURSE_ID"
+
         //Reading Practise Record title
         const val READING_PRACTICE_TITLE = "READING_PRACTICE_TITLE"
+
+        //Active api fire
+        const val INTERVAL_TO_FIRE_ACTIVE_API = "INTERVAL_TO_FIRE_ACTIVE_API"
+
 
     }
 }

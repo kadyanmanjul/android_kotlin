@@ -14,6 +14,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.MultiDexApplication
 import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.core.service.NetworkChangeReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.yariksoffice.lingver.Lingver
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
@@ -82,6 +83,11 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
     }
 
     private fun registerBroadcastReceiver() {
+        registerReceiver(
+            NetworkChangeReceiver(),
+            IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
+        )
+
         if (PrefManager.getStringValue(RESTORE_ID).isBlank()) {
             val intentFilterRestoreID = IntentFilter(Freshchat.FRESHCHAT_USER_RESTORE_ID_GENERATED)
             getLocalBroadcastManager().registerReceiver(restoreIdReceiver, intentFilterRestoreID)
@@ -146,7 +152,7 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
         isAppVisible = true
         WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
-      //  UsageStatsService.activeUserService(this)
+        //  UsageStatsService.activeUserService(this)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)

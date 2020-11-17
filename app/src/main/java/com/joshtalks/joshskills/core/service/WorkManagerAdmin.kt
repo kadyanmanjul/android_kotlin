@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.core.service
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
@@ -221,10 +222,14 @@ object WorkManagerAdmin {
             .build()
         val workRequest = OneTimeWorkRequestBuilder<IsUserActiveWorker>()
             .setInputData(data)
-            .setInitialDelay(10, TimeUnit.SECONDS)
+            .setInitialDelay(1, TimeUnit.SECONDS)
             .setConstraints(constraints)
             .build()
-        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniqueWork(
+            "Active_Api",
+            ExistingWorkPolicy.KEEP,
+            workRequest
+        )
     }
 
     fun startVersionAndFlowWorker() {

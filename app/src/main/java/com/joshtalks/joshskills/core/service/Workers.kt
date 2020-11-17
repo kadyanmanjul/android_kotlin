@@ -19,8 +19,10 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COUNTRY_ISO
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.InstallReferralUtil
+import com.joshtalks.joshskills.core.LAST_ACTIVE_API_TIME
 import com.joshtalks.joshskills.core.LOGIN_ON
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.RATING_DETAILS_KEY
@@ -60,10 +62,11 @@ import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.sinch.verification.PhoneNumberUtils
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
+import retrofit2.HttpException
+import timber.log.Timber
 import java.util.Date
 import java.util.HashMap
 import java.util.concurrent.TimeUnit
-import retrofit2.HttpException
 
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
@@ -740,8 +743,21 @@ class IsUserActiveWorker(context: Context, private var workerParams: WorkerParam
         try {
             if (Mentor.getInstance().hasId()) {
                 val active = workerParams.inputData.getBoolean(IS_ACTIVE, false)
-                val data = ActiveUserRequest(Mentor.getInstance().getId(), active)
-                AppObjectController.signUpNetworkService.activeUser(data)
+                val minTimeToApiFire = AppObjectController.getFirebaseRemoteConfig()
+                    .getLong(FirebaseRemoteConfigKey.INTERVAL_TO_FIRE_ACTIVE_API)
+                val lastTimeOfFireApi = PrefManager.getLongValue(LAST_ACTIVE_API_TIME)
+
+                val secDiff =
+                    TimeUnit.SECONDS.convert(Date().time - lastTimeOfFireApi, TimeUnit.MILLISECONDS)
+                Timber.tag("Workers").e("= %s", secDiff)
+                if (secDiff >= minTimeToApiFire || active.not()) {
+                    val data = ActiveUserRequest(Mentor.getInstance().getId(), active)
+                    AppObjectController.signUpNetworkService.activeUser(data)
+                    PrefManager.put(LAST_ACTIVE_API_TIME, Date().time)
+                }
+                if (active.not()) {
+                    PrefManager.put(LAST_ACTIVE_API_TIME, 0L)
+                }
             }
         } catch (ex: Exception) {
             ex.printStackTrace()

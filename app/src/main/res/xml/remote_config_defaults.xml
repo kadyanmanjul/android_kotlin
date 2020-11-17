@@ -512,5 +512,10 @@
         <key>READING_PRACTICE_TITLE</key>
         <value>Please, Record your answer</value>
     </entry>
+    <entry>
+        <key>INTERVAL_TO_FIRE_ACTIVE_API</key>
+        <value>60</value>
+    </entry>
+
 
 </defaultsMap>
