@@ -522,9 +522,6 @@
     <string name="pp_message">In this practice you have to speak to a practice partner for %s minute</string>
     <string name="pp_calling">Practice Partner Calling</string>
     <string name="speaking_time_msz">Speaking time\n %s minutes</string>
-    <string name="leaderboard_1">leaderboard</string>
-    <string name="leaderboard_2">leaderboard</string>
-    <string name="leaderboard_3">leaderboard_1</string>
     <string name="today_reading_practise">Today\'s Reading Practice</string>
 
     <string name="redo_quiz">Redo Quiz</string>
