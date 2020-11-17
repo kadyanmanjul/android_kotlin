@@ -295,13 +295,13 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
         super.onStop()
         compositeDisposable.clear()
         try {
-            binding.videoPlayer.onStop()
+            binding.videoPlayer.onPause()
 
         } catch (ex: Exception) {
         }
         try {
             if (filePath.isNullOrEmpty().not()) {
-                binding.videoPlayerSubmit.onStop()
+                binding.videoPlayerSubmit.onPause()
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -311,6 +311,19 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     override fun onDestroy() {
         try {
             super.onDestroy()
+            try {
+                binding.videoPlayer.onStop()
+
+            } catch (ex: Exception) {
+            }
+            try {
+                if (filePath.isNullOrEmpty().not()) {
+                    binding.videoPlayerSubmit.onStop()
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+
             audioManager?.release()
         } catch (ex: Exception) {
 
@@ -555,6 +568,9 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     private fun addObserver() {
         practiceViewModel.requestStatusLiveData.observe(viewLifecycleOwner, Observer {
             if (it) {
+                hidePracticeInputLayout()
+                hideCancelButtonInRV()
+                binding.submitAnswerBtn.visibility = GONE
                 binding.progressLayout.visibility = GONE
                 binding.feedbackResultProgressLl.visibility = VISIBLE
                 binding.feedbackLayout.setCardBackgroundColor(
@@ -582,6 +598,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                 }
 
             } else {
+                enableSubmitButton()
                 binding.progressLayout.visibility = GONE
             }
         })
@@ -601,7 +618,6 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
             binding.submitAnswerBtn.visibility = GONE
             binding.improveAnswerBtn.visibility = VISIBLE
             binding.continueBtn.visibility = View.VISIBLE
-            hidePracticeInputLayout()
         })
     }
 
@@ -611,6 +627,16 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
             it.let {
                 it.hideCancelButtons()
                 //it.setSeekToZero()
+            }
+        }
+    }
+    private fun removePreviousAddedViewHolder() {
+        val viewHolders = binding.audioList.allViewResolvers as List<PraticeAudioViewHolder>
+        viewHolders.forEach { it ->
+            it.let {
+                if(it.isEmpty()){
+                    binding.audioList.removeView(it)
+                }
             }
         }
     }
@@ -968,6 +994,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
         binding.practiseSubmitLayout.visibility = VISIBLE
         binding.subPractiseSubmitLayout.visibility = VISIBLE
         binding.audioList.visibility = VISIBLE
+        removePreviousAddedViewHolder()
         binding.audioList.addView(PraticeAudioViewHolder(null, context, filePath))
         initializePractiseSeekBar()
         enableSubmitButton()
@@ -1217,6 +1244,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                     showPracticeInputLayout()
                     setViewAccordingExpectedAnswer()
                     hideImproveButton()
+                    disableSubmitButton()
                     return
                 } else {
                     return
@@ -1274,6 +1302,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                 }
                 binding.progressLayout.visibility = INVISIBLE
                 setFeedBackLayout(null, true)
+                disableSubmitButton()
                 practiceViewModel.submitPractise(chatModel, requestEngage, engageType, true)
             }
         }
