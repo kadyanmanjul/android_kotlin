@@ -32,10 +32,10 @@
             android:layout_height="@dimen/_24sdp"
             android:layout_marginTop="@dimen/_4sdp"
             android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@+id/progress_index_tv"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/progress_index_tv"
             app:layout_constraintStart_toStartOf="@+id/progress_index_tv"
+            app:layout_constraintTop_toBottomOf="@+id/progress_index_tv"
             app:srcCompat="@drawable/gold_medal" />
 
         <com.joshtalks.joshskills.core.custom_ui.RadialProgressBar
@@ -45,7 +45,6 @@
             android:layout_marginTop="@dimen/_4sdp"
             app:centerEmptyProgressColor="@color/right_answer_color"
             app:centerMaxProgress="100"
-            app:centerProgress="30"
             app:centerProgressColor="@color/colorPrimary"
             app:circlePadding="2"
             app:hasEmptyProgressBar="true"
@@ -54,7 +53,8 @@
             app:innerEmptyProgressColor="@color/light_blue"
             app:innerMaxProgress="100"
             app:innerMostEmptyProgressColor="@color/quantum_purple200"
-            app:innerProgress="70"
+            app:innerMostMaxProgress="100"
+            app:innerMostProgressColor="@color/purple"
             app:innerProgressColor="@color/green_3d"
             app:isAnimationOn="true"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -63,7 +63,6 @@
             app:layout_constraintTop_toBottomOf="@+id/progress_index_tv"
             app:outerEmptyProgressColor="@color/quantum_purple100"
             app:outerMaxProgress="100"
-            app:outerProgress="50"
             app:outerProgressColor="@color/purple"
             app:useRoundedCorner="true" />
 

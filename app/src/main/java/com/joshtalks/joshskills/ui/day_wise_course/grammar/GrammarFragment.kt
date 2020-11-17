@@ -332,10 +332,13 @@ class GrammarFragment : Fragment() {
     }
 
     private fun updateQuiz(question: AssessmentQuestionWithRelations) {
-        binding.quizQuestionTv.text = getString(
-            R.string.question_lbl,
+        binding.questionCountTv.text = getString(
+            R.string.question_number_lbl,
             currentQuizQuestion + 1,
-            assessmentQuestions.size,
+            assessmentQuestions.size
+        )
+        binding.quizQuestionTv.text = getString(
+            R.string.ques_short_form,
             question.question.text
         )
 

@@ -46,18 +46,23 @@ class CourseProgressAdapter(
                 binding.root.setOnClickListener {
                     onItemClickListener.onCertificateExamClick()
                 }
+                binding.radialProgressView.visibility = View.GONE
+                binding.progressIv.visibility = View.VISIBLE
 
             } else {
                 binding.progressIv.visibility = View.GONE
-                binding.progressIv.visibility = View.VISIBLE
+                binding.radialProgressView.visibility = View.VISIBLE
                 val item = itemList[position]
                 binding.radialProgressView.setOuterProgress(
-                    item.speakingPercentage.toIntOrNull() ?: 0
+                    item.grammarPercentage.toDouble().toInt()
                 )
                 binding.radialProgressView.setCenterProgress(
-                    item.rpPercentageval.toIntOrNull() ?: 0
+                    item.vpPercentage.toDouble().toInt()
                 )
-                binding.radialProgressView.setInnerProgress(item.vpPercentage.toIntOrNull() ?: 0)
+                binding.radialProgressView.setInnerProgress(item.rpPercentageval.toDouble().toInt())
+                binding.radialProgressView.setInnerMostProgress(
+                    item.speakingPercentage.toDouble().toInt()
+                )
 
                 if (item.status == LESSON_STATUS.NO.name)
                     binding.progressIv.alpha = 0.5f
@@ -91,10 +96,10 @@ class CourseProgressAdapter(
             binding.radialProgressView.setInnerProgressColor(readingColor)
 
 
-            /* val outerColor = ArrayList<Int>()
-             outerColor.add(Color.parseColor("#E10717"))
-             outerColor.add(Color.parseColor("#FD3085"))
-             binding.radialProgressView.setOuterProgressColor(outerColor)*/
+            val speakingColor = ArrayList<Int>()
+            speakingColor.add(Color.parseColor("#560FBC"))
+            speakingColor.add(Color.parseColor("#560FBC"))
+            binding.radialProgressView.setInnerMostProgressColor(speakingColor)
 
         }
 
