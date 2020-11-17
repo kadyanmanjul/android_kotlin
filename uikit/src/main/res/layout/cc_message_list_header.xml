@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minWidth="@dimen/_300sdp"
-    android:paddingTop="5dp"
-    android:paddingBottom="@dimen/_4sdp">
+    android:minWidth="@dimen/_400sdp"
+    android:paddingHorizontal="@dimen/_12sdp"
+    android:paddingTop="@dimen/_4sdp"
+    android:paddingBottom="@dimen/_8sdp">
 
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:animateLayoutChanges="true"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:dividerHeight="0.0px"

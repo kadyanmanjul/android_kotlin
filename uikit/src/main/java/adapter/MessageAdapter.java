@@ -348,7 +348,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         BaseMessage baseMessage = messageList.get(i);
         BaseMessage nextMessage = null, prevMessage = null;
-        boolean isNextMessage = false, isPreviousMessage = false, isPrevActionMessage = false;
+        boolean isNextMessage = false, isPreviousMessage = false, isNextActionMessage = false;
         if ((i + 1) < messageList.size()) {
             if (messageList.get(i + 1).getSender() != null)
                 nextMessage = messageList.get(i + 1);
@@ -359,11 +359,11 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 prevMessage = messageList.get(i - 1);
         }
 
-        isPrevActionMessage = (prevMessage != null && (prevMessage.getCategory().equals(CometChatConstants.CATEGORY_ACTION) || prevMessage.getCategory().equals(CometChatConstants.CATEGORY_CALL)));
+        isNextActionMessage = (nextMessage != null && (nextMessage.getCategory().equals(CometChatConstants.CATEGORY_ACTION) || nextMessage.getCategory().equals(CometChatConstants.CATEGORY_CALL)));
         isNextMessage = (nextMessage != null && baseMessage.getSender().getUid().equals(nextMessage.getSender().getUid()));
         isPreviousMessage = (prevMessage != null && baseMessage.getSender().getUid().equals(prevMessage.getSender().getUid()));
 
-        if (!isPreviousMessage && isNextMessage) {
+        if (isPreviousMessage && !isNextMessage) {
             isUserDetailVisible = true;
         }
 
@@ -371,10 +371,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             isUserDetailVisible = false;
         } else if (!isNextMessage && !isPreviousMessage) {
             isUserDetailVisible = true;
-        } else if (!isNextMessage) {
+        } else if (!isPreviousMessage) {
             isUserDetailVisible = false;
         }
-        if (isPrevActionMessage) {
+        if (isNextActionMessage) {
             isUserDetailVisible = true;
         }
 

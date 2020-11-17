@@ -102,7 +102,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/cv_message_container"
         android:layout_alignStart="@+id/cv_message_container"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="@dimen/_4sdp">
 
         <LinearLayout
             android:id="@+id/reply_avatar_layout"
