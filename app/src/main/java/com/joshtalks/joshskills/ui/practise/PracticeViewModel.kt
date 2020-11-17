@@ -44,6 +44,8 @@ class PracticeViewModel(application: Application) :
     var recordFile: File? = null
     val requestStatusLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val practiceFeedback2LiveData: MutableLiveData<PracticeFeedback2> = MutableLiveData()
+    val practiceEngagementData: MutableLiveData<PracticeEngagement> = MutableLiveData()
+
 
 
     fun startRecord(): Boolean {
@@ -110,6 +112,7 @@ class PracticeViewModel(application: Application) :
                     AppObjectController.appDatabase.chatDao()
                         .updateQuestionObject(chatModel.question!!)
                     requestStatusLiveData.postValue(true)
+                    practiceEngagementData.postValue(resp.body()!!)
                     resp.body()?.localPath = localPath
                     if(isAudioPractice)
                         getAudioFeedback(chatModel, resp, engageType, false, mutableListOf())

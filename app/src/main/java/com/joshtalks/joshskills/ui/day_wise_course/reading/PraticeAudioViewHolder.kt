@@ -130,6 +130,10 @@ class PraticeAudioViewHolder(
         return practiceEngagement==null
     }
 
+    fun updatePracticeEngagement(practiceEngagement:PracticeEngagement) {
+        this.practiceEngagement=practiceEngagement
+    }
+
     fun onPlayAudio(audioObject: AudioType) {
         val audioList = java.util.ArrayList<AudioType>()
         audioList.add(audioObject)

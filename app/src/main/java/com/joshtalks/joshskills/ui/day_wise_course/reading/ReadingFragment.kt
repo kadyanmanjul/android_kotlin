@@ -619,6 +619,20 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
             binding.improveAnswerBtn.visibility = VISIBLE
             binding.continueBtn.visibility = View.VISIBLE
         })
+        practiceViewModel.practiceEngagementData.observe(viewLifecycleOwner, Observer {
+            updatePracticeFeedback(it)
+        })
+    }
+
+    private fun updatePracticeFeedback(practiceEngagement: PracticeEngagement) {
+        val viewHolders = binding.audioList.allViewResolvers as List<PraticeAudioViewHolder>
+        viewHolders.forEach { it ->
+            it.let {
+                if (it.isEmpty()) {
+                    it.updatePracticeEngagement(practiceEngagement)
+                }
+            }
+        }
     }
 
     private fun hideCancelButtonInRV() {
