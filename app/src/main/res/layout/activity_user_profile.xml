@@ -129,8 +129,8 @@
                 <LinearLayout
                     android:id="@+id/point_layout"
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/_64sdp"
-                    android:layout_marginVertical="@dimen/_16sdp"
+                    android:layout_height="@dimen/_70sdp"
+                    android:layout_marginTop="@dimen/_20sdp"
                     android:background="@drawable/rect_with_bound"
                     android:backgroundTint="#E57610"
                     android:elevation="@dimen/_4sdp"
@@ -166,8 +166,8 @@
 
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/_64sdp"
-                    android:layout_marginVertical="@dimen/_16sdp"
+                    android:layout_height="@dimen/_70sdp"
+                    android:layout_marginTop="@dimen/_20sdp"
                     android:background="@drawable/rect_with_bound"
                     android:backgroundTint="@color/colorPrimary"
                     android:elevation="@dimen/_4sdp"

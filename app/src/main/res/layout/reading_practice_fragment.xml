@@ -206,7 +206,7 @@
                     card_view:cardCornerRadius="@dimen/_4sdp"
                     card_view:cardElevation="0dp"
                     card_view:cardUseCompatPadding="false"
-                    tools:visibility="gone">
+                    tools:visibility="visible">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/practise_input_header"
@@ -216,7 +216,7 @@
                         android:text="@string/your_answer"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                         android:textColor="@color/black"
-                        android:visibility="gone" />
+                        android:visibility="visible" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -341,13 +341,13 @@
                     android:layout_marginTop="@dimen/_6sdp"
                     android:layout_marginEnd="@dimen/_6sdp"
                     android:orientation="vertical"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:contentPadding="@dimen/_8sdp"
 
                     card_view:cardCornerRadius="@dimen/_4sdp"
                     card_view:cardElevation="0dp"
                     card_view:cardUseCompatPadding="false"
-                    tools:visibility="gone">
+                    tools:visibility="visible">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/your_sub_answer_tv"

@@ -15,8 +15,10 @@
         android:padding="@dimen/_8sdp"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
         android:textColor="@color/black"
+        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/user_pic"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="1222" />
 

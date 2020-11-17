@@ -171,7 +171,7 @@ class UserProfileActivity : BaseActivity() {
         val linearLayoutManager = SmoothLinearLayoutManager(
             this,
             LinearLayoutManager.HORIZONTAL,
-            true
+            false
         )
         linearLayoutManager.isSmoothScrollbarEnabled = true
         recyclerView.builder.setHasFixedSize(true)
@@ -180,7 +180,7 @@ class UserProfileActivity : BaseActivity() {
         awardCategory.awards?.forEach {
             recyclerView.addView(AwardItemViewHolder(it, this))
         }
-        recyclerView.layoutManager?.scrollToPosition(0)
+        recyclerView.requestFocus(0)
         if (view != null) {
             viewCount = viewCount.plus(1)
         }
