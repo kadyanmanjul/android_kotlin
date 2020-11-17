@@ -548,6 +548,16 @@
     <string name="cexam_reattempt">Reattempt</string>
     <string name="cexam_check_results">Check Results</string>
     <string name="completed">Completed</string>
+    <string name="age">Age:</string>
+    <string name="joined_on">Joined on:</string>
+    <string name="highlights">Highlights</string>
+    <string name="points">Points</string>
+    <string name="streaks">Streaks</string>
+    <string name="awards">Awards</string>
+    <string name="more_info">More Info </string>
+    <string name="profile"> Profile</string>
+    <string name="view_profile"> View Profile</string>
+    <string name="with">with</string>
 
 
 </resources>

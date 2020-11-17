@@ -428,6 +428,16 @@
     <string name="ques_short_form">प्र- %1$s</string>
     <string name="question_number_lbl">प्रश्न %1$d/%2$d</string>
     <string name="completed">पूर्ण</string>
+    <string name="profile">प्रोफ़ाइल</string>
+    <string name="age">आयु:</string>
+    <string name="joined_on">दाखिला लिया:</string>
+    <string name="highlights">हाइलाइट</string>
+    <string name="points">अंक</string>
+    <string name="streaks">धारियाँ</string>
+    <string name="awards">पुरस्कार</string>
+    <string name="more_info">और जानकारी </string>
+    <string name="view_profile"> प्रोफाइल देखिये</string>
+    <string name="with"> </string>
 
 
 </resources>
