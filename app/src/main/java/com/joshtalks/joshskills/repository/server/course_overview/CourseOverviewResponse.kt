@@ -5,7 +5,8 @@ import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
 
 data class CourseOverviewBaseResponse(
-    @SerializedName("message") @Expose
+    @SerializedName("message")
+    @Expose
     var message: String? = null,
     @SerializedName("response_data")
     @Expose

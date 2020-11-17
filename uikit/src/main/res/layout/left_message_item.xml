@@ -123,7 +123,6 @@
 
         </RelativeLayout>
 
-
         <ImageView
             android:id="@+id/img_pending"
             android:layout_width="15dp"
@@ -140,7 +139,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/cv_message_container"
             android:layout_alignStart="@+id/cv_message_container"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="@dimen/_4sdp">
 
             <LinearLayout
                 android:id="@+id/reply_avatar_layout"
@@ -162,6 +161,7 @@
                 android:textColor="@color/colorPrimary"
                 tools:text="2 replies" />
         </LinearLayout>
+
     </RelativeLayout>
 
 </LinearLayout>

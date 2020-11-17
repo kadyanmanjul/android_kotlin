@@ -13,6 +13,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.offline.Download
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -29,6 +30,7 @@ import com.joshtalks.joshskills.core.service.video_download.VideoDownloadControl
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener
 import com.joshtalks.joshskills.databinding.ActivityVideoPlayer1Binding
+import com.joshtalks.joshskills.messaging.RxBus2.publish
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
@@ -36,6 +38,7 @@ import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.entity.VideoEngage
 import com.joshtalks.joshskills.repository.local.entity.VideoType
+import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
@@ -292,9 +295,12 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
 
     }
 
-
     override fun onCurrentTimeUpdated(time: Long) {
-
+        publish(
+            MediaProgressEventBus(
+                Download.STATE_DOWNLOADING, "0", time.toFloat()
+            )
+        )
         if (searchingNextUrl.not()
             && (videoDuration?.minus(time))!! < 2500
             && chatObject?.conversationId.isNullOrBlank().not()
@@ -544,4 +550,5 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     override fun onUsbDisconnect() {
         usbConnected = false
     }
+
 }

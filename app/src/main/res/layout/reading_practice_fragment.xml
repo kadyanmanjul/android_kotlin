@@ -565,6 +565,7 @@
                             android:layout_width="wrap_content"
                             android:minLines="2"
                             android:gravity="center"
+                            android:layout_gravity="center"
                             android:layout_height="wrap_content"
                             android:text="@string/plz_wait_feedback"/>
 

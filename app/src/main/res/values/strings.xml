@@ -481,7 +481,7 @@
     <string name="show_explanation">Show Explanation</string>
     <string name="hide_explanation">Hide Explanation</string>
     <string name="explanation">Explanation</string>
-    <string name="question_lbl">Ques. %1$d/%2$d %3$s</string>
+    <string name="question_number_lbl">Question %1$d/%2$d</string>
     <string name="lessons">Lessons</string>
     <string name="exam">Exam</string>
     <string name="congratulations">Congratulations</string>
@@ -522,9 +522,6 @@
     <string name="pp_message">In this practice you have to speak to a practice partner for %s minute</string>
     <string name="pp_calling">Practice Partner Calling</string>
     <string name="speaking_time_msz">Speaking time\n %s minutes</string>
-    <string name="leaderboard_1">leaderboard</string>
-    <string name="leaderboard_2">leaderboard</string>
-    <string name="leaderboard_3">leaderboard_1</string>
     <string name="today_reading_practise">Today\'s Reading Practice</string>
 
     <string name="redo_quiz">Redo Quiz</string>
@@ -536,6 +533,9 @@
     <string name="correct">Correct</string>
     <string name="unanswered">Unanswered</string>
     <string name="user_does_not_exist">This user does not exist anymore</string>
+    <string name="start_quiz_camel">Start Quiz</string>
+    <string name="word_tag">Word %1$d/%2$d - %3$s</string>
+    <string name="ques_short_form">Q- %1$s</string>
 
     <string name="cexam_marks">%1$d%% Marks</string>
     <string name="cexam_code">Code no.: %s</string>
@@ -545,6 +545,16 @@
     <string name="cexam_reattempt">Reattempt</string>
     <string name="cexam_check_results">Check Results</string>
     <string name="completed">Completed</string>
+    <string name="age">Age:</string>
+    <string name="joined_on">Joined on:</string>
+    <string name="highlights">Highlights</string>
+    <string name="points">Points</string>
+    <string name="streaks">Streaks</string>
+    <string name="awards">Awards</string>
+    <string name="more_info">More Info </string>
+    <string name="profile"> Profile</string>
+    <string name="view_profile"> View Profile</string>
+    <string name="with">with</string>
 
 
 </resources>

@@ -19,7 +19,7 @@ data class UserProfileResponse(
     @SerializedName("photo_url")
     val photoUrl: String?,
     @SerializedName("points")
-    val points: Double?,
+    val points: Int?,
     @SerializedName("role")
     val role: String?,
     @SerializedName("status")

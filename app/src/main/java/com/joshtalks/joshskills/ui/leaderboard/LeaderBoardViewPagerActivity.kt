@@ -11,9 +11,13 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.ActivityLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
+import kotlinx.android.synthetic.main.base_toolbar.iv_back
+import kotlinx.android.synthetic.main.base_toolbar.iv_help
+import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 import java.util.HashMap
 
 class LeaderBoardViewPagerActivity : BaseActivity() {
@@ -26,17 +30,33 @@ class LeaderBoardViewPagerActivity : BaseActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_leaderboard_view_pager)
         binding.lifecycleOwner = this
         binding.handler = this
+        initToolbar()
         initViewPager()
         addObserver()
         viewModel.getFullLeaderBoardData(Mentor.getInstance().getId())
         showProgressBar()
     }
 
+    private fun initToolbar() {
+        with(iv_back) {
+            visibility = View.VISIBLE
+            setOnClickListener {
+                onBackPressed()
+            }
+        }
+        with(iv_help) {
+            visibility = View.VISIBLE
+            setOnClickListener {
+                openHelpActivity()
+            }
+        }
+        text_message_title.text = getString(R.string.leaderboard)
+    }
+
     private fun addObserver() {
         viewModel.leaderBoardData.observe(this, Observer {
             binding.viewPager.adapter =
                 LeaderBoardViewPagerAdapter(this, it)
-            initViewPagerTab()
             setTabText(it)
 
         })
@@ -56,13 +76,24 @@ class LeaderBoardViewPagerActivity : BaseActivity() {
     }
 
     private fun setTabText(map: HashMap<String, LeaderboardResponse>) {
-        val list = map.keys
+        var list = EMPTY
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            if (map.get(list.elementAt(position))?.intervalTabText.isNullOrBlank()) {
-                tab.text = map.get(list.elementAt(position))?.intervalType
+            when(position){
+                0->{
+                    list = "TODAY"
+                }
+                1->{
+                    list = "WEEK"
+                }
+                2->{
+                    list = "MONTH"
+                }
+            }
+            if (map.get(list)?.intervalTabText.isNullOrBlank()) {
+                tab.text = map.get(list)?.intervalType
             } else {
-                tab.text = map.get(list.elementAt(position))?.intervalType.plus('\n')
-                    .plus(map.get(list.elementAt(position))?.intervalTabText)
+                tab.text = map.get(list)?.intervalType.plus('\n')
+                    .plus(map.get(list)?.intervalTabText)
             }
 
         }.attach()
@@ -74,11 +105,4 @@ class LeaderBoardViewPagerActivity : BaseActivity() {
         //binding.viewPager.offscreenPageLimit = 10
     }
 
-    private fun initViewPagerTab() {
-        val tabName = resources.getStringArray(R.array.leaderboard_tab)
-        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            tab.text = tabName[position]
-
-        }.attach()
-    }
 }
