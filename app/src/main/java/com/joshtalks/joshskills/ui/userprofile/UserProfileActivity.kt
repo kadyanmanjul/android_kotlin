@@ -24,6 +24,9 @@ import com.joshtalks.joshskills.repository.server.AwardCategory
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.mindorks.placeholderview.PlaceHolderView
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
+import kotlinx.android.synthetic.main.base_toolbar.iv_back
+import kotlinx.android.synthetic.main.base_toolbar.iv_help
+import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 
 class UserProfileActivity : BaseActivity() {
 
@@ -48,7 +51,24 @@ class UserProfileActivity : BaseActivity() {
         binding.handler = this
         addObserver()
         //initRecyclerView()
+        initToolbar()
         getProfileData()
+    }
+
+    private fun initToolbar() {
+        with(iv_back) {
+            visibility = View.VISIBLE
+            setOnClickListener {
+                onBackPressed()
+            }
+        }
+        with(iv_help) {
+            visibility = View.VISIBLE
+            setOnClickListener {
+                openHelpActivity()
+            }
+        }
+        text_message_title.text = getString(R.string.profile)
     }
 
     /* private fun initRecyclerView() {
@@ -112,10 +132,13 @@ class UserProfileActivity : BaseActivity() {
             )
         }
         binding.awardRv.addView(AwardViewHolder(listAwardss, this))*/
-        userData.awardCategory?.let {
+
+        if (userData.awardCategory.isNullOrEmpty()) {
+            binding.awardsHeading.visibility = View.GONE
+        } else {
             binding.awardsHeading.visibility = View.VISIBLE
             binding.moreInfo.visibility = View.VISIBLE
-            it.forEach { awardCategory ->
+            userData.awardCategory.forEach { awardCategory ->
                 binding.multiLineLl.addView(addLinerLayout(awardCategory))
             }
         }
@@ -141,7 +164,7 @@ class UserProfileActivity : BaseActivity() {
         val title = view.findViewById(R.id.title) as AppCompatTextView
         val recyclerView = view.findViewById(R.id.award_rv) as PlaceHolderView
         var text = awardCategory.label
-        if (awardCategory.label == null) {
+        if (awardCategory.label == null && awardCategory.awards.isNullOrEmpty().not()) {
             text = "Certificates"
         }
         title.text = text
