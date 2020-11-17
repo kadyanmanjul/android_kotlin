@@ -11,21 +11,35 @@
 
     </data>
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/parent_Container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ScrollView
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/base_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white"
-            android:scrollbarThumbHorizontal="@null"
-            android:scrollbarThumbVertical="@null">
+            android:layout_height="?attr/actionBarSize"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ScrollView
+            android:id="@+id/scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingBottom="@dimen/_2sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/root_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/user_pic"
@@ -34,6 +48,7 @@
                     android:layout_margin="@dimen/_16sdp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    tools:background="@color/black"
                     tools:src="@drawable/bot_bg_bubble" />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -51,9 +66,10 @@
                     android:id="@+id/user_age_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/_4sdp"
-                    android:text="Age:"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    android:text="@string/age"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                     android:textColor="@color/black"
                     app:layout_constraintStart_toStartOf="@id/user_name"
                     app:layout_constraintTop_toBottomOf="@id/user_name" />
@@ -63,7 +79,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_4sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     android:textColor="@color/grey_7A"
                     app:layout_constraintStart_toEndOf="@id/user_age_text"
                     app:layout_constraintTop_toTopOf="@id/user_age_text"
@@ -74,8 +90,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/_4sdp"
-                    android:text="Joined on:"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+                    android:text="@string/joined_on"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                     android:textColor="@color/black"
                     app:layout_constraintStart_toStartOf="@id/user_age_text"
                     app:layout_constraintTop_toBottomOf="@id/user_age_text" />
@@ -85,7 +101,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_4sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     android:textColor="@color/grey_7A"
                     app:layout_constraintStart_toEndOf="@id/joined_on_text"
                     app:layout_constraintTop_toTopOf="@id/joined_on_text"
@@ -104,7 +120,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/_16sdp"
-                    android:text="Highlights"
+                    android:text="@string/highlights"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                     android:textColor="@color/black"
                     app:layout_constraintStart_toStartOf="parent"
@@ -117,6 +133,7 @@
                     android:layout_marginVertical="@dimen/_16sdp"
                     android:background="@drawable/rect_with_bound"
                     android:backgroundTint="#E57610"
+                    android:elevation="@dimen/_4sdp"
                     android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.1"
@@ -129,9 +146,9 @@
                         android:id="@+id/point_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_6sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
                         android:gravity="center"
-                        android:text="Points"
+                        android:text="@string/points"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/white" />
 
@@ -139,7 +156,7 @@
                         android:id="@+id/points"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="@dimen/_1sdp"
+                        android:layout_marginBottom="@dimen/_1sdp"
                         android:gravity="center"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
                         android:textColor="@color/white"
@@ -153,6 +170,7 @@
                     android:layout_marginVertical="@dimen/_16sdp"
                     android:background="@drawable/rect_with_bound"
                     android:backgroundTint="@color/colorPrimary"
+                    android:elevation="@dimen/_4sdp"
                     android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.9"
@@ -165,9 +183,9 @@
                         android:id="@+id/streaks_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_6sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
                         android:gravity="center"
-                        android:text="Streaks"
+                        android:text="@string/streaks"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/white" />
 
@@ -175,7 +193,7 @@
                         android:id="@+id/streaks"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="@dimen/_1sdp"
+                        android:layout_marginBottom="@dimen/_1sdp"
                         android:gravity="center"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
                         android:textColor="@color/white"
@@ -188,7 +206,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/_16sdp"
-                    android:text="Awards"
+                    android:text="@string/awards"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                     android:textColor="@color/black"
                     android:visibility="gone"
@@ -210,7 +228,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_4sdp"
-                    android:layout_marginTop="@dimen/_2sdp"
                     android:orientation="vertical"
                     android:padding="@dimen/_2sdp"
                     android:visibility="visible"
@@ -222,17 +239,20 @@
                     android:id="@+id/more_info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginBottom="@dimen/_4sdp"
                     android:drawableEnd="@drawable/arrow_down"
                     android:drawableTint="@color/black"
                     android:onClick="@{()->handler.showAllAwards()}"
-                    android:text="More Info "
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:text="@string/more_info"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
                     android:textColor="@color/black"
                     android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/multi_line_ll" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
-    </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
