@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.view.animation.Animation
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -40,7 +39,6 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -49,23 +47,17 @@ import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
 const val PRACTISE_OBJECT = "practise_object"
-const val IMAGE_OR_VIDEO_SELECT_REQUEST_CODE = 1081
-const val TEXT_FILE_ATTACHMENT_REQUEST_CODE = 1082
 
 class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEventListener,
     ProgressUpdateListener, PracticeAdapter.PracticeClickListeners {
     private var currentPlayingPosition: Int = -1
     private lateinit var adapter: PracticeAdapter
-    private var compositeDisposable = CompositeDisposable()
 
     private lateinit var binding: FragmentPraticeBinding
     private var chatModelList: ArrayList<ChatModel>? = null
-    private var sBound = false
-    private var mUserIsSeeking = false
     private var isAudioRecordDone = false
     private var isVideoRecordDone = false
     private var isDocumentAttachDone = false
-    private var scaleAnimation: Animation? = null
     private var startTime: Long = 0
     private var totalTimeSpend: Long = 0
     private var filePath: String? = null

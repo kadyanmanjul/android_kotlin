@@ -37,9 +37,6 @@ class DayWiseCourseActivity : CoreJoshActivity(),
     var lessonInterval: Int = -1
     var conversastionId: String? = null
     var isBatchChanged: Boolean = false
-//    val questionList: ArrayList<Question> = ArrayList()
-
-//    lateinit var chatList: ArrayList<ChatModel>
 
     private val viewModel: CapsuleViewModel by lazy {
         ViewModelProvider(this).get(CapsuleViewModel::class.java)
@@ -56,7 +53,6 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             putExtra(LESSON_ID, lessonId)
             putExtra(COURSE_ID, courseId)
             putExtra(LESSON_INTERVAL, interval)
-//            putExtra(CHAT_ITEMS, chatList)
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         }
 
