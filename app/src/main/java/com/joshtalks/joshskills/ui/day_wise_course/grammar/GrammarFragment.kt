@@ -180,7 +180,7 @@ class GrammarFragment : Fragment() {
 
         binding.expandIv.setOnClickListener {
             if (desExpanded) {
-                binding.grammarDescTv.maxLines = 1
+                binding.grammarDescTv.maxLines = 2
                 binding.expandIv.setImageDrawable(
                     ContextCompat.getDrawable(
                         requireContext(),
@@ -355,7 +355,7 @@ class GrammarFragment : Fragment() {
             }
         }
 
-        binding.submitAnswerBtn.visibility = View.GONE
+        binding.submitAnswerBtn.isEnabled = false
         binding.continueBtn.visibility = View.GONE
         if (question.question.isAttempted) {
             binding.showExplanationBtn.visibility = View.VISIBLE
@@ -373,12 +373,19 @@ class GrammarFragment : Fragment() {
         radioButton.text = choice.text
         if (question.question.isAttempted) {
             radioButton.isClickable = false
-            if (choice.userSelectedOrder == 1)
+            if (choice.userSelectedOrder == 1) {
                 radioButton.isChecked = true
-            if (choice.isCorrect)
-                radioButton.setBackgroundColor(
-                    ContextCompat.getColor(requireContext(), R.color.right_answer_color)
-                ) else
+                if (choice.isCorrect) {
+                    radioButton.setBackgroundResource(R.drawable.rb_correct_rect_bg)
+                    radioButton.elevation = 8F
+                } else
+                    radioButton.setBackgroundColor(
+                        ContextCompat.getColor(requireContext(), R.color.received_bg_BC)
+                    )
+            } else if (choice.isCorrect) {
+                radioButton.setBackgroundResource(R.drawable.rb_correct_rect_bg)
+                radioButton.elevation = 8F
+            } else
                 radioButton.setBackgroundColor(
                     ContextCompat.getColor(requireContext(), R.color.white)
                 )
@@ -397,7 +404,7 @@ class GrammarFragment : Fragment() {
         binding.quizTv.visibility = View.VISIBLE
         binding.quizQuestionTv.visibility = View.VISIBLE
         binding.quizRadioGroup.visibility = View.VISIBLE
-        binding.submitAnswerBtn.visibility = View.VISIBLE
+        binding.submitAnswerBtn.isEnabled = true
     }
 
     fun onQuestionSubmit() {
@@ -422,9 +429,7 @@ class GrammarFragment : Fragment() {
                 )
 
             binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.tag as Int)
-                .setBackgroundColor(
-                    ContextCompat.getColor(requireContext(), R.color.right_answer_color)
-                )
+                .setBackgroundResource(R.drawable.rb_correct_rect_bg)
 
             if (binding.quizRadioGroup.tag as Int == binding.quizRadioGroup.checkedRadioButtonId) {
                 correctAns++
@@ -483,7 +488,7 @@ class GrammarFragment : Fragment() {
 
     private fun showQuizCompleteLayout() {
         binding.grammarCompleteLayout.visibility = View.VISIBLE
-        binding.submitAnswerBtn.visibility = View.GONE
+        binding.submitAnswerBtn.isEnabled = false
         binding.continueBtn.visibility = View.GONE
         binding.showExplanationBtn.visibility = View.GONE
         hideExplanation()

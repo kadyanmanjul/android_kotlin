@@ -536,6 +536,7 @@
     <string name="correct">Correct</string>
     <string name="unanswered">Unanswered</string>
     <string name="user_does_not_exist">This user does not exist anymore</string>
+    <string name="start_quiz_camel">Start Quiz</string>
 
     <string name="cexam_marks">%1$d%% Marks</string>
     <string name="cexam_code">Code no.: %s</string>

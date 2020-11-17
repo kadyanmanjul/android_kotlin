@@ -15,7 +15,7 @@
         android:id="@+id/grammar_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/artboard_color"
+        android:background="@color/white"
         android:overScrollMode="never">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -60,12 +60,11 @@
                 android:id="@id/description_rl"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
                 android:background="@color/white"
                 android:gravity="start|center"
                 android:orientation="vertical"
                 android:paddingVertical="@dimen/_8sdp"
-                android:paddingStart="@dimen/_16sdp"
+                android:paddingStart="@dimen/_8sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/video_player">
@@ -77,7 +76,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_toStartOf="@+id/expand_iv"
                     android:gravity="start|center"
-                    android:maxLines="1"
+                    android:maxLines="2"
                     android:text="slkdfjweo sdf sdklf wpof spo wepofm sddopf fpow fms s sofslkd ois sdfjiweof sdf wioef  siodf s"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     android:textColor="@color/black"
@@ -102,15 +101,13 @@
                 android:id="@+id/additional_material_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_4sdp"
                 android:background="@color/white"
                 android:drawablePadding="@dimen/_8sdp"
                 android:gravity="center_vertical"
                 android:onClick="@{()->handler.onClickPdfContainer()}"
-                android:paddingVertical="@dimen/_8sdp"
-                android:paddingStart="@dimen/_12sdp"
+                android:paddingStart="@dimen/_8sdp"
                 android:text="Android study material"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                 app:drawableStartCompat="@drawable/ic_pdf"
                 app:layout_constraintEnd_toStartOf="@+id/download_container"
                 app:layout_constraintStart_toStartOf="parent"
@@ -172,17 +169,31 @@
 
             </FrameLayout>
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/quiz_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:background="@color/white"
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:text="Today's quiz"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/additional_material_tv"
+                tools:visibility="visible" />
+
             <RelativeLayout
                 android:id="@+id/question_navigate_rl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_4sdp"
                 android:background="@color/white"
                 android:paddingHorizontal="@dimen/_16sdp"
                 android:paddingTop="@dimen/_4sdp"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/additional_material_tv"
+                app:layout_constraintTop_toBottomOf="@+id/quiz_tv"
                 tools:visibility="visible">
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -197,6 +208,14 @@
                     android:rotation="180"
                     app:srcCompat="@drawable/ic_double_arrow" />
 
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:text="Ques 1/5"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular" />
+
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/next_question_iv"
                     android:layout_width="@dimen/_24sdp"
@@ -209,31 +228,19 @@
                     app:srcCompat="@drawable/ic_double_arrow" />
             </RelativeLayout>
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/quiz_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:paddingHorizontal="@dimen/_16sdp"
-                android:text="Today's quiz"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/question_navigate_rl"
-                tools:visibility="visible" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/quiz_question_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:paddingHorizontal="@dimen/_16sdp"
+                android:paddingHorizontal="@dimen/_8sdp"
                 android:paddingVertical="@dimen/_8sdp"
                 android:text="Ques. 1/5 - What is the correct translation of “Hum sab apni english sudharna chahte hai”?"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/quiz_tv"
+                app:layout_constraintTop_toBottomOf="@+id/question_navigate_rl"
                 tools:text="Ques. 1/5 - What is the correct translation of “Hum sab apni english sudharna chahte hai”?"
                 tools:visibility="visible" />
 
@@ -241,6 +248,7 @@
                 android:id="@+id/quiz_radio_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_16sdp"
                 android:background="@color/white"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -252,7 +260,12 @@
                     android:id="@+id/option_1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_4sdp"
                     android:button="@drawable/radio_button_inset"
+                    android:buttonTint="@color/colorPrimary"
+                    android:gravity="center_vertical"
+                    android:minHeight="0dp"
+                    android:paddingVertical="@dimen/_6sdp"
                     android:paddingEnd="@dimen/_8sdp"
                     android:text="We all want to improve our english"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular" />
@@ -261,7 +274,11 @@
                     android:id="@+id/option_2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_4sdp"
                     android:button="@drawable/radio_button_inset"
+                    android:buttonTint="@color/colorPrimary"
+                    android:minHeight="0dp"
+                    android:paddingVertical="@dimen/_6sdp"
                     android:paddingEnd="@dimen/_8sdp"
                     android:text="We all will want to improve our english"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular" />
@@ -270,7 +287,11 @@
                     android:id="@+id/option_3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_4sdp"
                     android:button="@drawable/radio_button_inset"
+                    android:buttonTint="@color/colorPrimary"
+                    android:minHeight="0dp"
+                    android:paddingVertical="@dimen/_6sdp"
                     android:paddingEnd="@dimen/_8sdp"
                     android:text="Option third"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular" />
@@ -279,7 +300,11 @@
                     android:id="@+id/option_4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_4sdp"
                     android:button="@drawable/radio_button_inset"
+                    android:buttonTint="@color/colorPrimary"
+                    android:minHeight="0dp"
+                    android:paddingVertical="@dimen/_6sdp"
                     android:paddingEnd="@dimen/_8sdp"
                     android:text="Option fourth"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular" />
@@ -294,7 +319,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/quiz_radio_group"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/question_navigate_rl"
-                tools:visibility="visible">
+                tools:visibility="gone">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
@@ -357,23 +382,50 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/_8sdp"
                     android:onClick="@{()->handler.onRedoQuizClick()}"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     android:text="@string/redo_quiz"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <RelativeLayout
                 android:id="@+id/quiz_shader"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:alpha="0.92"
+                android:alpha="0.95"
+                android:background="@color/white"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/quiz_radio_group"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/quiz_tv"
-                app:srcCompat="@color/white" />
+                tools:visibility="gone">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/start_quiz_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="@dimen/_16sdp"
+                    android:layout_marginVertical="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_16sdp"
+                    android:alpha="0.5"
+                    android:background="@drawable/rounded_state_button_bg"
+                    android:gravity="center"
+                    android:onClick="@{()->handler.onQuestionSubmit()}"
+                    android:paddingHorizontal="@dimen/_16sdp"
+                    android:paddingVertical="@dimen/_8sdp"
+                    android:text="@string/start_quiz_camel"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                    android:textColor="@color/white"
+                    android:visibility="visible"
+                    app:rippleColor="@color/white" />
+            </RelativeLayout>
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/submit_answer_btn"
@@ -450,7 +502,6 @@
                 android:id="@+id/explanation_lbl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
                 android:background="@color/white"
                 android:paddingHorizontal="@dimen/_16sdp"
                 android:paddingVertical="@dimen/_8sdp"

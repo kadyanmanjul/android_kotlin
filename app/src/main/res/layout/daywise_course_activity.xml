@@ -41,7 +41,7 @@
             app:tabIndicatorHeight="0dp"
             app:tabPadding="@dimen/_12sdp"
             app:tabMinWidth="@dimen/_30sdp"
-            app:tabMode="scrollable"
+            app:tabMode="fixed"
             app:tabSelectedTextColor="@color/white"
             app:tabTextAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
             app:tabTextColor="@color/black" />
