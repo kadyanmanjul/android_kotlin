@@ -18,13 +18,22 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <include
+                android:id="@+id/toolbar"
+                layout="@layout/base_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:tabStripEnabled="true"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/toolbar"
                 app:tabGravity="fill"
                 app:tabIndicatorColor="@color/button_color"
                 app:tabIndicatorFullWidth="true"
@@ -33,8 +42,7 @@
                 app:tabPaddingEnd="0dp"
                 app:tabPaddingStart="0dp"
                 app:tabSelectedTextColor="@color/button_color"
-                app:tabTextAppearance="@style/TabLayoutStyle"
-                app:tabTextColor="@color/dark_grey" />
+                app:tabTextAppearance="@style/LeaderBoardTabLayoutStyle"/>
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewPager"
