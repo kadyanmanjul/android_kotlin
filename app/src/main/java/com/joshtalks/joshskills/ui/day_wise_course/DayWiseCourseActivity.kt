@@ -23,7 +23,6 @@ import com.joshtalks.joshskills.core.LESSON_INTERVAL
 import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.ui.chat.LESSON_REQUEST_CODE
-import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.day_wise_course.unlock_next_class.ActivityUnlockNextClass
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
@@ -111,16 +110,6 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             courseId = it.getOrNull(0)?.question?.course_id
             conversastionId = it.getOrNull(0)?.conversationId
 
-            courseId?.let { courseId ->
-                titleView.setOnClickListener {
-                    startActivity(
-                        CourseProgressActivityNew.getCourseProgressActivityNew(
-                            this,
-                            courseId
-                        )
-                    )
-                }
-            }
             titleView.text = it.getOrNull(0)?.question?.lesson?.lessonName
 
             val adapter = LessonPagerAdapter(

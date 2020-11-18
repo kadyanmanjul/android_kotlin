@@ -540,5 +540,9 @@
         <key>TODAYS_QUIZ_TITLE</key>
         <value>Today's Quiz</value>
     </entry>
+    <entry>
+        <key>VOCABULARY_COMPLETED</key>
+        <value>Congratulations you have completed vocabulary!</value>
+    </entry>
 
 </defaultsMap>

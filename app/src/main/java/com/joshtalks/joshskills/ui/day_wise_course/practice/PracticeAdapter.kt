@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
+import android.os.Handler
 import android.os.SystemClock
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -723,14 +724,13 @@ class PracticeAdapter(
                     )
                 )
             }
-            binding.rootView.scrollTo(
-                binding.submitAnswerBtn.scrollX,
-                (binding.submitAnswerBtn.scrollY + 32)
-            )
-            /* binding.submitAnswerBtn.parent.requestChildFocus(
-                 binding.submitAnswerBtn,
-                 binding.submitAnswerBtn
-             )*/
+            Handler().postDelayed({
+                binding.submitAnswerBtn.parent.requestChildFocus(
+                    binding.submitAnswerBtn,
+                    binding.submitAnswerBtn
+                )
+            }, 200)
+
         }
 
         fun hidePracticeInputLayout() {

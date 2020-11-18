@@ -553,6 +553,7 @@
     <string name="profile"> Profile</string>
     <string name="view_profile"> View Profile</string>
     <string name="with">with</string>
+    <string name="vocabulary_completed">Congratulations you have completed vocabulary!</string>
 
 
 </resources>

@@ -119,6 +119,7 @@ import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.chat.extra.CallingFeatureShowcaseView
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
+import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
 import com.joshtalks.joshskills.ui.day_wise_course.lesson.LessonCompleteViewHolder
@@ -209,6 +210,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         }
     }
 
+    private var isLessonTypeChat: Boolean = false
     private var currentAudioPosition: Int = -1
     private val conversationViewModel: ConversationViewModel by lazy {
         ViewModelProvider(this).get(ConversationViewModel::class.java)
@@ -1356,6 +1358,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     ): BaseCell? {
         return when (chatModel.type) {
             BASE_MESSAGE_TYPE.LESSON -> {
+                isLessonTypeChat = true
                 getGenericView(chatModel.type, chatModel)
             }
             BASE_MESSAGE_TYPE.Q -> {
@@ -1846,12 +1849,22 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     }
 
     private fun openCourseProgressListingScreen() {
-        AppAnalytics.create(AnalyticsEvent.COURSE_PROGRESS_OVERVIEW.NAME).push()
-        CourseProgressActivity.startCourseProgressActivity(
-            this,
-            COURSE_PROGRESS_REQUEST_CODE,
-            inboxEntity
-        )
+        if (isLessonTypeChat) {
+            startActivity(
+                CourseProgressActivityNew.getCourseProgressActivityNew(
+                    this,
+                    conversationList[0].question?.course_id ?: 0
+                )
+            )
+
+        } else {
+            AppAnalytics.create(AnalyticsEvent.COURSE_PROGRESS_OVERVIEW.NAME).push()
+            CourseProgressActivity.startCourseProgressActivity(
+                this,
+                COURSE_PROGRESS_REQUEST_CODE,
+                inboxEntity
+            )
+        }
     }
 
     private fun observeNetwork() {

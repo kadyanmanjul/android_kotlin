@@ -16,6 +16,7 @@ import com.google.android.exoplayer2.Player
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
@@ -129,6 +130,9 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
         binding.progressLayout.setOnClickListener {
 
         }
+
+        binding.vocabularyCompletedTv.text = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FirebaseRemoteConfigKey.VOCABULARY_COMPLETED)
         return binding.root
     }
 
@@ -144,6 +148,16 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
                         QUESTION_STATUS.AT.name,
                         currentChatModel?.question?.questionId?.toIntOrNull() ?: 0
                     )
+                    var openNextScreen = true
+                    chatModelList?.forEach { item ->
+                        if (item.question?.status == QUESTION_STATUS.NA) {
+                            openNextScreen = false
+                            return@forEach
+                        }
+                    }
+
+                    if (openNextScreen)
+                        binding.vocabularyCompleteLayout.visibility = View.VISIBLE
 
                     currentChatModel = null
                     CoroutineScope(Dispatchers.Main).launch {
@@ -179,6 +193,14 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
     }
 
     override fun onPlayerEmptyTrack() {
+    }
+
+    fun onContinueClick() {
+        activityCallback?.onNextTabCall(binding.vocabularyCompleteLayout)
+    }
+
+    fun onCloseDialog() {
+        binding.vocabularyCompleteLayout.visibility = View.GONE
     }
 
     override fun complete() {
