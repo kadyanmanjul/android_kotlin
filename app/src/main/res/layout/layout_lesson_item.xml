@@ -50,13 +50,16 @@
                 app:layout_constraintTop_toBottomOf="@+id/lesson_name_tv"
                 tools:srcCompat="@drawable/have_a_referral" />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/start_lesson_tv"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/rating_bar_card_drawable"
                 android:layout_marginVertical="@dimen/_4sdp"
                 android:gravity="center"
+                android:backgroundTint="@color/wa_color"
                 android:text="@string/start_lesson"
+                android:paddingHorizontal="@dimen/_20sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

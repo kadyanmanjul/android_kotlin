@@ -275,6 +275,7 @@ class GrammarFragment : Fragment() {
                                 )
 
                                 updateVideoQuestionStatus(this)
+                                binding.quizShader.visibility = View.GONE
 
                             }
                             binding.videoPlayer.downloadStreamButNotPlay()
@@ -288,9 +289,9 @@ class GrammarFragment : Fragment() {
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({ eventBus ->
-                                        if (eventBus.progress >= 3000) {
+                                        if (eventBus.progress + 1000 >= this.videoList?.getOrNull(0)?.duration ?: 0) {
                                             updateVideoQuestionStatus(this)
-                                            binding.startQuizBtn.alpha = 1f
+                                            binding.quizShader.visibility = View.GONE
                                         }
                                     }, {
                                         it.printStackTrace()

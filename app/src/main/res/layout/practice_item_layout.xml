@@ -229,6 +229,34 @@
                             android:textCursorDrawable="@drawable/cursor_drawable"
                             android:visibility="gone" />
 
+
+                        <FrameLayout
+                            android:id="@+id/counter_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/transparent"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <Chronometer
+                                android:id="@+id/counter_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="top|center"
+                                android:background="@drawable/bg_timer"
+                                android:drawableStart="@drawable/timer_drawable"
+                                android:drawablePadding="@dimen/_4sdp"
+                                android:drawableTint="@color/error_color"
+                                android:gravity="top|center"
+                                android:paddingStart="@dimen/_16sdp"
+                                android:paddingTop="@dimen/_8sdp"
+                                android:paddingEnd="@dimen/_16sdp"
+                                android:paddingBottom="@dimen/_8sdp"
+                                android:textColor="@android:color/white"
+                                android:textSize="@dimen/font_11_5" />
+
+                        </FrameLayout>
+
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/upload_practise_view"
                             android:layout_width="@dimen/_52sdp"
@@ -377,33 +405,6 @@
 
 
         </LinearLayout>
-
-        <FrameLayout
-            android:id="@+id/counter_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/transparent"
-            android:visibility="gone">
-
-            <Chronometer
-                android:id="@+id/counter_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top|center"
-                android:layout_marginTop="?attr/actionBarSize"
-                android:background="@drawable/bg_timer"
-                android:drawableStart="@drawable/timer_drawable"
-                android:drawablePadding="@dimen/_4sdp"
-                android:drawableTint="@color/error_color"
-                android:gravity="top|center"
-                android:paddingStart="@dimen/_16sdp"
-                android:paddingTop="@dimen/_8sdp"
-                android:paddingEnd="@dimen/_16sdp"
-                android:paddingBottom="@dimen/_8sdp"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/font_11_5" />
-
-        </FrameLayout>
 
     </FrameLayout>
 

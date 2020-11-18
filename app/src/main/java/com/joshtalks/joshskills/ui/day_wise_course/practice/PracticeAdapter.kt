@@ -9,6 +9,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -86,13 +87,21 @@ class PracticeAdapter(
         var appAnalytics: AppAnalytics? = null
 
         fun bind(chatModel: ChatModel, position: Int) {
-            if (position == 0 && isFirstTime && currentChatModel?.question?.status != QUESTION_STATUS.AT) {
+            if (isFirstTime && chatModel.question?.status != QUESTION_STATUS.AT) {
                 isFirstTime = false
-                binding.practiceContentLl.visibility = View.VISIBLE
+                binding.practiceContentLl.visibility = VISIBLE
                 binding.expandIv.setImageDrawable(
                     ContextCompat.getDrawable(
                         context,
                         R.drawable.ic_remove
+                    )
+                )
+            } else {
+                binding.practiceContentLl.visibility = GONE
+                binding.expandIv.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        context,
+                        R.drawable.ic_add
                     )
                 )
             }
@@ -105,7 +114,7 @@ class PracticeAdapter(
 
             binding.titleView.setOnClickListener {
                 if (binding.practiceContentLl.visibility == View.GONE) {
-                    binding.practiceContentLl.visibility = View.VISIBLE
+                    binding.practiceContentLl.visibility = VISIBLE
                     binding.expandIv.setImageDrawable(
                         ContextCompat.getDrawable(
                             context,
@@ -175,7 +184,7 @@ class PracticeAdapter(
             }
 
             binding.submitAnswerBtn.setOnClickListener {
-
+                isFirstTime = true
                 if (chatModel.filePath == null) {
                     showToast(context.getString(R.string.submit_practise_msz))
                     return@setOnClickListener
@@ -373,7 +382,7 @@ class PracticeAdapter(
                 }
                 when (this.material_type) {
                     BASE_MESSAGE_TYPE.AU -> {
-                        binding.audioViewContainer.visibility = View.VISIBLE
+                        binding.audioViewContainer.visibility = VISIBLE
                         this.audioList?.getOrNull(0)?.audio_url?.let {
                             binding.btnPlayInfo.tag = it
                             binding.practiseSeekbar.max = this.audioList?.getOrNull(0)?.duration!!
@@ -445,7 +454,7 @@ class PracticeAdapter(
                 }
 
                 if (this.practiceEngagement.isNullOrEmpty()) {
-                    binding.submitAnswerBtn.visibility = View.VISIBLE
+                    binding.submitAnswerBtn.visibility = VISIBLE
                     setViewAccordingExpectedAnswer(chatModel)
                 } else {
                     hidePracticeInputLayout()
@@ -714,6 +723,14 @@ class PracticeAdapter(
                     )
                 )
             }
+            binding.rootView.scrollTo(
+                binding.submitAnswerBtn.scrollX,
+                (binding.submitAnswerBtn.scrollY + 32)
+            )
+            /* binding.submitAnswerBtn.parent.requestChildFocus(
+                 binding.submitAnswerBtn,
+                 binding.submitAnswerBtn
+             )*/
         }
 
         fun hidePracticeInputLayout() {
@@ -722,13 +739,13 @@ class PracticeAdapter(
         }
 
         fun showPracticeInputLayout() {
-            binding.practiseInputHeader.visibility = View.VISIBLE
-            binding.practiceInputLl.visibility = View.VISIBLE
+            binding.practiseInputHeader.visibility = VISIBLE
+            binding.practiceInputLl.visibility = VISIBLE
         }
 
         fun showPracticeSubmitLayout() {
-            binding.yourSubAnswerTv.visibility = View.VISIBLE
-            binding.subPractiseSubmitLayout.visibility = View.VISIBLE
+            binding.yourSubAnswerTv.visibility = VISIBLE
+            binding.subPractiseSubmitLayout.visibility = VISIBLE
         }
 
         fun hidePracticeSubmitLayout() {
