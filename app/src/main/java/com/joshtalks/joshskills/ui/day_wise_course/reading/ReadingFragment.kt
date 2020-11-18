@@ -1076,7 +1076,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                     val params =
                         binding.counterContainer.layoutParams as ViewGroup.MarginLayoutParams
 //                    params.topMargin = binding.rootView.scrollY
-                    practiceViewModel.startRecord()
+                    practiceViewModel.startRecordAudio(null)
                     binding.audioPractiseHint.visibility = GONE
                 }
                 MotionEvent.ACTION_MOVE -> {
@@ -1084,7 +1084,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     binding.rootView.requestDisallowInterceptTouchEvent(false)
                     binding.counterTv.stop()
-                    practiceViewModel.stopRecording()
+                    practiceViewModel.stopRecordingAudio(false)
                     binding.uploadPractiseView.clearAnimation()
                     binding.counterContainer.visibility = GONE
                     binding.audioPractiseHint.visibility = VISIBLE

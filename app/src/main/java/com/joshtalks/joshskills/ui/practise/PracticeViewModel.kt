@@ -11,6 +11,8 @@ import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
+import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
@@ -45,8 +47,47 @@ class PracticeViewModel(application: Application) :
     val requestStatusLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val practiceFeedback2LiveData: MutableLiveData<PracticeFeedback2> = MutableLiveData()
     val practiceEngagementData: MutableLiveData<PracticeEngagement> = MutableLiveData()
+    private var isRecordingStarted = false
+    private val mAudioRecording: com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording =
+        com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording()
 
 
+    @Synchronized
+    fun startRecordAudio(recordListener: OnAudioRecordListener?) {
+        val onRecordListener: OnAudioRecordListener = object :
+            OnAudioRecordListener {
+            override fun onRecordFinished(recordingItem: RecordingItem) {
+                isRecordingStarted = false
+                recordListener?.onRecordFinished(recordingItem)
+            }
+
+            override fun onError(e: Int) {
+                recordListener?.onError(e)
+            }
+
+            override fun onRecordingStarted() {
+                isRecordingStarted = true
+                recordListener?.onRecordingStarted()
+            }
+        }
+        AppDirectory.tempRecordingFile().let {
+            mAudioRecording.setOnAudioRecordListener(onRecordListener)
+            mAudioRecording.setFile(it.absolutePath)
+            recordFile = it
+            mAudioRecording.startRecording()
+            return@let true
+        }
+    }
+
+    fun isRecordingStarted(): Boolean {
+        return isRecordingStarted
+    }
+
+    @Synchronized
+    fun stopRecordingAudio(cancel: Boolean) {
+        mAudioRecording.stopRecording(cancel)
+        isRecordingStarted = false
+    }
 
     fun startRecord(): Boolean {
         AppDirectory.tempRecordingFile().let {
@@ -66,7 +107,7 @@ class PracticeViewModel(application: Application) :
         chatModel: ChatModel,
         requestEngage: RequestEngage,
         engageType: EXPECTED_ENGAGE_TYPE?,
-        isAudioPractice:Boolean=false
+        isAudioPractice: Boolean = false
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -114,7 +155,7 @@ class PracticeViewModel(application: Application) :
                     requestStatusLiveData.postValue(true)
                     practiceEngagementData.postValue(resp.body()!!)
                     resp.body()?.localPath = localPath
-                    if(isAudioPractice)
+                    if (isAudioPractice)
                         getAudioFeedback(chatModel, resp, engageType, false, mutableListOf())
 
                 } else {
@@ -196,6 +237,9 @@ class PracticeViewModel(application: Application) :
     override fun onCleared() {
         super.onCleared()
         compositeDisposable.clear()
+        if (isRecordingStarted) {
+            mAudioRecording.stopRecording(true)
+        }
     }
 
 
