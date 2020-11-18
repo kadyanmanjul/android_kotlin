@@ -571,7 +571,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                 hidePracticeInputLayout()
                 hideCancelButtonInRV()
                 binding.submitAnswerBtn.visibility = GONE
-                binding.progressLayout.visibility = GONE
+                //binding.progressLayout.visibility = GONE
                 binding.feedbackResultProgressLl.visibility = VISIBLE
                 binding.feedbackLayout.setCardBackgroundColor(
                     ContextCompat.getColor(
@@ -599,7 +599,9 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
 
             } else {
                 enableSubmitButton()
-                binding.progressLayout.visibility = GONE
+                //binding.progressLayout.visibility = GONE
+                showImproveButton()
+                binding.feedbackLayout.visibility = GONE
             }
         })
 
@@ -614,7 +616,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
             )
             binding.feedbackResultProgressLl.visibility = GONE
             binding.feedbackResultLinearLl.visibility = VISIBLE
-            binding.progressLayout.visibility = GONE
+            //binding.progressLayout.visibility = GONE
             binding.submitAnswerBtn.visibility = GONE
             binding.improveAnswerBtn.visibility = VISIBLE
             binding.continueBtn.visibility = View.VISIBLE
@@ -658,13 +660,24 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     fun setFeedBackLayout(feedback2: PracticeFeedback2?, isProcessing: Boolean = false) {
         binding.feedbackLayout.visibility = VISIBLE
         if (isProcessing) {
-            binding.progressLayout.visibility = VISIBLE
+            //binding.progressLayout.visibility = VISIBLE
+            binding.feedbackResultLinearLl.visibility = GONE
+            binding.submitAnswerBtn.visibility = GONE
+            binding.feedbackResultProgressLl.visibility = VISIBLE
+            binding.feedbackLayout.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.lightest_blue
+                )
+            )
             binding.feedbackGrade.visibility = GONE
             binding.feedbackDescription.visibility = GONE
+            hidePracticeInputLayout()
+            hideCancelButtonInRV()
         } else if (feedback2 != null) {
             binding.feedbackGrade.visibility = VISIBLE
             binding.feedbackDescription.visibility = VISIBLE
-            binding.progressLayout.visibility = GONE
+            //binding.progressLayout.visibility = GONE
             binding.feedbackGrade.text = feedback2.grade
             binding.feedbackDescription.text = feedback2.text
         }
@@ -1314,7 +1327,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                 if (it == EXPECTED_ENGAGE_TYPE.AU || it == EXPECTED_ENGAGE_TYPE.VI || it == EXPECTED_ENGAGE_TYPE.DX) {
                     requestEngage.answerUrl = filePath
                 }
-                binding.progressLayout.visibility = INVISIBLE
+                //binding.progressLayout.visibility = INVISIBLE
                 setFeedBackLayout(null, true)
                 disableSubmitButton()
                 practiceViewModel.submitPractise(chatModel, requestEngage, engageType, true)
