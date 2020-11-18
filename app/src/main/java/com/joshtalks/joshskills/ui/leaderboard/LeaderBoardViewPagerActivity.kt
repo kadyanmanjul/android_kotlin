@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.base_toolbar.iv_back
 import kotlinx.android.synthetic.main.base_toolbar.iv_help
 import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 import java.util.HashMap
+import java.util.Locale
 
 class LeaderBoardViewPagerActivity : BaseActivity() {
     lateinit var binding: ActivityLeaderboardViewPagerBinding
@@ -90,9 +91,9 @@ class LeaderBoardViewPagerActivity : BaseActivity() {
                 }
             }
             if (map.get(list)?.intervalTabText.isNullOrBlank()) {
-                tab.text = map.get(list)?.intervalType
+                tab.text = map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
             } else {
-                tab.text = map.get(list)?.intervalType.plus('\n')
+                tab.text = map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize().plus('\n')
                     .plus(map.get(list)?.intervalTabText)
             }
 
