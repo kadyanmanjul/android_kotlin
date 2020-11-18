@@ -593,13 +593,6 @@ class PracticeAdapter(
                             )
                         if (timeDifference > 1) {
                             audioAttachmentInit(chatModel)
-                            /*practiceViewModel.recordFile?.let {
-//                                isAudioRecordDone = true
-                                filePath = AppDirectory.getAudioSentFile(null).absolutePath
-                                AppDirectory.copy(it.absolutePath, filePath!!)
-                                audioAttachmentInit(chatModel)
-                            }*/
-
                         }
                     }
                 }
@@ -614,11 +607,11 @@ class PracticeAdapter(
 
         fun startRecording(chatModel: ChatModel, position: Int, startTime: Long) {
             this.startTime = startTime
-            practiceViewModel.startRecord()
+            practiceViewModel.startRecordAudio(null)
         }
 
         fun stopRecording(chatModel: ChatModel, position: Int, stopTime: Long) {
-            practiceViewModel.stopRecording()
+            practiceViewModel.stopRecordingAudio(false)
             val timeDifference =
                 TimeUnit.MILLISECONDS.toSeconds(stopTime) - TimeUnit.MILLISECONDS.toSeconds(
                     startTime

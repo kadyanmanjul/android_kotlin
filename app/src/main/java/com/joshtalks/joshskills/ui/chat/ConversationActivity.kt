@@ -235,7 +235,6 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     private var internetAvailableFlag: Boolean = true
     private var flowFrom: String? = EMPTY
     private var unlockViewHolder: UnlockNextClassViewHolder? = null
-    private var lastVideoStartingDate: Date? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -876,7 +875,6 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    lastVideoStartingDate = Date(System.currentTimeMillis())
                     conversationViewModel.setMRefreshControl(false)
                     VideoPlayerActivity.startConversionActivity(
                         this,
@@ -1505,6 +1503,12 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     IS_BATCH_CHANGED
                 )
             ) {
+                fetchMessage()
+
+            } else if (requestCode == LESSON_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null && data.hasExtra(
+                    IS_BATCH_CHANGED
+                )
+            ) {
                 if (data.getBooleanExtra(
                         IS_BATCH_CHANGED,
                         false
@@ -1537,14 +1541,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                         refreshViewAtPos(chatObj)
                     }
                 }
-            } else if (requestCode == LESSON_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null && data.hasExtra(
-                    IS_BATCH_CHANGED
-                )
-            ) {
-                fetchMessage()
-
             }
-
         } catch (ex: Exception) {
             FirebaseCrashlytics.getInstance().recordException(ex)
             ex.printStackTrace()
@@ -1565,7 +1562,6 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     }
 
     private fun fetchNewUnlockClasses(data: Intent) {
-        lastVideoStartingDate?.let { date ->
             showProgressBar()
             val tUnlockClassMessage =
                 TUnlockClassMessage(getString(R.string.unlock_class_demo))
@@ -1587,9 +1583,9 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 if (maxInterval == interval && isNextVideoAvailable.not() && interval < inboxEntity.duration!!) {
                     conversationViewModel.insertUnlockClassToDatabase(cell.message)
                 }
-                conversationViewModel.getAllUnlockedMessage(date)
+                conversationViewModel.getAllUnlockedMessage(Date(System.currentTimeMillis()))
             }
-        }
+
     }
 
     private fun addUnlockNextClassCard(interval: Int, isNextVideoAvailable: Boolean = false) {

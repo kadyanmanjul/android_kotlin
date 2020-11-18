@@ -163,7 +163,7 @@ class GrammarFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         if (arguments != null) {
-            chatModelList = arguments?.getParcelableArrayList<ChatModel>(PRACTISE_OBJECT)
+            chatModelList = arguments?.getParcelableArrayList(PRACTISE_OBJECT)
         }
         if (chatModelList == null) {
             requireActivity().finish()
@@ -288,14 +288,7 @@ class GrammarFragment : Fragment() {
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({ eventBus ->
-                                        println(
-                                            "eventbus progress ${eventBus.progress} duration ${
-                                                this.videoList?.getOrNull(
-                                                    0
-                                                )?.duration ?: 0
-                                            }"
-                                        )
-                                        if (eventBus.progress >= this.videoList?.getOrNull(0)?.duration ?: 0) {
+                                        if (eventBus.progress >= 3000) {
                                             updateVideoQuestionStatus(this)
                                             binding.startQuizBtn.alpha = 1f
                                         }
@@ -414,6 +407,12 @@ class GrammarFragment : Fragment() {
                 } else {
                     radioButton.setBackgroundColor(
                         ContextCompat.getColor(requireContext(), R.color.received_bg_BC)
+                    )
+                    radioButton.setCompoundDrawablesWithIntrinsicBounds(
+                        0,
+                        0,
+                        R.drawable.ic_green_tick,
+                        0
                     )
                 }
             } else if (choice.isCorrect) {
