@@ -129,12 +129,7 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
         groupIcon = findViewById(R.id.iv_group);
         tvGroupName = findViewById(R.id.tv_group_name);
         tvGroupDesc = findViewById(R.id.group_description);
-        tvGroupName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateGroupDialog();
-            }
-        });
+        tvGroupName.setOnClickListener(v -> updateGroupDialog());
         tvMemberCount = findViewById(R.id.tv_members);
         tvAdminCount = findViewById(R.id.tv_admin_count);
         tvModeratorCount = findViewById(R.id.tv_moderator_count);
@@ -146,33 +141,13 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
         callBtn = findViewById(R.id.callBtn_iv);
         videoCallBtn = findViewById(R.id.video_callBtn_iv);
         rlBanMembers = findViewById(R.id.rlBanView);
-        rlBanMembers.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openBanMemberListScreen();
-            }
-        });
+        rlBanMembers.setOnClickListener(v -> openBanMemberListScreen());
         rlAddMemberView = findViewById(R.id.rl_add_member);
-        rlAddMemberView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addMembers();
-            }
-        });
+        rlAddMemberView.setOnClickListener(v -> addMembers());
         rlAdminListView = findViewById(R.id.rlAdminView);
-        rlAdminListView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openAdminListScreen(false);
-            }
-        });
+        rlAdminListView.setOnClickListener(v -> openAdminListScreen(false));
         rlModeratorView = findViewById(R.id.rlModeratorView);
-        rlModeratorView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openAdminListScreen(true);
-            }
-        });
+        rlModeratorView.setOnClickListener(v -> openAdminListScreen(true));
         tvDelete = findViewById(R.id.tv_delete);
         TextView tvExit = findViewById(R.id.tv_exit);
         toolbar = findViewById(R.id.groupDetailToolbar);
@@ -224,12 +199,7 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
             }
         }));
 
-        tvLoadMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getGroupMembers();
-            }
-        });
+        tvLoadMore.setOnClickListener(view -> getGroupMembers());
         tvExit.setOnClickListener(view -> createDialog(getResources().getString(R.string.exit_group_title), getResources().getString(R.string.exit_group_message),
                 getResources().getString(R.string.exit), getResources().getString(R.string.cancel), R.drawable.ic_exit_to_app));
 
@@ -249,21 +219,21 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
     }
 
     private void checkDarkMode() {
-        if (Utils.isDarkMode(this)) {
-            toolbar.setTitleTextColor(getResources().getColor(R.color.textColorWhite));
-            tvGroupName.setTextColor(getResources().getColor(R.color.textColorWhite));
-            dividerAdmin.setBackgroundColor(getResources().getColor(R.color.grey));
-            dividerModerator.setBackgroundColor(getResources().getColor(R.color.grey));
-            dividerBan.setBackgroundColor(getResources().getColor(R.color.grey));
-            divider2.setBackgroundColor(getResources().getColor(R.color.grey));
-        } else {
-            toolbar.setTitleTextColor(getResources().getColor(R.color.primaryTextColor));
-            tvGroupName.setTextColor(getResources().getColor(R.color.primaryTextColor));
-            dividerAdmin.setBackgroundColor(getResources().getColor(R.color.light_grey));
-            dividerModerator.setBackgroundColor(getResources().getColor(R.color.light_grey));
-            dividerBan.setBackgroundColor(getResources().getColor(R.color.light_grey));
-            divider2.setBackgroundColor(getResources().getColor(R.color.light_grey));
-        }
+//        if (Utils.isDarkMode(this)) {
+//            toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.textColorWhite));
+//            tvGroupName.setTextColor(ContextCompat.getColor(this, R.color.textColorWhite));
+//            dividerAdmin.setBackgroundColor(ContextCompat.getColor(this, R.color.grey));
+//            dividerModerator.setBackgroundColor(ContextCompat.getColor(this, R.color.grey));
+//            dividerBan.setBackgroundColor(ContextCompat.getColor(this, R.color.grey));
+//            divider2.setBackgroundColor(ContextCompat.getColor(this, R.color.grey));
+//        } else {
+//            toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.textColorWhite));
+//            tvGroupName.setTextColor(ContextCompat.getColor(this, R.color.primaryTextColor));
+//            dividerAdmin.setBackgroundColor(ContextCompat.getColor(this, R.color.light_grey));
+//            dividerModerator.setBackgroundColor(ContextCompat.getColor(this, R.color.light_grey));
+//            dividerBan.setBackgroundColor(ContextCompat.getColor(this, R.color.light_grey));
+//            divider2.setBackgroundColor(ContextCompat.getColor(this, R.color.light_grey));
+//        }
     }
 
     private void checkOnGoingCall(String callType) {
@@ -271,19 +241,12 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setTitle(getResources().getString(R.string.ongoing_call))
                     .setMessage(getResources().getString(R.string.ongoing_call_message))
-                    .setPositiveButton(getResources().getString(R.string.join), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            CallUtils.joinOnGoingCall(CometChatGroupDetailScreenActivity.this);
-                        }
-                    }).setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    callBtn.setClickable(true);
-                    videoCallBtn.setClickable(true);
-                    dialog.dismiss();
-                }
-            }).create().show();
+                    .setPositiveButton(getResources().getString(R.string.join), (dialog, which) -> CallUtils.joinOnGoingCall(CometChatGroupDetailScreenActivity.this))
+                    .setNegativeButton(getResources().getString(R.string.cancel), (dialog, which) -> {
+                        callBtn.setClickable(true);
+                        videoCallBtn.setClickable(true);
+                        dialog.dismiss();
+                    }).create().show();
         } else {
             CallUtils.initiateCall(CometChatGroupDetailScreenActivity.this, guid, CometChatConstants.RECEIVER_TYPE_GROUP, callType);
         }
@@ -398,6 +361,7 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
         if (getIntent().hasExtra(StringContract.IntentStrings.NAME)) {
             gName = getIntent().getStringExtra(StringContract.IntentStrings.NAME);
             tvGroupName.setText(gName);
+            toolbar.setTitle(gName);
         }
         if (getIntent().hasExtra(StringContract.IntentStrings.AVATAR)) {
             String avatar = getIntent().getStringExtra(StringContract.IntentStrings.AVATAR);
@@ -930,6 +894,7 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
             public void onSuccess(Group group) {
                 gName = group.getName();
                 tvGroupName.setText(gName);
+                toolbar.setTitle(gName);
                 groupIcon.setAvatar(group.getIcon());
                 loggedInUserScope = group.getScope();
                 // groupMemberCount = group.getMembersCount();
