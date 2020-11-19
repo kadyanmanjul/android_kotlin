@@ -97,18 +97,22 @@ class SearchingUserActivity : BaseActivity() {
 
         override fun onDisconnect() {
             Timber.tag("SearchingUserActivity").e("onDisconnect")
+            requestForSearchUser()
         }
 
         override fun onCallDisconnect(id: String?) {
             Timber.tag("SearchingUserActivity").e("onCallDisconnect")
+            requestForSearchUser()
         }
 
         override fun onCallReject(id: String?) {
             Timber.tag("SearchingUserActivity").e("onCallReject")
+            requestForSearchUser()
         }
 
         override fun onSelfDisconnect(id: String?) {
             Timber.tag("SearchingUserActivity").e("onSelfDisconnect")
+            requestForSearchUser()
         }
 
         override fun onIncomingCallHangup(id: String?) {
@@ -156,6 +160,7 @@ class SearchingUserActivity : BaseActivity() {
         viewModel.voipDetailsLiveData.observe(this, {
             if (it != null) {
                 WebRtcService.startOutgoingCall(getMapForOutgoing(it))
+                ifEndUserDidNtPickCall()
             }
         })
         viewModel.apiCallStatusLiveData.observe(this, {
@@ -233,6 +238,7 @@ class SearchingUserActivity : BaseActivity() {
     }
 
     private fun requestForSearchUser() {
+        AppObjectController.uiHandler.removeCallbacksAndMessages(null)
         appAnalytics?.addParam(AnalyticsEvent.SEARCH_USER_FOR_VOIP.NAME, courseId)
         courseId?.let {
             startProgressBarCountDown()
@@ -317,5 +323,11 @@ class SearchingUserActivity : BaseActivity() {
             return "User"
         }
         return name
+    }
+
+    private fun ifEndUserDidNtPickCall() {
+        AppObjectController.uiHandler.postDelayed({
+            mBoundService?.endCall()
+        }, 10000)
     }
 }
