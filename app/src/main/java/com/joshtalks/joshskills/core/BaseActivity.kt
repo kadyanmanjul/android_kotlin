@@ -20,11 +20,16 @@ import com.google.firebase.ktx.Firebase
 import java.util.*
 */
 import android.app.Activity
+import android.app.DownloadManager
 import android.app.LauncherActivity
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.Settings
 import android.util.DisplayMetrics
 import androidx.activity.result.ActivityResultLauncher
@@ -77,12 +82,13 @@ import com.uxcam.OnVerificationListener
 import com.uxcam.UXCam
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import java.lang.reflect.Type
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.lang.reflect.Type
+import kotlin.random.Random
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 
@@ -92,6 +98,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
     private lateinit var referrerClient: InstallReferrerClient
     private val versionResponseTypeToken: Type = object : TypeToken<VersionResponse>() {}.type
     private var versionResponse: VersionResponse? = null
+    private var downloadID: Long = -1
 
     enum class ActivityEnum {
         Conversation,
@@ -115,6 +122,12 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
         }
     }
 
+    protected var onDownloadComplete = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+
+        }
+    }
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase?.let { ViewPumpContextWrapper.wrap(it) })
@@ -379,8 +392,10 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
     }
 
     fun showSignUpDialog() {
-        if(AppObjectController.getFirebaseRemoteConfig().getBoolean(FirebaseRemoteConfigKey.FORCE_SIGN_IN_FEATURE_ENABLE))
-        SignUpPermissionDialogFragment.showDialog(supportFragmentManager)
+        if (AppObjectController.getFirebaseRemoteConfig()
+                .getBoolean(FirebaseRemoteConfigKey.FORCE_SIGN_IN_FEATURE_ENABLE)
+        )
+            SignUpPermissionDialogFragment.showDialog(supportFragmentManager)
     }
 
     fun checkForOemNotifications() {
@@ -603,4 +618,34 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
         FullScreenProgressDialog.hideProgressBar(this)
     }
 
+    protected fun downloadFile(url: String, message: String = "Downloading file") {
+        registerDownloadReceiver()
+        var fileName = Utils.getFileNameFromURL(url)
+        if (fileName.isEmpty()) {
+            url.let {
+                fileName = it + Random(5).nextInt().toString().plus(it.getExtension())
+            }
+        }
+        val request: DownloadManager.Request =
+            DownloadManager.Request(Uri.parse(url))
+                .setTitle("Josh Skills")
+                .setDescription(message)
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+                .setAllowedOverMetered(true)
+                .setAllowedOverRoaming(true)
+                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            request.setRequiresCharging(false).setRequiresDeviceIdle(false)
+        }
+
+        val downloadManager = getSystemService(DOWNLOAD_SERVICE) as (DownloadManager)
+        downloadID = downloadManager.enqueue(request)
+    }
+
+
+    private fun registerDownloadReceiver() {
+        registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+    }
 }

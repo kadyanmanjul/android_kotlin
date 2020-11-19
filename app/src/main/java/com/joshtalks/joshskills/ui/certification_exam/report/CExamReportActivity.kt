@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.ActivityCexamReportBinding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.DownloadFileEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.GotoCEQuestionEventBus
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationExamView
@@ -153,6 +154,24 @@ class CExamReportActivity : BaseActivity() {
                     it.printStackTrace()
                 })
         )
+
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(DownloadFileEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .subscribe({
+                    downloadFile(it.url)
+                }, {
+                    it.printStackTrace()
+                })
+        )
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            unregisterReceiver(onDownloadComplete)
+        } catch (ex: Exception) {
+        }
     }
 
 

@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.DownloadFileEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
 import com.mindorks.placeholderview.annotations.Click
@@ -41,6 +42,11 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
     @com.mindorks.placeholderview.annotations.View(R.id.group_certificate_download)
     lateinit var cDownloadGroup: androidx.constraintlayout.widget.Group
 
+
+    @com.mindorks.placeholderview.annotations.View(R.id.btn_download_certificate)
+    lateinit var downloadCertificateBtn: MaterialButton
+
+
     private val context: Context = AppObjectController.joshApplication
 
     @Resolve
@@ -62,10 +68,14 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
                         R.color.white
                     )
                 )
+                if (certificateURL.isNullOrEmpty()) {
+                    downloadCertificateBtn.visibility = View.GONE
+                }
             }
             checkExamDetails.visibility = View.VISIBLE
             scoreTv.text = getScoreText(score, maxScore)
         }
+
     }
 
     private fun getScoreText(score: Double, maxScore: Int): SpannableString? {
@@ -83,7 +93,9 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
 
     @Click(R.id.btn_download_certificate)
     fun downloadCertificate() {
-
+        if (certificateExamReport.certificateURL.isNullOrEmpty().not()) {
+            RxBus2.publish(DownloadFileEventBus(certificateExamReport.certificateURL!!))
+        }
     }
 
     @Click(R.id.check_exam_details)

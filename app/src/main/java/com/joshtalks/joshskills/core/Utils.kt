@@ -1018,6 +1018,10 @@ fun Map<String, String?>.printAll() {
     }
 }
 
+fun String.getExtension(): String {
+    return this.substring(this.lastIndexOf("."))
+}
+
 
 fun Intent.serviceStart() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
