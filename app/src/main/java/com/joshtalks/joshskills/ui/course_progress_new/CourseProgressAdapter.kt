@@ -8,13 +8,18 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.CourseProgressItemBinding
+import com.joshtalks.joshskills.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewItem
 
 class CourseProgressAdapter(
     val context: Context,
     val itemList: List<CourseOverviewItem>,
-    val onItemClickListener: ProgressItemClickListener
+    val onItemClickListener: ProgressItemClickListener,
+    val conversationId: String,
+    val chatMessageId: String,
+    val certificationId: Int,
+    val cExamStatus: CExamStatus = CExamStatus.FRESH
 ) :
     RecyclerView.Adapter<CourseProgressAdapter.CourseProgressViewHolder>() {
 
@@ -41,10 +46,23 @@ class CourseProgressAdapter(
                 binding.progressIv.visibility = View.GONE
                 binding.progressIndexTv.text = context.getString(R.string.exam)
 
-                binding.progressIv.alpha = 0.5f
+                if (itemList.size > 0) {
+                    if (itemList[position - 1].status == LESSON_STATUS.CO.name)
+                        binding.progressIv.alpha = 1f
+                    else
+                        binding.progressIv.alpha = 0.5f
 
-                binding.root.setOnClickListener {
-                    onItemClickListener.onCertificateExamClick()
+                    binding.root.setOnClickListener {
+                        onItemClickListener.onCertificateExamClick(
+                            itemList[position - 1],
+                            conversationId,
+                            chatMessageId,
+                            certificationId,
+                            cExamStatus
+                        )
+                    }
+                } else {
+                    binding.progressIv.alpha = 0.5f
                 }
                 binding.radialProgressView.visibility = View.GONE
                 binding.progressIv.visibility = View.VISIBLE
@@ -107,7 +125,12 @@ class CourseProgressAdapter(
 
     interface ProgressItemClickListener {
         fun onProgressItemClick(item: CourseOverviewItem)
-        fun onCertificateExamClick()
+        fun onCertificateExamClick(
+            previousLesson: CourseOverviewItem, conversationId: String,
+            chatMessageId: String,
+            certificationId: Int,
+            cExamStatus: CExamStatus = CExamStatus.FRESH
+        )
     }
 
 }

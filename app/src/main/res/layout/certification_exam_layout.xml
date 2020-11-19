@@ -135,8 +135,9 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_start_exam"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_28sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/_16sdp"
                 android:backgroundTint="@color/white"
                 android:clickable="true"
                 android:focusable="true"
@@ -148,11 +149,10 @@
                 android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_12ssp"
-                app:cornerRadius="@dimen/_28sdp"
+                app:cornerRadius="@dimen/_24sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintWidth_percent="0.5"
                 app:rippleColor="@color/white" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

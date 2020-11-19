@@ -1,10 +1,13 @@
 package com.joshtalks.joshskills.ui.course_progress_new
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -13,10 +16,13 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.databinding.CourseProgressActivityNewBinding
+import com.joshtalks.joshskills.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewItem
 import com.joshtalks.joshskills.repository.server.course_overview.PdfInfo
+import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
+import com.joshtalks.joshskills.ui.pdfviewer.MESSAGE_ID
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.util.CustomDialog
 import com.karumi.dexter.MultiplePermissionsReport
@@ -165,7 +171,7 @@ class CourseProgressActivityNew : AppCompatActivity(),
                 }
 
             }
-            adapter = ProgressActivityAdapter(this, it.responseData!!, this)
+            adapter = ProgressActivityAdapter(this, it.responseData!!, this, it.conversationId)
             binding.progressRv.adapter = adapter
 
         })
@@ -200,8 +206,35 @@ class CourseProgressActivityNew : AppCompatActivity(),
             )
     }
 
-    override fun onCertificateExamClick() {
-        showAlertMessage()
+    override fun onCertificateExamClick(
+        previousLesson: CourseOverviewItem, conversationId: String,
+        chatMessageId: String,
+        certificationId: Int,
+        cExamStatus: CExamStatus
+    ) {
+        if (previousLesson.status != LESSON_STATUS.CO.name) {
+            showAlertMessage()
+        } else {
+            val cExamActivityListener: ActivityResultLauncher<Intent> =
+                registerForActivityResult(
+                    ActivityResultContracts.StartActivityForResult()
+                ) { result ->
+                    if (result.resultCode == Activity.RESULT_OK) {
+                        result.data?.getStringExtra(MESSAGE_ID)?.let { chatId ->
+                            viewModel.getCourseOverview(courseId)
+                        }
+                    }
+                }
+            cExamActivityListener.launch(
+                CertificationBaseActivity.certificationExamIntent(
+                    this,
+                    conversationId = conversationId,
+                    chatMessageId = chatMessageId,
+                    certificationId = certificationId,
+                    cExamStatus = cExamStatus
+                )
+            )
+        }
     }
 
     private fun showAlertMessage() {

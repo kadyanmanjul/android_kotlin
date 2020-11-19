@@ -10,7 +10,8 @@ import com.joshtalks.joshskills.repository.server.course_overview.CourseOverview
 class ProgressActivityAdapter(
     val context: Context,
     val list: List<CourseOverviewResponse>,
-    val onItemClickListener: CourseProgressAdapter.ProgressItemClickListener
+    val onItemClickListener: CourseProgressAdapter.ProgressItemClickListener,
+    val conversationId: String
 ) :
     RecyclerView.Adapter<ProgressActivityAdapter.ProgressViewHolder>() {
 
@@ -43,7 +44,15 @@ class ProgressActivityAdapter(
         lateinit var adapter: CourseProgressAdapter
         fun bind(position: Int, item: CourseOverviewResponse) {
             binding.progressTitleTv.text = item.title
-            adapter = CourseProgressAdapter(context, item.data, onItemClickListener)
+            adapter = CourseProgressAdapter(
+                context,
+                item.data,
+                onItemClickListener,
+                conversationId,
+                item.chatId,
+                item.certificateExamId,
+                item.examStatus
+            )
             binding.progressRv.adapter = adapter
 
         }

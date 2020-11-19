@@ -412,7 +412,7 @@ class GrammarFragment : Fragment() {
                     radioButton.setCompoundDrawablesWithIntrinsicBounds(
                         0,
                         0,
-                        R.drawable.ic_green_tick,
+                        0,
                         0
                     )
                 }

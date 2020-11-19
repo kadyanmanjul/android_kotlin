@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.repository.server.course_overview
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.repository.local.entity.CExamStatus
 
 data class CourseOverviewBaseResponse(
     @SerializedName("message")
@@ -18,6 +19,9 @@ data class CourseOverviewBaseResponse(
     @SerializedName("pdf_info")
     @Expose
     val pdfInfo: PdfInfo,
+    @SerializedName("conversationId")
+    @Expose
+    var conversationId: String,
 
     )
 
@@ -26,9 +30,17 @@ data class CourseOverviewResponse(
     @SerializedName("title")
     @Expose
     var title: String,
+    @SerializedName("chatId")
+    @Expose
+    var chatId: String,
     @SerializedName("total_count")
     @Expose
     var totalCount: Int,
+    @SerializedName("certificateExamId")
+    @Expose
+    var certificateExamId: Int,
+    @SerializedName("status")
+    val examStatus: CExamStatus,
     @SerializedName("data")
     @Expose
     var data: List<CourseOverviewItem>
