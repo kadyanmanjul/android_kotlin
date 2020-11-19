@@ -1,8 +1,8 @@
 package com.joshtalks.joshskills.repository.local.eventbus
 
-import com.joshtalks.joshskills.ui.day_wise_course.reading.PraticeAudioViewHolder
+import com.joshtalks.joshskills.ui.day_wise_course.reading.PracticeAudioViewHolder
 
 data class RemovePracticeAudioEventBus(
     val practiceEngagementId: Int?,
-    val praticeAudioViewHolder: PraticeAudioViewHolder
+    val practiceAudioViewHolder: PracticeAudioViewHolder
 )
