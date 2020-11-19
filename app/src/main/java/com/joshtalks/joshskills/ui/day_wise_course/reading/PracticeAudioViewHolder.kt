@@ -31,7 +31,7 @@ import java.util.Locale
 import kotlin.random.Random
 
 @Layout(R.layout.practice_audio_item)
-class PraticeAudioViewHolder(
+class PracticeAudioViewHolder(
     private var practiceEngagement: PracticeEngagement?,
     private var context: Context?,
     private var filePath: String?
@@ -132,6 +132,15 @@ class PraticeAudioViewHolder(
 
     fun updatePracticeEngagement(practiceEngagement:PracticeEngagement) {
         this.practiceEngagement=practiceEngagement
+    }
+
+    fun pauseAudio() {
+        audioManager?.isPlaying()?.let {
+            if(it){
+                audioManager?.onPause()
+                playPauseBtn.state = MaterialPlayPauseDrawable.State.Play
+            }
+        }
     }
 
     fun onPlayAudio(audioObject: AudioType) {
