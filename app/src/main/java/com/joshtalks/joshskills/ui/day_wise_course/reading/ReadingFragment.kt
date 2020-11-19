@@ -20,7 +20,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.GONE
-import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -277,6 +276,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
 
         try {
             binding.videoPlayer.onPause()
+            pauseAllViewHolderAudio()
 
         } catch (ex: Exception) {
 
@@ -289,6 +289,14 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
 
         }
     }
+
+    private fun pauseAllViewHolderAudio() {
+        val viewHolders = binding.audioList.allViewResolvers as List<PracticeAudioViewHolder>
+        viewHolders.forEach { it ->
+            it?.pauseAudio()
+        }
+    }
+
 
     override fun onStop() {
         appAnalytics?.push()
@@ -391,7 +399,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                 .subscribeOn(Schedulers.computation())
                 .subscribe({
                     Handler(Looper.getMainLooper()).post {
-                        binding.audioList.removeView(it.praticeAudioViewHolder)
+                        binding.audioList.removeView(it.practiceAudioViewHolder)
                         chatModel.question?.run {
                             if (this.practiceEngagement.isNullOrEmpty()) {
                                 showPracticeInputLayout()
@@ -627,7 +635,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     }
 
     private fun updatePracticeFeedback(practiceEngagement: PracticeEngagement) {
-        val viewHolders = binding.audioList.allViewResolvers as List<PraticeAudioViewHolder>
+        val viewHolders = binding.audioList.allViewResolvers as List<PracticeAudioViewHolder>
         viewHolders.forEach { it ->
             it.let {
                 if (it.isEmpty()) {
@@ -638,7 +646,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     }
 
     private fun hideCancelButtonInRV() {
-        val viewHolders = binding.audioList.allViewResolvers as List<PraticeAudioViewHolder>
+        val viewHolders = binding.audioList.allViewResolvers as List<PracticeAudioViewHolder>
         viewHolders.forEach { it ->
             it.let {
                 it.hideCancelButtons()
@@ -647,7 +655,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
         }
     }
     private fun removePreviousAddedViewHolder() {
-        val viewHolders = binding.audioList.allViewResolvers as List<PraticeAudioViewHolder>
+        val viewHolders = binding.audioList.allViewResolvers as List<PracticeAudioViewHolder>
         viewHolders.forEach { it ->
             it.let {
                 if(it.isEmpty()){
@@ -780,7 +788,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
             if (practiceList.isNullOrEmpty().not()) {
                 practiceList.forEach { practice ->
                     binding.audioList.addView(
-                        PraticeAudioViewHolder(
+                        PracticeAudioViewHolder(
                             practice,
                             context,
                             practice.answerUrl
@@ -859,7 +867,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
         val viewHolders = binding.audioList.allViewResolvers as List<*>
         viewHolders.forEach {
             it?.let {
-                if (it is PraticeAudioViewHolder && it.isSeekBaarInitialized()) {
+                if (it is PracticeAudioViewHolder && it.isSeekBaarInitialized()) {
                     it.initializePractiseSeekBar()
                     //it.setSeekToZero()
                 }
@@ -1022,7 +1030,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
         binding.subPractiseSubmitLayout.visibility = VISIBLE
         binding.audioList.visibility = VISIBLE
         removePreviousAddedViewHolder()
-        binding.audioList.addView(PraticeAudioViewHolder(null, context, filePath))
+        binding.audioList.addView(PracticeAudioViewHolder(null, context, filePath))
         initializePractiseSeekBar()
         enableSubmitButton()
     }
@@ -1208,7 +1216,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
 
             val viewHolders = binding.audioList.allViewResolvers as List<*>
             viewHolders.forEach {
-                if (it is PraticeAudioViewHolder) {
+                if (it is PracticeAudioViewHolder) {
                     it.playPauseBtn.state = MaterialPlayPauseDrawable.State.Pause
                 }
             }
