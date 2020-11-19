@@ -3,17 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/_12sdp"
-    android:layout_marginEnd="@dimen/_16sdp">
+    android:layout_marginTop="@dimen/_14sdp"
+    android:layout_marginEnd="@dimen/_20sdp"
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/image"
         android:layout_width="@dimen/_48sdp"
         android:layout_height="@dimen/_48sdp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/title"
         app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="@dimen/_6sdp"
         app:layout_constraintStart_toStartOf="parent"
+        android:scaleType="fitXY"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/josh_skill" />
 
@@ -25,7 +27,7 @@
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/image"
+        app:layout_constraintBottom_toTopOf="@id/date"
         tools:text="Student of the year" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -36,6 +38,6 @@
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintBottom_toBottomOf="parent"
         tools:text="Earned on 24th Aug" />
 </androidx.constraintlayout.widget.ConstraintLayout>
