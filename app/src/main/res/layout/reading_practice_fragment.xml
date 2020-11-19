@@ -485,7 +485,7 @@
                         android:id="@+id/feedback_header"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
+                        android:gravity="start"
                         android:text="@string/your_feedback"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                         android:textColor="@color/black"
