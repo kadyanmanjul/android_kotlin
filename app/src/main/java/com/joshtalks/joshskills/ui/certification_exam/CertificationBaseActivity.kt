@@ -139,7 +139,7 @@ class CertificationBaseActivity : BaseActivity() {
                 )
                 if (CExamStatus.CHECK_RESULT == cExamStatus) {
                     cExamStatus = CExamStatus.NIL
-                    this.finish()
+                    //   this.finish()
                 }
             }
         })

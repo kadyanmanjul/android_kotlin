@@ -327,7 +327,13 @@ class SearchingUserActivity : BaseActivity() {
 
     private fun ifEndUserDidNtPickCall() {
         AppObjectController.uiHandler.postDelayed({
-            mBoundService?.endCall()
-        }, 10000)
+            try {
+                binding.progressBar.progress = 0
+                timer?.cancel()
+                mBoundService?.endCall()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }, 15000)
     }
 }

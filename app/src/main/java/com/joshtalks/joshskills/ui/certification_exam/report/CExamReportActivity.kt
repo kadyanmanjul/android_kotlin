@@ -105,7 +105,7 @@ class CExamReportActivity : BaseActivity() {
             ViewPager2.OnPageChangeCallback() {
         })
         TabLayoutMediator(binding.tabLayout, binding.examReportList) { tab, position ->
-            tab.text = "Attempt" + (position + 1)
+            tab.text = "Attempt " + (position + 1)
         }.attach()
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
