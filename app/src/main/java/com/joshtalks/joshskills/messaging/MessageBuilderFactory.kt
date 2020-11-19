@@ -64,7 +64,7 @@ object MessageBuilderFactory {
         model.created = Date(System.currentTimeMillis())
         model.messageDeliverStatus = MESSAGE_DELIVER_STATUS.SENT
         model.chatLocalId = RandomString().nextString()
-        model.isSync = false
+        model.isSync = true
         model.sender = Sender(Mentor.getInstance().getId(), User(), "")
         return model
     }
