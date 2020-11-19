@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 
 import utils.FontUtils;
-import utils.Utils;
 
 /**
  * Purpose - GroupMemberAdapter is a subclass of RecyclerView Adapter which is used to display
@@ -109,21 +108,21 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
             groupMemberViewHolder.userListRowBinding.txtUserScope.setText("");
         }
 
-        groupMemberViewHolder.userListRowBinding.txtUserName.setTypeface(fontUtils.getTypeFace(FontUtils.robotoMedium));
+        groupMemberViewHolder.userListRowBinding.txtUserName.setTypeface(fontUtils.getTypeFace(FontUtils.robotoRegular));
         if (groupMember.getAvatar() == null || groupMember.getAvatar().isEmpty())
             groupMemberViewHolder.userListRowBinding.avUser.setInitials(groupMember.getName());
         else
             groupMemberViewHolder.userListRowBinding.avUser.setAvatar(groupMember.getAvatar());
 
-        if (Utils.isDarkMode(context)) {
-            groupMemberViewHolder.userListRowBinding.txtUserName.setTextColor(context.getResources().getColor(R.color.textColorWhite));
-            groupMemberViewHolder.userListRowBinding.tvSeprator.setBackgroundColor(context.getResources().getColor(R.color.grey));
-            groupMemberViewHolder.userListRowBinding.txtUserScope.setTextColor(context.getResources().getColor(R.color.textColorWhite));
-        } else {
-            groupMemberViewHolder.userListRowBinding.txtUserName.setTextColor(context.getResources().getColor(R.color.primaryTextColor));
-            groupMemberViewHolder.userListRowBinding.tvSeprator.setBackgroundColor(context.getResources().getColor(R.color.light_grey));
-            groupMemberViewHolder.userListRowBinding.txtUserScope.setTextColor(context.getResources().getColor(R.color.secondaryTextColor));
-        }
+//        if (Utils.isDarkMode(context)) {
+//            groupMemberViewHolder.userListRowBinding.txtUserName.setTextColor(context.getResources().getColor(R.color.textColorWhite));
+//            groupMemberViewHolder.userListRowBinding.tvSeprator.setBackgroundColor(context.getResources().getColor(R.color.grey));
+//            groupMemberViewHolder.userListRowBinding.txtUserScope.setTextColor(context.getResources().getColor(R.color.textColorWhite));
+//        } else {
+//            groupMemberViewHolder.userListRowBinding.txtUserName.setTextColor(context.getResources().getColor(R.color.primaryTextColor));
+//            groupMemberViewHolder.userListRowBinding.tvSeprator.setBackgroundColor(context.getResources().getColor(R.color.light_grey));
+//            groupMemberViewHolder.userListRowBinding.txtUserScope.setTextColor(context.getResources().getColor(R.color.secondaryTextColor));
+//        }
 
         if (i == getItemCount() - 1)
             groupMemberViewHolder.userListRowBinding.tvSeprator.setVisibility(View.GONE);

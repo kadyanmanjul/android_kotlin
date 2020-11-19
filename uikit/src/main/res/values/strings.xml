@@ -120,7 +120,7 @@
     <string name="send">Send</string>
     <string name="details">Details</string>
     <string name="administrators">Administrators</string>
-    <string name="members">Members</string>
+    <string name="members">Group Members</string>
     <string name="add_members">Add Members</string>
     <string name="privacy_support"><![CDATA[Privacy & Support]]></string>
     <string name="privacy_security"><![CDATA[Privacy &  Security]]></string>
@@ -239,6 +239,8 @@
     <string name="ended">Ended</string>
     <string name="ongoing">Ongoing</string>
     <string name="audio_file">Audio File</string>
+    <string name="description">Description</string>
+    <string name="default_description">This group is for practice.</string>
     <array name="groupType">
         <item>Public Group</item>
         <item>Private Group</item>

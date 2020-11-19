@@ -72,10 +72,10 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
     private final List<GroupMember> groupMembers = new ArrayList<>();
     private final User loggedInUser = CometChat.getLoggedInUser();
     String[] s = new String[0];
-    private Avatar groupIcon;
+    // private Avatar groupIcon;
     private String groupType;
     private String ownerId;
-    private TextView tvGroupName;
+    // private TextView tvGroupName;
     private TextView tvGroupDesc;
     private TextView tvAdminCount;
     private TextView tvModeratorCount;
@@ -126,10 +126,10 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
         dividerModerator = findViewById(R.id.tv_seperator_moderator);
         dividerBan = findViewById(R.id.tv_seperator_ban);
         divider2 = findViewById(R.id.tv_seperator_1);
-        groupIcon = findViewById(R.id.iv_group);
-        tvGroupName = findViewById(R.id.tv_group_name);
+        // groupIcon = findViewById(R.id.iv_group);
+        // tvGroupName = findViewById(R.id.tv_group_name);
         tvGroupDesc = findViewById(R.id.group_description);
-        tvGroupName.setOnClickListener(v -> updateGroupDialog());
+        // tvGroupName.setOnClickListener(v -> updateGroupDialog());
         tvMemberCount = findViewById(R.id.tv_members);
         tvAdminCount = findViewById(R.id.tv_admin_count);
         tvModeratorCount = findViewById(R.id.tv_moderator_count);
@@ -360,15 +360,15 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
         }
         if (getIntent().hasExtra(StringContract.IntentStrings.NAME)) {
             gName = getIntent().getStringExtra(StringContract.IntentStrings.NAME);
-            tvGroupName.setText(gName);
+            // tvGroupName.setText(gName);
             toolbar.setTitle(gName);
         }
         if (getIntent().hasExtra(StringContract.IntentStrings.AVATAR)) {
             String avatar = getIntent().getStringExtra(StringContract.IntentStrings.AVATAR);
-            if (avatar != null && !avatar.isEmpty())
-                groupIcon.setAvatar(avatar);
-            else
-                groupIcon.setInitials(gName);
+//            if (avatar != null && !avatar.isEmpty())
+//                groupIcon.setAvatar(avatar);
+//            else
+//                groupIcon.setInitials(gName);
         }
         if (getIntent().hasExtra(StringContract.IntentStrings.GROUP_DESC)) {
             gDesc = getIntent().getStringExtra(StringContract.IntentStrings.GROUP_DESC);
@@ -734,13 +734,13 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
         View view = LayoutInflater.from(this).inflate(R.layout.update_group, null);
         Avatar avatar = view.findViewById(R.id.group_icon);
         TextInputEditText avatar_url = view.findViewById(R.id.icon_url_edt);
-        if (groupIcon.getAvatarUrl() != null) {
-            avatar.setVisibility(View.VISIBLE);
-            avatar.setAvatar(groupIcon.getAvatarUrl());
-            avatar_url.setText(groupIcon.getAvatarUrl());
-        } else {
-            avatar.setVisibility(View.GONE);
-        }
+//        if (groupIcon.getAvatarUrl() != null) {
+//            avatar.setVisibility(View.VISIBLE);
+//            avatar.setAvatar(groupIcon.getAvatarUrl());
+//            avatar_url.setText(groupIcon.getAvatarUrl());
+//        } else {
+//            avatar.setVisibility(View.GONE);
+//        }
         TextInputEditText groupName = view.findViewById(R.id.groupname_edt);
         TextInputEditText groupDesc = view.findViewById(R.id.groupdesc_edt);
         TextInputEditText groupOldPwd = view.findViewById(R.id.group_old_pwd);
@@ -893,9 +893,9 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Group group) {
                 gName = group.getName();
-                tvGroupName.setText(gName);
+                // tvGroupName.setText(gName);
                 toolbar.setTitle(gName);
-                groupIcon.setAvatar(group.getIcon());
+                // groupIcon.setAvatar(group.getIcon());
                 loggedInUserScope = group.getScope();
                 // groupMemberCount = group.getMembersCount();
                 groupType = group.getGroupType();

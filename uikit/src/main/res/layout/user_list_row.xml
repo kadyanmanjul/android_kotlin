@@ -7,16 +7,18 @@
         android:layout_width="match_parent"
         android:layout_height="72dp"
         android:background="?attr/selectableItemBackground"
-        android:clickable="true">
+        android:clickable="true"
+        android:focusable="true">
 
         <com.cometchat.pro.uikit.Avatar
             android:id="@+id/av_user"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_32sdp"
+            android:layout_alignParentBottom="true"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="16dp"
             tools:src="@tools:sample/avatars" />
 
         <com.cometchat.pro.uikit.StatusIndicator
@@ -37,8 +39,7 @@
             android:layout_toEndOf="@id/av_user"
             android:maxLines="1"
             android:textColor="@color/primaryTextColor"
-            android:textSize="@dimen/name"
-            android:textStyle="bold"
+            android:textSize="@dimen/_12ssp"
             tools:text="@tools:sample/full_names" />
 
         <TextView
@@ -71,12 +72,11 @@
             android:layout_width="match_parent"
             android:layout_height="0.8dp"
             android:layout_alignParentBottom="true"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_toEndOf="@id/av_user"
-            android:background="@color/light_grey" />
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:background="@color/gray_9E" />
 
     </RelativeLayout>
 
 </layout>
-
