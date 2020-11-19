@@ -44,10 +44,10 @@ import com.plivo.endpoint.Endpoint
 import com.plivo.endpoint.EventListener
 import com.plivo.endpoint.Incoming
 import com.plivo.endpoint.Outgoing
+import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.HashMap
 import java.util.concurrent.ExecutorService
-import timber.log.Timber
 
 class WebRtcService : Service() {
 
@@ -352,8 +352,12 @@ class WebRtcService : Service() {
                                     putExtra(CALL_TYPE, CallType.INCOMING)
                                     putExtra(AUTO_PICKUP_CALL, true)
                                     putExtra(CALL_USER_OBJ, incomingData)
-                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                                 }
+                            if (JoshApplication.isAppVisible) {
+                                startActivity(callActivityIntent)
+                                return@execute
+                            }
                             startActivities(arrayOf(getBackIntent(), callActivityIntent))
                         }
                         this == CallDisconnect().action -> {
@@ -412,8 +416,12 @@ class WebRtcService : Service() {
                 putExtra(CALL_USER_OBJ, incomingData)
                 addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             }
-        val activityArray = arrayOf(getBackIntent(), callActivityIntent)
         if (isAppVisible()) {
+            if (JoshApplication.isAppVisible) {
+                startActivity(callActivityIntent)
+                return
+            }
+            val activityArray = arrayOf(getBackIntent(), callActivityIntent)
             startActivities(activityArray)
         }
     }
