@@ -21,7 +21,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent=".95">
+            app:layout_constraintWidth_percent=".93">
 
             <View
                 android:layout_width="@dimen/_2sdp"
