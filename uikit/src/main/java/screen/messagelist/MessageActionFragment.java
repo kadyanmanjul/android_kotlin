@@ -52,19 +52,19 @@ public class MessageActionFragment extends BottomSheetDialogFragment {
     private void fetchArguments() {
         if (getArguments() != null) {
 //            isCopyVisible = getArguments().getBoolean("copyVisible");
+//            isReplyVisible = getArguments().getBoolean("replyVisible");
 //            isThreadVisible = getArguments().getBoolean("threadVisible");
 //            isEditVisible = getArguments().getBoolean("editVisible");
 //            isDeleteVisible = getArguments().getBoolean("deleteVisible");
-//            isReplyVisible = getArguments().getBoolean("replyVisible");
 //            isForwardVisible = getArguments().getBoolean("forwardVisible");
 //            isShareVisible = getArguments().getBoolean("shareVisible");
 //            isMessageInfoVisible = getArguments().getBoolean("messageInfoVisible");
             isCopyVisible = true;
+            isReplyVisible = true;
             isThreadVisible = false;
             isEditVisible = false;
             isDeleteVisible = false;
-            isReplyVisible = true;
-            isForwardVisible = true;
+            isForwardVisible = false;
             isShareVisible = false;
             isMessageInfoVisible = false;
             type = getArguments().getString("type");
