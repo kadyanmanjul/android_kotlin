@@ -3,6 +3,7 @@ package screen;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -73,6 +75,7 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
     private final User loggedInUser = CometChat.getLoggedInUser();
     String[] s = new String[0];
     // private Avatar groupIcon;
+    private AppCompatImageView groupImage;
     private String groupType;
     private String ownerId;
     // private TextView tvGroupName;
@@ -128,6 +131,7 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
         divider2 = findViewById(R.id.tv_seperator_1);
         // groupIcon = findViewById(R.id.iv_group);
         // tvGroupName = findViewById(R.id.tv_group_name);
+        groupImage = findViewById(R.id.groupImage);
         tvGroupDesc = findViewById(R.id.group_description);
         // tvGroupName.setOnClickListener(v -> updateGroupDialog());
         tvMemberCount = findViewById(R.id.tv_members);
@@ -365,14 +369,18 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
         }
         if (getIntent().hasExtra(StringContract.IntentStrings.AVATAR)) {
             String avatar = getIntent().getStringExtra(StringContract.IntentStrings.AVATAR);
-//            if (avatar != null && !avatar.isEmpty())
-//                groupIcon.setAvatar(avatar);
-//            else
-//                groupIcon.setInitials(gName);
+            if (avatar != null && !avatar.isEmpty()) {
+                // groupIcon.setAvatar(avatar);
+                groupImage.setImageURI(Uri.parse(avatar));
+            } else {
+                // groupIcon.setInitials(gName);
+            }
         }
         if (getIntent().hasExtra(StringContract.IntentStrings.GROUP_DESC)) {
             gDesc = getIntent().getStringExtra(StringContract.IntentStrings.GROUP_DESC);
-            tvGroupDesc.setText(gDesc);
+            if (gDesc != null && !gDesc.isEmpty()) {
+                tvGroupDesc.setText(gDesc);
+            }
         }
         if (getIntent().hasExtra(StringContract.IntentStrings.GROUP_PASSWORD)) {
             gPassword = getIntent().getStringExtra(StringContract.IntentStrings.GROUP_PASSWORD);
@@ -895,12 +903,19 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
                 gName = group.getName();
                 // tvGroupName.setText(gName);
                 toolbar.setTitle(gName);
-                // groupIcon.setAvatar(group.getIcon());
+                if (group.getIcon() != null && !group.getIcon().isEmpty()) {
+                    // groupIcon.setAvatar(group.getIcon());
+                    groupImage.setImageURI(Uri.parse(group.getIcon()));
+                } else {
+                    // groupIcon.setInitials(group.getName());
+                }
                 loggedInUserScope = group.getScope();
                 // groupMemberCount = group.getMembersCount();
                 groupType = group.getGroupType();
                 gDesc = group.getDescription();
-                tvGroupDesc.setText(gDesc);
+                if (gDesc != null && !gDesc.isEmpty()) {
+                    tvGroupDesc.setText(gDesc);
+                }
                 tvMemberCount.setText(groupMemberCount + " Members");
             }
 

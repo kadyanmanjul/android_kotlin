@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -88,7 +89,7 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
 
         GroupMember groupMember = groupMemberList.get(i);
 
-        groupMemberViewHolder.userListRowBinding.avUser.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+        groupMemberViewHolder.userListRowBinding.avUser.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary));
         groupMemberViewHolder.userListRowBinding.getRoot().setTag(R.string.user, groupMember);
 
 
