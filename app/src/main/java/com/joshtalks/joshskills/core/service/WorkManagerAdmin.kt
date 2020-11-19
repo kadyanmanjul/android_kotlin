@@ -109,7 +109,6 @@ object WorkManagerAdmin {
     }
 
     fun readMessageUpdating() {
-
         val workRequest = PeriodicWorkRequest.Builder(
             MessageReadPeriodicWorker::class.java,
             30,
@@ -209,7 +208,7 @@ object WorkManagerAdmin {
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniquePeriodicWork(
             "memoryManagerWorker",
-            ExistingPeriodicWorkPolicy.REPLACE,
+            ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
     }
