@@ -220,7 +220,6 @@ class GrammarFragment : Fragment() {
     }
 
     private fun addObserValbles() {
-//        viewModel.getQuestions()
         assessmentQuestions.clear()
         viewModel.assessmentLiveData.observe(viewLifecycleOwner) { assessmentRelations ->
             assessmentRelations.questionList.sortedBy { it.question.sortOrder }
