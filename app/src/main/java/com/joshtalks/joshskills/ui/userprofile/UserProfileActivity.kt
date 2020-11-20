@@ -90,6 +90,7 @@ class UserProfileActivity : BaseActivity() {
             it?.let {
                 hideProgressBar()
                 initView(it)
+
             }
         })
 

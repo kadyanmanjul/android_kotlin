@@ -544,5 +544,9 @@
         <key>VOCABULARY_COMPLETED</key>
         <value>Congratulations you have completed vocabulary!</value>
     </entry>
+    <entry>
+        <key>DISABLED_VERSION_CODES</key>
+        <value>0</value>
+    </entry>
 
 </defaultsMap>

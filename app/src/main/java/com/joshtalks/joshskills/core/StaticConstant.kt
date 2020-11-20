@@ -190,6 +190,8 @@ class FirebaseRemoteConfigKey {
         const val TODAYS_QUIZ_TITLE = "TODAYS_QUIZ_TITLE"
         const val VOCABULARY_COMPLETED = "VOCABULARY_COMPLETED"
 
+        const val DISABLED_VERSION_CODES = "DISABLED_VERSION_CODES"
+
     }
 }
 

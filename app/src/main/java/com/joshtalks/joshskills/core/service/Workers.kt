@@ -67,6 +67,7 @@ import timber.log.Timber
 import java.util.Date
 import java.util.HashMap
 import java.util.concurrent.TimeUnit
+import kotlin.system.exitProcess
 
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
@@ -96,6 +97,16 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
         WorkManagerAdmin.readMessageUpdating()
         WorkManagerAdmin.deleteUnlockTypeQuestions()
         AppObjectController.getFirebaseRemoteConfig().fetchAndActivate().addOnCompleteListener {
+            val disabledVersions =
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.DISABLED_VERSION_CODES)
+
+            val disabledVersionsArr = disabledVersions.split(",")
+            disabledVersionsArr.forEach {
+                if (it == BuildConfig.VERSION_CODE.toString()) {
+                    exitProcess(0)
+                }
+            }
             val npsEvent =
                 AppObjectController.getFirebaseRemoteConfig().getString("NPS_EVENT_LIST")
             NPSEventModel.setNPSList(npsEvent)

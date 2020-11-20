@@ -293,7 +293,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     private fun pauseAllViewHolderAudio() {
         val viewHolders = binding.audioList.allViewResolvers as List<PracticeAudioViewHolder>
         viewHolders.forEach { it ->
-            it?.pauseAudio()
+            it.pauseAudio()
         }
     }
 
@@ -590,7 +590,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                 binding.rootView.postDelayed(Runnable {
                     binding.rootView.smoothScrollTo(
                         0,
-                        binding.rootView.getHeight()
+                        binding.rootView.height
                     )
                 }, 100)
 
@@ -601,7 +601,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                     }
                     activityCallback?.onQuestionStatusUpdate(
                         QUESTION_STATUS.AT.name,
-                        chatModel?.question?.questionId?.toIntOrNull() ?: 0
+                        chatModel.question?.questionId?.toIntOrNull() ?: 0
                     )
                 }
 
@@ -1121,7 +1121,14 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                             filePath = AppDirectory.getAudioSentFile(null).absolutePath
                             AppDirectory.copy(it.absolutePath, filePath!!)
                             audioAttachmentInit()
+                            Handler().postDelayed({
+                                binding.submitAnswerBtn.parent.requestChildFocus(
+                                    binding.submitAnswerBtn,
+                                    binding.submitAnswerBtn
+                                )
+                            }, 200)
                         }
+
 
                     }
                 }
