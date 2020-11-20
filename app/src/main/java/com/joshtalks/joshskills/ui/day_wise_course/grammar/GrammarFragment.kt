@@ -9,6 +9,7 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -226,10 +227,8 @@ class GrammarFragment : Fragment() {
                 .forEach { item -> assessmentQuestions.add(item) }
 
             if (assessmentQuestions.size > 0) {
-                binding.quizRadioGroup.setOnCheckedChangeListener { radioGroup: RadioGroup, checkedId: Int ->
-                    showQuizUi()
-                    requestFocus(binding.submitAnswerBtn)
-                }
+                binding.quizRadioGroup.setOnCheckedChangeListener(quizCheckedChangeListener)
+                showQuizUi()
 
                 updateQuiz(assessmentQuestions.get(0))
                 if (quizQuestion?.status == QUESTION_STATUS.AT) {
@@ -385,6 +384,29 @@ class GrammarFragment : Fragment() {
 
     }
 
+    fun resetRadioBackground(radioButton: RadioButton) {
+        radioButton.setBackgroundColor(
+            ContextCompat.getColor(requireContext(), R.color.white)
+        )
+        radioButton.setCompoundDrawablesWithIntrinsicBounds(
+            0,
+            0,
+            0,
+            0
+        )
+        radioButton.elevation = 0F
+    }
+
+    val quizCheckedChangeListener =
+        RadioGroup.OnCheckedChangeListener { radioGroup: RadioGroup, checkedId: Int ->
+
+            resetRadioButtonsBg()
+            binding.submitAnswerBtn.isEnabled = true
+            radioGroup.findViewById<RadioButton>(checkedId)?.setBackgroundColor(
+                ContextCompat.getColor(requireContext(), R.color.received_bg_BC)
+            )
+        }
+
     private fun setupOption(
         radioButton: RadioButton,
         choice: Choice,
@@ -394,7 +416,11 @@ class GrammarFragment : Fragment() {
         if (question.question.isAttempted) {
             radioButton.isClickable = false
             if (choice.userSelectedOrder == 1) {
+                binding.quizRadioGroup.setOnCheckedChangeListener(null)
                 radioButton.isChecked = true
+
+                binding.quizRadioGroup.setOnCheckedChangeListener(quizCheckedChangeListener)
+
                 if (choice.isCorrect) {
                     radioButton.setBackgroundResource(R.drawable.rb_correct_rect_bg)
                     radioButton.setCompoundDrawablesWithIntrinsicBounds(
@@ -405,15 +431,7 @@ class GrammarFragment : Fragment() {
                     )
                     radioButton.elevation = 8F
                 } else {
-                    radioButton.setBackgroundColor(
-                        ContextCompat.getColor(requireContext(), R.color.received_bg_BC)
-                    )
-                    radioButton.setCompoundDrawablesWithIntrinsicBounds(
-                        0,
-                        0,
-                        0,
-                        0
-                    )
+                    resetRadioBackground(radioButton)
                 }
             } else if (choice.isCorrect) {
                 radioButton.setBackgroundResource(R.drawable.rb_correct_rect_bg)
@@ -425,29 +443,11 @@ class GrammarFragment : Fragment() {
                 )
                 radioButton.elevation = 8F
             } else {
-                radioButton.setBackgroundColor(
-                    ContextCompat.getColor(requireContext(), R.color.white)
-                )
-                radioButton.setCompoundDrawablesWithIntrinsicBounds(
-                    0,
-                    0,
-                    0,
-                    0
-                )
-                radioButton.elevation = 0F
+                resetRadioBackground(radioButton)
             }
         } else {
             radioButton.isClickable = true
-            radioButton.setBackgroundColor(
-                ContextCompat.getColor(requireContext(), R.color.white)
-            )
-            radioButton.elevation = 0F
-            radioButton.setCompoundDrawablesWithIntrinsicBounds(
-                0,
-                0,
-                0,
-                0
-            )
+            resetRadioBackground(radioButton)
         }
         if (choice.isCorrect)
             binding.quizRadioGroup.tag = radioButton.id
@@ -458,12 +458,20 @@ class GrammarFragment : Fragment() {
         binding.quizTv.visibility = View.VISIBLE
         binding.quizQuestionTv.visibility = View.VISIBLE
         binding.quizRadioGroup.visibility = View.VISIBLE
-        binding.submitAnswerBtn.isEnabled = true
         binding.submitAnswerBtn.visibility = View.VISIBLE
+    }
+
+    private fun resetRadioButtonsBg() {
+        binding.quizRadioGroup.children.iterator().forEach {
+            if (it is RadioButton)
+                resetRadioBackground(it)
+        }
     }
 
     fun onQuestionSubmit() {
         if (binding.quizRadioGroup.tag is Int) {
+
+            binding.submitAnswerBtn.isEnabled = true
 
             val question = assessmentQuestions.get(currentQuizQuestion)
             question.question.isAttempted = true

@@ -21,7 +21,7 @@ data class CourseOverviewBaseResponse(
     val pdfInfo: PdfInfo,
     @SerializedName("conversationId")
     @Expose
-    var conversationId: String,
+    var conversationId: String?,
 
     )
 
@@ -32,15 +32,15 @@ data class CourseOverviewResponse(
     var title: String,
     @SerializedName("chatId")
     @Expose
-    var chatId: String,
+    var chatId: String?,
     @SerializedName("total_count")
     @Expose
-    var totalCount: Int,
+    var totalCount: Int?,
     @SerializedName("certificateExamId")
     @Expose
-    var certificateExamId: Int,
+    var certificateExamId: Int?,
     @SerializedName("status")
-    val examStatus: CExamStatus,
+    val examStatus: CExamStatus?,
     @SerializedName("data")
     @Expose
     var data: List<CourseOverviewItem>

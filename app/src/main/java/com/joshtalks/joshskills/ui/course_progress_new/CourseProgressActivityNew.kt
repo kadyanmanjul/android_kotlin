@@ -111,7 +111,6 @@ class CourseProgressActivityNew : AppCompatActivity(),
             downloadBlocks: List<DownloadBlock>,
             totalBlocks: Int
         ) {
-//            message?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
             fileDownloadingInProgressView()
 
         }
@@ -171,7 +170,8 @@ class CourseProgressActivityNew : AppCompatActivity(),
                 }
 
             }
-            adapter = ProgressActivityAdapter(this, it.responseData!!, this, it.conversationId)
+            adapter =
+                ProgressActivityAdapter(this, it.responseData!!, this, it.conversationId ?: "0")
             binding.progressRv.adapter = adapter
 
         })

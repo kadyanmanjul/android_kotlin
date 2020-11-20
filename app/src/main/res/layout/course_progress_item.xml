@@ -61,7 +61,7 @@
             app:layout_constraintEnd_toEndOf="@+id/progress_index_tv"
             app:layout_constraintStart_toStartOf="@+id/progress_index_tv"
             app:layout_constraintTop_toBottomOf="@+id/progress_index_tv"
-            app:outerEmptyProgressColor="@color/quantum_purple100"
+            app:outerEmptyProgressColor="#77FD3085"
             app:outerMaxProgress="100"
             app:outerProgressColor="@color/quantum_pink"
             app:useRoundedCorner="true" />

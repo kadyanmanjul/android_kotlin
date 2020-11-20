@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.databinding.ProgressActivityAdapterLayoutBinding
+import com.joshtalks.joshskills.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewResponse
 
 class ProgressActivityAdapter(
@@ -49,9 +50,9 @@ class ProgressActivityAdapter(
                 item.data,
                 onItemClickListener,
                 conversationId,
-                item.chatId,
-                item.certificateExamId,
-                item.examStatus
+                item.chatId ?: "0",
+                item.certificateExamId ?: 0,
+                item.examStatus ?: CExamStatus.FRESH
             )
             binding.progressRv.adapter = adapter
 
