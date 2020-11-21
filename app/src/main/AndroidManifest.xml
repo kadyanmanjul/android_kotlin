@@ -405,6 +405,12 @@
             android:launchMode="singleTask"
             android:parentActivityName=".ui.chat.ConversationActivity"
             android:theme="@style/AppNoBarTheme" />
+        <activity
+            android:name=".ui.day_wise_course.unlock_next_class.ActivityUnlockNextClass"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:launchMode="singleTask"
+            android:parentActivityName=".ui.chat.ConversationActivity"
+            android:theme="@style/AppNoBarTheme" />
 
         <service
             android:name=".core.service.video_download.VideoDownloadService"

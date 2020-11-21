@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.day_wise_course.unlock_next_class
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -52,12 +51,12 @@ class ActivityUnlockNextClass : AppCompatActivity() {
         descTv = findViewById(R.id.description_tv)
 
         lessonModel?.let {
-            lessonName.text = it.lessonName
+            lessonName.text = getString(R.string.lesson_name, it.lessonNo, it.lessonName)
             Utils.setImage(lessonIv, it.varthumbnail)
             /*descTv.text = it.*/
         }
 
-        findViewById<Button>(R.id.continue_btn).setOnClickListener {
+        findViewById<TextView>(R.id.continue_btn).setOnClickListener {
             setResult(RESULT_OK, Intent().apply { putExtra(IS_BATCH_CHANGED, true) })
             finish()
             /* CoroutineScope(Dispatchers.IO).launch {

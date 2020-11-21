@@ -16,10 +16,11 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
-
             android:layout_height="wrap_content"
+            android:background="@drawable/rect_grey_bg"
+            android:elevation="@dimen/_8sdp"
             android:layout_margin="@dimen/_16sdp"
-            android:background="@drawable/rectangle_with_blue_bound_stroke"
+            android:outlineAmbientShadowColor="@color/green_right_answer"
             app:cardElevation="@dimen/_8sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -30,12 +31,16 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/_16sdp">
+                android:background="@drawable/rect_grey_bg"
+                android:paddingHorizontal="@dimen/_16sdp"
+                android:paddingTop="@dimen/_8sdp"
+                android:paddingBottom="@dimen/_16sdp">
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/textView6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/black"
                     android:text="@string/lesson_completed"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -46,7 +51,8 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/lesson_iv"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_marginTop="@dimen/_8sdp"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/_40sdp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -59,8 +65,10 @@
                     android:id="@+id/lesson_name_tv"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
                     android:text="@string/lesson_completed"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+                    android:textColor="@color/black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/lesson_iv" />
@@ -68,6 +76,7 @@
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/description_tv"
                     android:layout_width="0dp"
+                    android:layout_marginTop="@dimen/_4sdp"
                     android:layout_height="wrap_content"
                     android:text="@string/lesson_completed"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
