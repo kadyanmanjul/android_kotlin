@@ -180,6 +180,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
         viewModel.lessonStatusLiveData.observe(this, {
             if (it == LESSON_STATUS.CO.name) {
+                viewModel.updateQuestionLessonStatus(lessonId)
                 lessonCompleted = true
             }
         })

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.PdfType
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.entity.VideoType
@@ -30,6 +31,7 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
     var videoForQuestion: LiveData<List<VideoType>> = MutableLiveData()
     val appDatabase = AppObjectController.appDatabase
     val chatDao = appDatabase.chatDao()
+    val lessonDao = appDatabase.lessonDao()
 
     val chatObservableLiveData: MutableLiveData<List<ChatModel>> = MutableLiveData()
 
@@ -208,6 +210,12 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
     fun updateQuestionInLocal(question: Question) {
         viewModelScope.launch(Dispatchers.IO) {
             chatDao.updateQuestionObject(question)
+        }
+    }
+
+    fun updateQuestionLessonStatus(lessonId:Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            lessonDao.updateFeedbackStatus(lessonId,LESSON_STATUS.CO)
         }
     }
 }
