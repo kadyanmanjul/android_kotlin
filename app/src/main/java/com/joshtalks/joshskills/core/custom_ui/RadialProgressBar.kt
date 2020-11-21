@@ -89,7 +89,7 @@ open class RadialProgressBar : View {
      */
     private var mStartAngleInnerMostView = 270
     private var mSweepAngleInnerMostView = 0
-    private var mInnerMostProgress = 80
+    private var mInnerMostProgress = 0
     private var mAnimationDurationInnerMostView = 400
     private var mMaxProgressInnerMostView = 100
     private var mProgressColorInnerMostView = Color.parseColor("#560FBC")
@@ -825,7 +825,12 @@ open class RadialProgressBar : View {
     /**
     set the  progress for all progressview
      */
-    fun setProgressValues(innerProgress: Int, centerProgress: Int, outerProgress: Int) {
+    fun setProgressValues(
+        innerMostProgress: Int,
+        innerProgress: Int,
+        centerProgress: Int,
+        outerProgress: Int
+    ) {
         when {
             hasTwoProgressView -> {
                 setCenterProgress(centerProgress)
@@ -836,6 +841,7 @@ open class RadialProgressBar : View {
             }
             !hasOneProgressView && !hasTwoProgressView -> {
                 setInnerProgress(innerProgress)
+                setInnerMostProgress(innerMostProgress)
                 setCenterProgress(centerProgress)
                 setOuterProgress(outerProgress)
             }
@@ -898,7 +904,7 @@ open class RadialProgressBar : View {
             val animator =
                 ValueAnimator.ofFloat(
                     mSweepAngleInnerMostView.toFloat(),
-                    calcSweepAngleFromInnerMostProgress(mInnerProgress)
+                    calcSweepAngleFromInnerMostProgress(mInnerMostProgress)
                 )
             animator.removeAllUpdateListeners()
             animator.interpolator = DecelerateInterpolator()
