@@ -57,12 +57,17 @@ class LessonPagerAdapter(
             else -> SpeakingPractiseFragment.newInstance(
                 courseId = courseId,
                 lessonId = lessonId,
-                topicId = getTopicId()
+                topicId = getTopicId(),
+                questionId = getQuestionId()
             )
         }
     }
 
     private fun getTopicId(): String? {
         return chatList.find { obj -> obj.question?.topicId != null }?.question?.topicId
+    }
+
+    private fun getQuestionId(): String? {
+        return chatList.find { obj -> obj.question?.topicId != null }?.question?.questionId
     }
 }

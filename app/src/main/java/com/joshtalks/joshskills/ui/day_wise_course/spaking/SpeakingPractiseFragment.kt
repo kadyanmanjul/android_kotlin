@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.ui.day_wise_course.spaking
 
 
-import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,7 +18,10 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopicModel
+import com.joshtalks.joshskills.ui.day_wise_course.CapsuleActivityCallback
+import com.joshtalks.joshskills.ui.feedback.QUESTION_ID
 import com.joshtalks.joshskills.ui.voip.COURSE_ID
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.TOPIC_ID
@@ -28,6 +31,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import kotlinx.android.synthetic.main.speaking_practise_fragment.btn_continue
 import kotlinx.android.synthetic.main.speaking_practise_fragment.btn_start
 import kotlinx.android.synthetic.main.speaking_practise_fragment.group_one
 import kotlinx.android.synthetic.main.speaking_practise_fragment.group_two
@@ -42,18 +46,23 @@ import kotlinx.coroutines.launch
 const val LESSON_ID = "lesson_id"
 
 class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
+
+    var activityCallback: CapsuleActivityCallback? = null
     private var lessonId: String = EMPTY
     private var courseId: String = EMPTY
     private var topicId: String? = null
+    private var questionId: String? = null
+
     private val speakingTopicModelLiveData: MutableLiveData<SpeakingTopicModel> = MutableLiveData()
-    var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
+    private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            topicId?.let {
-                getTopicDetail(it)
-            }
-        }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is CapsuleActivityCallback)
+            activityCallback = context
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,6 +75,9 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
         }
         arguments?.getString(TOPIC_ID)?.run {
             topicId = this
+        }
+        arguments?.getString(QUESTION_ID)?.run {
+            questionId = this
         }
     }
 
@@ -86,6 +98,9 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
         btn_start.setOnClickListener {
             startPractise()
         }
+        btn_continue.setOnClickListener {
+
+        }
         speakingTopicModelLiveData.observe(viewLifecycleOwner, { response ->
             try {
                 tv_today_topic.text = response.topicName
@@ -100,6 +115,17 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
             }
             group_two.visibility = View.VISIBLE
             group_one.visibility = View.GONE
+
+            if (response.alreadyTalked >= response.duration) {
+                btn_continue.visibility = View.VISIBLE
+                activityCallback?.onQuestionStatusUpdate(
+                    QUESTION_STATUS.AT.name,
+                    questionId?.toInt() ?: 0
+                )
+            } else {
+                btn_start.visibility = View.VISIBLE
+            }
+
         })
     }
 
@@ -109,7 +135,6 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
             getTopicDetail(it)
         }
     }
-
 
     private fun startPractise() {
         if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
@@ -172,13 +197,14 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
 
     companion object {
         @JvmStatic
-        fun newInstance(courseId: String, lessonId: Int, topicId: String?) =
+        fun newInstance(courseId: String, lessonId: Int, topicId: String?, questionId: String?) =
             SpeakingPractiseFragment()
                 .apply {
                     arguments = Bundle().apply {
                         putString(COURSE_ID, courseId)
                         putString(LESSON_ID, lessonId.toString())
                         putString(TOPIC_ID, topicId)
+                        putString(QUESTION_ID, questionId)
                     }
                 }
     }
