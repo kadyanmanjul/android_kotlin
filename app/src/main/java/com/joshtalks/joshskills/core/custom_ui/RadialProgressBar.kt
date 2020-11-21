@@ -898,7 +898,7 @@ open class RadialProgressBar : View {
             val animator =
                 ValueAnimator.ofFloat(
                     mSweepAngleInnerMostView.toFloat(),
-                    calcSweepAngleFromInnerMostProgress(mInnerProgress)
+                    calcSweepAngleFromInnerMostProgress(mInnerMostProgress)
                 )
             animator.removeAllUpdateListeners()
             animator.interpolator = DecelerateInterpolator()
