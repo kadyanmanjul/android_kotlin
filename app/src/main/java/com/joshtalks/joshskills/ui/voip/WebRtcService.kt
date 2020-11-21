@@ -18,6 +18,7 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import androidx.annotation.ColorRes
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -79,6 +80,7 @@ class WebRtcService : Service() {
         @Volatile
         var isCallWasOnGoing: Boolean = false
 
+        @RequiresApi(Build.VERSION_CODES.O)
         fun loginUserClient() {
             if (UserPlivoDetailsModel.getPlivoUser() == null) {
                 return
@@ -90,7 +92,7 @@ class WebRtcService : Service() {
                 action = LoginUser().action
             }
             try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && JoshApplication.isAppVisible.not()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     serviceIntent.also { intent ->
                         AppObjectController.joshApplication.startForegroundService(intent)
                     }
@@ -309,7 +311,11 @@ class WebRtcService : Service() {
                     Timber.tag(TAG).e(intent.getStringExtra(INCOMING_CALL_JSON_OBJECT))
                     when {
                         this == LoginUser().action -> {
-                            loginUser()
+                            val notification = loginNotification()
+                            startForeground(INCOMING_CALL_NOTIFICATION_ID, notification)
+                            if (loginUser()) {
+                                removeNotifications()
+                            }
                         }
                         this == LogoutUser().action -> {
                             logoutUser()
@@ -481,6 +487,7 @@ class WebRtcService : Service() {
                     this.hangup()
                     return@run
                 }
+
                 if (this is Incoming) {
                     this.hangup()
                     return@run
@@ -618,6 +625,32 @@ class WebRtcService : Service() {
     override fun onDestroy() {
         Timber.tag(TAG).e("onDestroy")
     }
+
+    private fun loginNotification(): Notification {
+        Timber.tag(TAG).e("incomingCallNotification   ")
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name: CharSequence = "Voip Login User"
+            val importance: Int = NotificationManager.IMPORTANCE_LOW
+            val mChannel = NotificationChannel(INCOMING_CALL_CHANNEL_ID, name, importance)
+            mNotificationManager?.createNotificationChannel(mChannel)
+        }
+
+        val lNotificationBuilder = NotificationCompat.Builder(this, INCOMING_CALL_CHANNEL_ID)
+            .setChannelId(INCOMING_CALL_CHANNEL_ID)
+            .setContentTitle(getString(R.string.app_name))
+            .setContentText("Syncing...")
+            .setSmallIcon(R.drawable.ic_status_bar_notification)
+            .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
+            .setOngoing(true)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            lNotificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+        }
+        return lNotificationBuilder.build()
+    }
+
 
     private fun incomingCallNotification(incomingData: HashMap<String, String>?): Notification {
         Timber.tag(TAG).e("incomingCallNotification   ")

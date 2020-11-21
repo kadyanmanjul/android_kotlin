@@ -58,7 +58,6 @@ import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
-import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.sinch.verification.PhoneNumberUtils
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
@@ -828,7 +827,6 @@ class GetPlivoUserWorker(context: Context, workerParams: WorkerParameters) :
                 AppObjectController.commonNetworkService.getPlivoUserDetails().run {
                     this.savePlivoUser()
                 }
-                WebRtcService.loginUserClient()
             }
         } catch (ex: Exception) {
             ex.printStackTrace()

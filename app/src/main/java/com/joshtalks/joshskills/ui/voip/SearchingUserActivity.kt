@@ -292,6 +292,7 @@ class SearchingUserActivity : BaseActivity() {
         super.onStop()
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
         unbindService(myConnection)
+        WebRtcService.stopCall()
     }
 
     private fun getMapForOutgoing(
