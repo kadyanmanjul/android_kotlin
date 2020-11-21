@@ -92,7 +92,17 @@ class CourseProgressAdapter(
                 binding.progressIv.visibility = View.GONE
 
                 binding.root.setOnClickListener {
-                    onItemClickListener.onProgressItemClick(itemList[position])
+                    if (position > 0) {
+                        onItemClickListener.onProgressItemClick(
+                            itemList[position],
+                            itemList[position - 1]
+                        )
+                    } else {
+                        onItemClickListener.onProgressItemClick(
+                            itemList[position],
+                            null
+                        )
+                    }
                 }
             }
 
@@ -124,7 +134,7 @@ class CourseProgressAdapter(
     }
 
     interface ProgressItemClickListener {
-        fun onProgressItemClick(item: CourseOverviewItem)
+        fun onProgressItemClick(item: CourseOverviewItem, previousItem: CourseOverviewItem? = null)
         fun onCertificateExamClick(
             previousLesson: CourseOverviewItem, conversationId: String,
             chatMessageId: String,

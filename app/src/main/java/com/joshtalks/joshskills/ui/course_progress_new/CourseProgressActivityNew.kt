@@ -194,16 +194,26 @@ class CourseProgressActivityNew : AppCompatActivity(),
         }
     }
 
-    override fun onProgressItemClick(item: CourseOverviewItem) {
-        if (item.status == LESSON_STATUS.NO.name) {
+    override fun onProgressItemClick(item: CourseOverviewItem, previousItem: CourseOverviewItem?) {
+        if (previousItem != null && previousItem.status != LESSON_STATUS.CO.name) {
             showAlertMessage()
-        } else
-            startActivity(
+        } else {
+            val dayWiseActivityListener: ActivityResultLauncher<Intent> =
+                registerForActivityResult(
+                    ActivityResultContracts.StartActivityForResult()
+                ) { result ->
+                    if (result.resultCode == Activity.RESULT_OK) {
+                        viewModel.getCourseOverview(courseId)
+                    }
+                }
+
+            dayWiseActivityListener.launch(
                 DayWiseCourseActivity.getDayWiseCourseActivityIntent(
                     this, item.lessonId,
                     courseId = courseId.toString()
                 )
             )
+        }
     }
 
     override fun onCertificateExamClick(
