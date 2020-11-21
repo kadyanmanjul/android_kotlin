@@ -258,6 +258,9 @@ class GrammarFragment : Fragment() {
             } else
                 when (this.material_type) {
                     BASE_MESSAGE_TYPE.VI -> {
+
+                        binding.practiceTitleTv.text =
+                            getString(R.string.today_lesson, this.lesson?.lessonName ?: 0)
                         binding.videoPlayer.visibility = View.VISIBLE
                         this.videoList?.getOrNull(0)?.video_url?.let {
                             binding.videoPlayer.setUrl(it)
@@ -287,6 +290,9 @@ class GrammarFragment : Fragment() {
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({ eventBus ->
+                                        if (eventBus.progress > 3000) {
+                                            binding.startQuizBtn.visibility = View.VISIBLE
+                                        }
                                         if (eventBus.progress + 1000 >= this.videoList?.getOrNull(0)?.duration ?: 0) {
                                             updateVideoQuestionStatus(this)
                                             binding.quizShader.visibility = View.GONE

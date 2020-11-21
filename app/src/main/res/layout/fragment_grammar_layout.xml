@@ -33,8 +33,8 @@
                 android:background="@color/white"
                 android:gravity="start|center"
                 android:padding="@dimen/_8sdp"
-                android:text="@string/today_practise"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                android:text="@string/today_lesson"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
                 android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -86,10 +86,10 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/expand_iv"
-                    android:layout_width="@dimen/_20sdp"
+                    android:layout_width="@dimen/_24sdp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:layout_marginEnd="@dimen/_8sdp"
                     app:layout_constraintBottom_toBottomOf="@+id/grammar_desc_tv"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/grammar_desc_tv"
@@ -105,8 +105,9 @@
                 android:drawablePadding="@dimen/_8sdp"
                 android:gravity="center_vertical"
                 android:onClick="@{()->handler.onClickPdfContainer()}"
-                android:paddingStart="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_4sdp"
                 android:text="Android study material"
+                android:paddingStart="@dimen/_6sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                 app:drawableStartCompat="@drawable/ic_pdf"
                 app:layout_constraintEnd_toStartOf="@+id/download_container"
@@ -129,8 +130,8 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_start_download"
-                    android:layout_width="@dimen/_24sdp"
-                    android:layout_height="@dimen/_24sdp"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
                     android:layout_gravity="center"
                     android:background="@drawable/circle_pdf_bg"
                     android:clickable="true"
@@ -143,8 +144,8 @@
 
                 <com.pnikosis.materialishprogress.ProgressWheel
                     android:id="@+id/progress_dialog"
-                    android:layout_width="@dimen/_28sdp"
-                    android:layout_height="@dimen/_28sdp"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
                     android:layout_gravity="center"
                     android:visibility="gone"
                     app:matProg_barWidth="@dimen/_2sdp"
@@ -174,8 +175,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:paddingHorizontal="@dimen/_16sdp"
-                android:paddingTop="@dimen/_4sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:paddingHorizontal="@dimen/_8sdp"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/additional_material_tv"
@@ -404,15 +405,13 @@
                 app:layout_constraintBottom_toBottomOf="@+id/show_explanation_btn"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/question_navigate_rl"
-                tools:visibility="gone">
+                app:layout_constraintTop_toTopOf="@+id/question_navigate_rl">
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/start_quiz_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
+                    android:layout_centerInParent="true"
                     android:layout_gravity="center"
                     android:layout_marginHorizontal="@dimen/_16sdp"
                     android:layout_marginVertical="@dimen/_8sdp"
@@ -427,7 +426,7 @@
                     android:textAllCaps="false"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                     android:textColor="@color/white"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:rippleColor="@color/white" />
             </RelativeLayout>
 

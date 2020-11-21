@@ -437,6 +437,8 @@
     <string name="more_info">और जानकारी </string>
     <string name="view_profile"> प्रोफाइल देखिये</string>
     <string name="with"> </string>
+    <string name="lesson_no">"पाठ %1$d"</string>
 
+    <string name="today_lesson">आज का पाठ: %1$s</string>
 
 </resources>

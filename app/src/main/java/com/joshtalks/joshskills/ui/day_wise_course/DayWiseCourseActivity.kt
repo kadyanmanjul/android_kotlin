@@ -110,7 +110,8 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             courseId = it.getOrNull(0)?.question?.course_id
             conversastionId = it.getOrNull(0)?.conversationId
 
-            titleView.text = it.getOrNull(0)?.question?.lesson?.lessonName
+            titleView.text =
+                getString(R.string.lesson_no, it.getOrNull(0)?.question?.lesson?.lessonNo)
 
             val adapter = LessonPagerAdapter(
                 supportFragmentManager, this.lifecycle, it,
