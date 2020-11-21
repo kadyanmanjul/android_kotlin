@@ -122,8 +122,6 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
                     QUESTION_STATUS.AT.name,
                     questionId?.toInt() ?: 0
                 )
-            } else {
-                btn_start.visibility = View.VISIBLE
             }
 
         })

@@ -21,7 +21,6 @@ import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 const val LAST_VOIP_CALL_ID = "last_call_id"
 const val LAST_VOIP_CALL_TIME = "last_call_time"
@@ -82,9 +81,10 @@ class VoipRatingFragment : DialogFragment() {
     }
 
     private fun getTimeHhMm(): String {
+        val second: Int = (lastCallTime / 1000 % 60).toInt()
+        val minute: Int = (lastCallTime / (1000 * 60) % 60).toInt()
         return String.format(
-            "%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(lastCallTime),
-            TimeUnit.MILLISECONDS.toSeconds(lastCallTime)
+            "%02d:%02d", minute, second
         )
     }
 

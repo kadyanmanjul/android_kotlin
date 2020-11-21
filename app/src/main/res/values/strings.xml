@@ -510,10 +510,10 @@
     <string name="found_practise_partner">Practice Partner found Connecting Call</string>
     <string name="rating">Rating</string>
     <string name="rate_your_practise_partner">Rate Your  Practice Partner</string>
-    <string name="confidence">Confidence:</string>
+    <string name="confidence">Confidence: </string>
     <string name="pronunciation">Pronunciation: </string>
-    <string name="eagerness_to_learn">Eagerness to Learn:</string>
-    <string name="was_the_respect_fullness">Was Respectfulness: </string>
+    <string name="eagerness_to_learn">Eagerness to Learn: </string>
+    <string name="was_the_respect_fullness">Was Respectful: </string>
     <string name="submit_feedback">Submit Feedback</string>
     <string name="speak_practise_title">Welcome to \n Practice with Partner</string>
     <string name="today_topic">Today Topic</string>
