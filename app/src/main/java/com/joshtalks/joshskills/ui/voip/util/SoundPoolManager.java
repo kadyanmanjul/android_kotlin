@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.voip.util;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.SoundPool;
+
 import com.joshtalks.joshskills.R;
 
 import static android.content.Context.AUDIO_SERVICE;
@@ -13,11 +14,11 @@ public class SoundPoolManager {
     private boolean playing = false;
     private boolean loaded = false;
     private boolean playingCalled = false;
-    private float volume;
+    private final float volume;
     private SoundPool soundPool;
-    private int ringingSoundId;
+    private final int ringingSoundId;
     private int ringingStreamId;
-    private int disconnectSoundId;
+    private final int disconnectSoundId;
 
     private SoundPoolManager(Context context) {
         // AudioManager audio settings for adjusting the volume
@@ -61,8 +62,11 @@ public class SoundPoolManager {
     }
 
     public static SoundPoolManager getInstance(Context context) {
-        if (instance == null) {
-            instance = new SoundPoolManager(context);
+        try {
+            if (instance == null) {
+                instance = new SoundPoolManager(context);
+            }
+        } catch (Exception e) {
         }
         return instance;
     }

@@ -9,7 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.OnLifecycleEvent
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
@@ -38,7 +41,7 @@ import kotlinx.coroutines.launch
 
 const val LESSON_ID = "lesson_id"
 
-class SpeakingPractiseFragment : CoreJoshFragment() {
+class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
     private var lessonId: String = EMPTY
     private var courseId: String = EMPTY
     private var topicId: String? = null
@@ -64,7 +67,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         arguments?.getString(TOPIC_ID)?.run {
             topicId = this
         }
-
     }
 
     override fun onCreateView(
@@ -80,6 +82,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewLifecycleOwner.lifecycle.addObserver(this)
         btn_start.setOnClickListener {
             startPractise()
         }
@@ -98,10 +101,15 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             group_two.visibility = View.VISIBLE
             group_one.visibility = View.GONE
         })
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    fun onFragmentResume() {
         topicId?.let {
             getTopicDetail(it)
         }
     }
+
 
     private fun startPractise() {
         if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
@@ -138,7 +146,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private fun startPractiseSearchScreen() {
         speakingTopicModelLiveData.value?.run {
-
             openCallActivity.launch(
                 SearchingUserActivity.startUserForPractiseOnPhoneActivity(
                     requireActivity(),

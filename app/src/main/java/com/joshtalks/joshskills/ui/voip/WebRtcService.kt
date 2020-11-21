@@ -258,7 +258,7 @@ class WebRtcService : Service() {
         override fun onOutgoingCallRejected(outgoing: Outgoing) {
             callData = outgoing
             Timber.tag(TAG).e("onOutgoingCallRejected %s", getCallId())
-            callCallback?.get()?.onCallDisconnect(getCallId())
+            callCallback?.get()?.onCallReject(getCallId())
             removeNotifications()
         }
 
@@ -352,13 +352,15 @@ class WebRtcService : Service() {
                                     putExtra(CALL_TYPE, CallType.INCOMING)
                                     putExtra(AUTO_PICKUP_CALL, true)
                                     putExtra(CALL_USER_OBJ, incomingData)
-                                    addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                 }
-                            if (JoshApplication.isAppVisible) {
-                                startActivity(callActivityIntent)
-                                return@execute
-                            }
                             startActivities(arrayOf(getBackIntent(), callActivityIntent))
+
+                            /*if (JoshApplication.isAppVisible) {
+                                startActivity(callActivityIntent)
+                            } else {
+                                startActivities(arrayOf(getBackIntent(), callActivityIntent))
+                            }*/
                         }
                         this == CallDisconnect().action -> {
                             endCall()
@@ -417,12 +419,11 @@ class WebRtcService : Service() {
                 addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             }
         if (isAppVisible()) {
-            if (JoshApplication.isAppVisible) {
-                startActivity(callActivityIntent)
-                return
-            }
-            val activityArray = arrayOf(getBackIntent(), callActivityIntent)
-            startActivities(activityArray)
+            /*     if (JoshApplication.isAppVisible) {
+                     startActivity(callActivityIntent)
+                 } else {
+           */          startActivities(arrayOf(getBackIntent(), callActivityIntent))
+            // }
         }
     }
 
@@ -593,7 +594,7 @@ class WebRtcService : Service() {
     private fun onDisconnectAndRemove() {
         callCallback?.get()?.onDisconnect()
         removeNotifications()
-        SoundPoolManager.getInstance(applicationContext).stopRinging()
+        SoundPoolManager.getInstance(applicationContext)?.stopRinging()
         isCallWasOnGoing = false
         isSpeakerEnable = false
         isMicEnable = true
@@ -765,18 +766,6 @@ class WebRtcService : Service() {
             val mChannel = NotificationChannel(CONNECTED_CALL_CHANNEL_ID, name, importance)
             mNotificationManager?.createNotificationChannel(mChannel)
         }
-        /*   val notificationIntent = Intent(
-               AppObjectController.joshApplication,
-               WebRtcActivity::class.java
-           )
-           notificationIntent.action = "calling.action.main"
-
-           val pendingIntent: PendingIntent = PendingIntent.getActivity(
-               this,
-               0,
-               notificationIntent,
-               PendingIntent.FLAG_UPDATE_CURRENT
-           )*/
         val declineActionIntent =
             Intent(AppObjectController.joshApplication, WebRtcService::class.java)
         declineActionIntent.action = CallDisconnect().action
