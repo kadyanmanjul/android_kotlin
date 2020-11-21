@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.LESSON_INTERVAL
 import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.ui.chat.LESSON_REQUEST_CODE
 import com.joshtalks.joshskills.ui.day_wise_course.unlock_next_class.ActivityUnlockNextClass
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
@@ -31,6 +32,8 @@ import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 class DayWiseCourseActivity : CoreJoshActivity(),
     CapsuleActivityCallback {
 
+    private var lessonModel: LessonModel? = null
+    private var lessonCompleted: Boolean = false
     lateinit var titleView: TextView
     private var courseId: Int? = null
     private lateinit var binding: DaywiseCourseActivityBinding
@@ -110,6 +113,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             courseId = it.getOrNull(0)?.question?.course_id
             conversastionId = it.getOrNull(0)?.conversationId
 
+            lessonModel = it.getOrNull(0)?.question?.lesson
             titleView.text =
                 getString(R.string.lesson_no, it.getOrNull(0)?.question?.lesson?.lessonNo)
 
@@ -176,14 +180,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
         viewModel.lessonStatusLiveData.observe(this, {
             if (it == LESSON_STATUS.CO.name) {
-                conversastionId?.let { id ->
-                    startActivityForResult(
-                        ActivityUnlockNextClass.getActivityUnlockNextClassIntent(
-                            this,
-                            id
-                        ), LESSON_REQUEST_CODE
-                    )
-                }
+                lessonCompleted = true
             }
         })
     }
@@ -245,6 +242,19 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         viewModel.updateQuestionStatus(status, questionId, courseId!!, lessonId)
     }
 
+    override fun onContinueClick() {
+        if (lessonModel != null) {
+            conversastionId?.let { id ->
+                startActivityForResult(
+                    ActivityUnlockNextClass.getActivityUnlockNextClassIntent(
+                        this,
+                        id, lessonModel!!
+                    ), LESSON_REQUEST_CODE
+                )
+            }
+        }
+    }
+
     override fun onBackPressed() {
         val resultIntent = Intent()
         resultIntent.putExtra(IS_BATCH_CHANGED, isBatchChanged)
@@ -258,4 +268,5 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 interface CapsuleActivityCallback {
     fun onNextTabCall(view: View?)
     fun onQuestionStatusUpdate(status: String, questionId: Int)
+    fun onContinueClick()
 }

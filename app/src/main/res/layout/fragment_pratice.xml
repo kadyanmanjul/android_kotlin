@@ -61,12 +61,11 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/vocabulary_complete_layout"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:background="@color/white"
             android:paddingHorizontal="@dimen/_8sdp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHeight_percent="0.40"
             app:layout_constraintStart_toStartOf="parent"
             tools:visibility="visible">
 
@@ -76,6 +75,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_8sdp"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:srcCompat="@drawable/ic_new_shadow_tick" />
 
@@ -84,8 +84,8 @@
                 android:id="@+id/vocabulary_completed_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:layout_marginBottom="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:layout_marginBottom="@dimen/_16sdp"
                 android:gravity="center_horizontal"
                 android:text="@string/vocabulary_completed"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"

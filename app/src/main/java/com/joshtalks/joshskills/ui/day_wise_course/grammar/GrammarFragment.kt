@@ -436,8 +436,10 @@ class GrammarFragment : Fragment() {
                         0
                     )
                     radioButton.elevation = 8F
+                    radioButton.alpha = 1f
                 } else {
                     resetRadioBackground(radioButton)
+                    radioButton.alpha = 0.5f
                 }
             } else if (choice.isCorrect) {
                 radioButton.setBackgroundResource(R.drawable.rb_correct_rect_bg)
@@ -448,12 +450,15 @@ class GrammarFragment : Fragment() {
                     0
                 )
                 radioButton.elevation = 8F
+                radioButton.alpha = 1f
             } else {
                 resetRadioBackground(radioButton)
+                radioButton.alpha = 0.5f
             }
         } else {
-            radioButton.isClickable = true
             resetRadioBackground(radioButton)
+            radioButton.isClickable = true
+            radioButton.alpha = 1f
         }
         if (choice.isCorrect)
             binding.quizRadioGroup.tag = radioButton.id
@@ -476,9 +481,6 @@ class GrammarFragment : Fragment() {
 
     fun onQuestionSubmit() {
         if (binding.quizRadioGroup.tag is Int) {
-
-            binding.submitAnswerBtn.isEnabled = true
-
             val question = assessmentQuestions.get(currentQuizQuestion)
             question.question.isAttempted = true
             question.question.status =
@@ -535,9 +537,14 @@ class GrammarFragment : Fragment() {
     }
 
     fun onRedoQuizClick() {
+        correctAns = 0
         assessmentQuestions.forEach { question ->
             question.question.isAttempted = false
             question.question.status = QuestionStatus.NONE
+            question.choiceList.forEach { choice ->
+                choice.isSelectedByUser = false
+                choice.userSelectedOrder = 0
+            }
             viewModel.saveAssessmentQuestion(question)
         }
         currentQuizQuestion = 0
