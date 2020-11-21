@@ -412,7 +412,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun setToolbar() {
-        iv_reminder.visibility = View.VISIBLE
+        iv_reminder.visibility = View.GONE
         iv_setting.visibility = View.VISIBLE
         text_message_title.text = getString(R.string.inbox_header)
         findMoreLayout = findViewById(R.id.parent_layout)
