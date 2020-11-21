@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.ui.day_wise_course.grammar.GrammarFragment
 import com.joshtalks.joshskills.ui.day_wise_course.practice.NewPracticeFragment
 import com.joshtalks.joshskills.ui.day_wise_course.reading.ReadingFragment
+import com.joshtalks.joshskills.ui.day_wise_course.reading.ReadingFragmentWithoutFeedback
 import com.joshtalks.joshskills.ui.day_wise_course.spaking.SpeakingPractiseFragment
 
 class LessonPagerAdapter(
@@ -52,7 +53,7 @@ class LessonPagerAdapter(
 
             1 -> NewPracticeFragment.instance(vocabularyQuestions)
 
-            2 -> ReadingFragment.instance(readingQuestions)
+            2 -> ReadingFragmentWithoutFeedback.instance(readingQuestions)
 
             else -> SpeakingPractiseFragment.newInstance(
                 courseId = courseId,
