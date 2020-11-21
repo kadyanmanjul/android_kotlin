@@ -204,7 +204,9 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
             User.getInstance().isVerified.not() -> {
                 if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false)) {
                     getInboxActivityIntent()
-                } else {
+                } else if(PrefManager.getBoolValue(IS_PAYMENT_DONE, false)){
+                    Intent(this, SignUpActivity::class.java)
+                } else{
                     Intent(this, OnBoardActivity::class.java)
                 }
             }

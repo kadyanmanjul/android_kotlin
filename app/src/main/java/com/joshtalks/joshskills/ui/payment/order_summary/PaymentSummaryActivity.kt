@@ -41,6 +41,7 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CTA_PAYMENT_SUMMARY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PAYMENT_SUMMARY_CTA_LABEL_FREE
 import com.joshtalks.joshskills.core.INSTANCE_ID
+import com.joshtalks.joshskills.core.IS_PAYMENT_DONE
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
 import com.joshtalks.joshskills.core.PrefManager
@@ -404,6 +405,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 if (intent.hasExtra(HAS_FREE_7_DAY_TRIAL)) {
                     MarketingAnalytics.sevenDayFreeTrialStart(testId)
                 }
+                PrefManager.put(IS_PAYMENT_DONE, true)
                 navigateToStartCourseActivity(false)
             }
         })
@@ -782,6 +784,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }
 
         uiHandler.post {
+            PrefManager.put(IS_PAYMENT_DONE, true)
             showPaymentProcessingFragment()
         }
 
