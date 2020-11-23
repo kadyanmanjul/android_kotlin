@@ -74,7 +74,7 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
-        <activity android:name=".ui.userprofile.UserProfileActivity"></activity>
+        <activity android:name=".ui.userprofile.UserProfileActivity" />
         <activity android:name=".ui.leaderboard.LeaderBoardViewPagerActivity" />
 
         <activity android:name=".ui.groupchat.GroupChatActivity" />
@@ -251,11 +251,6 @@
             android:parentActivityName=".ui.inbox.InboxActivity"
             android:theme="@style/AppNoBarTheme" />
         <activity
-            android:name=".core.notification.BaseActivityNew"
-            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
-            android:theme="@style/AppNoBarTheme" />
-        <activity
             android:name=".ui.referral.ReferralActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTask"
@@ -366,12 +361,6 @@
         <activity
             android:name=".ui.newonboarding.OnBoardingActivityNew"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-
-        <activity
-            android:name="com.tyagiabhinav.dialogflowchatlibrary.ChatbotActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
@@ -600,7 +589,7 @@
             android:name=".ui.certification_exam.CertificationBaseActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme"></activity>
+            android:theme="@style/AppNoBarTheme" />
 
         <activity
             android:name=".ui.certification_exam.examview.CExamMainActivity"
