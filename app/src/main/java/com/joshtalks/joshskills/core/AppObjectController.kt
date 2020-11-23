@@ -240,7 +240,7 @@ class AppObjectController {
                 .addInterceptor(HeaderInterceptor())
                 .hostnameVerifier { _, _ -> true }
 
-            if (BuildConfig.DEBUG.not() && BuildConfig.FLAVOR != "prod") {
+            if (BuildConfig.DEBUG.not() && BuildConfig.FLAVOR == "prod2") {
                 builder.certificatePinner(
                     CertificatePinner.Builder()
                         .add(
