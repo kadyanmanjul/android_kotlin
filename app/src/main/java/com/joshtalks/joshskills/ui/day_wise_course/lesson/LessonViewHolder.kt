@@ -7,7 +7,6 @@ import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.ui.view_holders.BaseChatViewHolder
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
@@ -51,12 +50,6 @@ class LessonViewHolder(
             )
             Utils.setImage(imageView, lessonModel.varthumbnail)
 
-            if (lessonModel.status == LESSON_STATUS.CO) {
-                startLessonTv.text = getAppContext().getString(R.string.lesson_completed)
-            } else {
-                startLessonTv.text = getAppContext().getString(R.string.start_lesson)
-
-            }
             rootView.setOnClickListener {
                 onItemClick?.invoke(lessonModel.id, message.lessons?.interval ?: -1)
             }
