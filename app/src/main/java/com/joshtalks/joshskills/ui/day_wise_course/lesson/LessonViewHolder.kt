@@ -51,7 +51,7 @@ class LessonViewHolder(
             )
             Utils.setImage(imageView, lessonModel.varthumbnail)
 
-            if (message.question?.lessonStatus == LESSON_STATUS.CO) {
+            if (lessonModel.status == LESSON_STATUS.CO) {
                 startLessonTv.text = getAppContext().getString(R.string.lesson_completed)
             } else {
                 startLessonTv.text = getAppContext().getString(R.string.start_lesson)

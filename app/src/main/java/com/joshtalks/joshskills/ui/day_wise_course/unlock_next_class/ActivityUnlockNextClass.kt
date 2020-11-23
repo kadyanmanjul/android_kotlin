@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
@@ -42,10 +43,15 @@ class ActivityUnlockNextClass : AppCompatActivity() {
         if (intent.hasExtra(CONVERSATION_ID).not())
             finish()
         conversationId = intent.getStringExtra(CONVERSATION_ID)
-
         lessonModel = intent.getParcelableExtra(LESSON_MODEL)
 
         setContentView(R.layout.acitivity_unlock_next_class_layout)
+
+        val card = findViewById<CardView>(R.id.card)
+
+//        val animation: Animation = AnimationUtils.loadAnimation(this, R.anim.enter_from_right_rotating)
+//        card.animation = animation
+
         lessonName = findViewById(R.id.lesson_name_tv)
         lessonIv = findViewById(R.id.lesson_iv)
         descTv = findViewById(R.id.description_tv)

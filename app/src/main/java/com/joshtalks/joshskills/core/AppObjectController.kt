@@ -61,7 +61,6 @@ import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
-import okhttp3.CertificatePinner
 import okhttp3.CipherSuite
 import okhttp3.ConnectionSpec
 import okhttp3.Interceptor
@@ -241,14 +240,14 @@ class AppObjectController {
                 .hostnameVerifier { _, _ -> true }
 
             if (BuildConfig.DEBUG.not()) {
-                builder.certificatePinner(
+               /* builder.certificatePinner(
                     CertificatePinner.Builder()
                         .add(
                             getHostOfUrl(),
                             *getCertificatePins()
                         )
                         .build()
-                )
+                )*/
                 val spec: ConnectionSpec = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
                     .tlsVersions(TlsVersion.TLS_1_2)
                     .cipherSuites(

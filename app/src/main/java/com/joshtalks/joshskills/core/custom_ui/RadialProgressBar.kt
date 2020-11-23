@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.core.custom_ui
 
+import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.TypedArray
@@ -12,7 +13,7 @@ import android.graphics.Shader
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import android.view.animation.DecelerateInterpolator
+import android.view.animation.AccelerateDecelerateInterpolator
 import com.joshtalks.joshskills.R
 
 
@@ -63,7 +64,7 @@ open class RadialProgressBar : View {
     private var mStartAngleOuterView = 270
     private var mOuterProgress = 0
     private var mSweepAngleOuterView = 0
-    private var mAnimationDurationOuterView = 400
+    private var mAnimationDurationOuterView = 700
     private var mMaxProgressOuterView = 100
     private var mProgressColorOuterView = Color.parseColor("#f52e67")
     private var mEmptyProgressColorOuterView = Color.parseColor("#F5F5F5")
@@ -75,7 +76,7 @@ open class RadialProgressBar : View {
      */
     private var mStartAngleCenterView = 270
     private var mSweepAngleCenterView = 0
-    private var mAnimationDurationCenterView = 400
+    private var mAnimationDurationCenterView = 700
     private var mMaxProgressCenterView = 100
     private var mCenterProgress = 0
     private var mProgressColorCenterView = Color.parseColor("#c2ff07")
@@ -90,7 +91,7 @@ open class RadialProgressBar : View {
     private var mStartAngleInnerMostView = 270
     private var mSweepAngleInnerMostView = 0
     private var mInnerMostProgress = 0
-    private var mAnimationDurationInnerMostView = 400
+    private var mAnimationDurationInnerMostView = 700
     private var mMaxProgressInnerMostView = 100
     private var mProgressColorInnerMostView = Color.parseColor("#560FBC")
     private var mPaintInnerMostView = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -106,7 +107,7 @@ open class RadialProgressBar : View {
     private var mStartAngleInnerView = 270
     private var mSweepAngleInnerView = 0
     private var mInnerProgress = 0
-    private var mAnimationDurationInnerView = 400
+    private var mAnimationDurationInnerView = 700
     private var mMaxProgressInnerView = 100
     private var mProgressColorInnerView = Color.parseColor("#0dffab")
     private var mPaintInnerView = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -767,7 +768,7 @@ open class RadialProgressBar : View {
                 calcSweepAngleFromOuterProgress(mOuterProgress)
             )
         animator.removeAllUpdateListeners()
-        animator.interpolator = DecelerateInterpolator()
+        animator.interpolator = getInterPolator()
         animator.duration = mAnimationDurationOuterView.toLong()
         animator.addUpdateListener { valueAnimator ->
             val value: Float = valueAnimator.animatedValue as Float
@@ -776,6 +777,10 @@ open class RadialProgressBar : View {
         }
         animator.start()
 
+    }
+
+    private fun getInterPolator(): TimeInterpolator? {
+        return AccelerateDecelerateInterpolator()
     }
 
     /**
@@ -882,7 +887,7 @@ open class RadialProgressBar : View {
                     calcSweepAngleFromInnerProgress(mInnerProgress)
                 )
             animator.removeAllUpdateListeners()
-            animator.interpolator = DecelerateInterpolator()
+            animator.interpolator = getInterPolator()
             animator.duration = mAnimationDurationInnerView.toLong()
             animator.addUpdateListener { valueAnimator ->
                 val value: Float = valueAnimator.animatedValue as Float
@@ -907,7 +912,7 @@ open class RadialProgressBar : View {
                     calcSweepAngleFromInnerMostProgress(mInnerMostProgress)
                 )
             animator.removeAllUpdateListeners()
-            animator.interpolator = DecelerateInterpolator()
+            animator.interpolator = getInterPolator()
             animator.duration = mAnimationDurationInnerMostView.toLong()
             animator.addUpdateListener { valueAnimator ->
                 val value: Float = valueAnimator.animatedValue as Float
@@ -951,7 +956,7 @@ open class RadialProgressBar : View {
                     calcSweepAngleFromCenterProgress(mCenterProgress)
                 )
             animator.removeAllUpdateListeners()
-            animator.interpolator = DecelerateInterpolator()
+            animator.interpolator = getInterPolator()
             animator.duration = mAnimationDurationCenterView.toLong()
             animator.addUpdateListener { valueAnimator ->
                 val value: Float = valueAnimator.animatedValue as Float
