@@ -207,7 +207,6 @@ class ConversationViewModel(application: Application) :
         val lessonModel = chat.question?.lesson
         if (lessonModel != null) {
             //It means This chat is a part of some lesson.
-
             if (chatList.isEmpty()) {
                 addNewLesson(lessonModel, chatList, chat)
             } else {
@@ -215,19 +214,13 @@ class ConversationViewModel(application: Application) :
                 if (lastChatModelInList.type != BASE_MESSAGE_TYPE.LESSON) {
                     //Check if last chat in the current list is a lesson
                     //if its not then we create a new chat object with same data as current chat obejct but chane type to Lesson and add it to list
-
                     addNewLesson(lessonModel, chatList, chat)
                 } else {
-
                     if (lastChatModelInList.lessonId != lessonModel.id) {
                         //checking wheather last chat and current chat belong to same lesson. No
                         addNewLesson(lessonModel, chatList, chat)
                     } else {
                         // it means last chat and current chat belong to same lesson. add current chat to last lesson
-//                        lastChatModelInList.lessons?.add(chat)
-//                        lastChatModelInList.lessonStatus = lessonModel.status //chat.question.status
-
-//                        chatList.set(chatList.size - 1, lastChatModelInList)
                     }
                 }
             }
@@ -243,18 +236,8 @@ class ConversationViewModel(application: Application) :
         chatList: MutableList<ChatModel>,
         chat: ChatModel
     ) {
-//        val lessonChat = ChatModel()
-        /*lessonChat.created = chat.created
-        lessonChat.chatId = chat.chatId
-        lessonChat.conversationId = chat.conversationId
-        lessonChat.isSync = chat.isSync
-        lessonChat.lastUseTime = chat.lastUseTime
-        lessonChat.lessonId = lessonModel.id*/
         chat.type = BASE_MESSAGE_TYPE.LESSON
-//        lessonModel.status = lessonChat.question?.lessonStatus
-
         chat.lessons = lessonModel
-
         chatList.add(chat)
     }
 

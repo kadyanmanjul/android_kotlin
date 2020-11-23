@@ -798,8 +798,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                             conversationBinding.chatRv.addView(cell)
                             lastMessage = chatModel
                         }
-                        if(chatModel.type==BASE_MESSAGE_TYPE.LESSON)
-                        addLessonCompleteCard(chatModel)
+                        if (chatModel.type == BASE_MESSAGE_TYPE.LESSON)
+                            addLessonCompleteCard(chatModel)
                     }
                 }
                 if (isNewChatViewAdd) {
@@ -839,12 +839,18 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
 
     private fun addLessonCompleteCard(chatModel: ChatModel) {
         if (isLessonCompleted(chatModel)) {
-            conversationBinding.chatRv.addView(LessonCompleteViewHolder(activityRef, chatModel, lastMessage))
+            conversationBinding.chatRv.addView(
+                LessonCompleteViewHolder(
+                    activityRef,
+                    chatModel,
+                    lastMessage
+                )
+            )
         }
     }
 
-    private fun isLessonCompleted(chatModel:ChatModel): Boolean {
-        return chatModel.lessons?.status==LESSON_STATUS.CO
+    private fun isLessonCompleted(chatModel: ChatModel): Boolean {
+        return chatModel.lessons?.status == LESSON_STATUS.CO
     }
 
     private fun showGroupChatScreen(groupDetails: GroupDetails) {
@@ -1356,13 +1362,14 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     private fun getView(
         chatModel: ChatModel
     ): BaseCell? {
-        return when (chatModel.type) {
+        var type = chatModel.type
+        when (chatModel.type) {
             BASE_MESSAGE_TYPE.LESSON -> {
                 isLessonTypeChat = true
-                getGenericView(chatModel.type, chatModel)
+                type = chatModel.type
             }
             BASE_MESSAGE_TYPE.Q -> {
-                return when (chatModel.question?.type) {
+                when (chatModel.question?.type) {
                     BASE_MESSAGE_TYPE.P2P,
                     BASE_MESSAGE_TYPE.PR,
                     BASE_MESSAGE_TYPE.OTHER,
@@ -1370,17 +1377,18 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     BASE_MESSAGE_TYPE.TEST,
                     BASE_MESSAGE_TYPE.CE,
                     BASE_MESSAGE_TYPE.CP -> {
-                        getGenericView(chatModel.question?.type, chatModel)
+                        type = chatModel.question?.type
                     }
                     else -> {
-                        getGenericView(chatModel.question?.material_type, chatModel)
+                        type = chatModel.question?.material_type
                     }
                 }
             }
             else -> {
-                getGenericView(chatModel.type, chatModel)
+                type = chatModel.type
             }
         }
+        return getGenericView(type, chatModel)
     }
 
     private fun getGenericView(
