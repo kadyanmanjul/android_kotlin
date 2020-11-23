@@ -11,7 +11,7 @@ if (!project.hasProperty("devBuild")) {
 
 def majorVersion = 2
 def minorVersion = 3
-def patchVersion = 3
+def patchVersion = 4
 
 android {
     compileSdkVersion 29
