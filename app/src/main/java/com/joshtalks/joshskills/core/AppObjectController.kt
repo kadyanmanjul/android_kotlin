@@ -387,11 +387,7 @@ class AppObjectController {
         }
 
         private fun configureCrashlytics() {
-            if (BuildConfig.DEBUG) {
-                FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
-            } else {
-                FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
-            }
+            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         }
 
         private fun initFlurryAnalytics(context: Context) {

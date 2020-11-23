@@ -96,7 +96,7 @@ android {
             resValue("string", "truecaller_key", "P31uP46c15762366b41fdba957b16b9a7c620")
             buildConfigField "String", "FLURRY_API_KEY", "\"2MHQRXWJ93XX7BWRHXWS\""
             crunchPngs false
-            ext.enableCrashlytics = false
+            ext.enableCrashlytics = true
         }
         release {
             resValue("string", "branch_id", "key_live_hmRIENEBxRompOkPRCOXujibxFgew8w4")
@@ -151,14 +151,14 @@ android {
             // applicationId "com.joshtalks.joshskills.local"
             versionName "${majorVersion}.${minorVersion}.${patchVersion}.Local"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
-            manifestPlaceholders = [enableCrashReporting: "false"]
+            manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"http://13.235.94.72:8000\""
         }
         dev {
             // applicationId "com.joshtalks.joshskills.dev"
             versionName "${majorVersion}.${minorVersion}.${patchVersion}.Dev"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
-            manifestPlaceholders = [enableCrashReporting: "false"]
+            manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
         }
         prod {
