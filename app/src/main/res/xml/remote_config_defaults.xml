@@ -320,12 +320,14 @@
     </entry>
     <entry>
         <key>NEW_ONBOARD_FLOW_TEXT_ON_ENROLLED</key>
-        <value>Aap aapne interest ke courses me enroll hogaye hai. Yeh Courses 7 Days tak Completely FREE hai . Aap inke alawa bhi courses le sakte hai
+        <value>Aap aapne interest ke courses me enroll hogaye hai. Yeh Courses 7 Days tak Completely
+            FREE hai . Aap inke alawa bhi courses le sakte hai
         </value>
     </entry>
     <entry>
         <key>BUY_COURSE_LAST_DAY_OFFER_HINT</key>
-        <value>Bade Bhaiya Tip: Get additional 50% off on final subscription price, last day for this offer!
+        <value>Bade Bhaiya Tip: Get additional 50% off on final subscription price, last day for
+            this offer!
         </value>
     </entry>
     <entry>
@@ -338,27 +340,34 @@
     </entry>
     <entry>
         <key>BB_TOOL_TIP_BELOW_FIND_COURSE_TEXT</key>
-        <value>Agar aap in course ke alawa kuch aur bhi seekhna chahte hai to agle %s dino tak aap free mei unlimited courses unlock kar sakte hai
+        <value>Agar aap in course ke alawa kuch aur bhi seekhna chahte hai to agle %s dino tak aap
+            free mei unlimited courses unlock kar sakte hai
         </value>
     </entry>
     <entry>
         <key>BB_TOOL_TIP_BELOW_FIND_COURSE_TEXT_FREE</key>
-        <value>Agar aap in course ke alawa kuch aur bhi seekhna chahte hai to aaj aur aap free mei unlimited courses unlock kar sakte hai.
+        <value>Agar aap in course ke alawa kuch aur bhi seekhna chahte hai to aaj aur aap free mei
+            unlimited courses unlock kar sakte hai.
         </value>
     </entry>
     <entry>
         <key>INBOX_OVERLAY_TOOLTIP_D0_1</key>
-        <value>Bade Bhaiya Tip: Please yaad rakhna ki agar aap subscription lena chahe to pehle 3 dino tak aapke paas price pe 50% off hai.
+        <value>Bade Bhaiya Tip: Please yaad rakhna ki agar aap subscription lena chahe to pehle 3
+            dino tak aapke paas price pe 50% off hai.
         </value>
     </entry>
     <entry>
         <key>INBOX_OVERLAY_TOOLTIP_D2_3</key>
-        <value>Bade Bhaiya Tip: Please yaad rakhna ki agar aap subscription lena chahe to pehle 3 dino tak aapke paas price pe 50% off hai.
+        <value>Bade Bhaiya Tip: Please yaad rakhna ki agar aap subscription lena chahe to pehle 3
+            dino tak aapke paas price pe 50% off hai.
         </value>
     </entry>
     <entry>
         <key>BB_TOOL_TIP_FIRST_TIME_TEXT</key>
-        <value>Yeh aapke courses ki inbox screen hai. Aap jo bhi courses me enroll karte hai vo aapko es screen pe mil jayengey. Aap first 7 days tak jitne chahe utne courses avail kar sakte hai completely free</value>
+        <value>Yeh aapke courses ki inbox screen hai. Aap jo bhi courses me enroll karte hai vo
+            aapko es screen pe mil jayengey. Aap first 7 days tak jitne chahe utne courses avail kar
+            sakte hai completely free
+        </value>
     </entry>
     <entry>
         <key>BB_TOOL_TIP_FIRST_TIME_BTN_TEXT</key>
@@ -422,7 +431,9 @@
     </entry>
     <entry>
         <key>SIGNIN_DIALOG_DESCRIPTION</key>
-        <value>Apne subscription ko use karne ke liye sabse pehle apna registration complete kijiye  </value>
+        <value>Apne subscription ko use karne ke liye sabse pehle apna registration complete
+            kijiye
+        </value>
     </entry>
     <entry>
         <key>MINIMUM_TIME_TO_SHOW_REVIEW</key>
