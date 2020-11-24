@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/root_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
+    android:elevation="@dimen/_6sdp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/_10ssp"
+        android:paddingTop="@dimen/_12ssp"
+        android:paddingBottom="@dimen/_4ssp"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toStartOf="@id/score"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/see_leaderboard" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/_10ssp"
+        android:paddingTop="@dimen/_12ssp"
+        android:paddingBottom="@dimen/_4ssp"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
+        android:textColor="#48A429"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="+245" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/in_lesson"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/_10ssp"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+        android:textColor="@color/grey_68"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        tools:text="in Lesson 3" />
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_1sdp"
+        android:background="#C4C4C4"
+        android:layout_marginTop="@dimen/_8sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.93"
+        app:layout_constraintTop_toBottomOf="@id/in_lesson"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
+

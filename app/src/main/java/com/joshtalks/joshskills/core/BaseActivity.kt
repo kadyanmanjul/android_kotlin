@@ -74,6 +74,8 @@ import com.joshtalks.joshskills.ui.inbox.IS_FROM_NEW_ONBOARDING
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
+import com.joshtalks.joshskills.ui.points_history.PointsHistoryActivity
+import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
@@ -181,6 +183,11 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
 
     fun openLeaderBoard() {
         val i = Intent(this, LeaderBoardViewPagerActivity::class.java)
+        startActivity(i)
+    }
+
+    fun openPointHistory() {
+        val i = Intent(this, PointsHistoryActivity::class.java)
         startActivity(i)
     }
 

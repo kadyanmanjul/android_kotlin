@@ -29,6 +29,8 @@ import com.joshtalks.joshskills.repository.server.feedback.UserFeedbackRequest
 import com.joshtalks.joshskills.repository.server.onboarding.CourseEnrolledRequest
 import com.joshtalks.joshskills.repository.server.onboarding.CourseEnrolledResponse
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
+import com.joshtalks.joshskills.repository.server.points.PointsHistoryResponse
+import com.joshtalks.joshskills.repository.server.points.PointsInfoResponse
 import com.joshtalks.joshskills.repository.server.reminder.DeleteReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
@@ -187,5 +189,13 @@ interface CommonNetworkService {
     suspend fun getUserProfileData(
         @Path("mentor_id") id: String
     ): Response<UserProfileResponse>
+
+    @GET("$DIR/reputation/get_points_history/")
+    suspend fun getUserPointsHistory(
+        @Query("mentor_id") id: String
+    ): Response<PointsHistoryResponse>
+
+    @GET("$DIR/reputation/get_points_working/")
+    suspend fun getPointsInfo(): Response<PointsInfoResponse>
 
 }

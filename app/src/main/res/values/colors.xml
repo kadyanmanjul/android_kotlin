@@ -98,5 +98,7 @@
     <color name="blue49">#4985CA</color>
 
     <color name="light_shade_of_gray">#E5E5E5</color>
+    <color name="white_shade">#F2F9FF</color>
+    <color name="red_shade">#E23F3F</color>
 
 </resources>
