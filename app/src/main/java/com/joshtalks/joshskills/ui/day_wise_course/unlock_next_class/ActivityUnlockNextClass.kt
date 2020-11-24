@@ -3,6 +3,8 @@ package com.joshtalks.joshskills.ui.day_wise_course.unlock_next_class
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -49,8 +51,9 @@ class ActivityUnlockNextClass : AppCompatActivity() {
 
         val card = findViewById<CardView>(R.id.card)
 
-//        val animation: Animation = AnimationUtils.loadAnimation(this, R.anim.enter_from_right_rotating)
-//        card.animation = animation
+        val animation: Animation =
+            AnimationUtils.loadAnimation(this, R.anim.enter_from_right_rotating)
+        card.animation = animation
 
         lessonName = findViewById(R.id.lesson_name_tv)
         lessonIv = findViewById(R.id.lesson_iv)
@@ -59,7 +62,6 @@ class ActivityUnlockNextClass : AppCompatActivity() {
         lessonModel?.let {
             lessonName.text = getString(R.string.lesson_name, it.lessonNo, it.lessonName)
             Utils.setImage(lessonIv, it.varthumbnail)
-            /*descTv.text = it.*/
         }
 
         findViewById<TextView>(R.id.continue_btn).setOnClickListener {

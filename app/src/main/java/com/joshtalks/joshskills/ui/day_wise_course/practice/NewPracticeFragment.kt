@@ -418,4 +418,8 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
                 }
             })
     }
+
+    override fun focusChild(position: Int) {
+        binding.practiceRv.smoothScrollToPosition(position)
+    }
 }

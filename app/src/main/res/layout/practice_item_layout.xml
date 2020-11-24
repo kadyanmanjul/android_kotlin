@@ -11,15 +11,11 @@
             type="com.joshtalks.joshskills.ui.day_wise_course.practice.PracticeAdapter" />
     </data>
 
-    <FrameLayout
-        android:id="@+id/root_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:animateLayoutChanges="true">
-
         <LinearLayout
+            android:id="@+id/root_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
             android:orientation="vertical">
 
             <com.google.android.material.card.MaterialCardView
@@ -405,7 +401,5 @@
 
 
         </LinearLayout>
-
-    </FrameLayout>
 
 </layout>

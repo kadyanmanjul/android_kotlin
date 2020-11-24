@@ -97,6 +97,8 @@ class PracticeAdapter(
                         R.drawable.ic_remove
                     )
                 )
+                if (position > 0)
+                    clickListener.focusChild(position - 1)
             } else {
                 binding.practiceContentLl.visibility = GONE
                 binding.expandIv.setImageDrawable(
@@ -459,7 +461,7 @@ class PracticeAdapter(
                     binding.infoTv2.visibility = VISIBLE
                 }
 
-                if (this.practiceEngagement.isNullOrEmpty()) {
+                if (this.practiceEngagement.isNullOrEmpty() || this.status == QUESTION_STATUS.NA) {
                     binding.submitAnswerBtn.visibility = VISIBLE
                     setViewAccordingExpectedAnswer(chatModel)
                 } else {
@@ -729,13 +731,18 @@ class PracticeAdapter(
                     )
                 )
             }
+            requestFocus(
+                binding.submitAnswerBtn
+            )
+        }
+
+        private fun requestFocus(view: View) {
             Handler().postDelayed({
-                binding.submitAnswerBtn.parent.requestChildFocus(
-                    binding.submitAnswerBtn,
-                    binding.submitAnswerBtn
+                view.parent.requestChildFocus(
+                    view,
+                    view
                 )
             }, 200)
-
         }
 
         fun hidePracticeInputLayout() {
@@ -768,5 +775,6 @@ class PracticeAdapter(
         fun startRecording(chatModel: ChatModel, position: Int, startTimeUnit: Long)
         fun stopRecording(chatModel: ChatModel, position: Int, stopTime: Long)
         fun askRecordPermission()
+        fun focusChild(position: Int)
     }
 }
