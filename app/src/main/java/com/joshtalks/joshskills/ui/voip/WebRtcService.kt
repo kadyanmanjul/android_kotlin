@@ -89,17 +89,7 @@ class WebRtcService : Service() {
             ).apply {
                 action = LoginUser().action
             }
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    serviceIntent.also { intent ->
-                        AppObjectController.joshApplication.startForegroundService(intent)
-                    }
-                } else {
-                    AppObjectController.joshApplication.startService(serviceIntent)
-                }
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
-            }
+            ContextCompat.startForegroundService(AppObjectController.joshApplication, serviceIntent)
         }
 
         fun startOutgoingCall(map: HashMap<String, String?>) {
@@ -110,17 +100,7 @@ class WebRtcService : Service() {
                 action = OutgoingCall().action
                 putExtra(CALL_USER_OBJ, map)
             }
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    serviceIntent.also { intent ->
-                        AppObjectController.joshApplication.startForegroundService(intent)
-                    }
-                } else {
-                    AppObjectController.joshApplication.startService(serviceIntent)
-                }
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
-            }
+            ContextCompat.startForegroundService(AppObjectController.joshApplication, serviceIntent)
         }
 
         fun startOnNotificationIncomingCall(data: HashMap<String, String>) {
@@ -131,17 +111,7 @@ class WebRtcService : Service() {
                 action = NotificationIncomingCall().action
                 putExtra(INCOMING_CALL_USER_OBJ, data)
             }
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    serviceIntent.also { intent ->
-                        AppObjectController.joshApplication.startForegroundService(intent)
-                    }
-                } else {
-                    AppObjectController.joshApplication.startService(serviceIntent)
-                }
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
-            }
+            ContextCompat.startForegroundService(AppObjectController.joshApplication, serviceIntent)
         }
 
         fun startOnIncomingCall(data: HashMap<String, String>) {
@@ -152,40 +122,9 @@ class WebRtcService : Service() {
                 action = IncomingCall().action
                 putExtra(INCOMING_CALL_USER_OBJ, data)
             }
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    serviceIntent.also { intent ->
-                        AppObjectController.joshApplication.startForegroundService(intent)
-                    }
-                } else {
-                    AppObjectController.joshApplication.startService(serviceIntent)
-                }
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
-            }
-        }
-
-        fun stopCall() {
-            val serviceIntent = Intent(
-                AppObjectController.joshApplication,
-                WebRtcService::class.java
-            ).apply {
-                action = CallStop().action
-            }
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    serviceIntent.also { intent ->
-                        AppObjectController.joshApplication.startForegroundService(intent)
-                    }
-                } else {
-                    AppObjectController.joshApplication.startService(serviceIntent)
-                }
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
-            }
+            ContextCompat.startForegroundService(AppObjectController.joshApplication, serviceIntent)
         }
     }
-
 
     fun addListener(callback: WebRtcCallback?) {
         callCallback = WeakReference(callback)
@@ -292,6 +231,7 @@ class WebRtcService : Service() {
         super.onCreate()
         Timber.tag(TAG).e("onCreate")
         mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
+        startForeground(EMPTY_NOTIFICATION_ID, loginUserService())
         endpoint = Endpoint.newInstance(BuildConfig.DEBUG, eventListener, options)
         executor.execute {
             userPlivo = UserPlivoDetailsModel.getPlivoUser()
@@ -301,8 +241,9 @@ class WebRtcService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Timber.tag(TAG).e("onStartCommand=  %s", intent?.action)
         if (intent?.action == null) {
-            return START_STICKY
+            return START_NOT_STICKY
         }
+        startForeground(EMPTY_NOTIFICATION_ID, loginUserService())
         executor.execute {
             if (endpoint == null) {
                 endpoint = Endpoint.newInstance(BuildConfig.DEBUG, eventListener, options)
@@ -315,7 +256,6 @@ class WebRtcService : Service() {
                     Timber.tag(TAG).e(intent.getStringExtra(INCOMING_CALL_JSON_OBJECT))
                     when {
                         this == LoginUser().action -> {
-                            startForeground(EMPTY_NOTIFICATION_ID, loginUserService())
                             Timber.tag(TAG).e("User= %s", userPlivo?.toString())
                             if (loginUser()) {
                                 removeNotifications()
@@ -325,7 +265,6 @@ class WebRtcService : Service() {
                             logoutUser()
                         }
                         this == NotificationIncomingCall().action -> {
-                            startForeground(EMPTY_NOTIFICATION_ID, loginUserService())
                             if (loginUser()) {
                                 val incomingData: HashMap<String, String>? =
                                     intent.getSerializableExtra(INCOMING_CALL_USER_OBJ) as HashMap<String, String>?
@@ -634,6 +573,7 @@ class WebRtcService : Service() {
             .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setOnlyAlertOnce(true)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             lNotificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
