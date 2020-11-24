@@ -74,9 +74,10 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
+        <activity android:name=".ui.points_history.PointsInfoActivity"></activity>
+        <activity android:name=".ui.points_history.PointsHistoryActivity" />
         <activity android:name=".ui.userprofile.UserProfileActivity" />
         <activity android:name=".ui.leaderboard.LeaderBoardViewPagerActivity" />
-
         <activity android:name=".ui.groupchat.GroupChatActivity" />
 
         <meta-data
@@ -400,12 +401,6 @@
             android:launchMode="singleTask"
             android:parentActivityName=".ui.chat.ConversationActivity"
             android:theme="@style/AppNoBarTheme" />
-        <activity
-            android:name=".ui.day_wise_course.unlock_next_class.ActivityUnlockNextClass"
-            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
-            android:parentActivityName=".ui.chat.ConversationActivity"
-            android:theme="@style/AppNoBarTheme" />
 
         <service
             android:name=".core.service.video_download.VideoDownloadService"
@@ -594,7 +589,7 @@
             android:name=".ui.certification_exam.CertificationBaseActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme" />
+            android:theme="@style/AppNoBarTheme"></activity>
 
         <activity
             android:name=".ui.certification_exam.examview.CExamMainActivity"
