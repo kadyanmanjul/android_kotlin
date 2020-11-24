@@ -7,7 +7,7 @@ data class PointsHistoryResponse(
     @SerializedName("points_history_date_list")
     val pointsHistoryDateList: List<PointsHistoryDate>?,
     @SerializedName("total_points")
-    val totalPoints: Double?,
+    val totalPoints: Int?,
     @SerializedName("total_points_text")
     val totalPointsText: String?
 )
@@ -18,12 +18,12 @@ data class PointsHistoryDate(
     @SerializedName("points_history_list")
     val pointsHistoryList: List<PointsHistory>?,
     @SerializedName("points_sum")
-    val pointsSum: Double?
+    val pointsSum: Int?
 )
 
 data class PointsHistory(
     @SerializedName("points")
-    val points: Double?,
+    val points: Int?,
     @SerializedName("sub_title")
     val subTitle: String?,
     @SerializedName("title")

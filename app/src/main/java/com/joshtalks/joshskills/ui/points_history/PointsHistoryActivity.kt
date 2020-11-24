@@ -13,6 +13,10 @@ import com.joshtalks.joshskills.ui.points_history.viewholder.PointsSummaryDescVi
 import com.joshtalks.joshskills.ui.points_history.viewholder.PointsSummaryTitleViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewmodel.PointsViewModel
 import com.mindorks.placeholderview.ExpandablePlaceHolderView
+import kotlinx.android.synthetic.main.base_toolbar.iv_back
+import kotlinx.android.synthetic.main.base_toolbar.iv_help
+import kotlinx.android.synthetic.main.base_toolbar.iv_setting
+import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 
 
 class PointsHistoryActivity : BaseActivity() {
@@ -21,8 +25,6 @@ class PointsHistoryActivity : BaseActivity() {
     }
     private lateinit var binding: ActivityPointsHistoryBinding
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding =
@@ -30,7 +32,23 @@ class PointsHistoryActivity : BaseActivity() {
         binding.lifecycleOwner = this
         binding.handler = this
         addObserver()
+        initToolbar()
         viewModel.getPointsSummary()
+    }
+    private fun initToolbar() {
+        with(iv_back) {
+            visibility = View.VISIBLE
+            setOnClickListener {
+                onBackPressed()
+            }
+        }
+        with(iv_help) {
+            visibility = View.VISIBLE
+            setOnClickListener {
+                openHelpActivity()
+            }
+        }
+        text_message_title.text = getString(R.string.points_history)
     }
 
     private fun addObserver() {
@@ -38,10 +56,10 @@ class PointsHistoryActivity : BaseActivity() {
             binding.userScore.text = it.totalPoints.toString()
             binding.userScoreText.text = it.totalPointsText
 
-            it.pointsHistoryDateList?.forEach {
-                binding.recyclerView.addView(PointsSummaryTitleViewHolder(it.date!!,it.pointsSum!!))
-                it.pointsHistoryList?.forEach {
-                    binding.recyclerView.addView(PointsSummaryDescViewHolder(it))
+            it.pointsHistoryDateList?.forEach {list->
+                binding.recyclerView.addView(PointsSummaryTitleViewHolder(list.date!!,list.pointsSum!!))
+                list.pointsHistoryList?.forEachIndexed { index, pointsHistory ->
+                    binding.recyclerView.addView(PointsSummaryDescViewHolder(pointsHistory,index,list.pointsHistoryList.size))
                 }
             }
         })
