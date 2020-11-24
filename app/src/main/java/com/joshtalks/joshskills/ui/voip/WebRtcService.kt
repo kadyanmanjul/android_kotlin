@@ -31,9 +31,9 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.core.printAll
 import com.joshtalks.joshskills.repository.local.model.UserPlivoDetailsModel
-import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CONNECTED_CALL_CHANNEL_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CONNECTED_CALL_NOTIFICATION_ID
+import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.EMPTY_NOTIFICATION_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_CHANNEL_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_NOTIFICATION_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.OUTGOING_CALL_CHANNEL_ID
@@ -111,7 +111,7 @@ class WebRtcService : Service() {
                 putExtra(CALL_USER_OBJ, map)
             }
             try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && JoshApplication.isAppVisible.not()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     serviceIntent.also { intent ->
                         AppObjectController.joshApplication.startForegroundService(intent)
                     }
@@ -132,7 +132,7 @@ class WebRtcService : Service() {
                 putExtra(INCOMING_CALL_USER_OBJ, data)
             }
             try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && JoshApplication.isAppVisible.not()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     serviceIntent.also { intent ->
                         AppObjectController.joshApplication.startForegroundService(intent)
                     }
@@ -153,7 +153,7 @@ class WebRtcService : Service() {
                 putExtra(INCOMING_CALL_USER_OBJ, data)
             }
             try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && JoshApplication.isAppVisible.not()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     serviceIntent.also { intent ->
                         AppObjectController.joshApplication.startForegroundService(intent)
                     }
@@ -173,7 +173,7 @@ class WebRtcService : Service() {
                 action = CallStop().action
             }
             try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && JoshApplication.isAppVisible.not()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     serviceIntent.also { intent ->
                         AppObjectController.joshApplication.startForegroundService(intent)
                     }
@@ -200,6 +200,9 @@ class WebRtcService : Service() {
             }
             Timber.tag(TAG).e("LoginUser")
             Timber.tag(TAG).e("= %s", endpoint?.registered.toString())
+            (getSystemService(NOTIFICATION_SERVICE) as NotificationManager?)?.cancel(
+                EMPTY_NOTIFICATION_ID
+            )
         }
 
         override fun onLogout() {
@@ -312,8 +315,7 @@ class WebRtcService : Service() {
                     Timber.tag(TAG).e(intent.getStringExtra(INCOMING_CALL_JSON_OBJECT))
                     when {
                         this == LoginUser().action -> {
-                            val notification = loginNotification()
-                            startForeground(INCOMING_CALL_NOTIFICATION_ID, notification)
+                            startForeground(EMPTY_NOTIFICATION_ID, loginUserService())
                             Timber.tag(TAG).e("User= %s", userPlivo?.toString())
                             if (loginUser()) {
                                 removeNotifications()
@@ -323,6 +325,7 @@ class WebRtcService : Service() {
                             logoutUser()
                         }
                         this == NotificationIncomingCall().action -> {
+                            startForeground(EMPTY_NOTIFICATION_ID, loginUserService())
                             if (loginUser()) {
                                 val incomingData: HashMap<String, String>? =
                                     intent.getSerializableExtra(INCOMING_CALL_USER_OBJ) as HashMap<String, String>?
@@ -334,13 +337,11 @@ class WebRtcService : Service() {
                             val incomingData: HashMap<String, String>? =
                                 intent.getSerializableExtra(INCOMING_CALL_USER_OBJ) as HashMap<String, String>?
                             incomingData?.printAll()
-                            processIncomingCall(incomingData)
                             showNotificationOnIncomingCall(incomingData)
-
+                            processIncomingCall(incomingData)
                         }
                         this == OutgoingCall().action -> {
                             if (loginUser()) {
-
                                 val extraHeaders: HashMap<String, String>? =
                                     intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String>
                                 endpoint?.createOutgoingCall()
@@ -363,12 +364,6 @@ class WebRtcService : Service() {
                                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                 }
                             startActivities(arrayOf(callActivityIntent))
-
-                            /*if (JoshApplication.isAppVisible) {
-                                startActivity(callActivityIntent)
-                            } else {
-                                startActivities(arrayOf(getBackIntent(), callActivityIntent))
-                            }*/
                         }
                         this == CallDisconnect().action -> {
                             endCall()
@@ -411,13 +406,6 @@ class WebRtcService : Service() {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && JoshApplication.isAppVisible.not()
     }
 
-
-    private fun getBackIntent(): Intent {
-        return Intent(this, InboxActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-    }
-
     private fun processIncomingCall(incomingData: HashMap<String, String>?) {
         val callActivityIntent =
             Intent(this, WebRtcActivity::class.java).apply {
@@ -427,11 +415,7 @@ class WebRtcService : Service() {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
         if (isAppVisible()) {
-            /*     if (JoshApplication.isAppVisible) {
-                     startActivity(callActivityIntent)
-                 } else {
-           */          startActivities(arrayOf(callActivityIntent))
-            // }
+            startActivities(arrayOf(callActivityIntent))
         }
     }
 
@@ -632,8 +616,8 @@ class WebRtcService : Service() {
         Timber.tag(TAG).e("onDestroy")
     }
 
-    private fun loginNotification(): Notification {
-        Timber.tag(TAG).e("Login Notification   ")
+    private fun loginUserService(): Notification {
+        Timber.tag(TAG).e("Login User   ")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name: CharSequence = "Voip Login User"
@@ -678,21 +662,7 @@ class WebRtcService : Service() {
             mChannel.setSound(incomingSoundUri, att)
             mNotificationManager?.createNotificationChannel(mChannel)
         }
-
-        /*       val notificationIntent = Intent(this, WebRtcActivity::class.java).apply {
-                   putExtra(INCOMING_CALL_USER_OBJ, incomingData)
-               }
-               notificationIntent.action = "calling.action.main"
-
-               val pendingIntent: PendingIntent = PendingIntent.getActivity(
-                   this,
-                   0,
-                   notificationIntent,
-                   PendingIntent.FLAG_UPDATE_CURRENT
-               )*/
-
         val fullScreenPendingIntent = FullScreenActivity.getPendingIntent(this, 22)
-
         val declineActionIntent =
             Intent(AppObjectController.joshApplication, WebRtcService::class.java)
         declineActionIntent.action = CallDisconnect().action
@@ -759,15 +729,6 @@ class WebRtcService : Service() {
             val mChannel = NotificationChannel(OUTGOING_CALL_CHANNEL_ID, name, importance)
             mNotificationManager?.createNotificationChannel(mChannel)
         }
-        /*       val notificationIntent = Intent(this, WebRtcActivity::class.java)
-               notificationIntent.action = "calling.action.main"
-
-               val pendingIntent: PendingIntent = PendingIntent.getActivity(
-                   this,
-                   0,
-                   notificationIntent,
-                   PendingIntent.FLAG_UPDATE_CURRENT
-               )*/
         val declineActionIntent =
             Intent(AppObjectController.joshApplication, WebRtcService::class.java)
         declineActionIntent.action = CallDisconnect().action
@@ -824,7 +785,6 @@ class WebRtcService : Service() {
             .setSmallIcon(R.drawable.ic_status_bar_notification)
             .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
             .setOngoing(true)
-            //  .setContentIntent(pendingIntent)
             .addAction(
                 NotificationCompat.Action(
                     R.drawable.ic_call_end,
