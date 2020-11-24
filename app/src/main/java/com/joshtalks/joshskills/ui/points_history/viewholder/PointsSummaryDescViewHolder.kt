@@ -58,6 +58,9 @@ class PointsSummaryDescViewHolder(var pointsHistory: PointsHistory,var position:
         }
         title.text = pointsHistory.title
         score.text = "+".plus(pointsHistory.points)
-        inLesson.text = pointsHistory.subTitle
+        pointsHistory.subTitle?.let {
+            inLesson.visibility=android.view.View.VISIBLE
+            inLesson.text = it
+        }
     }
 }

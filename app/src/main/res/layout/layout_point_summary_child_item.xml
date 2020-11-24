@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/root_view"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white"
-    android:elevation="@dimen/_6sdp"
+    android:id="@+id/root_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:elevation="@dimen/_6sdp">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/title"
@@ -44,18 +43,20 @@
         android:paddingHorizontal="@dimen/_10ssp"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
         android:textColor="@color/grey_68"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title"
         tools:text="in Lesson 3" />
+
     <View
         android:id="@+id/divider"
         android:layout_width="0dp"
         android:layout_height="@dimen/_1sdp"
-        android:background="#C4C4C4"
         android:layout_marginTop="@dimen/_8sdp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:background="#C4C4C4"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.93"
-        app:layout_constraintTop_toBottomOf="@id/in_lesson"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/in_lesson"
+        app:layout_constraintWidth_percent="0.93" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -232,6 +232,7 @@
                     app:layout_constraintTop_toTopOf="@id/user_min_data" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/see_leaderboard"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_16sdp"

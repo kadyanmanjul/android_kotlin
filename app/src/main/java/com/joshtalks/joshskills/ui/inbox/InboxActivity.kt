@@ -12,6 +12,7 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import android.widget.ScrollView
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModelProvider
@@ -49,6 +50,7 @@ import com.joshtalks.joshskills.core.inapp_update.Constants
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
+import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
@@ -59,9 +61,12 @@ import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.server.Award
+import com.joshtalks.joshskills.repository.server.AwardCategory
 import com.joshtalks.joshskills.repository.server.ProfileResponse
 import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
+import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.SubscriptionData
@@ -95,12 +100,17 @@ import kotlinx.android.synthetic.main.activity_inbox.overlay_layout
 import kotlinx.android.synthetic.main.activity_inbox.overlay_tip
 import kotlinx.android.synthetic.main.activity_inbox.progress_bar
 import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
+import kotlinx.android.synthetic.main.activity_inbox.see_leaderboard
 import kotlinx.android.synthetic.main.activity_inbox.subscriptionTipContainer
 import kotlinx.android.synthetic.main.activity_inbox.text_btn
 import kotlinx.android.synthetic.main.activity_inbox.txtConvert
 import kotlinx.android.synthetic.main.activity_inbox.txtConvert2
 import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip
 import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip2
+import kotlinx.android.synthetic.main.activity_inbox.user_data_container
+import kotlinx.android.synthetic.main.activity_inbox.user_min_data
+import kotlinx.android.synthetic.main.activity_inbox.user_points
+import kotlinx.android.synthetic.main.activity_inbox.user_streak_data
 import kotlinx.android.synthetic.main.find_more_layout.bb_tip_below_find_btn
 import kotlinx.android.synthetic.main.find_more_layout.find_more
 import kotlinx.android.synthetic.main.inbox_toolbar.iv_reminder
@@ -156,6 +166,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         handelIntentAction()
         initNewUserTip()
         viewModel.getTotalWatchTime()
+        viewModel.getProfileData(Mentor.getInstance().getId())
 
     }
 
@@ -741,6 +752,22 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 }
             }
         })
+        viewModel.userData.observe(this,  {
+            it?.let {
+                ///hideProgressBar()
+                initScoreCardView(it)
+            }
+        })
+    }
+
+    private fun initScoreCardView(userData: UserProfileResponse) {
+        user_data_container.visibility=View.VISIBLE
+        user_points.text = userData.points.toString()
+        user_streak_data.text = userData.streak.toString()
+        user_min_data.text = userData.minutesSpoken.toString()
+        see_leaderboard.setOnClickListener {
+            openLeaderBoard()
+        }
     }
 
     private fun logEvent(eventName: String) {
