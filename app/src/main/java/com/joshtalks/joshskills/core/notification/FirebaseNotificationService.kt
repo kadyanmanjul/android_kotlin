@@ -50,9 +50,9 @@ import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService
+import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.concurrent.ExecutorService
-import timber.log.Timber
 
 const val FCM_TOKEN = "fcmToken"
 const val HAS_NOTIFICATION = "has_notification"
@@ -74,6 +74,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
+        Timber.tag("notifiation").e(token)
         PrefManager.put(FCM_TOKEN, token)
         if (AppObjectController.freshChat != null) {
             AppObjectController.freshChat?.setPushRegistrationToken(token)
@@ -116,6 +117,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     private fun onIncomingPlivoCall(remoteMessage: RemoteMessage) {
         try {
+            WebRtcService.loginUserClient()
             val data: HashMap<String, String> = HashMap()
             for ((key, value) in remoteMessage.data) {
                 data[key] = value

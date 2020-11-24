@@ -35,7 +35,6 @@ import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopicModel
 import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
-import java.util.HashMap
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
@@ -47,6 +46,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.QueryMap
+import java.util.HashMap
 
 @JvmSuppressWildcards
 interface CommonNetworkService {
@@ -165,7 +165,10 @@ interface CommonNetworkService {
     suspend fun getTopicDetail(@Path("id") id: String): SpeakingTopicModel
 
     @GET("$DIR/voicecall/recipient_mentor")
-    suspend fun getP2PUser(@Query("course_id") id: String): VoipCallDetailModel
+    suspend fun getP2PUser(
+        @Query("course_id") id: String,
+        @Query("topic_id") topicId: Int?
+    ): VoipCallDetailModel
 
     @GET("$DIR/voicecall/mentor_topicinfo")
     suspend fun callMentorInfo(@Query("mobileuuid") id: String): HashMap<String, String?>

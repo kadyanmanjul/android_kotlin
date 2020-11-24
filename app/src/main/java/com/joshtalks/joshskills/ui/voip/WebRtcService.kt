@@ -18,7 +18,6 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import androidx.annotation.ColorRes
-import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -80,7 +79,6 @@ class WebRtcService : Service() {
         @Volatile
         var isCallWasOnGoing: Boolean = false
 
-        @RequiresApi(Build.VERSION_CODES.O)
         fun loginUserClient() {
             if (UserPlivoDetailsModel.getPlivoUser() == null) {
                 return
@@ -303,6 +301,9 @@ class WebRtcService : Service() {
             return START_STICKY
         }
         executor.execute {
+            if (endpoint == null) {
+                endpoint = Endpoint.newInstance(BuildConfig.DEBUG, eventListener, options)
+            }
             if (userPlivo == null) {
                 userPlivo = UserPlivoDetailsModel.getPlivoUser()
             }
@@ -313,6 +314,7 @@ class WebRtcService : Service() {
                         this == LoginUser().action -> {
                             val notification = loginNotification()
                             startForeground(INCOMING_CALL_NOTIFICATION_ID, notification)
+                            Timber.tag(TAG).e("User= %s", userPlivo?.toString())
                             if (loginUser()) {
                                 removeNotifications()
                             }
@@ -617,7 +619,11 @@ class WebRtcService : Service() {
 
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        endpoint?.logout()
+        try {
+            endpoint?.logout()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
         super.onTaskRemoved(rootIntent)
         Timber.tag(TAG).e("OnTaskRemoved")
     }
@@ -627,7 +633,7 @@ class WebRtcService : Service() {
     }
 
     private fun loginNotification(): Notification {
-        Timber.tag(TAG).e("incomingCallNotification   ")
+        Timber.tag(TAG).e("Login Notification   ")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name: CharSequence = "Voip Login User"

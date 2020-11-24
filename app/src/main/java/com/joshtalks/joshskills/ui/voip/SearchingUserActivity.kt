@@ -239,7 +239,7 @@ class SearchingUserActivity : BaseActivity() {
         appAnalytics?.addParam(AnalyticsEvent.SEARCH_USER_FOR_VOIP.NAME, courseId)
         courseId?.let {
             startProgressBarCountDown()
-            viewModel.getUserForTalk(it)
+            viewModel.getUserForTalk(it, topicId)
         }
     }
 

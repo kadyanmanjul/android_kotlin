@@ -105,7 +105,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
             try {
                 tv_today_topic.text = response.topicName
                 tv_practise_time.text =
-                    response.alreadyTalked.toString() + "/" + response.duration.toString()
+                    response.alreadyTalked.toString().plus("/").plus(response.duration.toString())
                 progress_bar.progress = response.alreadyTalked.toFloat()
                 progress_bar.progressMax = response.duration.toFloat()
                 text_view.text =

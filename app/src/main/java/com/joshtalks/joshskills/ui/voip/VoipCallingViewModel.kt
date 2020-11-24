@@ -19,7 +19,7 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
     var retryCount = 0
     var attemptCount = 0
 
-    fun getUserForTalk(courseId: String) {
+    fun getUserForTalk(courseId: String, topicId: Int?) {
         if (retryCount > RETRY_COUNT) {
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED_PERMANENT)
             return
@@ -30,7 +30,8 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
         }
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = AppObjectController.commonNetworkService.getP2PUser(courseId)
+                val response =
+                    AppObjectController.commonNetworkService.getP2PUser(courseId, topicId)
                 apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                 voipDetailsLiveData.postValue(response)
                 retryCount = 0
