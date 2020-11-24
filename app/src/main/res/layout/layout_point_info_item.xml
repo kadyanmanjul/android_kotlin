@@ -28,6 +28,6 @@
         android:textColor="#48A429"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text=":+5" />
+        tools:text=": +5" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 

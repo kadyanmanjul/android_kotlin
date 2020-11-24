@@ -16,10 +16,11 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/_8ssp"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-        android:textColor="@color/colorPrimary"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/score"
         app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/see_leaderboard" />
 
@@ -27,10 +28,11 @@
         android:id="@+id/score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingVertical="@dimen/_8ssp"
         android:paddingHorizontal="@dimen/_4ssp"
+        android:paddingVertical="@dimen/_8ssp"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
         android:textColor="#48A429"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/expand_unexpand_view"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="245" />
