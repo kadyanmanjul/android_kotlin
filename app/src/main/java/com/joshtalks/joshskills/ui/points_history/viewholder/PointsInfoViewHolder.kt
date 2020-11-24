@@ -29,7 +29,7 @@ class PointsInfoViewHolder(var points: PointsWorking,val position: Int) {
     @Resolve
     fun onViewInflated() {
         name.text=points.label
-        score.text=":+".plus(points.points)
+        score.text=": +".plus(points.points)
         if(position.rem(2)==0){
             rootView.setBackgroundColor(
                 ContextCompat.getColor(

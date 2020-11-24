@@ -7,7 +7,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ScrollView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -17,15 +19,21 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.ActivityUserProfileBinding
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.AwardCategory
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.mindorks.placeholderview.PlaceHolderView
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import kotlinx.android.synthetic.main.base_toolbar.iv_back
 import kotlinx.android.synthetic.main.base_toolbar.iv_help
+import kotlinx.android.synthetic.main.base_toolbar.iv_setting
 import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 
 class UserProfileActivity : BaseActivity() {
@@ -69,6 +77,26 @@ class UserProfileActivity : BaseActivity() {
             }
         }
         text_message_title.text = getString(R.string.profile)
+        with(iv_setting) {
+            visibility = View.VISIBLE
+            setOnClickListener {
+                openPopupMenu(it)
+            }
+        }
+    }
+
+    private fun openPopupMenu(view: View) {
+        val popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
+        popupMenu.inflate(R.menu.user_profile__menu)
+        popupMenu.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.menu_points_history -> {
+                    openPointHistory()
+                }
+            }
+            return@setOnMenuItemClickListener false
+        }
+        popupMenu.show()
     }
 
     /* private fun initRecyclerView() {
@@ -155,6 +183,7 @@ class UserProfileActivity : BaseActivity() {
             )
         }
         binding.multiLineLl.addView(addLinerLayout(AwardCategory(null, null, null, listAwardss)))
+        binding.scrollView.fullScroll(ScrollView.FOCUS_UP)
     }
 
     @SuppressLint("WrongViewCast")
