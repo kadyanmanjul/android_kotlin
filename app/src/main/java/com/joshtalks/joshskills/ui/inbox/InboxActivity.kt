@@ -140,7 +140,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
-        WebRtcService.loginUserClient()
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            WebRtcService.loginUserClient()
+        }
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         super.onCreate(savedInstanceState)
         AppObjectController.isSettingUpdate = false

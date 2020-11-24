@@ -65,29 +65,13 @@ class ActivityUnlockNextClass : AppCompatActivity() {
         }
 
         findViewById<TextView>(R.id.continue_btn).setOnClickListener {
-            setResult(RESULT_OK, Intent().apply { putExtra(IS_BATCH_CHANGED, true) })
+            setResult(RESULT_OK, Intent().apply { putExtra(IS_BATCH_CHANGED, false) })
             finish()
-            /* CoroutineScope(Dispatchers.IO).launch {
-                 try {
-                     val response =
-                         AppObjectController.chatNetworkService.changeBatchRequest(conversationId)
-                     val arguments = mutableMapOf<String, String>()
-                     val (key, value) = PrefManager.getLastSyncTime(conversationId)
-                     arguments[key] = value
-                     if (response.isSuccessful) {
-                         setResult(RESULT_OK, Intent().apply { putExtra(IS_BATCH_CHANGED, true) })
-                         finish()
-                     }
-                 } catch (e: Exception) {
-                     e.printStackTrace()
-                 }
-             }*/
-
         }
     }
 
     override fun onBackPressed() {
-        setResult(RESULT_OK, Intent().apply { putExtra(IS_BATCH_CHANGED, true) })
+        setResult(RESULT_OK, Intent().apply { putExtra(IS_BATCH_CHANGED, false) })
         finish()
         super.onBackPressed()
     }

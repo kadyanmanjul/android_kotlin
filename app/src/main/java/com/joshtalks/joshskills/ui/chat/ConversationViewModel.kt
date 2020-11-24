@@ -28,6 +28,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
 import com.joshtalks.joshskills.repository.local.entity.Question
@@ -551,7 +552,6 @@ class ConversationViewModel(application: Application) :
 
     fun initCometChat() {
         jobs += viewModelScope.launch(Dispatchers.IO) {
-
             isLoading.postValue(true)
 
             val appSettings = AppSettings.AppSettingsBuilder()
@@ -648,4 +648,18 @@ class ConversationViewModel(application: Application) :
         }
     }
 
+    suspend fun getLessonStatus(lessonId: Int): Boolean {
+        when(appDatabase.lessonDao().getLesson(lessonId)?.status){
+            LESSON_STATUS.CO->{
+                return true
+            }
+            else->{
+                return false
+            }
+        }
+    }
+
+    suspend fun getLessonModel(lessonId: Int): LessonModel? {
+        return appDatabase.lessonDao().getLesson(lessonId)
+    }
 }

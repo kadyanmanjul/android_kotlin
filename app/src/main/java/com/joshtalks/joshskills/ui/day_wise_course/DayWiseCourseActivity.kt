@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -42,11 +43,13 @@ class DayWiseCourseActivity : CoreJoshActivity(),
     var conversastionId: String? = null
     var isBatchChanged: Boolean = false
 
+
     private val viewModel: CapsuleViewModel by lazy {
         ViewModelProvider(this).get(CapsuleViewModel::class.java)
     }
 
     companion object {
+        const val LAST_LESSON_STATUS = "last_lesson_status"
         private val LESSON_ID = "lesson_id"
         fun getDayWiseCourseActivityIntent(
             context: Context,
@@ -224,7 +227,11 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                 IS_BATCH_CHANGED
             ) == true
         ) {
-            setResult(RESULT_OK, Intent().apply { putExtra(IS_BATCH_CHANGED, true) })
+            setResult(RESULT_OK, Intent().apply {
+                putExtra(IS_BATCH_CHANGED, false)
+                putExtra(LAST_LESSON_INTERVAL, lessonInterval)
+                putExtra(LAST_LESSON_STATUS, lessonCompleted)
+            })
             finish()
         }
 
@@ -260,7 +267,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         val resultIntent = Intent()
         resultIntent.putExtra(IS_BATCH_CHANGED, isBatchChanged)
         resultIntent.putExtra(LAST_LESSON_INTERVAL, lessonInterval)
-
+        resultIntent.putExtra(LAST_LESSON_STATUS, lessonCompleted)
         setResult(RESULT_OK, resultIntent)
         this@DayWiseCourseActivity.finish()
     }
