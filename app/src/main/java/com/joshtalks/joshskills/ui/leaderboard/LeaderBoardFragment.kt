@@ -22,7 +22,7 @@ import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class LeaderBoardFragment private constructor() : Fragment() {
+class LeaderBoardFragment : Fragment() {
 
     private lateinit var binding: FragmentLeaderboardViewPagerBinding
     private lateinit var type: String

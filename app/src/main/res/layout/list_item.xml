@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingHorizontal="4dp">
+    android:paddingHorizontal="@dimen/_4sdp">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/rank"
@@ -41,12 +41,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_12sdp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="@dimen/_4sdp"
         android:scrollHorizontally="true"
         android:ellipsize="end"
         android:maxLines="1"
         android:singleLine="true"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="@dimen/_4sdp"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -60,9 +60,9 @@
         android:id="@+id/points"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="@dimen/_4sdp"
         android:layout_marginEnd="@dimen/_12sdp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="@dimen/_4sdp"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -73,7 +73,7 @@
     <LinearLayout
         android:id="@+id/horizontal_line"
         android:layout_width="0dp"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/_1ssp"
         android:background="@color/gray_e6"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
