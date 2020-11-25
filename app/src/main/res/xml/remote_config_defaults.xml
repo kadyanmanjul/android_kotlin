@@ -563,5 +563,13 @@
         <key>SHOW_AWARDS_FULL_SCREEN</key>
         <value>false</value>
     </entry>
+    <entry>
+        <key>PROGRESS_MESSAGE</key>
+        <value>Please complete all previous lessons to unlock</value>
+    </entry>
+    <entry>
+        <key>INCOMPLETE_LESSONS_TITLE</key>
+        <value>Incomplete lessons</value>
+    </entry>
 
 </defaultsMap>

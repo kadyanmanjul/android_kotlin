@@ -193,6 +193,8 @@ class FirebaseRemoteConfigKey {
 
         const val DISABLED_VERSION_CODES = "DISABLED_VERSION_CODES"
         const val SHOW_AWARDS_FULL_SCREEN = "SHOW_AWARDS_FULL_SCREEN"
+        const val PROGRESS_MESSAGE = "PROGRESS_MESSAGE"
+        const val INCOMPLETE_LESSONS_TITLE = "INCOMPLETE_LESSONS_TITLE"
 
     }
 }

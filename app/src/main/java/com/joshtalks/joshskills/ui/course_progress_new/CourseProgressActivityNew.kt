@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
@@ -248,10 +250,13 @@ class CourseProgressActivityNew : AppCompatActivity(),
     }
 
     private fun showAlertMessage() {
+
         CustomDialog(
             this,
-            "Incomplete lessons",
-            "Please complete all previous lessons to unlock"
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.PROGRESS_MESSAGE),
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.PROGRESS_MESSAGE)
         ).show()
     }
 
