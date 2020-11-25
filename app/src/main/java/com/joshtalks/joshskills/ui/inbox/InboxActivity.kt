@@ -767,7 +767,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     private fun initScoreCardView(userData: UserProfileResponse) {
         userData.isPointsActive?.let { isLeaderBoardActive ->
-            PrefManager.put(IS_LEADERBOARD_ACTIVE, true)
+            PrefManager.put(IS_LEADERBOARD_ACTIVE, userData.isPointsActive)
             if (userData.isPointsActive) {
                 user_data_container.visibility = View.VISIBLE
                 user_points.text = userData.points.toString()

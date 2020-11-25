@@ -617,7 +617,7 @@
                     android:textAllCaps="false"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                     android:textColor="@color/white"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:rippleColor="@color/white" />
 
                 <com.google.android.material.textview.MaterialTextView
@@ -636,7 +636,7 @@
                     android:textAllCaps="false"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                     android:textColor="@color/white"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layout_goneMarginBottom="@dimen/_8sdp"
                     app:rippleColor="@color/white" />
 
