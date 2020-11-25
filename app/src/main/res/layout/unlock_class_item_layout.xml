@@ -7,8 +7,8 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/_2sdp"
     android:layout_marginBottom="@dimen/_2sdp"
-    android:paddingStart="@dimen/_7sdp"
-    android:paddingEnd="@dimen/_14sdp">
+    android:paddingStart="@dimen/_16sdp"
+    android:paddingEnd="@dimen/_32sdp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_top"

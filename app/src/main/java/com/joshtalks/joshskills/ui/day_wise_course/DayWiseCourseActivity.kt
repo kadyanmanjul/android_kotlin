@@ -43,6 +43,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
     private lateinit var binding: DaywiseCourseActivityBinding
     var lessonId: Int = 0
     var lessonInterval: Int = -1
+    var chatId: String = EMPTY
     var conversastionId: String? = null
     var isBatchChanged: Boolean = false
 
@@ -53,16 +54,19 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
     companion object {
         const val LAST_LESSON_STATUS = "last_lesson_status"
+        const val LESSON_CHAT_ID = "chat_lesson_id"
         private val LESSON_ID = "lesson_id"
         fun getDayWiseCourseActivityIntent(
             context: Context,
             lessonId: Int,
             courseId: String,
-            interval: Int = -1
+            interval: Int = -1,
+            chatId:String= EMPTY
         ) = Intent(context, DayWiseCourseActivity::class.java).apply {
             putExtra(LESSON_ID, lessonId)
             putExtra(COURSE_ID, courseId)
             putExtra(LESSON_INTERVAL, interval)
+            putExtra(LESSON_CHAT_ID, chatId)
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         }
 
@@ -76,6 +80,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
             lessonId = intent.getIntExtra(LESSON_ID, 0)
             lessonInterval = intent.getIntExtra(LESSON_INTERVAL, -1)
+            chatId = intent.getStringExtra(LESSON_CHAT_ID)
             viewModel.syncQuestions(lessonId)
             viewModel.getQuestions(lessonId)
         }
@@ -96,6 +101,8 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
 
         lessonInterval = intent.getIntExtra(LESSON_INTERVAL, -1)
+        chatId = intent.getStringExtra(LESSON_CHAT_ID)
+
 
         titleView = findViewById(R.id.text_message_title)
         val helpIv: ImageView = findViewById(R.id.iv_help)
@@ -252,6 +259,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                 putExtra(IS_BATCH_CHANGED, false)
                 putExtra(LAST_LESSON_INTERVAL, lessonInterval)
                 putExtra(LAST_LESSON_STATUS, lessonCompleted)
+                putExtra(LESSON_CHAT_ID, chatId)
             })
             finish()
         }
@@ -289,6 +297,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         resultIntent.putExtra(IS_BATCH_CHANGED, isBatchChanged)
         resultIntent.putExtra(LAST_LESSON_INTERVAL, lessonInterval)
         resultIntent.putExtra(LAST_LESSON_STATUS, lessonCompleted)
+        resultIntent.putExtra(LESSON_CHAT_ID, chatId)
         setResult(RESULT_OK, resultIntent)
         this@DayWiseCourseActivity.finish()
     }

@@ -56,6 +56,7 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
+import com.joshtalks.joshskills.core.LESSON__CHAT_ID
 import com.joshtalks.joshskills.core.MESSAGE_CHAT_SIZE_LIMIT
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
@@ -124,7 +125,6 @@ import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
 import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity.Companion.LAST_LESSON_STATUS
-import com.joshtalks.joshskills.ui.day_wise_course.lesson.LessonCompleteViewHolder
 import com.joshtalks.joshskills.ui.day_wise_course.lesson.LessonViewHolder
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.pdfviewer.MESSAGE_ID
@@ -806,11 +806,6 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                             conversationBinding.chatRv.addView(cell)
                             lastMessage = chatModel
                         }
-                        if (chatModel.type == BASE_MESSAGE_TYPE.LESSON) {
-                            chatModel.lessons?.let {
-                                addLessonCompleteCard(it)
-                            }
-                        }
                     }
                 }
                 if (isNewChatViewAdd) {
@@ -857,7 +852,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     }
 
     private fun isLessonCompleted(chatModel: LessonModel): Boolean {
-        return chatModel.status == LESSON_STATUS.CO
+        return chatModel?.status == LESSON_STATUS.CO
     }
 
     private fun showGroupChatScreen(groupDetails: GroupDetails) {
@@ -1538,7 +1533,16 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     val status = data.getBooleanExtra(LAST_LESSON_STATUS, false)
                     if (isCurrentLessonAlreadyCompleted.not() && status) {
                         CoroutineScope(Dispatchers.IO).launch {
-                            addLessonCompleteCard(conversationViewModel.getLessonModel(lastLessonId))
+                            try {
+                                val chatId = data.getStringExtra(LESSON__CHAT_ID)
+                                if(chatId!=null&&chatId.isNullOrBlank().not()) {
+                                    val chatObj = AppObjectController.appDatabase.chatDao()
+                                        .getUpdatedChatObjectViaId(chatId)
+                                    refreshViewAtPos(chatObj)
+                                }
+                            } catch (ex: Exception) {
+                            }
+
                         }
                     }
                     addUnlockNextClassCard(interval, fromLesson = true)
@@ -1567,7 +1571,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    fun onLessonItemClick(lessonId: Int, interval: Int) {
+    fun onLessonItemClick(lessonId: Int, interval: Int,chatId:String) {
         CoroutineScope(Dispatchers.IO).launch {
             isCurrentLessonAlreadyCompleted = conversationViewModel.getLessonStatus(lessonId)
             lastLessonId = lessonId
@@ -1577,7 +1581,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 this,
                 lessonId,
                 courseId = inboxEntity.courseId,
-                interval
+                interval,
+                chatId
             ),
             LESSON_REQUEST_CODE
         )

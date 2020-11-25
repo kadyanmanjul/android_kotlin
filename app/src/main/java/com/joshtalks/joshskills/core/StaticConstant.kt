@@ -21,6 +21,7 @@ const val IMAGE_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp)|WEBP|webp|JPEG|PNG|
 const val STARTED_FROM = "started_from"
 const val COURSE_ID = "course_ID"
 const val LESSON_INTERVAL = "lesson_interval"
+const val LESSON__CHAT_ID = "lesson_chat_id"
 const val SHOW_OVERLAY = "show_overlay"
 const val MIN_LINES = 4
 const val RC_HINT = 2
