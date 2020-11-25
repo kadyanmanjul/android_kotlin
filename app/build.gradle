@@ -61,6 +61,7 @@ android {
         resolutionStrategy.force "org.antlr:antlr4-runtime:4.7.1"
         resolutionStrategy.force "org.antlr:antlr4-tool:4.7.1"
     }
+/*
 
     configurations {
         // implementation.exclude module:'proto-google-common-protos'
@@ -68,6 +69,7 @@ android {
         implementation.exclude module: 'protobuf-lite'
         implementation.exclude module: 'protobuf-javalite'
     }
+*/
 
     signingConfigs {
         debug {
@@ -251,8 +253,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-config:20.0.1'
     implementation 'com.google.firebase:firebase-dynamic-links-ktx:19.1.1'
     implementation 'com.google.firebase:firebase-auth:20.0.1'
-    //   implementation 'com.google.firebase:firebase-inappmessaging-ktx:19.1.1'
-    // implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:19.1.1'
+    implementation 'com.google.firebase:firebase-inappmessaging-ktx:19.1.1'
+    implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:19.1.1'
 
     implementation 'com.huawei.hms:ads-identifier:3.4.28.305' // ads identifier for Huawei devices
     implementation 'com.google.android.gms:play-services-ads:19.5.0'
