@@ -18,7 +18,6 @@ import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.databinding.CourseProgressActivityNewBinding
 import com.joshtalks.joshskills.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewItem
 import com.joshtalks.joshskills.repository.server.course_overview.PdfInfo
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
@@ -196,7 +195,7 @@ class CourseProgressActivityNew : AppCompatActivity(),
     }
 
     override fun onProgressItemClick(item: CourseOverviewItem, previousItem: CourseOverviewItem?) {
-        if  (item.status == QUESTION_STATUS.NA.name) {
+        if (item.status == LESSON_STATUS.NO.name) {
             showAlertMessage()
         } else {
             val dayWiseActivityListener: ActivityResultLauncher<Intent> =

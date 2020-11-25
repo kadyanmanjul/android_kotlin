@@ -6,7 +6,9 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -21,6 +23,7 @@ import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.LESSON_INTERVAL
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
@@ -158,6 +161,24 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                         }
                     }
                 }).attach()
+            val tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
+            val layoutParam: LinearLayout.LayoutParams =
+                LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT
+                )
+
+            for (i in 0 until tabs.childCount) {
+                val tab = tabs.getChildAt(i)
+                tab.layoutParams = layoutParam
+                val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
+
+                layoutParams.weight = 0f
+                layoutParams.marginEnd = Utils.dpToPx(2)
+                layoutParams.marginStart = Utils.dpToPx(2)
+                tab.layoutParams = layoutParams
+                binding.lessonTabLayout.requestLayout()
+            }
 
             binding.lessonTabLayout.addOnTabSelectedListener(object :
                 TabLayout.OnTabSelectedListener {

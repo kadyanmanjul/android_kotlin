@@ -274,10 +274,6 @@ class GrammarFragment : Fragment() {
                                     videoId,
                                     videoUrl
                                 )
-
-                                updateVideoQuestionStatus(this)
-                                binding.quizShader.visibility = View.GONE
-
                             }
                             binding.videoPlayer.downloadStreamButNotPlay()
                         }
