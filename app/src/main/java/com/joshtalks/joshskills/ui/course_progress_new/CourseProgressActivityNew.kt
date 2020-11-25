@@ -254,7 +254,7 @@ class CourseProgressActivityNew : AppCompatActivity(),
         CustomDialog(
             this,
             AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.PROGRESS_MESSAGE),
+                .getString(FirebaseRemoteConfigKey.INCOMPLETE_LESSONS_TITLE),
             AppObjectController.getFirebaseRemoteConfig()
                 .getString(FirebaseRemoteConfigKey.PROGRESS_MESSAGE)
         ).show()
