@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.repository.local.entity
 
 import android.os.Parcelable
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.room.ColumnInfo
 import androidx.room.Dao
@@ -195,9 +194,6 @@ data class Question(
     @ColumnInfo
     @SerializedName("title") var title: String? = "",
 
-    @ColumnInfo
-    @SerializedName("practice_word") var practiceWord: String? = "",
-
     @ColumnInfo(name = "question_type") var questionType: String = "",
 
     @ColumnInfo(name = "type")
@@ -245,6 +241,9 @@ data class Question(
     @ColumnInfo(name = "temp_type")
     @Expose var tempType: BASE_MESSAGE_TYPE? = type,
 
+    @ColumnInfo(name = "practice_word")
+    @SerializedName("practice_word") var practiceWord: String? = "",
+
     @ColumnInfo(name = "chat_type")
     @SerializedName("chat_type")
     @Expose var chatType: CHAT_TYPE = CHAT_TYPE.OTHER,
@@ -265,7 +264,6 @@ data class Question(
 
     @ColumnInfo(name = "topic_id")
     @SerializedName("topic_id") var topicId: String? = null,
-
 
     @Embedded(prefix = "cexam_")
     @Expose

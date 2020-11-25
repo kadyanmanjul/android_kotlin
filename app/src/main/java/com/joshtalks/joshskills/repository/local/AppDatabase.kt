@@ -139,7 +139,7 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_21_22,
                                 MIGRATION_22_23
                             )
-                            .fallbackToDestructiveMigration()
+                          //  .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
                             .setJournalMode(JournalMode.WRITE_AHEAD_LOGGING)
                             .build()
@@ -332,17 +332,34 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE video_watch_table ADD COLUMN course_id INTEGER NOT NULL DEFAULT -1 ")
             }
         }
-        private val MIGRATION_22_23: Migration = object : Migration(23, 23) {
+        private val MIGRATION_22_23: Migration = object : Migration(22, 23) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE question_table ADD COLUMN topic_id INTEGER ")
-                database.execSQL("ALTER TABLE question_table ADD COLUMN certificate_exam_id INTEGER  ")
-                database.execSQL("CREATE TABLE IF NOT EXISTS `lessonmodel` (`lesson_id` INTEGER PRIMARY KEY NOT NULL, `lesson_no` INTEGER NOT NULL, `lesson_name` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, `status` TEXT NOT NULL)")
-                database.execSQL("ALTER TABLE `question_table` ADD COLUMN lesson INTEGER NOT NULL DEFAULT 0")
-                database.execSQL("ALTER TABLE `question_table` ADD COLUMN status TEXT NOT NULL DEFAULT 'NA'")
-                database.execSQL("ALTER TABLE `question_table` ADD COLUMN chat_type TEXT NOT NULL DEFAULT 'NA'")
-                database.execSQL("ALTER TABLE `question_table` ADD COLUMN practice_word TEXT NOT NULL DEFAULT 'NA'")
-                database.execSQL("ALTER TABLE `question_table` ADD COLUMN lesson_status TEXT NOT NULL DEFAULT 'NO'")
+                database.execSQL("ALTER TABLE course ADD COLUMN is_group_active INTEGER NOT NULL DEFAULT 0")
                 database.execSQL("ALTER TABLE `chat_table` ADD COLUMN lesson_id INTEGER NOT NULL DEFAULT 0")
+
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN lesson_id INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN practice_word TEXT NOT NULL DEFAULT 'NA'")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN status TEXT NOT NULL DEFAULT 'NA'")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN lesson_status TEXT NOT NULL DEFAULT 'NO'")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN chat_type TEXT NOT NULL DEFAULT 'NA'")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN lesson INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE question_table ADD COLUMN certificate_exam_id INTEGER")
+                database.execSQL("ALTER TABLE question_table ADD COLUMN topic_id INTEGER ")
+
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN cexam_attemptOn INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN cexam_attemptLeft INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN cexam_attempted INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN cexam_batchIcon TEXT NOT NULL DEFAULT ''")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN cexam_code TEXT NOT NULL DEFAULT ''")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN cexam_eligibilityDate TEXT NOT NULL DEFAULT ''")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN cexam_passedOn TEXT NOT NULL DEFAULT ''")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN cexam_marks REAL NOT NULL DEFAULT  0")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN cexam_examStatus TEXT NOT NULL DEFAULT ''")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN cexam_text TEXT NOT NULL DEFAULT ''")
+
+                database.execSQL("CREATE TABLE IF NOT EXISTS `app_usage` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `created` INTEGER NOT NULL, `usage_time` INTEGER NOT NULL)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `app_activity` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `created` INTEGER NOT NULL, `activity` TEXT NOT NULL)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `lessonmodel` (`lesson_id` INTEGER NOT NULL, `lesson_no` INTEGER NOT NULL, `lesson_name` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, `status` TEXT, `course` INTEGER NOT NULL, `interval` INTEGER NOT NULL, PRIMARY KEY(`lesson_id`))")
             }
         }
 
