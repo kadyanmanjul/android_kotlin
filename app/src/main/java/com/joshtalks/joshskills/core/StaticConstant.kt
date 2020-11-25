@@ -191,6 +191,7 @@ class FirebaseRemoteConfigKey {
         const val VOCABULARY_COMPLETED = "VOCABULARY_COMPLETED"
 
         const val DISABLED_VERSION_CODES = "DISABLED_VERSION_CODES"
+        const val SHOW_AWARDS_FULL_SCREEN = "SHOW_AWARDS_FULL_SCREEN"
 
     }
 }

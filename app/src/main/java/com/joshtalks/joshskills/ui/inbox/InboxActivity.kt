@@ -12,7 +12,6 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
-import android.widget.ScrollView
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModelProvider
@@ -34,6 +33,7 @@ import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.MINIMUM_TIME_TO_SHOW_REVIEW
 import com.joshtalks.joshskills.core.IN_APP_REVIEW_COUNT
+import com.joshtalks.joshskills.core.IS_LEADERBOARD_ACTIVE
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
@@ -50,7 +50,6 @@ import com.joshtalks.joshskills.core.inapp_update.Constants
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
@@ -61,8 +60,6 @@ import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.server.Award
-import com.joshtalks.joshskills.repository.server.AwardCategory
 import com.joshtalks.joshskills.repository.server.ProfileResponse
 import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
@@ -147,6 +144,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     var isFromOnBoarding: Boolean = false
     var time_in_milli_seconds = 0L
     var expiryToolText: String = EMPTY
+    private lateinit var popupMenu: PopupMenu
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
@@ -521,8 +519,15 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun openPopupMenu(view: View) {
-        val popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
+        popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
         popupMenu.inflate(R.menu.more_options_menu)
+        if (PrefManager.getBoolValue(IS_LEADERBOARD_ACTIVE)) {
+            popupMenu.menu.findItem(R.id.menu_leaderboard).setVisible(true)
+            popupMenu.menu.findItem(R.id.menu_leaderboard).setEnabled(true)
+        } else {
+            popupMenu.menu.findItem(R.id.menu_leaderboard).setVisible(false)
+            popupMenu.menu.findItem(R.id.menu_leaderboard).setEnabled(false)
+        }
         popupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_referral -> {
@@ -752,7 +757,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 }
             }
         })
-        viewModel.userData.observe(this,  {
+        viewModel.userData.observe(this, {
             it?.let {
                 ///hideProgressBar()
                 initScoreCardView(it)
@@ -761,12 +766,27 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun initScoreCardView(userData: UserProfileResponse) {
-        user_data_container.visibility=View.VISIBLE
-        user_points.text = userData.points.toString()
-        user_streak_data.text = userData.streak.toString()
-        user_min_data.text = userData.minutesSpoken.toString()
-        see_leaderboard.setOnClickListener {
-            openLeaderBoard()
+        userData.isPointsActive?.let { isLeaderBoardActive ->
+            PrefManager.put(IS_LEADERBOARD_ACTIVE, true)
+            if (userData.isPointsActive) {
+                user_data_container.visibility = View.VISIBLE
+                user_points.text = userData.points.toString()
+                user_streak_data.text = userData.streak.toString()
+                user_min_data.text = userData.minutesSpoken.toString()
+                see_leaderboard.setOnClickListener {
+                    openLeaderBoard()
+                }
+            } else {
+                user_data_container.visibility = View.GONE
+                try {
+
+                    popupMenu.menu.findItem(R.id.menu_leaderboard).setVisible(false)
+                    popupMenu.menu.findItem(R.id.menu_leaderboard).setEnabled(false)
+                    //popupMenu..findItem(R.id.menu_leaderboard).setVisible(false)
+                } catch (ex: Exception) {
+
+                }
+            }
         }
     }
 

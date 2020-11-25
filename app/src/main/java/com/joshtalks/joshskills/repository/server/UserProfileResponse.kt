@@ -1,7 +1,9 @@
 package com.joshtalks.joshskills.repository.server
 
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
 data class UserProfileResponse(
     @SerializedName("age")
@@ -30,6 +32,8 @@ data class UserProfileResponse(
     val streak: Int?,
     @SerializedName("uid")
     val uid: String?,
+    @SerializedName("is_points_active")
+    val isPointsActive: Boolean? = false,
     @SerializedName("award_category_list")
     val awardCategory: List<AwardCategory>?,
     @SerializedName("certificates")
@@ -59,7 +63,9 @@ data class Certificate(
     @SerializedName("image_url")
     val imageUrl: String?,
     @SerializedName("sort_order")
-    val sortOrder: Int?
+    val sortOrder: Int?,
+    @SerializedName("certificate_description")
+    val certificateDescription: String?
 )
 
 data class AwardCategory(
@@ -73,6 +79,7 @@ data class AwardCategory(
     val awards: List<Award>?
 )
 
+@Parcelize
 data class Award(
     @SerializedName("award_text")
     val awardText: String?,
@@ -81,5 +88,7 @@ data class Award(
     @SerializedName("date_text")
     val dateText: String?,
     @SerializedName("image_url")
-    val imageUrl: String?
-)
+    val imageUrl: String?,
+    @SerializedName("award_description")
+    val awardDescription: String?
+) : Parcelable

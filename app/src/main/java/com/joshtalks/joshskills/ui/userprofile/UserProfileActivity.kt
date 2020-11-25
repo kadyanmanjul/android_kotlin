@@ -19,18 +19,21 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IS_LEADERBOARD_ACTIVE
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.ActivityUserProfileBinding
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.AwardCategory
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
-import com.joshtalks.joshskills.ui.inbox.InboxActivity
-import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.mindorks.placeholderview.PlaceHolderView
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.base_toolbar.iv_back
 import kotlinx.android.synthetic.main.base_toolbar.iv_help
 import kotlinx.android.synthetic.main.base_toolbar.iv_setting
@@ -41,6 +44,8 @@ class UserProfileActivity : BaseActivity() {
     lateinit var binding: ActivityUserProfileBinding
     private var mentorId: String = EMPTY
     private var viewCount: Int = 0
+    private val compositeDisposable = CompositeDisposable()
+
 
     private val viewModel by lazy {
         ViewModelProvider(this).get(
@@ -51,7 +56,7 @@ class UserProfileActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mentorId = intent.getStringExtra(KEY_MENTOR_ID)
-        if (mentorId.isNullOrEmpty()) {
+        if (mentorId.isNullOrEmpty() || PrefManager.getBoolValue(IS_LEADERBOARD_ACTIVE).not()) {
             this.finish()
         }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_user_profile)
@@ -178,7 +183,8 @@ class UserProfileActivity : BaseActivity() {
                     certificate.certificateText,
                     certificate.sortOrder,
                     certificate.dateText,
-                    certificate.imageUrl
+                    certificate.imageUrl,
+                    certificate.certificateDescription
                 )
             )
         }
@@ -232,6 +238,55 @@ class UserProfileActivity : BaseActivity() {
             view.visibility = View.VISIBLE
         }
         binding.multiLineLl
+    }
+
+    override fun onResume() {
+        super.onResume()
+        subscribeRXBus()
+    }
+
+    private fun subscribeRXBus() {
+        compositeDisposable.add(
+            RxBus2.listen(AwardItemClickedEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    if (AppObjectController.getFirebaseRemoteConfig()
+                            .getBoolean(FirebaseRemoteConfigKey.SHOW_AWARDS_FULL_SCREEN)
+                    ) {
+                        openAwardPopUp(it.award)
+                    }
+                }, {
+                    it.printStackTrace()
+                })
+        )
+    }
+
+    private fun openAwardPopUp(award: Award) {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.parent_Container,
+                ShowAwardFragment.newInstance(award),
+                "Show Award Fragment"
+            )
+            .addToBackStack(null)
+            .commit()
+    }
+
+    override fun onStop() {
+        compositeDisposable.clear()
+        super.onStop()
+    }
+
+    override fun onBackPressed() {
+        val count = supportFragmentManager.backStackEntryCount
+        if (count == 0) {
+            super.onBackPressed()
+            //additional code
+        } else {
+            supportFragmentManager.popBackStack()
+        }
     }
 
     companion object {

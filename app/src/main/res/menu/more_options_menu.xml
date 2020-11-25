@@ -5,6 +5,7 @@
         android:id="@+id/menu_leaderboard"
         android:actionLayout="@layout/base_toolbar"
         android:orderInCategory="100"
+        android:visible="false"
         android:title="@string/leaderboard"
         app:showAsAction="collapseActionView" />
 

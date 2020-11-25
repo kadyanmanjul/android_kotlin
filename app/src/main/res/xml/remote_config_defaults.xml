@@ -559,5 +559,9 @@
         <key>DISABLED_VERSION_CODES</key>
         <value>0</value>
     </entry>
+    <entry>
+        <key>SHOW_AWARDS_FULL_SCREEN</key>
+        <value>false</value>
+    </entry>
 
 </defaultsMap>

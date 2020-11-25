@@ -2,20 +2,21 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
     android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/_14sdp"
-    android:layout_marginEnd="@dimen/_20sdp"
-    android:layout_height="wrap_content">
+    android:layout_marginEnd="@dimen/_20sdp">
 
     <ImageView
         android:id="@+id/image"
         android:layout_width="@dimen/_48sdp"
         android:layout_height="@dimen/_48sdp"
+        android:layout_marginBottom="@dimen/_6sdp"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toTopOf="@id/title"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="@dimen/_6sdp"
         app:layout_constraintStart_toStartOf="parent"
-        android:scaleType="fitXY"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/josh_skill" />
 
@@ -25,9 +26,9 @@
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
         android:textColor="@color/black"
+        app:layout_constraintBottom_toTopOf="@id/date"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/date"
         tools:text="Student of the year" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -36,8 +37,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
         android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         tools:text="Earned on 24th Aug" />
 </androidx.constraintlayout.widget.ConstraintLayout>
