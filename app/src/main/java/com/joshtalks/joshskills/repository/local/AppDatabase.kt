@@ -340,11 +340,11 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN lesson_id INTEGER NOT NULL DEFAULT 0")
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN practice_word TEXT ")
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN status TEXT NOT NULL DEFAULT 'NA'")
-                database.execSQL("ALTER TABLE `question_table` ADD COLUMN lesson_status TEXT NOT NULL DEFAULT 'NO'")
-                database.execSQL("ALTER TABLE `question_table` ADD COLUMN chat_type TEXT NOT NULL DEFAULT 'NA'")
-                database.execSQL("ALTER TABLE `question_table` ADD COLUMN lesson INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN lesson_status TEXT")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN chat_type TEXT NOT NULL DEFAULT 'OTHER'")
+                //   database.execSQL("ALTER TABLE `question_table` ADD COLUMN lesson INTEGER NOT NULL DEFAULT 0")
                 database.execSQL("ALTER TABLE question_table ADD COLUMN certificate_exam_id INTEGER")
-                database.execSQL("ALTER TABLE question_table ADD COLUMN topic_id INTEGER ")
+                database.execSQL("ALTER TABLE question_table ADD COLUMN topic_id TEXT ")
 
 
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN cexam_attemptLeft INTEGER")
