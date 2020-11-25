@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.repository.local.entity
 
 import android.os.Parcelable
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.room.ColumnInfo
 import androidx.room.Dao
@@ -661,18 +662,16 @@ interface ChatDao {
                         getPdfOfQuestion(questionId = question.questionId)
                 }
 
-                println("queston lesson " + question.lesson)
-                println("chat lesson " + chatModel.lessons)
                 if (question.lesson != null) {
                     chatModel.lessons = question.lesson
                 }
+
+                chatModel.question = question
                 val lessonModel =
                     AppObjectController.appDatabase.lessonDao().getLesson(question.lesson_id)
                 chatModel.lessons = lessonModel
                 chatModel.question?.lesson = lessonModel
 
-                println(" chat lesson1 " + chatModel.lessons)
-                chatModel.question = question
             }
         }
         return chatModel

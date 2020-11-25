@@ -841,18 +841,6 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
 
     }
 
-    private fun addLessonCompleteCard(chatModel: LessonModel?) {
-        if (chatModel != null && isLessonCompleted(chatModel)) {
-            conversationBinding.chatRv.addView(
-                LessonCompleteViewHolder(chatModel)
-            )
-        }
-    }
-
-    private fun isLessonCompleted(chatModel: LessonModel): Boolean {
-        return chatModel?.status == LESSON_STATUS.CO
-    }
-
     private fun showGroupChatScreen(groupDetails: GroupDetails) {
         Intent(
             this,
