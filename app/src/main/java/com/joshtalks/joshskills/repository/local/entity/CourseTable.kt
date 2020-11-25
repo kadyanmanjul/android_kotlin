@@ -12,7 +12,7 @@ import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import io.reactivex.Maybe
 import java.io.Serializable
-import java.util.*
+import java.util.Date
 
 @Entity(tableName = "course")
 data class Course(
@@ -53,6 +53,8 @@ data class Course(
     @ColumnInfo(name = "voicecall_status")
     @SerializedName("voicecall_status") val voiceCallStatus: Boolean = false,
 
+    @ColumnInfo(name = "is_group_active")
+    @SerializedName("is_group_active") val isGroupActive: Boolean = false,
 
     ) : Serializable
 

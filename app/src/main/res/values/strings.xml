@@ -556,6 +556,7 @@
     <string name="vocabulary_completed">Congratulations you have completed vocabulary!</string>
     <string name="lesson_no">"Lesson %1$d"</string>
     <string name="today_lesson">Today\'s lesson: %1$s</string>
+    <string name="group_chat">Group Chat</string>
 
 
 </resources>

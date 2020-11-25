@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <item
         android:id="@+id/groupChat"
         android:actionLayout="@layout/base_toolbar"
         android:orderInCategory="100"
-        android:title="Group Chat"
-        app:showAsAction="collapseActionView" />
+        android:title="@string/group_chat"
+        android:visible="false"
+        app:showAsAction="collapseActionView"
+        tools:visible="true" />
 
     <item
         android:id="@+id/menu_referral"

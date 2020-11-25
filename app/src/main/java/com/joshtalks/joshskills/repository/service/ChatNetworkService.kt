@@ -33,7 +33,7 @@ import retrofit2.http.QueryMap
 interface ChatNetworkService {
 
     @GET("$DIR/course/")
-    suspend fun getRegisterCourses(): Response<List<Course>>
+    suspend fun getRegisteredCourses(): Response<List<Course>>
 
     @POST("$DIR/chat/message/")
     fun sendMessageAsync(@Body messageObject: Any): Deferred<ChatMessageReceiver>

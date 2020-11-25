@@ -438,6 +438,10 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 }
                 return@setOnMenuItemClickListener true
             }
+
+            conversationBinding.toolbar.menu.findItem(R.id.groupChat).isVisible =
+                inboxEntity.isGroupActive
+
         } catch (ex: Exception) {
             FirebaseCrashlytics.getInstance().recordException(ex)
         }
@@ -853,7 +857,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     }
 
     private fun isLessonCompleted(chatModel: LessonModel): Boolean {
-        return chatModel?.status == LESSON_STATUS.CO
+        return chatModel.status == LESSON_STATUS.CO
     }
 
     private fun showGroupChatScreen(groupDetails: GroupDetails) {

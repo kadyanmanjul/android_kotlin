@@ -5,8 +5,8 @@ import androidx.room.ColumnInfo
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
 import com.joshtalks.joshskills.repository.local.entity.User
-import java.util.Date
 import kotlinx.android.parcel.Parcelize
+import java.util.Date
 
 @Parcelize
 data class InboxEntity constructor(
@@ -38,6 +38,8 @@ data class InboxEntity constructor(
     @ColumnInfo(name = "batch_started")
     val batchStarted: String?,
     @ColumnInfo(name = "voicecall_status")
-    val voiceCallStatus: Boolean = false
+    val voiceCallStatus: Boolean = false,
+    @ColumnInfo(name = "is_group_active")
+    val isGroupActive: Boolean = false,
 
-) : Parcelable
+    ) : Parcelable
