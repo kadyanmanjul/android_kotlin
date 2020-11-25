@@ -590,7 +590,7 @@ class ConvectorForNPSEvent {
 
 class ChatTypeConverters {
     @TypeConverter
-    fun fromString(value: String?): CHAT_TYPE? {
+    fun fromString(value: String?): CHAT_TYPE {
         return try {
             val matType = object : TypeToken<CHAT_TYPE>() {}.type
             AppObjectController.gsonMapper.fromJson(
@@ -603,11 +603,8 @@ class ChatTypeConverters {
     }
 
     @TypeConverter
-    fun fromMatType(enumVal: CHAT_TYPE?): String? {
-        if (null != enumVal) {
+    fun fromMatType(enumVal: CHAT_TYPE): String {
             return AppObjectController.gsonMapper.toJson(enumVal)
-        }
-        return AppObjectController.gsonMapper.toJson(CHAT_TYPE.OTHER)
     }
 }
 

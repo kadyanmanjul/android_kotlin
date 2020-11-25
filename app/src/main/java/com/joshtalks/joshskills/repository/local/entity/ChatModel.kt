@@ -246,11 +246,11 @@ data class Question(
 
     @ColumnInfo(name = "chat_type")
     @SerializedName("chat_type")
-    @Expose var chatType: CHAT_TYPE = CHAT_TYPE.OTHER,
+    var chatType: CHAT_TYPE = CHAT_TYPE.OTHER,
 
     @ColumnInfo(name = "status")
     @SerializedName("mentor_que_status")
-    @Expose var status: QUESTION_STATUS = QUESTION_STATUS.NA,
+    var status: QUESTION_STATUS = QUESTION_STATUS.NA,
 
     @ColumnInfo(name = "lesson_status")
     @SerializedName("mentor_lesson_status")
