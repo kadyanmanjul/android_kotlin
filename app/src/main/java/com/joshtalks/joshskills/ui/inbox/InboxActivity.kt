@@ -768,23 +768,27 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun initScoreCardView(userData: UserProfileResponse) {
         userData.isPointsActive?.let { isLeaderBoardActive ->
             PrefManager.put(IS_LEADERBOARD_ACTIVE, userData.isPointsActive)
-            if (userData.isPointsActive) {
-                user_data_container.visibility = View.VISIBLE
-                user_points.text = userData.points.toString()
-                user_streak_data.text = userData.streak.toString()
-                user_min_data.text = userData.minutesSpoken.toString()
-                see_leaderboard.setOnClickListener {
-                    openLeaderBoard()
-                }
-            } else {
-                user_data_container.visibility = View.GONE
-                try {
+            if (AppObjectController.getFirebaseRemoteConfig()
+                    .getBoolean(FirebaseRemoteConfigKey.SHOW_AWARDS_FULL_SCREEN)
+            ) {
+                if (userData.isPointsActive) {
+                    user_data_container.visibility = View.VISIBLE
+                    user_points.text = userData.points.toString()
+                    user_streak_data.text = userData.streak.toString()
+                    user_min_data.text = userData.minutesSpoken.toString()
+                    see_leaderboard.setOnClickListener {
+                        openLeaderBoard()
+                    }
+                } else {
+                    user_data_container.visibility = View.GONE
+                    try {
+                        if (::popupMenu.isInitialized)
+                            popupMenu.menu.findItem(R.id.menu_leaderboard).setVisible(false)
+                        popupMenu.menu.findItem(R.id.menu_leaderboard).setEnabled(false)
+                        //popupMenu..findItem(R.id.menu_leaderboard).setVisible(false)
+                    } catch (ex: Exception) {
 
-                    popupMenu.menu.findItem(R.id.menu_leaderboard).setVisible(false)
-                    popupMenu.menu.findItem(R.id.menu_leaderboard).setEnabled(false)
-                    //popupMenu..findItem(R.id.menu_leaderboard).setVisible(false)
-                } catch (ex: Exception) {
-
+                    }
                 }
             }
         }
