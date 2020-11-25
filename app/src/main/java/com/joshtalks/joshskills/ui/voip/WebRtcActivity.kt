@@ -79,6 +79,7 @@ class WebRtcActivity : BaseActivity() {
             mServiceBound = true
             mBoundService?.addListener(callback)
             initCall()
+
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -106,12 +107,13 @@ class WebRtcActivity : BaseActivity() {
             }
         }
 
-        override fun onDisconnect() {
+        override fun onDisconnect(id: String?) {
             Timber.tag(TAG).e("onDisconnect")
             onStopCall()
             AppObjectController.uiHandler.post {
                 countUpTimer.pause()
             }
+            checkAndShowRating(id)
         }
 
         override fun onCallDisconnect(id: String?) {

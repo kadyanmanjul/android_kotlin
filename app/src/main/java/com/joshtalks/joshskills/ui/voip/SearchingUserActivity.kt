@@ -95,7 +95,7 @@ class SearchingUserActivity : BaseActivity() {
             this@SearchingUserActivity.finish()
         }
 
-        override fun onDisconnect() {
+        override fun onDisconnect(callId: String?) {
             Timber.tag("SearchingUserActivity").e("onDisconnect")
         }
 

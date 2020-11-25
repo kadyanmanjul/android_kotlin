@@ -173,7 +173,7 @@ class WebRtcService : Service() {
         //end user ne phone kaat diya
         override fun onIncomingCallRejected(incoming: Incoming) {
             Timber.tag(TAG).e("onIncomingCallRejected")
-            callCallback?.get()?.onDisconnect()
+            callCallback?.get()?.onDisconnect(getCallId())
             callData = incoming
             callCallback?.get()?.onIncomingCallHangup(getCallId())
             onDisconnectAndRemove()
@@ -322,6 +322,8 @@ class WebRtcService : Service() {
     fun getCallId(): String? {
         return callUUID
     }
+
+    fun getCallDataObj() = callData
 
     private fun loginUser(): Boolean {
         if (userPlivo != null) {
@@ -524,7 +526,8 @@ class WebRtcService : Service() {
     }
 
     private fun onDisconnectAndRemove() {
-        callCallback?.get()?.onDisconnect()
+        callCallback?.get()?.onDisconnect(getCallId())
+        callCallback = null
         removeNotifications()
         SoundPoolManager.getInstance(applicationContext)?.stopRinging()
         isCallWasOnGoing = false
@@ -778,7 +781,7 @@ class NotificationId {
 interface WebRtcCallback {
     fun onRinging()
     fun onConnect()
-    fun onDisconnect()
+    fun onDisconnect(callId: String?)
     fun onCallDisconnect(id: String?)
     fun onCallReject(id: String?)
     fun onSelfDisconnect(id: String?)
