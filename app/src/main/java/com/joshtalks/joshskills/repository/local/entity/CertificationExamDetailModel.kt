@@ -2,28 +2,29 @@ package com.joshtalks.joshskills.repository.local.entity
 
 
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.EMPTY
 
 data class CertificationExamDetailModel(
     @SerializedName("attempt_left")
-    val attemptLeft: Int,
+    val attemptLeft: Int = 0,
     @SerializedName("attempt_on")
-    val attemptOn: String,
+    val attemptOn: String = EMPTY,
     @SerializedName("attempted")
-    val attempted: Int,
+    val attempted: Int = 0,
     @SerializedName("batch_icon")
-    val batchIcon: String,
+    val batchIcon: String = EMPTY,
     @SerializedName("code_no")
-    val code: String,
+    val code: String = EMPTY,
     @SerializedName("eligibility_date")
-    val eligibilityDate: String,
+    val eligibilityDate: String = EMPTY,
     @SerializedName("marks")
-    val marks: Double,
+    val marks: Double = 0.0,
     @SerializedName("passed_on")
-    val passedOn: String,
+    val passedOn: String = EMPTY,
     @SerializedName("status")
-    val examStatus: CExamStatus,
+    val examStatus: CExamStatus = CExamStatus.NIL,
     @SerializedName("text")
-    val text: String
+    val text: String = EMPTY
 ) : java.io.Serializable
 
 
