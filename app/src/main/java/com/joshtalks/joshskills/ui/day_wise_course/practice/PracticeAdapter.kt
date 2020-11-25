@@ -116,7 +116,7 @@ class PracticeAdapter(
             setPracticeInfoView(chatModel)
 
             binding.titleView.setOnClickListener {
-                if (binding.practiceContentLl.visibility == View.GONE) {
+                if (binding.practiceContentLl.visibility == GONE) {
                     binding.practiceContentLl.visibility = VISIBLE
                     binding.expandIv.setImageDrawable(
                         ContextCompat.getDrawable(
@@ -125,7 +125,7 @@ class PracticeAdapter(
                         )
                     )
                 } else {
-                    binding.practiceContentLl.visibility = View.GONE
+                    binding.practiceContentLl.visibility = GONE
                     binding.expandIv.setImageDrawable(
                         ContextCompat.getDrawable(
                             context,
@@ -466,7 +466,7 @@ class PracticeAdapter(
                     setViewAccordingExpectedAnswer(chatModel)
                 } else {
                     hidePracticeInputLayout()
-                    binding.submitAnswerBtn.visibility = View.GONE
+                    binding.submitAnswerBtn.visibility = GONE
                     setViewUserSubmitAnswer(chatModel)
                 }
 
@@ -501,7 +501,7 @@ class PracticeAdapter(
                         dataSource: DataSource?,
                         isFirstResource: Boolean
                     ): Boolean {
-                        binding.progressBarImageView.visibility = View.GONE
+                        binding.progressBarImageView.visibility = GONE
 
                         return false
                     }
@@ -522,7 +522,8 @@ class PracticeAdapter(
                     binding.uploadPractiseView.setImageResource(R.drawable.recv_ic_mic_white)
                     audioRecordTouchListener(chatModel)
                     binding.audioPractiseHint.visibility = VISIBLE
-
+                    binding.submitAudioViewContainer.visibility = GONE
+                    binding.yourSubAnswerTv.visibility = GONE
                 }
             }
         }
@@ -563,7 +564,7 @@ class PracticeAdapter(
 
 
                     initializePractiseSeekBar(chatModel)
-                    binding.ivCancel.visibility = View.GONE
+                    binding.ivCancel.visibility = GONE
                 }
             }
         }
@@ -587,7 +588,7 @@ class PracticeAdapter(
                         binding.counterTv.start()
                         startRecording(chatModel, layoutPosition, startTime)
                         clickListener.startRecording(chatModel, layoutPosition, startTime)
-                        binding.audioPractiseHint.visibility = View.GONE
+                        binding.audioPractiseHint.visibility = GONE
 
                         appAnalytics?.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
                     }
@@ -600,7 +601,7 @@ class PracticeAdapter(
                         stopRecording(chatModel, layoutPosition, stopTime)
                         clickListener.stopRecording(chatModel, layoutPosition, stopTime)
                         binding.uploadPractiseView.clearAnimation()
-                        binding.counterContainer.visibility = View.GONE
+                        binding.counterContainer.visibility = GONE
                         binding.audioPractiseHint.visibility = VISIBLE
 //                        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
@@ -699,7 +700,7 @@ class PracticeAdapter(
 
         fun removeAudioPractice() {
             hidePracticeSubmitLayout()
-            binding.submitAudioViewContainer.visibility = View.GONE
+            binding.submitAudioViewContainer.visibility = GONE
             binding.submitPractiseSeekbar.progress = 0
             binding.submitPractiseSeekbar.max = 0
             binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
@@ -746,8 +747,8 @@ class PracticeAdapter(
         }
 
         fun hidePracticeInputLayout() {
-            binding.practiseInputHeader.visibility = View.GONE
-            binding.practiceInputLl.visibility = View.GONE
+            binding.practiseInputHeader.visibility = GONE
+            binding.practiceInputLl.visibility = GONE
         }
 
         fun showPracticeInputLayout() {
@@ -761,8 +762,8 @@ class PracticeAdapter(
         }
 
         fun hidePracticeSubmitLayout() {
-            binding.yourSubAnswerTv.visibility = View.GONE
-            binding.subPractiseSubmitLayout.visibility = View.GONE
+            binding.yourSubAnswerTv.visibility = GONE
+            binding.subPractiseSubmitLayout.visibility = GONE
         }
     }
 

@@ -422,10 +422,8 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         if (player != null) {
             player.setPlayWhenReady(true);
             player.getPlaybackState();
-            player.seekTo(currentPosition);
             timeHandler.post(timeRunnable);
         }
-
     }
 
     public void onPause() {

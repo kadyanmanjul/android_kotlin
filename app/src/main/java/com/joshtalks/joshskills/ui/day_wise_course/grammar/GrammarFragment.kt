@@ -282,7 +282,7 @@ class GrammarFragment : Fragment() {
 
                             binding.quizShader.visibility = View.VISIBLE
                             compositeDisposable.add(
-                                RxBus2.listen(MediaProgressEventBus::class.java)
+                                RxBus2.listenWithoutDelay(MediaProgressEventBus::class.java)
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({ eventBus ->
@@ -292,6 +292,7 @@ class GrammarFragment : Fragment() {
                                         if (eventBus.progress + 1000 >= this.videoList?.getOrNull(0)?.duration ?: 0) {
                                             updateVideoQuestionStatus(this)
                                             binding.quizShader.visibility = View.GONE
+                                            compositeDisposable.clear()
                                         }
                                     }, {
                                         it.printStackTrace()
