@@ -139,7 +139,7 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_21_22,
                                 MIGRATION_22_23
                             )
-                          //  .fallbackToDestructiveMigration()
+                            //  .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
                             .setJournalMode(JournalMode.WRITE_AHEAD_LOGGING)
                             .build()
@@ -341,7 +341,7 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN practice_word TEXT ")
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN status TEXT NOT NULL DEFAULT 'NA'")
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN lesson_status TEXT")
-                database.execSQL("ALTER TABLE `question_table` ADD COLUMN chat_type TEXT NOT NULL DEFAULT 'OTHER'")
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN chat_type TEXT DEFAULT 'OTHER'")
                 //   database.execSQL("ALTER TABLE `question_table` ADD COLUMN lesson INTEGER NOT NULL DEFAULT 0")
                 database.execSQL("ALTER TABLE question_table ADD COLUMN certificate_exam_id INTEGER")
                 database.execSQL("ALTER TABLE question_table ADD COLUMN topic_id TEXT ")
@@ -603,8 +603,11 @@ class ChatTypeConverters {
     }
 
     @TypeConverter
-    fun fromMatType(enumVal: CHAT_TYPE): String {
+    fun fromMatType(enumVal: CHAT_TYPE?): String {
+        if (null != enumVal) {
             return AppObjectController.gsonMapper.toJson(enumVal)
+        }
+        return AppObjectController.gsonMapper.toJson(CHAT_TYPE.OTHER)
     }
 }
 

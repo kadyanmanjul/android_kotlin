@@ -246,7 +246,7 @@ data class Question(
 
     @ColumnInfo(name = "chat_type")
     @SerializedName("chat_type")
-    var chatType: CHAT_TYPE = CHAT_TYPE.OTHER,
+    var chatType: CHAT_TYPE? = CHAT_TYPE.OTHER,
 
     @ColumnInfo(name = "status")
     @SerializedName("mentor_que_status")
