@@ -621,6 +621,7 @@ class GrammarFragment : Fragment() {
         binding.ivStartDownload.visibility = android.view.View.GONE
         binding.progressDialog.visibility = android.view.View.GONE
         binding.ivCancelDownload.visibility = android.view.View.GONE
+        binding.ivDownloadCompleted.visibility = View.VISIBLE
     }
 
     private fun fileNotDownloadView() {
@@ -628,12 +629,14 @@ class GrammarFragment : Fragment() {
         binding.ivStartDownload.visibility = android.view.View.VISIBLE
         binding.progressDialog.visibility = android.view.View.GONE
         binding.ivCancelDownload.visibility = android.view.View.GONE
+        binding.ivDownloadCompleted.visibility = View.GONE
     }
 
     private fun fileDownloadingInProgressView() {
         binding.ivStartDownload.visibility = android.view.View.GONE
         binding.progressDialog.visibility = android.view.View.VISIBLE
         binding.ivCancelDownload.visibility = android.view.View.VISIBLE
+        binding.ivDownloadCompleted.visibility = View.GONE
     }
 
 

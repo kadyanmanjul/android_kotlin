@@ -27,12 +27,12 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/pdf_view"
-            android:visibility="visible"
-            android:clickable="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_8sdp"
             android:layout_marginVertical="@dimen/_16sdp"
+            android:clickable="false"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/progress_title_tv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -83,6 +83,16 @@
                     android:tint="#7A7A7A"
                     android:visibility="visible"
                     app:srcCompat="@drawable/ic_download" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_download_completed"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_gravity="center"
+                    android:padding="@dimen/_6sdp"
+                    android:tint="#7A7A7A"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/ic_tick_default" />
 
                 <com.pnikosis.materialishprogress.ProgressWheel
                     android:id="@+id/progress_dialog"

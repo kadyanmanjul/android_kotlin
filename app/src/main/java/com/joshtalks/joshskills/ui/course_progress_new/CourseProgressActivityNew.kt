@@ -344,6 +344,7 @@ class CourseProgressActivityNew : AppCompatActivity(),
         binding.progressDialog.visibility = View.GONE
         binding.ivCancelDownload.visibility = View.GONE
         binding.pdfView.isClickable = false
+        binding.ivDownloadCompleted.visibility = View.VISIBLE
     }
 
     private fun fileNotDownloadView() {
@@ -353,12 +354,14 @@ class CourseProgressActivityNew : AppCompatActivity(),
         binding.ivStartDownload.visibility = View.VISIBLE
         binding.progressDialog.visibility = View.GONE
         binding.ivCancelDownload.visibility = View.GONE
+        binding.ivDownloadCompleted.visibility = View.GONE
     }
 
     private fun fileDownloadingInProgressView() {
         binding.ivStartDownload.visibility = View.GONE
         binding.progressDialog.visibility = View.VISIBLE
         binding.ivCancelDownload.visibility = View.VISIBLE
+        binding.ivDownloadCompleted.visibility = View.GONE
     }
 
 

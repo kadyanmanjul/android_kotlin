@@ -142,6 +142,18 @@
                     android:visibility="visible"
                     app:srcCompat="@drawable/ic_download" />
 
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_download_completed"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:layout_gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="@dimen/_6sdp"
+                    android:tint="#7A7A7A"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/ic_tick_default" />
+
                 <com.pnikosis.materialishprogress.ProgressWheel
                     android:id="@+id/progress_dialog"
                     android:layout_width="@dimen/_24sdp"
