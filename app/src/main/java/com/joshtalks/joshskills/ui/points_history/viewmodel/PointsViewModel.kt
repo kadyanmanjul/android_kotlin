@@ -22,7 +22,7 @@ class PointsViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = AppObjectController.commonNetworkService.getUserPointsHistory(
-                    "2c1e3d93-ec15-4e6f-be24-67d386dec669"
+                    Mentor.getInstance().getId()
                 )
                 if (response.isSuccessful && response.body() != null) {
                     pointsHistoryLiveData.postValue(response.body())

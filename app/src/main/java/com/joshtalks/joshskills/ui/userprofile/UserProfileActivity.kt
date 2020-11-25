@@ -56,9 +56,6 @@ class UserProfileActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mentorId = intent.getStringExtra(KEY_MENTOR_ID)
-        if (mentorId.isNullOrEmpty() || PrefManager.getBoolValue(IS_LEADERBOARD_ACTIVE).not()) {
-            this.finish()
-        }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_user_profile)
         binding.lifecycleOwner = this
         binding.handler = this
@@ -82,10 +79,12 @@ class UserProfileActivity : BaseActivity() {
             }
         }
         text_message_title.text = getString(R.string.profile)
-        with(iv_setting) {
-            visibility = View.VISIBLE
-            setOnClickListener {
-                openPopupMenu(it)
+        if (PrefManager.getBoolValue(IS_LEADERBOARD_ACTIVE)) {
+            with(iv_setting) {
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    openPopupMenu(it)
+                }
             }
         }
     }
