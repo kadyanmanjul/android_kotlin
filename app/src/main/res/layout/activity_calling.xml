@@ -40,7 +40,7 @@
             android:text="@string/pp_calling"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
             android:textColor="@color/white"
-            android:visibility="invisible"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/topic"
             app:layout_constraintEnd_toEndOf="@+id/topic"
             app:layout_constraintStart_toStartOf="@+id/topic"

@@ -37,11 +37,11 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import java.util.HashMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.HashMap
 
 const val IS_INCOMING_CALL = "is_incoming_call"
 const val INCOMING_CALL_JSON_OBJECT = "incoming_json_call_object"
@@ -94,6 +94,8 @@ class WebRtcActivity : BaseActivity() {
         override fun onConnect() {
             Timber.tag(TAG).e("onConnect")
             runOnUiThread {
+                binding.callStatus.text = getText(R.string.practice)
+
                 try {
                     countUpTimer.lap()
                     countUpTimer.resume()
@@ -192,7 +194,6 @@ class WebRtcActivity : BaseActivity() {
                     callDisViewEnable()
                     startCallTimer()
                 } else {
-                    binding.callStatus.visibility = View.VISIBLE
                     binding.groupForIncoming.visibility = View.VISIBLE
                 }
             } else {
@@ -313,12 +314,11 @@ class WebRtcActivity : BaseActivity() {
     }
 
     private fun answerCall() {
-        binding.callStatus.visibility = View.GONE
+        binding.callStatus.text = getText(R.string.practice)
         AudioPlayer.getInstance().stopProgressTone()
         binding.groupForIncoming.visibility = View.GONE
         binding.groupForOutgoing.visibility = View.VISIBLE
         mBoundService?.answerCall()
-//        startCallTimer()
         AppAnalytics.create(AnalyticsEvent.ANSWER_CALL_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()
