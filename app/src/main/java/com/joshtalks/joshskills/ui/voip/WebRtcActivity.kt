@@ -201,6 +201,7 @@ class WebRtcActivity : BaseActivity() {
             } else {
                 setUserInfoForOutgoing(map)
                 setImageInIV(map["X-PH-IMAGE_URL"])
+                binding.callStatus.text = getText(R.string.practice)
                 countUpTimer.lap()
                 countUpTimer.resume()
                 startCallTimer()
