@@ -85,8 +85,6 @@ import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.entity.Question
@@ -1538,6 +1536,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                                 if(chatId!=null&&chatId.isNullOrBlank().not()) {
                                     val chatObj = AppObjectController.appDatabase.chatDao()
                                         .getUpdatedChatObjectViaId(chatId)
+
                                     refreshViewAtPos(chatObj)
                                 }
                             } catch (ex: Exception) {

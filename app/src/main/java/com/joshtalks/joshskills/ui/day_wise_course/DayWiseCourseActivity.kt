@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -23,6 +22,7 @@ import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.LESSON_INTERVAL
+import com.joshtalks.joshskills.core.LESSON__CHAT_ID
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
@@ -54,7 +54,6 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
     companion object {
         const val LAST_LESSON_STATUS = "last_lesson_status"
-        const val LESSON_CHAT_ID = "chat_lesson_id"
         private val LESSON_ID = "lesson_id"
         fun getDayWiseCourseActivityIntent(
             context: Context,
@@ -66,7 +65,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             putExtra(LESSON_ID, lessonId)
             putExtra(COURSE_ID, courseId)
             putExtra(LESSON_INTERVAL, interval)
-            putExtra(LESSON_CHAT_ID, chatId)
+            putExtra(LESSON__CHAT_ID, chatId)
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         }
 
@@ -80,7 +79,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
             lessonId = intent.getIntExtra(LESSON_ID, 0)
             lessonInterval = intent.getIntExtra(LESSON_INTERVAL, -1)
-            chatId = intent.getStringExtra(LESSON_CHAT_ID)
+            chatId = intent.getStringExtra(LESSON__CHAT_ID)
             viewModel.syncQuestions(lessonId)
             viewModel.getQuestions(lessonId)
         }
@@ -101,7 +100,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
 
         lessonInterval = intent.getIntExtra(LESSON_INTERVAL, -1)
-        chatId = intent.getStringExtra(LESSON_CHAT_ID)
+        chatId = intent.getStringExtra(LESSON__CHAT_ID)
 
 
         titleView = findViewById(R.id.text_message_title)
@@ -259,7 +258,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                 putExtra(IS_BATCH_CHANGED, false)
                 putExtra(LAST_LESSON_INTERVAL, lessonInterval)
                 putExtra(LAST_LESSON_STATUS, lessonCompleted)
-                putExtra(LESSON_CHAT_ID, chatId)
+                putExtra(LESSON__CHAT_ID, chatId)
             })
             finish()
         }
@@ -297,7 +296,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         resultIntent.putExtra(IS_BATCH_CHANGED, isBatchChanged)
         resultIntent.putExtra(LAST_LESSON_INTERVAL, lessonInterval)
         resultIntent.putExtra(LAST_LESSON_STATUS, lessonCompleted)
-        resultIntent.putExtra(LESSON_CHAT_ID, chatId)
+        resultIntent.putExtra(LESSON__CHAT_ID, chatId)
         setResult(RESULT_OK, resultIntent)
         this@DayWiseCourseActivity.finish()
     }

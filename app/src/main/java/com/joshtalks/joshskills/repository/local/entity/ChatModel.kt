@@ -18,6 +18,7 @@ import androidx.room.TypeConverters
 import androidx.room.Update
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.ConvectorForEngagement
@@ -659,6 +660,18 @@ interface ChatDao {
                     BASE_MESSAGE_TYPE.PD -> question.pdfList =
                         getPdfOfQuestion(questionId = question.questionId)
                 }
+
+                println("queston lesson " + question.lesson)
+                println("chat lesson " + chatModel.lessons)
+                if (question.lesson != null) {
+                    chatModel.lessons = question.lesson
+                }
+                val lessonModel =
+                    AppObjectController.appDatabase.lessonDao().getLesson(question.lesson_id)
+                chatModel.lessons = lessonModel
+                chatModel.question?.lesson = lessonModel
+
+                println(" chat lesson1 " + chatModel.lessons)
                 chatModel.question = question
             }
         }

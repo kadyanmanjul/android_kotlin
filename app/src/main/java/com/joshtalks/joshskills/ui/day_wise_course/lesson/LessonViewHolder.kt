@@ -66,8 +66,11 @@ class LessonViewHolder(
 
         }
             rootViewUncompleted.setOnClickListener {
-                message?.lessons?.let {
-                    onItemClick?.invoke(it.id, message.lessons?.interval ?: -1,message?.chatId)
+                message.question?.lesson?.let {
+                    onItemClick?.invoke(
+                        it.id, message.question?.lesson?.interval ?: -1,
+                        message.chatId
+                    )
                 }
             }
 
@@ -88,8 +91,8 @@ class LessonViewHolder(
             }
             rootViewCompleted.setOnClickListener {
                 Log.d("Manjul", "onViewInflated() called")
-                message?.lessons?.let {
-                    onItemClick?.invoke(it.id, message.lessons?.interval ?: -1,message?.chatId)
+                message.lessons?.let {
+                    onItemClick?.invoke(it.id, message.lessons?.interval ?: -1, message.chatId)
                 }
             }
         }
