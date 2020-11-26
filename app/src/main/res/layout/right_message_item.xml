@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
+    android:gravity="end"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true">
+
+        <RelativeLayout
+            android:id="@+id/cv_message_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/outgoing_message_normal_bg">
+
+            <include
+                android:id="@+id/replyLayout"
+                layout="@layout/right_reply_message_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:id="@+id/go_txt_message"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/replyLayout"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="8dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:maxWidth="@dimen/_190sdp"
+                android:textColor="@color/black"
+                android:textColorHighlight="@color/black"
+                android:textColorLink="@color/colorPrimary"
+                tools:text="This is a text message. This is a text message.This is a text message. This is a text message." />
+
+            <TextView
+                android:id="@+id/txt_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/go_txt_message"
+                android:layout_alignEnd="@id/replyLayout"
+                android:layout_marginBottom="8dp"
+                android:gravity="end"
+                android:maxLines="1"
+                android:minWidth="@dimen/_32sdp"
+                android:paddingHorizontal="@dimen/_6sdp"
+                android:textColor="@color/gray_9E"
+                android:textSize="@dimen/_8ssp"
+                android:visibility="gone"
+                tools:text="11:00 PM"
+                tools:visibility="visible" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cv_message_container"
+            android:layout_alignEnd="@+id/cv_message_container"
+            android:layout_marginBottom="@dimen/_4sdp">
+
+            <LinearLayout
+                android:id="@+id/reply_avatar_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/thread_reply_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?selectableItemBackground"
+                android:textColor="@color/colorPrimary"
+                tools:text="2 replies" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

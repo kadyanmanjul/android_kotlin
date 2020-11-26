@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true">
+
+        <com.joshtalks.joshskills.ui.groupchat.uikit.Avatar
+            android:id="@+id/iv_user"
+            android:layout_width="@dimen/_28sdp"
+            android:layout_height="@dimen/_28sdp"
+            android:layout_marginStart="4dp"
+            android:layout_marginBottom="4dp"
+            tools:src="@tools:sample/avatars" />
+
+        <RelativeLayout
+            android:id="@+id/cv_message_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/iv_user"
+            android:layout_marginEnd="@dimen/_6sdp"
+            android:layout_toEndOf="@id/iv_user"
+            android:background="@drawable/incoming_message_normal_bg"
+            android:paddingStart="@dimen/_8sdp"
+            android:paddingTop="@dimen/_6sdp"
+            android:paddingEnd="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_6sdp">
+
+            <TextView
+                android:id="@+id/tv_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="0dp"
+                android:paddingStart="8dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="0dp"
+                android:textColor="@color/colorPrimary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:text="Iron Man" />
+
+            <include
+                android:id="@+id/replyLayout"
+                layout="@layout/left_reply_message_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_user"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="6dp" />
+
+            <RelativeLayout
+                android:id="@+id/sentiment_layout"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/cc_message_bubble_left"
+                android:backgroundTint="@color/checkbox_color"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/sentiment_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@+id/view_sentiment"
+                    android:text="@string/sentimment_content"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/view_sentiment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="@string/view"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/go_txt_message"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/replyLayout"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:autoLink="web|all"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:maxWidth="@dimen/_190sdp"
+                android:paddingHorizontal="8dp"
+                android:textColor="@color/black"
+                tools:text="This is a text message. This is a text message.This is a text message. This is a text message." />
+
+            <TextView
+                android:id="@+id/txt_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/go_txt_message"
+                android:layout_alignEnd="@id/replyLayout"
+                android:layout_gravity="end"
+                android:layout_marginBottom="2dp"
+                android:gravity="end"
+                android:paddingStart="@dimen/_6sdp"
+                android:paddingEnd="@dimen/_6sdp"
+                android:textColor="@color/gray_9E"
+                android:textSize="@dimen/_8ssp"
+                android:visibility="gone"
+                tools:text="11:00 PM"
+                tools:visibility="visible" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/img_pending"
+            android:layout_width="15dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="-5dp"
+            android:layout_marginTop="11dp"
+            android:layout_marginEnd="5dp"
+            android:layout_toEndOf="@+id/cv_message_container"
+            android:contentDescription="@string/user_avatar"
+            android:visibility="visible" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cv_message_container"
+            android:layout_alignStart="@+id/cv_message_container"
+            android:layout_marginBottom="@dimen/_4sdp">
+
+            <LinearLayout
+                android:id="@+id/reply_avatar_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/thread_reply_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?selectableItemBackground"
+                android:textColor="@color/colorPrimary"
+                tools:text="2 replies" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/cv_message_container"
+        android:layout_width="@dimen/_190sdp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/outgoing_message_normal_bg"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="@string/audio_file"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/black" />
+
+        <ImageView
+            android:id="@+id/playBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/ic_circle_grey_32dp"
+            android:backgroundTint="@color/gray_9E"
+            android:padding="8dp"
+            android:src="@drawable/ic_play_arrow_black_24dp"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/audiolength_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/black"
+            tools:text="125 KB" />
+
+        <TextView
+            android:id="@+id/txt_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/playBtn"
+            android:layout_alignEnd="@id/playBtn"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="end"
+            android:maxLines="1"
+            android:minWidth="@dimen/_32sdp"
+            android:paddingHorizontal="@dimen/_6sdp"
+            android:textColor="@color/gray_9E"
+            android:textSize="@dimen/_8ssp"
+            android:visibility="gone"
+            tools:text="11:00 PM"
+            tools:visibility="visible" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cv_message_container"
+        android:layout_alignEnd="@+id/cv_message_container"
+        android:layout_marginBottom="@dimen/_4sdp">
+
+        <LinearLayout
+            android:id="@+id/reply_avatar_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/thread_reply_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?selectableItemBackground"
+            android:textColor="@color/colorPrimary"
+            tools:text="2 replies" />
+    </LinearLayout>
+
+</RelativeLayout>

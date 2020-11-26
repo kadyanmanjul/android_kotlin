@@ -198,7 +198,7 @@ dependencies {
         exclude group: 'com.bumptech.glide'
     })
     implementation project(path: ':joshcamerax')
-    implementation project(path: ':uikit')
+    // implementation project(path: ':uikit')
     // implementation project(path: ':dialogflowchatlibrary')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
@@ -365,4 +365,3 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
 }
-

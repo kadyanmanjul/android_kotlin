@@ -16,7 +16,6 @@
             <option value="$PROJECT_DIR$/joshlibrary" />
             <option value="$PROJECT_DIR$/mediapicker" />
             <option value="$PROJECT_DIR$/recordview" />
-            <option value="$PROJECT_DIR$/uikit" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

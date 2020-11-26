@@ -1,4 +1,4 @@
-include ':uikit'
+// include ':uikit'
 // include ':dialogflowchatlibrary'
 include ':app', ':joshlibrary', ':recordview', ':mediapicker', ':joshcamerax'
 

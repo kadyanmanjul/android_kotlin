@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/replyLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:alpha="0.7"
+    android:background="@drawable/left_border_lmessage"
+    android:orientation="vertical"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:visibility="gone"
+    tools:visibility="visible">
+
+    <LinearLayout
+        android:id="@+id/reply_user_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/reply_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxWidth="150dp"
+            android:maxLines="1"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            tools:text="@tools:sample/full_names" />
+
+        <ImageView
+            android:id="@+id/reply_media"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            tools:src="@tools:sample/avatars" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/reply_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/reply_user_info"
+        android:ellipsize="end"
+        android:maxWidth="200dp"
+        android:maxLines="3"
+        android:textColor="@color/black"
+        android:textStyle="italic"
+        tools:text="@string/replyTxt" />
+
+</RelativeLayout>

@@ -78,7 +78,7 @@
         <activity android:name=".ui.points_history.PointsHistoryActivity" />
         <activity android:name=".ui.userprofile.UserProfileActivity" />
         <activity android:name=".ui.leaderboard.LeaderBoardViewPagerActivity" />
-        <activity android:name=".ui.groupchat.GroupChatActivity" />
+
 
         <meta-data
             android:name="CLEVERTAP_ACCOUNT_ID"
@@ -612,6 +612,37 @@
             android:isolatedProcess="true"
             tools:ignore="ExportedService" />
 
-    </application>
 
+
+        <meta-data
+            android:name="com.cometchat.pro.uikit"
+            android:value="${file_provider}" />
+
+        <activity
+            android:name=".ui.groupchat.screens.CometChatMediaViewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppNoBarTheme" />
+
+
+        <activity
+            android:name=".ui.groupchat.screens.CometChatGroupDetailScreenActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.groupchat.messagelist.CometChatMessageListActivity"
+            android:screenOrientation="portrait" />
+
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${file_provider}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"
+                tools:replace="android:resource" />
+        </provider>
+    </application>
 </manifest>

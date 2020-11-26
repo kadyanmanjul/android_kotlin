@@ -553,7 +553,6 @@ class ConversationViewModel(application: Application) :
     fun initCometChat() {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             isLoading.postValue(true)
-
             val appSettings = AppSettings.AppSettingsBuilder()
                 .subscribePresenceForAllUsers()
                 .setRegion(BuildConfig.COMETCHAT_REGION)
