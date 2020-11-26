@@ -264,6 +264,7 @@
                             android:backgroundTint="@color/button_color"
                             android:scaleType="centerInside"
                             android:tint="@color/white"
+                            android:elevation="@dimen/_2sdp"
                             android:visibility="gone"
                             app:srcCompat="@drawable/ic_rec_mic_big" />
 

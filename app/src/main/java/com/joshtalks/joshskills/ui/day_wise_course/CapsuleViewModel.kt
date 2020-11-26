@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.PdfType
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.entity.VideoType
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -39,7 +40,7 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
 
     val assessmentStatus: MutableLiveData<AssessmentStatus> =
         MutableLiveData(AssessmentStatus.NOT_STARTED)
-    val lessonStatusLiveData: MutableLiveData<String> = MutableLiveData()
+    val lessonStatusLiveData: MutableLiveData<LESSON_STATUS> = MutableLiveData()
 
     fun getQuestions(lessonId: Int) {
         val chatList: MutableList<ChatModel> = mutableListOf()
@@ -188,15 +189,21 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun updateQuestionStatus(status: String, questionId: Int, courseId: Int, lessonId: Int) {
+    fun updateQuestionStatus(
+        status: QUESTION_STATUS,
+        questionId: Int,
+        courseId: Int,
+        lessonId: Int
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val resp = AppObjectController.chatNetworkService.updateQuestionStatus(
                     UpdateQuestionStatus(
-                        status, lessonId, Mentor.getInstance().getId(), questionId, courseId
+                        status.name, lessonId, Mentor.getInstance().getId(), questionId, courseId
                     )
                 )
                 if (resp.success) {
+                    chatDao.updateQuestionStatus("$questionId", status)
                     lessonStatusLiveData.postValue(resp.responseData)
                     return@launch
                 }
@@ -213,9 +220,9 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun updateQuestionLessonStatus(lessonId:Int) {
+    fun updateQuestionLessonStatus(lessonId: Int, lessonStatus: LESSON_STATUS) {
         viewModelScope.launch(Dispatchers.IO) {
-            lessonDao.updateFeedbackStatus(lessonId,LESSON_STATUS.CO)
+            lessonDao.updateFeedbackStatus(lessonId, lessonStatus)
         }
     }
 }

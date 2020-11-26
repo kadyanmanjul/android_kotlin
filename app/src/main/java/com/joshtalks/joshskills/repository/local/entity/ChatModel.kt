@@ -780,6 +780,9 @@ interface ChatDao {
     @Update
     suspend fun updateQuestionObject(vararg question: Question)
 
+    @Query("UPDATE question_table set status = :questionStatus WHERE questionId=:questionId")
+    suspend fun updateQuestionStatus(questionId: String, questionStatus: QUESTION_STATUS)
+
     @Query("UPDATE question_table SET practice_engagements = :practiseEngagement  WHERE questionId= :questionId")
     suspend fun updatePractiseObject(
         questionId: String,

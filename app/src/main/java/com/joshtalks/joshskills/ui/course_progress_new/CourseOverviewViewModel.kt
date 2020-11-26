@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewBaseResponse
 import kotlinx.coroutines.Dispatchers
@@ -30,5 +31,9 @@ class CourseOverviewViewModel(application: Application) : AndroidViewModel(appli
 //                postResponse.postValue(true)
             }
         }
+    }
+
+    suspend fun getLesson(lessonId: Int): LessonModel? {
+        return AppObjectController.appDatabase.lessonDao().getLesson(lessonId)
     }
 }

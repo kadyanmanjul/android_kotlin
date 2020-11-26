@@ -35,6 +35,9 @@ import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
 import com.tonyodev.fetch2core.DownloadBlock
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 
 class CourseProgressActivityNew : AppCompatActivity(),
@@ -197,25 +200,31 @@ class CourseProgressActivityNew : AppCompatActivity(),
     }
 
     override fun onProgressItemClick(item: CourseOverviewItem, previousItem: CourseOverviewItem?) {
-        if (item.status == LESSON_STATUS.NO.name) {
-            showAlertMessage()
-        } else {
-            val dayWiseActivityListener: ActivityResultLauncher<Intent> =
-                registerForActivityResult(
-                    ActivityResultContracts.StartActivityForResult()
-                ) { result ->
-                    if (result.resultCode == Activity.RESULT_OK) {
-                        viewModel.getCourseOverview(courseId)
-                    }
-                }
+        CoroutineScope(Dispatchers.IO).launch {
+            val lessonModel = viewModel.getLesson(item.lessonId)
+            runOnUiThread {
+                if (lessonModel != null) {
+                    val dayWiseActivityListener: ActivityResultLauncher<Intent> =
+                        registerForActivityResult(
+                            ActivityResultContracts.StartActivityForResult()
+                        ) { result ->
+                            if (result.resultCode == Activity.RESULT_OK) {
+                                viewModel.getCourseOverview(courseId)
+                            }
+                        }
 
-            dayWiseActivityListener.launch(
-                DayWiseCourseActivity.getDayWiseCourseActivityIntent(
-                    this, item.lessonId,
-                    courseId = courseId.toString()
-                )
-            )
+                    dayWiseActivityListener.launch(
+                        DayWiseCourseActivity.getDayWiseCourseActivityIntent(
+                            this@CourseProgressActivityNew, item.lessonId,
+                            courseId = courseId.toString()
+                        )
+                    )
+                } else {
+                    showAlertMessage()
+                }
+            }
         }
+
     }
 
     override fun onCertificateExamClick(

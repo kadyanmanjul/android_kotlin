@@ -72,7 +72,7 @@ class GrammarFragment : Fragment() {
         ViewModelProvider(this).get(CapsuleViewModel::class.java)
     }
 
-    private var message: ChatModel? = null
+    private var pdfQuestion: ChatModel? = null
 
     companion object {
         @JvmStatic
@@ -90,14 +90,14 @@ class GrammarFragment : Fragment() {
 
         override fun onCancelled(download: Download) {
             DownloadUtils.removeCallbackListener(download.tag)
-            message?.downloadStatus = DOWNLOAD_STATUS.FAILED
+            pdfQuestion?.downloadStatus = DOWNLOAD_STATUS.FAILED
             fileNotDownloadView()
 
         }
 
         override fun onCompleted(download: Download) {
             DownloadUtils.removeCallbackListener(download.tag)
-            message?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
+            pdfQuestion?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
             fileDownloadSuccess()
         }
 
@@ -115,7 +115,7 @@ class GrammarFragment : Fragment() {
 
         override fun onError(download: Download, error: Error, throwable: Throwable?) {
             DownloadUtils.removeCallbackListener(download.tag)
-            message?.downloadStatus = DOWNLOAD_STATUS.FAILED
+            pdfQuestion?.downloadStatus = DOWNLOAD_STATUS.FAILED
             fileNotDownloadView()
 
         }
@@ -149,7 +149,7 @@ class GrammarFragment : Fragment() {
             downloadBlocks: List<DownloadBlock>,
             totalBlocks: Int
         ) {
-            message?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
+            pdfQuestion?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
             fileDownloadingInProgressView()
 
         }
@@ -263,11 +263,14 @@ class GrammarFragment : Fragment() {
                             getString(R.string.today_lesson, this.lesson?.lessonName ?: 0)
                         binding.videoPlayer.visibility = View.VISIBLE
                         this.videoList?.getOrNull(0)?.video_url?.let {
+                            val videoId = this.videoList?.getOrNull(0)?.id
                             binding.videoPlayer.setUrl(it)
+                            binding.videoPlayer.setVideoId(videoId)
+                            binding.videoPlayer.setCourseId(course_id)
                             binding.videoPlayer.fitToScreen()
                             binding.videoPlayer.setPlayListener {
-                                val videoId = this.videoList?.getOrNull(0)?.id
-                                val videoUrl = this.videoList?.getOrNull(0)?.video_url
+
+                                val videoUrl = it
                                 VideoPlayerActivity.startVideoActivity(
                                     requireContext(),
                                     "",
@@ -287,9 +290,6 @@ class GrammarFragment : Fragment() {
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({ eventBus ->
                                         if (eventBus.progress > 3000) {
-                                            binding.startQuizBtn.visibility = View.VISIBLE
-                                        }
-                                        if (eventBus.progress + 1000 >= this.videoList?.getOrNull(0)?.duration ?: 0) {
                                             updateVideoQuestionStatus(this)
                                             binding.quizShader.visibility = View.GONE
                                             compositeDisposable.clear()
@@ -310,7 +310,7 @@ class GrammarFragment : Fragment() {
                         }
                     }
                     BASE_MESSAGE_TYPE.PD -> {
-                        message = chatModel
+                        pdfQuestion = chatModel
                         binding.additionalMaterialTv.visibility = View.VISIBLE
                         binding.additionalMaterialTv.text = this.title
                         this.pdfList?.getOrNull(0)?.let { pdfType ->
@@ -492,7 +492,7 @@ class GrammarFragment : Fragment() {
             viewModel.saveAssessmentQuestion(question)
             if (currentQuizQuestion == assessmentQuestions.size - 1)
                 activityCallback?.onQuestionStatusUpdate(
-                    QUESTION_STATUS.AT.name,
+                    QUESTION_STATUS.AT,
                     quizQuestion?.questionId?.toIntOrNull() ?: 0
                 )
 
@@ -530,7 +530,7 @@ class GrammarFragment : Fragment() {
     }
 
     fun onGrammarContinueClick() {
-        activityCallback?.onNextTabCall(binding.continueBtn)
+        activityCallback?.onNextTabCall(1)
     }
 
     fun onRedoQuizClick() {
@@ -554,7 +554,7 @@ class GrammarFragment : Fragment() {
             viewModel.updateQuestionInLocal(it)
 
             viewModel.updateQuestionStatus(
-                QUESTION_STATUS.NA.name,
+                QUESTION_STATUS.NA,
                 it.questionId.toInt(),
                 it.course_id,
                 it.lesson_id
@@ -697,11 +697,11 @@ class GrammarFragment : Fragment() {
             askStoragePermission()
             return
         }
-        message?.question?.pdfList?.getOrNull(0)?.let { pdfType ->
+        pdfQuestion?.question?.pdfList?.getOrNull(0)?.let { pdfType ->
             PdfViewerActivity.startPdfActivity(
                 context = requireContext(),
                 pdfId = pdfType.id,
-                courseName = message!!.question!!.title!!,
+                courseName = pdfQuestion!!.question!!.title!!,
                 pdfPath = AppDirectory.docsReceivedFile(pdfType.url).absolutePath
             )
         }
@@ -710,15 +710,15 @@ class GrammarFragment : Fragment() {
 
     fun downloadCancel() {
         fileNotDownloadView()
-        message?.downloadStatus = DOWNLOAD_STATUS.NOT_START
+        pdfQuestion?.downloadStatus = DOWNLOAD_STATUS.NOT_START
 
     }
 
     fun downloadStart() {
-        if (message?.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
+        if (pdfQuestion?.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
             return
         }
-        download(message?.url)
+        download(pdfQuestion?.url)
     }
 
     fun askStoragePermission() {
@@ -753,13 +753,13 @@ class GrammarFragment : Fragment() {
             askStoragePermission()
             return
         }
-        message?.question?.pdfList?.let {
+        pdfQuestion?.question?.pdfList?.let {
             if (it.size > 0) {
                 DownloadUtils.downloadFile(
                     it.get(0).url,
                     AppDirectory.docsReceivedFile(it.get(0).url).absolutePath,
-                    message!!.chatId,
-                    message!!,
+                    pdfQuestion!!.chatId,
+                    pdfQuestion!!,
                     downloadListener
                 )
             } else if (BuildConfig.DEBUG) {
@@ -770,11 +770,14 @@ class GrammarFragment : Fragment() {
 
     private fun updateVideoQuestionStatus(question: Question) {
         activityCallback?.onQuestionStatusUpdate(
-            QUESTION_STATUS.AT.name,
+            QUESTION_STATUS.AT,
             question.questionId.toIntOrNull() ?: 0
         )
-        question.status = QUESTION_STATUS.AT
-        viewModel.updateQuestionInLocal(question)
+
+        pdfQuestion?.question?.let {
+            it.status = QUESTION_STATUS.AT
+            viewModel.updateQuestionInLocal(it)
+        }
     }
 
     override fun onDestroy() {

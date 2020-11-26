@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.repository.service
 
 import com.joshtalks.joshskills.repository.local.entity.CertificationExamDetailModel
 import com.joshtalks.joshskills.repository.local.entity.Course
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
 import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
@@ -128,7 +129,7 @@ interface ChatNetworkService {
     @POST("$DIR/chat/update_lesson/")
     suspend fun updateQuestionStatus(
         @Body questionStatus: UpdateQuestionStatus
-    ): BaseResponse<String>
+    ): BaseResponse<LESSON_STATUS>
 
 
     @GET("$DIR/course/course_overview/")

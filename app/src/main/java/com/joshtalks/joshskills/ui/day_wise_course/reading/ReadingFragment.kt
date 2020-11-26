@@ -600,7 +600,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                         WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
                     }
                     activityCallback?.onQuestionStatusUpdate(
-                        QUESTION_STATUS.AT.name,
+                        QUESTION_STATUS.AT,
                         chatModel.question?.questionId?.toIntOrNull() ?: 0
                     )
                 }
@@ -1351,7 +1351,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     }
 
     fun onReadingContinueClick() {
-        activityCallback?.onNextTabCall(binding.continueBtn)
+        activityCallback?.onNextTabCall(3)
     }
 
 /*

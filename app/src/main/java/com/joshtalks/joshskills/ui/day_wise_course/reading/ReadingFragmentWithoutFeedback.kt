@@ -609,7 +609,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                         WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
                     }
                     activityCallback?.onQuestionStatusUpdate(
-                        QUESTION_STATUS.AT.name,
+                        QUESTION_STATUS.AT,
                         chatModel.question?.questionId?.toIntOrNull() ?: 0
                     )
                 }
@@ -1353,7 +1353,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
     }
 
     fun onReadingContinueClick() {
-        activityCallback?.onNextTabCall(binding.continueBtn)
+        activityCallback?.onNextTabCall(3)
     }
 
 /*

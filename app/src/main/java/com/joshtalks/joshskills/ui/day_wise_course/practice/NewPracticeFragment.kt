@@ -145,7 +145,7 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
                     }
 
                     activityCallback?.onQuestionStatusUpdate(
-                        QUESTION_STATUS.AT.name,
+                        QUESTION_STATUS.AT,
                         currentChatModel?.question?.questionId?.toIntOrNull() ?: 0
                     )
                     var openNextScreen = true
@@ -196,7 +196,7 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
     }
 
     fun onContinueClick() {
-        activityCallback?.onNextTabCall(binding.vocabularyCompleteLayout)
+        activityCallback?.onNextTabCall(2)
     }
 
     fun onCloseDialog() {

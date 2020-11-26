@@ -470,4 +470,7 @@ enum class AnalyticsEvent(val NAME: String) {
     CHANNELS_DISABLED("channels_disabled"),
     CHANNELS_DISABLED_SIZE("channels_disabled_size"),
 
+    //Josh Video View
+    VIDEO_VIEW("video view")
+
 }

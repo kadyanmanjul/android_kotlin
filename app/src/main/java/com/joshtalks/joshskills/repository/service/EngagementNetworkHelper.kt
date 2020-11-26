@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 const val VIDEO_TIME_LEAP = 6
 
 object EngagementNetworkHelper {
+    @JvmStatic
     fun engageVideoApi(videoEngage: VideoEngage) {
         CoroutineScope(Dispatchers.IO).launch {
             try {

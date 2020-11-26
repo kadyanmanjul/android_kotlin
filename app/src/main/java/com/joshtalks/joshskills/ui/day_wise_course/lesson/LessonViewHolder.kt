@@ -20,7 +20,7 @@ class LessonViewHolder(
     activityRef: WeakReference<FragmentActivity>,
     message: ChatModel,
     previousMessage: ChatModel?,
-    private val onItemClick: ((lessonId: Int, lessonInterval: Int,chatId:String) -> Unit)? = null
+    private val onItemClick: ((lessonId: Int, lessonInterval: Int, chatId: String) -> Unit)? = null
 ) :
     BaseChatViewHolder(activityRef, message, previousMessage) {
 
@@ -53,18 +53,25 @@ class LessonViewHolder(
     @Resolve
     override fun onViewInflated() {
         super.onViewInflated()
-        if(message.question?.lesson?.status!=LESSON_STATUS.CO){
-            rootViewUncompleted.visibility=android.view.View.VISIBLE
-            rootViewCompleted.visibility=android.view.View.GONE
-            message.lessons?.let { lessonModel ->
-            lessonNameTv.text = getAppContext().getString(
-                R.string.lesson_name,
-                lessonModel.lessonNo,
-                lessonModel.lessonName
-            )
-            Utils.setImage(imageView, lessonModel.varthumbnail)
+        if (message.question?.lesson?.status != LESSON_STATUS.CO) {
+            rootViewUncompleted.visibility = android.view.View.VISIBLE
+            rootViewCompleted.visibility = android.view.View.GONE
 
-        }
+            if (message.question?.lesson?.status == LESSON_STATUS.AT) {
+                startLessonTv.text = getAppContext().getString(R.string.continue_lesson)
+            } else {
+                startLessonTv.text = getAppContext().getString(R.string.start_lesson)
+            }
+
+            message.lessons?.let { lessonModel ->
+                lessonNameTv.text = getAppContext().getString(
+                    R.string.lesson_name,
+                    lessonModel.lessonNo,
+                    lessonModel.lessonName
+                )
+                Utils.setImage(imageView, lessonModel.varthumbnail)
+
+            }
             rootViewUncompleted.setOnClickListener {
                 message.question?.lesson?.let {
                     onItemClick?.invoke(
@@ -75,13 +82,14 @@ class LessonViewHolder(
             }
 
             rootViewUncompleted.setBackgroundResource(
-            getViewHolderBGResource(
-                previousMessage?.sender,
-                message.sender
+                getViewHolderBGResource(
+                    previousMessage?.sender,
+                    message.sender
+                )
             )
-        )}else {
-            rootViewCompleted.visibility=android.view.View.VISIBLE
-            rootViewUncompleted.visibility=android.view.View.GONE
+        } else {
+            rootViewCompleted.visibility = android.view.View.VISIBLE
+            rootViewUncompleted.visibility = android.view.View.GONE
             message.question?.lesson?.let { lessonModel ->
                 lessonNameTvCompleted.text = getAppContext().getString(
                     R.string.lesson_name,

@@ -25,8 +25,11 @@ import com.joshtalks.joshskills.core.LESSON_INTERVAL
 import com.joshtalks.joshskills.core.LESSON__CHAT_ID
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
+import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.ui.chat.LESSON_REQUEST_CODE
 import com.joshtalks.joshskills.ui.day_wise_course.unlock_next_class.ActivityUnlockNextClass
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
@@ -60,7 +63,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             lessonId: Int,
             courseId: String,
             interval: Int = -1,
-            chatId:String= EMPTY
+            chatId: String = EMPTY
         ) = Intent(context, DayWiseCourseActivity::class.java).apply {
             putExtra(LESSON_ID, lessonId)
             putExtra(COURSE_ID, courseId)
@@ -129,91 +132,148 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             titleView.text =
                 getString(R.string.lesson_no, it.getOrNull(0)?.question?.lesson?.lessonNo)
 
-            val adapter = LessonPagerAdapter(
-                supportFragmentManager, this.lifecycle, it,
-                courseId = courseId?.toString() ?: EMPTY,
-                lessonId = lessonId
-            )
-            binding.lessonViewpager.adapter = adapter
-            TabLayoutMediator(
-                binding.lessonTabLayout,
-                binding.lessonViewpager,
-                object : TabLayoutMediator.TabConfigurationStrategy {
-                    override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {
+            setUpTablayout(it)
 
-                        when (position) {
-                            0 -> {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    setColor(tab)
-                                }
-                                tab.text = AppObjectController.getFirebaseRemoteConfig()
-                                    .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
-                            }
-                            1 -> {
-                                setUnselectedColor(tab)
-                                tab.text = AppObjectController.getFirebaseRemoteConfig()
-                                    .getString(FirebaseRemoteConfigKey.VOCABULARY_TITLE)
-                            }
-                            2 -> {
-                                setUnselectedColor(tab)
-                                tab.text = AppObjectController.getFirebaseRemoteConfig()
-                                    .getString(FirebaseRemoteConfigKey.READING_TITLE)
-                            }
-                            3 -> {
-                                setUnselectedColor(tab)
-                                tab.text = AppObjectController.getFirebaseRemoteConfig()
-                                    .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
-                            }
-                        }
-                    }
-                }).attach()
-            val tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
-            val layoutParam: LinearLayout.LayoutParams =
-                LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT
-                )
-
-            for (i in 0 until tabs.childCount) {
-                val tab = tabs.getChildAt(i)
-                tab.layoutParams = layoutParam
-                val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
-
-                layoutParams.weight = 0f
-                layoutParams.marginEnd = Utils.dpToPx(2)
-                layoutParams.marginStart = Utils.dpToPx(2)
-                tab.layoutParams = layoutParams
-                binding.lessonTabLayout.requestLayout()
-            }
-
-            binding.lessonTabLayout.addOnTabSelectedListener(object :
-                TabLayout.OnTabSelectedListener {
-
-                override fun onTabSelected(tab: TabLayout.Tab?) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        setColor(tab)
-                    }
-                }
-
-                override fun onTabReselected(tab: TabLayout.Tab?) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        setColor(tab)
-                    }
-                }
-
-                override fun onTabUnselected(tab: TabLayout.Tab?) {
-                    setUnselectedColor(tab)
-                }
-            })
 
         })
 
         viewModel.lessonStatusLiveData.observe(this, {
-            if (it == LESSON_STATUS.CO.name) {
-                viewModel.updateQuestionLessonStatus(lessonId)
+
+            viewModel.updateQuestionLessonStatus(lessonId, it)
+            if (it == LESSON_STATUS.CO) {
                 lessonCompleted = true
             }
         })
+    }
+
+    private fun setUpTablayout(chatModellist: List<ChatModel>) {
+        val grammarQuestions: ArrayList<ChatModel> = ArrayList()
+        val vocabularyQuestions: ArrayList<ChatModel> = ArrayList()
+        val readingQuestions: ArrayList<ChatModel> = ArrayList()
+
+        chatModellist.forEach {
+            when (it.question?.chatType) {
+                CHAT_TYPE.GR -> {
+                    grammarQuestions.add(it)
+                }
+                CHAT_TYPE.RP -> {
+                    readingQuestions.add(it)
+                }
+                CHAT_TYPE.VP -> {
+                    vocabularyQuestions.add(it)
+                }
+                else -> {
+
+                }
+            }
+        }
+
+        val adapter = LessonPagerAdapter(
+            supportFragmentManager, this.lifecycle, chatModellist,
+            courseId = courseId?.toString() ?: EMPTY,
+            lessonId = lessonId
+        )
+
+        binding.lessonViewpager.adapter = adapter
+
+        TabLayoutMediator(
+            binding.lessonTabLayout,
+            binding.lessonViewpager,
+            object : TabLayoutMediator.TabConfigurationStrategy {
+                override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {
+
+                    when (position) {
+                        0 -> {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                setColor(tab)
+                            }
+                            tab.text = AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
+                        }
+                        1 -> {
+                            setUnselectedColor(tab)
+                            tab.text = AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.VOCABULARY_TITLE)
+                        }
+                        2 -> {
+                            setUnselectedColor(tab)
+                            tab.text = AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.READING_TITLE)
+                        }
+                        3 -> {
+                            setUnselectedColor(tab)
+                            tab.text = AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
+                        }
+                    }
+                }
+            }).attach()
+        val tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
+        val layoutParam: LinearLayout.LayoutParams =
+            LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+            )
+
+        for (i in 0 until tabs.childCount) {
+            val tab = tabs.getChildAt(i)
+            tab.layoutParams = layoutParam
+            val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
+
+            layoutParams.weight = 0f
+            layoutParams.marginEnd = Utils.dpToPx(2)
+            layoutParams.marginStart = Utils.dpToPx(2)
+            tab.layoutParams = layoutParams
+            binding.lessonTabLayout.requestLayout()
+        }
+
+        binding.lessonTabLayout.addOnTabSelectedListener(object :
+            TabLayout.OnTabSelectedListener {
+
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    setColor(tab)
+                }
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    setColor(tab)
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                setUnselectedColor(tab)
+            }
+        })
+
+        var tabOpened = false
+        grammarQuestions.forEach {
+            if (it.question?.status == QUESTION_STATUS.NA) {
+                onNextTabCall(0)
+                tabOpened = true
+                return@forEach
+            }
+        }
+        if (tabOpened.not()) {
+            vocabularyQuestions.forEach {
+                if (it.question?.status == QUESTION_STATUS.NA) {
+                    onNextTabCall(1)
+                    tabOpened = true
+                    return@forEach
+                }
+            }
+        }
+
+        if (tabOpened.not()) {
+            readingQuestions.forEach {
+                if (it.question?.status == QUESTION_STATUS.NA) {
+                    onNextTabCall(2)
+                    tabOpened = true
+                    return@forEach
+                }
+            }
+        }
     }
 
     private fun setUnselectedColor(tab: TabLayout.Tab?) {
@@ -266,15 +326,15 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun onNextTabCall(view: View?) {
+    override fun onNextTabCall(tabNumber: Int) {
         try {
-            binding.lessonViewpager.currentItem = ++binding.lessonViewpager.currentItem
+            binding.lessonViewpager.currentItem = tabNumber
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    override fun onQuestionStatusUpdate(status: String, questionId: Int) {
+    override fun onQuestionStatusUpdate(status: QUESTION_STATUS, questionId: Int) {
         viewModel.updateQuestionStatus(status, questionId, courseId!!, lessonId)
     }
 
@@ -300,10 +360,11 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         setResult(RESULT_OK, resultIntent)
         this@DayWiseCourseActivity.finish()
     }
+
 }
 
 interface CapsuleActivityCallback {
-    fun onNextTabCall(view: View?)
-    fun onQuestionStatusUpdate(status: String, questionId: Int)
+    fun onNextTabCall(tabNumber: Int)
+    fun onQuestionStatusUpdate(status: QUESTION_STATUS, questionId: Int)
     fun onContinueClick()
 }
