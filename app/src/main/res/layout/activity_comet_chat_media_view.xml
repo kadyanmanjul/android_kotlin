@@ -65,5 +65,16 @@
             android:layout_marginLeft="8dp"
             android:textColor="@color/colorPrimary"
             tools:text="125 KB" />
+
+
     </RelativeLayout>
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/video_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_100sdp"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/_24sdp" />
+
 </RelativeLayout>

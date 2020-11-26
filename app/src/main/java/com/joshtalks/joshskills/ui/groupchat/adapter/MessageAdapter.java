@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,12 +31,13 @@ import com.cometchat.pro.models.TextMessage;
 import com.cometchat.pro.models.User;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.ui.groupchat.constant.StringContract;
+import com.joshtalks.joshskills.ui.groupchat.listeners.OnMessageLongClick;
 import com.joshtalks.joshskills.ui.groupchat.listeners.StickyHeaderAdapter;
 import com.joshtalks.joshskills.ui.groupchat.messagelist.CometChatMessageListActivity;
 import com.joshtalks.joshskills.ui.groupchat.screens.CometChatMediaViewActivity;
+import com.joshtalks.joshskills.ui.groupchat.uikit.AudioV2PlayerView;
 import com.joshtalks.joshskills.ui.groupchat.uikit.Avatar;
 import com.joshtalks.joshskills.ui.groupchat.utils.Extensions;
-import com.joshtalks.joshskills.ui.groupchat.utils.FontUtils;
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils;
 
 import org.json.JSONObject;
@@ -91,29 +91,17 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static final int RIGHT_LOCATION_CUSTOM_MESSAGE = 32;
     private static final int RIGHT_POLLS_CUSTOM_MESSAGE = 41;
     private static final int LEFT_POLLS_CUSTOM_MESSAGE = 42;
-    public static double LATITUDE;
-    public static double LONGITUDE;
     private final List<BaseMessage> messageList = new ArrayList<>();
     private final User loggedInUser = CometChat.getLoggedInUser();
     private final List<Integer> selectedItemList = new ArrayList<>();
-    private final FontUtils fontUtils;
-    private final int messagePosition = 0;
     private final String TAG = "MessageAdapter";
     public Context context;
     public List<BaseMessage> longselectedItemList = new ArrayList<>();
     private boolean isLongClickEnabled;
-    private MediaPlayer mediaPlayer;
     private OnMessageLongClick messageLongClick;
     private boolean isUserDetailVisible;
-    private boolean isSent;
-
     private boolean isTextMessageClick;
-
     private boolean isImageMessageClick;
-
-    private boolean isLocationMessageClick;
-
-    private String selectedOption;
 
     /**
      * It is used to initialize the adapter wherever we needed. It has parameter like messageList
@@ -123,22 +111,15 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      *
      * @param context     is a object of Context.
      * @param messageList is a list of messages used in this adapter.
-     * @param type        is a String which identifies whether it is a user messages or a group messages.
      */
-    public MessageAdapter(Context context, List<BaseMessage> messageList, String type) {
+    public MessageAdapter(CometChatMessageListActivity context, List<BaseMessage> messageList) {
         setMessageList(messageList);
         this.context = context;
         try {
-            messageLongClick = (CometChatMessageListActivity) context;
+            messageLongClick = context;
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        if (null == mediaPlayer) {
-            mediaPlayer = new MediaPlayer();
-        }
-
-        fontUtils = FontUtils.getInstance(context);
     }
 
     /**
@@ -383,13 +364,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 viewHolder.tvThreadReplyCount.setVisibility(View.GONE);
             }
 
-
             showMessageTime(viewHolder, baseMessage);
-//            if (selectedItemList.contains(baseMessage.getId()))
-            viewHolder.txtTime.setVisibility(View.VISIBLE);
-//            else
-//                viewHolder.txtTime.setVisibility(View.GONE);
 
+            viewHolder.audioV2PlayerView.bindView(baseMessage.getId(), ((MediaMessage) baseMessage).getAttachment().getFileUrl(), baseMessage.getMetadata());
+            viewHolder.txtTime.setVisibility(View.VISIBLE);
             viewHolder.length.setText(Utils.getFileSize(((MediaMessage) baseMessage).getAttachment().getFileSize()));
             viewHolder.playBtn.setImageResource(R.drawable.ic_play_arrow_black_24dp);
             viewHolder.playBtn.setOnClickListener(v -> {
@@ -419,17 +397,12 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (viewHolder.tvUser != null)
                 viewHolder.tvUser.setOnClickListener(view -> Utils.moveToUserProfile(baseMessage.getSender().getUid(), context));
         }
-    }
+        viewHolder.playBtn.setOnClickListener(v -> {
 
-    public void stopPlayingAudio() {
-        if (mediaPlayer != null)
-            mediaPlayer.stop();
+        });
     }
-
 
     private void setDeleteData(DeleteMessageViewHolder viewHolder, int i) {
-
-
         BaseMessage baseMessage = messageList.get(i);
         if (!baseMessage.getSender().getUid().equals(loggedInUser.getUid())) {
             if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_USER)) {
@@ -481,8 +454,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //            viewHolder.textView.setTextColor(context.getResources().getColor(R.color.textColorWhite));
 //        else
 //            viewHolder.textView.setTextColor(context.getResources().getColor(R.color.primaryTextColor));
-
-        viewHolder.textView.setTypeface(fontUtils.getTypeFace(FontUtils.robotoRegular));
         if (baseMessage instanceof Action)
             viewHolder.textView.setText(((Action) baseMessage).getMessage());
         else if (baseMessage instanceof Call) {
@@ -670,8 +641,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             viewHolder.txtMessage.setText(txtMessage);
             String profanityFilter = Extensions.checkProfanityMessage(baseMessage);
             viewHolder.txtMessage.setText(profanityFilter);
-            viewHolder.txtMessage.setTypeface(fontUtils.getTypeFace(FontUtils.robotoRegular));
-
             Utils.setHyperLinkSupport(context, viewHolder.txtMessage);
 
             viewHolder.txtMessage.setOnLongClickListener(view -> {
@@ -771,7 +740,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
 
             viewHolder.txtMessage.setText(context.getResources().getString(R.string.custom_message));
-            viewHolder.txtMessage.setTypeface(fontUtils.getTypeFace(FontUtils.robotoLight));
             if (baseMessage.getSender().getUid().equals(loggedInUser.getUid()))
                 viewHolder.txtMessage.setTextColor(context.getResources().getColor(R.color.white));
             else
@@ -874,15 +842,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     context.startActivity(intent);
                 }
             });
-//            if (selectedItemList.contains(baseMessage.getId()))
             viewHolder.txtTime.setVisibility(View.VISIBLE);
-//            else
-//                viewHolder.txtTime.setVisibility(View.GONE);
-//            if (i < selectedItems.length && selectedItems[i] == 0) {
-//                viewHolder.txtTime.setVisibility(View.GONE);
-//            } else
-//                viewHolder.txtTime.setVisibility(View.VISIBLE);
-
             viewHolder.rlMessageBubble.setOnClickListener(view -> {
                 if (isLongClickEnabled && !isImageMessageClick) {
                     setLongClickSelectedItem(baseMessage);
@@ -1153,7 +1113,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         isLongClickEnabled = false;
         isTextMessageClick = false;
         isImageMessageClick = false;
-        isLocationMessageClick = false;
         longselectedItemList.clear();
         notifyDataSetChanged();
     }
@@ -1168,10 +1127,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public int getPosition(BaseMessage baseMessage) {
         return messageList.indexOf(baseMessage);
-    }
-
-    public interface OnMessageLongClick {
-        void setLongMessageClick(List<BaseMessage> baseMessage);
     }
 
     public class ActionMessageViewHolder extends RecyclerView.ViewHolder {
@@ -1299,6 +1254,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private final TextView txtTime;
         private final TextView tvThreadReplyCount;
         private final LinearLayout lvReplyAvatar;
+        private final AudioV2PlayerView audioV2PlayerView;
 
         public AudioMessageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -1311,6 +1267,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             txtTime = itemView.findViewById(R.id.txt_time);
             tvThreadReplyCount = itemView.findViewById(R.id.thread_reply_count);
             lvReplyAvatar = itemView.findViewById(R.id.reply_avatar_layout);
+            audioV2PlayerView = itemView.findViewById(R.id.audio_player);
         }
     }
 

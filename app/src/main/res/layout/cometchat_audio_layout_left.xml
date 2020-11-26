@@ -25,6 +25,11 @@
         android:paddingEnd="@dimen/_8sdp"
         android:paddingBottom="@dimen/_6sdp">
 
+        <com.joshtalks.joshskills.ui.groupchat.uikit.AudioV2PlayerView
+            android:id="@+id/audio_player"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_48sdp" />
+
         <TextView
             android:id="@+id/tv_user"
             android:layout_width="wrap_content"
@@ -32,6 +37,7 @@
             android:layout_marginBottom="0dp"
             android:paddingStart="8dp"
             android:paddingTop="8dp"
+            android:visibility="gone"
             android:paddingEnd="8dp"
             android:paddingBottom="0dp"
             android:textColor="@color/colorPrimary"
@@ -41,6 +47,8 @@
 
         <TextView
             android:id="@+id/title"
+            android:visibility="gone"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_user"
@@ -58,6 +66,8 @@
 
         <ImageView
             android:id="@+id/playBtn"
+            android:visibility="gone"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/title"
@@ -73,6 +83,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
             android:layout_marginStart="8dp"
+            android:visibility="gone"
+
             android:textColor="@color/secondaryTextColor"
             tools:text="125 KB" />
 
@@ -84,6 +96,7 @@
             android:layout_alignEnd="@id/playBtn"
             android:layout_gravity="center"
             android:layout_marginTop="4dp"
+
             android:layout_marginBottom="8dp"
             android:gravity="end"
             android:maxLines="1"

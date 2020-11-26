@@ -19,6 +19,12 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.cometchat.pro.constants.CometChatConstants;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.ui.groupchat.constant.StringContract;
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils;
@@ -64,6 +70,8 @@ public class CometChatMediaViewActivity extends AppCompatActivity {
             videoMessage.setVideoURI(Uri.parse(mediaUrl));
             videoMessage.setVisibility(View.VISIBLE);
         } else if (mediaType.equals(CometChatConstants.MESSAGE_TYPE_AUDIO)) {
+            inttPlayer();
+
             mediaPlayer.reset();
             mediaSize.setText(Utils.getFileSize(mSize));
             playBtn.setOnClickListener(new View.OnClickListener() {
@@ -97,6 +105,21 @@ public class CometChatMediaViewActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+    }
+
+    private void inttPlayer() {
+        SimpleExoPlayer player = new SimpleExoPlayer.Builder(this).build();
+        PlayerView pp = findViewById(R.id.video_view);
+        pp.setPlayer(player);
+        player.setPlayWhenReady(true);
+        player.seekTo(0, 0);
+        Uri uri = Uri.parse("https://data-us.cometchat.io/25039c54194d899/media/1606377435_1183340688_f3dadc7cf88c858b3ee1c8c281331ff7.mp3");
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(
+                this, Util.getUserAgent(this, "joshskills"));
+        ProgressiveMediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
+                .createMediaSource(uri);
+        player.prepare(mediaSource);
+
     }
 
     @Override

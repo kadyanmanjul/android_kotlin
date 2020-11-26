@@ -166,10 +166,10 @@ class MemoryManagementWorker(var context: Context, var workerParams: WorkerParam
             }
 
             var externalStorageSize = 0.0
-            if (PermissionUtils.isStoragePermissionEnabled(applicationContext)) {
+          /*  if (PermissionUtils.isStoragePermissionEnabled(applicationContext)) {
                 externalStorageSize =
                     AppDirectory.getDirSize(AppDirectory.getRootDirectoryPath()).bytesToKB()
-            }
+            }*/
 
 
             val totalUsedInMB = externalFileSize + cacheFileSize + externalStorageSize

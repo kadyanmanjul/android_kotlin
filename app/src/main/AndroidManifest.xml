@@ -632,7 +632,6 @@
             android:name=".ui.groupchat.messagelist.CometChatMessageListActivity"
             android:screenOrientation="portrait" />
 
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${file_provider}.provider"

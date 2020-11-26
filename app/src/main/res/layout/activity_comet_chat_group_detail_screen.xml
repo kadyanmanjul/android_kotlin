@@ -21,6 +21,9 @@
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:collapsedTitleTextAppearance="@style/CollapsedAppBar"
+            app:expandedTitleTextAppearance="@style/ExpandedAppBar"
+
             app:toolbarId="@+id/groupDetailToolbar">
 
             <androidx.appcompat.widget.AppCompatImageView

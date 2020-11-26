@@ -117,6 +117,7 @@ object PermissionUtils {
     }
 
 
+    @JvmStatic
     fun checkPermissionForAudioRecord(context: Context): Boolean {
         return ContextCompat.checkSelfPermission(
             context,

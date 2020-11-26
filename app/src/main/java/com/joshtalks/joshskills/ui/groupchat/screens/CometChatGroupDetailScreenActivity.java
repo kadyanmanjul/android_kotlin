@@ -756,4 +756,9 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
         super.onStop();
         removeGroupListener();
     }
+
+    @Override
+    public void onBackPressed() {
+        this.finish();
+    }
 }

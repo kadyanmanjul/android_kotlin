@@ -20,8 +20,10 @@ class ExoAudioPlayer {
     private var progressUpdateListener: ProgressUpdateListener? = null
     var context: Context? = AppObjectController.joshApplication
     private val playerEventListener: Player.EventListener
-
+    private var durationSet = false
     var currentPlayingUrl = EMPTY
+    private var audioDuration: Long = 0
+
 
     init {
         playerEventListener = object : Player.EventListener {
@@ -29,6 +31,10 @@ class ExoAudioPlayer {
             }
 
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                if (playbackState == ExoPlayer.STATE_READY && !durationSet) {
+                    audioDuration = player?.duration ?: 0
+                    durationSet = true
+                }
                 if (playbackState == ExoPlayer.STATE_ENDED)
                     playerListener?.complete()
                 if (playbackState == ExoPlayer.STATE_READY)
@@ -54,6 +60,8 @@ class ExoAudioPlayer {
         var LAST_ID: String = ""
         private var manager: ExoAudioPlayer? = null
 
+        @JvmStatic
+        @Synchronized
         fun getInstance(): ExoAudioPlayer? {
             if (manager == null) {
                 manager = ExoAudioPlayer()
@@ -113,6 +121,8 @@ class ExoAudioPlayer {
     fun isPlaying(): Boolean {
         return player?.isPlaying ?: false
     }
+
+    fun getDuration() = audioDuration
 
     fun resumeOrPause() {
         player?.playWhenReady = player?.playWhenReady!!.not()
