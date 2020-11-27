@@ -38,7 +38,7 @@
             android:layout_marginEnd="16dp"
             android:layout_toEndOf="@id/av_user"
             android:maxLines="1"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/black"
             android:textSize="@dimen/_12ssp"
             tools:text="@tools:sample/full_names" />
 
@@ -63,7 +63,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="16dp"
-            android:src="@drawable/ic_delete"
+            android:src="@drawable/recv_ic_delete"
             android:visibility="gone"
             tools:visibility="visible" />
 

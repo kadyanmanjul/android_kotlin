@@ -23,7 +23,7 @@
             android:layout_height="30dp"
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
-            android:src="@drawable/ic_library_music_24dp" />
+            android:src="@drawable/ic_inbox_audio" />
 
         <ImageView
             android:id="@+id/ivCamera"
@@ -31,7 +31,8 @@
             android:layout_height="30dp"
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
-            android:layout_toEndOf="@+id/ivAudio" />
+            android:layout_toEndOf="@+id/ivAudio"
+            android:src="@drawable/ic_inbox_camera" />
 
         <ImageView
             android:id="@+id/ivImage"
@@ -39,7 +40,8 @@
             android:layout_height="30dp"
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
-            android:layout_toEndOf="@id/ivCamera" />
+            android:layout_toEndOf="@id/ivCamera"
+            android:src="@drawable/ct_image" />
 
         <ImageView
             android:id="@+id/ivFile"
@@ -59,6 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:padding="8dp"
+        android:src="@drawable/ic_add"
         android:visibility="gone" />
 
     <RelativeLayout
@@ -70,6 +73,7 @@
         android:layout_marginBottom="@dimen/_4sdp"
         android:layout_toStartOf="@+id/boxEndLayout"
         android:layout_toEndOf="@id/ivArrow"
+        android:background="@drawable/compose_box"
         android:paddingHorizontal="@dimen/_14sdp"
         android:paddingVertical="@dimen/_2sdp"
         tools:visibility="gone">
@@ -95,6 +99,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/boxEndLayout"
         android:layout_toStartOf="@+id/boxEndLayout"
+        android:background="@drawable/compose_box"
         android:visibility="gone"
         tools:visibility="visible">
 
