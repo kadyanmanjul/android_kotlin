@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.points_history
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -12,10 +13,8 @@ import com.joshtalks.joshskills.databinding.ActivityPointsHistoryBinding
 import com.joshtalks.joshskills.ui.points_history.viewholder.PointsSummaryDescViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewholder.PointsSummaryTitleViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewmodel.PointsViewModel
-import com.mindorks.placeholderview.ExpandablePlaceHolderView
 import kotlinx.android.synthetic.main.base_toolbar.iv_back
 import kotlinx.android.synthetic.main.base_toolbar.iv_help
-import kotlinx.android.synthetic.main.base_toolbar.iv_setting
 import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 
 
@@ -56,8 +55,8 @@ class PointsHistoryActivity : BaseActivity() {
             binding.userScore.text = it.totalPoints.toString()
             binding.userScoreText.text = it.totalPointsText
 
-            it.pointsHistoryDateList?.forEach {list->
-                binding.recyclerView.addView(PointsSummaryTitleViewHolder(list.date!!,list.pointsSum!!))
+            it.pointsHistoryDateList?.forEachIndexed {index,list->
+                binding.recyclerView.addView(PointsSummaryTitleViewHolder(list.date!!,list.pointsSum!!,index))
                 list.pointsHistoryList?.forEachIndexed { index, pointsHistory ->
                     binding.recyclerView.addView(PointsSummaryDescViewHolder(pointsHistory,index,list.pointsHistoryList.size))
                 }

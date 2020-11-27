@@ -19,13 +19,13 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.IS_LEADERBOARD_ACTIVE
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.ActivityUserProfileBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.AwardCategory
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
@@ -86,6 +86,10 @@ class UserProfileActivity : BaseActivity() {
                     openPopupMenu(it)
                 }
             }
+        }
+        binding.pointLayout.setOnClickListener {
+            if(mentorId.equals(Mentor.getInstance().getId()))
+            openPointHistory()
         }
     }
 
@@ -183,7 +187,8 @@ class UserProfileActivity : BaseActivity() {
                     certificate.sortOrder,
                     certificate.dateText,
                     certificate.imageUrl,
-                    certificate.certificateDescription
+                    certificate.certificateDescription,
+                    certificate.is_achieved
                 )
             )
         }
@@ -213,7 +218,11 @@ class UserProfileActivity : BaseActivity() {
             .setLayoutManager(linearLayoutManager)
 
         awardCategory.awards?.forEach {
-            recyclerView.addView(AwardItemViewHolder(it, this))
+            if (mentorId.equals(Mentor.getInstance().getId())) {
+                recyclerView.addView(AwardItemViewHolder(it, this))
+            } else if (it.is_achieved) {
+                recyclerView.addView(AwardItemViewHolder(it, this))
+            }
         }
         recyclerView.requestFocus(0)
         if (view != null) {
@@ -250,11 +259,8 @@ class UserProfileActivity : BaseActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    if (AppObjectController.getFirebaseRemoteConfig()
-                            .getBoolean(FirebaseRemoteConfigKey.SHOW_AWARDS_FULL_SCREEN)
-                    ) {
+                    if (mentorId.equals(Mentor.getInstance().getId()) && it.award.is_achieved)
                         openAwardPopUp(it.award)
-                    }
                 }, {
                     it.printStackTrace()
                 })
