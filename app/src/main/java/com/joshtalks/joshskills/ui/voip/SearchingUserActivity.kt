@@ -62,6 +62,7 @@ class SearchingUserActivity : BaseActivity() {
     private lateinit var binding: ActivitySearchingUserBinding
     private var mBoundService: WebRtcService? = null
     private var appAnalytics: AppAnalytics? = null
+    private var isOutgoingCall = false
     private var mServiceBound = false
     private val viewModel: VoipCallingViewModel by lazy {
         ViewModelProvider(this).get(VoipCallingViewModel::class.java)
@@ -106,7 +107,7 @@ class SearchingUserActivity : BaseActivity() {
 
         override fun onCallReject(id: String?) {
             Timber.tag("SearchingUserActivity").e("onCallReject")
-            stopCalling()
+            reCallToUser()
         }
 
         override fun onSelfDisconnect(id: String?) {
@@ -115,6 +116,11 @@ class SearchingUserActivity : BaseActivity() {
 
         override fun onIncomingCallHangup(id: String?) {
             Timber.tag("SearchingUserActivity").e("onIncomingCallHangup")
+        }
+
+        override fun initOutgoingCall(id: String?) {
+            isOutgoingCall = true
+            initApiForSearchUser()
         }
 
     }
@@ -156,7 +162,7 @@ class SearchingUserActivity : BaseActivity() {
 
     private fun addObserver() {
         viewModel.voipDetailsLiveData.observe(this, {
-            if (it != null) {
+            if (it != null && isOutgoingCall.not()) {
                 WebRtcService.startOutgoingCall(getMapForOutgoing(it))
             }
         })
@@ -237,8 +243,12 @@ class SearchingUserActivity : BaseActivity() {
     private fun requestForSearchUser() {
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
         appAnalytics?.addParam(AnalyticsEvent.SEARCH_USER_FOR_VOIP.NAME, courseId)
+        startProgressBarCountDown()
+        initApiForSearchUser()
+    }
+
+    private fun initApiForSearchUser() {
         courseId?.let {
-            startProgressBarCountDown()
             viewModel.getUserForTalk(it, topicId)
         }
     }
@@ -251,6 +261,12 @@ class SearchingUserActivity : BaseActivity() {
             .push()
         timer?.cancel()
         this.finish()
+    }
+
+    private fun reCallToUser() {
+        viewModel.voipDetailsLiveData.value?.let {
+            WebRtcService.startOutgoingCall(getMapForOutgoing(it))
+        }
     }
 
     override fun onDestroy() {

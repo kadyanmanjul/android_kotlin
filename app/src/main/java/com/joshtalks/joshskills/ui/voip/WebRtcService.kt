@@ -69,6 +69,9 @@ class WebRtcService : Service() {
     private val executor: ExecutorService =
         JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-Calling Service")
 
+    private var incomingCallData: HashMap<String, String>? = null
+    private var outgoingCallData: HashMap<String, String>? = null
+
 
     companion object {
         private val TAG = "PlivoCallingListenService"
@@ -132,16 +135,24 @@ class WebRtcService : Service() {
 
     private var eventListener = object : EventListener {
         override fun onLogin() {
+            Timber.tag(TAG).e("LoginUser")
+            Timber.tag(TAG).e("= %s", endpoint?.registered.toString())
+
             try {
                 endpoint?.keepAlive()
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
-            Timber.tag(TAG).e("LoginUser")
-            Timber.tag(TAG).e("= %s", endpoint?.registered.toString())
             (getSystemService(NOTIFICATION_SERVICE) as NotificationManager?)?.cancel(
                 EMPTY_NOTIFICATION_ID
             )
+
+            if (outgoingCallData != null) {
+                initCall()
+            }
+            if (incomingCallData != null) {
+                endpoint?.relayVoipPushNotification(incomingCallData)
+            }
         }
 
         override fun onLogout() {
@@ -149,6 +160,9 @@ class WebRtcService : Service() {
         }
 
         override fun onLoginFailed() {
+            (getSystemService(NOTIFICATION_SERVICE) as NotificationManager?)?.cancel(
+                EMPTY_NOTIFICATION_ID
+            )
             Timber.tag(TAG).e("onLoginFailed")
         }
 
@@ -187,8 +201,13 @@ class WebRtcService : Service() {
 
         override fun onOutgoingCall(outgoing: Outgoing) {
             callData = outgoing
+            callCallback?.get()?.initOutgoingCall(getCallId())
             Timber.tag(TAG).e("onOutgoingCall")
         }
+
+        /*  override fun onOutgoingCallRinging(p0: Outgoing) {
+              Timber.tag(TAG).e("onOutgoingCallRinging")
+          }*/
 
         override fun onOutgoingCallAnswered(outgoing: Outgoing) {
             Timber.tag(TAG).e("onOutgoingCallAnswered")
@@ -231,7 +250,7 @@ class WebRtcService : Service() {
         super.onCreate()
         Timber.tag(TAG).e("onCreate")
         mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
-        startForeground(EMPTY_NOTIFICATION_ID, loginUserService())
+        //startForeground(EMPTY_NOTIFICATION_ID, loginUserService())
         endpoint = Endpoint.newInstance(BuildConfig.DEBUG, eventListener, options)
         executor.execute {
             userPlivo = UserPlivoDetailsModel.getPlivoUser()
@@ -265,10 +284,10 @@ class WebRtcService : Service() {
                             logoutUser()
                         }
                         this == NotificationIncomingCall().action -> {
+                            incomingCallData =
+                                intent.getSerializableExtra(INCOMING_CALL_USER_OBJ) as HashMap<String, String>?
                             if (loginUser()) {
-                                val incomingData: HashMap<String, String>? =
-                                    intent.getSerializableExtra(INCOMING_CALL_USER_OBJ) as HashMap<String, String>?
-                                endpoint?.relayVoipPushNotification(incomingData)
+                                endpoint?.relayVoipPushNotification(incomingCallData)
                             }
                         }
                         this == IncomingCall().action -> {
@@ -280,14 +299,10 @@ class WebRtcService : Service() {
                             processIncomingCall(incomingData)
                         }
                         this == OutgoingCall().action -> {
+                            outgoingCallData =
+                                intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String>
                             if (loginUser()) {
-                                val extraHeaders: HashMap<String, String>? =
-                                    intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String>
-                                endpoint?.createOutgoingCall()
-                                    ?.callH(userPlivo?.username, extraHeaders)
-                                showNotificationOnOutgoingCall(extraHeaders)
-                                callUUID = extraHeaders?.get("X-PH-MOBILEUUID")
-                                Timber.tag(TAG).e("Outgoing")
+                                initCall()
                             }
                         }
                         this == CallConnect().action -> {
@@ -319,6 +334,16 @@ class WebRtcService : Service() {
         return START_STICKY
     }
 
+    private fun initCall() {
+        endpoint?.createOutgoingCall()
+            ?.callH(userPlivo?.username, outgoingCallData)
+        showNotificationOnOutgoingCall(outgoingCallData)
+        callUUID = outgoingCallData?.get("X-PH-MOBILEUUID")
+        Timber.tag(TAG).e("Outgoing")
+        outgoingCallData = null
+        endpoint?.registered
+    }
+
     fun getCallId(): String? {
         return callUUID
     }
@@ -326,7 +351,10 @@ class WebRtcService : Service() {
     fun getCallDataObj() = callData
 
     private fun loginUser(): Boolean {
-        if (userPlivo != null) {
+        if (userPlivo != null && endpoint != null) {
+            if (endpoint!!.registered) {
+                return true
+            }
             return endpoint?.login(
                 userPlivo?.username,
                 userPlivo?.password,
@@ -574,7 +602,7 @@ class WebRtcService : Service() {
             .setContentText("Syncing...")
             .setSmallIcon(R.drawable.ic_status_bar_notification)
             .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
-            .setOngoing(true)
+            .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setOnlyAlertOnce(true)
 
@@ -786,5 +814,6 @@ interface WebRtcCallback {
     fun onCallReject(id: String?)
     fun onSelfDisconnect(id: String?)
     fun onIncomingCallHangup(id: String?)
+    fun initOutgoingCall(id: String?)
 
 }

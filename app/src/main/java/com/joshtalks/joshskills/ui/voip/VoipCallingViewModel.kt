@@ -6,38 +6,41 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.RETRY_COUNT
 import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.net.ProtocolException
 
+const val RETRY_MIN_COUNT = 5
+
 class VoipCallingViewModel(application: Application) : AndroidViewModel(application) {
     val voipDetailsLiveData: MutableLiveData<VoipCallDetailModel> = MutableLiveData()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
-    var retryCount = 0
     var attemptCount = 0
 
+
     fun getUserForTalk(courseId: String, topicId: Int?) {
-        if (retryCount > RETRY_COUNT) {
+        var supportUser = "false"
+        if (attemptCount > RETRY_MIN_COUNT) {
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED_PERMANENT)
             return
         }
-        if (attemptCount == 5) {
-            apiCallStatusLiveData.postValue(ApiCallStatus.FAILED_PERMANENT)
-            return
-        }
+        attemptCount += 1
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                if (attemptCount == RETRY_MIN_COUNT) {
+                    supportUser = "true"
+                }
                 val response =
-                    AppObjectController.commonNetworkService.getP2PUser(courseId, topicId)
+                    AppObjectController.commonNetworkService.getP2PUser(
+                        courseId,
+                        topicId,
+                        supportUser
+                    )
                 apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                 voipDetailsLiveData.postValue(response)
-                retryCount = 0
-                attemptCount++
             } catch (ex: ProtocolException) {
-                retryCount++
                 apiCallStatusLiveData.postValue(ApiCallStatus.RETRY)
             } catch (ex: Throwable) {
                 apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)

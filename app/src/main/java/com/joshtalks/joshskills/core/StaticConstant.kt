@@ -28,7 +28,6 @@ const val RC_HINT = 2
 const val MAX_YEAR = 6
 const val ALPHA_MAX = 1F
 const val ALPHA_MIN = 0.45F
-const val RETRY_COUNT = 5
 
 
 val IMAGE_REGEX = Regex(pattern = IMAGE_PATTERN)

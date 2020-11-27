@@ -169,7 +169,8 @@ interface CommonNetworkService {
     @GET("$DIR/voicecall/recipient_mentor")
     suspend fun getP2PUser(
         @Query("course_id") id: String,
-        @Query("topic_id") topicId: Int?
+        @Query("topic_id") topicId: Int?,
+        @Query("support_user") supportUser: String
     ): VoipCallDetailModel
 
     @GET("$DIR/voicecall/mentor_topicinfo")
