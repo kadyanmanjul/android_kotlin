@@ -23,8 +23,27 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import com.joshtalks.joshcamerax.utils.SharedPrefsManager
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
+import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.COURSE_ID
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.MINIMUM_TIME_TO_SHOW_REVIEW
+import com.joshtalks.joshskills.core.IN_APP_REVIEW_COUNT
+import com.joshtalks.joshskills.core.IS_LEADERBOARD_ACTIVE
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
+import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
+import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
+import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
+import com.joshtalks.joshskills.core.SHOW_OVERLAY
+import com.joshtalks.joshskills.core.SINGLE_SPACE
+import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.inapp_update.Constants
@@ -72,10 +91,30 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.android.synthetic.main.find_more_layout.*
-import kotlinx.android.synthetic.main.inbox_toolbar.*
-import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.*
+import kotlinx.android.synthetic.main.activity_inbox.expiry_tool_tip
+import kotlinx.android.synthetic.main.activity_inbox.hint_text
+import kotlinx.android.synthetic.main.activity_inbox.new_user_layout
+import kotlinx.android.synthetic.main.activity_inbox.overlay_layout
+import kotlinx.android.synthetic.main.activity_inbox.overlay_tip
+import kotlinx.android.synthetic.main.activity_inbox.progress_bar
+import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
+import kotlinx.android.synthetic.main.activity_inbox.see_leaderboard
+import kotlinx.android.synthetic.main.activity_inbox.subscriptionTipContainer
+import kotlinx.android.synthetic.main.activity_inbox.text_btn
+import kotlinx.android.synthetic.main.activity_inbox.txtConvert
+import kotlinx.android.synthetic.main.activity_inbox.txtConvert2
+import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip
+import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip2
+import kotlinx.android.synthetic.main.activity_inbox.user_data_container
+import kotlinx.android.synthetic.main.activity_inbox.user_min_data
+import kotlinx.android.synthetic.main.activity_inbox.user_points
+import kotlinx.android.synthetic.main.activity_inbox.user_streak_data
+import kotlinx.android.synthetic.main.find_more_layout.bb_tip_below_find_btn
+import kotlinx.android.synthetic.main.find_more_layout.find_more
+import kotlinx.android.synthetic.main.inbox_toolbar.iv_reminder
+import kotlinx.android.synthetic.main.inbox_toolbar.iv_setting
+import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
+import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.expiry_tool_tip_text
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -726,14 +765,20 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     private fun initScoreCardView(userData: UserProfileResponse) {
         userData.isPointsActive?.let { isLeaderBoardActive ->
-            PrefManager.put(IS_LEADERBOARD_ACTIVE, false)
-                if (false) {
+            PrefManager.put(IS_LEADERBOARD_ACTIVE, userData.isPointsActive)
+            if (AppObjectController.getFirebaseRemoteConfig()
+                    .getBoolean(FirebaseRemoteConfigKey.SHOW_AWARDS_FULL_SCREEN)
+            ) {
+                if (userData.isPointsActive) {
                     user_data_container.visibility = View.VISIBLE
                     user_points.text = userData.points.toString()
                     user_streak_data.text = userData.streak.toString()
                     user_min_data.text = userData.minutesSpoken.toString()
                     see_leaderboard.setOnClickListener {
                         openLeaderBoard()
+                    }
+                    user_data_container.setOnClickListener {
+                        openUserProfileActivity(Mentor.getInstance().getId())
                     }
                 } else {
                     user_data_container.visibility = View.GONE
