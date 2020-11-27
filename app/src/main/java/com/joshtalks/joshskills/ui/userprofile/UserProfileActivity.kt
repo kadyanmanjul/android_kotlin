@@ -268,15 +268,7 @@ class UserProfileActivity : BaseActivity() {
     }
 
     private fun openAwardPopUp(award: Award) {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(
-                R.id.parent_Container,
-                ShowAwardFragment.newInstance(award),
-                "Show Award Fragment"
-            )
-            .addToBackStack(null)
-            .commit()
+        ShowAwardFragment.showDialog(supportFragmentManager,award)
     }
 
     override fun onStop() {
