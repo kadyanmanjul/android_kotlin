@@ -48,7 +48,7 @@ class PointsInfoActivity : BaseActivity() {
                 openHelpActivity()
             }
         }
-        text_message_title.text = getString(R.string.how_points_work)
+        text_message_title.text = getString(R.string.how_points_work_title)
     }
 
     private fun addObserver() {

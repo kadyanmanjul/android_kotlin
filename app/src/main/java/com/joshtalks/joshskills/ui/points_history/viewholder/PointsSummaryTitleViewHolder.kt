@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.ui.points_history.viewholder
 
 import android.graphics.drawable.Drawable
-import android.os.Build
+import android.util.Log
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -22,7 +22,7 @@ import com.mindorks.placeholderview.annotations.expand.Toggle
 @Parent
 @SingleTop
 @Layout(R.layout.layout_point_summary_parent_item)
-class PointsSummaryTitleViewHolder(var date: String, var point: Int) {
+class PointsSummaryTitleViewHolder(var date: String, var point: Int, var index: Int) {
 
     @Toggle(R.id.root_view)
     @View(R.id.root_view)
@@ -56,16 +56,23 @@ class PointsSummaryTitleViewHolder(var date: String, var point: Int) {
         AppObjectController.joshApplication,
         R.drawable.rectangle_with_blue_bound_stroke_corner_8dp
     )
-   val drawableSqaure = ContextCompat.getDrawable(
+    val drawableSqaure = ContextCompat.getDrawable(
         AppObjectController.joshApplication,
         R.drawable.rectangle_top_rounded_corner_8dp
     )
 
     @Resolve
     fun onResolved() {
-        name.text=date
+        name.text = date
+        if (index == 0) {
+            name.textColorSet(R.color.colorPrimary)
+            onExpand()
+        } else {
+            name.textColorSet(R.color.black)
+            onCollapse()
+        }
         rootView.background = drawable
-        score.text=point.toString()
+        score.text = point.toString()
         toggleView.setImageDrawable(drawableDown)
     }
 
