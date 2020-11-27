@@ -213,8 +213,6 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         rvChatListView.setLayoutManager(linearLayoutManager);
 
         setSupportActionBar(toolbar);
-        replyMessageLayout.setBackground(getResources().getDrawable(R.drawable.left_border));
-        tvName.setTextColor(getResources().getColor(R.color.white));
 
 
         KeyBoardUtils.setKeyboardVisibilityListener(this, (View) rvChatListView.getParent(), keyboardVisible -> {

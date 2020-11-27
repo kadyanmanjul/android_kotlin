@@ -122,14 +122,11 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
         mediaPlayer = new MediaPlayer();
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         if (audioManager.isMusicActive()) {
-            audioManager.requestAudioFocus(new AudioManager.OnAudioFocusChangeListener() {
-                @Override
-                public void onAudioFocusChange(int focusChange) {
-                    if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+            audioManager.requestAudioFocus(focusChange -> {
+                if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
 
-                    } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-                        stopRecording(true);
-                    }
+                } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+                    stopRecording(true);
                 }
             }, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         }

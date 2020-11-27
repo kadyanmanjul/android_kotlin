@@ -101,8 +101,8 @@
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:text="@string/description"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/_12ssp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -113,8 +113,8 @@
                         android:ellipsize="end"
                         android:maxLines="6"
                         android:text="@string/default_description"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/_12ssp"
                         tools:text="@tools:sample/lorem/random" />
                 </LinearLayout>
 
@@ -289,8 +289,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/members"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/_12ssp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -298,8 +298,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="end"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     android:textColor="@color/gray_9E"
-                    android:textSize="@dimen/_12ssp"
                     tools:text="2940 Members" />
 
             </LinearLayout>
@@ -382,7 +382,7 @@
                 android:layout_below="@id/rl_load_more"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="4dp"
-                android:background="@color/light_grey" />
+                android:background="@color/light_blue" />
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -38,8 +38,8 @@
             android:layout_marginEnd="16dp"
             android:layout_toEndOf="@id/av_user"
             android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:textColor="@color/black"
-            android:textSize="@dimen/_12ssp"
             tools:text="@tools:sample/full_names" />
 
         <TextView
@@ -51,7 +51,7 @@
             android:layout_marginStart="@dimen/_8sdp"
             android:layout_marginEnd="@dimen/_16sdp"
             android:maxLines="1"
-            android:textSize="@dimen/_11ssp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
             tools:text="Owner"
             tools:visibility="visible" />
 

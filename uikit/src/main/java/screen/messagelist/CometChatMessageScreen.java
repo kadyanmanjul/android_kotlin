@@ -303,8 +303,8 @@ public class CometChatMessageScreen extends Fragment implements View.OnClickList
         // ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // bottomLayout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.textColorWhite)));
         // toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        editMessageLayout.setBackground(getResources().getDrawable(R.drawable.left_border));
-        replyMessageLayout.setBackground(getResources().getDrawable(R.drawable.left_border));
+        // editMessageLayout.setBackground(getResources().getDrawable(R.drawable.left_border));
+        // replyMessageLayout.setBackground(getResources().getDrawable(R.drawable.left_border));
         // composeBox.setBackgroundColor(getResources().getColor(R.color.textColorWhite));
         // rvChatListView.setBackgroundColor(getResources().getColor(R.color.textColorWhite));
         tvName.setTextColor(getResources().getColor(R.color.textColorWhite));

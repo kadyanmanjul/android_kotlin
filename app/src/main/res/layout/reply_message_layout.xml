@@ -6,9 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_above="@+id/bottom_layout"
-    android:layout_marginStart="8dp"
+    android:layout_marginStart="@dimen/_6sdp"
+    android:layout_marginEnd="@dimen/_6sdp"
     android:background="@drawable/left_border"
-    android:padding="16dp"
+    android:padding="@dimen/_8sdp"
     android:visibility="gone"
     tools:visibility="visible">
 
@@ -47,8 +48,8 @@
 
     <ImageView
         android:id="@+id/iv_reply_close"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
         android:layout_alignParentEnd="true"
         android:clickable="true"
         android:focusable="true"

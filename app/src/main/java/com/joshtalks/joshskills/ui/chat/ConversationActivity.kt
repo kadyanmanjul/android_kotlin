@@ -419,7 +419,12 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             conversationBinding.toolbar.setOnMenuItemClickListener {
                 when (it?.itemId) {
                     R.id.groupChat -> {
-                        conversationViewModel.initCometChat()
+                        try {
+                            conversationViewModel.initCometChat()
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                            showToast(this.getString(R.string.generic_message_for_error))
+                        }
                     }
                     R.id.menu_referral -> {
                         ReferralActivity.startReferralActivity(
