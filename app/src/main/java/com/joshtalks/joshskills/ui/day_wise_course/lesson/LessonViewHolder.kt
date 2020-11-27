@@ -56,12 +56,12 @@ class LessonViewHolder(
         if (message.question?.lesson?.status != LESSON_STATUS.CO) {
             rootViewUncompleted.visibility = android.view.View.VISIBLE
             rootViewCompleted.visibility = android.view.View.GONE
-
+/*
             if (message.question?.lesson?.status == LESSON_STATUS.AT) {
                 startLessonTv.text = getAppContext().getString(R.string.continue_lesson)
             } else {
                 startLessonTv.text = getAppContext().getString(R.string.start_lesson)
-            }
+            }*/
 
             message.lessons?.let { lessonModel ->
                 lessonNameTv.text = getAppContext().getString(

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.core.content.ContextCompat
@@ -55,7 +56,7 @@ import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.util.ArrayList
 
-class GrammarFragment : Fragment() {
+class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
 
     private var quizQuestion: Question? = null
     private var currentQuizQuestion: Int = 0
@@ -187,6 +188,7 @@ class GrammarFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.fragment_grammar_layout, container, false)
         binding.handler = this
 
+        binding.grammarScrollView.viewTreeObserver.addOnScrollChangedListener(this)
         binding.expandIv.setOnClickListener {
             if (desExpanded) {
                 binding.grammarDescTv.maxLines = 2
@@ -264,6 +266,7 @@ class GrammarFragment : Fragment() {
                         binding.videoPlayer.visibility = View.VISIBLE
                         this.videoList?.getOrNull(0)?.video_url?.let {
                             val videoId = this.videoList?.getOrNull(0)?.id
+
                             binding.videoPlayer.setUrl(it)
                             binding.videoPlayer.setVideoId(videoId)
                             binding.videoPlayer.setCourseId(course_id)
@@ -279,29 +282,43 @@ class GrammarFragment : Fragment() {
                                 )
                             }
                             binding.videoPlayer.downloadStreamButNotPlay()
+
+                            videoId?.toIntOrNull()?.let {
+                                viewModel.getMaxIntervalForVideo(it)
+                            }
+                            viewModel.videoInterval.observe(this@GrammarFragment.viewLifecycleOwner,
+                                { graph ->
+                                    binding.videoPlayer.setProgress(graph?.endTime ?: 0)
+                                })
+
                         }
 
                         if (this.status == QUESTION_STATUS.NA) {
-
                             binding.quizShader.visibility = View.VISIBLE
-                            compositeDisposable.add(
-                                RxBus2.listenWithoutDelay(MediaProgressEventBus::class.java)
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe({ eventBus ->
-                                        if (eventBus.progress > 3000) {
-                                            updateVideoQuestionStatus(this)
-                                            binding.quizShader.visibility = View.GONE
-                                            compositeDisposable.clear()
-                                        }
-                                    }, {
-                                        it.printStackTrace()
-                                    })
-                            )
-
                         } else {
                             binding.quizShader.visibility = View.GONE
                         }
+
+                        compositeDisposable.add(
+                            RxBus2.listenWithoutDelay(MediaProgressEventBus::class.java)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ eventBus ->
+                                    if (eventBus.progress > 3000 && this.status == QUESTION_STATUS.NA) {
+                                        updateVideoQuestionStatus(this)
+                                        this.status = QUESTION_STATUS.AT
+                                    }
+                                    if (eventBus.progress + 1000 >= this.videoList?.get(0)?.duration ?: 0) {
+                                        binding.quizShader.visibility = View.GONE
+                                        compositeDisposable.clear()
+                                        showScrollToBottomView()
+                                    }
+
+
+                                }, {
+                                    it.printStackTrace()
+                                })
+                        )
 
                         this.qText?.let {
                             binding.grammarDescTv.visibility = View.VISIBLE
@@ -336,6 +353,22 @@ class GrammarFragment : Fragment() {
                     }
                 }
         }
+    }
+
+    private fun showScrollToBottomView() {
+        val view: View =
+            binding.grammarScrollView.getChildAt(binding.grammarScrollView.childCount - 1)
+        val bottomDetector: Int =
+            view.bottom - (binding.grammarScrollView.height + binding.grammarScrollView.scrollY)
+        if (bottomDetector == 0) {
+            binding.scrollToBottomIv.visibility = View.GONE
+        } else if (binding.grammarDescTv.maxLines > 2) {
+            binding.scrollToBottomIv.visibility = View.VISIBLE
+        }
+    }
+
+    fun scrollToBottom() {
+        binding.grammarScrollView.scrollTo(0, binding.grammarScrollView.bottom)
     }
 
     private fun updateQuiz(question: AssessmentQuestionWithRelations) {
@@ -783,6 +816,16 @@ class GrammarFragment : Fragment() {
     override fun onDestroy() {
         compositeDisposable.dispose()
         super.onDestroy()
+    }
+
+    override fun onScrollChanged() {
+        val view: View =
+            binding.grammarScrollView.getChildAt(binding.grammarScrollView.childCount - 1)
+        val bottomDetector: Int =
+            view.bottom - (binding.grammarScrollView.height + binding.grammarScrollView.scrollY)
+        if (bottomDetector == 0) {
+            binding.scrollToBottomIv.visibility = View.GONE
+        }
     }
 
 }

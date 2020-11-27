@@ -57,7 +57,7 @@
                 tools:visibility="visible" />
 
             <RelativeLayout
-                android:id="@id/description_rl"
+                android:id="@+id/description_rl"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
@@ -97,22 +97,38 @@
                     app:srcCompat="@drawable/arrow_down" />
             </RelativeLayout>
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/scroll_to_bottom_iv"
+                android:layout_width="@dimen/_34sdp"
+                android:layout_height="@dimen/_34sdp"
+                android:layout_margin="@dimen/_4sdp"
+                android:background="@drawable/circle_pdf_bg"
+                android:backgroundTint="@color/colorPrimary"
+                android:onClick="@{()->handler.scrollToBottom()}"
+                android:padding="@dimen/_4sdp"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/description_rl"
+                app:srcCompat="@drawable/arrow_down"
+                app:tint="@color/white" />
+
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/additional_material_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
                 android:background="@color/white"
                 android:drawablePadding="@dimen/_8sdp"
                 android:gravity="center_vertical"
                 android:onClick="@{()->handler.onClickPdfContainer()}"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:text="Android study material"
                 android:paddingStart="@dimen/_6sdp"
+                android:text="Android study material"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                 app:drawableStartCompat="@drawable/ic_pdf"
                 app:layout_constraintEnd_toStartOf="@+id/download_container"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/description_rl" />
+                app:layout_constraintTop_toBottomOf="@+id/scroll_to_bottom_iv" />
 
             <FrameLayout
                 android:id="@+id/download_container"
@@ -186,8 +202,8 @@
                 android:id="@+id/question_navigate_rl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
                 android:layout_marginTop="@dimen/_8sdp"
+                android:background="@color/white"
                 android:paddingHorizontal="@dimen/_8sdp"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
@@ -412,9 +428,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:alpha="0.95"
+                android:background="@color/white"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="@color/white"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/show_explanation_btn"
                 app:layout_constraintEnd_toEndOf="parent"

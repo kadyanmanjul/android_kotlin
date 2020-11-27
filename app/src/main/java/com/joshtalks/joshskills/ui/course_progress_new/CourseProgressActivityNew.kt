@@ -220,7 +220,12 @@ class CourseProgressActivityNew : AppCompatActivity(),
                         )
                     )
                 } else {
-                    showAlertMessage()
+                    showAlertMessage(
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.INCOMPLETE_LESSONS_TITLE),
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.PROGRESS_MESSAGE)
+                    )
                 }
             }
         }
@@ -234,7 +239,12 @@ class CourseProgressActivityNew : AppCompatActivity(),
         cExamStatus: CExamStatus
     ) {
         if (previousLesson.status != LESSON_STATUS.CO.name) {
-            showAlertMessage()
+            showAlertMessage(
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.INCOMPLETE_CERTIFICATION_TITLE),
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.INCOMPLETE_CERTIFICATION_MESSAGE)
+            )
         } else {
             val cExamActivityListener: ActivityResultLauncher<Intent> =
                 registerForActivityResult(
@@ -258,14 +268,12 @@ class CourseProgressActivityNew : AppCompatActivity(),
         }
     }
 
-    private fun showAlertMessage() {
+    private fun showAlertMessage(title: String, message: String) {
 
         CustomDialog(
             this,
-            AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.INCOMPLETE_LESSONS_TITLE),
-            AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.PROGRESS_MESSAGE)
+            title,
+            message
         ).show()
     }
 

@@ -1517,11 +1517,11 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 } else {
                     val interval = data.getIntExtra(LAST_LESSON_INTERVAL, -1)
                     val status = data.getBooleanExtra(LAST_LESSON_STATUS, false)
-                    if (isCurrentLessonAlreadyCompleted.not() && status) {
+                    if (isCurrentLessonAlreadyCompleted.not()) {
                         CoroutineScope(Dispatchers.IO).launch {
                             try {
                                 val chatId = data.getStringExtra(LESSON__CHAT_ID)
-                                if(chatId!=null&&chatId.isNullOrBlank().not()) {
+                                if (chatId != null && chatId.isNullOrBlank().not()) {
                                     val chatObj = AppObjectController.appDatabase.chatDao()
                                         .getUpdatedChatObjectViaId(chatId)
 

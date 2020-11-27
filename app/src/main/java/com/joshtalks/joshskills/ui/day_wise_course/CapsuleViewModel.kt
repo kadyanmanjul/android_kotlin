@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
+import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -37,6 +38,7 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
     val chatObservableLiveData: MutableLiveData<List<ChatModel>> = MutableLiveData()
 
     val assessmentLiveData: MutableLiveData<AssessmentWithRelations> = MutableLiveData()
+    val videoInterval: MutableLiveData<Graph?> = MutableLiveData()
 
     val assessmentStatus: MutableLiveData<AssessmentStatus> =
         MutableLiveData(AssessmentStatus.NOT_STARTED)
@@ -223,6 +225,15 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
     fun updateQuestionLessonStatus(lessonId: Int, lessonStatus: LESSON_STATUS) {
         viewModelScope.launch(Dispatchers.IO) {
             lessonDao.updateFeedbackStatus(lessonId, lessonStatus)
+        }
+    }
+
+    fun getMaxIntervalForVideo(videoId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            videoInterval.postValue(
+                AppObjectController.appDatabase.videoEngageDao()
+                    .getWatchTimeForVideo(videoId)?.graph?.last()
+            )
         }
     }
 }

@@ -565,10 +565,18 @@
     </entry>
     <entry>
         <key>PROGRESS_MESSAGE</key>
-        <value>Please complete all previous lessons to unlock</value>
+        <value>You have not unlocked this lesson yet.</value>
     </entry>
     <entry>
         <key>INCOMPLETE_LESSONS_TITLE</key>
+        <value>Lesson not unlocked</value>
+    </entry>
+    <entry>
+        <key>INCOMPLETE_CERTIFICATION_MESSAGE</key>
+        <value>Please complete all previous lessons to unlock</value>
+    </entry>
+    <entry>
+        <key>INCOMPLETE_CERTIFICATION_TITLE</key>
         <value>Incomplete lessons</value>
     </entry>
 
