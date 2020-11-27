@@ -39,8 +39,6 @@ class PointsSummaryDescViewHolder(var pointsHistory: PointsHistory,var position:
 
     @Resolve
     fun onViewInflated() {
-        //Log.d("Manjul", "onViewInflated() called $mParentPosition")
-        //Log.d("Manjul", "onViewInflated() called $mChildPosition")
         if (totalItems==position.plus(1)){
             val drawable = ContextCompat.getDrawable(
                 AppObjectController.joshApplication,

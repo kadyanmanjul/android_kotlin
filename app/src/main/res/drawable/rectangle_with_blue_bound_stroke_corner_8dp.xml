@@ -4,7 +4,7 @@
     <solid android:color="#FFFFFF" />
     <stroke
         android:width="@dimen/_1sdp"
-        android:color="@color/button_color" />
+        android:color="@color/light_blue" />
     <padding
         android:bottom="@dimen/_4sdp"
         android:left="@dimen/_4sdp"
