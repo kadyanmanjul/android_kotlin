@@ -62,13 +62,11 @@ class SearchingUserActivity : BaseActivity() {
     private lateinit var binding: ActivitySearchingUserBinding
     private var mBoundService: WebRtcService? = null
     private var appAnalytics: AppAnalytics? = null
-    private var isOutgoingCall = false
     private var mServiceBound = false
     private val viewModel: VoipCallingViewModel by lazy {
         ViewModelProvider(this).get(VoipCallingViewModel::class.java)
     }
-
-    private var currentCallData: HashMap<String, String?>? = null
+    private var outgoingCallData: HashMap<String, String?> = HashMap()
 
     private var myConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -93,9 +91,9 @@ class SearchingUserActivity : BaseActivity() {
             Timber.tag("SearchingUserActivity").e("onConnect")
             Timber.tag("WEBRTC_")
                 .e(getMapForOutgoing(viewModel.voipDetailsLiveData.value).toString())
-
             WebRtcActivity.startOutgoingCallActivity(
-                this@SearchingUserActivity, currentCallData!!
+                this@SearchingUserActivity,
+                getMapForOutgoing(viewModel.voipDetailsLiveData.value)
             )
             this@SearchingUserActivity.finish()
         }
@@ -111,7 +109,9 @@ class SearchingUserActivity : BaseActivity() {
 
         override fun onCallReject(id: String?) {
             Timber.tag("SearchingUserActivity").e("onCallReject")
-            reCallToUser()
+            outgoingCallData.clear()
+            initApiForSearchUser()
+            //     reCallToUser()
         }
 
         override fun onSelfDisconnect(id: String?) {
@@ -123,8 +123,6 @@ class SearchingUserActivity : BaseActivity() {
         }
 
         override fun initOutgoingCall(id: String?) {
-            isOutgoingCall = true
-            initApiForSearchUser()
         }
 
     }
@@ -166,7 +164,7 @@ class SearchingUserActivity : BaseActivity() {
 
     private fun addObserver() {
         viewModel.voipDetailsLiveData.observe(this, {
-            if (it != null && isOutgoingCall.not()) {
+            if (it != null) {
                 Timber.tag("WEBRTC_").e(getMapForOutgoing(it).toString())
                 WebRtcService.startOutgoingCall(getMapForOutgoing(it))
             }
@@ -270,7 +268,6 @@ class SearchingUserActivity : BaseActivity() {
 
     private fun reCallToUser() {
         viewModel.voipDetailsLiveData.value?.let {
-            currentCallData = null
             Timber.tag("WEBRTC_").e(getMapForOutgoing(it).toString())
             WebRtcService.startOutgoingCall(getMapForOutgoing(it))
         }
@@ -320,11 +317,11 @@ class SearchingUserActivity : BaseActivity() {
     private fun getMapForOutgoing(
         voipCallDetailModel: VoipCallDetailModel?
     ): HashMap<String, String?> {
-        if (currentCallData == null) {
+        if (outgoingCallData.isEmpty()) {
             voipCallDetailModel?.topic = topicId?.toString()
             voipCallDetailModel?.topicName = topicName
             voipCallDetailModel?.callieName = getCallieName()
-            return object : HashMap<String, String?>() {
+            outgoingCallData = object : HashMap<String, String?>() {
                 init {
                     put("X-PH-MOBILEUUID", UUID.randomUUID().toString())
                     put("X-PH-Destination", voipCallDetailModel?.plivoUserName)
@@ -337,7 +334,7 @@ class SearchingUserActivity : BaseActivity() {
                 }
             }
         }
-        return currentCallData as HashMap<String, String?>
+        return outgoingCallData
     }
 
     fun getCallieName(): String {

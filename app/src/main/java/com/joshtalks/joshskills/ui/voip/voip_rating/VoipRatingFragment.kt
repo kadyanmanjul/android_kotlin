@@ -62,7 +62,7 @@ class VoipRatingFragment : DialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =
             DataBindingUtil.inflate(
                 inflater,
@@ -110,6 +110,7 @@ class VoipRatingFragment : DialogFragment() {
                 exitDialog()
             } catch (ex: Throwable) {
                 FullScreenProgressDialog.hideProgressBar(requireActivity())
+                exitDialog()
                 ex.showAppropriateMsg()
             }
         }

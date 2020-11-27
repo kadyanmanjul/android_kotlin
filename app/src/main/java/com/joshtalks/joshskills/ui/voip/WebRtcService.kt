@@ -174,7 +174,7 @@ class WebRtcService : Service() {
             Timber.tag(TAG).e("onIncomingCall")
             callData = incoming
             startOnIncomingCall(incoming.headerDict as HashMap<String, String>)
-            callUUID = incoming.headerDict.get("X-PH-MOBILEUUID")
+            callUUID = incoming.headerDict["X-PH-MOBILEUUID"]
         }
 
         override fun onIncomingCallHangup(incoming: Incoming) {
