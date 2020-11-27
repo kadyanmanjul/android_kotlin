@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginTop="@dimen/_8sdp"
             android:background="@drawable/rect_with_bound"
             android:backgroundTint="#C6DDF8"
             app:layout_constraintEnd_toEndOf="parent"

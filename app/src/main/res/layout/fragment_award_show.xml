@@ -61,13 +61,14 @@
             app:layout_constraintVertical_bias="0.10"
             app:rippleColor="@color/colorPrimary" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/_64sdp"
-            android:paddingHorizontal="@dimen/_16sdp"
+            android:paddingHorizontal="@dimen/_46sdp"
             android:text="@string/congratulations"
+            android:gravity="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
