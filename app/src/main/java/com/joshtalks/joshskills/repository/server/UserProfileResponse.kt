@@ -65,7 +65,9 @@ data class Certificate(
     @SerializedName("sort_order")
     val sortOrder: Int?,
     @SerializedName("certificate_description")
-    val certificateDescription: String?
+    val certificateDescription: String?,
+    @SerializedName("is_achieved")
+    val is_achieved: Boolean=false
 )
 
 data class AwardCategory(
@@ -90,5 +92,7 @@ data class Award(
     @SerializedName("image_url")
     val imageUrl: String?,
     @SerializedName("award_description")
-    val awardDescription: String?
+    val awardDescription: String?,
+    @SerializedName("is_achieved")
+    val is_achieved: Boolean=false
 ) : Parcelable
