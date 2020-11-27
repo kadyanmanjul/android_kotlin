@@ -74,6 +74,7 @@ import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.smartlook.sdk.smartlook.Smartlook
 import com.smartlook.sdk.smartlook.integrations.IntegrationListener
 import com.smartlook.sdk.smartlook.integrations.model.FirebaseCrashlyticsIntegration
@@ -193,6 +194,14 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
     fun openPointHistory() {
         val i = Intent(this, PointsHistoryActivity::class.java)
         startActivity(i)
+    }
+
+    fun openUserProfileActivity(id: String) {
+            UserProfileActivity.startUserProfileActivity(
+                this,
+                id,
+                arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            )
     }
 
     fun getActivityType(act: Activity): BaseActivity.ActivityEnum {
