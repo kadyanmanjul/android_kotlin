@@ -418,10 +418,11 @@
             android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
             android:name=".core.notification.FirebaseNotificationService"
+            android:directBootAware="true"
             android:enabled="true"
             android:exported="false"
             tools:ignore="ExportedService">
-            <intent-filter>
+            <intent-filter android:priority="1000">
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
