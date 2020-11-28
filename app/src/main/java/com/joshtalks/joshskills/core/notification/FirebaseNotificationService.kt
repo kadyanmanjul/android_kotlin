@@ -117,7 +117,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     private fun onIncomingPlivoCall(remoteMessage: RemoteMessage) {
         try {
-            WebRtcService.loginUserClient()
             val data: HashMap<String, String> = HashMap()
             for ((key, value) in remoteMessage.data) {
                 data[key] = value

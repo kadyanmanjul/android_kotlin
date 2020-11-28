@@ -106,7 +106,7 @@ class VoipRatingFragment : DialogFragment() {
     private fun requestForFeedback(request: RequestVoipRating) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                AppObjectController.commonNetworkService.feedbackVoipCallAsync(request).await()
+                AppObjectController.commonNetworkService.feedbackVoipCallAsync(request)
                 FullScreenProgressDialog.hideProgressBar(requireActivity())
                 exitDialog()
             } catch (ex: Throwable) {

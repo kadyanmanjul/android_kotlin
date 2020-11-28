@@ -71,6 +71,7 @@ class WebRtcService : Service() {
 
     private var incomingCallData: HashMap<String, String>? = null
     private var outgoingCallData: HashMap<String, String>? = null
+    private var callFromFirebase = false
 
     companion object {
         private val TAG = "PlivoCallingListenService"
@@ -90,6 +91,16 @@ class WebRtcService : Service() {
                 WebRtcService::class.java
             ).apply {
                 action = LoginUser().action
+            }
+            ContextCompat.startForegroundService(AppObjectController.joshApplication, serviceIntent)
+        }
+
+        fun logoutUserClient() {
+            val serviceIntent = Intent(
+                AppObjectController.joshApplication,
+                WebRtcService::class.java
+            ).apply {
+                action = LogoutUser().action
             }
             ContextCompat.startForegroundService(AppObjectController.joshApplication, serviceIntent)
         }
@@ -149,9 +160,11 @@ class WebRtcService : Service() {
             if (outgoingCallData != null) {
                 initCall()
             }
-            if (incomingCallData != null) {
+            if (callFromFirebase && incomingCallData != null) {
                 endpoint?.relayVoipPushNotification(incomingCallData)
+                callFromFirebase = false
             }
+
         }
 
         override fun onLogout() {
@@ -252,7 +265,7 @@ class WebRtcService : Service() {
         super.onCreate()
         Timber.tag(TAG).e("onCreate")
         mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
-        //startForeground(EMPTY_NOTIFICATION_ID, loginUserService())
+        startForeground(EMPTY_NOTIFICATION_ID, loginUserService())
         endpoint = Endpoint.newInstance(BuildConfig.DEBUG, eventListener, options)
         executor.execute {
             userPlivo = UserPlivoDetailsModel.getPlivoUser()
@@ -282,18 +295,22 @@ class WebRtcService : Service() {
                     when {
                         this == LoginUser().action -> {
                             Timber.tag(TAG).e("User= %s", userPlivo?.toString())
-                            if (loginUser()) {
-                                removeNotifications()
+                            if (isUserLogin().not()) {
+                                loginUser()
                             }
+                            removeNotifications()
                         }
                         this == LogoutUser().action -> {
-                            logoutUser()
+                            stopService()
                         }
                         this == NotificationIncomingCall().action -> {
                             incomingCallData =
                                 intent.getSerializableExtra(INCOMING_CALL_USER_OBJ) as HashMap<String, String>?
-                            if (loginUser()) {
+                            if (isUserLogin()) {
                                 endpoint?.relayVoipPushNotification(incomingCallData)
+                            } else {
+                                callFromFirebase = true
+                                loginUser()
                             }
                         }
                         this == IncomingCall().action -> {
@@ -307,8 +324,11 @@ class WebRtcService : Service() {
                         this == OutgoingCall().action -> {
                             outgoingCallData =
                                 intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String>
-                            if (loginUser()) {
+                            outgoingCallData?.printAll()
+                            if (isUserLogin()) {
                                 initCall()
+                            } else {
+                                loginUser()
                             }
                         }
                         this == CallConnect().action -> {
@@ -345,33 +365,27 @@ class WebRtcService : Service() {
             ?.callH(userPlivo?.username, outgoingCallData)
         showNotificationOnOutgoingCall(outgoingCallData)
         callUUID = outgoingCallData?.get("X-PH-MOBILEUUID")
-        Timber.tag(TAG).e("Outgoing")
         outgoingCallData = null
-        endpoint?.registered
+        Timber.tag(TAG).e("Outgoing")
     }
 
     fun getCallId(): String? {
         return callUUID
     }
 
-    fun getCallDataObj() = callData
-
-    private fun loginUser(): Boolean {
-        if (userPlivo != null && endpoint != null) {
-            if (endpoint!!.registered) {
-                return true
-            }
-            return endpoint?.login(
-                userPlivo?.username,
-                userPlivo?.password,
-                PrefManager.getStringValue(FCM_TOKEN)
-            ) ?: false
+    private fun isUserLogin(): Boolean {
+        if (userPlivo != null && endpoint != null && endpoint!!.registered) {
+            return true
         }
         return false
     }
 
-    private fun logoutUser() {
-        endpoint?.logout()
+    private fun loginUser() {
+        endpoint?.login(
+            userPlivo?.username,
+            userPlivo?.password,
+            PrefManager.getStringValue(FCM_TOKEN)
+        )
     }
 
     private fun isAppVisible(): Boolean {
@@ -567,6 +581,10 @@ class WebRtcService : Service() {
         isCallWasOnGoing = false
         isSpeakerEnable = false
         isMicEnable = true
+
+        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+        audioManager.isSpeakerphoneOn = false
     }
 
     private fun removeNotifications() {
@@ -578,18 +596,28 @@ class WebRtcService : Service() {
     fun getMic() = isMicEnable
 
 
+    private fun stopService() {
+        plivoLogout()
+        Timber.tag(TAG).e("stopService")
+    }
+
+
     override fun onTaskRemoved(rootIntent: Intent?) {
-        try {
-            endpoint?.logout()
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
+        plivoLogout()
         super.onTaskRemoved(rootIntent)
         Timber.tag(TAG).e("OnTaskRemoved")
     }
 
     override fun onDestroy() {
         Timber.tag(TAG).e("onDestroy")
+    }
+
+    private fun plivoLogout() {
+        try {
+            endpoint?.logout()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
     }
 
     private fun loginUserService(): Notification {
@@ -796,7 +824,7 @@ data class CallConnect(val action: String = "calling.action.connect") : WebRtcCa
 data class CallDisconnect(val action: String = "calling.action.disconnect") : WebRtcCalling()
 data class OutgoingCall(val action: String = "calling.action.outgoing_call") : WebRtcCalling()
 data class LoginUser(val action: String = "calling.action.login") : WebRtcCalling()
-data class LogoutUser(val action: String = "calling.action.login") : WebRtcCalling()
+data class LogoutUser(val action: String = "calling.action.logout") : WebRtcCalling()
 data class CallStop(val action: String = "calling.action.stopcall") : WebRtcCalling()
 
 class NotificationId {

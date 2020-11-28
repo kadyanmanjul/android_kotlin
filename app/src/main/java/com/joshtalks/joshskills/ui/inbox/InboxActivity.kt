@@ -78,7 +78,6 @@ import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivit
 import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
-import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -148,9 +147,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            WebRtcService.loginUserClient()
-        }
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         super.onCreate(savedInstanceState)
         AppObjectController.isSettingUpdate = false
@@ -522,11 +518,11 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
         popupMenu.inflate(R.menu.more_options_menu)
         if (PrefManager.getBoolValue(IS_LEADERBOARD_ACTIVE)) {
-            popupMenu.menu.findItem(R.id.menu_leaderboard).setVisible(true)
-            popupMenu.menu.findItem(R.id.menu_leaderboard).setEnabled(true)
+            popupMenu.menu.findItem(R.id.menu_leaderboard).isVisible = true
+            popupMenu.menu.findItem(R.id.menu_leaderboard).isEnabled = true
         } else {
-            popupMenu.menu.findItem(R.id.menu_leaderboard).setVisible(false)
-            popupMenu.menu.findItem(R.id.menu_leaderboard).setEnabled(false)
+            popupMenu.menu.findItem(R.id.menu_leaderboard).isVisible = false
+            popupMenu.menu.findItem(R.id.menu_leaderboard).isEnabled = false
         }
         popupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -783,8 +779,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     user_data_container.visibility = View.GONE
                     try {
                         if (::popupMenu.isInitialized)
-                            popupMenu.menu.findItem(R.id.menu_leaderboard).setVisible(false)
-                        popupMenu.menu.findItem(R.id.menu_leaderboard).setEnabled(false)
+                            popupMenu.menu.findItem(R.id.menu_leaderboard).isVisible = false
+                        popupMenu.menu.findItem(R.id.menu_leaderboard).isEnabled = false
                         //popupMenu..findItem(R.id.menu_leaderboard).setVisible(false)
                     } catch (ex: Exception) {
 
@@ -1099,4 +1095,5 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         overlay_layout.visibility = View.VISIBLE
         (overlay_tip as TopTrialTooltipView).setInboxOverayTipText(7.minus(remainingTrialDays))
     }
+
 }

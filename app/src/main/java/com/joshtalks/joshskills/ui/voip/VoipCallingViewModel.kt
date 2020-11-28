@@ -38,7 +38,6 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
                         topicId,
                         supportUser
                     )
-                apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                 voipDetailsLiveData.postValue(response)
             } catch (ex: ProtocolException) {
                 apiCallStatusLiveData.postValue(ApiCallStatus.RETRY)

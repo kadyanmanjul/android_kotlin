@@ -10,7 +10,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class VoipCallDetailModel(
     @SerializedName("name") val name: String? = EMPTY,
-    @SerializedName("plivo_username") val plivoUserName: String? = EMPTY,
+    @SerializedName("plivo_username") var plivoUserName: String? = EMPTY,
     @SerializedName("locality") val locality: String? = EMPTY,
     @SerializedName("profile_pic") val profilePic: String? = EMPTY,
     @SerializedName("topicName") var topic: String? = EMPTY,
