@@ -12,16 +12,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.net.ProtocolException
 
-const val RETRY_MIN_COUNT = 5
+const val RETRY_MIN_COUNT = 6
 
 class VoipCallingViewModel(application: Application) : AndroidViewModel(application) {
     val voipDetailsLiveData: MutableLiveData<VoipCallDetailModel> = MutableLiveData()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     var attemptCount = 0
-
+    var supportUser = "false"
 
     fun getUserForTalk(courseId: String, topicId: Int?) {
-        var supportUser = "false"
         if (attemptCount > RETRY_MIN_COUNT) {
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED_PERMANENT)
             return
@@ -29,7 +28,7 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
         attemptCount += 1
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                if (attemptCount == RETRY_MIN_COUNT) {
+                if (attemptCount == RETRY_MIN_COUNT - 1) {
                     supportUser = "true"
                 }
                 val response =
