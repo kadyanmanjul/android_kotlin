@@ -143,27 +143,27 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
                     currentChatModel?.question?.interval?.run {
                         WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
                     }
+                }
 
-                    activityCallback?.onQuestionStatusUpdate(
-                        QUESTION_STATUS.AT,
-                        currentChatModel?.question?.questionId?.toIntOrNull() ?: 0
-                    )
-                    var openNextScreen = true
-                    chatModelList?.forEach { item ->
-                        if (item.question?.status == QUESTION_STATUS.NA) {
-                            openNextScreen = false
-                            return@forEach
-                        }
-                    }
+                activityCallback?.onQuestionStatusUpdate(
+                    QUESTION_STATUS.AT,
+                    currentChatModel?.question?.questionId?.toIntOrNull() ?: 0
+                )
 
-                    if (openNextScreen)
-                        binding.vocabularyCompleteLayout.visibility = View.VISIBLE
-
-                    currentChatModel = null
-                    CoroutineScope(Dispatchers.Main).launch {
-                        adapter.notifyDataSetChanged()
+                var openNextScreen = true
+                chatModelList?.forEach { item ->
+                    if (item.question?.status == QUESTION_STATUS.NA) {
+                        openNextScreen = false
+                        return@forEach
                     }
                 }
+
+                if (openNextScreen && isVisible)
+                    binding.vocabularyCompleteLayout.visibility = View.VISIBLE
+
+                currentChatModel = null
+
+                adapter.notifyDataSetChanged()
 
             }
 

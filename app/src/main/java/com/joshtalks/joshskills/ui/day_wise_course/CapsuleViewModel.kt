@@ -48,69 +48,65 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
         val chatList: MutableList<ChatModel> = mutableListOf()
 
         viewModelScope.launch(Dispatchers.IO) {
-            val listOfChat = appDatabase.chatDao().getChatsForLessonId(lessonId)
-            listOfChat.forEach { chat ->
-                val question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
-                question?.run {
+            try {
+                val listOfChat = appDatabase.chatDao().getChatsForLessonId(lessonId)
+                listOfChat.forEach { chat ->
+                    val question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
+                    question?.run {
 
-                    question.lesson = appDatabase.lessonDao().getLesson(question.lesson_id)
+                        question.lesson = appDatabase.lessonDao().getLesson(question.lesson_id)
 
-                    when (this.material_type) {
-                        BASE_MESSAGE_TYPE.IM -> question.imageList =
-                            appDatabase.chatDao()
-                                .getImagesOfQuestion(questionId = question.questionId)
-                        BASE_MESSAGE_TYPE.VI -> question.videoList =
-                            appDatabase.chatDao()
-                                .getVideosOfQuestion(questionId = question.questionId)
-                        BASE_MESSAGE_TYPE.AU -> question.audioList =
-                            appDatabase.chatDao()
-                                .getAudiosOfQuestion(questionId = question.questionId)
-                        BASE_MESSAGE_TYPE.PD -> question.pdfList =
-                            appDatabase.chatDao()
-                                .getPdfOfQuestion(questionId = question.questionId)
+                        when (this.material_type) {
+                            BASE_MESSAGE_TYPE.IM -> question.imageList =
+                                appDatabase.chatDao()
+                                    .getImagesOfQuestion(questionId = question.questionId)
+                            BASE_MESSAGE_TYPE.VI -> question.videoList =
+                                appDatabase.chatDao()
+                                    .getVideosOfQuestion(questionId = question.questionId)
+                            BASE_MESSAGE_TYPE.AU -> question.audioList =
+                                appDatabase.chatDao()
+                                    .getAudiosOfQuestion(questionId = question.questionId)
+                            BASE_MESSAGE_TYPE.PD -> question.pdfList =
+                                appDatabase.chatDao()
+                                    .getPdfOfQuestion(questionId = question.questionId)
+                        }
+                        if (this.parent_id.isNullOrEmpty().not()) {
+                            chat.parentQuestionObject =
+                                appDatabase.chatDao().getQuestionOnId(this.parent_id!!)
+                        }
+                        if (assessmentId != null) {
+                            question.vAssessmentCount =
+                                AppObjectController.appDatabase.assessmentDao()
+                                    .countOfAssessment(assessmentId)
+                        }
+                        chat.question = question
                     }
-                    if (this.parent_id.isNullOrEmpty().not()) {
-                        chat.parentQuestionObject =
-                            appDatabase.chatDao().getQuestionOnId(this.parent_id!!)
+
+                    if (chat.type == BASE_MESSAGE_TYPE.Q && question == null) {
+                        return@forEach
                     }
-                    if (assessmentId != null) {
-                        question.vAssessmentCount = AppObjectController.appDatabase.assessmentDao()
-                            .countOfAssessment(assessmentId)
-                    }
-                    chat.question = question
+
+                    chatList.add(chat)
                 }
-
-                if (chat.type == BASE_MESSAGE_TYPE.Q && question == null) {
-                    return@forEach
-                }
-
-                chatList.add(chat)
+                chatObservableLiveData.postValue(chatList)
+                return@launch
+            } catch (e: Exception) {
+                return@launch
             }
-            chatObservableLiveData.postValue(chatList)
         }
     }
-/*
-    fun getPdfForQuestions(questionId: String) {
-        viewModelScope.launch {
-            pdfForQuestion = chatDao.getPdfOfQuestion(questionId)
-            return@launch
-        }
-    }
-
-    fun getVideoForQuestions(questionId: String) {
-        viewModelScope.launch {
-            videoForQuestion = chatDao.getVideosOfQuestion(questionId)
-            return@launch
-        }
-    }*/
 
     fun syncQuestions(lessonId: Int) {
         //Note: it is required to be called for some backend logic reason.
         viewModelScope.launch(Dispatchers.IO) {
-            AppObjectController.chatNetworkService.getQuestionsForLesson(
-                Mentor.getInstance().getId(), lessonId
-            )
-            return@launch
+            try {
+                AppObjectController.chatNetworkService.getQuestionsForLesson(
+                    Mentor.getInstance().getId(), lessonId
+                )
+                return@launch
+            } catch (e: java.lang.Exception) {
+                return@launch
+            }
         }
     }
 
@@ -155,22 +151,6 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }
-//            apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
-            /*
-            val response = getAssessmentFromServer(assessmentId)
-            if (response.isSuccessful) {
-//                apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
-                response.body()?.let {
-                    if (it.status == AssessmentStatus.COMPLETED) {
-                        assessmentStatus.postValue(it.status)
-                    } else {
-                        insertAssessmentToDB(it)
-                        var assessmentWithRelations = getAssessmentFromDB(assessmentId)
-                        assessmentLiveData.postValue(assessmentWithRelations)
-                    }
-                }
-
-            }*/
         }
     }
 
