@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.day_wise_course.lesson
 
-import android.util.Log
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
@@ -98,7 +97,6 @@ class LessonViewHolder(
                 )
             }
             rootViewCompleted.setOnClickListener {
-                Log.d("Manjul", "onViewInflated() called")
                 message.lessons?.let {
                     onItemClick?.invoke(it.id, message.lessons?.interval ?: -1, message.chatId)
                 }

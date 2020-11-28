@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.exoplayer2.Player
@@ -65,19 +64,7 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
     private var audioManager: ExoAudioPlayer? = null
     private var currentChatModel: ChatModel? = null
 
-    var activityCallback: CapsuleActivityCallback? = null
-
-    private val DOCX_FILE_MIME_TYPE = arrayOf(
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "application/msword", "application/vnd.ms-excel",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "text/*",
-        "application/vnd.ms-powerpoint",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "application/vnd.oasis.opendocument.text",
-        "application/vnd.oasis.opendocument.spreadsheet"
-    )
-
+    private var activityCallback: CapsuleActivityCallback? = null
 
     private val practiceViewModel: PracticeViewModel by lazy {
         ViewModelProvider(this).get(PracticeViewModel::class.java)
@@ -103,7 +90,7 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
         super.onCreate(savedInstanceState)
 
         if (arguments != null) {
-            chatModelList = arguments?.getParcelableArrayList<ChatModel>(PRACTISE_OBJECT)
+            chatModelList = arguments?.getParcelableArrayList(PRACTISE_OBJECT)
         }
         if (chatModelList == null) {
             requireActivity().finish()
@@ -116,7 +103,7 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_pratice, container, false)
         binding.lifecycleOwner = this
@@ -137,7 +124,7 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
     }
 
     private fun addObserver() {
-        practiceViewModel.requestStatusLiveData.observe(viewLifecycleOwner, Observer {
+        practiceViewModel.requestStatusLiveData.observe(viewLifecycleOwner, {
             if (it) {
                 CoroutineScope(Dispatchers.IO).launch {
                     currentChatModel?.question?.interval?.run {
@@ -233,7 +220,7 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
             audioManager?.onPause()
         } else {
             currentChatModel = chatModel
-            val audioList = java.util.ArrayList<AudioType>()
+            val audioList = ArrayList<AudioType>()
             audioList.add(audioObject)
             audioManager = ExoAudioPlayer.getInstance()
             audioManager?.playerListener = this
@@ -369,8 +356,8 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
         audioManager?.seekTo(seekTo)
     }
 
-    override fun startRecording(chatModel: ChatModel, position: Int, startTime: Long) {
-        this.startTime = startTime
+    override fun startRecording(chatModel: ChatModel, position: Int, startTimeUnit: Long) {
+        this.startTime = startTimeUnit
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         practiceViewModel.startRecordAudio(null)
     }
@@ -399,7 +386,7 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
             requireActivity(),
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let { flag ->
+                    report?.areAllPermissionsGranted()?.let {
                         if (report.isAnyPermissionPermanentlyDenied) {
                             PermissionUtils.permissionPermanentlyDeniedDialog(
                                 requireActivity(),

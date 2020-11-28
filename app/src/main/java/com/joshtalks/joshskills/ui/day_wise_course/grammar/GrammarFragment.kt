@@ -66,8 +66,8 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
     lateinit var binding: FragmentGrammarLayoutBinding
     private val compositeDisposable = CompositeDisposable()
     private var correctAns = 0
-    var activityCallback: CapsuleActivityCallback? = null
-    var assessmentQuestions: ArrayList<AssessmentQuestionWithRelations> = ArrayList()
+    private var activityCallback: CapsuleActivityCallback? = null
+    private var assessmentQuestions: ArrayList<AssessmentQuestionWithRelations> = ArrayList()
 
     private val viewModel: CapsuleViewModel by lazy {
         ViewModelProvider(this).get(CapsuleViewModel::class.java)
@@ -183,7 +183,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_grammar_layout, container, false)
         binding.handler = this
@@ -224,18 +224,14 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
 
     private fun addObserValbles() {
         assessmentQuestions.clear()
-        viewModel.assessmentLiveData.observe(viewLifecycleOwner) { assessmentRelations ->
+        viewModel.assessmentLiveData.observe(owner = viewLifecycleOwner) { assessmentRelations ->
             assessmentRelations.questionList.sortedBy { it.question.sortOrder }
                 .forEach { item -> assessmentQuestions.add(item) }
 
             if (assessmentQuestions.size > 0) {
                 binding.quizRadioGroup.setOnCheckedChangeListener(quizCheckedChangeListener)
                 showQuizUi()
-
-                updateQuiz(assessmentQuestions.get(0))
-                if (quizQuestion?.status == QUESTION_STATUS.AT) {
-                    showQuizCompleteLayout()
-                }
+                updateQuiz(assessmentQuestions[0])
             }
         }
     }
@@ -247,8 +243,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
             .addUserDetails()
     }
 
-
-    fun setupUi(chatModel: ChatModel) {
+    private fun setupUi(chatModel: ChatModel) {
         chatModel.question?.run {
             if (this.type == BASE_MESSAGE_TYPE.QUIZ) {
                 binding.quizTv.text = AppObjectController.getFirebaseRemoteConfig()
@@ -283,13 +278,13 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                             }
                             binding.videoPlayer.downloadStreamButNotPlay()
 
-                            videoId?.toIntOrNull()?.let {
-                                viewModel.getMaxIntervalForVideo(it)
+                            videoId?.toIntOrNull()?.let { id ->
+                                viewModel.getMaxIntervalForVideo(id)
                             }
-                            viewModel.videoInterval.observe(this@GrammarFragment.viewLifecycleOwner,
-                                { graph ->
-                                    binding.videoPlayer.setProgress(graph?.endTime ?: 0)
-                                })
+                            viewModel.videoInterval.observe(owner = this@GrammarFragment.viewLifecycleOwner)
+                            { graph ->
+                                binding.videoPlayer.setProgress(graph?.endTime ?: 0)
+                            }
 
                         }
 
@@ -420,7 +415,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
 
     }
 
-    fun resetRadioBackground(radioButton: RadioButton) {
+    private fun resetRadioBackground(radioButton: RadioButton) {
         radioButton.setBackgroundColor(
             ContextCompat.getColor(requireContext(), R.color.white)
         )
@@ -433,7 +428,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
         radioButton.elevation = 0F
     }
 
-    val quizCheckedChangeListener =
+    private val quizCheckedChangeListener =
         RadioGroup.OnCheckedChangeListener { radioGroup: RadioGroup, checkedId: Int ->
 
             resetRadioButtonsBg()
@@ -511,7 +506,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
 
     fun onQuestionSubmit() {
         if (binding.quizRadioGroup.tag is Int) {
-            val question = assessmentQuestions.get(currentQuizQuestion)
+            val question = assessmentQuestions[currentQuizQuestion]
             question.question.isAttempted = true
             question.question.status =
                 evaluateQuestionStatus((binding.quizRadioGroup.tag as Int) == binding.quizRadioGroup.checkedRadioButtonId)
@@ -556,7 +551,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
 
     fun onContinueClick() {
         if (assessmentQuestions.size - 1 > currentQuizQuestion) {
-            updateQuiz(assessmentQuestions.get(++currentQuizQuestion))
+            updateQuiz(assessmentQuestions[++currentQuizQuestion])
         } else {
             showQuizCompleteLayout()
         }
@@ -632,7 +627,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                 try {
                     if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
                         fileDownloadingInProgressView()
-                        download(pdfObj.url)
+                        download()
                     } else if (PermissionUtils.isStoragePermissionEnabled(requireContext()) && AppDirectory.getFileSize(
                             File(
                                 AppDirectory.docsReceivedFile(pdfObj.url).absolutePath
@@ -651,24 +646,24 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
     }
 
     private fun fileDownloadSuccess() {
-        binding.ivStartDownload.visibility = android.view.View.GONE
-        binding.progressDialog.visibility = android.view.View.GONE
-        binding.ivCancelDownload.visibility = android.view.View.GONE
+        binding.ivStartDownload.visibility = View.GONE
+        binding.progressDialog.visibility = View.GONE
+        binding.ivCancelDownload.visibility = View.GONE
         binding.ivDownloadCompleted.visibility = View.VISIBLE
     }
 
     private fun fileNotDownloadView() {
         appAnalytics?.addParam(AnalyticsEvent.PDF_VIEW_STATUS.NAME, "Not downloaded")
-        binding.ivStartDownload.visibility = android.view.View.VISIBLE
-        binding.progressDialog.visibility = android.view.View.GONE
-        binding.ivCancelDownload.visibility = android.view.View.GONE
+        binding.ivStartDownload.visibility = View.VISIBLE
+        binding.progressDialog.visibility = View.GONE
+        binding.ivCancelDownload.visibility = View.GONE
         binding.ivDownloadCompleted.visibility = View.GONE
     }
 
     private fun fileDownloadingInProgressView() {
-        binding.ivStartDownload.visibility = android.view.View.GONE
-        binding.progressDialog.visibility = android.view.View.VISIBLE
-        binding.ivCancelDownload.visibility = android.view.View.VISIBLE
+        binding.ivStartDownload.visibility = View.GONE
+        binding.progressDialog.visibility = View.VISIBLE
+        binding.ivCancelDownload.visibility = View.VISIBLE
         binding.ivDownloadCompleted.visibility = View.GONE
     }
 
@@ -681,11 +676,11 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
     }
 
     fun showNextQuestion() {
-        updateQuiz(assessmentQuestions.get(++currentQuizQuestion))
+        updateQuiz(assessmentQuestions[++currentQuizQuestion])
     }
 
     fun showPreviousQuestion() {
-        updateQuiz(assessmentQuestions.get(--currentQuizQuestion))
+        updateQuiz(assessmentQuestions[--currentQuizQuestion])
     }
 
     fun onClickPdfContainer() {
@@ -751,16 +746,16 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
         if (pdfQuestion?.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
             return
         }
-        download(pdfQuestion?.url)
+        download()
     }
 
-    fun askStoragePermission() {
+    private fun askStoragePermission() {
 
         PermissionUtils.storageReadAndWritePermission(
             requireActivity(),
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let { flag ->
+                    report?.areAllPermissionsGranted()?.let {
                         if (report.isAnyPermissionPermanentlyDenied) {
                             PermissionUtils.permissionPermanentlyDeniedDialog(
                                 requireActivity(),
@@ -780,17 +775,17 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
             })
     }
 
-    private fun download(url: String?) {
+    private fun download() {
 
         if (PermissionUtils.isStoragePermissionEnabled(requireContext()).not()) {
             askStoragePermission()
             return
         }
         pdfQuestion?.question?.pdfList?.let {
-            if (it.size > 0) {
+            if (it.isNotEmpty()) {
                 DownloadUtils.downloadFile(
-                    it.get(0).url,
-                    AppDirectory.docsReceivedFile(it.get(0).url).absolutePath,
+                    it[0].url,
+                    AppDirectory.docsReceivedFile(it[0].url).absolutePath,
                     pdfQuestion!!.chatId,
                     pdfQuestion!!,
                     downloadListener

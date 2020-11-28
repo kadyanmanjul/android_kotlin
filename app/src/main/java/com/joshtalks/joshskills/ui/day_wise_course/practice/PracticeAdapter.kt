@@ -73,7 +73,7 @@ class PracticeAdapter(
     }
 
     override fun onBindViewHolder(holder: PracticeViewHolder, position: Int) {
-        holder.bind(itemList.get(position), position)
+        holder.bind(itemList[position], position)
     }
 
     override fun getItemCount(): Int {
@@ -182,7 +182,7 @@ class PracticeAdapter(
 
             binding.ivCancel.setOnClickListener {
                 chatModel.filePath = null
-                removeAudioPractise(chatModel)
+                removeAudioPractise()
                 removeAudioPractice()
             }
 
@@ -357,14 +357,14 @@ class PracticeAdapter(
 
         }
 
-        fun removeAudioPractise(chatModel: ChatModel) {
+        fun removeAudioPractise() {
             if (isAudioPlaying()) {
                 audioManager?.resumeOrPause()
             }
         }
 
         //============================================================================
-        fun setPracticeInfoView(chatModel: ChatModel) {
+        private fun setPracticeInfoView(chatModel: ChatModel) {
             chatModel.question?.run {
                 binding.practiceTitleTv.text =
                     context.getString(
@@ -450,6 +450,9 @@ class PracticeAdapter(
                             binding.infoTv.text =
                                 HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
                         }
+                    }
+                    else -> {
+
                     }
                 }
 
@@ -540,10 +543,8 @@ class PracticeAdapter(
                     binding.subPractiseSubmitLayout.layoutParams = params
                     binding.yourSubAnswerTv.text = context.getString(R.string.your_submitted_answer)
                     val practiseEngagement = this.practiceEngagement?.get(0)
-                    when {
-                        EXPECTED_ENGAGE_TYPE.AU == it -> {
-                            binding.submitAudioViewContainer.visibility = VISIBLE
-                        }
+                    if (EXPECTED_ENGAGE_TYPE.AU == it) {
+                        binding.submitAudioViewContainer.visibility = VISIBLE
                     }
                     filePath = practiseEngagement?.answerUrl
                     if (PermissionUtils.isStoragePermissionEnabled(context) && AppDirectory.isFileExist(
@@ -586,7 +587,7 @@ class PracticeAdapter(
                         binding.counterTv.base = SystemClock.elapsedRealtime()
                         startTime = System.currentTimeMillis()
                         binding.counterTv.start()
-                        startRecording(chatModel, layoutPosition, startTime)
+                        startRecording(startTime)
                         clickListener.startRecording(chatModel, layoutPosition, startTime)
                         binding.audioPractiseHint.visibility = GONE
 
@@ -598,7 +599,7 @@ class PracticeAdapter(
                         binding.rootView.requestDisallowInterceptTouchEvent(false)
                         binding.counterTv.stop()
                         val stopTime = System.currentTimeMillis()
-                        stopRecording(chatModel, layoutPosition, stopTime)
+                        stopRecording(chatModel, stopTime)
                         clickListener.stopRecording(chatModel, layoutPosition, stopTime)
                         binding.uploadPractiseView.clearAnimation()
                         binding.counterContainer.visibility = GONE
@@ -619,16 +620,12 @@ class PracticeAdapter(
             }
         }
 
-        fun onSeekChange(seekTo: Long) {
-            audioManager?.seekTo(seekTo)
-        }
-
-        fun startRecording(chatModel: ChatModel, position: Int, startTime: Long) {
+        private fun startRecording(startTime: Long) {
             this.startTime = startTime
             practiceViewModel.startRecordAudio(null)
         }
 
-        fun stopRecording(chatModel: ChatModel, position: Int, stopTime: Long) {
+        fun stopRecording(chatModel: ChatModel, stopTime: Long) {
             practiceViewModel.stopRecordingAudio(false)
             val timeDifference =
                 TimeUnit.MILLISECONDS.toSeconds(stopTime) - TimeUnit.MILLISECONDS.toSeconds(
@@ -636,7 +633,6 @@ class PracticeAdapter(
                 )
             if (timeDifference > 1) {
                 practiceViewModel.recordFile?.let {
-//                                isAudioRecordDone = true
                     filePath = AppDirectory.getAudioSentFile(null).absolutePath
                     chatModel.filePath = filePath
                     AppDirectory.copy(it.absolutePath, filePath!!)
@@ -698,7 +694,7 @@ class PracticeAdapter(
                 })
         }
 
-        fun removeAudioPractice() {
+        private fun removeAudioPractice() {
             hidePracticeSubmitLayout()
             binding.submitAudioViewContainer.visibility = GONE
             binding.submitPractiseSeekbar.progress = 0
@@ -746,22 +742,22 @@ class PracticeAdapter(
             }, 200)
         }
 
-        fun hidePracticeInputLayout() {
+        private fun hidePracticeInputLayout() {
             binding.practiseInputHeader.visibility = GONE
             binding.practiceInputLl.visibility = GONE
         }
 
-        fun showPracticeInputLayout() {
+        private fun showPracticeInputLayout() {
             binding.practiseInputHeader.visibility = VISIBLE
             binding.practiceInputLl.visibility = VISIBLE
         }
 
-        fun showPracticeSubmitLayout() {
+        private fun showPracticeSubmitLayout() {
             binding.yourSubAnswerTv.visibility = VISIBLE
             binding.subPractiseSubmitLayout.visibility = VISIBLE
         }
 
-        fun hidePracticeSubmitLayout() {
+        private fun hidePracticeSubmitLayout() {
             binding.yourSubAnswerTv.visibility = GONE
             binding.subPractiseSubmitLayout.visibility = GONE
         }
