@@ -111,7 +111,6 @@ class SearchingUserActivity : BaseActivity() {
             Timber.tag("SearchingUserActivity").e("onCallReject")
             outgoingCallData.clear()
             initApiForSearchUser()
-            //     reCallToUser()
         }
 
         override fun onSelfDisconnect(id: String?) {
@@ -121,10 +120,6 @@ class SearchingUserActivity : BaseActivity() {
         override fun onIncomingCallHangup(id: String?) {
             Timber.tag("SearchingUserActivity").e("onIncomingCallHangup")
         }
-
-        override fun initOutgoingCall(id: String?) {
-        }
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -266,13 +261,6 @@ class SearchingUserActivity : BaseActivity() {
         this.finish()
     }
 
-    private fun reCallToUser() {
-        viewModel.voipDetailsLiveData.value?.let {
-            Timber.tag("WEBRTC_").e(getMapForOutgoing(it).toString())
-            WebRtcService.startOutgoingCall(getMapForOutgoing(it))
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         timer?.cancel()
@@ -285,19 +273,6 @@ class SearchingUserActivity : BaseActivity() {
     override fun onBackPressed() {
         stopCalling()
     }
-
-    override fun onActivityResult(
-        requestCode: Int,
-        resultCode: Int,
-        data: Intent?
-    ) {
-        super.onActivityResult(requestCode, resultCode, data)
-        binding.progressBar.progress = 0
-        AppObjectController.uiHandler.postDelayed({
-            addRequesting()
-        }, 2000)
-    }
-
 
     override fun onStart() {
         super.onStart()
@@ -323,7 +298,7 @@ class SearchingUserActivity : BaseActivity() {
             voipCallDetailModel?.callieName = getCallieName()
             outgoingCallData = object : HashMap<String, String?>() {
                 init {
-                    put("X-PH-MOBILEUUID", UUID.randomUUID().toString())
+                    put("X-PH-MOBILEUUID", getUUIDString())
                     put("X-PH-Destination", voipCallDetailModel?.plivoUserName)
                     put("X-PH-TOPIC", topicId?.toString())
                     put("X-PH-TOPICNAME", topicName)
@@ -335,6 +310,10 @@ class SearchingUserActivity : BaseActivity() {
             }
         }
         return outgoingCallData
+    }
+
+    private fun getUUIDString(): String {
+        return UUID.randomUUID().toString()
     }
 
     fun getCallieName(): String {

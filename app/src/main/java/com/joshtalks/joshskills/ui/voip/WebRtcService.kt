@@ -201,7 +201,7 @@ class WebRtcService : Service() {
 
         override fun onOutgoingCall(outgoing: Outgoing) {
             callData = outgoing
-            callCallback?.get()?.initOutgoingCall(getCallId())
+         //   callCallback?.get()?.initOutgoingCall(getCallId())
             Timber.tag(TAG).e("onOutgoingCall")
         }
 
@@ -814,6 +814,6 @@ interface WebRtcCallback {
     fun onCallReject(id: String?)
     fun onSelfDisconnect(id: String?)
     fun onIncomingCallHangup(id: String?)
-    fun initOutgoingCall(id: String?)
+//    fun initOutgoingCall(id: String?)
 
 }

@@ -136,10 +136,6 @@ class WebRtcActivity : BaseActivity() {
             checkAndShowRating(id)
         }
 
-        override fun initOutgoingCall(id: String?) {
-
-        }
-
         private fun checkAndShowRating(id: String?) {
             Timber.tag(TAG).e("checkAndShowRating   %s", id)
             if (id.isNullOrEmpty().not() && countUpTimer.time > 0) {
