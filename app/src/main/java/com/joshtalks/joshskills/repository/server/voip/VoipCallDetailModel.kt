@@ -16,7 +16,9 @@ data class VoipCallDetailModel(
     @SerializedName("topicName") var topic: String? = EMPTY,
     @SerializedName("topicId") var topicName: String? = EMPTY,
     @SerializedName("callieName") var callieName: String? = EMPTY,
-) : Parcelable {
+    @SerializedName("mobileuuid") var mobileUUID: String? = EMPTY,
+
+    ) : Parcelable {
     constructor() : this(
         name = EMPTY,
         plivoUserName = EMPTY,

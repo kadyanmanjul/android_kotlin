@@ -161,7 +161,7 @@ interface CommonNetworkService {
     suspend fun getPlivoUserDetails(): UserPlivoDetailsModel
 
     @POST("$DIR/voicecall/feedback")
-    suspend fun feedbackVoipCall(@Body request: RequestVoipRating): Any
+    suspend fun feedbackVoipCallAsync(@Body request: RequestVoipRating): Deferred<Any>
 
     @GET("$DIR/voicecall/topic/{id}/")
     suspend fun getTopicDetail(@Path("id") id: String): SpeakingTopicModel

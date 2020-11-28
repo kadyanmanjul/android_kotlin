@@ -88,6 +88,7 @@ class VoipRatingFragment : DialogFragment() {
         )
     }
 
+    @Synchronized
     fun submitFeedback() {
         FullScreenProgressDialog.showProgressBar(requireActivity())
         val request = RequestVoipRating(
@@ -105,7 +106,7 @@ class VoipRatingFragment : DialogFragment() {
     private fun requestForFeedback(request: RequestVoipRating) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                AppObjectController.commonNetworkService.feedbackVoipCall(request)
+                AppObjectController.commonNetworkService.feedbackVoipCallAsync(request).await()
                 FullScreenProgressDialog.hideProgressBar(requireActivity())
                 exitDialog()
             } catch (ex: Throwable) {

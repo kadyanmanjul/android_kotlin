@@ -32,7 +32,6 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import timber.log.Timber
 import java.util.HashMap
-import java.util.UUID
 
 const val COURSE_ID = "course_id"
 const val TOPIC_ID = "topic_id"
@@ -89,12 +88,7 @@ class SearchingUserActivity : BaseActivity() {
 
         override fun onConnect() {
             Timber.tag("SearchingUserActivity").e("onConnect")
-            Timber.tag("WEBRTC_")
-                .e(getMapForOutgoing(viewModel.voipDetailsLiveData.value).toString())
-            WebRtcActivity.startOutgoingCallActivity(
-                this@SearchingUserActivity,
-                getMapForOutgoing(viewModel.voipDetailsLiveData.value)
-            )
+            WebRtcActivity.startOutgoingCallActivity(this@SearchingUserActivity, outgoingCallData)
             this@SearchingUserActivity.finish()
         }
 
@@ -160,7 +154,6 @@ class SearchingUserActivity : BaseActivity() {
     private fun addObserver() {
         viewModel.voipDetailsLiveData.observe(this, {
             if (it != null) {
-                Timber.tag("WEBRTC_").e(getMapForOutgoing(it).toString())
                 WebRtcService.startOutgoingCall(getMapForOutgoing(it))
             }
         })
@@ -296,27 +289,22 @@ class SearchingUserActivity : BaseActivity() {
             voipCallDetailModel?.topic = topicId?.toString()
             voipCallDetailModel?.topicName = topicName
             voipCallDetailModel?.callieName = getCallieName()
-            outgoingCallData = object : HashMap<String, String?>() {
-                init {
-                    put("X-PH-MOBILEUUID", getUUIDString())
-                    put("X-PH-Destination", voipCallDetailModel?.plivoUserName)
-                    put("X-PH-TOPIC", topicId?.toString())
-                    put("X-PH-TOPICNAME", topicName)
-                    put("X-PH-CALLERNAME", getCallieName())
-                    put("X-PH-CALLIENAME", voipCallDetailModel?.name)
-                    put("X-PH-IMAGE_URL", voipCallDetailModel?.profilePic)
-                    put("X-PH-LOCALITY", voipCallDetailModel?.locality)
-                }
+            outgoingCallData = LinkedHashMap()
+            outgoingCallData.apply {
+                put("X-PH-MOBILEUUID", voipCallDetailModel?.mobileUUID)
+                put("X-PH-Destination", voipCallDetailModel?.plivoUserName)
+                put("X-PH-TOPIC", topicId?.toString())
+                put("X-PH-TOPICNAME", topicName)
+                put("X-PH-CALLERNAME", getCallieName())
+                put("X-PH-CALLIENAME", voipCallDetailModel?.name)
+                put("X-PH-IMAGE_URL", voipCallDetailModel?.profilePic)
+                put("X-PH-LOCALITY", voipCallDetailModel?.locality)
             }
         }
         return outgoingCallData
     }
 
-    private fun getUUIDString(): String {
-        return UUID.randomUUID().toString()
-    }
-
-    fun getCallieName(): String {
+    private fun getCallieName(): String {
         val name = Mentor.getInstance().getUser()?.firstName
         if (name.isNullOrEmpty()) {
             return "User"

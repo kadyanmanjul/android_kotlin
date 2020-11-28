@@ -72,7 +72,6 @@ class WebRtcService : Service() {
     private var incomingCallData: HashMap<String, String>? = null
     private var outgoingCallData: HashMap<String, String>? = null
 
-
     companion object {
         private val TAG = "PlivoCallingListenService"
 
@@ -201,7 +200,7 @@ class WebRtcService : Service() {
 
         override fun onOutgoingCall(outgoing: Outgoing) {
             callData = outgoing
-         //   callCallback?.get()?.initOutgoingCall(getCallId())
+            //   callCallback?.get()?.initOutgoingCall(getCallId())
             Timber.tag(TAG).e("onOutgoingCall")
         }
 
@@ -213,6 +212,9 @@ class WebRtcService : Service() {
             Timber.tag(TAG).e("onOutgoingCallAnswered")
             callData = outgoing
             callCallback?.get()?.onConnect()
+            if (outgoingCallData.isNullOrEmpty().not()) {
+                showNotificationConnectedCall(outgoingCallData as HashMap<String, String>)
+            }
         }
 
         // samene wale ne phone kaat diya
@@ -262,7 +264,11 @@ class WebRtcService : Service() {
         if (intent?.action == null) {
             return START_NOT_STICKY
         }
-        startForeground(EMPTY_NOTIFICATION_ID, loginUserService())
+        intent.action?.run {
+            if (this == LoginUser().action) {
+                startForeground(EMPTY_NOTIFICATION_ID, loginUserService())
+            }
+        }
         executor.execute {
             if (endpoint == null) {
                 endpoint = Endpoint.newInstance(BuildConfig.DEBUG, eventListener, options)

@@ -41,6 +41,7 @@ import kotlinx.android.synthetic.main.speaking_practise_fragment.tv_practise_tim
 import kotlinx.android.synthetic.main.speaking_practise_fragment.tv_today_topic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 const val LESSON_ID = "lesson_id"
@@ -185,6 +186,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
     private fun getTopicDetail(topicId: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
+                delay(1500)
                 val response = AppObjectController.commonNetworkService.getTopicDetail(topicId)
                 speakingTopicModelLiveData.postValue(response)
             } catch (ex: Throwable) {
