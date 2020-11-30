@@ -524,17 +524,6 @@
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
-        <service
-            android:name="com.google.android.exoplayer2.scheduler.PlatformScheduler$PlatformSchedulerService"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service
-            android:name=".ui.voip.WebRtcService"
-            android:exported="false"
-            android:foregroundServiceType="phoneCall"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-
-
         <activity android:name=".ui.deeplink.DeeplinkAnalyzeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -578,19 +567,11 @@
                     android:scheme="joshskills" />
             </intent-filter>
         </activity>
-        <service
-            android:name=".engage_notification.UsageStatsService"
-            android:directBootAware="true"
-            android:enabled="true"
-            android:exported="true"
-            android:isolatedProcess="true"
-            tools:ignore="ExportedService" />
-
         <activity
             android:name=".ui.certification_exam.CertificationBaseActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme"></activity>
+            android:theme="@style/AppNoBarTheme" />
 
         <activity
             android:name=".ui.certification_exam.examview.CExamMainActivity"
@@ -611,6 +592,25 @@
                 <action android:name="android.intent.action. ACTION_LOCKED_BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <service
+            android:name="com.google.android.exoplayer2.scheduler.PlatformScheduler$PlatformSchedulerService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service
+            android:name=".ui.voip.WebRtcService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="phoneCall"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service
+            android:name=".engage_notification.UsageStatsService"
+            android:directBootAware="true"
+            android:enabled="true"
+            android:exported="true"
+            android:isolatedProcess="true"
+            tools:ignore="ExportedService" />
+
     </application>
 
 </manifest>

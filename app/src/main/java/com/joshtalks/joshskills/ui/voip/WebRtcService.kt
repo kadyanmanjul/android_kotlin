@@ -14,6 +14,8 @@ import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.telephony.PhoneStateListener
+import android.telephony.TelephonyManager
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -40,6 +42,7 @@ import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.OUTGOING_CALL_C
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.OUTGOING_CALL_NOTIFICATION_ID
 import com.joshtalks.joshskills.ui.voip.extra.FullScreenActivity
 import com.joshtalks.joshskills.ui.voip.util.SoundPoolManager
+import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
 import com.plivo.endpoint.Endpoint
 import com.plivo.endpoint.EventListener
 import com.plivo.endpoint.Incoming
@@ -72,9 +75,13 @@ class WebRtcService : Service() {
     private var incomingCallData: HashMap<String, String>? = null
     private var outgoingCallData: HashMap<String, String>? = null
     private var callFromFirebase = false
+    private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
+        HangUpRtcOnPstnCallAnsweredListener()
+
 
     companion object {
         private val TAG = "PlivoCallingListenService"
+        private var phoneCallState = CallState.CALL_STATE_IDLE
 
         @Volatile
         private var callUUID: String? = null
@@ -185,8 +192,12 @@ class WebRtcService : Service() {
         override fun onIncomingCall(incoming: Incoming) {
             Timber.tag(TAG).e("onIncomingCall")
             callData = incoming
-            startOnIncomingCall(incoming.headerDict as HashMap<String, String>)
             callUUID = incoming.headerDict["X-PH-MOBILEUUID"]
+            if (CallState.CALL_STATE_BUSY == phoneCallState) {
+                rejectCall()
+                return
+            }
+            startOnIncomingCall(incoming.headerDict as HashMap<String, String>)
         }
 
         override fun onIncomingCallHangup(incoming: Incoming) {
@@ -264,11 +275,26 @@ class WebRtcService : Service() {
     override fun onCreate() {
         super.onCreate()
         Timber.tag(TAG).e("onCreate")
+        phoneCallState = CallState.CALL_STATE_IDLE
         mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
         startForeground(EMPTY_NOTIFICATION_ID, loginUserService())
         endpoint = Endpoint.newInstance(BuildConfig.DEBUG, eventListener, options)
         executor.execute {
             userPlivo = UserPlivoDetailsModel.getPlivoUser()
+        }
+        TelephonyUtil.getManager(this)
+            .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_CALL_STATE)
+    }
+
+    private class HangUpRtcOnPstnCallAnsweredListener : PhoneStateListener() {
+        override fun onCallStateChanged(state: Int, phoneNumber: String?) {
+            super.onCallStateChanged(state, phoneNumber)
+            Timber.tag(TAG).e("RTC=    %s", state)
+            phoneCallState = if (state == TelephonyManager.CALL_STATE_IDLE) {
+                CallState.CALL_STATE_IDLE
+            } else {
+                CallState.CALL_STATE_BUSY
+            }
         }
     }
 
@@ -314,10 +340,13 @@ class WebRtcService : Service() {
                             }
                         }
                         this == IncomingCall().action -> {
-                            SoundPoolManager.getInstance(applicationContext).playRinging()
+                            if (CallState.CALL_STATE_BUSY == phoneCallState) {
+                                return@run
+                            }
                             val incomingData: HashMap<String, String>? =
                                 intent.getSerializableExtra(INCOMING_CALL_USER_OBJ) as HashMap<String, String>?
                             incomingData?.printAll()
+                            SoundPoolManager.getInstance(applicationContext).playRinging()
                             showNotificationOnIncomingCall(incomingData)
                             processIncomingCall(incomingData)
                         }
@@ -357,7 +386,7 @@ class WebRtcService : Service() {
                 }
             }
         }
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     private fun initCall() {
@@ -610,6 +639,9 @@ class WebRtcService : Service() {
 
     override fun onDestroy() {
         Timber.tag(TAG).e("onDestroy")
+        TelephonyUtil.getManager(this)
+            .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_NONE)
+        phoneCallState = CallState.CALL_STATE_IDLE
     }
 
     private fun plivoLogout() {
@@ -812,6 +844,8 @@ class WebRtcService : Service() {
         )
         return spannable
     }
+
+
 }
 
 
@@ -826,6 +860,10 @@ data class OutgoingCall(val action: String = "calling.action.outgoing_call") : W
 data class LoginUser(val action: String = "calling.action.login") : WebRtcCalling()
 data class LogoutUser(val action: String = "calling.action.logout") : WebRtcCalling()
 data class CallStop(val action: String = "calling.action.stopcall") : WebRtcCalling()
+
+enum class CallState {
+    CALL_STATE_IDLE, CALL_STATE_BUSY
+}
 
 class NotificationId {
     companion object {
