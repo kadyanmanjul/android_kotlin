@@ -118,7 +118,6 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     private TextView tvName;
     private TextView tvStatus;
     private String Id;
-    private Context context;
     private StickyHeaderDecoration stickyHeaderDecoration;
     private String avatarUrl;
     private Toolbar toolbar;
@@ -422,7 +421,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             @Override
             public void onError(CometChatException e) {
                 Log.d(TAG, "Group Member list fetching failed with exception: " + e.getMessage());
-                Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(CometChatMessageListActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -598,43 +597,47 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
      * @see MediaMessage
      */
     private void sendMediaMessage(File file, String filetype, JSONObject metadata) {
-        ProgressDialog progressDialog;
-        progressDialog = ProgressDialog.show(context, "", getResources().getString(R.string.sending_media_message));
-        MediaMessage mediaMessage;
-
-        if (type.equalsIgnoreCase(CometChatConstants.RECEIVER_TYPE_USER))
-            mediaMessage = new MediaMessage(Id, file, filetype, CometChatConstants.RECEIVER_TYPE_USER);
-        else
-            mediaMessage = new MediaMessage(Id, file, filetype, CometChatConstants.RECEIVER_TYPE_GROUP);
-
-        if (metadata == null) {
-            metadata = new JSONObject();
-        }
         try {
-            metadata.put("path", file.getAbsolutePath());
-        } catch (JSONException e) {
+            ProgressDialog progressDialog;
+            progressDialog = ProgressDialog.show(CometChatMessageListActivity.this, "", getResources().getString(R.string.sending_media_message));
+            MediaMessage mediaMessage;
+
+            if (type.equalsIgnoreCase(CometChatConstants.RECEIVER_TYPE_USER))
+                mediaMessage = new MediaMessage(Id, file, filetype, CometChatConstants.RECEIVER_TYPE_USER);
+            else
+                mediaMessage = new MediaMessage(Id, file, filetype, CometChatConstants.RECEIVER_TYPE_GROUP);
+
+            if (metadata == null) {
+                metadata = new JSONObject();
+            }
+            try {
+                metadata.put("path", file.getAbsolutePath());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            mediaMessage.setMetadata(metadata);
+
+            CometChat.sendMediaMessage(mediaMessage, new CometChat.CallbackListener<MediaMessage>() {
+                @Override
+                public void onSuccess(MediaMessage mediaMessage) {
+                    progressDialog.dismiss();
+                    Log.d(TAG, "sendMediaMessage onSuccess: " + mediaMessage.toString());
+                    if (messageAdapter != null) {
+                        messageAdapter.addMessage(mediaMessage);
+                        scrollToBottom();
+                    }
+                }
+
+                @Override
+                public void onError(CometChatException e) {
+                    progressDialog.dismiss();
+                    Toast.makeText(CometChatMessageListActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                }
+            });
+        } catch (Throwable e) {
             e.printStackTrace();
         }
-        mediaMessage.setMetadata(metadata);
-
-        CometChat.sendMediaMessage(mediaMessage, new CometChat.CallbackListener<MediaMessage>() {
-            @Override
-            public void onSuccess(MediaMessage mediaMessage) {
-                progressDialog.dismiss();
-                Log.d(TAG, "sendMediaMessage onSuccess: " + mediaMessage.toString());
-                if (messageAdapter != null) {
-                    messageAdapter.addMessage(mediaMessage);
-                    scrollToBottom();
-                }
-            }
-
-            @Override
-            public void onError(CometChatException e) {
-                progressDialog.dismiss();
-                Toast.makeText(CometChatMessageListActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-
-            }
-        });
     }
 
     /**
@@ -666,7 +669,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
 
             @Override
             public void onError(CometChatException e) {
-                Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(CometChatMessageListActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -695,9 +698,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
                 groupOwnerId = group.getOwner();
 
                 tvName.setText(name);
-                if (context != null) {
-                    userAvatar.setAvatar(getApplicationContext().getResources().getDrawable(R.drawable.ic_account), avatarUrl);
-                }
+                userAvatar.setAvatar(getApplicationContext().getResources().getDrawable(R.drawable.ic_account), avatarUrl);
                 setAvatar();
             }
 
@@ -1338,10 +1339,10 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
                     }
                 }
                 Log.e(TAG, "onCopy: " + message);
-                ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clipData = ClipData.newPlainText("MessageAdapter", message);
                 clipboardManager.setPrimaryClip(clipData);
-                Toast.makeText(context, getResources().getString(R.string.text_copied_clipboard), Toast.LENGTH_LONG).show();
+                Toast.makeText(CometChatMessageListActivity.this, getResources().getString(R.string.text_copied_clipboard), Toast.LENGTH_LONG).show();
                 if (messageAdapter != null) {
                     messageAdapter.clearLongClickSelectedItem();
                     messageAdapter.notifyDataSetChanged();

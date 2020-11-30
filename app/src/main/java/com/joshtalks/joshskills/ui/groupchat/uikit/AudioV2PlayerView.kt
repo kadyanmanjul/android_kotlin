@@ -16,29 +16,32 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
+import com.joshtalks.joshskills.core.playback.PlaybackInfoListener
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.AudioPlayerEventBus
 import com.joshtalks.joshskills.util.ExoAudioPlayer
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.Job
+import io.reactivex.schedulers.Schedulers
 import org.json.JSONObject
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 
 
 class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
     ExoAudioPlayer.ProgressUpdateListener, AudioPlayerEventListener {
 
+    private var exoAudioManager: ExoAudioPlayer? = ExoAudioPlayer.getInstance()
+    private val context = AppObjectController.joshApplication
+    private var id: String = EMPTY
+    private var url: String? = null
     private lateinit var playButton: ImageView
     private lateinit var pauseButton: ImageView
     private lateinit var seekPlayerProgress: SeekBar
     private lateinit var timestamp: TextView
-    private var audioManger: ExoAudioPlayer? = null
-    private val context = AppObjectController.joshApplication
+    private val compositeDisposable = CompositeDisposable()
+    private var lastPosition: Long = 0L
+    private var mediaDuration: Long = 0
 
-    private var id: String = EMPTY
-    private var url: String? = null
-    private var mediaDuration: Long? = null
-    private var compositeDisposable = CompositeDisposable()
-    private val jobs = arrayListOf<Job>()
 
     constructor(context: Context) : super(context) {
         init()
@@ -57,12 +60,6 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
     }
 
     private fun init() {
-        AppObjectController.createDefaultCacheDir()
-        audioManger = ExoAudioPlayer.getInstance()
-        ExoAudioPlayer.LAST_ID = EMPTY
-        audioManger?.playerListener = this
-        audioManger?.setProgressUpdateListener(this)
-
         View.inflate(context, R.layout.audio_player_layout2, this)
         playButton = findViewById(R.id.btnPlay)
         pauseButton = findViewById(R.id.btnPause)
@@ -73,7 +70,65 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
         pauseButton.setOnClickListener(this)
         playButton.visibility = View.VISIBLE
         pauseButton.visibility = View.VISIBLE
+    }
 
+    fun bindView(
+        id: Int,
+        audioUrl: String,
+        metadata: JSONObject? = null
+    ) {
+        this.id = id.toString()
+        this.url = audioUrl
+        try {
+            this.mediaDuration = metadata?.getLong("audioDurationInMs") ?: 0
+            mediaDuration.let {
+                seekPlayerProgress.max = it.toInt()
+                timestamp.text = Utils.formatDuration(it.toInt())
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        Timber.tag("AudioV2PlayerView").e("" + mediaDuration)
+
+    }
+
+
+    private fun setDefaultValue() {
+        pausingAudio()
+        seekPlayerProgress.progress = lastPosition.toInt()
+        seekPlayerProgress.max = mediaDuration.toInt()
+    }
+
+    override fun onClick(v: View) {
+        if (v.id == R.id.btnPlay) {
+            playAudio()
+        } else if (v.id == R.id.btnPause) {
+            pausingAudio()
+            exoAudioManager?.resumeOrPause()
+        }
+    }
+
+    private fun checkAudioIsDifferent(): Boolean {
+        if (ExoAudioPlayer.LAST_ID.isEmpty()) {
+            return true
+        }
+        if (ExoAudioPlayer.LAST_ID == id) {
+            return true
+        }
+        removeSeekbarListener()
+        return true
+    }
+
+    private fun removeSeekbarListener() {
+        seekPlayerProgress.setOnSeekBarChangeListener(null)
+        exoAudioManager?.playerListener = null
+        exoAudioManager?.setProgressUpdateListener(
+            null
+        )
+    }
+
+    private fun addListner() {
+        seekPlayerProgress.setOnSeekBarChangeListener(null)
         seekPlayerProgress.setOnSeekBarChangeListener(
             object : SeekBar.OnSeekBarChangeListener {
                 var userSelectedPosition = 0
@@ -92,69 +147,43 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
                 }
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
-                    audioManger?.seekTo(userSelectedPosition.toLong())
+                    exoAudioManager?.seekTo(userSelectedPosition.toLong())
                 }
             })
-    }
+        exoAudioManager?.playerListener = this
+        exoAudioManager?.setProgressUpdateListener(this)
 
-    fun bindView(
-        id: Int,
-        audioUrl: String,
-        metadata: JSONObject? = null
-    ) {
-        this.id = id.toString()
-        this.url = audioUrl
-        try {
-            this.mediaDuration = metadata?.getLong("audioDurationInMs")
-            mediaDuration?.let {
-                seekPlayerProgress.max = TimeUnit.MILLISECONDS.toSeconds(it).toInt()
-                timestamp.text = Utils.formatDuration(it.toInt())
-
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-    }
-
-    private fun setDefaultValue() {
-        pausingAudio()
-        seekPlayerProgress.progress = 0
-    }
-
-    override fun onClick(v: View) {
-        if (v.id == R.id.btnPlay) {
-            playAudio()
-        } else if (v.id == R.id.btnPause) {
-            pausingAudio()
-        }
     }
 
     private fun playAudio() {
-        audioManger?.let {
-            if (ExoAudioPlayer.LAST_ID.isEmpty()) {
-                initAndPlay(url)
-                return@let
-            }
-            if (ExoAudioPlayer.LAST_ID == id) {
-                audioManger?.resumeOrPause()
-                if (audioManger?.isPlaying() == true) {
-                    playingAudio()
-                } else
-                    pausingAudio()
-            } else {
-                initAndPlay(url)
+        if (checkAudioIsDifferent()) {
+            exoAudioManager?.let {
+                removeSeekbarListener()
+                addListner()
+                if (ExoAudioPlayer.LAST_ID.isEmpty()) {
+                    initAndPlay(url)
+                    return@let
+                }
+                if (ExoAudioPlayer.LAST_ID == id) {
+                    exoAudioManager?.resumeOrPause()
+                    if (exoAudioManager?.isPlaying() == true) {
+                        playingAudio()
+                    } else
+                        pausingAudio()
+                } else {
+                    initAndPlay(url)
+                }
             }
         }
     }
 
+
     private fun initAndPlay(file: String?) {
         file?.let {
-            audioManger?.play(it, id)
-            seekPlayerProgress.progress = 0
+            exoAudioManager?.play(it, id, lastPosition)
+            seekPlayerProgress.progress = lastPosition.toInt()
             playingAudio()
-
         }
-        //seekPlayerProgress.max = duration.toInt()
     }
 
     private fun playingAudio() {
@@ -167,42 +196,35 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
         pauseButton.visibility = View.GONE
     }
 
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        setDefaultValue()
-        Timber.tag("onAttachedToWindow").e("AudioPlayer")
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        compositeDisposable.clear()
-        setDefaultValue()
-        audioManger?.release()
-        ExoAudioPlayer.LAST_ID = ""
-        Timber.tag("onDetachedFromWindow").e("AudioPlayer")
-    }
-
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun onPausePlayer() {
-        audioManger?.onPause()
+        exoAudioManager?.onPause()
         pausingAudio()
     }
 
     override fun onProgressUpdate(progress: Long) {
-        if (!JoshApplication.isAppVisible)
+        if (JoshApplication.isAppVisible.not()) {
             onPausePlayer()
+        }
         seekPlayerProgress.progress = progress.toInt()
+        lastPosition = progress
     }
+
 
     override fun onDurationUpdate(duration: Long?) {
+        duration?.toInt()?.let {
+            seekPlayerProgress.max = it
+        }
     }
 
+
     override fun onPlayerPause() {
-        pausingAudio()
+        Timber.tag("AudioV2PlayerView").e("onPlayerPause")
     }
 
     override fun onPlayerResume() {
-        playingAudio()
+        Timber.tag("AudioV2PlayerView").e("onPlayerResume")
+        RxBus2.publish(AudioPlayerEventBus(PlaybackInfoListener.State.PLAYING, id))
     }
 
     override fun onCurrentTimeUpdated(lastPosition: Long) {
@@ -218,6 +240,8 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
     }
 
     override fun onPlayerReleased() {
+        Timber.tag("AudioV2PlayerView").e("onPlayerReleased")
+
     }
 
     override fun onPlayerEmptyTrack() {
@@ -225,103 +249,41 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
 
     override fun complete() {
         seekPlayerProgress.progress = 0
-        audioManger?.seekTo(0)
-        audioManger?.onPause()
+        exoAudioManager?.seekTo(0)
+        exoAudioManager?.onPause()
+        setDefaultValue()
     }
+
+    private fun subscribeRXBus() {
+        compositeDisposable.add(
+            RxBus2.listen(AudioPlayerEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    if (it.id != id) {
+                        pausingAudio()
+                    }
+
+                }, {
+                    it.printStackTrace()
+                })
+        )
+    }
+
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        setDefaultValue()
+        subscribeRXBus()
+        Timber.tag("onAttachedToWindow").e("AudioPlayer")
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        setDefaultValue()
+        exoAudioManager?.release()
+        compositeDisposable.clear()
+        Timber.tag("onDetachedFromWindow").e("AudioPlayer")
+    }
+
 }
-
-/*
-        <RelativeLayout
-            android:id="@+id/audio_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/audio_view_sent">
-
-            <FrameLayout
-                android:id="@+id/fl_controller"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:minWidth="@dimen/_36sdp">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/btnPlay"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@null"
-                    android:contentDescription="@string/play_button_description"
-                    android:visibility="invisible"
-                    app:srcCompat="@drawable/ic_play_24dp"
-                    tools:visibility="visible" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/btnPause"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@null"
-                    android:contentDescription="@string/play_button_description"
-                    android:visibility="invisible"
-                    app:srcCompat="@drawable/ic_pause_24dp"
-                    tools:visibility="visible" />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/fl_seek_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@id/fl_controller"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:layout_marginEnd="@dimen/_5sdp"
-                android:layout_toEndOf="@id/fl_controller">
-
-                <SeekBar
-                    android:id="@+id/seekBar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/_6sdp"
-                    android:paddingEnd="@dimen/_6sdp"
-                    android:progressTint="@color/colorPrimary"
-                    android:thumb="@drawable/seek_thumb"
-                    android:visibility="visible" />
-
-            </FrameLayout>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/txtCurrentDuration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/fl_seek_bar"
-                android:layout_alignStart="@id/fl_seek_bar"
-                android:layout_marginTop="@dimen/_20sdp"
-                android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-                android:textColor="@color/gray_9E"
-                app:layout_goneMarginTop="@dimen/spacing_large"
-                tools:text="00:24" />
-
-            <TextView
-                android:id="@+id/message_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/fl_seek_bar"
-                android:layout_alignEnd="@id/fl_seek_bar"
-                android:layout_marginTop="@dimen/_20sdp"
-                android:layout_marginEnd="@dimen/_5sdp"
-                android:gravity="center|end"
-                android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-                android:textColor="@color/gray_9E"
-                app:layout_goneMarginTop="@dimen/spacing_large"
-                tools:ignore="MissingPrefix"
-                tools:text="12:35PM" />
-        </RelativeLayout>
-
-* */

@@ -100,7 +100,7 @@ class ExoAudioPlayer {
         player?.addListener(playerEventListener)
     }
 
-    fun play(audioUrl: String, id: String = "") {
+    fun play(audioUrl: String, id: String = "", seekDuration: Long = 0) {
         currentPlayingUrl = audioUrl
         val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(
             context,
@@ -111,9 +111,10 @@ class ExoAudioPlayer {
         val factory = ProgressiveMediaSource.Factory(dataSourceFactory)
         val audioSource: MediaSource =
             factory.createMediaSource(Uri.parse(audioUrl))
-        player!!.prepare(audioSource)
-        player!!.repeatMode = ExoPlayer.REPEAT_MODE_OFF
-        player!!.playWhenReady = true
+        player?.prepare(audioSource)
+        player?.repeatMode = ExoPlayer.REPEAT_MODE_OFF
+        player?.seekTo(seekDuration)
+        player?.playWhenReady = true
         progressTracker =
             ProgressTracker(player!!)
     }
@@ -148,7 +149,6 @@ class ExoAudioPlayer {
     fun release() {
         player?.playWhenReady = false
         progressTracker?.let { it.handler.removeCallbacks(it) }
-        LAST_ID = EMPTY
         currentPlayingUrl = EMPTY
         if (playerListener != null)
             playerListener = null
