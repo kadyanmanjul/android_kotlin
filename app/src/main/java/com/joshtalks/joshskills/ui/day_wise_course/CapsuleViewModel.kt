@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.repository.local.entity.VideoType
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
+import com.joshtalks.joshskills.repository.server.UpdateLessonResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
@@ -42,7 +43,7 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
 
     val assessmentStatus: MutableLiveData<AssessmentStatus> =
         MutableLiveData(AssessmentStatus.NOT_STARTED)
-    val lessonStatusLiveData: MutableLiveData<LESSON_STATUS> = MutableLiveData()
+    val updatedLessonResponseLiveData: MutableLiveData<UpdateLessonResponse> = MutableLiveData()
 
     fun getQuestions(lessonId: Int) {
         val chatList: MutableList<ChatModel> = mutableListOf()
@@ -184,9 +185,9 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
                         status.name, lessonId, Mentor.getInstance().getId(), questionId, courseId
                     )
                 )
-                if (resp.success) {
+                if (resp.isSuccessful&&resp.body()!=null) {
                     chatDao.updateQuestionStatus("$questionId", status)
-                    lessonStatusLiveData.postValue(resp.responseData)
+                    updatedLessonResponseLiveData.postValue(resp.body())
                     return@launch
                 }
             } catch (e: Exception) {

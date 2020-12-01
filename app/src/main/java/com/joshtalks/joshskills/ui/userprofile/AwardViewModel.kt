@@ -22,7 +22,7 @@ class AwardViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 val extras: HashMap<String, List<Int>> = HashMap()
                 extras["award_mentor_list"] = awardIds
-                AppObjectController.commonNetworkService.getPointsInfo(extras)
+                AppObjectController.commonNetworkService.patchAwardDetails(extras)
 
             } catch (ex: Exception) {
                 ex.showAppropriateMsg()
