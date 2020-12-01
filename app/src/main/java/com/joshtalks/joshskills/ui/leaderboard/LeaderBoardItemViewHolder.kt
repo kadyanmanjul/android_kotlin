@@ -64,4 +64,11 @@ class LeaderBoardItemViewHolder(
             RxBus2.publish(OpenUserProfile(it))
         }
     }
+
+    @Click(R.id.container)
+    fun onContainerClick() {
+        response.id?.let {
+            RxBus2.publish(OpenUserProfile(it))
+        }
+    }
 }
