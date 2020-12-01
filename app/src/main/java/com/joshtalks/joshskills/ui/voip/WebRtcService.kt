@@ -163,6 +163,7 @@ class WebRtcService : Service() {
             (getSystemService(NOTIFICATION_SERVICE) as NotificationManager?)?.cancel(
                 EMPTY_NOTIFICATION_ID
             )
+            isCallWasOnGoing = false
 
             if (outgoingCallData != null) {
                 initCall()
@@ -191,6 +192,9 @@ class WebRtcService : Service() {
 
         override fun onIncomingCall(incoming: Incoming) {
             Timber.tag(TAG).e("onIncomingCall")
+            if (isCallWasOnGoing) {
+                return
+            }
             callData = incoming
             callUUID = incoming.headerDict["X-PH-MOBILEUUID"]
             if (CallState.CALL_STATE_BUSY == phoneCallState) {
@@ -219,10 +223,10 @@ class WebRtcService : Service() {
         override fun onIncomingCallInvalid(p0: Incoming) {
             Timber.tag(TAG).e("onIncomingCallInvalid")
             onDisconnectAndRemove()
-
         }
 
         override fun onOutgoingCall(outgoing: Outgoing) {
+            isCallWasOnGoing = false
             callData = outgoing
             //   callCallback?.get()?.initOutgoingCall(getCallId())
             Timber.tag(TAG).e("onOutgoingCall")
@@ -239,6 +243,7 @@ class WebRtcService : Service() {
             if (outgoingCallData.isNullOrEmpty().not()) {
                 showNotificationConnectedCall(outgoingCallData as HashMap<String, String>)
             }
+            isCallWasOnGoing = true
         }
 
         // samene wale ne phone kaat diya
@@ -255,6 +260,7 @@ class WebRtcService : Service() {
             Timber.tag(TAG).e("onOutgoingCallHangup  %s", getCallId())
             callCallback?.get()?.onSelfDisconnect(getCallId())
             removeNotifications()
+
         }
 
         override fun onOutgoingCallInvalid(p0: Outgoing) {
@@ -439,10 +445,10 @@ class WebRtcService : Service() {
 
 
     private fun showNotificationOnIncomingCall(incomingData: HashMap<String, String>?) {
-        if (isAppVisible()) {
-            val notification = incomingCallNotification(incomingData)
-            startForeground(INCOMING_CALL_NOTIFICATION_ID, notification)
-        }
+        //   if (isAppVisible()) {
+        val notification = incomingCallNotification(incomingData)
+        startForeground(INCOMING_CALL_NOTIFICATION_ID, notification)
+        //}
     }
 
     private fun showNotificationOnOutgoingCall(extraHeaders: HashMap<String, String>?) {
@@ -476,6 +482,7 @@ class WebRtcService : Service() {
                     this.answer()
                     showNotificationConnectedCall(this.headerDict as HashMap<String, String>)
                     callCallback?.get()?.onConnect()
+                    isCallWasOnGoing = true
                     return
                 }
             } catch (ex: Throwable) {
@@ -610,7 +617,6 @@ class WebRtcService : Service() {
         isCallWasOnGoing = false
         isSpeakerEnable = false
         isMicEnable = true
-
         val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
         audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
         audioManager.isSpeakerphoneOn = false
@@ -639,12 +645,14 @@ class WebRtcService : Service() {
 
     override fun onDestroy() {
         Timber.tag(TAG).e("onDestroy")
+        isCallWasOnGoing = false
         TelephonyUtil.getManager(this)
             .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_NONE)
         phoneCallState = CallState.CALL_STATE_IDLE
     }
 
     private fun plivoLogout() {
+        isCallWasOnGoing = false
         try {
             endpoint?.logout()
         } catch (ex: Exception) {

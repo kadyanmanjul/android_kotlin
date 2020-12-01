@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.core;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
+
 import java.util.ArrayList;
 
 public class CountUpTimer {
@@ -33,7 +34,7 @@ public class CountUpTimer {
         }
     };
     // An array to store lap timestamps
-    private ArrayList<Integer> lapTimestamps;
+    private final ArrayList<Integer> lapTimestamps;
 
 
     /**
@@ -75,6 +76,14 @@ public class CountUpTimer {
      * Create a new lap
      */
     public void lap() {
+        lapTimestamps.add(getTime());
+    }
+
+    /**
+     * Create a new lap
+     */
+    public void lap(long lastPauseTimestamp) {
+        this.lastPauseTimestamp = lastPauseTimestamp;
         lapTimestamps.add(getTime());
     }
 

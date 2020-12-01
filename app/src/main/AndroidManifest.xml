@@ -518,11 +518,12 @@
 
         <activity
             android:name=".ui.voip.WebRtcActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
-            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+            android:launchMode="singleTask"
+            android:taskAffinity=".calling"
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity android:name=".ui.deeplink.DeeplinkAnalyzeActivity">
             <intent-filter>

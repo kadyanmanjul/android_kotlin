@@ -79,7 +79,6 @@ class WebRtcActivity : BaseActivity() {
             mServiceBound = true
             mBoundService?.addListener(callback)
             initCall()
-
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -96,7 +95,6 @@ class WebRtcActivity : BaseActivity() {
             Timber.tag(TAG).e("onConnect")
             runOnUiThread {
                 binding.callStatus.text = getText(R.string.practice)
-
                 try {
                     countUpTimer.lap()
                     countUpTimer.resume()
@@ -210,6 +208,14 @@ class WebRtcActivity : BaseActivity() {
                 binding.groupForIncoming.visibility = View.GONE
                 binding.groupForOutgoing.visibility = View.VISIBLE
             }
+            phoneConnectedStatus(this)
+        }
+    }
+
+    private fun phoneConnectedStatus(callType: CallType) {
+        if (WebRtcService.isCallWasOnGoing) {
+            binding.groupForIncoming.visibility = View.GONE
+            binding.groupForOutgoing.visibility = View.VISIBLE
         }
     }
 
@@ -354,6 +360,11 @@ class WebRtcActivity : BaseActivity() {
     override fun onStop() {
         super.onStop()
         unbindService(myConnection)
+    }
+
+    override fun onDestroy() {
+        volumeControlStream = AudioManager.STREAM_MUSIC
+        super.onDestroy()
     }
 
     override fun onBackPressed() {
