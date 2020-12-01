@@ -568,6 +568,7 @@
     <string name="how_points_work_title">How Points Work</string>
     <string name="points_history">Points History</string>
     <string name="group_chat">Group Chat</string>
+    <string name="go_to_profile">Go to Profile</string>
 
     <!-- _______________________CometChat Strings________________________-->
     <string name="rectangle">Rectangle</string>

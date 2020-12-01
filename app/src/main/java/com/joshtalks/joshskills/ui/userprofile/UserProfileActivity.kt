@@ -179,20 +179,6 @@ class UserProfileActivity : BaseActivity() {
                 binding.multiLineLl.addView(addLinerLayout(awardCategory))
             }
         }
-        val listAwardss: ArrayList<Award> = ArrayList()
-        userData.certificates?.map { certificate ->
-            listAwardss.add(
-                Award(
-                    certificate.certificateText,
-                    certificate.sortOrder,
-                    certificate.dateText,
-                    certificate.imageUrl,
-                    certificate.certificateDescription,
-                    certificate.is_achieved
-                )
-            )
-        }
-        binding.multiLineLl.addView(addLinerLayout(AwardCategory(null, null, null, listAwardss)))
         binding.scrollView.fullScroll(ScrollView.FOCUS_UP)
     }
 
@@ -268,7 +254,7 @@ class UserProfileActivity : BaseActivity() {
     }
 
     private fun openAwardPopUp(award: Award) {
-        ShowAwardFragment.showDialog(supportFragmentManager,award)
+        ShowAwardFragment.showDialog(supportFragmentManager, listOf(award),true)
     }
 
     override fun onStop() {
