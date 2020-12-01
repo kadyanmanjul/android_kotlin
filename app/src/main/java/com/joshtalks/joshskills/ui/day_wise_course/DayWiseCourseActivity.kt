@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.ui.chat.LESSON_REQUEST_CODE
 import com.joshtalks.joshskills.ui.day_wise_course.unlock_next_class.ActivityUnlockNextClass
+import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 
@@ -166,12 +167,14 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
         })
 
-        viewModel.lessonStatusLiveData.observe(this, {
-
-            lessonStatus = it
-            viewModel.updateQuestionLessonStatus(lessonId, it)
-            if (it == LESSON_STATUS.CO) {
+        viewModel.updatedLessonResponseLiveData.observe(this, {
+            lessonStatus = it.responseData
+            viewModel.updateQuestionLessonStatus(lessonId, it.responseData)
+            if (it.responseData == LESSON_STATUS.CO) {
                 lessonCompleted = true
+            }
+            if(it.awardMentorList.isNullOrEmpty().not()){
+                ShowAwardFragment.showDialog(supportFragmentManager,it.awardMentorList!!)
             }
         })
 

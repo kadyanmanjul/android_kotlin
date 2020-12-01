@@ -1,6 +1,10 @@
 package com.joshtalks.joshskills.core.notification
 
-import android.app.*
+import android.app.ActivityManager
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
@@ -19,8 +23,15 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.API_TOKEN
+import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.JoshSkillExecutors
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
@@ -38,6 +49,7 @@ import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
+import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.ui.voip.RTC_CALLER_UID_KEY
@@ -48,7 +60,6 @@ import com.joshtalks.joshskills.ui.voip.WebRtcService
 import org.json.JSONObject
 import timber.log.Timber
 import java.lang.reflect.Type
-import java.util.*
 import java.util.concurrent.ExecutorService
 
 const val FCM_TOKEN = "fcmToken"
@@ -343,6 +354,18 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             }
             NotificationAction.CALL_NO_USER_FOUND_NOTIFICATION -> {
                 WebRtcService.noUserFoundCallDisconnect()
+                return null
+            }
+            NotificationAction.AUDIO_FEEDBACK_REPORT -> {
+                //deleteUserCredentials()
+                //deleteUserData()
+                return null
+            }
+            NotificationAction.AWARD_DECLARE -> {
+                Intent(applicationContext, LeaderBoardViewPagerActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    putExtra(HAS_NOTIFICATION, true)
+                }
                 return null
             }
             else -> {
