@@ -1,19 +1,17 @@
 {
-  "version": 1,
+  "version": 2,
   "artifactType": {
     "type": "APK",
     "kind": "Directory"
   },
   "applicationId": "com.joshtalks.joshskills",
-  "variantName": "prod2Release",
+  "variantName": "processProd2ReleaseResources",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
-      "properties": [],
-      "versionCode": 20203,
-      "versionName": "2.2.3",
-      "enabled": true,
+      "versionCode": 30006,
+      "versionName": "3.0.6",
       "outputFile": "app-prod2-release.apk"
     }
   ]

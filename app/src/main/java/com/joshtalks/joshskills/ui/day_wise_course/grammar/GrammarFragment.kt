@@ -18,7 +18,6 @@ import androidx.lifecycle.observe
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -232,7 +231,19 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                 binding.quizRadioGroup.setOnCheckedChangeListener(quizCheckedChangeListener)
                 showQuizUi()
                 updateQuiz(assessmentQuestions[0])
+
+                if (quizQuestion?.status == QUESTION_STATUS.AT) {
+                    setQuizScore(assessmentQuestions)
+                    showQuizCompleteLayout()
+                }
             }
+        }
+    }
+
+    private fun setQuizScore(assessmentQuestions: ArrayList<AssessmentQuestionWithRelations>) {
+        assessmentQuestions.forEach {
+            it.choiceList.filter { choice -> choice.isCorrect && choice.userSelectedOrder == 1 }
+                .map { correctAns++ }
         }
     }
 
@@ -325,16 +336,6 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                         pdfQuestion = chatModel
                         binding.additionalMaterialTv.visibility = View.VISIBLE
                         binding.additionalMaterialTv.text = this.title
-                        this.pdfList?.getOrNull(0)?.let { pdfType ->
-                            binding.additionalMaterialTv.setOnClickListener {
-                                PdfViewerActivity.startPdfActivity(
-                                    requireContext(),
-                                    pdfType.id,
-                                    EMPTY
-                                )
-
-                            }
-                        }
                         setUpPdfView(chatModel)
                     }
 
@@ -634,8 +635,10 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                             )
                         ) > 0
                     ) {
+                        message.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
                         fileDownloadSuccess()
                     } else {
+                        message.downloadStatus = DOWNLOAD_STATUS.NOT_START
                         fileNotDownloadView()
                     }
                 } catch (ex: Exception) {
@@ -725,15 +728,18 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
             askStoragePermission()
             return
         }
-        pdfQuestion?.question?.pdfList?.getOrNull(0)?.let { pdfType ->
-            PdfViewerActivity.startPdfActivity(
-                context = requireContext(),
-                pdfId = pdfType.id,
-                courseName = pdfQuestion!!.question!!.title!!,
-                pdfPath = AppDirectory.docsReceivedFile(pdfType.url).absolutePath
-            )
+        if (pdfQuestion?.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
+            pdfQuestion?.question?.pdfList?.getOrNull(0)?.let { pdfType ->
+                PdfViewerActivity.startPdfActivity(
+                    context = requireContext(),
+                    pdfId = pdfType.id,
+                    courseName = pdfQuestion!!.question!!.title!!,
+                    pdfPath = AppDirectory.docsReceivedFile(pdfType.url).absolutePath
+                )
+            }
+        } else {
+            download()
         }
-
     }
 
     fun downloadCancel() {

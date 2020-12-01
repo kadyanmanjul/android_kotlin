@@ -181,7 +181,6 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             binding.lessonViewpager,
             object : TabLayoutMediator.TabConfigurationStrategy {
                 override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {
-
                     when (position) {
                         0 -> {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -206,6 +205,10 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                                 .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
                         }
                     }
+                    /* tab.icon = ContextCompat.getDrawable(
+                         this@DayWiseCourseActivity,
+                         R.drawable.ic_green_check_circle
+                     )*/
                 }
             }).attach()
         val tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
@@ -223,6 +226,10 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             layoutParams.weight = 0f
             layoutParams.marginEnd = Utils.dpToPx(2)
             layoutParams.marginStart = Utils.dpToPx(2)
+            layoutParams.topMargin = Utils.dpToPx(2)
+            layoutParams.bottomMargin = Utils.dpToPx(2)
+
+            tab.setPadding(0, 0, 0, Utils.dpToPx(4))
             tab.layoutParams = layoutParams
             binding.lessonTabLayout.requestLayout()
         }
@@ -306,6 +313,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
                 }
             }
+
         }
     }
 

@@ -342,15 +342,27 @@ class CourseProgressActivityNew : AppCompatActivity(),
             return
         }
 
-        pdfInfo?.let {
-            PdfViewerActivity.startPdfActivity(
-                context = this,
-                pdfId = "$courseId",
-                courseName = it.coursePdfName,
-                pdfPath = AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath
 
-            )
+
+        pdfInfo?.let {
+            if (PermissionUtils.isStoragePermissionEnabled(this) && AppDirectory.getFileSize(
+                    File(
+                        AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath
+                    )
+                ) > 0
+            ) {
+                PdfViewerActivity.startPdfActivity(
+                    context = this,
+                    pdfId = "$courseId",
+                    courseName = it.coursePdfName,
+                    pdfPath = AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath
+
+                )
+            } else {
+                download()
+            }
         }
+
     }
 
     private fun fileDownloadSuccess() {
