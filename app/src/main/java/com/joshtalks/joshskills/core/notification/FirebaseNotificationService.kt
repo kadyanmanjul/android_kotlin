@@ -49,6 +49,7 @@ import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
+import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService
@@ -350,6 +351,18 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return Intent(applicationContext, ReminderListActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 }
+            }
+            NotificationAction.AUDIO_FEEDBACK_REPORT -> {
+                //deleteUserCredentials()
+                //deleteUserData()
+                return null
+            }
+            NotificationAction.AWARD_DECLARE -> {
+                Intent(applicationContext, LeaderBoardViewPagerActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    putExtra(HAS_NOTIFICATION, true)
+                }
+                return null
             }
             else -> {
                 return null
