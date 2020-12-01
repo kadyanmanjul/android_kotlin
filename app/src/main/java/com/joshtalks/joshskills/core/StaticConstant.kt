@@ -24,6 +24,7 @@ const val LESSON_INTERVAL = "lesson_interval"
 const val LESSON__CHAT_ID = "lesson_chat_id"
 const val LESSON_NUMBER = "lesson_no"
 const val SHOW_OVERLAY = "show_overlay"
+const val ACHIEVED_AWARD_LIST = "achieved_award_list"
 const val MIN_LINES = 4
 const val RC_HINT = 2
 const val MAX_YEAR = 6

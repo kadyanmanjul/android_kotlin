@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.databinding.VoipRatingFragmentBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
+import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -107,6 +108,15 @@ class VoipRatingFragment : DialogFragment() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 AppObjectController.commonNetworkService.feedbackVoipCallAsync(request)
+                val res = AppObjectController.commonNetworkService.feedbackVoipCall(request)
+                if (res.isSuccessful && res.body() != null && res.body()?.awardMentorList.isNullOrEmpty()
+                        .not()
+                ) {
+                    ShowAwardFragment.showDialog(
+                        requireActivity().supportFragmentManager,
+                        res.body()!!.awardMentorList!!
+                    )
+                }
                 FullScreenProgressDialog.hideProgressBar(requireActivity())
             } catch (ex: Throwable) {
                 FullScreenProgressDialog.hideProgressBar(requireActivity())
