@@ -60,6 +60,7 @@ import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.ProfileResponse
 import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
@@ -77,6 +78,7 @@ import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
+import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.karumi.dexter.Dexter
@@ -786,8 +788,17 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                         //popupMenu..findItem(R.id.menu_leaderboard).setVisible(false)
                     } catch (ex: Exception) {
 
-                    }
                 }
+            }
+        }
+        var unseenAwards: ArrayList<Award>? = ArrayList()
+        userData.awardCategory?.forEach {
+            it.awards?.filter { it.isSeen == false && it.is_achieved == true }?.forEach {
+                unseenAwards?.add(it)
+            }
+        }
+        if (unseenAwards.isNullOrEmpty().not()) {
+            ShowAwardFragment.showDialog(supportFragmentManager, unseenAwards?.toList()!!)
         }
     }
 

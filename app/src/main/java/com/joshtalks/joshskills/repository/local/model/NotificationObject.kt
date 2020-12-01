@@ -107,5 +107,10 @@ enum class NotificationAction(val type: String) {
 
     @SerializedName("open_reminder")
     ACTION_OPEN_REMINDER("open_reminder"),
-}
 
+    @SerializedName("audio_feedback_report")
+    AUDIO_FEEDBACK_REPORT("audio_feedback_report"),
+
+    @SerializedName("award_declare_notification")
+    AWARD_DECLARE("award_declare_notification")
+}
