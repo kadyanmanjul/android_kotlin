@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.repository.server.ChatMessageReceiver
 import com.joshtalks.joshskills.repository.server.CoursePerformanceResponse
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.ResponseChatMessage
+import com.joshtalks.joshskills.repository.server.UpdateLessonResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
@@ -129,7 +130,7 @@ interface ChatNetworkService {
     @POST("$DIR/chat/update_lesson/")
     suspend fun updateQuestionStatus(
         @Body questionStatus: UpdateQuestionStatus
-    ): BaseResponse<LESSON_STATUS>
+    ): Response<UpdateLessonResponse>
 
 
     @GET("$DIR/course/course_overview/")
