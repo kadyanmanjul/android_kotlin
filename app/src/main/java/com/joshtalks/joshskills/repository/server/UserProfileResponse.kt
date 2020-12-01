@@ -56,6 +56,8 @@ data class GroupInfo(
 )
 
 data class Certificate(
+    @SerializedName("id")
+    val id: Int?,
     @SerializedName("certificate_text")
     val certificateText: String?,
     @SerializedName("date_text")
@@ -67,7 +69,9 @@ data class Certificate(
     @SerializedName("certificate_description")
     val certificateDescription: String?,
     @SerializedName("is_achieved")
-    val is_achieved: Boolean=false
+    val is_achieved: Boolean=false,
+    @SerializedName("is_seen")
+    val isSeen: Boolean?
 )
 
 data class AwardCategory(
@@ -83,6 +87,8 @@ data class AwardCategory(
 
 @Parcelize
 data class Award(
+    @SerializedName("id")
+    val id: Int?,
     @SerializedName("award_text")
     val awardText: String?,
     @SerializedName("sort_order")
@@ -94,5 +100,7 @@ data class Award(
     @SerializedName("award_description")
     val awardDescription: String?,
     @SerializedName("is_achieved")
-    val is_achieved: Boolean=false
+    val is_achieved: Boolean=false,
+    @SerializedName("is_seen")
+    val isSeen: Boolean?
 ) : Parcelable
