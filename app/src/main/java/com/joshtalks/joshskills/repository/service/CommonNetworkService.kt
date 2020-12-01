@@ -10,11 +10,13 @@ import com.joshtalks.joshskills.repository.server.CertificateDetail
 import com.joshtalks.joshskills.repository.server.ComplaintResponse
 import com.joshtalks.joshskills.repository.server.FAQ
 import com.joshtalks.joshskills.repository.server.FAQCategory
+import com.joshtalks.joshskills.repository.server.FeedbackVoipResponse
 import com.joshtalks.joshskills.repository.server.FreshChatRestoreIDResponse
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.repository.server.NPSByUserRequest
 import com.joshtalks.joshskills.repository.server.RequestCertificateGenerate
 import com.joshtalks.joshskills.repository.server.RequestComplaint
+import com.joshtalks.joshskills.repository.server.SubmitExamResponse
 import com.joshtalks.joshskills.repository.server.SuccessResponse
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
@@ -162,7 +164,7 @@ interface CommonNetworkService {
     suspend fun getPlivoUserDetails(): UserPlivoDetailsModel
 
     @POST("$DIR/voicecall/feedback")
-    suspend fun feedbackVoipCallAsync(@Body request: RequestVoipRating): Any
+    suspend fun feedbackVoipCall(@Body request: RequestVoipRating): Response<FeedbackVoipResponse>
 
     @GET("$DIR/voicecall/topic/v2/{id}/")
     suspend fun getTopicDetail(@Path("id") id: String): SpeakingTopicModel
@@ -178,7 +180,7 @@ interface CommonNetworkService {
     suspend fun getCertificateExamDetails(@Path("id") id: Int): CertificationQuestionModel
 
     @POST("$DIR/certificateexam/report")
-    suspend fun submitExam(@Body params: RequestSubmitCertificateExam): Response<Any>
+    suspend fun submitExam(@Body params: RequestSubmitCertificateExam): Response<SubmitExamResponse>
 
     @GET("$DIR/certificateexam/report")
     suspend fun getExamReports(@Query("certificateexam_id") id: Int): List<CertificateExamReportModel>
@@ -208,4 +210,8 @@ interface CommonNetworkService {
     suspend fun getPinnedMessages(
         @Path("group_id") groupId: String
     ): Response<JsonArray>
+    @PATCH("$DIR/reputation/award_mentor/")
+    suspend fun patchAwardDetails(
+        @Body params: HashMap<String, List<Int>>): Response<PointsInfoResponse>
+
 }
