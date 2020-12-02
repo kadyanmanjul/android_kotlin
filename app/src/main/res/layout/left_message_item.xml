@@ -18,6 +18,8 @@
             android:layout_height="@dimen/_28sdp"
             android:layout_marginStart="4dp"
             android:layout_marginBottom="4dp"
+            android:background="@drawable/round_rectangle"
+            android:backgroundTint="@color/white"
             tools:src="@tools:sample/avatars" />
 
         <RelativeLayout
