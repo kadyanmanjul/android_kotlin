@@ -60,7 +60,7 @@ import static com.joshtalks.joshskills.messaging.RxBus2.publish;
 
 public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener, View.OnClickListener {
     private final Handler timeHandler = new Handler();
-    private final CountUpTimer countUpTimer = new CountUpTimer(true);
+    private final CountUpTimer countUpTimer = new CountUpTimer(false);
     private final Set<Graph> videoViewGraphList = new HashSet<>();
     private Uri uri;
     private long lastPosition = 0;
@@ -160,8 +160,6 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         appAnalytics = AppAnalytics.create(AnalyticsEvent.VIDEO_VIEW.getNAME())
                 .addBasicParam()
                 .addUserDetails();
-
-        countUpTimer.lap();
 
         if (player == null) {
             try {

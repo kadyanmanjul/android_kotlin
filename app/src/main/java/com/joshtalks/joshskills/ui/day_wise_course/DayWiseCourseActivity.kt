@@ -99,8 +99,6 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             finish()
 
         lessonId = intent.getIntExtra(LESSON_ID, 0)
-//        chatList = intent.getParcelableArrayListExtra(CHAT_ITEMS)!!
-
 
         lessonInterval = intent.getIntExtra(LESSON_INTERVAL, -1)
         chatId = intent.getStringExtra(LESSON__CHAT_ID)
@@ -147,6 +145,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
     }
 
     private fun setUpTablayout(chatModellist: List<ChatModel>) {
+        val sectionWiseChatList = ArrayList<ArrayList<ChatModel>>()
         val grammarQuestions: ArrayList<ChatModel> = ArrayList()
         val vocabularyQuestions: ArrayList<ChatModel> = ArrayList()
         val readingQuestions: ArrayList<ChatModel> = ArrayList()
@@ -156,17 +155,20 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                 CHAT_TYPE.GR -> {
                     grammarQuestions.add(it)
                 }
-                CHAT_TYPE.RP -> {
-                    readingQuestions.add(it)
-                }
                 CHAT_TYPE.VP -> {
                     vocabularyQuestions.add(it)
+                }
+                CHAT_TYPE.RP -> {
+                    readingQuestions.add(it)
                 }
                 else -> {
 
                 }
             }
         }
+        sectionWiseChatList.add(grammarQuestions)
+        sectionWiseChatList.add(vocabularyQuestions)
+        sectionWiseChatList.add(readingQuestions)
 
         val adapter = LessonPagerAdapter(
             supportFragmentManager, this.lifecycle, chatModellist,
@@ -205,6 +207,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                                 .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
                         }
                     }
+//                    tab.setCustomView(R.layout.capsule_tab_layout_view)
                     /* tab.icon = ContextCompat.getDrawable(
                          this@DayWiseCourseActivity,
                          R.drawable.ic_green_check_circle
@@ -226,10 +229,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             layoutParams.weight = 0f
             layoutParams.marginEnd = Utils.dpToPx(2)
             layoutParams.marginStart = Utils.dpToPx(2)
-            layoutParams.topMargin = Utils.dpToPx(2)
-            layoutParams.bottomMargin = Utils.dpToPx(2)
 
-            tab.setPadding(0, 0, 0, Utils.dpToPx(4))
             tab.layoutParams = layoutParams
             binding.lessonTabLayout.requestLayout()
         }
@@ -255,29 +255,14 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         })
 
         var tabOpened = false
-        grammarQuestions.forEach {
-            if (it.question?.status == QUESTION_STATUS.NA) {
-                onNextTabCall(0)
-                tabOpened = true
-                return@forEach
-            }
-        }
-        if (tabOpened.not()) {
-            vocabularyQuestions.forEach {
+        sectionWiseChatList.forEachIndexed outer@{ index, sectionChats ->
+            sectionChats.forEach {
                 if (it.question?.status == QUESTION_STATUS.NA) {
-                    onNextTabCall(1)
-                    tabOpened = true
-                    return@forEach
-                }
-            }
-        }
-
-        if (tabOpened.not()) {
-            readingQuestions.forEach {
-                if (it.question?.status == QUESTION_STATUS.NA) {
-                    onNextTabCall(2)
-                    tabOpened = true
-                    return@forEach
+                    if (tabOpened.not()) {
+                        onNextTabCall(index)
+                        tabOpened = true
+                    }
+                    return@outer
                 }
             }
         }
