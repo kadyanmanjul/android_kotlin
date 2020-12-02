@@ -27,6 +27,8 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CallType
+import com.joshtalks.joshskills.core.CountUpTimer
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
@@ -47,6 +49,9 @@ import com.plivo.endpoint.Endpoint
 import com.plivo.endpoint.EventListener
 import com.plivo.endpoint.Incoming
 import com.plivo.endpoint.Outgoing
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.HashMap
@@ -77,6 +82,7 @@ class WebRtcService : Service() {
     private var callFromFirebase = false
     private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
         HangUpRtcOnPstnCallAnsweredListener()
+    private var countUpTimer = CountUpTimer(false)
 
 
     companion object {
@@ -228,13 +234,9 @@ class WebRtcService : Service() {
         override fun onOutgoingCall(outgoing: Outgoing) {
             isCallWasOnGoing = false
             callData = outgoing
-            //   callCallback?.get()?.initOutgoingCall(getCallId())
+            initPlivoCallServer(outgoing.callId)
             Timber.tag(TAG).e("onOutgoingCall")
         }
-
-        /*  override fun onOutgoingCallRinging(p0: Outgoing) {
-              Timber.tag(TAG).e("onOutgoingCallRinging")
-          }*/
 
         override fun onOutgoingCallAnswered(outgoing: Outgoing) {
             Timber.tag(TAG).e("onOutgoingCallAnswered")
@@ -244,6 +246,7 @@ class WebRtcService : Service() {
                 showNotificationConnectedCall(outgoingCallData as HashMap<String, String>)
             }
             isCallWasOnGoing = true
+            startCallTimer()
         }
 
         // samene wale ne phone kaat diya
@@ -401,7 +404,7 @@ class WebRtcService : Service() {
         showNotificationOnOutgoingCall(outgoingCallData)
         callUUID = outgoingCallData?.get("X-PH-MOBILEUUID")
         outgoingCallData = null
-        Timber.tag(TAG).e("Outgoing")
+        Timber.tag(TAG).e("Outgoing" + endpoint?.callUUID)
     }
 
     fun getCallId(): String? {
@@ -421,6 +424,23 @@ class WebRtcService : Service() {
             userPlivo?.password,
             PrefManager.getStringValue(FCM_TOKEN)
         )
+    }
+
+    fun startCallTimer() {
+        try {
+            countUpTimer.lap()
+            countUpTimer.resume()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
+    private fun stopTimer() {
+        countUpTimer.pause()
+    }
+
+    fun getTimeOfTalk(): Int {
+        return countUpTimer.time
     }
 
     private fun isAppVisible(): Boolean {
@@ -610,13 +630,14 @@ class WebRtcService : Service() {
     }
 
     private fun onDisconnectAndRemove() {
+        stopTimer()
+        isCallWasOnGoing = false
+        isSpeakerEnable = false
+        isMicEnable = true
         callCallback?.get()?.onDisconnect(getCallId())
         callCallback = null
         removeNotifications()
         SoundPoolManager.getInstance(applicationContext)?.stopRinging()
-        isCallWasOnGoing = false
-        isSpeakerEnable = false
-        isMicEnable = true
         val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
         audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
         audioManager.isSpeakerphoneOn = false
@@ -853,7 +874,18 @@ class WebRtcService : Service() {
         return spannable
     }
 
-
+    private fun initPlivoCallServer(plivoCallId: String?) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val requestMap = mutableMapOf<String, String?>()
+                requestMap["call_initiate_id"] = plivoCallId
+                requestMap["mobileuuid"] = callUUID ?: EMPTY
+                AppObjectController.commonNetworkService.postCallInitAsync(requestMap)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
 }
 
 

@@ -20,7 +20,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.CallType
-import com.joshtalks.joshskills.core.CountUpTimer
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.TAG
 import com.joshtalks.joshskills.core.Utils
@@ -56,7 +55,6 @@ class WebRtcActivity : BaseActivity() {
     private lateinit var binding: ActivityCallingBinding
     private var mBoundService: WebRtcService? = null
     private var mServiceBound = false
-    private var countUpTimer = CountUpTimer(false)
 
     companion object {
         fun startOutgoingCallActivity(
@@ -95,22 +93,13 @@ class WebRtcActivity : BaseActivity() {
             Timber.tag(TAG).e("onConnect")
             runOnUiThread {
                 binding.callStatus.text = getText(R.string.practice)
-                try {
-                    countUpTimer.lap()
-                    countUpTimer.resume()
-                    startCallTimer()
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
+                startCallTimer()
             }
         }
 
         override fun onDisconnect(id: String?) {
             Timber.tag(TAG).e("onDisconnect")
             onStopCall()
-            AppObjectController.uiHandler.post {
-                countUpTimer.pause()
-            }
             checkAndShowRating(id)
         }
 
@@ -136,8 +125,8 @@ class WebRtcActivity : BaseActivity() {
 
         private fun checkAndShowRating(id: String?) {
             Timber.tag(TAG).e("checkAndShowRating   %s", id)
-            if (id.isNullOrEmpty().not() && countUpTimer.time > 0) {
-                VoipRatingFragment.newInstance(id, countUpTimer.time)
+            if (id.isNullOrEmpty().not() && mBoundService!!.getTimeOfTalk() > 0) {
+                VoipRatingFragment.newInstance(id, mBoundService!!.getTimeOfTalk())
                     .show(supportFragmentManager, "voip_rating_dialog_fragment")
                 return
             }
@@ -202,8 +191,6 @@ class WebRtcActivity : BaseActivity() {
                 setUserInfoForOutgoing(map)
                 setImageInIV(map["X-PH-IMAGE_URL"])
                 binding.callStatus.text = getText(R.string.practice)
-                countUpTimer.lap()
-                countUpTimer.resume()
                 startCallTimer()
                 binding.groupForIncoming.visibility = View.GONE
                 binding.groupForOutgoing.visibility = View.VISIBLE
@@ -216,6 +203,8 @@ class WebRtcActivity : BaseActivity() {
         if (WebRtcService.isCallWasOnGoing) {
             binding.groupForIncoming.visibility = View.GONE
             binding.groupForOutgoing.visibility = View.VISIBLE
+            binding.callTime.base = SystemClock.elapsedRealtime() - mBoundService!!.getTimeOfTalk()
+            binding.callTime.start()
         }
     }
 
@@ -359,6 +348,7 @@ class WebRtcActivity : BaseActivity() {
 
     override fun onStop() {
         super.onStop()
+        binding.callTime.stop()
         unbindService(myConnection)
     }
 

@@ -199,4 +199,8 @@ interface CommonNetworkService {
     @GET("$DIR/reputation/get_points_working/")
     suspend fun getPointsInfo(): Response<PointsInfoResponse>
 
+
+    @FormUrlEncoded
+    @PATCH("$DIR/voicecall/recipient_mentor")
+    suspend fun postCallInitAsync(@FieldMap params: Map<String, String?>): Any
 }
