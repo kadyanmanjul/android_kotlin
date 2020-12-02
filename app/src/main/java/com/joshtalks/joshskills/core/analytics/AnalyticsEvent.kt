@@ -471,6 +471,32 @@ enum class AnalyticsEvent(val NAME: String) {
     CHANNELS_DISABLED_SIZE("channels_disabled_size"),
 
     //Josh Video View
-    VIDEO_VIEW("video view")
+    VIDEO_VIEW("video view"),
+
+
+    //Voip Call
+    PLIVO_ID("plivo_id"),
+    FIND_USER_FOR_P2P_CALL("find_user_p2pl"),
+    LOGIN_PLIVO_SDK("login_in_plivo_p2p"),
+    LOGIN_FAILED_PLIVO_SDK("login_failed_plivo_p2p"),
+    LOGOUT_PLIVO_SDK("logout_in_plivo_p2p"),
+
+    INIT_CALL("init_call_p2p"),
+    OUTGOING_CALL("outgoing_call_int_p2p"),
+    OUTGOING_CALL_CONNECT("outgoing_call_connected_p2p"),
+    OUTGOING_CALL_REJECT("outgoing_call_reject_p2p"),
+    OUTGOING_CALL_HANGUP("outgoing_call_hangup_p2p"),
+    OUTGOING_CALL_INVALID("outgoing_call_invalid_p2p"),
+
+    INCOMING_CALL("incoming_call_int_p2p"),
+    INCOMING_CALL_HANGUP("incoming_call_hangup_p2p"),
+    INCOMING_CALL_REJECTED("incoming_call_rejected_p2p"),
+    INCOMING_CALL_INVALID("incoming_call_invalid_p2p"),
+
+    USER_ANSWER_EVENT_P2P("answer_p2p"),
+    USER_OUTGOING_HANGUP_EVENT_P2P("hangup_outgoing_p2p"),
+    USER_INCOMING_HANGUP_EVENT_P2P("hangup_incoming_p2p"),
+    USER_REJECT_INCOMING_P2P("reject_incoming_p2p"),
+
 
 }

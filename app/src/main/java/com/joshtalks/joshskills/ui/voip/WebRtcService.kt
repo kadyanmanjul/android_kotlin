@@ -32,6 +32,8 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.core.printAll
 import com.joshtalks.joshskills.repository.local.model.UserPlivoDetailsModel
@@ -83,6 +85,7 @@ class WebRtcService : Service() {
     private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
         HangUpRtcOnPstnCallAnsweredListener()
     private var countUpTimer = CountUpTimer(false)
+    private var appAnalytics: AppAnalytics? = null
 
 
     companion object {
@@ -160,32 +163,36 @@ class WebRtcService : Service() {
         override fun onLogin() {
             Timber.tag(TAG).e("LoginUser")
             Timber.tag(TAG).e("= %s", endpoint?.registered.toString())
-
+            executeEvent(AnalyticsEvent.LOGIN_PLIVO_SDK.NAME)
             try {
                 endpoint?.keepAlive()
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
+
+            isCallWasOnGoing = false
             (getSystemService(NOTIFICATION_SERVICE) as NotificationManager?)?.cancel(
                 EMPTY_NOTIFICATION_ID
             )
-            isCallWasOnGoing = false
 
             if (outgoingCallData != null) {
                 initCall()
+                return
             }
             if (callFromFirebase && incomingCallData != null) {
                 endpoint?.relayVoipPushNotification(incomingCallData)
                 callFromFirebase = false
+                return
             }
-
         }
 
         override fun onLogout() {
+            executeEvent(AnalyticsEvent.LOGOUT_PLIVO_SDK.NAME)
             Timber.tag(TAG).e("LogOutUser")
         }
 
         override fun onLoginFailed() {
+            executeEvent(AnalyticsEvent.LOGIN_FAILED_PLIVO_SDK.NAME)
             (getSystemService(NOTIFICATION_SERVICE) as NotificationManager?)?.cancel(
                 EMPTY_NOTIFICATION_ID
             )
@@ -208,9 +215,11 @@ class WebRtcService : Service() {
                 return
             }
             startOnIncomingCall(incoming.headerDict as HashMap<String, String>)
+            executeEvent(AnalyticsEvent.INCOMING_CALL.NAME)
         }
 
         override fun onIncomingCallHangup(incoming: Incoming) {
+            executeEvent(AnalyticsEvent.INCOMING_CALL_HANGUP.NAME)
             callData = incoming
             Timber.tag(TAG).e("%s%s", "onIncomingCallHangup ", getCallId())
             callCallback?.get()?.onCallDisconnect(getCallId())
@@ -219,6 +228,7 @@ class WebRtcService : Service() {
 
         //end user ne phone kaat diya
         override fun onIncomingCallRejected(incoming: Incoming) {
+            executeEvent(AnalyticsEvent.INCOMING_CALL_REJECTED.NAME)
             Timber.tag(TAG).e("onIncomingCallRejected")
             callCallback?.get()?.onDisconnect(getCallId())
             callData = incoming
@@ -227,6 +237,7 @@ class WebRtcService : Service() {
         }
 
         override fun onIncomingCallInvalid(p0: Incoming) {
+            executeEvent(AnalyticsEvent.INCOMING_CALL_INVALID.NAME)
             Timber.tag(TAG).e("onIncomingCallInvalid")
             onDisconnectAndRemove()
         }
@@ -236,6 +247,7 @@ class WebRtcService : Service() {
             callData = outgoing
             initPlivoCallServer(outgoing.callId)
             Timber.tag(TAG).e("onOutgoingCall")
+            executeEvent(AnalyticsEvent.OUTGOING_CALL.NAME)
         }
 
         override fun onOutgoingCallAnswered(outgoing: Outgoing) {
@@ -247,18 +259,22 @@ class WebRtcService : Service() {
             }
             isCallWasOnGoing = true
             startCallTimer()
+            executeEvent(AnalyticsEvent.OUTGOING_CALL_CONNECT.NAME)
         }
 
         // samene wale ne phone kaat diya
         override fun onOutgoingCallRejected(outgoing: Outgoing) {
+            executeEvent(AnalyticsEvent.OUTGOING_CALL_REJECT.NAME)
             callData = outgoing
             Timber.tag(TAG).e("onOutgoingCallRejected %s", getCallId())
             callCallback?.get()?.onCallReject(getCallId())
             removeNotifications()
+
         }
 
         // khud ne call kaata
         override fun onOutgoingCallHangup(outgoing: Outgoing) {
+            executeEvent(AnalyticsEvent.OUTGOING_CALL_HANGUP.NAME)
             callData = outgoing
             Timber.tag(TAG).e("onOutgoingCallHangup  %s", getCallId())
             callCallback?.get()?.onSelfDisconnect(getCallId())
@@ -267,6 +283,7 @@ class WebRtcService : Service() {
         }
 
         override fun onOutgoingCallInvalid(p0: Outgoing) {
+            executeEvent(AnalyticsEvent.OUTGOING_CALL_INVALID.NAME)
             Timber.tag(TAG).e("onOutgoingCallInvalid")
         }
 
@@ -503,6 +520,7 @@ class WebRtcService : Service() {
                     showNotificationConnectedCall(this.headerDict as HashMap<String, String>)
                     callCallback?.get()?.onConnect()
                     isCallWasOnGoing = true
+                    executeEvent(AnalyticsEvent.USER_ANSWER_EVENT_P2P.NAME)
                     return
                 }
             } catch (ex: Throwable) {
@@ -516,11 +534,13 @@ class WebRtcService : Service() {
             try {
                 if (this is Outgoing) {
                     this.hangup()
+                    executeEvent(AnalyticsEvent.USER_OUTGOING_HANGUP_EVENT_P2P.NAME)
                     return@run
                 }
 
                 if (this is Incoming) {
                     this.hangup()
+                    executeEvent(AnalyticsEvent.USER_INCOMING_HANGUP_EVENT_P2P.NAME)
                     return@run
                 }
             } catch (ex: Throwable) {
@@ -535,6 +555,7 @@ class WebRtcService : Service() {
             try {
                 if (this is Incoming) {
                     this.reject()
+                    executeEvent(AnalyticsEvent.USER_REJECT_INCOMING_P2P.NAME)
                     return@run
                 }
             } catch (ex: Throwable) {
@@ -884,6 +905,15 @@ class WebRtcService : Service() {
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
+        }
+    }
+
+    private fun executeEvent(event: String) {
+        executor.execute {
+            AppAnalytics.create(event)
+                .addUserDetails()
+                .addParam(AnalyticsEvent.PLIVO_ID.NAME, userPlivo?.username)
+                .push()
         }
     }
 }

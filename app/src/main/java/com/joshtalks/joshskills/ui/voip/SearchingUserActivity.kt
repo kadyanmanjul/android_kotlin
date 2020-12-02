@@ -154,6 +154,10 @@ class SearchingUserActivity : BaseActivity() {
     private fun addObserver() {
         viewModel.voipDetailsLiveData.observe(this, {
             if (it != null) {
+                AppAnalytics.create(AnalyticsEvent.FIND_USER_FOR_P2P_CALL.NAME)
+                    .addUserDetails()
+                    .addParam(AnalyticsEvent.PLIVO_ID.NAME, it.plivoUserName)
+                    .push()
                 WebRtcService.startOutgoingCall(getMapForOutgoing(it))
             }
         })
@@ -289,7 +293,7 @@ class SearchingUserActivity : BaseActivity() {
             voipCallDetailModel?.topic = topicId?.toString()
             voipCallDetailModel?.topicName = topicName
             voipCallDetailModel?.callieName = getCallieName()
-            //voipCallDetailModel?.plivoUserName = "698e8924b2b9411488dd6f1e710607837116065905138"
+            //      voipCallDetailModel?.plivoUserName = "698e8924b2b9411488dd6f1e710607837116065905138"
             outgoingCallData = LinkedHashMap()
             outgoingCallData.apply {
                 put("X-PH-MOBILEUUID", voipCallDetailModel?.mobileUUID)

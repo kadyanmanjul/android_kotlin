@@ -21,7 +21,6 @@ import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 const val LAST_VOIP_CALL_ID = "last_call_id"
 const val LAST_VOIP_CALL_TIME = "last_call_time"
@@ -78,11 +77,7 @@ class VoipRatingFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.tvSpeaking.text = if (TimeUnit.MILLISECONDS.toMinutes(lastCallTime) >= 10) {
-            getString(R.string.speaking_time_msz_s, getTimeHhMm())
-        } else {
-            getString(R.string.speaking_time_msz, getTimeHhMm())
-        }
+        binding.tvSpeaking.text = getString(R.string.speaking_time_msz, getTimeHhMm())
     }
 
     private fun getTimeHhMm(): String {
