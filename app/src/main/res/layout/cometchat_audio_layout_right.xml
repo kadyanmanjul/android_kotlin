@@ -14,24 +14,34 @@
         android:background="@drawable/outgoing_message_normal_bg"
         android:padding="8dp">
 
+        <View
+            android:id="@+id/dummy_view"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_15sdp"
+            android:visibility="visible" />
+
         <com.joshtalks.joshskills.ui.groupchat.uikit.AudioV2PlayerView
             android:id="@+id/audio_player"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_48sdp" />
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dummy_view"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:gravity="center_vertical"
+            android:paddingEnd="@dimen/_8sdp"
+            tools:layout_height="@dimen/_40sdp" />
 
         <TextView
-            android:visibility="gone"
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:text="@string/audio_file"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:visibility="gone" />
 
         <ImageView
-            android:visibility="gone"
-
             android:id="@+id/playBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -40,24 +50,25 @@
             android:backgroundTint="@color/gray_9E"
             android:padding="8dp"
             android:src="@drawable/ic_play_arrow_black_24dp"
+            android:visibility="gone"
             app:tint="@color/white" />
 
         <TextView
-            android:visibility="gone"
             android:id="@+id/audiolength_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
             android:layout_marginStart="8dp"
             android:textColor="@color/black"
+            android:visibility="gone"
             tools:text="125 KB" />
 
         <TextView
             android:id="@+id/txt_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/playBtn"
-            android:layout_alignEnd="@id/playBtn"
+            android:layout_below="@id/audio_player"
+            android:layout_alignEnd="@id/audio_player"
             android:layout_gravity="center"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="8dp"
@@ -86,8 +97,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:orientation="horizontal"
-            tools:visibility="visible"
-            android:visibility="gone" />
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/thread_reply_count"
