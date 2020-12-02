@@ -123,14 +123,18 @@ class ShowAwardFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.close.visibility = View.VISIBLE
-        if (award?.size!! < 2) {
+        if(isFromUserProfile) {
             binding.btnProfile.visibility = View.GONE
-            binding.next.visibility = View.GONE
-            binding.previous.visibility = View.GONE
-        } else {
+
+        } else{
+            if (award?.size!! < 2) {
+                binding.next.visibility = View.GONE
+                binding.previous.visibility = View.GONE
+            } else {
+                binding.next.visibility = View.VISIBLE
+                binding.previous.visibility = View.GONE
+            }
             binding.btnProfile.visibility = View.VISIBLE
-            binding.next.visibility = View.VISIBLE
-            binding.previous.visibility = View.GONE
         }
         award?.get(0)?.imageUrl?.let {
             binding.image.setImage(it)
