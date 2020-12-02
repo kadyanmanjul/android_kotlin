@@ -27,6 +27,7 @@ import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_ID
 import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTION
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
 import com.joshtalks.joshskills.ui.certification_exam.examview.CExamMainActivity
+import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
@@ -79,9 +80,15 @@ class CExamReportActivity : BaseActivity() {
         viewModel.apiStatus.observe(this, {
             binding.progressBar.visibility = View.GONE
         })
-        viewModel.examReportLiveData.observe(this, {
-            it?.run {
+        viewModel.examReportLiveData.observe(this, { certificateList->
+            certificateList?.run {
                 setUpExamViewPager(this)
+                if (certificateList.get(0).award_mentor != null) {
+                    ShowAwardFragment.showDialog(
+                        supportFragmentManager,
+                        listOf(certificateList.get(0).award_mentor!!)
+                    )
+                }
             }
         })
     }

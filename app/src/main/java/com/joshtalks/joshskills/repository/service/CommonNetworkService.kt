@@ -16,7 +16,6 @@ import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.repository.server.NPSByUserRequest
 import com.joshtalks.joshskills.repository.server.RequestCertificateGenerate
 import com.joshtalks.joshskills.repository.server.RequestComplaint
-import com.joshtalks.joshskills.repository.server.SubmitExamResponse
 import com.joshtalks.joshskills.repository.server.SuccessResponse
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
@@ -180,7 +179,7 @@ interface CommonNetworkService {
     suspend fun getCertificateExamDetails(@Path("id") id: Int): CertificationQuestionModel
 
     @POST("$DIR/certificateexam/report")
-    suspend fun submitExam(@Body params: RequestSubmitCertificateExam): Response<SubmitExamResponse>
+    suspend fun submitExam(@Body params: RequestSubmitCertificateExam): Response<Any>
 
     @GET("$DIR/certificateexam/report")
     suspend fun getExamReports(@Query("certificateexam_id") id: Int): List<CertificateExamReportModel>
