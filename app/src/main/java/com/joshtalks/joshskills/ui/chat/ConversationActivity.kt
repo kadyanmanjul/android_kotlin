@@ -49,6 +49,7 @@ import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshcamerax.utils.ImageQuality
 import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.ACHIEVED_AWARD_LIST
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CERTIFICATE_GENERATE
 import com.joshtalks.joshskills.core.COURSE_PROGRESS_OPENED
@@ -114,6 +115,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
+import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
@@ -139,6 +141,7 @@ import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment
+import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.LAST_VIDEO_INTERVAL
