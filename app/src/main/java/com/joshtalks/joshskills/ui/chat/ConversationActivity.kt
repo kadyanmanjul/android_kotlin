@@ -1502,38 +1502,23 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     IS_BATCH_CHANGED
                 )
             ) {
-                if (data.getBooleanExtra(
-                        IS_BATCH_CHANGED,
-                        false
-                    )
-                ) {
-                    AppObjectController.uiHandler.post {
-                        conversationViewModel.deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
-                        if (unlockViewHolder != null) {
-                            conversationBinding.chatRv.removeView(unlockViewHolder)
-                        }
-                        fetchNewUnlockClasses(data)
-                    }
-                } else {
-                    val interval = data.getIntExtra(LAST_LESSON_INTERVAL, -1)
-                    val status = data.getBooleanExtra(LAST_LESSON_STATUS, false)
-                    if (isCurrentLessonAlreadyCompleted.not()) {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            try {
-                                val chatId = data.getStringExtra(LESSON__CHAT_ID)
-                                if (chatId != null && chatId.isNullOrBlank().not()) {
-                                    val chatObj = AppObjectController.appDatabase.chatDao()
-                                        .getUpdatedChatObjectViaId(chatId)
-
-                                    refreshViewAtPos(chatObj)
-                                }
-                            } catch (ex: Exception) {
+                val interval = data.getIntExtra(LAST_LESSON_INTERVAL, -1)
+                val status = data.getBooleanExtra(LAST_LESSON_STATUS, false)
+                if (isCurrentLessonAlreadyCompleted.not()) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val chatId = data.getStringExtra(LESSON__CHAT_ID)
+                            if (chatId != null && chatId.isNullOrBlank().not()) {
+                                val chatObj = AppObjectController.appDatabase.chatDao()
+                                    .getUpdatedChatObjectViaId(chatId)
+                                refreshViewAtPos(chatObj)
                             }
-
+                        } catch (ex: Exception) {
                         }
+
                     }
-                    addUnlockNextClassCard(interval, fromLesson = true)
                 }
+                addUnlockNextClassCard(interval, fromLesson = true)
                 uiHandler.postDelayed({
                     try {
                         conversationViewModel.setMRefreshControl(true)
@@ -1558,7 +1543,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    fun onLessonItemClick(lessonId: Int, interval: Int,chatId:String) {
+    fun onLessonItemClick(lessonId: Int, interval: Int, chatId: String) {
         CoroutineScope(Dispatchers.IO).launch {
             isCurrentLessonAlreadyCompleted = conversationViewModel.getLessonStatus(lessonId)
             lastLessonId = lessonId
@@ -1631,9 +1616,9 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     conversationBinding.chatRv.addView(cell)
                     unlockViewHolder = cell as UnlockNextClassViewHolder
                     refreshViewAtPos(cell.message)
+                    scrollToEnd()
                 }
             }
-            scrollToEnd()
         }
     }
 
@@ -1658,7 +1643,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 .getQuestionForNextInterval(
                     inboxEntity.courseId, interval
                 )
-            if (fromLesson) {
+            if (fromLesson.not()) {
                 if (question != null && question.material_type == BASE_MESSAGE_TYPE.VI && question.type == BASE_MESSAGE_TYPE.Q) {
                     val videoList = AppObjectController.appDatabase.chatDao()
                         .getVideosOfQuestion(questionId = question.questionId)

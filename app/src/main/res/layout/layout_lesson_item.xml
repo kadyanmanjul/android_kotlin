@@ -84,11 +84,11 @@
         android:foreground="?android:attr/selectableItemBackground">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginHorizontal="@dimen/_7sdp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/round_rect_default"
-            android:backgroundTint="@color/light_shade_of_gray"
-            android:padding="@dimen/_4sdp">
+            android:backgroundTint="@color/light_shade_of_gray">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/lesson_name_tv__completed"
