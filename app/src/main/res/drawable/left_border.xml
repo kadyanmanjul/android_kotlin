@@ -7,7 +7,7 @@
         android:top="-6dp">
         <shape android:shape="rectangle">
             <stroke
-                android:width="5dp"
+                android:width="@dimen/_3sdp"
                 android:color="@color/colorPrimary" />
             <solid android:color="@color/sent_msg_background" />
         </shape>

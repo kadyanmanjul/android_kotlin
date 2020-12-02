@@ -9,7 +9,8 @@
     android:layout_marginStart="@dimen/_6sdp"
     android:layout_marginEnd="@dimen/_6sdp"
     android:background="@drawable/left_border"
-    android:padding="@dimen/_8sdp"
+    android:paddingHorizontal="@dimen/_6sdp"
+    android:paddingVertical="@dimen/_4sdp"
     android:visibility="gone"
     tools:visibility="visible">
 
@@ -17,7 +18,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginStart="8dp"
         android:orientation="vertical">
 
         <TextView
@@ -32,8 +32,8 @@
             android:id="@+id/tv_reply_layout_subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:drawablePadding="8dp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:drawablePadding="@dimen/_4sdp"
             android:textColor="@color/black"
             android:textStyle="italic"
             tools:text="Perfect! I've been waiting to go" />
@@ -41,9 +41,10 @@
 
     <ImageView
         android:id="@+id/iv_reply_media"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
         android:layout_alignParentEnd="true"
+        android:visibility="gone"
         tools:src="@tools:sample/avatars" />
 
     <ImageView
