@@ -92,7 +92,7 @@
             android:id="@+id/text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_36sdp"
+            android:layout_marginBottom="@dimen/_28sdp"
             android:gravity="center"
             android:paddingHorizontal="@dimen/_46sdp"
             android:text="@string/congratulations"
