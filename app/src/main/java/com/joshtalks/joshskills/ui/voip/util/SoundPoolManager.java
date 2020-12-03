@@ -67,6 +67,7 @@ public class SoundPoolManager {
                 instance = new SoundPoolManager(context);
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return instance;
     }

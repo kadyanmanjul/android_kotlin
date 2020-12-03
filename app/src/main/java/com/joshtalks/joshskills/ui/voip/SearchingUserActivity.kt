@@ -164,7 +164,8 @@ class SearchingUserActivity : BaseActivity() {
         viewModel.apiCallStatusLiveData.observe(this, {
             if (ApiCallStatus.RETRY == it) {
                 AppObjectController.uiHandler.postDelayed({
-                    requestForSearchUser()
+                    initApiForSearchUser()
+
                 }, 1000)
             } else if (ApiCallStatus.FAILED_PERMANENT == it) {
                 showToast("We did not find any user, please retry")

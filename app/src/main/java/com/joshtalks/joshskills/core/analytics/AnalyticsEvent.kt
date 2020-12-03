@@ -488,6 +488,7 @@ enum class AnalyticsEvent(val NAME: String) {
     OUTGOING_CALL_HANGUP("outgoing_call_hangup_p2p"),
     OUTGOING_CALL_INVALID("outgoing_call_invalid_p2p"),
 
+    INCOMING_CALL_NOTIFICATION("incoming_call_notification_p2p"),
     INCOMING_CALL("incoming_call_int_p2p"),
     INCOMING_CALL_HANGUP("incoming_call_hangup_p2p"),
     INCOMING_CALL_REJECTED("incoming_call_rejected_p2p"),

@@ -30,6 +30,8 @@ import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
@@ -121,6 +123,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             for ((key, value) in remoteMessage.data) {
                 data[key] = value
             }
+            AppAnalytics.create(AnalyticsEvent.INCOMING_CALL_NOTIFICATION.NAME)
+                .addUserDetails()
+                .push()
             WebRtcService.startOnNotificationIncomingCall(data)
         } catch (ex: Exception) {
             ex.printStackTrace()

@@ -269,7 +269,7 @@ class WebRtcService : Service() {
             Timber.tag(TAG).e("onOutgoingCallRejected %s", getCallId())
             callCallback?.get()?.onCallReject(getCallId())
             removeNotifications()
-
+            isCallWasOnGoing = false
         }
 
         // khud ne call kaata
@@ -372,7 +372,7 @@ class WebRtcService : Service() {
                             val incomingData: HashMap<String, String>? =
                                 intent.getSerializableExtra(INCOMING_CALL_USER_OBJ) as HashMap<String, String>?
                             incomingData?.printAll()
-                            SoundPoolManager.getInstance(applicationContext).playRinging()
+                            startRing()
                             showNotificationOnIncomingCall(incomingData)
                             processIncomingCall(incomingData)
                         }
@@ -415,6 +415,14 @@ class WebRtcService : Service() {
         return START_NOT_STICKY
     }
 
+    private fun startRing() {
+        try {
+            SoundPoolManager.getInstance(AppObjectController.joshApplication).playRinging()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
     private fun initCall() {
         endpoint?.createOutgoingCall()
             ?.callH(userPlivo?.username, outgoingCallData)
@@ -445,6 +453,7 @@ class WebRtcService : Service() {
 
     fun startCallTimer() {
         try {
+            countUpTimer.reset()
             countUpTimer.lap()
             countUpTimer.resume()
         } catch (ex: Exception) {
@@ -515,17 +524,26 @@ class WebRtcService : Service() {
         callData?.run {
             try {
                 if (this is Incoming) {
-                    SoundPoolManager.getInstance(applicationContext).stopRinging()
+                    stopRing()
                     this.answer()
                     showNotificationConnectedCall(this.headerDict as HashMap<String, String>)
                     callCallback?.get()?.onConnect()
                     isCallWasOnGoing = true
+                    startCallTimer()
                     executeEvent(AnalyticsEvent.USER_ANSWER_EVENT_P2P.NAME)
                     return
                 }
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
+        }
+    }
+
+    private fun stopRing() {
+        try {
+            SoundPoolManager.getInstance(AppObjectController.joshApplication).stopRinging()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 
@@ -658,10 +676,11 @@ class WebRtcService : Service() {
         callCallback?.get()?.onDisconnect(getCallId())
         callCallback = null
         removeNotifications()
-        SoundPoolManager.getInstance(applicationContext)?.stopRinging()
+        stopRing()
         val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
         audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
         audioManager.isSpeakerphoneOn = false
+        phoneCallState = CallState.CALL_STATE_IDLE
     }
 
     private fun removeNotifications() {
@@ -717,7 +736,12 @@ class WebRtcService : Service() {
             .setContentTitle(getString(R.string.app_name))
             .setContentText("Syncing...")
             .setSmallIcon(R.drawable.ic_status_bar_notification)
-            .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
+            .setColor(
+                ContextCompat.getColor(
+                    AppObjectController.joshApplication,
+                    R.color.colorPrimary
+                )
+            )
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setOnlyAlertOnce(true)
@@ -732,7 +756,7 @@ class WebRtcService : Service() {
     private fun incomingCallNotification(incomingData: HashMap<String, String>?): Notification {
         Timber.tag(TAG).e("incomingCallNotification   ")
         val incomingSoundUri: Uri =
-            Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + applicationContext.packageName + "/" + R.raw.incoming)
+            Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + AppObjectController.joshApplication.packageName + "/" + R.raw.incoming)
 
         val att: AudioAttributes = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
@@ -776,7 +800,12 @@ class WebRtcService : Service() {
             .setContentTitle(incomingData?.get("X-PH-CALLERNAME"))
             .setContentText("Incoming voice call")
             .setSmallIcon(R.drawable.ic_status_bar_notification)
-            .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
+            .setColor(
+                ContextCompat.getColor(
+                    AppObjectController.joshApplication,
+                    R.color.colorPrimary
+                )
+            )
             .setOngoing(true)
             //    .setContentIntent(pendingIntent)
             .addAction(
@@ -830,7 +859,12 @@ class WebRtcService : Service() {
             .setContentTitle(extraHeaders?.get("X-PH-CALLIENAME"))
             .setContentText("Outgoing voice call")
             .setSmallIcon(R.drawable.ic_status_bar_notification)
-            .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
+            .setColor(
+                ContextCompat.getColor(
+                    AppObjectController.joshApplication,
+                    R.color.colorPrimary
+                )
+            )
             //.setContentIntent(pendingIntent)
             .setOngoing(true)
             .addAction(
@@ -870,7 +904,12 @@ class WebRtcService : Service() {
             .setContentTitle(incomingData?.get("X-PH-CALLERNAME"))
             .setContentText("Ongoing voice call")
             .setSmallIcon(R.drawable.ic_status_bar_notification)
-            .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
+            .setColor(
+                ContextCompat.getColor(
+                    AppObjectController.joshApplication,
+                    R.color.colorPrimary
+                )
+            )
             .setOngoing(true)
             .addAction(
                 NotificationCompat.Action(
@@ -900,7 +939,8 @@ class WebRtcService : Service() {
             try {
                 val requestMap = mutableMapOf<String, String?>()
                 requestMap["call_initiate_id"] = plivoCallId
-                requestMap["mobileuuid"] = callUUID ?: EMPTY
+                requestMap["mobileuuid"] =
+                    callUUID ?: outgoingCallData?.get("X-PH-MOBILEUUID") ?: EMPTY
                 AppObjectController.commonNetworkService.postCallInitAsync(requestMap)
             } catch (ex: Exception) {
                 ex.printStackTrace()

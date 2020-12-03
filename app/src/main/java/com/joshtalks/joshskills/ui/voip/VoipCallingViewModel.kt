@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
-import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.net.ProtocolException
@@ -41,8 +40,8 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
             } catch (ex: ProtocolException) {
                 apiCallStatusLiveData.postValue(ApiCallStatus.RETRY)
             } catch (ex: Throwable) {
-                apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
-                ex.showAppropriateMsg()
+                apiCallStatusLiveData.postValue(ApiCallStatus.RETRY)
+                //      ex.showAppropriateMsg()
                 voipDetailsLiveData.postValue(null)
             }
         }
