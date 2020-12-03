@@ -74,7 +74,6 @@ const val CONVERSATION_ID = "conversation_id"
 const val IS_ACTIVE = "is_active"
 const val LANGUAGE_CODE = "language_code"
 
-
 class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
@@ -92,8 +91,6 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
         if (PrefManager.getIntValue(SUBSCRIPTION_TEST_ID) == 0) {
             PrefManager.put(SUBSCRIPTION_TEST_ID, 122)
         }
-
-        WorkManagerAdmin.readMessageUpdating()
         WorkManagerAdmin.deleteUnlockTypeQuestions()
         AppObjectController.getFirebaseRemoteConfig().fetchAndActivate().addOnCompleteListener {
             val disabledVersions =
@@ -120,7 +117,6 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
         return Result.success()
     }
 }
-
 
 class JoshTalksInstallWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
@@ -250,7 +246,6 @@ class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParamet
     }
 }
 
-
 class GetUserConversationWorker(var context: Context, private var workerParams: WorkerParameters) :
     Worker(context, workerParams) {
 
@@ -345,7 +340,6 @@ class RegisterUserGAId(context: Context, private val workerParams: WorkerParamet
     }
 }
 
-
 class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
@@ -365,7 +359,6 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
         return Result.success()
     }
 }
-
 
 class MappingGaIDWithMentor(var context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
@@ -412,7 +405,6 @@ class MappingGaIDWithMentor(var context: Context, workerParams: WorkerParameters
     }
 }
 
-
 class UploadFCMTokenOnServer(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
@@ -450,7 +442,6 @@ class UploadFCMTokenOnServer(context: Context, workerParams: WorkerParameters) :
     }
 }
 
-
 class WorkerAfterLoginInApp(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
@@ -463,14 +454,13 @@ class WorkerInLandingScreen(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         InstallReferralUtil.installReferrer(applicationContext)
-        //DatabaseUtils.updateUserMessageSeen()
         AppObjectController.clearDownloadMangerCallback()
         AppAnalytics.updateUser()
         SyncChatService.syncChatWithServer()
+        WorkManagerAdmin.readMessageUpdating()
         return Result.success()
     }
 }
-
 
 class SyncEngageVideo(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
@@ -745,7 +735,6 @@ class LogAchievementLevelEventWorker(context: Context, workerParams: WorkerParam
         return Result.success()
     }
 }
-
 
 class IsUserActiveWorker(context: Context, private var workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {

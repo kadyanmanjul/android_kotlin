@@ -50,8 +50,12 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
-        WorkManager.getInstance(applicationContext).cancelAllWork()
         animatedProgressBar()
+        initApp()
+    }
+
+    private fun initApp() {
+        WorkManager.getInstance(applicationContext).cancelAllWork()
         Branch.getInstance(applicationContext).resetUserSession()
         WorkManagerAdmin.appStartWorker()
         logAppLaunchEvent(getNetworkOperatorName())

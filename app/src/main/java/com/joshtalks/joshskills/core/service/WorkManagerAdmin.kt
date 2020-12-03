@@ -87,8 +87,10 @@ object WorkManagerAdmin {
     }
 
     fun deviceIdGenerateWorker() {
-        WorkManager.getInstance(AppObjectController.joshApplication)
-            .enqueue(OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build())
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniqueWork(
+            "Unique_id_generate",
+            ExistingWorkPolicy.KEEP, (OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build())
+        )
     }
 
     fun updatedCourseForConversation(conversationId: String) {
@@ -119,7 +121,6 @@ object WorkManagerAdmin {
             .setInitialDelay(1, TimeUnit.MINUTES)
             .addTag(MessageReadPeriodicWorker::class.java.simpleName)
             .build()
-
 
         WorkManager.getInstance(AppObjectController.joshApplication)
             .enqueueUniquePeriodicWork(
