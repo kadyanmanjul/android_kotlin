@@ -418,14 +418,6 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             conversationBinding.toolbar.inflateMenu(R.menu.conversation_menu)
             conversationBinding.toolbar.setOnMenuItemClickListener {
                 when (it?.itemId) {
-                    R.id.groupChat -> {
-                        try {
-                            conversationViewModel.initCometChat()
-                        } catch (ex: Exception) {
-                            ex.printStackTrace()
-                            showToast(this.getString(R.string.generic_message_for_error))
-                        }
-                    }
                     R.id.menu_referral -> {
                         ReferralActivity.startReferralActivity(
                             this@ConversationActivity,
@@ -441,9 +433,6 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 }
                 return@setOnMenuItemClickListener true
             }
-
-            conversationBinding.toolbar.menu.findItem(R.id.groupChat).isVisible =
-                inboxEntity.isGroupActive
 
         } catch (ex: Exception) {
             FirebaseCrashlytics.getInstance().recordException(ex)
@@ -698,6 +687,19 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
 
 
         }
+
+        conversationBinding.imgGroupChat.setOnClickListener {
+            try {
+                conversationViewModel.initCometChat()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                showToast(this.getString(R.string.generic_message_for_error))
+            }
+        }
+
+        conversationBinding.imgGroupChat.visibility =
+            if (inboxEntity.isGroupActive) VISIBLE else GONE
+
         findViewById<View>(R.id.ll_camera).setOnClickListener {
             AppAnalytics.create(AnalyticsEvent.CAMERA_SELECTED.NAME).push()
             uploadAttachment()

@@ -124,27 +124,11 @@
 
         </com.google.android.material.appbar.MaterialToolbar>
 
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/bottom_bar"
             android:layout_below="@+id/toolbar">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/imgGroupChat"
-                android:layout_width="@dimen/_28sdp"
-                android:layout_height="@dimen/_28sdp"
-                android:layout_gravity="top|end"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:layout_marginVertical="@dimen/_8sdp"
-                android:background="@drawable/white_button_round_enabled"
-                android:backgroundTint="@color/colorPrimary"
-                android:gravity="center_vertical|start"
-                android:padding="@dimen/_6sdp"
-                android:visibility="gone"
-                app:srcCompat="@drawable/ic_chat"
-                tools:visibility="visible" />
 
             <com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout
                 android:id="@+id/refresh_layout"
@@ -181,6 +165,27 @@
                 app:elevation="@dimen/_4sdp"
                 app:srcCompat="@drawable/ic_arrow_down"
                 tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgGroupChat"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_gravity="top|end"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginVertical="@dimen/_8sdp"
+                android:adjustViewBounds="true"
+                android:background="@drawable/white_button_round_enabled"
+                android:backgroundTint="@color/colorPrimary"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:padding="@dimen/_6sdp"
+                android:visibility="gone"
+                app:elevation="@dimen/_4sdp"
+                app:srcCompat="@drawable/ic_chat"
+                tools:visibility="visible" />
+
         </FrameLayout>
 
 
