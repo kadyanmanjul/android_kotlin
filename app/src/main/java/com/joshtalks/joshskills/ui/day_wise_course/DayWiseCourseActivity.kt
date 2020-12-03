@@ -178,6 +178,26 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
         binding.lessonViewpager.adapter = adapter
 
+        val tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
+        val layoutParam: LinearLayout.LayoutParams =
+            LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+            )
+
+        for (i in 0 until tabs.childCount) {
+            val tab = tabs.getChildAt(i)
+            tab.layoutParams = layoutParam
+            val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
+
+            layoutParams.weight = 0f
+            layoutParams.marginEnd = Utils.dpToPx(2)
+            layoutParams.marginStart = Utils.dpToPx(2)
+
+            tab.layoutParams = layoutParams
+            binding.lessonTabLayout.requestLayout()
+        }
+
         TabLayoutMediator(
             binding.lessonTabLayout,
             binding.lessonViewpager,
@@ -207,32 +227,8 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                                 .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
                         }
                     }
-//                    tab.setCustomView(R.layout.capsule_tab_layout_view)
-                    /* tab.icon = ContextCompat.getDrawable(
-                         this@DayWiseCourseActivity,
-                         R.drawable.ic_green_check_circle
-                     )*/
                 }
             }).attach()
-        val tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
-        val layoutParam: LinearLayout.LayoutParams =
-            LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT
-            )
-
-        for (i in 0 until tabs.childCount) {
-            val tab = tabs.getChildAt(i)
-            tab.layoutParams = layoutParam
-            val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
-
-            layoutParams.weight = 0f
-            layoutParams.marginEnd = Utils.dpToPx(2)
-            layoutParams.marginStart = Utils.dpToPx(2)
-
-            tab.layoutParams = layoutParams
-            binding.lessonTabLayout.requestLayout()
-        }
 
         binding.lessonTabLayout.addOnTabSelectedListener(object :
             TabLayout.OnTabSelectedListener {
