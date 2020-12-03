@@ -228,7 +228,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                     "mobile" to mobileNumber,
                     "test_id" to getPaymentTestId()
                 )
-                if (isRegisteredAlready) {
+                if (isRegisteredAlready&& User.getInstance().isVerified) {
                     data["mentor_id"] = Mentor.getInstance().getId()
                 }
                 val paymentDetailsResponse: Response<OrderDetailResponse> =
@@ -304,47 +304,4 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    fun updateSubscriptionStatus() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response =
-                    AppObjectController.signUpNetworkService.getOnBoardingStatus(
-                        PrefManager.getStringValue(INSTANCE_ID, false),
-                        Mentor.getInstance().getId(),
-                        PrefManager.getStringValue(USER_UNIQUE_ID)
-                    )
-                if (response.isSuccessful) {
-                    response.body()?.run {
-                        // Update Version Data in local
-                        PrefManager.put(SUBSCRIPTION_TEST_ID,this.SubscriptionTestId)
-                        val versionData = VersionResponse.getInstance()
-                        versionData.version?.let {
-                            it.name = this.version.name
-                            it.id = this.version.id
-                            VersionResponse.update(versionData)
-                        }
-
-                        // save Free trial data
-                        FreeTrialData.update(this.freeTrialData)
-
-                        PrefManager.put(EXPLORE_TYPE, this.exploreType)
-                        PrefManager.put(
-                            IS_SUBSCRIPTION_STARTED,
-                            this.subscriptionData.isSubscriptionBought ?: false
-                        )
-                        PrefManager.put(
-                            REMAINING_SUBSCRIPTION_DAYS,
-                            this.subscriptionData.remainingDays
-                        )
-
-                        PrefManager.put(IS_TRIAL_STARTED, this.freeTrialData.is7DFTBought ?: false)
-                        PrefManager.put(REMAINING_TRIAL_DAYS, this.freeTrialData.remainingDays)
-                        PrefManager.put(SHOW_COURSE_DETAIL_TOOLTIP, this.showTooltip5)
-                    }
-                }
-            } catch (ex: Throwable) {
-                ex.showAppropriateMsg()
-            }
-        }
-    }
 }

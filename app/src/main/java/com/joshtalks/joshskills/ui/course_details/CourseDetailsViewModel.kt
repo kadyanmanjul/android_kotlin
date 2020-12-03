@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponseV2
 import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTestIdRequest
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -30,7 +31,7 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
                 requestParams["test_id"] = testId
                 requestParams["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
                 requestParams["instance_id"] = PrefManager.getStringValue(INSTANCE_ID, false)
-                if (Mentor.getInstance().getId().isNotEmpty()) {
+                if (Mentor.getInstance().getId().isNotEmpty()&& User.getInstance().isVerified) {
                     requestParams["mentor_id"] = Mentor.getInstance().getId()
                 }
                 val response =

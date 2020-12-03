@@ -534,7 +534,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 data["test_id"] = testId
                 data["instance_id"] = PrefManager.getStringValue(INSTANCE_ID, false)
 
-                if (Mentor.getInstance().getId().isNotEmpty()) {
+                if (Mentor.getInstance().getId().isNotEmpty() && User.getInstance().isVerified) {
                     data["mentor_id"] = Mentor.getInstance().getId()
                 }
                 if (PrefManager.getStringValue(REFERRED_REFERRAL_CODE)
@@ -767,7 +767,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         logPaymentStatusAnalyticsEvents(AnalyticsEvent.SUCCESS_PARAM.NAME)
         isBackPressDisabled = true
         razorpayOrderId.verifyPayment()
-        viewModel.updateSubscriptionStatus()
+        //viewModel.updateSubscriptionStatus()
         NPSEventModel.setCurrentNPA(
             NPSEvent.PAYMENT_SUCCESS
         )

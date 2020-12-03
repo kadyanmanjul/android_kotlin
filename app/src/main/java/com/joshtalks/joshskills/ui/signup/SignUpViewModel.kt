@@ -356,60 +356,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         incorrectAttempt += 1
     }
 
-    fun verifyUser(
-        request: SocialSignUpRequest
-    ) {
-        if (request.createdSource == CreatedSource.OTP.name) {
-            request.countryCode = countryCode
-            request.mobile = phoneNumber
-        }
-        progressBarStatus.postValue(true)
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response =
-                    AppObjectController.signUpNetworkService.verifyGuestUser(
-                        request
-                    )
-                if (response.isSuccessful) {
-                    response.body()?.run {
-                        updateSubscriptionStatus()
-                        when (request.createdSource) {
-                            CreatedSource.FB.name -> {
-                                MarketingAnalytics.completeRegistrationAnalytics(
-                                    this.newUser,
-                                    RegistrationMethods.FACEBOOK
-                                )
-                            }
-                            CreatedSource.GML.name -> {
-                                MarketingAnalytics.completeRegistrationAnalytics(
-                                    this.newUser,
-                                    RegistrationMethods.GOOGLE
-                                )
-                            }
-                            CreatedSource.OTP.name -> {
-                                MarketingAnalytics.completeRegistrationAnalytics(
-                                    this.newUser,
-                                    RegistrationMethods.MOBILE_NUMBER
-                                )
-                            }
-                            CreatedSource.TC.name -> {
-                                MarketingAnalytics.completeRegistrationAnalytics(
-                                    this.newUser,
-                                    RegistrationMethods.TRUE_CALLER
-                                )
-                            }
-                        }
-                        updateFromLoginResponse(this)
-                    }
-                    return@launch
-                }
-            } catch (ex: Throwable) {
-                ex.showAppropriateMsg()
-            }
-            _signUpStatus.postValue(SignUpStepStatus.ERROR)
-        }
-    }
-
     fun updateSubscriptionStatus() {
         viewModelScope.launch(Dispatchers.IO) {
             try {

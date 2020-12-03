@@ -382,7 +382,9 @@ class MappingGaIDWithMentor(var context: Context, workerParams: WorkerParameters
             }
         } else {
             val obj = GaIDMentorModel.getMapObject()
-            if (obj != null && obj.mapMentorList.isNullOrEmpty() && Mentor.getInstance().hasId()) {
+            if (obj != null && obj.mapMentorList.isNullOrEmpty() && Mentor.getInstance()
+                    .hasId() && User.getInstance().isVerified
+            ) {
                 try {
                     val extras: HashMap<String, List<String>> = HashMap()
                     extras["mentors"] = listOf(Mentor.getInstance().getId())
@@ -423,7 +425,7 @@ class UploadFCMTokenOnServer(context: Context, workerParams: WorkerParameters) :
                 data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
             }
             val fcmResponse = FCMResponse.getInstance()
-            if (Mentor.getInstance().hasId() && fcmResponse != null) {
+            if (Mentor.getInstance().hasId() && fcmResponse != null&& User.getInstance().isVerified) {
                 fcmResponse.userId = Mentor.getInstance().getId()
                 AppObjectController.signUpNetworkService.updateFCMToken(
                     fcmResponse.id, fcmResponse
@@ -740,7 +742,7 @@ class IsUserActiveWorker(context: Context, private var workerParams: WorkerParam
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
-            if (Mentor.getInstance().hasId()) {
+            if (Mentor.getInstance().hasId()&& User.getInstance().isVerified) {
                 val active = workerParams.inputData.getBoolean(IS_ACTIVE, false)
                 val minTimeToApiFire = AppObjectController.getFirebaseRemoteConfig()
                     .getLong(FirebaseRemoteConfigKey.INTERVAL_TO_FIRE_ACTIVE_API)

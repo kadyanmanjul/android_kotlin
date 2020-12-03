@@ -249,17 +249,7 @@ class SignUpActivity : BaseActivity() {
             }
 
             override fun onSuccessProfileShared(trueProfile: TrueProfile) {
-                val requestObj = SocialSignUpRequest.Builder(
-                    Mentor.getInstance().getId(),
-                    PrefManager.getStringValue(INSTANCE_ID, false),
-                    CreatedSource.TC.name,
-                    Mentor.getInstance().getUserId()
-                ).payload(trueProfile.payload)
-                    .signatureAlgo(trueProfile.signatureAlgorithm)
-                    .signature(trueProfile.signature)
-                    .name("${trueProfile.firstName} ${trueProfile.lastName}")
-                    .build()
-                viewModel.verifyUser(requestObj)
+                viewModel.verifyUserViaTrueCaller(trueProfile)
             }
 
         })
@@ -366,16 +356,13 @@ class SignUpActivity : BaseActivity() {
                 if (jsonObject.has("email")) {
                     email = jsonObject.getString("email")
                 }
-                val requestObj = SocialSignUpRequest.Builder(
-                    Mentor.getInstance().getId(),
-                    PrefManager.getStringValue(INSTANCE_ID, false),
-                    CreatedSource.FB.name,
-                    Mentor.getInstance().getUserId()
-                ).name(name)
-                    .email(email)
-                    .photoUrl(getFBProfilePicture(id))
-                    .socialId(id).build()
-                viewModel.verifyUser(requestObj)
+                viewModel.signUpUsingSocial(
+                    LoginViaStatus.FACEBOOK,
+                    id,
+                    name,
+                    email,
+                    getFBProfilePicture(id)
+                )
             } catch (ex: Exception) {
                 LogException.catchException(ex)
             }
@@ -405,21 +392,17 @@ class SignUpActivity : BaseActivity() {
         }
     }
 
-    private fun handleFirebaseAuth(
-        accountUser: FirebaseUser?
+    private fun handleFirebaseAuth(accountUser: FirebaseUser?
     ) {
         if (accountUser != null) {
 
-            val requestObj = SocialSignUpRequest.Builder(
-                Mentor.getInstance().getId(),
-                PrefManager.getStringValue(INSTANCE_ID, false),
-                CreatedSource.GML.name,
-                Mentor.getInstance().getUserId()
-            ).name(accountUser.displayName)
-                .email(accountUser.email)
-                .photoUrl(accountUser.photoUrl?.toString())
-                .socialId(accountUser.uid).build()
-            viewModel.verifyUser(requestObj)
+            viewModel.signUpUsingSocial(
+                LoginViaStatus.GMAIL,
+                accountUser.uid,
+                accountUser.displayName,
+                accountUser.email,
+                accountUser.photoUrl?.toString()
+            )
         } else {
             showToast(getString(R.string.generic_message_for_error))
         }
