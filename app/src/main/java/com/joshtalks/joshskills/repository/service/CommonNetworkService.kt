@@ -203,4 +203,7 @@ interface CommonNetworkService {
     @FormUrlEncoded
     @PATCH("$DIR/voicecall/recipient_mentor")
     suspend fun postCallInitAsync(@FieldMap params: Map<String, String?>): Any
+
+    @POST("$DIR/mentor/delete_mentor/")
+    suspend fun deleteMentor(@Body params: Map<String, String>)
 }

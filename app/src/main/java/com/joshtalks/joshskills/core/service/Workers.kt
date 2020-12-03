@@ -147,12 +147,17 @@ class InstanceIdGenerationWorker(var context: Context, workerParams: WorkerParam
 
     override suspend fun doWork(): Result {
         try {
+            if (PrefManager.hasKey(INSTANCE_ID, true)) {
+                PrefManager.put(INSTANCE_ID, PrefManager.getStringValue(INSTANCE_ID, true), false)
+            }
             if (PrefManager.hasKey(INSTANCE_ID, false).not()) {
                 val gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
                 val res =
                     AppObjectController.signUpNetworkService.getInstanceIdAsync(mapOf("gaid" to gaid))
-                if (res.instanceId.isEmpty().not())
+                if (res.instanceId.isEmpty().not()) {
                     PrefManager.put(INSTANCE_ID, res.instanceId, false)
+                    PrefManager.put(INSTANCE_ID, res.instanceId, true)
+                }
             }
 
         } catch (ex: Throwable) {
@@ -425,7 +430,9 @@ class UploadFCMTokenOnServer(context: Context, workerParams: WorkerParameters) :
                 data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
             }
             val fcmResponse = FCMResponse.getInstance()
-            if (Mentor.getInstance().hasId() && fcmResponse != null&& User.getInstance().isVerified) {
+            if (Mentor.getInstance()
+                    .hasId() && fcmResponse != null && User.getInstance().isVerified
+            ) {
                 fcmResponse.userId = Mentor.getInstance().getId()
                 AppObjectController.signUpNetworkService.updateFCMToken(
                     fcmResponse.id, fcmResponse
@@ -742,7 +749,7 @@ class IsUserActiveWorker(context: Context, private var workerParams: WorkerParam
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
-            if (Mentor.getInstance().hasId()&& User.getInstance().isVerified) {
+            if (Mentor.getInstance().hasId() && User.getInstance().isVerified) {
                 val active = workerParams.inputData.getBoolean(IS_ACTIVE, false)
                 val minTimeToApiFire = AppObjectController.getFirebaseRemoteConfig()
                     .getLong(FirebaseRemoteConfigKey.INTERVAL_TO_FIRE_ACTIVE_API)

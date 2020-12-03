@@ -30,7 +30,6 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.repository.local.eventbus.CreatedSource
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
@@ -41,11 +40,11 @@ import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
-import com.joshtalks.joshskills.repository.server.signup.request.SocialSignUpRequest
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.truecaller.android.sdk.TrueProfile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.HashMap
 
 class SignUpViewModel(application: Application) : AndroidViewModel(application) {
     private val _signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()
@@ -235,6 +234,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private fun updateFromLoginResponse(loginResponse: LoginResponse) {
+        deleteMentor(loginResponse.mentorId, Mentor.getInstance().getId())
         val user = User.getInstance()
         user.userId = loginResponse.userId
         user.isVerified = true
@@ -251,6 +251,21 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         WorkManagerAdmin.requiredTaskAfterLoginComplete()
         fetchMentor()
         WorkManagerAdmin.userActiveStatusWorker(true)
+    }
+
+    private fun deleteMentor(mentorId: String, oldMentorId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestParams: HashMap<String, String> = HashMap()
+                requestParams["non_verified_mentor_id"] = oldMentorId
+                requestParams["verified_mentor_id"] = mentorId
+
+                AppObjectController.commonNetworkService.deleteMentor(requestParams)
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
+            _signUpStatus.postValue(SignUpStepStatus.ERROR)
+        }
     }
 
     private fun fetchMentor() {
@@ -368,7 +383,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 if (response.isSuccessful) {
                     response.body()?.run {
                         // Update Version Data in local
-                        PrefManager.put(SUBSCRIPTION_TEST_ID,this.SubscriptionTestId)
+                        PrefManager.put(SUBSCRIPTION_TEST_ID, this.SubscriptionTestId)
                         val versionData = VersionResponse.getInstance()
                         versionData.version?.let {
                             it.name = this.version.name
