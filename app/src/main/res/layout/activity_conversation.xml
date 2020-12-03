@@ -25,8 +25,8 @@
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
-            app:srcCompat="@drawable/chat_bg"
-            android:tintMode="multiply" />
+            android:tintMode="multiply"
+            app:srcCompat="@drawable/chat_bg" />
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
@@ -116,9 +116,9 @@
                     android:layout_centerVertical="true"
                     android:onClick="@{()->handler.practiseOnCall()}"
                     android:padding="@dimen/_4sdp"
-                    app:srcCompat="@drawable/ic_group_call"
                     android:tint="@color/white"
                     android:visibility="gone"
+                    app:srcCompat="@drawable/ic_group_call"
                     tools:visibility="visible" />
             </RelativeLayout>
 
@@ -130,6 +130,21 @@
             android:layout_height="match_parent"
             android:layout_above="@+id/bottom_bar"
             android:layout_below="@+id/toolbar">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgGroupChat"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_gravity="top|end"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginVertical="@dimen/_8sdp"
+                android:background="@drawable/white_button_round_enabled"
+                android:backgroundTint="@color/colorPrimary"
+                android:gravity="center_vertical|start"
+                android:padding="@dimen/_6sdp"
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_chat"
+                tools:visibility="visible" />
 
             <com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout
                 android:id="@+id/refresh_layout"
@@ -162,9 +177,9 @@
                 android:adjustViewBounds="true"
                 android:padding="@dimen/_4sdp"
                 android:scaleType="centerInside"
-                app:srcCompat="@drawable/ic_arrow_down"
                 android:visibility="gone"
                 app:elevation="@dimen/_4sdp"
+                app:srcCompat="@drawable/ic_arrow_down"
                 tools:visibility="visible" />
         </FrameLayout>
 
