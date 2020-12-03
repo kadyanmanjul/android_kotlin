@@ -185,18 +185,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                 LinearLayout.LayoutParams.MATCH_PARENT
             )
 
-        for (i in 0 until tabs.childCount) {
-            val tab = tabs.getChildAt(i)
-            tab.layoutParams = layoutParam
-            val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
 
-            layoutParams.weight = 0f
-            layoutParams.marginEnd = Utils.dpToPx(2)
-            layoutParams.marginStart = Utils.dpToPx(2)
-
-            tab.layoutParams = layoutParams
-            binding.lessonTabLayout.requestLayout()
-        }
 
         TabLayoutMediator(
             binding.lessonTabLayout,
@@ -249,7 +238,18 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                 setUnselectedColor(tab)
             }
         })
+        for (i in 0 until tabs.childCount) {
+            val tab = tabs.getChildAt(i)
+            tab.layoutParams = layoutParam
+            val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
 
+            layoutParams.weight = 0f
+            layoutParams.marginEnd = Utils.dpToPx(2)
+            layoutParams.marginStart = Utils.dpToPx(2)
+
+            tab.layoutParams = layoutParams
+            binding.lessonTabLayout.requestLayout()
+        }
         var tabOpened = false
         sectionWiseChatList.forEachIndexed outer@{ index, sectionChats ->
             sectionChats.forEach {
