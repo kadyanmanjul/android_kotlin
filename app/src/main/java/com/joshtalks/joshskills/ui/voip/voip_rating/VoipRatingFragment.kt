@@ -120,7 +120,7 @@ class VoipRatingFragment : DialogFragment() {
     fun exitDialog() {
         val intent = Intent()
         requireActivity().setResult(Activity.RESULT_OK, intent)
-        requireActivity().finish()
+        requireActivity().finishAndRemoveTask()
     }
 
     companion object {

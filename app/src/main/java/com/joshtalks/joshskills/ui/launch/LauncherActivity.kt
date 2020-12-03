@@ -36,7 +36,6 @@ import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogInteractionListener
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_NEW
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
-import com.joshtalks.joshskills.ui.voip.WebRtcService
 import io.branch.referral.Branch
 import io.branch.referral.Defines
 import kotlinx.android.synthetic.main.activity_launcher.progress_bar
@@ -60,7 +59,6 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         WorkManagerAdmin.appStartWorker()
         logAppLaunchEvent(getNetworkOperatorName())
         AppObjectController.initialiseFreshChat()
-        WebRtcService.loginUserClient()
         clearGlideCache()
         logNotificationData()
     }

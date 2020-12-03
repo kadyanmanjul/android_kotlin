@@ -118,7 +118,7 @@ class WebRtcService : Service() {
             ).apply {
                 action = LogoutUser().action
             }
-            ContextCompat.startForegroundService(AppObjectController.joshApplication, serviceIntent)
+            AppObjectController.joshApplication.stopService(serviceIntent)
         }
 
         fun startOutgoingCall(map: HashMap<String, String?>) {
@@ -353,11 +353,14 @@ class WebRtcService : Service() {
                             removeNotifications()
                         }
                         this == LogoutUser().action -> {
-                            stopService()
+                            stopForeground(true)
+                            stopSelfResult(startId)
                         }
                         this == NotificationIncomingCall().action -> {
                             incomingCallData =
                                 intent.getSerializableExtra(INCOMING_CALL_USER_OBJ) as HashMap<String, String>?
+                            Timber.tag(TAG).e("NotificationIncomingCall= %s ", endpoint?.registered)
+
                             if (isUserLogin()) {
                                 endpoint?.relayVoipPushNotification(incomingCallData)
                             } else {
@@ -412,7 +415,7 @@ class WebRtcService : Service() {
                 }
             }
         }
-        return START_NOT_STICKY
+        return START_STICKY
     }
 
     private fun startRing() {
@@ -443,8 +446,8 @@ class WebRtcService : Service() {
         return false
     }
 
-    private fun loginUser() {
-        endpoint?.login(
+    private fun loginUser(): Boolean? {
+        return endpoint?.login(
             userPlivo?.username,
             userPlivo?.password,
             PrefManager.getStringValue(FCM_TOKEN)
@@ -714,15 +717,10 @@ class WebRtcService : Service() {
 
     private fun plivoLogout() {
         isCallWasOnGoing = false
-        try {
-            endpoint?.logout()
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
     }
 
     private fun loginUserService(): Notification {
-        Timber.tag(TAG).e("Login User   ")
+        Timber.tag(TAG).e("forground Notification ")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name: CharSequence = "Voip Login User"

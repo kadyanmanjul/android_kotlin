@@ -130,7 +130,7 @@ class WebRtcActivity : BaseActivity() {
                     .show(supportFragmentManager, "voip_rating_dialog_fragment")
                 return
             }
-            this@WebRtcActivity.finish()
+            this@WebRtcActivity.finishAndRemoveTask()
         }
     }
 
