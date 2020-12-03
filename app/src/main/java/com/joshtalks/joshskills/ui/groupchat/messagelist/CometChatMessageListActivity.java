@@ -323,15 +323,20 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
                 if (isReply) {
                     replyMessage(baseMessage, message);
                     replyMessageLayout.setVisibility(GONE);
-                } else if (!message.isEmpty())
+                } else if (!message.isEmpty()) {
                     sendMessage(message);
+                }
             }
 
             @Override
             public void onVoiceNoteComplete(String string, JSONObject metadata) {
                 if (string != null) {
                     File audioFile = new File(string);
-                    sendMediaMessage(audioFile, CometChatConstants.MESSAGE_TYPE_AUDIO, metadata);
+                    if (isReply) {
+                        sendMediaMessage(audioFile, CometChatConstants.MESSAGE_TYPE_AUDIO, metadata, baseMessage);
+                    } else {
+                        sendMediaMessage(audioFile, CometChatConstants.MESSAGE_TYPE_AUDIO, metadata, null);
+                    }
                 }
             }
         });
@@ -575,13 +580,21 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
                 if (data != null) {
                     File file = MediaUtils.getRealPath(this, data.getData());
                     ContentResolver cr = this.getContentResolver();
-                    sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_AUDIO, null);
+                    if (isReply) {
+                        sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_AUDIO, null, baseMessage);
+                    } else {
+                        sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_AUDIO, null, null);
+                    }
                 }
                 break;
 
             case StringContract.RequestCode.FILE:
                 if (data != null)
-                    sendMediaMessage(MediaUtils.getRealPath(this, data.getData()), CometChatConstants.MESSAGE_TYPE_FILE, null);
+                    if (isReply) {
+                        sendMediaMessage(MediaUtils.getRealPath(this, data.getData()), CometChatConstants.MESSAGE_TYPE_FILE, null, baseMessage);
+                    } else {
+                        sendMediaMessage(MediaUtils.getRealPath(this, data.getData()), CometChatConstants.MESSAGE_TYPE_FILE, null, null);
+                    }
                 break;
         }
 
@@ -591,12 +604,13 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     /**
      * This method is used to send media messages to other users and group.
      *
-     * @param file     is an object of File which is been sent within the message.
-     * @param filetype is a string which indicate a type of file been sent within the message.
+     * @param file        is an object of File which is been sent within the message.
+     * @param filetype    is a string which indicate a type of file been sent within the message.
+     * @param baseMessage is a linked message for reply
      * @see CometChat#sendMediaMessage(MediaMessage, CometChat.CallbackListener)
      * @see MediaMessage
      */
-    private void sendMediaMessage(File file, String filetype, JSONObject metadata) {
+    private void sendMediaMessage(File file, String filetype, JSONObject metadata, BaseMessage baseMessage) {
         try {
             ProgressDialog progressDialog;
             progressDialog = ProgressDialog.show(CometChatMessageListActivity.this, "", getResources().getString(R.string.sending_media_message));
@@ -615,6 +629,47 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            if (isReply) {
+                JSONObject replyObject = new JSONObject();
+                if (baseMessage != null) {
+                    if (baseMessage.getCategory().equals(CometChatConstants.CATEGORY_MESSAGE)) {
+                        switch (baseMessage.getType()) {
+                            case CometChatConstants.MESSAGE_TYPE_TEXT:
+                                replyObject.put("type", CometChatConstants.MESSAGE_TYPE_TEXT);
+                                replyObject.put("message", ((TextMessage) baseMessage).getText());
+                                break;
+                            case CometChatConstants.MESSAGE_TYPE_IMAGE:
+                                replyObject.put("type", CometChatConstants.MESSAGE_TYPE_IMAGE);
+                                replyObject.put("message", "image");
+                                break;
+                            case CometChatConstants.MESSAGE_TYPE_VIDEO:
+                                replyObject.put("type", CometChatConstants.MESSAGE_TYPE_VIDEO);
+                                replyObject.put("message", "video");
+                                break;
+                            case CometChatConstants.MESSAGE_TYPE_FILE:
+                                replyObject.put("type", CometChatConstants.MESSAGE_TYPE_FILE);
+                                replyObject.put("message", "file");
+                                break;
+                            case CometChatConstants.MESSAGE_TYPE_AUDIO:
+                                replyObject.put("type", CometChatConstants.MESSAGE_TYPE_AUDIO);
+                                replyObject.put("message", "audio");
+                                break;
+                        }
+                    } else if (baseMessage.getType().equals(StringContract.IntentStrings.LOCATION)) {
+                        replyObject.put("type", StringContract.IntentStrings.LOCATION);
+                        replyObject.put("message", "location");
+                    } else if (baseMessage.getType().equals(StringContract.IntentStrings.POLLS)) {
+                        replyObject.put("type", StringContract.IntentStrings.POLLS);
+                        replyObject.put("message", ((CustomMessage) baseMessage).getCustomData().getString("question"));
+                    }
+                    replyObject.put("name", baseMessage.getSender().getName());
+                    replyObject.put("avatar", baseMessage.getSender().getAvatar());
+                }
+                metadata.put("reply", replyObject);
+                replyMessageLayout.setVisibility(GONE);
+            }
+
             mediaMessage.setMetadata(metadata);
 
             CometChat.sendMediaMessage(mediaMessage, new CometChat.CallbackListener<MediaMessage>() {
@@ -1381,8 +1436,8 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
                 replyMessage.setText(messageStr);
                 replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_insert_drive_file_black_24dp, 0, 0, 0);
             }
-            composeBox.ivMic.setVisibility(GONE);
-            composeBox.ivSend.setVisibility(View.VISIBLE);
+            composeBox.ivMic.setVisibility(View.VISIBLE);
+            composeBox.ivSend.setVisibility(GONE);
             replyMessageLayout.setVisibility(View.VISIBLE);
             if (messageAdapter != null) {
                 messageAdapter.setSelectedMessage(baseMessage.getId());

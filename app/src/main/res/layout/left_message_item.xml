@@ -36,14 +36,14 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/_6sdp">
 
                 <TextView
                     android:id="@+id/tv_user"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingStart="@dimen/_6sdp"
-                    android:paddingTop="@dimen/_6sdp"
                     android:paddingEnd="@dimen/_6sdp"
                     android:paddingBottom="0dp"
                     android:textColor="@color/colorPrimary"
@@ -73,7 +73,6 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/replyLayout"
                     android:layout_marginStart="@dimen/_8sdp"
-                    android:layout_marginTop="@dimen/_6sdp"
                     android:layout_marginEnd="@dimen/_8sdp"
                     android:autoLink="web|all"
                     android:focusable="true"

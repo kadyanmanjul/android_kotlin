@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
@@ -14,11 +13,22 @@
         android:background="@drawable/outgoing_message_normal_bg"
         android:padding="8dp">
 
+        <include
+            android:id="@+id/replyLayout"
+            layout="@layout/right_reply_message_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="@dimen/_6sdp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginEnd="@dimen/_6sdp" />
+
         <View
             android:id="@+id/dummy_view"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_15sdp"
-            android:visibility="visible" />
+            android:layout_below="@id/replyLayout"
+            android:visibility="invisible" />
 
         <com.joshtalks.joshskills.ui.groupchat.uikit.AudioV2PlayerView
             android:id="@+id/audio_player"
@@ -30,38 +40,6 @@
             android:gravity="center_vertical"
             android:paddingEnd="@dimen/_8sdp"
             tools:layout_height="@dimen/_40sdp" />
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:text="@string/audio_file"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/black"
-            android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/playBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:background="@drawable/ic_circle_grey_32dp"
-            android:backgroundTint="@color/gray_9E"
-            android:padding="8dp"
-            android:src="@drawable/ic_play_arrow_black_24dp"
-            android:visibility="gone"
-            app:tint="@color/white" />
-
-        <TextView
-            android:id="@+id/audiolength_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/title"
-            android:layout_marginStart="8dp"
-            android:textColor="@color/black"
-            android:visibility="gone"
-            tools:text="125 KB" />
 
         <TextView
             android:id="@+id/txt_time"
@@ -78,7 +56,7 @@
             android:paddingHorizontal="@dimen/_6sdp"
             android:textColor="@color/gray_9E"
             android:textSize="@dimen/_8ssp"
-            android:visibility="gone"
+            android:visibility="visible"
             tools:text="11:00 PM"
             tools:visibility="visible" />
 
@@ -97,7 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:orientation="horizontal"
-            android:visibility="gone"
+            android:visibility="visible"
             tools:visibility="visible" />
 
         <TextView

@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.groupchat.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.util.Log;
@@ -34,7 +33,6 @@ import com.joshtalks.joshskills.ui.groupchat.constant.StringContract;
 import com.joshtalks.joshskills.ui.groupchat.listeners.OnMessageLongClick;
 import com.joshtalks.joshskills.ui.groupchat.listeners.StickyHeaderAdapter;
 import com.joshtalks.joshskills.ui.groupchat.messagelist.CometChatMessageListActivity;
-import com.joshtalks.joshskills.ui.groupchat.screens.CometChatMediaViewActivity;
 import com.joshtalks.joshskills.ui.groupchat.uikit.AudioV2PlayerView;
 import com.joshtalks.joshskills.ui.groupchat.uikit.Avatar;
 import com.joshtalks.joshskills.ui.groupchat.utils.Extensions;
@@ -329,7 +327,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         BaseMessage baseMessage = messageList.get(i);
         if (baseMessage != null && baseMessage.getDeletedAt() == 0) {
             if (!baseMessage.getSender().getUid().equals(loggedInUser.getUid())) {
-                viewHolder.playBtn.setImageTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.white)));
                 if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_USER)) {
                     viewHolder.tvUser.setVisibility(View.GONE);
                     viewHolder.ivUser.setVisibility(View.GONE);
@@ -356,6 +353,30 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             }
 
+            if (baseMessage.getMetadata() != null && baseMessage.getMetadata().has("reply")) {
+                try {
+                    JSONObject metaData = baseMessage.getMetadata().getJSONObject("reply");
+                    String messageType = metaData.getString("type");
+                    String message = metaData.getString("message");
+                    viewHolder.replyLayout.setVisibility(View.VISIBLE);
+                    String replyUserName = metaData.getString("name");
+                    if (replyUserName.equals(loggedInUser.getName())) {
+                        viewHolder.replyUser.setText(context.getString(R.string.you));
+                    } else {
+                        viewHolder.replyUser.setText(replyUserName);
+                    }
+                    if (messageType.equals(CometChatConstants.MESSAGE_TYPE_TEXT)) {
+                        viewHolder.replyMessage.setText(message);
+                        viewHolder.replyMessage.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                    } else if (messageType.equals(CometChatConstants.MESSAGE_TYPE_AUDIO)) {
+                        viewHolder.replyMessage.setText(String.format(context.getResources().getString(R.string.shared_a_audio), ""));
+                        viewHolder.replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_grey_24dp, 0, 0, 0);
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "setTextData: " + e.getMessage());
+                }
+            }
+
             if (baseMessage.getReplyCount() != 0) {
                 viewHolder.tvThreadReplyCount.setVisibility(View.VISIBLE);
                 viewHolder.tvThreadReplyCount.setText(baseMessage.getReplyCount() + " Replies");
@@ -368,19 +389,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             viewHolder.audioV2PlayerView.bindView(baseMessage.getId(), ((MediaMessage) baseMessage).getAttachment().getFileUrl(), baseMessage.getMetadata());
             viewHolder.txtTime.setVisibility(View.VISIBLE);
-            viewHolder.length.setText(Utils.getFileSize(((MediaMessage) baseMessage).getAttachment().getFileSize()));
-            viewHolder.playBtn.setImageResource(R.drawable.ic_play_arrow_black_24dp);
-            viewHolder.playBtn.setOnClickListener(v -> {
-                Intent intent = new Intent(context, CometChatMediaViewActivity.class);
-                intent.putExtra(StringContract.IntentStrings.MEDIA_SIZE,
-                        ((MediaMessage) baseMessage).getAttachment().getFileSize());
-                intent.putExtra(StringContract.IntentStrings.MESSAGE_TYPE, CometChatConstants.MESSAGE_TYPE_AUDIO);
-                intent.putExtra(StringContract.IntentStrings.INTENT_MEDIA_MESSAGE,
-                        ((MediaMessage) baseMessage).getAttachment().getFileUrl());
-                intent.putExtra(StringContract.IntentStrings.NAME, baseMessage.getSender().getName());
-                intent.putExtra(StringContract.IntentStrings.SENTAT, baseMessage.getSentAt());
-                context.startActivity(intent);
-            });
             viewHolder.rlMessageBubble.setOnLongClickListener(v -> {
                 if (!isLongClickEnabled && !isTextMessageClick) {
                     isImageMessageClick = true;
@@ -397,9 +405,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (viewHolder.tvUser != null)
                 viewHolder.tvUser.setOnClickListener(view -> Utils.moveToUserProfile(baseMessage.getSender().getUid(), context));
         }
-        viewHolder.playBtn.setOnClickListener(v -> {
-
-        });
     }
 
     private void setDeleteData(DeleteMessageViewHolder viewHolder, int i) {
@@ -1245,8 +1250,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public class AudioMessageViewHolder extends RecyclerView.ViewHolder {
 
-        private final TextView length;
-        private final ImageView playBtn;
         private final int type;
         private final TextView tvUser;
         private final Avatar ivUser;
@@ -1255,12 +1258,14 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private final TextView tvThreadReplyCount;
         private final LinearLayout lvReplyAvatar;
         private final AudioV2PlayerView audioV2PlayerView;
+        private final RelativeLayout replyLayout;     //reply message layout
+        private final TextView replyUser;             //reply message sender name
+        private final TextView replyMessage;          //reply message text
+
 
         public AudioMessageViewHolder(@NonNull View itemView) {
             super(itemView);
             type = (int) itemView.getTag();
-            length = itemView.findViewById(R.id.audiolength_tv);
-            playBtn = itemView.findViewById(R.id.playBtn);
             rlMessageBubble = itemView.findViewById(R.id.cv_message_container);
             tvUser = itemView.findViewById(R.id.tv_user);
             ivUser = itemView.findViewById(R.id.iv_user);
@@ -1268,6 +1273,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             tvThreadReplyCount = itemView.findViewById(R.id.thread_reply_count);
             lvReplyAvatar = itemView.findViewById(R.id.reply_avatar_layout);
             audioV2PlayerView = itemView.findViewById(R.id.audio_player);
+            replyLayout = itemView.findViewById(R.id.replyLayout);
+            replyUser = itemView.findViewById(R.id.reply_user);
+            replyMessage = itemView.findViewById(R.id.reply_message);
         }
     }
 

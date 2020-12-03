@@ -43,10 +43,21 @@
             tools:text="Iron Man"
             tools:visibility="visible" />
 
+        <include
+            android:id="@+id/replyLayout"
+            layout="@layout/left_reply_message_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_user"
+            android:layout_marginStart="@dimen/_6sdp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginEnd="@dimen/_6sdp" />
+
         <View
             android:id="@+id/dummy_view"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_15sdp"
+            android:layout_below="@id/replyLayout"
             android:visibility="invisible" />
 
         <com.joshtalks.joshskills.ui.groupchat.uikit.AudioV2PlayerView
@@ -57,50 +68,8 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:gravity="center_vertical"
-            android:paddingEnd="@dimen/_8sdp" />
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_user"
-            android:layout_margin="8dp"
-            android:layout_toStartOf="@+id/playBtn"
-            android:gravity="center_vertical"
-            android:text="@string/audio_file"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/black"
-            android:visibility="gone"
-            tools:visibility="visible" />
-
-        <!-- <com.cometchat.pro.uikit.audioplayer.AudioPlayerView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/title" /> -->
-
-        <ImageView
-            android:id="@+id/playBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/title"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="-8dp"
-            android:background="@drawable/ic_circle_grey_32dp"
-            android:padding="8dp"
-            android:src="@drawable/ic_play_arrow_black_24dp"
-            android:visibility="gone"
-            tools:visibility="visible" />
-
-        <TextView
-            android:id="@+id/audiolength_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/title"
-            android:layout_marginStart="8dp"
-            android:textColor="@color/secondaryTextColor"
-            android:visibility="gone"
-            tools:text="125 KB"
-            tools:visibility="visible" />
+            android:paddingEnd="@dimen/_8sdp"
+            tools:layout_height="@dimen/_40sdp" />
 
         <TextView
             android:id="@+id/txt_time"

@@ -19,6 +19,8 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/bottom_layout"
         android:layout_below="@+id/chatList_toolbar"
+        android:layout_marginTop="-1dp"
+        android:layout_marginBottom="1dp"
         android:clipToPadding="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 

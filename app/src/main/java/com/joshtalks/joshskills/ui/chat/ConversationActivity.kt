@@ -1284,9 +1284,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     it.forEachIndexed { index, view ->
                         if (view is BaseChatViewHolder) {
                             tempView = view
-                            if (chatObj.chatId.toLowerCase(Locale.getDefault()) == tempView.message.chatId.toLowerCase(
-                                    Locale.getDefault()
-                                )
+                            if (chatObj.chatId.equals(tempView.message.chatId, ignoreCase = true)
                             ) {
                                 tempView.message = chatObj
                                 tempView.message.isSelected = false
