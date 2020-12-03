@@ -19,7 +19,6 @@ import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEvent
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AudioPlayerEventBus
-import com.joshtalks.joshskills.util.ExoAudioPlayer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -28,9 +27,9 @@ import timber.log.Timber
 
 
 class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
-    ExoAudioPlayer.ProgressUpdateListener, AudioPlayerEventListener {
+    ExoAudioPlayer2.ProgressUpdateListener, AudioPlayerEventListener {
 
-    private var exoAudioManager: ExoAudioPlayer? = ExoAudioPlayer.getInstance()
+    private var exoAudioManager: ExoAudioPlayer2? = ExoAudioPlayer2.getInstance()
     private val context = AppObjectController.joshApplication
     private var id: String = EMPTY
     private var url: String? = null
@@ -89,7 +88,6 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
             ex.printStackTrace()
         }
         Timber.tag("AudioV2PlayerView").e("" + mediaDuration)
-
     }
 
 
@@ -109,10 +107,10 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
     }
 
     private fun checkAudioIsDifferent(): Boolean {
-        if (ExoAudioPlayer.LAST_ID.isEmpty()) {
+        if (ExoAudioPlayer2.LAST_ID.isEmpty()) {
             return true
         }
-        if (ExoAudioPlayer.LAST_ID == id) {
+        if (ExoAudioPlayer2.LAST_ID == id) {
             return true
         }
         removeSeekbarListener()
@@ -160,11 +158,11 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
             exoAudioManager?.let {
                 removeSeekbarListener()
                 addListner()
-                if (ExoAudioPlayer.LAST_ID.isEmpty()) {
+                if (ExoAudioPlayer2.LAST_ID.isEmpty()) {
                     initAndPlay(url)
                     return@let
                 }
-                if (ExoAudioPlayer.LAST_ID == id) {
+                if (ExoAudioPlayer2.LAST_ID == id) {
                     exoAudioManager?.resumeOrPause()
                     if (exoAudioManager?.isPlaying() == true) {
                         playingAudio()
@@ -194,6 +192,7 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
     private fun pausingAudio() {
         playButton.visibility = View.VISIBLE
         pauseButton.visibility = View.GONE
+        timestamp.text = Utils.formatDuration(mediaDuration.toInt())
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
@@ -206,15 +205,21 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
         if (JoshApplication.isAppVisible.not()) {
             onPausePlayer()
         }
+        if (seekPlayerProgress.progress >= mediaDuration) {
+            lastPosition = 0
+            seekPlayerProgress.progress = 0
+            complete()
+            return
+        }
         seekPlayerProgress.progress = progress.toInt()
         lastPosition = progress
     }
 
 
     override fun onDurationUpdate(duration: Long?) {
-        duration?.toInt()?.let {
-            seekPlayerProgress.max = it
-        }
+        /*  duration?.toInt()?.let {
+              seekPlayerProgress.max = it
+          }*/
     }
 
 
@@ -241,16 +246,16 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
 
     override fun onPlayerReleased() {
         Timber.tag("AudioV2PlayerView").e("onPlayerReleased")
-
     }
 
     override fun onPlayerEmptyTrack() {
     }
 
     override fun complete() {
-        seekPlayerProgress.progress = 0
+        Timber.tag("AudioV2PlayerView").e("complete")
+        exoAudioManager?.onPauseComplete()
         exoAudioManager?.seekTo(0)
-        exoAudioManager?.onPause()
+        seekPlayerProgress.progress = 0
         setDefaultValue()
     }
 
@@ -263,7 +268,6 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
                     if (it.id != id) {
                         pausingAudio()
                     }
-
                 }, {
                     it.printStackTrace()
                 })
