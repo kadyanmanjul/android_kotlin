@@ -277,7 +277,7 @@ class CourseProgressActivityNew : AppCompatActivity(),
         ).show()
     }
 
-    fun askStoragePermission() {
+    private fun askStoragePermission() {
 
         PermissionUtils.storageReadAndWritePermission(
             this,
@@ -287,7 +287,7 @@ class CourseProgressActivityNew : AppCompatActivity(),
                         if (report.isAnyPermissionPermanentlyDenied) {
                             PermissionUtils.permissionPermanentlyDeniedDialog(
                                 this@CourseProgressActivityNew,
-                                R.string.record_permission_message
+                                R.string.storage_permission_message
                             )
                             return
                         }

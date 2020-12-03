@@ -18,21 +18,22 @@
         android:clickable="true"
         android:enabled="true"
         android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
         android:visibility="gone"
-        tools:visibility="visible"
-        android:foreground="?android:attr/selectableItemBackground">
+        tools:visibility="visible">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:background="@drawable/round_rect_default"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_rect_default">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/lesson_name_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_marginTop="@dimen/_4sdp"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_6sdp"
                 android:text="Lesson 1: title name"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                 app:layout_constraintBottom_toTopOf="@+id/lesson_iv"
@@ -55,15 +56,15 @@
                 android:id="@+id/start_lesson_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rounded_state_button_bg"
                 android:layout_marginVertical="@dimen/_8sdp"
-                android:gravity="center"
+                android:background="@drawable/rounded_state_button_bg"
                 android:backgroundTint="@color/colorPrimary"
+                android:gravity="center"
                 android:paddingHorizontal="@dimen/_24sdp"
                 android:paddingVertical="@dimen/_4sdp"
                 android:text="@string/start_lesson"
-                android:textColor="@color/white"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -71,6 +72,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>
+
     <FrameLayout
         android:id="@+id/root_view_completed"
         android:layout_width="@dimen/_220sdp"
@@ -79,14 +81,14 @@
         android:clickable="true"
         android:enabled="true"
         android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
         android:visibility="gone"
-        tools:visibility="visible"
-        android:foreground="?android:attr/selectableItemBackground">
+        tools:visibility="gone">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_marginHorizontal="@dimen/_7sdp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_7sdp"
             android:background="@drawable/round_rect_default"
             android:backgroundTint="@color/light_shade_of_gray">
 

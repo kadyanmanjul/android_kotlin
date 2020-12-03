@@ -104,4 +104,8 @@
     <color name="white_shade">#F2F9FF</color>
     <color name="red_shade">#E23F3F</color>
 
+    <color name="message_bubble_grey">#e0e0e0</color>
+    <color name="shimmer">#ECECEC</color>
+    <color name="purple">#8867C5</color>
+
 </resources>
