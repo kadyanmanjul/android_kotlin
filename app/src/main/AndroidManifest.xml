@@ -158,11 +158,13 @@
 
         <activity
             android:name=".ui.help.HelpActivity"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:theme="@style/AppNoBarTheme" />
         <activity
             android:name=".ui.launch.LauncherActivity"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme">
             <intent-filter>
@@ -198,17 +200,20 @@
         <activity
             android:name=".ui.inbox.InboxActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:theme="@style/AppNoBarTheme" />
         <activity
             android:name=".ui.payment.order_summary.PaymentSummaryActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:theme="@style/AppNoBarTheme" />
         <activity
             android:name=".ui.startcourse.StartCourseActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:theme="@style/AppNoBarTheme" />
         <activity
             android:name=".ui.chat.ConversationActivity"
@@ -228,33 +233,38 @@
         <activity
             android:name=".ui.signup.OnBoardActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:theme="@style/AppNoBarTheme" />
 
         <activity
             android:name=".ui.video_player.VideoPlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:theme="@style/VideoPlayerTheme" />
 
         <activity
             android:name=".ui.pdfviewer.PdfViewerActivity"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateHidden" />
 
         <activity
             android:name=".ui.explore.CourseExploreActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:parentActivityName=".ui.inbox.InboxActivity"
             android:theme="@style/AppNoBarTheme" />
 
         <activity
             android:name=".ui.practise.PractiseSubmitActivity"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:parentActivityName=".ui.inbox.InboxActivity"
             android:theme="@style/AppNoBarTheme" />
         <activity
@@ -275,14 +285,16 @@
         <activity
             android:name=".ui.courseprogress.CourseProgressActivity"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
             android:name=".ui.subscription.StartSubscriptionActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
@@ -307,7 +319,8 @@
         <activity
             android:name=".ui.signup.SignUpActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="adjustResize" />
@@ -315,7 +328,8 @@
         <activity
             android:name=".ui.course_details.CourseDetailsActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:parentActivityName=".ui.explore.CourseExploreActivity"
             android:theme="@style/AppNoBarTheme">
             <meta-data
@@ -327,13 +341,15 @@
             android:name=".ui.conversation_practice.ConversationPracticeActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTop"
+            android:alwaysRetainTaskState="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".ui.conversation_practice.history.SubmittedPractiseActivity"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
@@ -341,33 +357,38 @@
 
         <activity
             android:name=".ui.assessment.AssessmentActivity"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".ui.reminder.set_reminder.ReminderActivity"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".ui.reminder.set_reminder.AlarmNotifierActivity"
             android:autoRemoveFromRecents="true"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".ui.reminder.reminder_listing.ReminderListActivity"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <activity
             android:name=".ui.newonboarding.OnBoardingActivityNew"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
@@ -375,30 +396,35 @@
         <activity
             android:name=".ui.voip.SearchingUserActivity"
             android:launchMode="singleTop"
+            android:alwaysRetainTaskState="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme" />
 
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:launchMode="singleTop"
+            android:alwaysRetainTaskState="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme" />
         <activity
             android:name=".ui.day_wise_course.DayWiseCourseActivity"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:parentActivityName=".ui.inbox.InboxActivity"
             android:theme="@style/AppNoBarTheme" />
         <activity
             android:name=".ui.course_progress_new.CourseProgressActivityNew"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:parentActivityName=".ui.inbox.InboxActivity"
             android:theme="@style/AppNoBarTheme" />
         <activity
             android:name=".ui.day_wise_course.unlock_next_class.ActivityUnlockNextClass"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:parentActivityName=".ui.chat.ConversationActivity"
             android:theme="@style/AppNoBarTheme" />
 
