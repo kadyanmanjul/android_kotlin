@@ -610,11 +610,13 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
-            val details =
-                AppObjectController.signUpNetworkService.postDeviceDetails(
-                    UpdateDeviceRequest()
-                )
-            details.update()
+            if (User.getInstance().isVerified) {
+                val details =
+                    AppObjectController.signUpNetworkService.postDeviceDetails(
+                        UpdateDeviceRequest()
+                    )
+                details.update()
+            }
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
