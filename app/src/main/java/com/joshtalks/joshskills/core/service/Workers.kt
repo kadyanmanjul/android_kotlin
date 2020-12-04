@@ -615,6 +615,12 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
                         UpdateDeviceRequest()
                     )
                 details.update()
+            } else {
+                val details =
+                    AppObjectController.signUpNetworkService.postDeviceDetails(
+                        UpdateDeviceRequest(user_id = EMPTY)
+                    )
+                details.update()
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
