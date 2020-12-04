@@ -544,15 +544,17 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
 
                     }
                     EXPECTED_ENGAGE_TYPE.AU == it -> {
-                        binding.practiseInputHeader.text = AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
+                        binding.practiseInputHeader.text =
+                            AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
                         binding.uploadPractiseView.setImageResource(R.drawable.recv_ic_mic_white)
                         audioRecordTouchListener()
                         binding.audioPractiseHint.visibility = VISIBLE
                     }
                     EXPECTED_ENGAGE_TYPE.VI == it -> {
-                        binding.practiseInputHeader.text = AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
+                        binding.practiseInputHeader.text =
+                            AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
                         binding.uploadPractiseView.setImageResource(R.drawable.ic_videocam)
                         setupFileUploadListener(it)
                     }
@@ -628,6 +630,8 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
             binding.submitAnswerBtn.visibility = GONE
             binding.improveAnswerBtn.visibility = VISIBLE
             binding.continueBtn.visibility = View.VISIBLE
+
+            activityCallback?.onSectionStatusUpdate(2, true)
         })
         practiceViewModel.practiceEngagementData.observe(viewLifecycleOwner, Observer {
             updatePracticeFeedback(it)
@@ -654,11 +658,12 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
             }
         }
     }
+
     private fun removePreviousAddedViewHolder() {
         val viewHolders = binding.audioList.allViewResolvers as List<PracticeAudioViewHolder>
         viewHolders.forEach { it ->
             it.let {
-                if(it.isEmpty()){
+                if (it.isEmpty()) {
                     binding.audioList.removeView(it)
                 }
             }

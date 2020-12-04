@@ -555,10 +555,12 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
             updateQuiz(assessmentQuestions[++currentQuizQuestion])
         } else {
             showQuizCompleteLayout()
+            activityCallback?.onSectionStatusUpdate(0, true)
         }
     }
 
     fun onGrammarContinueClick() {
+
         activityCallback?.onNextTabCall(1)
     }
 
@@ -576,7 +578,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
         currentQuizQuestion = 0
         updateQuiz(assessmentQuestions[0])
         binding.grammarCompleteLayout.visibility = View.GONE
-
+        activityCallback?.onSectionStatusUpdate(0, false)
         quizQuestion?.let {
 
             it.status = QUESTION_STATUS.NA

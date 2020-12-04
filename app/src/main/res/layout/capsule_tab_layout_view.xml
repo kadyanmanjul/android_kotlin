@@ -3,20 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:gravity="center"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/title_tv"
-        android:layout_width="@dimen/_100sdp"
-        android:layout_height="@dimen/_24sdp"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+        android:layout_width="@dimen/_60sdp"
+        android:layout_height="@dimen/_16sdp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+        app:autoSizeMaxTextSize="@dimen/_14ssp"
+        app:autoSizeMinTextSize="@dimen/_11ssp"
         app:autoSizeTextType="uniform" />
 
     <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/tab_iv"
         android:layout_width="wrap_content"
+        android:gravity="center"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/_2sdp"
-        android:src="@drawable/ic_circle_tick" />
+        app:srcCompat="@drawable/ic_green_check_circle"
+        app:tint="@color/grey" />
 
 </LinearLayout>

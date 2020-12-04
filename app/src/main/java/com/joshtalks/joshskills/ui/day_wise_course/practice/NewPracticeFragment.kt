@@ -145,9 +145,10 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
                     }
                 }
 
-                if (openNextScreen && isVisible)
+                if (openNextScreen && isVisible) {
                     binding.vocabularyCompleteLayout.visibility = View.VISIBLE
-
+                    activityCallback?.onSectionStatusUpdate(1, true)
+                }
                 currentChatModel = null
 
                 adapter.notifyDataSetChanged()

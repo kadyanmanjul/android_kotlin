@@ -127,6 +127,8 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
                     QUESTION_STATUS.AT,
                     questionId?.toInt() ?: 0
                 )
+
+                activityCallback?.onSectionStatusUpdate(3, true)
             }
 
         })
