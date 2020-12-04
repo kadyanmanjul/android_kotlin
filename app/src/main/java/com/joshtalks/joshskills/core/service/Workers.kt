@@ -12,7 +12,7 @@ import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.common.util.concurrent.ListenableFuture
-import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.AppObjectController
@@ -348,19 +348,18 @@ class RegisterUserGAId(context: Context, private val workerParams: WorkerParamet
 class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
-        FirebaseInstanceId.getInstance().instanceId
-            .addOnCompleteListener(OnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    task.exception?.run {
-                        LogException.catchException(this)
-                    }
-                    task.exception?.printStackTrace()
-                    return@OnCompleteListener
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                task.exception?.run {
+                    LogException.catchException(this)
                 }
-                task.result?.token?.run {
-                    PrefManager.put(FCM_TOKEN, this)
-                }
-            })
+                task.exception?.printStackTrace()
+                return@OnCompleteListener
+            }
+            task.result?.run {
+                PrefManager.put(FCM_TOKEN, this)
+            }
+        })
         return Result.success()
     }
 }
