@@ -633,7 +633,7 @@ class PatchDeviceDetailsWorker(context: Context, workerParams: WorkerParameters)
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
-            if (Mentor.getInstance().hasId()) {
+            if (Mentor.getInstance().hasId() && User.getInstance().isVerified) {
                 val id = DeviceDetailsResponse.getInstance()?.id!!
                 val details =
                     AppObjectController.signUpNetworkService.patchDeviceDetails(
