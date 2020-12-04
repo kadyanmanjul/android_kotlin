@@ -216,4 +216,23 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
             )
         }
     }
+
+    fun updateSectionStatus(lessonId: Int, status: LESSON_STATUS, tabPosition: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            when (tabPosition) {
+                0 -> {
+                    lessonDao.updateGrammarSectionStatus(lessonId, status)
+                }
+                1 -> {
+                    lessonDao.updateVocabularySectionStatus(lessonId, status)
+                }
+                2 -> {
+                    lessonDao.updateReadingSectionStatus(lessonId, status)
+                }
+                3 -> {
+                    lessonDao.updateSpeakingSectionStatus(lessonId, status)
+                }
+            }
+        }
+    }
 }

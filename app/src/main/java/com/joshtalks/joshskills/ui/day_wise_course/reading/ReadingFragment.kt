@@ -596,7 +596,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                     )
                 }, 100)
 
-                activityCallback?.onSectionStatusUpdate(3, true)
+                activityCallback?.onSectionStatusUpdate(2, true)
                 binding.feedbackResultLinearLl.visibility = GONE
                 CoroutineScope(Dispatchers.IO).launch {
                     chatModel.question?.interval?.run {
@@ -632,7 +632,6 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
             binding.improveAnswerBtn.visibility = VISIBLE
             binding.continueBtn.visibility = View.VISIBLE
 
-            activityCallback?.onSectionStatusUpdate(2, true)
         })
         practiceViewModel.practiceEngagementData.observe(viewLifecycleOwner, Observer {
             updatePracticeFeedback(it)

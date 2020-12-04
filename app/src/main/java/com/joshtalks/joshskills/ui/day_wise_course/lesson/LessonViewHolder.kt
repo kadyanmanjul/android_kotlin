@@ -1,8 +1,10 @@
 package com.joshtalks.joshskills.ui.day_wise_course.lesson
 
 import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
@@ -44,6 +46,18 @@ class LessonViewHolder(
 
     @View(R.id.root_view_completed)
     lateinit var rootViewCompleted: FrameLayout
+
+    @View(R.id.view1)
+    lateinit var grammarStatus: ImageView
+
+    @View(R.id.view2)
+    lateinit var vocabStatus: ImageView
+
+    @View(R.id.view3)
+    lateinit var readingStatus: ImageView
+
+    @View(R.id.view4)
+    lateinit var speakingStatus: ImageView
 
     override fun getRoot(): FrameLayout {
         return rootView
@@ -100,6 +114,64 @@ class LessonViewHolder(
                 message.lessons?.let {
                     onItemClick?.invoke(it.id, message.lessons?.interval ?: -1, message.chatId)
                 }
+            }
+        }
+
+        message.question?.lesson?.let {
+            if (it.grammarStatus == LESSON_STATUS.CO) {
+                grammarStatus.drawable.setTint(
+                    ContextCompat.getColor(
+                        getAppContext(),
+                        R.color.green_right_answer
+                    )
+                )
+            } else {
+                grammarStatus.drawable.setTint(
+                    ContextCompat.getColor(
+                        getAppContext(),
+                        R.color.grey
+                    )
+                )
+            }
+            if (it.vocabStatus == LESSON_STATUS.CO) {
+                vocabStatus.drawable.setTint(
+                    ContextCompat.getColor(
+                        getAppContext(),
+                        R.color.green_right_answer
+                    )
+                )
+            } else {
+                vocabStatus.drawable.setTint(ContextCompat.getColor(getAppContext(), R.color.grey))
+            }
+            if (it.readingStatus == LESSON_STATUS.CO) {
+                readingStatus.drawable.setTint(
+                    ContextCompat.getColor(
+                        getAppContext(),
+                        R.color.green_right_answer
+                    )
+                )
+            } else {
+                readingStatus.drawable.setTint(
+                    ContextCompat.getColor(
+                        getAppContext(),
+                        R.color.grey
+                    )
+                )
+            }
+            if (it.speakingStatus == LESSON_STATUS.CO) {
+                speakingStatus.drawable.setTint(
+                    ContextCompat.getColor(
+                        getAppContext(),
+                        R.color.green_right_answer
+                    )
+                )
+            } else {
+                speakingStatus.drawable.setTint(
+                    ContextCompat.getColor(
+                        getAppContext(),
+                        R.color.grey
+                    )
+                )
             }
         }
     }

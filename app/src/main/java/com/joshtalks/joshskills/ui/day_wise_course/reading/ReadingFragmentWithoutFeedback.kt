@@ -604,6 +604,8 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                 //binding.improveAnswerBtn.visibility = VISIBLE
                 binding.continueBtn.visibility = View.VISIBLE
 
+                activityCallback?.onSectionStatusUpdate(2, true)
+
                 CoroutineScope(Dispatchers.IO).launch {
                     chatModel.question?.interval?.run {
                         WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)

@@ -179,7 +179,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
         binding.lessonViewpager.adapter = adapter
 
-        val tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
+        tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
         val layoutParam: LinearLayout.LayoutParams =
             LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -383,6 +383,11 @@ class DayWiseCourseActivity : CoreJoshActivity(),
     override fun onSectionStatusUpdate(tabPosition: Int, status: Boolean) {
         println("tabPosition = [${tabPosition}], status = [${status}]")
         setTabCompletionStatus(tabs.getChildAt(tabPosition), status)
+        if (status) {
+            viewModel.updateSectionStatus(lessonId, LESSON_STATUS.CO, tabPosition)
+        } else {
+            viewModel.updateSectionStatus(lessonId, LESSON_STATUS.NO, tabPosition)
+        }
     }
 
     override fun onBackPressed() {

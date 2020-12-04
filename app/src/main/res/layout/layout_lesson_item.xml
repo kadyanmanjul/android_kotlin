@@ -56,12 +56,15 @@
                 android:id="@+id/start_lesson_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8sdp"
                 android:layout_marginVertical="@dimen/_8sdp"
                 android:background="@drawable/rounded_state_button_bg"
                 android:backgroundTint="@color/colorPrimary"
                 android:gravity="center"
-                android:paddingHorizontal="@dimen/_16sdp"
+                android:maxLines="1"
+                android:paddingHorizontal="@dimen/_8sdp"
                 android:paddingVertical="@dimen/_4sdp"
+                app:layout_constraintHorizontal_chainStyle="packed"
                 android:text="@string/start_lesson"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                 android:textColor="@color/white"
@@ -71,54 +74,60 @@
                 app:layout_constraintStart_toEndOf="@+id/view4"
                 app:layout_constraintTop_toBottomOf="@+id/lesson_iv" />
 
-            <View
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/view1"
                 android:layout_width="@dimen/_8sdp"
                 android:layout_height="@dimen/_8sdp"
-                android:layout_margin="@dimen/_4sdp"
-                android:background="@drawable/circle"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintBottom_toBottomOf="@+id/start_lesson_tv"
                 app:layout_constraintEnd_toStartOf="@+id/view2"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/start_lesson_tv" />
+                app:layout_constraintTop_toTopOf="@+id/start_lesson_tv"
+                app:srcCompat="@drawable/circle" />
 
-            <View
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/view2"
                 android:layout_width="@dimen/_8sdp"
                 android:layout_height="@dimen/_8sdp"
-                android:layout_margin="@dimen/_4sdp"
-                android:background="@drawable/circle"
+                android:layout_marginStart="@dimen/_4sdp"
                 app:layout_constraintBottom_toBottomOf="@+id/start_lesson_tv"
                 app:layout_constraintEnd_toStartOf="@+id/view3"
                 app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toEndOf="@+id/view1"
-                app:layout_constraintTop_toTopOf="@+id/start_lesson_tv" />
+                app:layout_constraintTop_toTopOf="@+id/start_lesson_tv"
+                app:srcCompat="@drawable/circle" />
 
-            <View
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/view3"
                 android:layout_width="@dimen/_8sdp"
                 android:layout_height="@dimen/_8sdp"
-                android:layout_margin="@dimen/_4sdp"
-                android:background="@drawable/circle"
+                android:layout_marginStart="@dimen/_4sdp"
                 app:layout_constraintBottom_toBottomOf="@+id/start_lesson_tv"
                 app:layout_constraintEnd_toStartOf="@+id/view4"
                 app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toEndOf="@+id/view2"
-                app:layout_constraintTop_toTopOf="@+id/start_lesson_tv" />
+                app:layout_constraintTop_toTopOf="@+id/start_lesson_tv"
+                app:srcCompat="@drawable/circle" />
 
-            <View
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/view4"
                 android:layout_width="@dimen/_8sdp"
                 android:layout_height="@dimen/_8sdp"
-                android:layout_margin="@dimen/_4sdp"
+                android:layout_marginStart="@dimen/_4sdp"
                 android:layout_marginEnd="@dimen/_4sdp"
-                android:background="@drawable/circle"
                 app:layout_constraintBottom_toBottomOf="@+id/start_lesson_tv"
                 app:layout_constraintEnd_toStartOf="@+id/start_lesson_tv"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/view3"
-                app:layout_constraintTop_toTopOf="@+id/start_lesson_tv" />
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintTop_toTopOf="@+id/start_lesson_tv"
+                app:srcCompat="@drawable/circle" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
