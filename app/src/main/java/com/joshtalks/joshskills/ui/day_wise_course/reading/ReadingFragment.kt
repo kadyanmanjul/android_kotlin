@@ -596,6 +596,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                     )
                 }, 100)
 
+                activityCallback?.onSectionStatusUpdate(3, true)
                 binding.feedbackResultLinearLl.visibility = GONE
                 CoroutineScope(Dispatchers.IO).launch {
                     chatModel.question?.interval?.run {

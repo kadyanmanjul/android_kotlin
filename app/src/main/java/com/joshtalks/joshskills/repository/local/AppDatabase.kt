@@ -75,7 +75,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class,
         AppUsageModel::class, AppActivityModel::class, LessonModel::class
     ],
-    version = 23,
+    version = 24,
     exportSchema = true
 )
 @TypeConverters(
@@ -137,7 +137,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_19_20,
                                 MIGRATION_20_21,
                                 MIGRATION_21_22,
-                                MIGRATION_22_23
+                                MIGRATION_22_23/*,
+                                MIGRATION_23_24*/
                             )
                             //  .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -364,6 +365,16 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /*  private val MIGRATION_23_24: Migration = object : Migration(22, 23) {
+              override fun migrate(database: SupportSQLiteDatabase) {
+                  database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `grammarStatus` TEXT")
+                  database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `vocabularyStatus` TEXT")
+                  database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `readingStatus` TEXT")
+                  database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `speakingStatus` TEXT")
+              }
+
+          }
+  */
         fun clearDatabase() {
             INSTANCE?.clearAllTables()
         }
