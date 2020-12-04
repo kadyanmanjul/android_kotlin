@@ -172,11 +172,11 @@ class WebRtcService : Service() {
             Timber.tag(TAG).e("LoginUser")
             Timber.tag(TAG).e("= %s", endpoint?.registered.toString())
             executeEvent(AnalyticsEvent.LOGIN_PLIVO_SDK.NAME)
-            try {
-                endpoint?.keepAlive()
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
-            }
+            /* try {
+                 endpoint?.keepAlive()
+             } catch (ex: Throwable) {
+                 ex.printStackTrace()
+             }*/
             isCallWasOnGoing = false
             (getSystemService(NOTIFICATION_SERVICE) as NotificationManager?)?.cancel(
                 EMPTY_NOTIFICATION_ID
@@ -323,13 +323,13 @@ class WebRtcService : Service() {
             Timber.tag(TAG).e("onCreate")
             phoneCallState = CallState.CALL_STATE_IDLE
             mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
-            userPlivo = UserPlivoDetailsModel.getPlivoUser()
-            if (endpoint == null) {
-                endpoint = Endpoint.newInstance(BuildConfig.DEBUG, eventListener, options)
-            }
             if (userPlivo == null) {
                 userPlivo = UserPlivoDetailsModel.getPlivoUser()
             }
+            if (endpoint == null) {
+                endpoint = Endpoint.newInstance(BuildConfig.DEBUG, eventListener, options)
+            }
+
             TelephonyUtil.getManager(this)
                 .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_CALL_STATE)
         } catch (ex: Exception) {
@@ -540,11 +540,11 @@ class WebRtcService : Service() {
             try {
                 if (this is Incoming) {
                     stopRing()
+                    startCallTimer()
                     this.answer()
                     showNotificationConnectedCall(this.headerDict as HashMap<String, String>)
                     callCallback?.get()?.onConnect()
                     isCallWasOnGoing = true
-                    startCallTimer()
                     executeEvent(AnalyticsEvent.USER_ANSWER_EVENT_P2P.NAME)
                     return
                 }

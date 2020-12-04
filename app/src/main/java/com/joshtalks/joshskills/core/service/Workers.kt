@@ -466,6 +466,7 @@ class WorkerInLandingScreen(context: Context, workerParams: WorkerParameters) :
         AppAnalytics.updateUser()
         SyncChatService.syncChatWithServer()
         WorkManagerAdmin.readMessageUpdating()
+        WorkManagerAdmin.refreshFcmToken()
         return Result.success()
     }
 }

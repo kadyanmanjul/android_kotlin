@@ -26,8 +26,7 @@ object WorkManagerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .beginWith(
                 mutableListOf(
-                    OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build(),
-                    OneTimeWorkRequestBuilder<RefreshFCMTokenWorker>().build()
+                    OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build()
                 )
             )
             .then(OneTimeWorkRequestBuilder<EngageToUseAppNotificationWorker>().build())
@@ -129,6 +128,18 @@ object WorkManagerAdmin {
                 workRequest
             )
     }
+
+    fun refreshFcmToken() {
+        val workRequest = PeriodicWorkRequestBuilder<RefreshFCMTokenWorker>(2, TimeUnit.DAYS)
+            .setInitialDelay(5, TimeUnit.MINUTES)
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniquePeriodicWork(
+            "fcm_refresh",
+            ExistingPeriodicWorkPolicy.KEEP,
+            workRequest
+        )
+    }
+
 
     fun registerUserGAID(testId: String?, exploreType: String? = null) {
         val data =
