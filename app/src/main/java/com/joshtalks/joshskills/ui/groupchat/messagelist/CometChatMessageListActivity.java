@@ -448,7 +448,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             memberNames = stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
             totalMembers = users.length;
             // Random Number between 10%-30% of totalMembers
-            onlineMembers = (int) ((new Random().nextInt((30 - 10) + 1) + 10) / 100.0) * totalMembers;
+            onlineMembers = (int) (((new Random().nextInt((30 - 10) + 1) + 10) / 100.0) * totalMembers);
             if (onlineMembers == 0) {
                 onlineMembers++;
             }
