@@ -12,5 +12,7 @@ data class UpdateLessonResponse(
     @SerializedName("response_data")
     val responseData: LESSON_STATUS=LESSON_STATUS.NO,
     @SerializedName("Success")
-    val success: Boolean?
-)
+    val success: Boolean?,
+    @SerializedName("points_list")
+    val pointsList: List<String>?,
+    )

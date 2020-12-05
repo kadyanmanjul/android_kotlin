@@ -21,5 +21,7 @@ data class FeedbackVoipResponse(
     @SerializedName("pronunciation")
     val pronunciation: Int?,
     @SerializedName("respectfulness")
-    val respectfulness: Int?
-)
+    val respectfulness: Int?,
+    @SerializedName("points_list")
+    val pointsList: List<String>?
+    )
