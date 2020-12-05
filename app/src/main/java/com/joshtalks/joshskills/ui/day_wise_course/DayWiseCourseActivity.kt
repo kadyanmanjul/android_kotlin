@@ -11,15 +11,31 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ACHIEVED_AWARD_LIST
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.COURSE_ID
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.LESSON_INTERVAL
+import com.joshtalks.joshskills.core.LESSON__CHAT_ID
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LessonModel
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.ui.chat.LESSON_REQUEST_CODE
 import com.joshtalks.joshskills.ui.day_wise_course.unlock_next_class.ActivityUnlockNextClass
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
@@ -40,6 +56,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
     var lessonInterval: Int = -1
     var lessonStatus = LESSON_STATUS.NO
     var chatId: String = EMPTY
+    var awardList: List<Award> = emptyList()
     var conversastionId: String? = null
     var isBatchChanged: Boolean = false
 
@@ -173,10 +190,17 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             if (it.responseData == LESSON_STATUS.CO) {
                 lessonCompleted = true
             }
+            if (it.awardMentorList.isNullOrEmpty().not()) {
+                awardList = it.awardMentorList!!
+            }
+            if (it.pointsList.isNullOrEmpty().not()) {
+                PointSnackbar.make(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))?.show()
+            }
             if(it.awardMentorList.isNullOrEmpty().not()){
                 ShowAwardFragment.showDialog(supportFragmentManager,it.awardMentorList!!)
             }
         })
+
 
 
     }
@@ -356,6 +380,8 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             e.printStackTrace()
         }
     }
+
+
 
     override fun onQuestionStatusUpdate(status: QUESTION_STATUS, questionId: Int) {
         viewModel.updateQuestionStatus(status, questionId, courseId!!, lessonId)
