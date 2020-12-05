@@ -5,7 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshcamerax.utils.SharedPrefsManager
-import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
@@ -19,7 +18,6 @@ import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
 import com.joshtalks.joshskills.core.SHOW_COURSE_DETAIL_TOOLTIP
 import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
@@ -27,7 +25,6 @@ import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
 import com.joshtalks.joshskills.repository.server.onboarding.OnBoardingStatusResponse
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.util.ReminderUtil
-import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -63,14 +60,12 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                     && response.errorBody()!!.string().contains("mentor_id is not valid")
                 ) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
-                    showToast(AppObjectController.joshApplication.getString(R.string.user_does_not_exist))
                 } else {
                     apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
-                    showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
                 }
 
             } catch (ex: Throwable) {
-                ex.showAppropriateMsg()
+                ex.printStackTrace()
             }
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
         }
@@ -231,7 +226,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                     }
                 }
             } catch (ex: Throwable) {
-                ex.showAppropriateMsg()
+                ex.printStackTrace()
             }
         }
     }

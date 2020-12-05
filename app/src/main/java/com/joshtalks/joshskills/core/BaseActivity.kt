@@ -37,7 +37,6 @@ import com.google.firebase.inappmessaging.model.Action
 import com.google.firebase.inappmessaging.model.InAppMessage
 import com.google.firebase.ktx.Firebase
 import com.google.gson.reflect.TypeToken
-import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -76,15 +75,15 @@ import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.newrelic.agent.android.NewRelic
-import com.uxcam.OnVerificationListener
-import com.uxcam.UXCam
+import com.smartlook.sdk.smartlook.Smartlook
+import com.smartlook.sdk.smartlook.integrations.IntegrationListener
+import com.smartlook.sdk.smartlook.integrations.model.FirebaseCrashlyticsIntegration
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.Locale
 import kotlin.random.Random
@@ -146,11 +145,31 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
             initUserForCrashlytics()
             initIdentifierForTools()
             InstallReferralUtil.installReferrer(applicationContext)
-        }
-        if (AppObjectController.getFirebaseRemoteConfig()
-                .getBoolean(FirebaseRemoteConfigKey.UX_CAM_FEATURE_ENABLE)
-        ) {
-            UXCam.startWithKey(BuildConfig.WX_CAM_KEY)
+            if (AppObjectController.getFirebaseRemoteConfig()
+                    .getBoolean(FirebaseRemoteConfigKey.UX_CAM_FEATURE_ENABLE)
+            ) {
+                Smartlook.registerIntegrationListener(object : IntegrationListener {
+                    override fun onSessionReady(dashboardSessionUrl: String) {
+                        FirebaseCrashlytics.getInstance()
+                            .setCustomKey("Smartlook_session_Link", dashboardSessionUrl)
+                    }
+
+                    override fun onVisitorReady(dashboardVisitorUrl: String) {
+                        FirebaseCrashlytics.getInstance()
+                            .setCustomKey("Smartlook_visitor_Link", dashboardVisitorUrl)
+                    }
+                })
+                val id = if (Mentor.getInstance().hasId()) {
+                    Mentor.getInstance().getId()
+                } else {
+                    PrefManager.getStringValue(USER_UNIQUE_ID)
+                }
+                Smartlook.setUserIdentifier(id)
+                if (Smartlook.isRecording().not()) {
+                    Smartlook.startRecording()
+                }
+                Smartlook.enableIntegration(FirebaseCrashlyticsIntegration())
+            }
         }
     }
 
@@ -160,19 +179,6 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
             initNewRelic()
             initFlurry()
         }
-        UXCam.setUserIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
-        // UXCam.setUserProperty(String propertyName , String value)
-
-        UXCam.addVerificationListener(object : OnVerificationListener {
-            override fun onVerificationSuccess() {
-                FirebaseCrashlytics.getInstance()
-                    .setCustomKey("UXCam_Recording_Link", UXCam.urlForCurrentSession())
-            }
-
-            override fun onVerificationFailed(errorMessage: String) {
-                Timber.e(errorMessage)
-            }
-        })
     }
 
     fun openHelpActivity() {
@@ -190,7 +196,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         startActivity(i)
     }
 
-    fun getActivityType(act: Activity): ActivityEnum {
+    fun getActivityType(act: Activity): BaseActivity.ActivityEnum {
         return when (act) {
             is ConversationActivity -> ActivityEnum.Conversation
             is CourseExploreActivity -> ActivityEnum.CourseExplore

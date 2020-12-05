@@ -1098,9 +1098,4 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         (overlay_tip as TopTrialTooltipView).setInboxOverayTipText(7.minus(remainingTrialDays))
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        WebRtcService.logoutUserClient()
-
-    }
 }

@@ -34,6 +34,8 @@ android {
         buildConfigField "String", "COMETCHAT_REGION", "\"us\""
         buildConfigField "String", "COMETCHAT_APP_ID", "\"25039c54194d899\""
         buildConfigField "String", "COMETCHAT_API_KEY", "\"eb53131bce1b40ffb7007d74729337ee8d29625b\""
+        buildConfigField "String", "SMARTLOOK_API_KEY", "\"070b0f426bd4bfcd10e1ca37f3fc7e00cd2e5df3\""
+
 
         manifestPlaceholders = [file_provider: "com.joshtalks.joshskills"]
 
@@ -343,7 +345,9 @@ dependencies {
     implementation 'androidx.startup:startup-runtime:1.0.0-beta01'
 
     implementation 'com.github.YarikSOffice:lingver:1.3.0'
-    implementation 'com.uxcam:uxcam:3.3.3@aar'
+    implementation 'com.smartlook.recording:app:1.7.0-native'
+
+    //  implementation 'com.uxcam:uxcam:3.3.3@aar'
 
     // api 'com.google.cloud:google-cloud-dialogflow:2.3.0'
     // api 'io.grpc:grpc-okhttp:1.32.1'

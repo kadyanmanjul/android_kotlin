@@ -60,6 +60,9 @@ allprojects {
         maven {
             url "https://dl.bintray.com/cometchat/pro"
         }
+        maven {
+            url "https://sdk.smartlook.com/android/release"
+        }
     }
 }
 

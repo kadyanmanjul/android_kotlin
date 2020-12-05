@@ -21,7 +21,6 @@ fun Exception.showAppropriateMsg(application: Application = AppObjectController.
         else -> {
             showToast(application.getString(R.string.something_went_wrong))
         }
-
     }
 }
 
@@ -37,6 +36,5 @@ fun Throwable.showAppropriateMsg(application: Application = AppObjectController.
         else -> {
             showToast(application.getString(R.string.something_went_wrong))
         }
-
     }
 }

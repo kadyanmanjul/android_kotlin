@@ -49,13 +49,14 @@ import com.joshtalks.joshskills.ui.view_holders.IMAGE_SIZE
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.newrelic.agent.android.FeatureFlag
 import com.newrelic.agent.android.NewRelic
+import com.smartlook.sdk.smartlook.Smartlook
+import com.smartlook.sdk.smartlook.interceptors.SmartlookOkHttpInterceptor
 import com.tonyodev.fetch2.Fetch
 import com.tonyodev.fetch2.FetchConfiguration
 import com.tonyodev.fetch2.HttpUrlConnectionDownloader
 import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
-import com.uxcam.UXCam
 import io.branch.referral.Branch
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
@@ -239,6 +240,7 @@ class AppObjectController {
                 .followSslRedirects(true)
                 .addInterceptor(StatusCodeInterceptor())
                 .addInterceptor(NewRelicHttpMetricsLogger())
+                .addNetworkInterceptor(SmartlookOkHttpInterceptor())
                 .addInterceptor(HeaderInterceptor())
                 .hostnameVerifier { _, _ -> true }
 
@@ -296,7 +298,7 @@ class AppObjectController {
             com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
             ActivityLifecycleCallback.register(joshApplication)
             AppEventsLogger.activateApp(joshApplication)
-            initUXCam()
+            initSmartLookCam()
             initFacebookService(joshApplication)
         }
 
@@ -410,11 +412,11 @@ class AppObjectController {
                             BuildConfig.FRESH_CHAT_APP_ID,
                             BuildConfig.FRESH_CHAT_APP_KEY
                         )
-                    Objects.requireNonNull(af.aw(joshApplication))?.let {
+                    Objects.requireNonNull(af.aw(joshApplication)).let {
                         Freshchat.setImageLoader(
                             it
                         )
-                    };
+                    }
 
                     config.isCameraCaptureEnabled = true
                     config.isGallerySelectionEnabled = true
@@ -461,8 +463,17 @@ class AppObjectController {
             return FirebaseRemoteConfig.getInstance()
         }
 
-        private fun initUXCam() {
-            UXCam.setAutomaticScreenNameTagging(true)
+        private fun initSmartLookCam() {
+            val builder = Smartlook.SetupOptionsBuilder((BuildConfig.SMARTLOOK_API_KEY))
+                .setExperimental(true)
+                .build()
+            //.setFps(fps: Int)
+            //  .useAdaptiveFramerate(enabled: Boolean)
+            //.setActivity(@NonNull activity: Activity)
+            //    .setRenderingMode(RenderingMode.)
+            //  .setRenderingMode(renderingModeOption: RenderingModeOption)
+            //.setEventTrackingModes(eventTrackingModes: List<EventTrackingMode>)
+            Smartlook.setup(builder)
         }
 
         private fun getOkHttpDownloader(): OkHttpDownloader {
