@@ -75,6 +75,7 @@ import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.smartlook.sdk.smartlook.Smartlook
+import com.smartlook.sdk.smartlook.analytics.identify.UserProperties
 import com.smartlook.sdk.smartlook.integrations.IntegrationListener
 import com.smartlook.sdk.smartlook.integrations.model.FirebaseCrashlyticsIntegration
 import io.branch.referral.Branch
@@ -83,6 +84,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.Locale
 import kotlin.random.Random
@@ -149,11 +151,13 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
             ) {
                 Smartlook.registerIntegrationListener(object : IntegrationListener {
                     override fun onSessionReady(dashboardSessionUrl: String) {
+                        Timber.tag("baseactivity").e(dashboardSessionUrl)
                         FirebaseCrashlytics.getInstance()
                             .setCustomKey("Smartlook_session_Link", dashboardSessionUrl)
                     }
 
                     override fun onVisitorReady(dashboardVisitorUrl: String) {
+                        Timber.tag("baseactivity1").e(dashboardVisitorUrl)
                         FirebaseCrashlytics.getInstance()
                             .setCustomKey("Smartlook_visitor_Link", dashboardVisitorUrl)
                     }
@@ -164,6 +168,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
                     PrefManager.getStringValue(USER_UNIQUE_ID)
                 }
                 Smartlook.setUserIdentifier(id)
+                Smartlook.setUserProperties(UserProperties())
                 if (Smartlook.isRecording().not()) {
                     Smartlook.startRecording()
                 }
