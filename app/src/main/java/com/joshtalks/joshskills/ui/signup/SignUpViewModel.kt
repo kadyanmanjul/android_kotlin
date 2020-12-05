@@ -247,6 +247,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             .setReferralCode(loginResponse.referralCode)
             .setUserId(loginResponse.userId)
             .update()
+        Mentor.getInstance().updateUser(user)
         AppAnalytics.updateUser()
         WorkManagerAdmin.requiredTaskAfterLoginComplete()
         fetchMentor()
@@ -326,9 +327,9 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                         Mentor.getInstance().getUserId(), map
                     )
                 if (response.isSuccessful) {
-                    response.body()?.run {
-                        this.isVerified = true
-                        User.getInstance().updateFromResponse(this)
+                    response.body()?.let {
+                        it.isVerified = true
+                        User.getInstance().updateFromResponse(it)
                         _signUpStatus.postValue(SignUpStepStatus.ProfileCompleted)
                     }
                     return@launch

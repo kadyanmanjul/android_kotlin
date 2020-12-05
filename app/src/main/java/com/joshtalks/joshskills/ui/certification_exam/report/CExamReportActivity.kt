@@ -11,11 +11,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.databinding.ActivityCexamReportBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadFileEventBus
@@ -88,6 +90,10 @@ class CExamReportActivity : BaseActivity() {
                         supportFragmentManager,
                         listOf(certificateList.get(0).award_mentor!!)
                     )
+                }
+
+                if(certificateList.get(0).pointsList.isNullOrEmpty().not()){
+                    PointSnackbar.make(binding.rootView, Snackbar.LENGTH_LONG,certificateList.get(0).pointsList?.get(0))?.show()
                 }
             }
         })
