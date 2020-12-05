@@ -10,10 +10,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
+import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.databinding.VoipRatingFragmentBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
@@ -107,15 +109,19 @@ class VoipRatingFragment : DialogFragment() {
     private fun requestForFeedback(request: RequestVoipRating) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                AppObjectController.commonNetworkService.feedbackVoipCallAsync(request)
-                val res = AppObjectController.commonNetworkService.feedbackVoipCall(request)
-                if (res.isSuccessful && res.body() != null && res.body()?.awardMentorList.isNullOrEmpty()
-                        .not()
-                ) {
-                    ShowAwardFragment.showDialog(
-                        requireActivity().supportFragmentManager,
-                        res.body()!!.awardMentorList!!
-                    )
+                val res = AppObjectController.commonNetworkService.feedbackVoipCallAsync(request)
+                if (res.isSuccessful && res.body() != null) {
+                    if (res.body()?.awardMentorList.isNullOrEmpty().not())
+                        ShowAwardFragment.showDialog(
+                            requireActivity().supportFragmentManager,
+                            res.body()!!.awardMentorList!!)
+                            if (res.body()?.pointsList.isNullOrEmpty().not()) {
+                                PointSnackbar.make(
+                                    binding.rootView,
+                                    Snackbar.LENGTH_LONG,
+                                    res.body()?.pointsList?.get(0)
+                                )?.show()
+                            }
                 }
                 FullScreenProgressDialog.hideProgressBar(requireActivity())
                 exitDialog()

@@ -9,15 +9,18 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.exoplayer2.Player
+import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -155,6 +158,12 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
             }
 
             binding.progressLayout.visibility = View.GONE
+        })
+
+        practiceViewModel.practiceEngagementData.observe(viewLifecycleOwner, Observer {
+            if(it.pointsList.isNullOrEmpty().not()){
+                PointSnackbar.make(binding.rootView, Snackbar.LENGTH_LONG,it.pointsList?.get(0))?.show()
+            }
         })
     }
 
