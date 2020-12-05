@@ -445,6 +445,7 @@ data class PracticeEngagement(
     @SerializedName("feedback") var practiceFeedback: PracticeFeedback?,
     @SerializedName("practice_date") val practiceDate: String?,
     @SerializedName("transcript_id") val transcriptId: String?,
+    @SerializedName("points_list") val pointsList: List<String>?,
     @Expose var localPath: String? = null
 
 ) : java.io.Serializable {
@@ -455,7 +456,8 @@ data class PracticeEngagement(
         duration = null,
         practiceFeedback = null,
         practiceDate = null,
-        transcriptId = null
+        transcriptId = null,
+        pointsList = emptyList()
     )
 }
 
