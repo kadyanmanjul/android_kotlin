@@ -11,7 +11,7 @@ if (!project.hasProperty("devBuild")) {
 
 def majorVersion = 3
 def minorVersion = 1
-def patchVersion = 1
+def patchVersion = 2
 
 android {
     compileSdkVersion 29
@@ -35,10 +35,7 @@ android {
         buildConfigField "String", "COMETCHAT_APP_ID", "\"25039c54194d899\""
         buildConfigField "String", "COMETCHAT_API_KEY", "\"eb53131bce1b40ffb7007d74729337ee8d29625b\""
         buildConfigField "String", "SMARTLOOK_API_KEY", "\"070b0f426bd4bfcd10e1ca37f3fc7e00cd2e5df3\""
-
-
         manifestPlaceholders = [file_provider: "com.joshtalks.joshskills"]
-
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [

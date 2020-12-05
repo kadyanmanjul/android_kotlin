@@ -85,7 +85,6 @@ import java.net.URL
 import java.text.DateFormat
 import java.util.Collections
 import java.util.Date
-import java.util.Objects
 import java.util.concurrent.TimeUnit
 
 const val KEY_AUTHORIZATION = "Authorization"
@@ -412,7 +411,7 @@ class AppObjectController {
                             BuildConfig.FRESH_CHAT_APP_ID,
                             BuildConfig.FRESH_CHAT_APP_KEY
                         )
-                    Objects.requireNonNull(af.aw(joshApplication)).let {
+                    af.aw(joshApplication)?.let {
                         Freshchat.setImageLoader(
                             it
                         )
