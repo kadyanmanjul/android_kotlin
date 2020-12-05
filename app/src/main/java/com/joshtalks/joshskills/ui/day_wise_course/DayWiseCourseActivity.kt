@@ -13,9 +13,11 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.ACHIEVED_AWARD_LIST
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.CoreJoshActivity
@@ -24,15 +26,16 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.LESSON_INTERVAL
 import com.joshtalks.joshskills.core.LESSON__CHAT_ID
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.ui.chat.LESSON_REQUEST_CODE
 import com.joshtalks.joshskills.ui.day_wise_course.unlock_next_class.ActivityUnlockNextClass
-import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 
@@ -48,6 +51,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
     var lessonId: Int = 0
     var lessonInterval: Int = -1
     var chatId: String = EMPTY
+    var awardList: List<Award> = emptyList()
     var conversastionId: String? = null
     var isBatchChanged: Boolean = false
 
@@ -142,8 +146,11 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             if (it.responseData == LESSON_STATUS.CO) {
                 lessonCompleted = true
             }
-            if(it.awardMentorList.isNullOrEmpty().not()){
-                ShowAwardFragment.showDialog(supportFragmentManager,it.awardMentorList!!)
+            if (it.awardMentorList.isNullOrEmpty().not()) {
+                awardList = it.awardMentorList!!
+            }
+            if (it.pointsList.isNullOrEmpty().not()) {
+                PointSnackbar.make(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))?.show()
             }
         })
     }
@@ -312,6 +319,9 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                 putExtra(LAST_LESSON_INTERVAL, lessonInterval)
                 putExtra(LAST_LESSON_STATUS, lessonCompleted)
                 putExtra(LESSON__CHAT_ID, chatId)
+                if (awardList.isNullOrEmpty().not()) {
+                    putParcelableArrayListExtra(ACHIEVED_AWARD_LIST, ArrayList(awardList))
+                }
             })
             finish()
         }
@@ -350,6 +360,9 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         resultIntent.putExtra(LAST_LESSON_INTERVAL, lessonInterval)
         resultIntent.putExtra(LAST_LESSON_STATUS, lessonCompleted)
         resultIntent.putExtra(LESSON__CHAT_ID, chatId)
+        if (awardList.isNullOrEmpty().not()) {
+            resultIntent.putParcelableArrayListExtra(ACHIEVED_AWARD_LIST, ArrayList(awardList))
+        }
         setResult(RESULT_OK, resultIntent)
         this@DayWiseCourseActivity.finish()
     }

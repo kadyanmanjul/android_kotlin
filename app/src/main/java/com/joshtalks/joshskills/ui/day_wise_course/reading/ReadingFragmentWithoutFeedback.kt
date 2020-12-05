@@ -45,6 +45,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
@@ -60,6 +61,7 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -639,6 +641,9 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
 
         practiceViewModel.practiceEngagementData.observe(viewLifecycleOwner, Observer {
             updatePracticeFeedback(it)
+            if(it.pointsList.isNullOrEmpty().not()){
+                PointSnackbar.make(binding.rootView, Snackbar.LENGTH_LONG,it.pointsList?.get(0))?.show()
+            }
         })
     }
 

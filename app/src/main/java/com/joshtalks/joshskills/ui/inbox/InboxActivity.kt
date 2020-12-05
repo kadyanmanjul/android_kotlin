@@ -46,6 +46,7 @@ import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.inapp_update.Constants
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
@@ -94,6 +95,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_inbox.expiry_tool_tip
 import kotlinx.android.synthetic.main.activity_inbox.hint_text
+import kotlinx.android.synthetic.main.activity_inbox.nested_scroll_view
 import kotlinx.android.synthetic.main.activity_inbox.new_user_layout
 import kotlinx.android.synthetic.main.activity_inbox.overlay_layout
 import kotlinx.android.synthetic.main.activity_inbox.overlay_tip
@@ -165,7 +167,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         initNewUserTip()
         viewModel.getTotalWatchTime()
         viewModel.getProfileData(Mentor.getInstance().getId())
-
+        //PointSnackbar.make(nested_scroll_view,Snackbar.LENGTH_INDEFINITE,"Updated successfully")?.show()
     }
 
     private fun initNewUserTip() {
