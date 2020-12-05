@@ -1524,7 +1524,11 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                         } catch (ex: Exception) {
                         }
 
+                        }
                     }
+                val awardList = data.getParcelableArrayListExtra<Award>(ACHIEVED_AWARD_LIST)
+                if (awardList.isNullOrEmpty().not()){
+                    ShowAwardFragment.showDialog(supportFragmentManager,awardList)
                 }
                 addUnlockNextClassCard(interval, fromLesson = true)
                 uiHandler.postDelayed({
