@@ -146,6 +146,16 @@ class ShowAwardFragment : DialogFragment() {
 
     }
 
+    override fun show(manager: FragmentManager, tag: String?) {
+        try {
+            val ft = manager?.beginTransaction()
+            ft?.add(this, tag)
+            ft?.commitAllowingStateLoss()
+        } catch (ignored: IllegalStateException) {
+
+        }
+    }
+
     override fun onDismiss(dialog: DialogInterface) {
         if (isFromUserProfile.not()) {
             val list = ArrayList<Int>()
