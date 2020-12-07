@@ -74,7 +74,6 @@ import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
-import com.newrelic.agent.android.NewRelic
 import com.smartlook.sdk.smartlook.Smartlook
 import com.smartlook.sdk.smartlook.integrations.IntegrationListener
 import com.smartlook.sdk.smartlook.integrations.model.FirebaseCrashlyticsIntegration
@@ -301,7 +300,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
     }
 
     private fun initNewRelic() {
-        NewRelic.setUserId(PrefManager.getStringValue(USER_UNIQUE_ID))
+     //   NewRelic.setUserId(PrefManager.getStringValue(USER_UNIQUE_ID))
     }
 
     private fun initFlurry() {

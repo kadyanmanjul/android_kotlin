@@ -32,7 +32,6 @@ import com.google.gson.JsonParseException
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -47,8 +46,6 @@ import com.joshtalks.joshskills.repository.service.SignUpNetworkService
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.view_holders.IMAGE_SIZE
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
-import com.newrelic.agent.android.FeatureFlag
-import com.newrelic.agent.android.NewRelic
 import com.smartlook.sdk.smartlook.Smartlook
 import com.smartlook.sdk.smartlook.interceptors.SmartlookOkHttpInterceptor
 import com.tonyodev.fetch2.Fetch
@@ -72,7 +69,6 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.TlsVersion
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
@@ -198,7 +194,7 @@ class AppObjectController {
             initFirebaseRemoteConfig()
             configureCrashlytics()
             initFlurryAnalytics(context)
-            initNewRelic(context)
+         //   initNewRelic(context)
             initFonts()
             WorkManagerAdmin.deviceIdGenerateWorker()
             WorkManagerAdmin.runMemoryManagementWorker()
@@ -238,7 +234,7 @@ class AppObjectController {
                 .retryOnConnectionFailure(true)
                 .followSslRedirects(true)
                 .addInterceptor(StatusCodeInterceptor())
-                .addInterceptor(NewRelicHttpMetricsLogger())
+                //   .addInterceptor(NewRelicHttpMetricsLogger())
                 .addNetworkInterceptor(SmartlookOkHttpInterceptor())
                 .addInterceptor(HeaderInterceptor())
                 .hostnameVerifier { _, _ -> true }
@@ -363,23 +359,23 @@ class AppObjectController {
             return aURL.host
         }
 
-        private fun initNewRelic(context: Context) {
-            NewRelic.enableFeature(FeatureFlag.CrashReporting)
-            NewRelic.enableFeature(FeatureFlag.DefaultInteractions)
-            NewRelic.enableFeature(FeatureFlag.DistributedTracing)
-            NewRelic.enableFeature(FeatureFlag.GestureInstrumentation)
-            NewRelic.enableFeature(FeatureFlag.HttpResponseBodyCapture)
-            NewRelic.enableFeature(FeatureFlag.HandledExceptions)
-            NewRelic.enableFeature(FeatureFlag.NetworkErrorRequests)
-            NewRelic.enableFeature(FeatureFlag.NetworkRequests)
-            NewRelic.enableFeature(FeatureFlag.AnalyticsEvents)
-            NewRelic.withApplicationToken(BuildConfig.NEW_RELIC_TOKEN)
-                .withLocationServiceEnabled(true)
-                // .withLogLevel(AgentLog.AUDIT)
-                .start(
-                    context
-                )
-        }
+        /*  private fun initNewRelic(context: Context) {
+              NewRelic.enableFeature(FeatureFlag.CrashReporting)
+              NewRelic.enableFeature(FeatureFlag.DefaultInteractions)
+              NewRelic.enableFeature(FeatureFlag.DistributedTracing)
+              NewRelic.enableFeature(FeatureFlag.GestureInstrumentation)
+              NewRelic.enableFeature(FeatureFlag.HttpResponseBodyCapture)
+              NewRelic.enableFeature(FeatureFlag.HandledExceptions)
+              NewRelic.enableFeature(FeatureFlag.NetworkErrorRequests)
+              NewRelic.enableFeature(FeatureFlag.NetworkRequests)
+              NewRelic.enableFeature(FeatureFlag.AnalyticsEvents)
+              NewRelic.withApplicationToken(BuildConfig.NEW_RELIC_TOKEN)
+                  .withLocationServiceEnabled(true)
+                  // .withLogLevel(AgentLog.AUDIT)
+                  .start(
+                      context
+                  )
+          }*/
 
         private fun initFirebaseRemoteConfig() {
             val configSettingsBuilder = FirebaseRemoteConfigSettings.Builder()
@@ -640,6 +636,7 @@ class StatusCodeInterceptor : Interceptor {
         return response
     }
 }
+/*
 
 class NewRelicHttpMetricsLogger : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -672,6 +669,7 @@ class NewRelicHttpMetricsLogger : Interceptor {
         }
     }
 }
+*/
 
 fun initStethoLibrary(context: Context) {
     val cls = Class.forName("com.facebook.stetho.Stetho")
