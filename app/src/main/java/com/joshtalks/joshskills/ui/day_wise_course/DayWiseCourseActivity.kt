@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -146,6 +147,114 @@ class DayWiseCourseActivity : CoreJoshActivity(),
     }
 
     private fun setUpTablayout(chatModellist: List<ChatModel>) {
+        val adapter = LessonPagerAdapter(
+            supportFragmentManager, this.lifecycle, chatModellist,
+            courseId = courseId?.toString() ?: EMPTY,
+            lessonId = lessonId
+        )
+
+        binding.lessonViewpager.adapter = adapter
+
+        tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
+        val layoutParam: LinearLayout.LayoutParams =
+            LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+            )
+
+        for (i in 0 until tabs.childCount) {
+            val tab = tabs.getChildAt(i)
+            tab.layoutParams = layoutParam
+            val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
+            layoutParams.weight = 0f
+            layoutParams.marginEnd = Utils.dpToPx(2)
+            layoutParams.marginStart = Utils.dpToPx(2)
+
+            tab.layoutParams = layoutParams
+            binding.lessonTabLayout.requestLayout()
+        }
+
+        TabLayoutMediator(
+            binding.lessonTabLayout,
+            binding.lessonViewpager
+        ) { tab, position ->
+            tab.setCustomView(R.layout.capsule_tab_layout_view)
+            when (position) {
+                0 -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        setColor(tab)
+                    }
+                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
+                }
+                1 -> {
+                    setUnselectedColor(tab)
+                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.VOCABULARY_TITLE)
+                }
+                2 -> {
+                    setUnselectedColor(tab)
+                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.READING_TITLE)
+                }
+                3 -> {
+                    setUnselectedColor(tab)
+                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
+                }
+            }
+        }.attach()
+
+        binding.lessonTabLayout.addOnTabSelectedListener(object :
+            TabLayout.OnTabSelectedListener {
+
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    setColor(tab)
+                }
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    setColor(tab)
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                setUnselectedColor(tab)
+            }
+        })
+
+        Handler().postDelayed({
+            openInCompleteTab(chatModellist)
+        }, 50)
+    }
+
+    private fun setTabCompletionStatus(tab: View?, status: Boolean) {
+        tab?.let {
+            if (status) {
+                it.findViewById<ImageView>(R.id.tab_iv).drawable.setTint(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.green_right_answer
+                    )
+                )
+            } else {
+                it.findViewById<ImageView>(R.id.tab_iv).drawable.setTint(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.grey
+                    )
+                )
+            }
+        }
+    }
+
+    private fun openInCompleteTab(chatModellist: List<ChatModel>) {
         val sectionWiseChatList = ArrayList<ArrayList<ChatModel>>()
         val grammarQuestions: ArrayList<ChatModel> = ArrayList()
         val vocabularyQuestions: ArrayList<ChatModel> = ArrayList()
@@ -171,94 +280,9 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         sectionWiseChatList.add(vocabularyQuestions)
         sectionWiseChatList.add(readingQuestions)
 
-        val adapter = LessonPagerAdapter(
-            supportFragmentManager, this.lifecycle, chatModellist,
-            courseId = courseId?.toString() ?: EMPTY,
-            lessonId = lessonId
-        )
-
-        binding.lessonViewpager.adapter = adapter
-
-        tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
-        val layoutParam: LinearLayout.LayoutParams =
-            LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT
-            )
-
-        for (i in 0 until tabs.childCount) {
-            val tab = tabs.getChildAt(i)
-            tab.layoutParams = layoutParam
-            val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
-
-            layoutParams.weight = 0f
-            layoutParams.marginEnd = Utils.dpToPx(2)
-            layoutParams.marginStart = Utils.dpToPx(2)
-
-            tab.layoutParams = layoutParams
-            binding.lessonTabLayout.requestLayout()
-        }
-
-        TabLayoutMediator(
-            binding.lessonTabLayout,
-            binding.lessonViewpager,
-            object : TabLayoutMediator.TabConfigurationStrategy {
-                override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {
-                    tab.setCustomView(R.layout.capsule_tab_layout_view)
-                    when (position) {
-                        0 -> {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                setColor(tab)
-                            }
-                            tab.view.findViewById<TextView>(R.id.title_tv).text =
-                                AppObjectController.getFirebaseRemoteConfig()
-                                    .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
-
-                        }
-                        1 -> {
-                            setUnselectedColor(tab)
-                            tab.view.findViewById<TextView>(R.id.title_tv).text =
-                                AppObjectController.getFirebaseRemoteConfig()
-                                    .getString(FirebaseRemoteConfigKey.VOCABULARY_TITLE)
-                        }
-                        2 -> {
-                            setUnselectedColor(tab)
-                            tab.view.findViewById<TextView>(R.id.title_tv).text =
-                                AppObjectController.getFirebaseRemoteConfig()
-                                    .getString(FirebaseRemoteConfigKey.READING_TITLE)
-                        }
-                        3 -> {
-                            setUnselectedColor(tab)
-                            tab.view.findViewById<TextView>(R.id.title_tv).text =
-                                AppObjectController.getFirebaseRemoteConfig()
-                                    .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
-                        }
-                    }
-                }
-            }).attach()
-
-        binding.lessonTabLayout.addOnTabSelectedListener(object :
-            TabLayout.OnTabSelectedListener {
-
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    setColor(tab)
-                }
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    setColor(tab)
-                }
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-                setUnselectedColor(tab)
-            }
-        })
-
         var tabOpened = false
-        var incompleteFound = false
+        var incompleteFound: Boolean
+
         sectionWiseChatList.forEachIndexed outer@{ index, sectionChats ->
             incompleteFound = false
             sectionChats.forEach inner@{
@@ -277,26 +301,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                 setTabCompletionStatus(tabs.getChildAt(index), true)
             incompleteFound = false
         }
-    }
 
-    private fun setTabCompletionStatus(tab: View?, status: Boolean) {
-        tab?.let {
-            if (status) {
-                it.findViewById<ImageView>(R.id.tab_iv).drawable.setTint(
-                    ContextCompat.getColor(
-                        this,
-                        R.color.green_right_answer
-                    )
-                )
-            } else {
-                it.findViewById<ImageView>(R.id.tab_iv).drawable.setTint(
-                    ContextCompat.getColor(
-                        this,
-                        R.color.grey
-                    )
-                )
-            }
-        }
     }
 
     private fun setUnselectedColor(tab: TabLayout.Tab?) {
