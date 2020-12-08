@@ -172,6 +172,12 @@ class WebRtcActivity : BaseActivity() {
             .push()
     }
 
+    override fun onNewIntent(nIntent: Intent) {
+        super.onNewIntent(nIntent)
+        this.intent = nIntent
+        initCall()
+    }
+
     private fun initCall() {
         val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
         callType?.run {
@@ -314,11 +320,11 @@ class WebRtcActivity : BaseActivity() {
     }
 
     private fun answerCall() {
+        mBoundService?.answerCall()
         binding.callStatus.text = getText(R.string.practice)
         AudioPlayer.getInstance().stopProgressTone()
         binding.groupForIncoming.visibility = View.GONE
         binding.groupForOutgoing.visibility = View.VISIBLE
-        mBoundService?.answerCall()
         AppAnalytics.create(AnalyticsEvent.ANSWER_CALL_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()

@@ -175,11 +175,11 @@ class WebRtcService : Service() {
             Timber.tag(TAG).e("LoginUser")
             Timber.tag(TAG).e("= %s", endpoint?.registered.toString())
             executeEvent(AnalyticsEvent.LOGIN_PLIVO_SDK.NAME)
-            try {
-                endpoint?.keepAlive()
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
-            }
+            /* try {
+                 endpoint?.keepAlive()
+             } catch (ex: Throwable) {
+                 ex.printStackTrace()
+             }*/
             isCallWasOnGoing = false
             (getSystemService(NOTIFICATION_SERVICE) as NotificationManager?)?.cancel(
                 EMPTY_NOTIFICATION_ID
@@ -407,13 +407,16 @@ class WebRtcService : Service() {
                         val incomingData: HashMap<String, String>? =
                             intent.getSerializableExtra(INCOMING_CALL_USER_OBJ) as HashMap<String, String>?
                         val callActivityIntent =
-                            Intent(this@WebRtcService, WebRtcActivity::class.java).apply {
+                            Intent(
+                                AppObjectController.joshApplication,
+                                WebRtcActivity::class.java
+                            ).apply {
                                 putExtra(CALL_TYPE, CallType.INCOMING)
                                 putExtra(AUTO_PICKUP_CALL, true)
                                 putExtra(CALL_USER_OBJ, incomingData)
                                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             }
-                        startActivities(arrayOf(callActivityIntent))
+                        startActivity(callActivityIntent)
                     }
                     this == CallDisconnect().action -> {
                         endCall()
@@ -426,7 +429,7 @@ class WebRtcService : Service() {
                 ex.printStackTrace()
             }
         }
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     private fun startRing() {
@@ -695,7 +698,7 @@ class WebRtcService : Service() {
         stopRing()
         val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
         audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-        audioManager.isSpeakerphoneOn = true
+        audioManager.isSpeakerphoneOn = false
         phoneCallState = CallState.CALL_STATE_IDLE
         removeNotifications()
         outgoingCallData = null
