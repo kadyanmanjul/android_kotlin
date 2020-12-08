@@ -76,9 +76,6 @@ class WebRtcService : Service() {
     private val executor: ExecutorService =
         JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-Calling Service")
 
-    private var incomingCallData: HashMap<String, String>? = null
-    private var outgoingCallData: HashMap<String, String>? = null
-    private var callFromFirebase = false
     private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
         HangUpRtcOnPstnCallAnsweredListener()
     private var countUpTimer = CountUpTimer(false)
@@ -86,6 +83,12 @@ class WebRtcService : Service() {
     companion object {
         private val TAG = "PlivoCallingListenService"
         private var phoneCallState = CallState.CALL_STATE_IDLE
+
+        @Volatile
+        private var incomingCallData: HashMap<String, String>? = null
+
+        @Volatile
+        private var outgoingCallData: HashMap<String, String>? = null
 
         @Volatile
         private var endpoint: Endpoint? = null
@@ -172,11 +175,11 @@ class WebRtcService : Service() {
             Timber.tag(TAG).e("LoginUser")
             Timber.tag(TAG).e("= %s", endpoint?.registered.toString())
             executeEvent(AnalyticsEvent.LOGIN_PLIVO_SDK.NAME)
-            /* try {
-                 endpoint?.keepAlive()
-             } catch (ex: Throwable) {
-                 ex.printStackTrace()
-             }*/
+            try {
+                endpoint?.keepAlive()
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
             isCallWasOnGoing = false
             (getSystemService(NOTIFICATION_SERVICE) as NotificationManager?)?.cancel(
                 EMPTY_NOTIFICATION_ID
@@ -184,13 +187,11 @@ class WebRtcService : Service() {
 
             if (outgoingCallData != null) {
                 initCall()
-                return
             }
-            if (callFromFirebase && incomingCallData != null) {
+            if (incomingCallData != null) {
                 endpoint?.relayVoipPushNotification(incomingCallData)
-                callFromFirebase = false
-                return
             }
+            executeEvent(AnalyticsEvent.LOGIN_COMPLETED_PLIVO_SDK.NAME)
         }
 
         override fun onLogout() {
@@ -345,6 +346,9 @@ class WebRtcService : Service() {
         if (userPlivo == null) {
             userPlivo = UserPlivoDetailsModel.getPlivoUser()
         }
+        if (intent.action == NotificationIncomingCall().action && isUserLogin().not()) {
+            startForeground(EMPTY_NOTIFICATION_ID, loginUserService())
+        }
         intent.action?.run {
             try {
                 Timber.tag(TAG).e(intent.getStringExtra(INCOMING_CALL_JSON_OBJECT))
@@ -370,7 +374,6 @@ class WebRtcService : Service() {
                         if (isUserLogin()) {
                             endpoint?.relayVoipPushNotification(incomingCallData)
                         } else {
-                            callFromFirebase = true
                             loginUser()
                         }
                     }
@@ -438,7 +441,7 @@ class WebRtcService : Service() {
             ?.callH(userPlivo?.username, outgoingCallData)
         showNotificationOnOutgoingCall(outgoingCallData)
         callUUID = outgoingCallData?.get("X-PH-MOBILEUUID")
-        outgoingCallData = null
+        executeEvent(AnalyticsEvent.INIT_CALL.NAME)
     }
 
     fun getCallId(): String? {
@@ -506,10 +509,8 @@ class WebRtcService : Service() {
 
 
     private fun showNotificationOnIncomingCall(incomingData: HashMap<String, String>?) {
-        //   if (isAppVisible()) {
         val notification = incomingCallNotification(incomingData)
         startForeground(INCOMING_CALL_NOTIFICATION_ID, notification)
-        //}
     }
 
     private fun showNotificationOnOutgoingCall(extraHeaders: HashMap<String, String>?) {
@@ -531,7 +532,7 @@ class WebRtcService : Service() {
     }
 
 
-    override fun onBind(intent: Intent): IBinder? {
+    override fun onBind(intent: Intent): IBinder {
         return mBinder
     }
 
@@ -693,10 +694,10 @@ class WebRtcService : Service() {
         stopRing()
         val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
         audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-        audioManager.isSpeakerphoneOn = false
+        audioManager.isSpeakerphoneOn = true
         phoneCallState = CallState.CALL_STATE_IDLE
         removeNotifications()
-
+        outgoingCallData = null
     }
 
     private fun removeNotifications() {
@@ -966,6 +967,7 @@ class WebRtcService : Service() {
             AppAnalytics.create(event)
                 .addUserDetails()
                 .addParam(AnalyticsEvent.PLIVO_ID.NAME, userPlivo?.username)
+                .addParam("Call UUID", callUUID)
                 .push()
         }
     }
@@ -997,7 +999,6 @@ class NotificationId {
         val INCOMING_CALL_CHANNEL_ID = "incoming_call_channel_id"
         val OUTGOING_CALL_CHANNEL_ID = "outgoing_call_channel_id"
         val CONNECTED_CALL_CHANNEL_ID = "connected_call_channel_id"
-        val EMPTY_CHANNEL_ID = "empty_channel_id"
     }
 }
 
@@ -1009,6 +1010,4 @@ interface WebRtcCallback {
     fun onCallReject(id: String?)
     fun onSelfDisconnect(id: String?)
     fun onIncomingCallHangup(id: String?)
-//    fun initOutgoingCall(id: String?)
-
 }

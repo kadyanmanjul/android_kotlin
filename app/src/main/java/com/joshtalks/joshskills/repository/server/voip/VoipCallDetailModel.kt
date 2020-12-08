@@ -11,14 +11,16 @@ import kotlinx.android.parcel.Parcelize
 data class VoipCallDetailModel(
     @SerializedName("name") val name: String? = EMPTY,
     @SerializedName("plivo_username") var plivoUserName: String? = EMPTY,
+    @SerializedName("mentor_id") var mentorId: String? = EMPTY,
     @SerializedName("locality") val locality: String? = EMPTY,
     @SerializedName("profile_pic") val profilePic: String? = EMPTY,
     @SerializedName("topicName") var topic: String? = EMPTY,
     @SerializedName("topicId") var topicName: String? = EMPTY,
     @SerializedName("callieName") var callieName: String? = EMPTY,
     @SerializedName("mobileuuid") var mobileUUID: String? = EMPTY,
+    @SerializedName("is_support_available") var isSupportAvailable: Boolean? = false
 
-    ) : Parcelable {
+) : Parcelable {
     constructor() : this(
         name = EMPTY,
         plivoUserName = EMPTY,

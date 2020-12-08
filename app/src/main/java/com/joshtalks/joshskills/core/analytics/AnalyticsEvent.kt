@@ -478,6 +478,8 @@ enum class AnalyticsEvent(val NAME: String) {
     PLIVO_ID("plivo_id"),
     FIND_USER_FOR_P2P_CALL("find_user_p2pl"),
     LOGIN_PLIVO_SDK("login_in_plivo_p2p"),
+    LOGIN_COMPLETED_PLIVO_SDK("login_in_completed_plivo_p2p"),
+
     LOGIN_FAILED_PLIVO_SDK("login_failed_plivo_p2p"),
     LOGOUT_PLIVO_SDK("logout_in_plivo_p2p"),
 

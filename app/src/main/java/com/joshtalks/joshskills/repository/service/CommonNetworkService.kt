@@ -167,11 +167,7 @@ interface CommonNetworkService {
     suspend fun getTopicDetail(@Path("id") id: String): SpeakingTopicModel
 
     @GET("$DIR/voicecall/recipient_mentor")
-    suspend fun getP2PUser(
-        @Query("course_id") id: String,
-        @Query("topic_id") topicId: Int?,
-        @Query("support_user") supportUser: String
-    ): VoipCallDetailModel
+    suspend fun getP2PUser(@QueryMap params: Map<String, String?>): VoipCallDetailModel
 
     @GET("$DIR/voicecall/mentor_topicinfo")
     suspend fun callMentorInfo(@Query("mobileuuid") id: String): HashMap<String, String?>
