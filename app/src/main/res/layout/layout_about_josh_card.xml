@@ -25,25 +25,25 @@
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
         android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image"
-            app:layout_constraintWidth_default="percent"
-            tools:text="National Media Award" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/image"
+        app:layout_constraintWidth_default="percent"
+        tools:text="National Media Award" />
 
     <TextView
-            android:id="@+id/description"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/title"
-            android:layout_marginTop="@dimen/_4sdp"
-            android:maxLines="5"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-            android:textColor="@color/light_grey"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/title"
-            app:layout_constraintWidth_default="percent"
-            tools:text="Josh Talks is the winner of National Media Award from President of India Ram Nath Kovind." />
+        android:id="@+id/description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:maxLines="5"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+        android:textColor="@color/light_grey"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintWidth_default="percent"
+        tools:text="Josh Talks is the winner of National Media Award from President of India Ram Nath Kovind." />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.explore
+package com.joshtalks.joshskills.ui.explore.v2
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,11 +12,12 @@ import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
+import com.joshtalks.joshskills.ui.explore.CourseExploreAdapter
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 import kotlinx.android.synthetic.main.fragment_course_listing.offer_card_view
 import kotlinx.android.synthetic.main.fragment_course_listing.recycler_view
 
-class CourseListingFragment : Fragment() {
+class CourseListingFragmentV2 : Fragment() {
     private var courseList: ArrayList<CourseExploreModel> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,7 +72,7 @@ class CourseListingFragment : Fragment() {
 
         @JvmStatic
         fun newInstance(conversationPractiseModel: List<CourseExploreModel>) =
-            CourseListingFragment().apply {
+            CourseListingFragmentV2().apply {
                 arguments = Bundle().apply {
                     putParcelableArrayList(
                         ARG_COURSE_LIST_OBJ,

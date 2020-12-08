@@ -44,4 +44,8 @@ enum class ExploreCardType(value: String) {
     @SerializedName("FREETRIAL")
     FREETRIAL("FREETRIAL"),
 
+    @SerializedName("RECOMMENDATION")
+    RECOMMENDATION("RECOMMENDATION"),
+
+
 }

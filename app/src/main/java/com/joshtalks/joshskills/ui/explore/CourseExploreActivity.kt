@@ -5,28 +5,21 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.EXPLORE_TYPE
-import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SERVER_GID_ID
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
-import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityCourseExploreBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
-import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
@@ -35,14 +28,11 @@ import com.joshtalks.joshskills.ui.inbox.PAYMENT_FOR_COURSE_CODE
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.subscription.StartSubscriptionActivity
-import com.joshtalks.joshskills.util.showAppropriateMsg
 import io.reactivex.disposables.CompositeDisposable
-import java.util.Date
-import java.util.LinkedHashSet
-import kotlin.collections.set
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.collections.set
 
 const val COURSE_EXPLORER_SCREEN_NAME = "Course Explorer"
 const val USER_COURSES = "user_courses"
@@ -57,6 +47,10 @@ class CourseExploreActivity : CoreJoshActivity() {
         ScreenEngagementModel(COURSE_EXPLORER_SCREEN_NAME)
     private val tabName: MutableList<String> = ArrayList()
 
+    private val viewModel: CourseExploreViewModel by lazy {
+        ViewModelProvider(this).get(CourseExploreViewModel::class.java)
+    }
+
     companion object {
         fun startCourseExploreActivity(
             context: Activity,
@@ -64,11 +58,9 @@ class CourseExploreActivity : CoreJoshActivity() {
             list: MutableSet<InboxEntity>?, clearBackStack: Boolean = false, state: ActivityEnum
         ) {
             val intent = Intent(context, CourseExploreActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             list?.run {
                 intent.putParcelableArrayListExtra(USER_COURSES, ArrayList(this))
             }
-
             intent.putExtra(PREV_ACTIVITY, state.toString())
             if (clearBackStack) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -94,7 +86,33 @@ class CourseExploreActivity : CoreJoshActivity() {
             }
         }
         initView()
-        registerUserGAID()
+        addObserver()
+
+        val list: ArrayList<InboxEntity>? = if (intent.hasExtra(USER_COURSES)) {
+            intent.getParcelableArrayListExtra(USER_COURSES)
+        } else {
+            null
+        }
+        //viewModel.getCourse(list)
+        viewModel.getRecommendCourses()
+    }
+
+    private fun addObserver() {
+        viewModel.apiCallStatusLiveData.observe(this, {
+            courseExploreBinding.progressBar.visibility = View.GONE
+        })
+        viewModel.languageListLiveData.observe(this, {
+            tabName.addAll(it)
+        })
+        viewModel.courseListLiveData.observe(this, {
+            courseExploreBinding.courseListingRv.adapter =
+                CourseListingAdapter(this@CourseExploreActivity, it)
+            courseExploreBinding.progressBar.visibility = View.GONE
+            initViewPagerTab()
+        })
+        viewModel.recommendSegment.observe(this, {
+
+        })
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -167,99 +185,11 @@ class CourseExploreActivity : CoreJoshActivity() {
         courseExploreBinding.courseListingRv.offscreenPageLimit = 10
     }
 
-    private fun loadCourses() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, false)
-            WorkManagerAdmin.registerUserGAID(
-                null,
-                if (exploreType.isNotBlank()) exploreType else null
-            )
-
-            try {
-                var list: ArrayList<InboxEntity>? = null
-                if (intent.hasExtra(USER_COURSES)) {
-                    list = intent.getParcelableArrayListExtra(USER_COURSES)
-                }
-                val data = HashMap<String, String>()
-                if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
-                    data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
-                }
-                if (PrefManager.getStringValue(INSTANCE_ID, false).isNotEmpty()) {
-                    data["instance"] = PrefManager.getStringValue(INSTANCE_ID, false)
-                }
-                if (Mentor.getInstance().getId().isNotEmpty()) {
-                    data["mentor"] = Mentor.getInstance().getId()
-                }
-                if (data.isNullOrEmpty()) {
-                    data["is_default"] = "true"
-                }
-
-                val response: List<CourseExploreModel> =
-                    AppObjectController.signUpNetworkService.exploreCourses(data)
-
-                val languageSet: LinkedHashSet<String> = linkedSetOf()
-
-                val listIterator =
-                    response.sortedBy { it.languageId }.toMutableList().listIterator()
-                while (listIterator.hasNext()) {
-                    val courseExploreModel = listIterator.next()
-                    val resp = list?.find { it.courseId == courseExploreModel.course.toString() }
-                    if (resp != null) {
-                        listIterator.remove()
-                    }
-                    languageSet.add(courseExploreModel.language)
-                }
-                tabName.addAll(languageSet)
-
-                val courseByMap: Map<Int, List<CourseExploreModel>> =
-                    response.groupBy { it.languageId }.toSortedMap(compareBy { it })
-
-                AppObjectController.uiHandler.post {
-                    courseExploreBinding.courseListingRv.adapter =
-                        PractiseViewPagerAdapter(this@CourseExploreActivity, courseByMap)
-                    courseExploreBinding.progressBar.visibility = View.GONE
-                    initViewPagerTab()
-                }
-
-            } catch (ex: Throwable) {
-                ex.showAppropriateMsg()
-                AppObjectController.uiHandler.post {
-                    courseExploreBinding.progressBar.visibility = View.GONE
-                }
-            }
-        }
-    }
-
-    private fun registerUserGAID() {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val requestRegisterGAId = RequestRegisterGAId()
-                requestRegisterGAId.gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
-                requestRegisterGAId.installOn =
-                    InstallReferrerModel.getPrefObject()?.installOn ?: Date().time
-                requestRegisterGAId.utmMedium =
-                    InstallReferrerModel.getPrefObject()?.utmMedium ?: EMPTY
-                requestRegisterGAId.utmSource =
-                    InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY
-                val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, false)
-                requestRegisterGAId.exploreCardType =
-                    if (exploreType.isNotBlank()) ExploreCardType.valueOf(exploreType) else null
-                val resp =
-                    AppObjectController.commonNetworkService.registerGAIdAsync(requestRegisterGAId)
-                        .await()
-                PrefManager.put(SERVER_GID_ID, resp.id)
-                PrefManager.put(EXPLORE_TYPE, resp.exploreCardType!!.name, false)
-            } catch (ex: Throwable) {
-                //LogException.catchException(ex)
-            }
-            loadCourses()
-        }
-    }
 
     override fun onResume() {
         super.onResume()
         Runtime.getRuntime().gc()
-        addObserver()
+        addRXBusObserver()
     }
 
     override fun onPause() {
@@ -267,7 +197,7 @@ class CourseExploreActivity : CoreJoshActivity() {
         compositeDisposable.clear()
     }
 
-    private fun addObserver() {
+    private fun addRXBusObserver() {
         compositeDisposable.add(
             RxBus2.listen(CourseExploreModel::class.java).subscribe { courseExploreModel ->
                 val extras: HashMap<String, String> = HashMap()

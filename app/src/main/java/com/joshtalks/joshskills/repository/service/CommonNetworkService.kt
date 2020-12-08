@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.repository.server.conversation_practice.Conversa
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmitConversationPractiseRequest
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmittedConversationPractiseModel
 import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponseV2
+import com.joshtalks.joshskills.repository.server.course_recommend.BaseResponseCourseList
 import com.joshtalks.joshskills.repository.server.feedback.FeedbackStatusResponse
 import com.joshtalks.joshskills.repository.server.feedback.RatingDetails
 import com.joshtalks.joshskills.repository.server.feedback.UserFeedbackRequest
@@ -206,4 +207,9 @@ interface CommonNetworkService {
 
     @POST("$DIR/mentor/delete_mentor/")
     suspend fun deleteMentor(@Body params: Map<String, String>)
+
+    @GET("$DIR/recommendation/course_explorer/")
+    suspend fun getRecommendCoursesAsync(@QueryMap params: Map<String, String>): BaseResponseCourseList
+
+
 }

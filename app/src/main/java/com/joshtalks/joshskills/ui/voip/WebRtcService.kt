@@ -172,11 +172,11 @@ class WebRtcService : Service() {
             Timber.tag(TAG).e("LoginUser")
             Timber.tag(TAG).e("= %s", endpoint?.registered.toString())
             executeEvent(AnalyticsEvent.LOGIN_PLIVO_SDK.NAME)
-            /* try {
+             try {
                  endpoint?.keepAlive()
              } catch (ex: Throwable) {
                  ex.printStackTrace()
-             }*/
+             }
             isCallWasOnGoing = false
             (getSystemService(NOTIFICATION_SERVICE) as NotificationManager?)?.cancel(
                 EMPTY_NOTIFICATION_ID
@@ -257,6 +257,11 @@ class WebRtcService : Service() {
             executeEvent(AnalyticsEvent.OUTGOING_CALL.NAME)
         }
 
+        override fun onOutgoingCallRinging(p0: Outgoing) {
+            Timber.tag(TAG).e("onOutgoingCallRinging")
+
+        }
+
         override fun onOutgoingCallAnswered(outgoing: Outgoing) {
             Timber.tag(TAG).e("onOutgoingCallAnswered")
             callData = outgoing
@@ -320,6 +325,7 @@ class WebRtcService : Service() {
     override fun onCreate() {
         super.onCreate()
         try {
+
             Timber.tag(TAG).e("onCreate")
             phoneCallState = CallState.CALL_STATE_IDLE
             mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
@@ -344,6 +350,9 @@ class WebRtcService : Service() {
         }
         if (userPlivo == null) {
             userPlivo = UserPlivoDetailsModel.getPlivoUser()
+        }
+        if (intent.action == NotificationIncomingCall().action && isUserLogin().not()) {
+            startForeground(EMPTY_NOTIFICATION_ID, loginUserService())
         }
         intent.action?.run {
             try {
