@@ -12,7 +12,8 @@ class ProgressActivityAdapter(
     val context: Context,
     val list: List<CourseOverviewResponse>,
     val onItemClickListener: CourseProgressAdapter.ProgressItemClickListener,
-    val conversationId: String
+    val conversationId: String,
+    val lastAvailableLessonId: Int?
 ) :
     RecyclerView.Adapter<ProgressActivityAdapter.ProgressViewHolder>() {
 
@@ -52,7 +53,8 @@ class ProgressActivityAdapter(
                 conversationId,
                 item.chatId ?: "0",
                 item.certificateExamId ?: 0,
-                item.examStatus ?: CExamStatus.FRESH
+                item.examStatus ?: CExamStatus.FRESH,
+                lastAvailableLessonId = lastAvailableLessonId
             )
             binding.progressRv.adapter = adapter
 

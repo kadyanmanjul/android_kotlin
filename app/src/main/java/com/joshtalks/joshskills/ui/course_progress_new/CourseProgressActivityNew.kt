@@ -43,6 +43,7 @@ import java.io.File
 class CourseProgressActivityNew : AppCompatActivity(),
     CourseProgressAdapter.ProgressItemClickListener {
 
+    private var lastAvailableLessonId: Int? = null
     lateinit var binding: CourseProgressActivityNewBinding
     lateinit var adapter: ProgressActivityAdapter
     var courseId: Int = 0
@@ -154,7 +155,12 @@ class CourseProgressActivityNew : AppCompatActivity(),
 
         courseId = intent.getIntExtra(COURSE_ID, 0)
 
+        CoroutineScope(Dispatchers.IO).launch {
+            lastAvailableLessonId = viewModel.getLastLessonForCourse(courseId)
+        }
+
         viewModel.getCourseOverview(courseId)
+
         viewModel.progressLiveData.observe(this, {
             binding.pdfNameTv.text = it.pdfInfo.coursePdfName
             binding.sizeTv.text = "${it.pdfInfo.coursePdfSize} kB"
@@ -176,7 +182,13 @@ class CourseProgressActivityNew : AppCompatActivity(),
 
             }
             adapter =
-                ProgressActivityAdapter(this, it.responseData!!, this, it.conversationId ?: "0")
+                ProgressActivityAdapter(
+                    this,
+                    it.responseData!!,
+                    this,
+                    it.conversationId ?: "0",
+                    lastAvailableLessonId
+                )
             binding.progressRv.adapter = adapter
 
         })

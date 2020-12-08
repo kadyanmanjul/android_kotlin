@@ -14,8 +14,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFF"
-        android:padding="@dimen/_8sdp">
+        android:background="#FFF">
 
         <include
             android:id="@+id/include"
@@ -30,10 +29,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_8sdp"
-            android:layout_marginVertical="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_8sdp"
             android:clickable="false"
             android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/progress_title_tv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/include">
@@ -54,9 +52,12 @@
                 android:id="@+id/pdf_name_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:paddingTop="@dimen/_4sdp"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:text="Pdf name will be shown here"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+                android:textColor="#000"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/pdf_icon"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -64,11 +65,12 @@
             <FrameLayout
                 android:id="@+id/download_container"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:layout_marginTop="@dimen/_4sdp"
-                android:paddingEnd="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 android:visibility="visible"
                 app:layout_constraintStart_toEndOf="@+id/pdf_icon"
                 app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv">
@@ -96,12 +98,11 @@
 
                 <com.pnikosis.materialishprogress.ProgressWheel
                     android:id="@+id/progress_dialog"
-                    android:layout_width="@dimen/_28sdp"
-                    android:layout_height="@dimen/_28sdp"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
                     android:layout_gravity="center"
                     android:visibility="gone"
                     app:matProg_barWidth="@dimen/_2sdp"
-                    android:padding="@dimen/_4sdp"
                     tools:visibility="gone"
                     wheel:matProg_barColor="#878A91"
                     wheel:matProg_fillRadius="true"
@@ -109,17 +110,16 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_cancel_download"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
                     android:layout_gravity="center"
                     android:clickable="true"
-                    android:padding="@dimen/_6sdp"
                     android:focusable="true"
                     android:onClick="@{()->handler.downloadCancel()}"
                     android:tint="#878A91"
-                    android:visibility="visible"
-                    app:srcCompat="@drawable/ic_cross"
-                    tools:visibility="gone" />
+                    android:padding="@dimen/_2sdp"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/ic_cross" />
 
             </FrameLayout>
 
@@ -129,58 +129,78 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_6sdp"
                 android:text="238 pages"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                 android:textColor="@color/text_light_ac"
                 app:layout_constraintStart_toEndOf="@+id/download_container"
-                app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv" />
+                app:layout_constraintBottom_toBottomOf="@+id/download_container"
+                app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv"
+                app:layout_constraintTop_toTopOf="@+id/download_container" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/size_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_6sdp"
-                android:drawableStart="@drawable/ct_unselected_dot"
-                android:drawablePadding="@dimen/_8sdp"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_6sdp"
+                android:drawableStart="@drawable/ic_unselected_dot"
+                android:drawablePadding="@dimen/_6sdp"
                 android:text="24Kb"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                 android:textColor="@color/text_light_ac"
                 app:layout_constraintStart_toEndOf="@+id/page_count_tv"
-                app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv" />
+                app:layout_constraintBottom_toBottomOf="@+id/download_container"
+                app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv"
+                app:layout_constraintTop_toTopOf="@+id/download_container" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_6sdp"
-                android:drawableStart="@drawable/ct_unselected_dot"
-                android:drawablePadding="@dimen/_8sdp"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_6sdp"
+                android:drawableStart="@drawable/ic_unselected_dot"
+                android:drawablePadding="@dimen/_6sdp"
                 android:text="PDF"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                 android:textColor="@color/text_light_ac"
                 app:layout_constraintStart_toEndOf="@+id/size_tv"
-                app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv" />
+                app:layout_constraintBottom_toBottomOf="@+id/download_container"
+                app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv"
+                app:layout_constraintTop_toTopOf="@+id/download_container" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/pdf_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:background="@color/grey"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pdf_view" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/progress_title_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_8sdp"
             android:text="@string/lessons"
+            android:textColor="#000"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pdf_view" />
+            app:layout_constraintTop_toBottomOf="@+id/pdf_bottom" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/progress_rv"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/_8sdp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

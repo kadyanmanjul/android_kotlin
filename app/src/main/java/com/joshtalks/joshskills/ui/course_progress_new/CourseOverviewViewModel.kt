@@ -36,4 +36,8 @@ class CourseOverviewViewModel(application: Application) : AndroidViewModel(appli
     suspend fun getLesson(lessonId: Int): LessonModel? {
         return AppObjectController.appDatabase.lessonDao().getLesson(lessonId)
     }
+
+    suspend fun getLastLessonForCourse(courseId: Int): Int {
+        return AppObjectController.appDatabase.lessonDao().getLastLessonForCourse(courseId)
+    }
 }

@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.CourseProgressItemBinding
@@ -19,7 +20,8 @@ class CourseProgressAdapter(
     val conversationId: String,
     val chatMessageId: String,
     val certificationId: Int,
-    val cExamStatus: CExamStatus = CExamStatus.FRESH
+    val cExamStatus: CExamStatus = CExamStatus.FRESH,
+    val lastAvailableLessonId: Int?
 ) :
     RecyclerView.Adapter<CourseProgressAdapter.CourseProgressViewHolder>() {
 
@@ -92,7 +94,27 @@ class CourseProgressAdapter(
                     binding.progressIv.alpha = 1f
 
                 binding.progressIndexTv.text = "${item.lessonNo}"
-
+                lastAvailableLessonId?.let {
+                    if (it == item.lessonId) {
+                        binding.progressIndexTv.background =
+                            ContextCompat.getDrawable(context, R.drawable.lesson_number_bg)
+                        binding.progressIndexTv.setTextColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.white
+                            )
+                        )
+                    } else {
+                        binding.progressIndexTv.background =
+                            ContextCompat.getDrawable(context, R.color.white)
+                        binding.progressIndexTv.setTextColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.black
+                            )
+                        )
+                    }
+                }
                 binding.progressIv.visibility = View.GONE
 
 
