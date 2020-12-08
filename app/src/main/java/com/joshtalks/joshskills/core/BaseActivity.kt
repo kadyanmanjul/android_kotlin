@@ -300,7 +300,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
     }
 
     private fun initNewRelic() {
-     //   NewRelic.setUserId(PrefManager.getStringValue(USER_UNIQUE_ID))
+        //   NewRelic.setUserId(PrefManager.getStringValue(USER_UNIQUE_ID))
     }
 
     private fun initFlurry() {
@@ -400,8 +400,16 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         npsModel: NPSEventModel,
         questionList: List<NPSQuestionModel>
     ) {
+        if (isFinishing) {
+            return
+        }
+        val prev =
+            supportFragmentManager.findFragmentByTag(NetPromoterScoreFragment::class.java.name)
+        if (prev != null) {
+            return
+        }
         val bottomSheetFragment = NetPromoterScoreFragment.newInstance(npsModel, questionList)
-        bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+        bottomSheetFragment.show(supportFragmentManager, NetPromoterScoreFragment::class.java.name)
     }
 
     fun showSignUpDialog() {
