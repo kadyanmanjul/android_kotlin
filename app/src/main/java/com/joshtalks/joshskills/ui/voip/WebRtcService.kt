@@ -324,17 +324,20 @@ class WebRtcService : Service() {
             Timber.tag(TAG).e("onCreate")
             phoneCallState = CallState.CALL_STATE_IDLE
             mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
-            if (userPlivo == null) {
-                userPlivo = UserPlivoDetailsModel.getPlivoUser()
-            }
-            if (endpoint == null) {
-                endpoint = Endpoint.newInstance(BuildConfig.DEBUG, eventListener, options)
-            }
-
+            initLib()
             TelephonyUtil.getManager(this)
                 .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_CALL_STATE)
         } catch (ex: Exception) {
             ex.printStackTrace()
+        }
+    }
+
+    private fun initLib() {
+        if (userPlivo == null) {
+            userPlivo = UserPlivoDetailsModel.getPlivoUser()
+        }
+        if (endpoint == null) {
+            endpoint = Endpoint.newInstance(BuildConfig.DEBUG, eventListener, options)
         }
     }
 
@@ -343,9 +346,7 @@ class WebRtcService : Service() {
         if (intent?.action == null) {
             return START_NOT_STICKY
         }
-        if (userPlivo == null) {
-            userPlivo = UserPlivoDetailsModel.getPlivoUser()
-        }
+        initLib()
         if (intent.action == NotificationIncomingCall().action && isUserLogin().not()) {
             startForeground(EMPTY_NOTIFICATION_ID, loginUserService())
         }
@@ -747,6 +748,7 @@ class WebRtcService : Service() {
             .setContentTitle(getString(R.string.app_name))
             .setContentText("Syncing...")
             .setSmallIcon(R.drawable.ic_status_bar_notification)
+            .setOngoing(false)
             .setColor(
                 ContextCompat.getColor(
                     AppObjectController.joshApplication,
@@ -754,12 +756,9 @@ class WebRtcService : Service() {
                 )
             )
             .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-            .setOnlyAlertOnce(true)
+            .setPriority(NotificationCompat.PRIORITY_MIN)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            lNotificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        }
+
         return lNotificationBuilder.build()
     }
 

@@ -13,6 +13,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.AutoLinkMode
 import com.joshtalks.joshskills.repository.server.course_detail.TeacherDetails
@@ -34,7 +35,7 @@ class TeacherDetailsFragment : DialogFragment() {
             }
     }
 
-    private lateinit var tgDetails: TeacherDetails
+    private var tgDetails: TeacherDetails? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,9 +65,12 @@ class TeacherDetailsFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupProfilePicture()
-        teacher_name.text = tgDetails.name
+        teacher_name.text = tgDetails?.name
         teacher_details.text =
-            HtmlCompat.fromHtml(tgDetails.longDescription, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            HtmlCompat.fromHtml(
+                tgDetails?.longDescription ?: EMPTY,
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
         iv_back.setOnClickListener {
             dismissAllowingStateLoss()
         }
@@ -80,7 +84,7 @@ class TeacherDetailsFragment : DialogFragment() {
     }
 
     private fun setupProfilePicture() {
-        tgDetails.dpUrl?.run {
+        tgDetails?.dpUrl?.run {
             Glide.with(requireContext())
                 .load(this)
                 .override(Target.SIZE_ORIGINAL)
