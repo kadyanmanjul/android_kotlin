@@ -10,21 +10,18 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
-import com.joshtalks.joshskills.repository.local.model.ExploreCardType
-import com.joshtalks.joshskills.repository.server.CourseExploreModel
-import com.joshtalks.joshskills.ui.explore.CourseExploreAdapter
+import com.joshtalks.joshskills.repository.server.course_recommend.Segment
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
-import kotlinx.android.synthetic.main.fragment_course_listing.offer_card_view
 import kotlinx.android.synthetic.main.fragment_course_listing.recycler_view
 
-class CourseListingFragmentV2 : Fragment() {
-    private var courseList: ArrayList<CourseExploreModel> = arrayListOf()
+class SegmentedCourseListingFragment : Fragment() {
+    private var segmentList: ArrayList<Segment> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            courseList =
-                it.getParcelableArrayList<CourseExploreModel>(ARG_COURSE_LIST_OBJ) as ArrayList<CourseExploreModel>
+            segmentList =
+                it.getParcelableArrayList<Segment>(ARG_COURSE_LIST_OBJ) as ArrayList<Segment>
         }
     }
 
@@ -52,31 +49,19 @@ class CourseListingFragmentV2 : Fragment() {
             LayoutMarginDecoration(Utils.dpToPx(requireContext(), 6f))
         )
 
-        val filterList = courseList.filter { it.cardType.ordinal == ExploreCardType.NORMAL.ordinal }
-        val adapter = CourseExploreAdapter(filterList)
+        val adapter = CourseExploreV2Adapter(segmentList)
         recycler_view.adapter = adapter
-        addOfferCard()
     }
-
-    private fun addOfferCard() {
-        val filterList = courseList.filter { it.cardType.ordinal != ExploreCardType.NORMAL.ordinal }
-        if (filterList.isNullOrEmpty().not()) {
-            filterList.forEach {
-                offer_card_view.bind(it)
-            }
-        }
-    }
-
     companion object {
         private const val ARG_COURSE_LIST_OBJ = "course-list-obj"
 
         @JvmStatic
-        fun newInstance(conversationPractiseModel: List<CourseExploreModel>) =
-            CourseListingFragmentV2().apply {
+        fun newInstance(segmentList: List<Segment>) =
+            SegmentedCourseListingFragment().apply {
                 arguments = Bundle().apply {
                     putParcelableArrayList(
                         ARG_COURSE_LIST_OBJ,
-                        ArrayList(conversationPractiseModel)
+                        ArrayList(segmentList)
                     )
                 }
             }

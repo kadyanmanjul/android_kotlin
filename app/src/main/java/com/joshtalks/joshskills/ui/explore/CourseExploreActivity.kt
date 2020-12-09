@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
+import com.joshtalks.joshskills.ui.explore.v2.SegmentedViewPagerAdapter
 import com.joshtalks.joshskills.ui.inbox.PAYMENT_FOR_COURSE_CODE
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
@@ -111,7 +112,10 @@ class CourseExploreActivity : CoreJoshActivity() {
             initViewPagerTab()
         })
         viewModel.recommendSegment.observe(this, {
-
+            courseExploreBinding.courseListingRv.adapter =
+                SegmentedViewPagerAdapter(this@CourseExploreActivity, it)
+            courseExploreBinding.progressBar.visibility = View.GONE
+            initViewPagerTab()
         })
     }
 

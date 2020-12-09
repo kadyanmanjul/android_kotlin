@@ -13,7 +13,7 @@ import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.course_recommend.BaseResponseCourseList
-import com.joshtalks.joshskills.repository.server.course_recommend.Segment
+import com.joshtalks.joshskills.repository.server.course_recommend.ResponseCourseRecommend
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,7 +23,7 @@ class CourseExploreViewModel(application: Application) : AndroidViewModel(applic
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val languageListLiveData: MutableLiveData<LinkedHashSet<String>> = MutableLiveData()
     val courseListLiveData: MutableLiveData<Map<Int, List<CourseExploreModel>>> = MutableLiveData()
-    val recommendSegment: MutableLiveData<List<Segment>> = MutableLiveData()
+    val recommendSegment: MutableLiveData<List<ResponseCourseRecommend>> = MutableLiveData()
 
 
     fun getCourse(list: ArrayList<InboxEntity>?) {
@@ -84,6 +84,13 @@ class CourseExploreViewModel(application: Application) : AndroidViewModel(applic
                 val response: BaseResponseCourseList =
                     AppObjectController.commonNetworkService.getRecommendCoursesAsync(data)
                 response.languageSpecificCourses.sortedBy { it.sortOrder }
+
+                val languageSet: LinkedHashSet<String> = linkedSetOf()
+                response.languageSpecificCourses.forEach {
+                    languageSet.add(it.languageName)
+                }
+                languageListLiveData.postValue(languageSet)
+                recommendSegment.postValue(response.languageSpecificCourses)
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }

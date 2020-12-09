@@ -12,9 +12,10 @@ import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.databinding.CourseExplorerViewHolderV2Binding
 import com.joshtalks.joshskills.repository.server.course_detail.RecyclerViewCarouselItemDecorator
 import com.joshtalks.joshskills.repository.server.course_recommend.Segment
+import com.joshtalks.joshskills.ui.explore.CourseExploreAdapter
 import jp.wasabeef.recyclerview.animators.FadeInLeftAnimator
 
-class CourseExploreV2Adapter(private var segmentList: List<Segment>) :
+class CourseExploreV2Adapter(private var segmentList: ArrayList<Segment>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -72,8 +73,7 @@ class CourseExploreV2Adapter(private var segmentList: List<Segment>) :
             with(binding) {
                 if (recyclerView.adapter == null) {
                     headerTv.text = segment.name
-                    //  val adapter = CourseExploreAdapter(segment.testList)
-                    // binding.recyclerView.adapter = adapter
+                    binding.recyclerView.adapter = CourseExploreAdapter(segment.courseList)
                 }
             }
         }

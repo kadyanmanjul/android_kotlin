@@ -386,11 +386,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_ONBOARD_FLOW)
         } else {
             find_more.text = when (exploreType) {
-
-                ExploreCardType.NORMAL ->
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_NORMAL)
-
                 ExploreCardType.FFCOURSE ->
                     AppObjectController.getFirebaseRemoteConfig()
                         .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_FFCOURSE)
@@ -398,7 +393,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 ExploreCardType.FREETRIAL ->
                     AppObjectController.getFirebaseRemoteConfig()
                         .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_FREETRIAL)
-
+                else -> {
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_NORMAL)
+                }
             }
         }
     }

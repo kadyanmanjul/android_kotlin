@@ -13,7 +13,7 @@ data class ResponseCourseRecommend(
     @SerializedName("sort_order")
     val sortOrder: Int,
     @SerializedName("explore_type")
-    var exploreCardType: ExploreCardType? = ExploreCardType.NORMAL,
+    var exploreCardType: ExploreCardType = ExploreCardType.NORMAL,
     @SerializedName("segment_list")
     val segmentList: List<Segment> = emptyList(),
     @SerializedName("test_list")
