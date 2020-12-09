@@ -19,10 +19,15 @@
             android:textColor="@color/black"
             tools:text="Letter to my younger self" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
+        <com.joshtalks.joshskills.core.custom_ui.NestedScrollableHost
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start" />
+            android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.joshtalks.joshskills.core.custom_ui.NestedScrollableHost>
+
     </LinearLayout>
 </layout>

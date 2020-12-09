@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.databinding.CourseExplorerViewHolderV2Binding
 import com.joshtalks.joshskills.repository.server.course_detail.RecyclerViewCarouselItemDecorator
@@ -44,7 +43,7 @@ class CourseExploreV2Adapter(private var segmentList: ArrayList<Segment>) :
                 changeDuration = 2000
             }
             binding.recyclerView.itemAnimator = FadeInLeftAnimator(OvershootInterpolator(2f))
-            binding.recyclerView.layoutManager = SmoothLinearLayoutManager(
+            binding.recyclerView.layoutManager = LinearLayoutManager(
                 AppObjectController.joshApplication,
                 LinearLayoutManager.HORIZONTAL,
                 false

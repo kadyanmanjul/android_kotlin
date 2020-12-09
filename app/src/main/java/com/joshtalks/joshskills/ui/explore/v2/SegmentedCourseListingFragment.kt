@@ -2,10 +2,12 @@ package com.joshtalks.joshskills.ui.explore.v2
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
@@ -51,7 +53,25 @@ class SegmentedCourseListingFragment : Fragment() {
 
         val adapter = CourseExploreV2Adapter(segmentList)
         recycler_view.adapter = adapter
+
+        recycler_view.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
+
+            override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {}
+
+            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                when (e.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        recycler_view.parent?.requestDisallowInterceptTouchEvent(true)
+                    }
+                }
+                return false
+            }
+
+            override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
+        })
+
     }
+
     companion object {
         private const val ARG_COURSE_LIST_OBJ = "course-list-obj"
 

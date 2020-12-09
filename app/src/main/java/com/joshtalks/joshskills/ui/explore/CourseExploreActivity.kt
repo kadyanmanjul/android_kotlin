@@ -96,6 +96,7 @@ class CourseExploreActivity : CoreJoshActivity() {
         }
         //viewModel.getCourse(list)
         viewModel.getRecommendCourses()
+        //courseExploreBinding.courseListingRv.isUserInputEnabled = false
     }
 
     private fun addObserver() {
