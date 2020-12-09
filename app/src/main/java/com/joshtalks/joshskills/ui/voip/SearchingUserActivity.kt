@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivitySearchingUserBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
+import com.joshtalks.joshskills.ui.voip.util.AudioPlayer
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -158,6 +159,7 @@ class SearchingUserActivity : BaseActivity() {
                     .addUserDetails()
                     .addParam(AnalyticsEvent.PLIVO_ID.NAME, it.plivoUserName)
                     .push()
+                AudioPlayer.getInstance().playProgressTone()
                 WebRtcService.startOutgoingCall(getMapForOutgoing(it))
             }
         })
@@ -261,6 +263,7 @@ class SearchingUserActivity : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        AudioPlayer.getInstance().stopProgressTone()
         timer?.cancel()
         timer = null
         window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -294,7 +297,7 @@ class SearchingUserActivity : BaseActivity() {
             voipCallDetailModel?.topic = topicId?.toString()
             voipCallDetailModel?.topicName = topicName
             voipCallDetailModel?.callieName = getCallieName()
-            //      voipCallDetailModel?.plivoUserName = "698e8924b2b9411488dd6f1e710607837116065905138"
+            //   voipCallDetailModel?.plivoUserName = "514c55d8d96a40cb90b2ed193151019617540338749"
             outgoingCallData = LinkedHashMap()
             outgoingCallData.apply {
                 put("X-PH-MOBILEUUID", voipCallDetailModel?.mobileUUID)

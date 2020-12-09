@@ -258,6 +258,10 @@ class WebRtcService : Service() {
             executeEvent(AnalyticsEvent.OUTGOING_CALL.NAME)
         }
 
+        override fun onOutgoingCallRinging(outgoing: Outgoing) {
+            Timber.tag(TAG).e("onOutgoingCallRinging")
+        }
+
         override fun onOutgoingCallAnswered(outgoing: Outgoing) {
             Timber.tag(TAG).e("onOutgoingCallAnswered")
             callData = outgoing
