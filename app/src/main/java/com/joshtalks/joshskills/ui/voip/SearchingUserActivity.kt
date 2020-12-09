@@ -261,9 +261,9 @@ class SearchingUserActivity : BaseActivity() {
         this.finish()
     }
 
+
     override fun onDestroy() {
         super.onDestroy()
-        AudioPlayer.getInstance().stopProgressTone()
         timer?.cancel()
         timer = null
         window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -286,6 +286,7 @@ class SearchingUserActivity : BaseActivity() {
 
     override fun onStop() {
         super.onStop()
+        AudioPlayer.getInstance().stopProgressTone()
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
         unbindService(myConnection)
     }

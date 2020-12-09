@@ -175,11 +175,6 @@ class WebRtcService : Service() {
             Timber.tag(TAG).e("LoginUser")
             Timber.tag(TAG).e("= %s", endpoint?.registered.toString())
             executeEvent(AnalyticsEvent.LOGIN_PLIVO_SDK.NAME)
-            /* try {
-                 endpoint?.keepAlive()
-             } catch (ex: Throwable) {
-                 ex.printStackTrace()
-             }*/
             isCallWasOnGoing = false
             (getSystemService(NOTIFICATION_SERVICE) as NotificationManager?)?.cancel(
                 EMPTY_NOTIFICATION_ID
@@ -260,14 +255,15 @@ class WebRtcService : Service() {
 
         override fun onOutgoingCallRinging(outgoing: Outgoing) {
             Timber.tag(TAG).e("onOutgoingCallRinging")
+            executeEvent(AnalyticsEvent.OUTGOING_CALL_RINGING.NAME)
         }
 
         override fun onOutgoingCallAnswered(outgoing: Outgoing) {
             Timber.tag(TAG).e("onOutgoingCallAnswered")
             callData = outgoing
             callCallback?.get()?.onConnect()
-            if (outgoingCallData.isNullOrEmpty().not()) {
-                showNotificationConnectedCall(outgoingCallData as HashMap<String, String>)
+            outgoingCallData?.let {
+                showNotificationConnectedCall(it, CallType.OUTGOING)
             }
             isCallWasOnGoing = true
             startCallTimer()
@@ -534,8 +530,11 @@ class WebRtcService : Service() {
         }
     }
 
-    private fun showNotificationConnectedCall(incomingData: HashMap<String, String>?) {
-        val notification = callConnectNotification(incomingData)
+    private fun showNotificationConnectedCall(
+        header: HashMap<String, String>?,
+        callType: CallType
+    ) {
+        val notification = callConnectNotification(header, callType)
         startForeground(CONNECTED_CALL_NOTIFICATION_ID, notification)
     }
 
@@ -551,7 +550,10 @@ class WebRtcService : Service() {
                     stopRing()
                     startCallTimer()
                     this.answer()
-                    showNotificationConnectedCall(this.headerDict as HashMap<String, String>)
+                    showNotificationConnectedCall(
+                        this.headerDict as HashMap<String, String>,
+                        CallType.INCOMING
+                    )
                     callCallback?.get()?.onConnect()
                     isCallWasOnGoing = true
                     executeEvent(AnalyticsEvent.USER_ANSWER_EVENT_P2P.NAME)
@@ -900,7 +902,10 @@ class WebRtcService : Service() {
         return lNotificationBuilder.build()
     }
 
-    private fun callConnectNotification(incomingData: HashMap<String, String>?): Notification {
+    private fun callConnectNotification(
+        header: HashMap<String, String>?,
+        callType: CallType
+    ): Notification {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name: CharSequence = "Voip call connect"
             val importance: Int = NotificationManager.IMPORTANCE_LOW
@@ -918,10 +923,9 @@ class WebRtcService : Service() {
                 declineActionIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
-
         val lNotificationBuilder = NotificationCompat.Builder(this, CONNECTED_CALL_CHANNEL_ID)
             .setChannelId(CONNECTED_CALL_CHANNEL_ID)
-            .setContentTitle(incomingData?.get("X-PH-CALLERNAME"))
+            .setContentTitle(getNameAfterConnectedCall(header, callType))
             .setContentText("Ongoing voice call")
             .setSmallIcon(R.drawable.ic_status_bar_notification)
             .setColor(
@@ -940,6 +944,16 @@ class WebRtcService : Service() {
             )
             .setContentInfo("Outgoing call")
         return lNotificationBuilder.build()
+    }
+
+    private fun getNameAfterConnectedCall(
+        header: HashMap<String, String>?,
+        callType: CallType
+    ): String? {
+        if (CallType.INCOMING == callType) {
+            return header?.get("X-PH-CALLERNAME")
+        }
+        return header?.get("X-PH-CALLIENAME")
     }
 
 

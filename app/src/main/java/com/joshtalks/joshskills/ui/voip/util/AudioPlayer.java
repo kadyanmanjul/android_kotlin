@@ -6,8 +6,10 @@ import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.util.Log;
+
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.core.AppObjectController;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -21,7 +23,7 @@ public class AudioPlayer {
     private AudioPlayer() {
     }
 
-    public static AudioPlayer getInstance() {
+    public static synchronized AudioPlayer getInstance() {
         if (instance == null)
             instance = new AudioPlayer();
         return instance;
@@ -41,10 +43,15 @@ public class AudioPlayer {
     }
 
     public void stopProgressTone() {
-        if (mProgressTone != null) {
-            mProgressTone.stop();
-            mProgressTone.release();
-            mProgressTone = null;
+        try {
+            if (mProgressTone != null) {
+                mProgressTone.stop();
+                mProgressTone.release();
+                mProgressTone = null;
+            }
+        } catch (IllegalStateException e) {
+
+        } catch (Exception e) {
         }
     }
 

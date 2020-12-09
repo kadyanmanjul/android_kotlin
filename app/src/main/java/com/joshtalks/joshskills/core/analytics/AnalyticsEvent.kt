@@ -485,6 +485,7 @@ enum class AnalyticsEvent(val NAME: String) {
 
     INIT_CALL("init_call_p2p"),
     OUTGOING_CALL("outgoing_call_int_p2p"),
+    OUTGOING_CALL_RINGING("outgoing_call_ringing_p2p"),
     OUTGOING_CALL_CONNECT("outgoing_call_connected_p2p"),
     OUTGOING_CALL_REJECT("outgoing_call_reject_p2p"),
     OUTGOING_CALL_HANGUP("outgoing_call_hangup_p2p"),
