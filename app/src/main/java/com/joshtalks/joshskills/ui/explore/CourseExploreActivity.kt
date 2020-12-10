@@ -23,7 +23,9 @@ import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
+import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
+import com.joshtalks.joshskills.ui.explore.v1.CourseExploreViewModel
 import com.joshtalks.joshskills.ui.explore.v2.SegmentedViewPagerAdapter
 import com.joshtalks.joshskills.ui.inbox.PAYMENT_FOR_COURSE_CODE
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
@@ -47,6 +49,7 @@ class CourseExploreActivity : CoreJoshActivity() {
     private var screenEngagementModel: ScreenEngagementModel =
         ScreenEngagementModel(COURSE_EXPLORER_SCREEN_NAME)
     private val tabName: MutableList<String> = ArrayList()
+    private var userBuyingCourseList: ArrayList<InboxEntity>? = null
 
     private val viewModel: CourseExploreViewModel by lazy {
         ViewModelProvider(this).get(CourseExploreViewModel::class.java)
@@ -86,14 +89,11 @@ class CourseExploreActivity : CoreJoshActivity() {
                 appAnalytics.addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, prevAct)
             }
         }
+        if (intent.hasExtra(USER_COURSES)) {
+            userBuyingCourseList = intent.getParcelableArrayListExtra(USER_COURSES)
+        }
         initView()
         addObserver()
-
-        val list: ArrayList<InboxEntity>? = if (intent.hasExtra(USER_COURSES)) {
-            intent.getParcelableArrayListExtra(USER_COURSES)
-        } else {
-            null
-        }
         //viewModel.getCourse(list)
         viewModel.getRecommendCourses()
         //courseExploreBinding.courseListingRv.isUserInputEnabled = false
@@ -204,49 +204,56 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     private fun addRXBusObserver() {
         compositeDisposable.add(
-            RxBus2.listen(CourseExploreModel::class.java).subscribe { courseExploreModel ->
-                val extras: HashMap<String, String> = HashMap()
-                extras["test_id"] = courseExploreModel.id?.toString() ?: EMPTY
-                extras["course_name"] = courseExploreModel.courseName
-                AppAnalytics.create(AnalyticsEvent.COURSE_THUMBNAIL_CLICKED.NAME)
-                    .addBasicParam()
-                    .addUserDetails()
-                    .addParam(AnalyticsEvent.COURSE_NAME.NAME, courseExploreModel.courseName)
-                    .addParam(AnalyticsEvent.COURSE_PRICE.NAME, courseExploreModel.amount)
-                    .push()
-                MarketingAnalytics.viewContentEvent(
-                    applicationContext,
-                    courseExploreModel
-                )
-
-                when (courseExploreModel.cardType) {
-
-                    ExploreCardType.NORMAL -> {
-                        courseExploreModel.id?.let { testId ->
-                            CourseDetailsActivity.startCourseDetailsActivity(
-                                activity = this,
-                                testId = testId,
-                                whatsappUrl = courseExploreModel.whatsappUrl,
-                                startedFrom = this@CourseExploreActivity.javaClass.simpleName,
-                                buySubscription = false
-
-                            )
-                        }
+            RxBus2.listenWithoutDelay(CourseExploreModel::class.java)
+                .subscribe { courseExploreModel ->
+                    val obj =
+                        userBuyingCourseList?.find { it.courseId == courseExploreModel.course.toString() }
+                    if (obj != null) {
+                        ConversationActivity.startConversionActivity(this, obj)
+                        return@subscribe
                     }
 
-                    ExploreCardType.FFCOURSE,
-                    ExploreCardType.FREETRIAL -> {
-                        courseExploreModel.id?.let { testId ->
-                            StartSubscriptionActivity.startActivity(
-                                this,
-                                testId,
-                                courseExploreModel.cardType,
-                                this::class.simpleName!!
-                            )
+
+                    val extras: HashMap<String, String> = HashMap()
+                    extras["test_id"] = courseExploreModel.id?.toString() ?: EMPTY
+                    extras["course_name"] = courseExploreModel.courseName
+                    AppAnalytics.create(AnalyticsEvent.COURSE_THUMBNAIL_CLICKED.NAME)
+                        .addBasicParam()
+                        .addUserDetails()
+                        .addParam(AnalyticsEvent.COURSE_NAME.NAME, courseExploreModel.courseName)
+                        .addParam(AnalyticsEvent.COURSE_PRICE.NAME, courseExploreModel.amount)
+                        .push()
+                    MarketingAnalytics.viewContentEvent(
+                        applicationContext,
+                        courseExploreModel
+                    )
+
+                    when (courseExploreModel.cardType) {
+                        ExploreCardType.NORMAL -> {
+                            courseExploreModel.id?.let { testId ->
+                                CourseDetailsActivity.startCourseDetailsActivity(
+                                    activity = this,
+                                    testId = testId,
+                                    whatsappUrl = courseExploreModel.whatsappUrl,
+                                    startedFrom = this@CourseExploreActivity.javaClass.simpleName,
+                                    buySubscription = false
+
+                                )
+                            }
+                        }
+                        ExploreCardType.FFCOURSE,
+                        ExploreCardType.FREETRIAL -> {
+                            courseExploreModel.id?.let { testId ->
+                                StartSubscriptionActivity.startActivity(
+                                    this,
+                                    testId,
+                                    courseExploreModel.cardType,
+                                    this::class.simpleName!!
+                                )
+                            }
                         }
                     }
-                }
-            })
+                })
     }
 
     private fun logChipSelectedEvent(selectedLanguage: String) {
