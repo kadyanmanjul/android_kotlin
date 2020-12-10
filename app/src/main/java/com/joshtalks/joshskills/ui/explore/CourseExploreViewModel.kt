@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.explore.v1
+package com.joshtalks.joshskills.ui.explore
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

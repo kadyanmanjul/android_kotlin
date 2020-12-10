@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.explore
+package com.joshtalks.joshskills.ui.explore.v1
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity

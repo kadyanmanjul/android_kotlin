@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.server.course_recommend.ResponseCourseRecommend
-import com.joshtalks.joshskills.ui.explore.CourseListingFragment
+import com.joshtalks.joshskills.ui.explore.v1.CourseListingFragment
 
 class SegmentedViewPagerAdapter(
     fragmentActivity: FragmentActivity,

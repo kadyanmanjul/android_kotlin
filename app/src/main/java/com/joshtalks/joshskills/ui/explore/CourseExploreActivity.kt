@@ -25,7 +25,7 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
-import com.joshtalks.joshskills.ui.explore.v1.CourseExploreViewModel
+import com.joshtalks.joshskills.ui.explore.v1.CourseListingAdapter
 import com.joshtalks.joshskills.ui.explore.v2.SegmentedViewPagerAdapter
 import com.joshtalks.joshskills.ui.inbox.PAYMENT_FOR_COURSE_CODE
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
@@ -212,7 +212,6 @@ class CourseExploreActivity : CoreJoshActivity() {
                         ConversationActivity.startConversionActivity(this, obj)
                         return@subscribe
                     }
-
 
                     val extras: HashMap<String, String> = HashMap()
                     extras["test_id"] = courseExploreModel.id?.toString() ?: EMPTY
