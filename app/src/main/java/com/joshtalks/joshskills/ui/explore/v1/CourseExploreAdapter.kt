@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.explore
+package com.joshtalks.joshskills.ui.explore.v1
 
 import android.view.LayoutInflater
 import android.view.View.GONE

@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
+import com.joshtalks.joshskills.ui.explore.v1.CourseExploreAdapter
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 import kotlinx.android.synthetic.main.fragment_course_listing.offer_card_view
 import kotlinx.android.synthetic.main.fragment_course_listing.recycler_view

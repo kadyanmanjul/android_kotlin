@@ -7,6 +7,7 @@ import com.bumptech.glide.Glide
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.RecommendedItemViewHolderV2Binding
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 
 class RecommendedItemAdapter(private var courseList: List<CourseExploreModel>) :
@@ -37,7 +38,7 @@ class RecommendedItemAdapter(private var courseList: List<CourseExploreModel>) :
         fun bind(courseExploreModel: CourseExploreModel) {
             with(binding) {
                 rootView.setOnClickListener {
-
+                    RxBus2.publish(courseExploreModel)
                 }
                 Glide.with(context)
                     .load(courseExploreModel.imageUrl)
