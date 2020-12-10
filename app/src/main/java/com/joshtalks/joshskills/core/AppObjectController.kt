@@ -58,6 +58,7 @@ import com.tonyodev.fetch2okhttp.OkHttpDownloader
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.RtcEngineConfig
+import com.uxcam.UXCam
 import io.branch.referral.Branch
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
@@ -308,6 +309,7 @@ class AppObjectController {
             com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
             ActivityLifecycleCallback.register(joshApplication)
             AppEventsLogger.activateApp(joshApplication)
+            initUXCam()
             initSmartLookCam()
             initFacebookService(joshApplication)
             initRtcEngine(joshApplication)
@@ -494,6 +496,10 @@ class AppObjectController {
 
         fun getFirebaseRemoteConfig(): FirebaseRemoteConfig {
             return FirebaseRemoteConfig.getInstance()
+        }
+
+        private fun initUXCam() {
+            UXCam.setAutomaticScreenNameTagging(true)
         }
 
         private fun initSmartLookCam() {

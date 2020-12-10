@@ -579,5 +579,9 @@
         <key>INCOMPLETE_CERTIFICATION_TITLE</key>
         <value>Incomplete lessons</value>
     </entry>
+    <entry>
+        <key>SMART_LOOK_FEATURE_ENABLE</key>
+        <value>false</value>
+    </entry>
 
 </defaultsMap>

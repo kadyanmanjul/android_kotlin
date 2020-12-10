@@ -37,6 +37,7 @@ import com.google.firebase.inappmessaging.model.Action
 import com.google.firebase.inappmessaging.model.InAppMessage
 import com.google.firebase.ktx.Firebase
 import com.google.gson.reflect.TypeToken
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -78,6 +79,8 @@ import com.smartlook.sdk.smartlook.Smartlook
 import com.smartlook.sdk.smartlook.analytics.identify.UserProperties
 import com.smartlook.sdk.smartlook.integrations.IntegrationListener
 import com.smartlook.sdk.smartlook.integrations.model.FirebaseCrashlyticsIntegration
+import com.uxcam.OnVerificationListener
+import com.uxcam.UXCam
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
@@ -149,6 +152,11 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
             if (AppObjectController.getFirebaseRemoteConfig()
                     .getBoolean(FirebaseRemoteConfigKey.UX_CAM_FEATURE_ENABLE)
             ) {
+                UXCam.startWithKey(BuildConfig.WX_CAM_KEY)
+            }
+            if (AppObjectController.getFirebaseRemoteConfig()
+                    .getBoolean(FirebaseRemoteConfigKey.SMART_LOOK_FEATURE_ENABLE)
+            ) {
                 Smartlook.registerIntegrationListener(object : IntegrationListener {
                     override fun onSessionReady(dashboardSessionUrl: String) {
                         Timber.tag("baseactivity").e(dashboardSessionUrl)
@@ -183,6 +191,19 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
             initNewRelic()
             initFlurry()
         }
+        UXCam.setUserIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
+        // UXCam.setUserProperty(String propertyName , String value)
+
+        UXCam.addVerificationListener(object : OnVerificationListener {
+            override fun onVerificationSuccess() {
+                FirebaseCrashlytics.getInstance()
+                    .setCustomKey("UXCam_Recording_Link", UXCam.urlForCurrentSession())
+            }
+
+            override fun onVerificationFailed(errorMessage: String) {
+                Timber.e(errorMessage)
+            }
+        })
     }
 
     fun openHelpActivity() {
