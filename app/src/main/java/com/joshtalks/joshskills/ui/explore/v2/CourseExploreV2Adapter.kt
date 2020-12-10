@@ -6,12 +6,9 @@ import android.view.animation.OvershootInterpolator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.databinding.CourseExplorerViewHolderV2Binding
 import com.joshtalks.joshskills.repository.server.course_detail.RecyclerViewCarouselItemDecorator
 import com.joshtalks.joshskills.repository.server.course_recommend.Segment
-import com.joshtalks.joshskills.ui.explore.CourseExploreAdapter
 import jp.wasabeef.recyclerview.animators.FadeInLeftAnimator
 
 class CourseExploreV2Adapter(private var segmentList: ArrayList<Segment>) :
@@ -48,14 +45,6 @@ class CourseExploreV2Adapter(private var segmentList: ArrayList<Segment>) :
                 LinearLayoutManager.HORIZONTAL,
                 false
             )
-            binding.recyclerView.addItemDecoration(
-                LayoutMarginDecoration(
-                    Utils.dpToPx(
-                        AppObjectController.joshApplication,
-                        6f
-                    )
-                )
-            )
             val cardWidthPixels =
                 (AppObjectController.joshApplication.resources.displayMetrics.widthPixels * 0.90f).toInt()
             val cardHintPercent = 0.01f
@@ -72,7 +61,7 @@ class CourseExploreV2Adapter(private var segmentList: ArrayList<Segment>) :
             with(binding) {
                 if (recyclerView.adapter == null) {
                     headerTv.text = segment.name
-                    binding.recyclerView.adapter = CourseExploreAdapter(segment.courseList)
+                    binding.recyclerView.adapter = RecommendedItemAdapter(segment.courseList)
                 }
             }
         }
