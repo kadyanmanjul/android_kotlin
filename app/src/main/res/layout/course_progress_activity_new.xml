@@ -31,11 +31,10 @@
             android:layout_marginHorizontal="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_8sdp"
             android:clickable="false"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/include">
-
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/pdf_icon"
@@ -52,15 +51,15 @@
                 android:id="@+id/pdf_name_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/_4sdp"
                 android:layout_marginStart="@dimen/_8sdp"
-                android:text="Pdf name will be shown here"
+                android:paddingTop="@dimen/_4sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
                 android:textColor="#000"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/pdf_icon"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Pdf name will be shown here" />
 
             <FrameLayout
                 android:id="@+id/download_container"
@@ -70,8 +69,8 @@
                 android:layout_marginStart="@dimen/_8sdp"
                 android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginBottom="@dimen/_4sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/pdf_icon"
                 app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv">
 
@@ -116,8 +115,8 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:onClick="@{()->handler.downloadCancel()}"
-                    android:tint="#878A91"
                     android:padding="@dimen/_2sdp"
+                    android:tint="#878A91"
                     android:visibility="gone"
                     app:srcCompat="@drawable/ic_cross" />
 
@@ -134,8 +133,8 @@
                 android:text="238 pages"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                 android:textColor="@color/text_light_ac"
-                app:layout_constraintStart_toEndOf="@+id/download_container"
                 app:layout_constraintBottom_toBottomOf="@+id/download_container"
+                app:layout_constraintStart_toEndOf="@+id/download_container"
                 app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv"
                 app:layout_constraintTop_toTopOf="@+id/download_container" />
 
@@ -151,8 +150,8 @@
                 android:text="24Kb"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                 android:textColor="@color/text_light_ac"
-                app:layout_constraintStart_toEndOf="@+id/page_count_tv"
                 app:layout_constraintBottom_toBottomOf="@+id/download_container"
+                app:layout_constraintStart_toEndOf="@+id/page_count_tv"
                 app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv"
                 app:layout_constraintTop_toTopOf="@+id/download_container" />
 
@@ -167,8 +166,8 @@
                 android:text="PDF"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                 android:textColor="@color/text_light_ac"
-                app:layout_constraintStart_toEndOf="@+id/size_tv"
                 app:layout_constraintBottom_toBottomOf="@+id/download_container"
+                app:layout_constraintStart_toEndOf="@+id/size_tv"
                 app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv"
                 app:layout_constraintTop_toTopOf="@+id/download_container" />
 
@@ -190,8 +189,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_8sdp"
             android:text="@string/lessons"
-            android:textColor="#000"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
+            android:textColor="#000"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -207,6 +206,40 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/progress_title_tv"
             tools:listitem="@layout/progress_activity_adapter_layout" />
+
+        <RelativeLayout
+            android:id="@+id/progress_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@color/overlay"
+            android:visibility="gone">
+
+            <com.pnikosis.materialishprogress.ProgressWheel
+                android:id="@+id/progress_bar"
+                android:layout_width="@dimen/_60sdp"
+                android:layout_height="@dimen/_60sdp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                wheel:matProg_barColor="@color/button_color"
+                wheel:matProg_fillRadius="true"
+                wheel:matProg_linearProgress="false"
+                wheel:matProg_progressIndeterminate="true"
+                wheel:matProg_rimColor="#33128C7E"
+                wheel:matProg_rimWidth="@dimen/_2sdp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/progress_bar"
+                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="@string/plz_wait"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                android:textColor="@color/white" />
+        </RelativeLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

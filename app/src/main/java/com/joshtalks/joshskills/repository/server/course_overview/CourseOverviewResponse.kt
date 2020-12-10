@@ -43,7 +43,19 @@ data class CourseOverviewResponse(
     val examStatus: CExamStatus?,
     @SerializedName("data")
     @Expose
-    var data: List<CourseOverviewItem>
+    var data: List<CourseOverviewItem>,
+    @SerializedName("ce_inst")
+    @Expose
+    var examInstructions: List<String>,
+    @SerializedName("ce_marks")
+    @Expose
+    var ceMarks: Int?,
+    @SerializedName("ce_min")
+    @Expose
+    var ceMin: Int?,
+    @SerializedName("ce_que")
+    @Expose
+    var ceQue: Int?
 )
 
 data class CourseOverviewItem(

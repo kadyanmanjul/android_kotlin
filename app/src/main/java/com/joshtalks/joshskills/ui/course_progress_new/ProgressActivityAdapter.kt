@@ -54,7 +54,8 @@ class ProgressActivityAdapter(
                 item.chatId ?: "0",
                 item.certificateExamId ?: 0,
                 item.examStatus ?: CExamStatus.FRESH,
-                lastAvailableLessonId = lastAvailableLessonId
+                lastAvailableLessonId = lastAvailableLessonId,
+                parentPosition = layoutPosition
             )
             binding.progressRv.adapter = adapter
 

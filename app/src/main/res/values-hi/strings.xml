@@ -441,6 +441,10 @@
     <string name="lesson_no">"पाठ %1$d"</string>
 
     <string name="today_lesson">आज का पाठ: %1$s</string>
+    <string name="examination_not_unlocked">परीक्षा अनलॉक नहीं हुई</string>
+    <string name="okay">ठीक है</string>
+    <string name="exam_info">%1$d प्रश्न - %2$d मिनट - %3$d मार्क्स</string>
+    <string name="you_can_only_attempt_the_certification_exam">आप केवल %1$d पाठों के बाद प्रमाणन परीक्षा का प्रयास कर सकते हैं</string>
     <string name="did_not_answer_message">हमें कोई उपयोगकर्ता नहीं मिला, कृपया पुनः प्रयास करें.</string>
 
 </resources>

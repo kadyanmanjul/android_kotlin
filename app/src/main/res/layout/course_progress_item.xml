@@ -55,6 +55,7 @@
             app:hasEmptyProgressBar="true"
             app:hasOneProgressView="false"
             app:hasTwoProgressView="false"
+            app:hasElevation="true"
             app:innerEmptyProgressColor="@color/light_blue"
             app:innerMaxProgress="100"
             app:innerMostEmptyProgressColor="@color/quantum_purple200"

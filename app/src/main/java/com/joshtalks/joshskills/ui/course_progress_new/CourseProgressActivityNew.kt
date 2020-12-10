@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.databinding.CourseProgressActivityNewBinding
 import com.joshtalks.joshskills.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewItem
+import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewResponse
 import com.joshtalks.joshskills.repository.server.course_overview.PdfInfo
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
@@ -42,6 +43,8 @@ import java.io.File
 
 class CourseProgressActivityNew : AppCompatActivity(),
     CourseProgressAdapter.ProgressItemClickListener {
+
+    private var courseOverviewResponse: List<CourseOverviewResponse>? = null
 
     private var lastAvailableLessonId: Int? = null
     lateinit var binding: CourseProgressActivityNewBinding
@@ -161,7 +164,10 @@ class CourseProgressActivityNew : AppCompatActivity(),
 
         viewModel.getCourseOverview(courseId)
 
+        binding.progressLayout.visibility = View.VISIBLE
         viewModel.progressLiveData.observe(this, {
+
+            courseOverviewResponse = it.responseData
             binding.pdfNameTv.text = it.pdfInfo.coursePdfName
             binding.sizeTv.text = "${it.pdfInfo.coursePdfSize} kB"
             binding.pageCountTv.text = "${it.pdfInfo.coursePdfPageCount} pages"
@@ -169,6 +175,7 @@ class CourseProgressActivityNew : AppCompatActivity(),
 
             pdfInfo?.let {
                 binding.pdfView.visibility = View.VISIBLE
+                binding.progressLayout.visibility = View.GONE
                 if (PermissionUtils.isStoragePermissionEnabled(this) && AppDirectory.getFileSize(
                         File(
                             AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath
@@ -181,6 +188,7 @@ class CourseProgressActivityNew : AppCompatActivity(),
                 }
 
             }
+
             adapter =
                 ProgressActivityAdapter(
                     this,
@@ -248,15 +256,23 @@ class CourseProgressActivityNew : AppCompatActivity(),
         previousLesson: CourseOverviewItem, conversationId: String,
         chatMessageId: String,
         certificationId: Int,
-        cExamStatus: CExamStatus
+        cExamStatus: CExamStatus,
+        parentPosition: Int
+
     ) {
         if (previousLesson.status != LESSON_STATUS.CO.name) {
-            showAlertMessage(
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.INCOMPLETE_CERTIFICATION_TITLE),
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.INCOMPLETE_CERTIFICATION_MESSAGE)
-            )
+            courseOverviewResponse?.let {
+                ExamUnlockDialogFragment(
+                    it[parentPosition].examInstructions,
+                    it[parentPosition].ceMarks,
+                    it[parentPosition].ceQue,
+                    it[parentPosition].ceMin,
+                    it[parentPosition].totalCount
+                ).show(
+                    supportFragmentManager,
+                    "ExamUnlockDialogFragment"
+                )
+            }
         } else {
             val cExamActivityListener: ActivityResultLauncher<Intent> =
                 registerForActivityResult(

@@ -21,7 +21,8 @@ class CourseProgressAdapter(
     val chatMessageId: String,
     val certificationId: Int,
     val cExamStatus: CExamStatus = CExamStatus.FRESH,
-    val lastAvailableLessonId: Int?
+    val lastAvailableLessonId: Int?,
+    val parentPosition: Int
 ) :
     RecyclerView.Adapter<CourseProgressAdapter.CourseProgressViewHolder>() {
 
@@ -60,7 +61,8 @@ class CourseProgressAdapter(
                             conversationId,
                             chatMessageId,
                             certificationId,
-                            cExamStatus
+                            cExamStatus,
+                            parentPosition
                         )
                     }
                 } else {
@@ -167,7 +169,8 @@ class CourseProgressAdapter(
             previousLesson: CourseOverviewItem, conversationId: String,
             chatMessageId: String,
             certificationId: Int,
-            cExamStatus: CExamStatus = CExamStatus.FRESH
+            cExamStatus: CExamStatus = CExamStatus.FRESH,
+            parentPosition: Int
         )
     }
 

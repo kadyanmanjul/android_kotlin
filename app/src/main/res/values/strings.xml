@@ -802,6 +802,10 @@
     <string name="audio_file">Audio File</string>
     <string name="description">Description</string>
     <string name="default_description">This group is for practice.</string>
+    <string name="examination_not_unlocked">Examination Not Unlocked</string>
+    <string name="okay">Okay</string>
+    <string name="exam_info">%1$d Questions - %2$d Minutes - %3$d Marks</string>
+    <string name="you_can_only_attempt_the_certification_exam">You can only attempt the Certification exam after %1$d lessons</string>
     <array name="groupType">
         <item>Public Group</item>
         <item>Private Group</item>
