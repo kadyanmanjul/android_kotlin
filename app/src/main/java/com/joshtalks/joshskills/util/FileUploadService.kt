@@ -1,22 +1,29 @@
 package com.joshtalks.joshskills.util
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.text.TextUtils
 import android.util.Log
 import androidx.annotation.Nullable
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
-import com.joshtalks.joshskills.repository.server.RequestEngage
+import com.joshtalks.joshskills.ui.voip.NotificationId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -32,14 +39,21 @@ import java.util.concurrent.BlockingQueue
 
 
 class FileUploadService : Service() {
-    private val fileQueue: BlockingQueue<RequestEngage> = ArrayBlockingQueue(100)
+    private val fileQueue: BlockingQueue<PendingTaskModel> = ArrayBlockingQueue(100)
     private val mFileUploadHandler = Handler()
     private var mFileUploadTask: FileUploadTask? = null
     private var isFileUploadRunning = false
+    private var mNotificationManager: NotificationManager? = null
+
 
     @Nullable
     override fun onBind(intent: Intent): IBinder? {
         return null
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
@@ -48,8 +62,13 @@ class FileUploadService : Service() {
             when (action) {
                 START_UPLOAD -> {
                     // get all files here to be uploaded
-                    val fileList = intent.getParcelableArrayListExtra<RequestEngage?>(FILE_LIST)
-                    fileList?.let { startFileUpload(it) }
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val fileList =
+                            AppObjectController.appDatabase.pendingTaskDao().getPendingTasks()
+                        if (fileList.isNullOrEmpty().not()) {
+                            startFileUpload(ArrayList(fileList))
+                        }
+                    }
                 }
                 CANCEL_UPLOAD -> cancelFileUpload()
             }
@@ -67,7 +86,7 @@ class FileUploadService : Service() {
         }
     }
 
-    private fun startFileUpload(fileList: ArrayList<RequestEngage?>) {
+    private fun startFileUpload(fileList: ArrayList<PendingTaskModel?>) {
         for (filePath in fileList) {
             if (!fileQueue.contains(filePath) && filePath != null) {
                 fileQueue.add(filePath)
@@ -98,7 +117,7 @@ class FileUploadService : Service() {
                 val filePath = fileQueue.take()
                 Log.e(TAG, "Upload File: $filePath")
                 callUploadFileApi(filePath)
-                showUploadNotification(filePath)
+                showUploadNotification()
                 Thread.sleep(2000)
                 mFileUploadHandler.post(this)
             } catch (e: InterruptedException) {
@@ -107,10 +126,10 @@ class FileUploadService : Service() {
         }
     }
 
-    private fun callUploadFileApi(requestEngage: RequestEngage) {
+    private fun callUploadFileApi(pendingTaskModel: PendingTaskModel) {
         CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
             try {
-                val localPath = requestEngage.localPath
+                val requestEngage = pendingTaskModel.requestObject
                 if (requestEngage.localPath.isNullOrEmpty().not()) {
                     val obj = mapOf("media_path" to File(requestEngage.localPath!!).name)
                     val responseObj =
@@ -128,9 +147,9 @@ class FileUploadService : Service() {
 
                 val resp = AppObjectController.chatNetworkService.submitPracticeAsync(requestEngage)
                 if (resp.isSuccessful && resp.body() != null) {
-                    val engangementList = List(1) { resp.body()!! }
                     // update question status and engagement data here from response
-
+                    // delete entry
+                    AppObjectController.appDatabase.pendingTaskDao().deleteTask(pendingTaskModel.id)
                 } else {
                     // want to retry here retry ??
                 }
@@ -171,19 +190,35 @@ class FileUploadService : Service() {
         stopForeground(true)
     }
 
-    private fun showUploadNotification(fileName: RequestEngage) {
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createNotificationChannel(channelId: String, channelName: String): String{
+        val chan = NotificationChannel(channelId,
+            channelName, NotificationManager.IMPORTANCE_NONE)
+        chan.lightColor = Color.BLUE
+        chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
+        val service = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        service.createNotificationChannel(chan)
+        return channelId
+    }
+    private fun showUploadNotification() {
         var messageText = ""
         if (fileQueue.size > 0) {
             messageText = """$messageText${fileQueue.size} is remaining."""
         }
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name: CharSequence = "Voip Login User"
+            val importance: Int = NotificationManager.IMPORTANCE_LOW
+            val mChannel = NotificationChannel(NotificationId.INCOMING_CALL_CHANNEL_ID, name, importance)
+            mNotificationManager?.createNotificationChannel(mChannel)
+        }
 
-        val lNotificationBuilder = NotificationCompat.Builder(
-            this, CHANNEL_ID.toString()
+        val lNotificationBuilder = NotificationCompat.Builder(this,
+            NotificationId.INCOMING_CALL_CHANNEL_ID
         )
-            .setChannelId(CHANNEL_ID.toString())
+            .setChannelId(NotificationId.INCOMING_CALL_CHANNEL_ID)
             .setContentTitle(getString(R.string.app_name))
-            .setContentText("Practise submitting ...")
-            .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
+            .setContentText("Syncing...")
             .setSmallIcon(R.drawable.ic_status_bar_notification)
             .setOngoing(false)
             .setColor(
@@ -194,20 +229,20 @@ class FileUploadService : Service() {
             )
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_MIN)
-        startForeground(0, lNotificationBuilder.build())
+
+
+        startForeground(NOTIFICATION_ID, lNotificationBuilder.build())
     }
 
     companion object {
         const val START_UPLOAD = "START_UPLOAD"
         const val CANCEL_UPLOAD = "CANCEL_UPLOAD"
-        private const val FILE_LIST = "FILE_LIST"
         private val TAG = "FileUploadService"
         private const val CHANNEL_ID = "FILE_UPLOAD"
         private const val NOTIFICATION_ID = 111
-        fun startUpload(context: Context, fileList: ArrayList<RequestEngage?>) {
+        fun startUpload(context: Context) {
             val intent = Intent(context, FileUploadService::class.java)
             intent.action = START_UPLOAD
-            intent.putParcelableArrayListExtra(FILE_LIST, fileList)
             context.startService(intent)
         }
 

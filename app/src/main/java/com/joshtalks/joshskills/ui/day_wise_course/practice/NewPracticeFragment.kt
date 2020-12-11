@@ -27,6 +27,8 @@ import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
+import com.joshtalks.joshskills.repository.local.entity.PendingTask
+import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
@@ -34,6 +36,7 @@ import com.joshtalks.joshskills.ui.day_wise_course.CapsuleActivityCallback
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.ExoAudioPlayer.ProgressUpdateListener
+import com.joshtalks.joshskills.util.FileUploadService
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -343,7 +346,13 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
                 if (it == EXPECTED_ENGAGE_TYPE.AU || it == EXPECTED_ENGAGE_TYPE.VI || it == EXPECTED_ENGAGE_TYPE.DX) {
                     requestEngage.answerUrl = chatModel.filePath
                 }
-                practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
+                CoroutineScope(Dispatchers.IO).launch {
+                    AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
+                        PendingTaskModel(requestEngage,PendingTask.VOCABULARY_PRACTICE)
+                    )
+                }
+                FileUploadService.startUpload(AppObjectController.joshApplication)
+                //practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
 
                 binding.progressLayout.visibility = View.VISIBLE
 

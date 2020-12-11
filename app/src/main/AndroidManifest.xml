@@ -641,6 +641,11 @@
             android:isolatedProcess="true"
             tools:ignore="ExportedService" />
 
+        <service
+            android:name=".util.FileUploadService"
+            android:enabled="true"
+            android:exported="true"
+            tools:ignore="ExportedService" />
 
 
         <meta-data

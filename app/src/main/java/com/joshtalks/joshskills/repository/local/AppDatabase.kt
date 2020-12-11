@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.engage_notification.AppUsageDao
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.repository.local.dao.AssessmentDao
 import com.joshtalks.joshskills.repository.local.dao.LessonDao
+import com.joshtalks.joshskills.repository.local.dao.PendingTaskDao
 import com.joshtalks.joshskills.repository.local.dao.reminder.ReminderDao
 import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
@@ -411,6 +412,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun appUsageDao(): AppUsageDao
     abstract fun appActivityDao(): AppActivityDao
     abstract fun lessonDao(): LessonDao
+    abstract fun pendingTaskDao(): PendingTaskDao
 
 }
 

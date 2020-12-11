@@ -7,15 +7,17 @@ import com.joshtalks.joshskills.repository.server.RequestEngage
 
 @Entity(tableName = "pending_task_table")
 data class PendingTaskModel(
-    @PrimaryKey
-    @ColumnInfo(name = "id")
-    var id: Int,
+
     @ColumnInfo(name = "request_object")
     var requestObject: RequestEngage,
     @ColumnInfo(name = "type")
     var type: PendingTask
 
-)
+){
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    var id: Int=0
+}
 
 enum class PendingTask {
     VOCABULARY_PRACTICE,

@@ -4,15 +4,16 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
+import com.joshtalks.joshskills.repository.server.RequestEngage
 
 @Dao
 interface PendingTaskDao {
     @Insert
-    fun insertPendingTask(pendingTask: PendingTaskModel): Int
+    suspend fun insertPendingTask(pendingTask: PendingTaskModel)
 
     @Query("SELECT * FROM pending_task_table")
-    fun getPendingTasks()
+    suspend fun getPendingTasks():List<PendingTaskModel>
 
     @Query("DELETE FROM pending_task_table WHERE id =:id")
-    fun deleteTask(id: Int)
+    suspend fun deleteTask(id: Int)
 }

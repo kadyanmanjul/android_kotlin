@@ -1,14 +1,11 @@
 package com.joshtalks.joshskills.repository.server
 
 
-import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import kotlinx.android.parcel.Parcelize
 
-@Parcelize
-class RequestEngage : Parcelable {
+class RequestEngage {
     @SerializedName("answer_url")
     var answerUrl: String? = null
 
