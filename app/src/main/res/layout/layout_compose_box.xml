@@ -68,118 +68,71 @@
         android:id="@+id/flBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/_4sdp"
-        android:layout_marginTop="@dimen/_4sdp"
-        android:layout_marginBottom="@dimen/_4sdp"
-        android:layout_toStartOf="@+id/boxEndLayout"
+        android:layout_margin="@dimen/_4sdp"
+        android:layout_toStartOf="@+id/record_button"
         android:layout_toEndOf="@id/ivArrow"
-        android:background="@drawable/compose_box"
+        android:background="@drawable/rect_round"
         android:paddingHorizontal="@dimen/_14sdp"
-        android:paddingVertical="@dimen/_2sdp"
-        tools:visibility="gone">
+        android:paddingVertical="@dimen/_8sdp"
+        android:visibility="visible"
+        tools:visibility="visible">
 
         <com.joshtalks.joshskills.ui.groupchat.uikit.ComposeBox.CometChatEditText
             android:id="@+id/etComposeBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
             android:background="@android:color/transparent"
             android:hint="@string/message"
             android:imeOptions="actionSend"
-            android:inputType="textMultiLine"
+            android:inputType="textCapSentences|textMultiLine"
             android:maxLines="3"
-            android:paddingVertical="8dp"
-            android:singleLine="false"
             android:textColor="@color/black"
+            android:textCursorDrawable="@color/button_color"
             android:textSize="@dimen/_12ssp" />
+
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/voiceMessageLayout"
+    <com.joshtalks.recordview.RecordView
+        android:id="@+id/record_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/boxEndLayout"
-        android:layout_toStartOf="@+id/boxEndLayout"
-        android:background="@drawable/compose_box"
+        android:layout_marginHorizontal="@dimen/_4sdp"
+        android:layout_marginVertical="@dimen/_4sdp"
+        android:layout_toStartOf="@+id/record_button"
+        android:background="@drawable/rect_round"
         android:visibility="gone"
-        tools:visibility="visible">
+        app:counter_time_color="#ff0000"
+        app:slide_to_cancel_arrow="@drawable/recv_ic_arrow"
+        app:slide_to_cancel_arrow_color="#000000"
+        app:slide_to_cancel_bounds="10dp"
+        app:slide_to_cancel_margin_right="10dp"
+        app:slide_to_cancel_text="@string/slide_to_cancel"
+        tools:visibility="gone" />
 
-        <ImageView
-            android:id="@+id/ivDelete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/record_time"
-            android:layout_centerVertical="true"
-            android:padding="8dp"
-            android:src="@drawable/recv_ic_delete"
-            android:visibility="gone"
-            tools:visibility="visible" />
+    <com.joshtalks.recordview.CustomImageButton
+        android:id="@+id/record_button"
+        android:layout_width="@dimen/_36sdp"
+        android:layout_height="@dimen/_36sdp"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="@dimen/_4sdp"
+        android:background="@drawable/recv_bg_mic"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?selectableItemBackground"
+        android:padding="@dimen/_8sdp"
+        android:scaleType="centerInside"
+        android:textColor="#fff"
+        android:visibility="visible"
+        app:image_first="@drawable/recv_ic_mic_white"
+        app:image_second="@drawable/ic_send" />
 
-        <SeekBar
-            android:id="@+id/voice_message_seekbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/record_time"
-            android:visibility="visible" />
-
-        <com.joshtalks.joshskills.ui.groupchat.uikit.AudioRecordView
-            android:id="@+id/record_audio_visualizer"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_toEndOf="@+id/ivDelete"
-            android:visibility="gone"
-            app:chunkAlignTo="bottom"
-            app:chunkColor="@color/colorPrimary"
-            app:chunkMaxHeight="150dp"
-            app:chunkMinHeight="1dp"
-            app:chunkSpace="1dp"
-            app:chunkWidth="2dp"
-            tools:visibility="gone" />
-
-        <Chronometer
-            android:id="@+id/record_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="8dp"
-            android:layout_toEndOf="@+id/ivDelete"
-            android:elevation="8dp"
-            android:textSize="@dimen/_14ssp" />
-    </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/boxEndLayout"
+    <Chronometer
+        android:id="@+id/record_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:animateLayoutChanges="true"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/ivMic"
-            android:layout_width="@dimen/_36sdp"
-            android:layout_height="@dimen/_36sdp"
-            android:layout_marginEnd="@dimen/_4sdp"
-            android:background="@drawable/recv_bg_mic"
-            android:backgroundTint="@color/colorPrimary"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?selectableItemBackground"
-            android:padding="8dp"
-            android:src="@drawable/ic_mic_white_24dp" />
-
-        <ImageView
-            android:id="@+id/ivSend"
-            android:layout_width="@dimen/_36sdp"
-            android:layout_height="@dimen/_36sdp"
-            android:layout_marginEnd="@dimen/_4sdp"
-            android:background="@drawable/recv_bg_mic"
-            android:backgroundTint="@color/colorPrimary"
-            android:padding="@dimen/_8sdp"
-            android:src="@drawable/ic_send"
-            android:visibility="gone" />
-    </LinearLayout>
+        android:visibility="gone" />
 
 </RelativeLayout>

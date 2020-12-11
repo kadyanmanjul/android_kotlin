@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -62,6 +63,10 @@ import com.joshtalks.joshskills.ui.groupchat.utils.KeyBoardUtils;
 import com.joshtalks.joshskills.ui.groupchat.utils.MediaUtils;
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils;
 import com.joshtalks.joshskills.util.ExoAudioPlayer;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -74,6 +79,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 
 /**
@@ -217,15 +223,15 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         KeyBoardUtils.setKeyboardVisibilityListener(this, (View) rvChatListView.getParent(), keyboardVisible -> {
             if (keyboardVisible) {
                 scrollToBottom();
-                composeBox.ivMic.setVisibility(GONE);
-                composeBox.ivSend.setVisibility(View.VISIBLE);
+//                composeBox.ivMic.setVisibility(GONE);
+//                composeBox.ivSend.setVisibility(VISIBLE);
             } else {
                 if (isEdit) {
-                    composeBox.ivMic.setVisibility(GONE);
-                    composeBox.ivSend.setVisibility(View.VISIBLE);
+//                    composeBox.ivMic.setVisibility(GONE);
+//                    composeBox.ivSend.setVisibility(VISIBLE);
                 } else {
-                    composeBox.ivMic.setVisibility(View.VISIBLE);
-                    composeBox.ivSend.setVisibility(GONE);
+//                    composeBox.ivMic.setVisibility(VISIBLE);
+//                    composeBox.ivSend.setVisibility(GONE);
                 }
             }
         });
@@ -252,6 +258,38 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             }
 
         });
+
+        composeBox.recordButton.setOnTouchListener(event -> {
+            if (composeBox.etComposeBox.getText().toString().trim()
+                    .isEmpty() && event == MotionEvent.ACTION_DOWN
+            ) {
+                if (!PermissionUtils.INSTANCE.isAudioAndStoragePermissionEnable(this)) {
+                    PermissionUtils.INSTANCE.audioRecordStorageReadAndWritePermission(this, new MultiplePermissionsListener() {
+                        @Override
+                        public void onPermissionsChecked(MultiplePermissionsReport report) {
+
+                            if (report != null) {
+                                if (report.areAllPermissionsGranted()) {
+                                    composeBox.recordButton.setListenForRecord(true);
+                                } else if (report.isAnyPermissionPermanentlyDenied()) {
+                                    PermissionUtils.INSTANCE.permissionPermanentlyDeniedDialog(CometChatMessageListActivity.this, R.string.record_permission_message);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken token) {
+                            if (token != null) {
+                                token.continuePermissionRequest();
+                            }
+                        }
+                    });
+                } else {
+                    composeBox.recordButton.setListenForRecord(true);
+                }
+            }
+        });
+
     }
 
     private void setComposeBoxListener() {
@@ -1421,7 +1459,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         if (baseMessage != null) {
             isReply = true;
             replyTitle.setText(baseMessage.getSender().getName());
-            replyMedia.setVisibility(View.VISIBLE);
+            replyMedia.setVisibility(VISIBLE);
             if (baseMessage.getType().equals(CometChatConstants.MESSAGE_TYPE_TEXT)) {
                 replyMessage.setText(((TextMessage) baseMessage).getText());
                 replyMedia.setVisibility(GONE);
@@ -1436,9 +1474,9 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
                 replyMessage.setText(messageStr);
                 replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_insert_drive_file_black_24dp, 0, 0, 0);
             }
-            composeBox.ivMic.setVisibility(View.VISIBLE);
-            composeBox.ivSend.setVisibility(GONE);
-            replyMessageLayout.setVisibility(View.VISIBLE);
+//            composeBox.ivMic.setVisibility(VISIBLE);
+//            composeBox.ivSend.setVisibility(GONE);
+            replyMessageLayout.setVisibility(VISIBLE);
             if (messageAdapter != null) {
                 messageAdapter.setSelectedMessage(baseMessage.getId());
                 messageAdapter.notifyDataSetChanged();

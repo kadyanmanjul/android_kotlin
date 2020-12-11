@@ -1,14 +1,12 @@
 package com.joshtalks.joshskills.ui.groupchat.uikit.ComposeBox;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -16,24 +14,25 @@ import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.fragment.app.FragmentManager;
 
 import com.cometchat.pro.core.CometChat;
 import com.joshtalks.joshskills.R;
-import com.joshtalks.joshskills.ui.groupchat.constant.StringContract;
+import com.joshtalks.joshskills.core.PermissionUtils;
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent;
+import com.joshtalks.joshskills.core.analytics.AppAnalytics;
 import com.joshtalks.joshskills.ui.groupchat.listeners.ComposeActionListener;
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils;
+import com.joshtalks.recordview.CustomImageButton;
+import com.joshtalks.recordview.OnRecordListener;
+import com.joshtalks.recordview.RecordView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,13 +42,17 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.joshtalks.joshskills.core.StaticConstantKt.EMPTY;
+import static com.joshtalks.recordview.CustomImageButton.FIRST_STATE;
+import static com.joshtalks.recordview.CustomImageButton.SECOND_STATE;
+
 
 public class ComposeBox extends RelativeLayout implements View.OnClickListener {
 
     private static final String TAG = ComposeBox.class.getName();
     private final Handler seekHandler = new Handler(Looper.getMainLooper());
     private final Bundle bundle = new Bundle();
-    public ImageView ivAudio, ivCamera, ivGallery, ivFile, ivSend, ivArrow, ivMic, ivDelete;
+    public ImageView ivAudio, ivCamera, ivGallery, ivFile, ivArrow;
     public CometChatEditText etComposeBox;
     public boolean isGalleryVisible = true, isAudioVisible = true, isCameraVisible = true,
             isFileVisible = true, isLocationVisible = true, isPollVisible = true;
@@ -59,17 +62,15 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
     private Timer timer = new Timer();
     private ComposeBoxActionFragment composeBoxActionFragment;
     private String audioFileNameWithPath;
-    private boolean isOpen, isRecording, isPlaying, voiceMessage;
-    private SeekBar voiceSeekbar;
     private Chronometer recordTime;
     private RelativeLayout composeBox;
     private RelativeLayout flBox;
-    private RelativeLayout voiceMessageLayout;
     private RelativeLayout rlActionContainer;
-    private boolean hasFocus;
     private ComposeActionListener composeActionListener;
     private Context context;
     private int color;
+    public CustomImageButton recordButton;
+    public RecordView recordView;
 
     public ComposeBox(Context context) {
         super(context);
@@ -119,39 +120,34 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
         ViewGroup viewGroup = (ViewGroup) view.getParent();
         viewGroup.setClipChildren(false);
 
-        mediaPlayer = new MediaPlayer();
+//        mediaPlayer = new MediaPlayer();
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         if (audioManager.isMusicActive()) {
             audioManager.requestAudioFocus(focusChange -> {
                 if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
 
                 } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-                    stopRecording(true);
+                    hideRecordView();
+                    stopRecord(true);
                 }
             }, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         }
         composeBox = this.findViewById(R.id.message_box);
         flBox = this.findViewById(R.id.flBox);
-        ivMic = this.findViewById(R.id.ivMic);
-        ivDelete = this.findViewById(R.id.ivDelete);
-        voiceMessageLayout = this.findViewById(R.id.voiceMessageLayout);
         recordTime = this.findViewById(R.id.record_time);
-        voiceSeekbar = this.findViewById(R.id.voice_message_seekbar);
         ivCamera = this.findViewById(R.id.ivCamera);
         ivGallery = this.findViewById(R.id.ivImage);
         ivAudio = this.findViewById(R.id.ivAudio);
         ivFile = this.findViewById(R.id.ivFile);
-        ivSend = this.findViewById(R.id.ivSend);
         ivArrow = this.findViewById(R.id.ivArrow);
         etComposeBox = this.findViewById(R.id.etComposeBox);
         rlActionContainer = this.findViewById(R.id.rlActionContainers);
+        recordButton = this.findViewById(R.id.record_button);
+        recordView = this.findViewById(R.id.record_view);
 
         ivAudio.setOnClickListener(this);
         ivArrow.setOnClickListener(this);
-        ivSend.setOnClickListener(this);
-        ivDelete.setOnClickListener(this);
         ivFile.setOnClickListener(this);
-        ivMic.setOnClickListener(this);
         ivGallery.setOnClickListener(this);
         ivCamera.setOnClickListener(this);
 
@@ -212,13 +208,87 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
                 }
             }
         });
-        etComposeBox.setMediaSelected(new CometChatEditText.OnEditTextMediaListener() {
+        etComposeBox.setMediaSelected(inputContentInfoCompat -> composeActionListener.onEditTextMediaSelected(inputContentInfoCompat));
+        a.recycle();
+
+        recordButton.setRecordView(recordView);
+        recordView.setCancelBounds(2f);
+        recordView.setSmallMicColor(Color.parseColor("#c2185b"));
+        recordView.setLessThanSecondAllowed(false);
+        recordView.setSlideToCancelText(getContext().getString(R.string.slide_to_cancel));
+        recordView.setCustomSounds(
+                R.raw.record_start,
+                R.raw.record_finished,
+                0
+        );
+        recordButton.setListenForRecord(PermissionUtils.checkPermissionForAudioRecord(getContext()));
+        recordView.setOnRecordListener(new OnRecordListener() {
             @Override
-            public void OnMediaSelected(InputContentInfoCompat i) {
-                composeActionListener.onEditTextMediaSelected(i);
+            public void onStart() {
+//                window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                AppAnalytics.create(AnalyticsEvent.AUDIO_BUTTON_CLICKED.getNAME()).push();
+                startRecord();
+                AppAnalytics.create(AnalyticsEvent.AUDIO_RECORD.getNAME()).push();
+            }
+
+            @Override
+            public void onCancel() {
+                stopRecord(true);
+            }
+
+            @Override
+            public void onFinish(long recordTime) {
+                try {
+                    AppAnalytics.create(AnalyticsEvent.AUDIO_SENT.getNAME()).push();
+                    hideRecordView();
+                    stopRecord(false);
+                    sendVoiceNote();
+//                    window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onLessThanSecond() {
+                hideRecordView();
+                stopRecord(true);
+                AppAnalytics.create(AnalyticsEvent.AUDIO_CANCELLED.getNAME()).push();
             }
         });
-        a.recycle();
+
+        recordView.setOnBasketAnimationEndListener(() -> {
+            hideRecordView();
+            stopRecord(true);
+            AppAnalytics.create(AnalyticsEvent.AUDIO_CANCELLED.getNAME()).push();
+//            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        });
+
+        etComposeBox.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s != null && !s.toString().trim().equals(EMPTY)) {
+                    recordButton.goToState(SECOND_STATE);
+                    recordButton.setListenForRecord(false);
+                } else {
+                    recordButton.goToState(FIRST_STATE);
+                    recordButton.setListenForRecord(PermissionUtils.checkPermissionForAudioRecord(getContext()));
+                }
+            }
+        });
+
+        recordButton.setOnRecordClickListener(v -> composeActionListener.onSendActionClicked(etComposeBox));
+
     }
 
     public void setText(String text) {
@@ -226,18 +296,14 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
     }
 
     public void setColor(int color) {
-
-        ivSend.setImageTintList(ColorStateList.valueOf(color));
         ivCamera.setImageTintList(ColorStateList.valueOf(color));
         ivGallery.setImageTintList(ColorStateList.valueOf(color));
         ivFile.setImageTintList(ColorStateList.valueOf(color));
-
         ivArrow.setImageTintList(ColorStateList.valueOf(color));
     }
 
     public void setComposeBoxListener(ComposeActionListener composeActionListener) {
         this.composeActionListener = composeActionListener;
-
         this.composeActionListener.getCameraActionView(ivCamera);
         this.composeActionListener.getGalleryActionView(ivGallery);
         this.composeActionListener.getFileActionView(ivFile);
@@ -245,45 +311,28 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.ivDelete) {
-            stopRecording(true);
-            stopPlayingAudio();
-            voiceMessageLayout.setVisibility(GONE);
-            etComposeBox.setVisibility(View.VISIBLE);
-            ivMic.setVisibility(View.VISIBLE);
-            ivMic.setImageDrawable(getResources().getDrawable(R.drawable.ic_mic_white_24dp));
-            isPlaying = false;
-            isRecording = false;
-            voiceMessage = false;
-            ivDelete.setVisibility(GONE);
-            ivSend.setVisibility(View.GONE);
-        }
-        if (view.getId() == R.id.ivSend) {
-            if (!voiceMessage) {
-                composeActionListener.onSendActionClicked(etComposeBox);
-            } else {
-                long audioDurationInMs = SystemClock.elapsedRealtime() - recordTime.getBase();
-                JSONObject metadata = new JSONObject();
-                try {
-                    metadata.put("audioDurationInMs", audioDurationInMs);
-                } catch (JSONException exception) {
-                    exception.printStackTrace();
-                }
-                composeActionListener.onVoiceNoteComplete(audioFileNameWithPath, metadata);
-                audioFileNameWithPath = "";
-                voiceMessageLayout.setVisibility(GONE);
-                etComposeBox.setVisibility(View.VISIBLE);
-                ivDelete.setVisibility(GONE);
-                ivSend.setVisibility(GONE);
-                // ivArrow.setVisibility(View.VISIBLE);
-                ivMic.setVisibility(View.VISIBLE);
-                isRecording = false;
-                isPlaying = false;
-                voiceMessage = false;
-                ivMic.setImageResource(R.drawable.ic_mic_white_24dp);
-            }
-
-        }
+//        if (view.getId() == R.id.ivDelete) {
+//            stopRecording(true);
+//            stopPlayingAudio();
+//            //voiceMessageLayout.setVisibility(GONE);
+//            etComposeBox.setVisibility(View.VISIBLE);
+//            flBox.setVisibility(View.VISIBLE);
+////            ivMic.setVisibility(View.VISIBLE);
+////            ivMic.setImageDrawable(getResources().getDrawable(R.drawable.ic_mic_white_24dp));
+//            isPlaying = false;
+//            isRecording = false;
+//            voiceMessage = false;
+//            //ivDelete.setVisibility(GONE);
+////            ivSend.setVisibility(View.GONE);
+//        }
+//        if (view.getId() == R.id.ivSend) {
+//            if (!voiceMessage) {
+//                composeActionListener.onSendActionClicked(etComposeBox);
+//            } else {
+//                sendVoiceNote();
+//            }
+//
+//        }
         if (view.getId() == R.id.ivArrow) {
 //            if (isOpen) {
 //               closeActionContainer();
@@ -301,41 +350,41 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
             composeBoxActionFragment.setArguments(bundle);
             composeBoxActionFragment.show(fm, composeBoxActionFragment.getTag());
         }
-        if (view.getId() == R.id.ivMic) {
-            if (Utils.hasPermissions(context, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-
-                if (isOpen) {
-//                    closeActionContainer();
-                }
-                if (!isRecording) {
-                    startRecord();
-                    ivMic.setImageDrawable(getResources().getDrawable(R.drawable.ic_stop_24dp));
-                    isRecording = true;
-                    isPlaying = false;
-                } else {
-                    if (isRecording && !isPlaying) {
-                        isPlaying = true;
-                        stopRecording(false);
-                        recordTime.stop();
-                    }
-                    ivMic.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow_black_24dp));
-                    ivMic.setVisibility(View.GONE);
-                    ivSend.setVisibility(View.VISIBLE);
-                    ivDelete.setVisibility(View.VISIBLE);
-                    voiceSeekbar.setVisibility(View.VISIBLE);
-                    voiceMessage = true;
-                    if (audioFileNameWithPath != null)
-                        startPlayingAudio(audioFileNameWithPath);
-                    else
-                        Toast.makeText(getContext(), "No File Found. Please", Toast.LENGTH_LONG).show();
-                }
-            } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    ((Activity) context).requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            StringContract.RequestCode.RECORD);
-                }
-            }
-        }
+//        if (view.getId() == R.id.ivMic) {
+//            if (Utils.hasPermissions(context, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+//
+//                if (isOpen) {
+////                    closeActionContainer();
+//                }
+//                if (!isRecording) {
+//                    startRecord();
+//                    ivMic.setImageDrawable(getResources().getDrawable(R.drawable.ic_stop_24dp));
+//                    isRecording = true;
+//                    isPlaying = false;
+//                } else {
+//                    if (isRecording && !isPlaying) {
+//                        isPlaying = true;
+//                        stopRecording(false);
+//                        //recordTime.stop();
+//                    }
+//                    ivMic.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow_black_24dp));
+//                    ivMic.setVisibility(View.GONE);
+//                    ivSend.setVisibility(View.VISIBLE);
+//                    //ivDelete.setVisibility(View.VISIBLE);
+//                    //voiceSeekbar.setVisibility(View.VISIBLE);
+//                    voiceMessage = true;
+//                    if (audioFileNameWithPath != null)
+//                        startPlayingAudio(audioFileNameWithPath);
+//                    else
+//                        Toast.makeText(getContext(), "No File Found. Please", Toast.LENGTH_LONG).show();
+//                }
+//            } else {
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                    ((Activity) context).requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                            StringContract.RequestCode.RECORD);
+//                }
+//            }
+//        }
     }
 
     public void usedIn(String className) {
@@ -359,83 +408,83 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
 //    }
 
     public void startRecord() {
-        etComposeBox.setVisibility(GONE);
+        showRecordView();
         recordTime.setBase(SystemClock.elapsedRealtime());
         recordTime.start();
-        ivArrow.setVisibility(GONE);
-        voiceSeekbar.setVisibility(GONE);
-        voiceMessageLayout.setVisibility(View.VISIBLE);
-        // audioRecordView.recreate();
-        // audioRecordView.setVisibility(View.VISIBLE);
         startRecording();
     }
 
-    private void startPlayingAudio(String path) {
-        try {
-
-            if (timerRunnable != null) {
-                seekHandler.removeCallbacks(timerRunnable);
-                timerRunnable = null;
-            }
-
-            mediaPlayer.reset();
-            if (Utils.hasPermissions(context, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                mediaPlayer.setDataSource(path);
-                mediaPlayer.prepare();
-                mediaPlayer.start();
-            } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    ((Activity) context).requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                            StringContract.RequestCode.READ_STORAGE);
-                } else {
-                    Toast.makeText(context, "Permission Denied!", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            final int duration = mediaPlayer.getDuration();
-            voiceSeekbar.setMax(duration);
-            recordTime.setBase(SystemClock.elapsedRealtime());
-            recordTime.start();
-            timerRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    int pos = mediaPlayer.getCurrentPosition();
-                    voiceSeekbar.setProgress(pos);
-
-                    if (mediaPlayer.isPlaying() && pos < duration) {
-//                        audioLength.setText(Utils.convertTimeStampToDurationTime(player.getCurrentPosition()));
-                        seekHandler.postDelayed(this, 100);
-                    } else {
-                        seekHandler
-                                .removeCallbacks(timerRunnable);
-                        timerRunnable = null;
-                    }
-                }
-
-            };
-            seekHandler.postDelayed(timerRunnable, 100);
-            mediaPlayer.setOnCompletionListener(mp -> {
-                seekHandler
-                        .removeCallbacks(timerRunnable);
-                timerRunnable = null;
-                mp.stop();
-                recordTime.stop();
-//                audioLength.setText(Utils.convertTimeStampToDurationTime(duration));
-                voiceSeekbar.setProgress(0);
-//                playButton.setImageResource(R.drawable.ic_play_arrow_black_24dp);
-            });
-
-        } catch (Exception e) {
-            Log.e("playAudioError: ", e.getMessage());
-            stopPlayingAudio();
-        }
+    public void stopRecord(boolean isCancel) {
+        recordTime.stop();
+        stopRecording(isCancel);
     }
 
-
-    private void stopPlayingAudio() {
-        if (mediaPlayer != null)
-            mediaPlayer.stop();
-    }
+//    private void startPlayingAudio(String path) {
+//        try {
+//
+//            if (timerRunnable != null) {
+//                seekHandler.removeCallbacks(timerRunnable);
+//                timerRunnable = null;
+//            }
+//
+//            mediaPlayer.reset();
+//            if (Utils.hasPermissions(context, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+//                mediaPlayer.setDataSource(path);
+//                mediaPlayer.prepare();
+//                mediaPlayer.start();
+//            } else {
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                    ((Activity) context).requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+//                            StringContract.RequestCode.READ_STORAGE);
+//                } else {
+//                    Toast.makeText(context, "Permission Denied!", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//
+//            final int duration = mediaPlayer.getDuration();
+////            voiceSeekbar.setMax(duration);
+////            recordTime.setBase(SystemClock.elapsedRealtime());
+////            recordTime.start();
+//            timerRunnable = new Runnable() {
+//                @Override
+//                public void run() {
+//                    int pos = mediaPlayer.getCurrentPosition();
+////                    voiceSeekbar.setProgress(pos);
+//
+//                    if (mediaPlayer.isPlaying() && pos < duration) {
+////                        audioLength.setText(Utils.convertTimeStampToDurationTime(player.getCurrentPosition()));
+//                        seekHandler.postDelayed(this, 100);
+//                    } else {
+//                        seekHandler
+//                                .removeCallbacks(timerRunnable);
+//                        timerRunnable = null;
+//                    }
+//                }
+//
+//            };
+//            seekHandler.postDelayed(timerRunnable, 100);
+//            mediaPlayer.setOnCompletionListener(mp -> {
+//                seekHandler
+//                        .removeCallbacks(timerRunnable);
+//                timerRunnable = null;
+//                mp.stop();
+//                //recordTime.stop();
+////                audioLength.setText(Utils.convertTimeStampToDurationTime(duration));
+//                //voiceSeekbar.setProgress(0);
+////                playButton.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+//            });
+//
+//        } catch (Exception e) {
+//            Log.e("playAudioError: ", e.getMessage());
+//            stopPlayingAudio();
+//        }
+//    }
+//
+//
+//    private void stopPlayingAudio() {
+//        if (mediaPlayer != null)
+//            mediaPlayer.stop();
+//    }
 
     private void startRecording() {
         try {
@@ -472,7 +521,7 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
         }
     }
 
-    private void stopRecording(boolean isCancel) {
+    public void stopRecording(boolean isCancel) {
         try {
             if (mediaRecorder != null) {
                 mediaRecorder.stop();
@@ -485,5 +534,25 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void sendVoiceNote() {
+        JSONObject metadata = new JSONObject();
+        try {
+            metadata.put("audioDurationInMs", recordView.getCounterTimeInMs());
+        } catch (JSONException exception) {
+            exception.printStackTrace();
+        }
+        composeActionListener.onVoiceNoteComplete(audioFileNameWithPath, metadata);
+        audioFileNameWithPath = "";
+        hideRecordView();
+    }
+
+    private void showRecordView() {
+        recordView.setVisibility(VISIBLE);
+    }
+
+    private void hideRecordView() {
+        recordView.setVisibility(GONE);
     }
 }

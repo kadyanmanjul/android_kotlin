@@ -648,11 +648,11 @@ class ConversationViewModel(application: Application) :
     }
 
     suspend fun getLessonStatus(lessonId: Int): Boolean {
-        when(appDatabase.lessonDao().getLesson(lessonId)?.status){
-            LESSON_STATUS.CO->{
+        when (appDatabase.lessonDao().getLesson(lessonId)?.status) {
+            LESSON_STATUS.CO -> {
                 return true
             }
-            else->{
+            else -> {
                 return false
             }
         }

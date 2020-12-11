@@ -79,7 +79,9 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
         this.id = id.toString()
         this.url = audioUrl
         try {
-            this.mediaDuration = metadata?.getLong("audioDurationInMs") ?: 0
+            if (metadata != null && metadata.has("audioDurationInMs")) {
+                this.mediaDuration = metadata.getLong("audioDurationInMs")
+            }
             mediaDuration.let {
                 seekPlayerProgress.max = it.toInt()
                 timestamp.text = Utils.formatDuration(it.toInt())

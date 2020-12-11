@@ -15,10 +15,11 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.io.IOException;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
+
+import java.io.IOException;
+
 import io.supercharge.shimmerlayout.ShimmerLayout;
 
 public class RecordView extends RelativeLayout {
@@ -26,13 +27,14 @@ public class RecordView extends RelativeLayout {
     public static final int DEFAULT_CANCEL_BOUNDS = 8; //8dp
     private ImageView smallBlinkingMic, basketImg;
     private Chronometer counterTime;
+    private final Context context;
     private TextView slideToCancel;
     private ShimmerLayout slideToCancelLayout;
     private ImageView arrow;
     private float initialX, basketInitialY, difX = 0;
     private float cancelBounds = DEFAULT_CANCEL_BOUNDS;
     private long startTime, elapsedTime = 0;
-    private Context context;
+    private long counterTimeInMs = 0;
     private OnRecordListener recordListener;
     private boolean isSwiped, isLessThanSecondAllowed = false;
     private boolean isSoundEnabled = true;
@@ -113,7 +115,6 @@ public class RecordView extends RelativeLayout {
 
             if (arrowColor != -1)
                 setSlideToCancelArrowColor(arrowColor);
-
 
 
             setMarginRight(slideMarginRight, true);
@@ -209,7 +210,6 @@ public class RecordView extends RelativeLayout {
 
     }
 
-
     protected void onActionMove(CustomImageButton recordBtn, MotionEvent motionEvent) {
 
 
@@ -236,6 +236,7 @@ public class RecordView extends RelativeLayout {
                 animationHelper.moveRecordButtonAndSlideToCancelBack(recordBtn, slideToCancelLayout, initialX, difX);
 
                 counterTime.stop();
+                counterTimeInMs = SystemClock.elapsedRealtime() - counterTime.getBase();
                 slideToCancelLayout.stopShimmerAnimation();
                 isSwiped = true;
 
@@ -310,6 +311,7 @@ public class RecordView extends RelativeLayout {
 
         animationHelper.moveRecordButtonAndSlideToCancelBack(recordBtn, slideToCancelLayout, initialX, difX);
         counterTime.stop();
+        counterTimeInMs = SystemClock.elapsedRealtime() - counterTime.getBase();
         slideToCancelLayout.stopShimmerAnimation();
 
 
@@ -383,11 +385,15 @@ public class RecordView extends RelativeLayout {
     public void setCounterTimeColor(int color) {
         counterTime.setTextColor(color);
     }
-    
-    public void setSlideToCancelArrowColor(int color){
+
+    public void setSlideToCancelArrowColor(int color) {
         arrow.setColorFilter(color);
     }
 
+    public long getCounterTimeInMs() {
+        counterTimeInMs = SystemClock.elapsedRealtime() - counterTime.getBase();
+        return counterTimeInMs;
+    }
 
     private void setCancelBounds(float cancelBounds, boolean convertDpToPixel) {
         float bounds = convertDpToPixel ? DpUtil.toPixel(cancelBounds, context) : cancelBounds;
@@ -395,5 +401,3 @@ public class RecordView extends RelativeLayout {
     }
 
 }
-
-
