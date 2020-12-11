@@ -41,6 +41,8 @@ import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModelDao
 import com.joshtalks.joshskills.repository.local.entity.OptionType
 import com.joshtalks.joshskills.repository.local.entity.PdfType
+import com.joshtalks.joshskills.repository.local.entity.PendingTask
+import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
 import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
@@ -58,6 +60,7 @@ import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAss
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterChoiceColumn
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterChoiceType
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterQuestionStatus
+import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentIntro
 import com.joshtalks.joshskills.repository.server.assessment.ReviseConcept
 import com.joshtalks.joshskills.repository.server.engage.Graph
@@ -73,7 +76,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         AudioType::class, OptionType::class, PdfType::class, ImageType::class, VideoEngage::class,
         FeedbackEngageModel::class, NPSEventModel::class, Assessment::class, AssessmentQuestion::class,
         Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class,
-        AppUsageModel::class, AppActivityModel::class, LessonModel::class
+        AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class
     ],
     version = 24,
     exportSchema = true
@@ -99,7 +102,9 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     LessonStatus::class,
     ConvectorForPracticeFeedback::class,
     QuestionStatus::class,
-    CExamStatusTypeConverter::class
+    CExamStatusTypeConverter::class,
+    PendingTaskTypeConverter::class,
+    PendingTaskRequestTypeConverter::class
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -371,6 +376,7 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `vocabularyStatus` TEXT")
                 database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `readingStatus` TEXT")
                 database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `speakingStatus` TEXT")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `pending_task_tabl` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `created` INTEGER NOT NULL, `request_object` RequestEngage NOT NULL, `tyoe` PendingTask NOT NULL)")
             }
 
         }
@@ -677,6 +683,32 @@ class CExamStatusTypeConverter {
 
     @TypeConverter
     fun fromMatType(enumVal: CExamStatus): String {
+        return AppObjectController.gsonMapper.toJson(enumVal)
+    }
+}
+
+class PendingTaskTypeConverter {
+    @TypeConverter
+    fun fromString(value: String): PendingTask {
+        val type = object : TypeToken<PendingTask>() {}.type
+        return AppObjectController.gsonMapper.fromJson(value, type)
+    }
+
+    @TypeConverter
+    fun fromMatType(enumVal: PendingTask): String {
+        return AppObjectController.gsonMapper.toJson(enumVal)
+    }
+}
+
+class PendingTaskRequestTypeConverter {
+    @TypeConverter
+    fun fromString(value: String): RequestEngage {
+        val type = object : TypeToken<RequestEngage>() {}.type
+        return AppObjectController.gsonMapper.fromJson(value, type)
+    }
+
+    @TypeConverter
+    fun fromMatType(enumVal: RequestEngage): String {
         return AppObjectController.gsonMapper.toJson(enumVal)
     }
 }
