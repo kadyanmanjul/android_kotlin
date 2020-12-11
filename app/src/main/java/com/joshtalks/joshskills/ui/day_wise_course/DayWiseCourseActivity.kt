@@ -115,7 +115,6 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             onBackPressed()
         }
 
-
         viewModel.syncQuestions(lessonId)
         viewModel.getQuestions(lessonId)
 
@@ -133,7 +132,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                 getString(R.string.lesson_no, it.getOrNull(0)?.question?.lesson?.lessonNo)
 
             setUpTablayout(it)
-
+            viewModel.getLessonModelLiveData(lessonId)
 
         })
 
@@ -143,6 +142,13 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             if (it == LESSON_STATUS.CO) {
                 lessonCompleted = true
             }
+        })
+
+        viewModel.lessonLiveData.observe(this, {
+            setTabCompletionStatus(tabs.getChildAt(0), it.grammarStatus == LESSON_STATUS.CO)
+            setTabCompletionStatus(tabs.getChildAt(1), it.vocabStatus == LESSON_STATUS.CO)
+            setTabCompletionStatus(tabs.getChildAt(2), it.readingStatus == LESSON_STATUS.CO)
+            setTabCompletionStatus(tabs.getChildAt(3), it.speakingStatus == LESSON_STATUS.CO)
         })
     }
 
@@ -387,7 +393,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
     override fun onSectionStatusUpdate(tabPosition: Int, status: Boolean) {
         println("tabPosition = [${tabPosition}], status = [${status}]")
-        setTabCompletionStatus(tabs.getChildAt(tabPosition), status)
+//        setTabCompletionStatus(tabs.getChildAt(tabPosition), status)
         if (status) {
             viewModel.updateSectionStatus(lessonId, LESSON_STATUS.CO, tabPosition)
         } else {

@@ -354,7 +354,7 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
                 FileUploadService.startUpload(AppObjectController.joshApplication)
                 //practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
 
-                binding.progressLayout.visibility = View.VISIBLE
+//                binding.progressLayout.visibility = View.VISIBLE
 
                 return true
             }

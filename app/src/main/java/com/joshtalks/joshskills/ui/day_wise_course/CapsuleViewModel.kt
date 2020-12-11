@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.PdfType
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.entity.Question
@@ -43,6 +44,12 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
     val assessmentStatus: MutableLiveData<AssessmentStatus> =
         MutableLiveData(AssessmentStatus.NOT_STARTED)
     val lessonStatusLiveData: MutableLiveData<LESSON_STATUS> = MutableLiveData()
+
+    var lessonLiveData: LiveData<LessonModel> = MutableLiveData()
+
+    fun getLessonModelLiveData(lessonId: Int) {
+        lessonLiveData = lessonDao.observeLesson(lessonId)
+    }
 
     fun getQuestions(lessonId: Int) {
         val chatList: MutableList<ChatModel> = mutableListOf()
@@ -235,4 +242,5 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
             }
         }
     }
+
 }

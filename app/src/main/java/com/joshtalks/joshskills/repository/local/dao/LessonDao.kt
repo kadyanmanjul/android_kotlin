@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.repository.local.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -14,6 +15,9 @@ interface LessonDao {
 
     @Query("SELECT * FROM lessonmodel WHERE lesson_id=:lessonId ORDER BY lesson_no DESC")
     fun getLesson(lessonId: Int): LessonModel?
+
+    @Query("SELECT * FROM lessonmodel WHERE lesson_id=:lessonId ORDER BY lesson_no DESC")
+    fun observeLesson(lessonId: Int): LiveData<LessonModel>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertSingleItem(lesson: LessonModel)
