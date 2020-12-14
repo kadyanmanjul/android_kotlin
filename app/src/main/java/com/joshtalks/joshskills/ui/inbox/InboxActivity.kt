@@ -12,6 +12,8 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModelProvider
@@ -33,7 +35,7 @@ import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.MINIMUM_TIME_TO_SHOW_REVIEW
 import com.joshtalks.joshskills.core.IN_APP_REVIEW_COUNT
-import com.joshtalks.joshskills.core.IS_LEADERBOARD_ACTIVE
+import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
@@ -46,7 +48,6 @@ import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.inapp_update.Constants
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
@@ -56,6 +57,8 @@ import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.OpenLeaderBoardEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfileEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -70,6 +73,7 @@ import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.SubscriptionData
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
+import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_OBJECT
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.extra.TopTrialTooltipView
@@ -79,7 +83,6 @@ import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
-import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.karumi.dexter.Dexter
@@ -95,23 +98,17 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_inbox.expiry_tool_tip
 import kotlinx.android.synthetic.main.activity_inbox.hint_text
-import kotlinx.android.synthetic.main.activity_inbox.nested_scroll_view
 import kotlinx.android.synthetic.main.activity_inbox.new_user_layout
 import kotlinx.android.synthetic.main.activity_inbox.overlay_layout
 import kotlinx.android.synthetic.main.activity_inbox.overlay_tip
 import kotlinx.android.synthetic.main.activity_inbox.progress_bar
 import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
-import kotlinx.android.synthetic.main.activity_inbox.see_leaderboard
 import kotlinx.android.synthetic.main.activity_inbox.subscriptionTipContainer
 import kotlinx.android.synthetic.main.activity_inbox.text_btn
 import kotlinx.android.synthetic.main.activity_inbox.txtConvert
 import kotlinx.android.synthetic.main.activity_inbox.txtConvert2
 import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip
 import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip2
-import kotlinx.android.synthetic.main.activity_inbox.user_data_container
-import kotlinx.android.synthetic.main.activity_inbox.user_min_data
-import kotlinx.android.synthetic.main.activity_inbox.user_points
-import kotlinx.android.synthetic.main.activity_inbox.user_streak_data
 import kotlinx.android.synthetic.main.find_more_layout.bb_tip_below_find_btn
 import kotlinx.android.synthetic.main.find_more_layout.find_more
 import kotlinx.android.synthetic.main.inbox_toolbar.iv_reminder
@@ -166,7 +163,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         handelIntentAction()
         initNewUserTip()
         viewModel.getTotalWatchTime()
-        viewModel.getProfileData(Mentor.getInstance().getId())
+        //viewModel.getProfileData(Mentor.getInstance().getId())
         //PointSnackbar.make(nested_scroll_view,Snackbar.LENGTH_INDEFINITE,"Updated successfully")?.show()
     }
 
@@ -425,7 +422,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun setToolbar() {
-        iv_reminder.visibility = View.GONE
         iv_setting.visibility = View.VISIBLE
         text_message_title.text = getString(R.string.inbox_header)
         findMoreLayout = findViewById(R.id.parent_layout)
@@ -477,6 +473,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             openPopupMenu(it)
         }
         reminderIv = findViewById<ImageView>(R.id.iv_reminder)
+        reminderIv.visibility=View.GONE
         reminderIv.setOnClickListener {
             AppAnalytics.create(AnalyticsEvent.REMINDER_BELL_CLICKED.NAME)
                 .addBasicParam()
@@ -523,7 +520,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun openPopupMenu(view: View) {
         popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
         popupMenu.inflate(R.menu.more_options_menu)
-        if (PrefManager.getBoolValue(IS_LEADERBOARD_ACTIVE)) {
+        if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             popupMenu.menu.findItem(R.id.menu_leaderboard).isVisible = true
             popupMenu.menu.findItem(R.id.menu_leaderboard).isEnabled = true
         } else {
@@ -769,26 +766,24 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     private fun initScoreCardView(userData: UserProfileResponse) {
         userData.isPointsActive?.let { isLeaderBoardActive ->
-            PrefManager.put(IS_LEADERBOARD_ACTIVE, true)
-                if (true) {
-                    user_data_container.visibility = View.VISIBLE
-                    user_points.text = userData.points.toString()
-                    user_streak_data.text = userData.streak.toString()
-                    user_min_data.text = userData.minutesSpoken.toString()
-                    see_leaderboard.setOnClickListener {
-                        openLeaderBoard()
+            if (isLeaderBoardActive) {
+                recycler_view_inbox.allViewResolvers?.let {
+                    it.forEachIndexed { index, view ->
+                        if (view is InboxViewHolder) {
+                            view.setView(userData.points.toString())
+                        }
                     }
-                    user_data_container.setOnClickListener {
-                        openUserProfileActivity(Mentor.getInstance().getId())
-                    }
-                } else {
-                    user_data_container.visibility = View.GONE
-                    try {
-                        if (::popupMenu.isInitialized)
-                            popupMenu.menu.findItem(R.id.menu_leaderboard).isVisible = false
+                }
+            } else {
+                try {
+                    if (::popupMenu.isInitialized) {
+                        popupMenu.menu.findItem(R.id.menu_leaderboard).isVisible = false
                         popupMenu.menu.findItem(R.id.menu_leaderboard).isEnabled = false
-                        //popupMenu..findItem(R.id.menu_leaderboard).setVisible(false)
-                    } catch (ex: Exception) {
+                    } else {
+
+                    }
+                    //popupMenu..findItem(R.id.menu_leaderboard).setVisible(false)
+                } catch (ex: Exception) {
 
                 }
             }
@@ -800,7 +795,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             }
         }
         if (unseenAwards.isNullOrEmpty().not()) {
-            ShowAwardFragment.showDialog(supportFragmentManager, unseenAwards?.toList()!!)
+            showAward(unseenAwards?.toList()!!)
         }
     }
 
@@ -818,22 +813,34 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
         recycler_view_inbox.removeAllViews()
         val total = items.size
-        val newCourses = items.filter { it.created == null || it.created == 0L }
+        var capsuleIndex = 0
+        val newCourses = items.filter { (it.created == null || it.created == 0L)&& it.courseId.equals("151").not() }
+        val capsuleCourse = items.filter { it.courseId.equals("151") }
+        if (capsuleCourse.isNullOrEmpty().not()) {
+            recycler_view_inbox.addView(
+                InboxViewHolder(
+                    capsuleCourse.get(0), total, 0
+                )
+            )
+            capsuleIndex = 1
+        }
+
+
         newCourses.sortedByDescending { it.courseCreatedDate }.forEachIndexed { index, inbox ->
-            if (inbox.courseId != TRIAL_COURSE_ID)
+            if (inbox.courseId != TRIAL_COURSE_ID && inbox.courseId.equals("151").not())
                 recycler_view_inbox.addView(
                     InboxViewHolder(
-                        inbox, total, index
+                        inbox, total, index + capsuleIndex
                     )
                 )
         }
-        items.filter { it.created != null && it.created != 0L }
+        items.filter { it.created != null && it.created != 0L && it.courseId.equals("151").not()}
             .sortedByDescending { it.created }
             .forEachIndexed { index, inbox ->
                 if (inbox.courseId != TRIAL_COURSE_ID)
                     recycler_view_inbox.addView(
                         InboxViewHolder(
-                            inbox, total, newCourses.size + index
+                            inbox, total, newCourses.size + index + capsuleIndex
                         )
                     )
             }
@@ -864,6 +871,19 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 showNetPromoterScoreDialog()
+            })
+
+        compositeDisposable.add(RxBus2.listen(OpenLeaderBoardEventBus::class.java)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                openLeaderBoard()
+            })
+        compositeDisposable.add(RxBus2.listen(OpenUserProfileEventBus::class.java)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                openUserProfileActivity(Mentor.getInstance().getId())
             })
 
     }
@@ -1003,6 +1023,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         Runtime.getRuntime().gc()
         addObserver()
         viewModel.getRegisterCourses()
+        viewModel.getProfileData(Mentor.getInstance().getId())
         animateBell()
     }
 
