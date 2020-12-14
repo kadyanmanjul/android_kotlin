@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
 import android.util.DisplayMetrics
+import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -37,11 +38,13 @@ import com.google.firebase.inappmessaging.model.Action
 import com.google.firebase.inappmessaging.model.InAppMessage
 import com.google.firebase.ktx.Firebase
 import com.google.gson.reflect.TypeToken
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
+import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -51,6 +54,7 @@ import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
+import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
@@ -74,16 +78,20 @@ import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.smartlook.sdk.smartlook.Smartlook
 import com.smartlook.sdk.smartlook.integrations.IntegrationListener
 import com.smartlook.sdk.smartlook.integrations.model.FirebaseCrashlyticsIntegration
+import com.uxcam.OnVerificationListener
+import com.uxcam.UXCam
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.Locale
 import kotlin.random.Random
@@ -148,6 +156,11 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
             if (AppObjectController.getFirebaseRemoteConfig()
                     .getBoolean(FirebaseRemoteConfigKey.UX_CAM_FEATURE_ENABLE)
             ) {
+                UXCam.startWithKey(BuildConfig.WX_CAM_KEY)
+            }
+            if (AppObjectController.getFirebaseRemoteConfig()
+                    .getBoolean(FirebaseRemoteConfigKey.SMART_LOOK_FEATURE_ENABLE)
+            ) {
                 Smartlook.registerIntegrationListener(object : IntegrationListener {
                     override fun onSessionReady(dashboardSessionUrl: String) {
                         FirebaseCrashlytics.getInstance()
@@ -178,6 +191,19 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
             Branch.getInstance().setIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
             initNewRelic()
             initFlurry()
+            UXCam.setUserIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
+            // UXCam.setUserProperty(String propertyName , String value)
+
+            UXCam.addVerificationListener(object : OnVerificationListener {
+                override fun onVerificationSuccess() {
+                    FirebaseCrashlytics.getInstance()
+                        .setCustomKey("UXCam_Recording_Link", UXCam.urlForCurrentSession())
+                }
+
+                override fun onVerificationFailed(errorMessage: String) {
+                    Timber.e(errorMessage)
+                }
+            })
         }
     }
 
@@ -191,17 +217,16 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         startActivity(i)
     }
 
-    fun openPointHistory() {
-        val i = Intent(this, PointsHistoryActivity::class.java)
-        startActivity(i)
+    fun openPointHistory(mentorId: String? = null) {
+        PointsHistoryActivity.startPointHistory(this, mentorId)
     }
 
     fun openUserProfileActivity(id: String) {
-            UserProfileActivity.startUserProfileActivity(
-                this,
-                id,
-                arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-            )
+        UserProfileActivity.startUserProfileActivity(
+            this,
+            id,
+            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+        )
     }
 
     fun getActivityType(act: Activity): BaseActivity.ActivityEnum {
@@ -677,5 +702,21 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
 
     private fun registerDownloadReceiver() {
         registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+    }
+
+    fun showSnackBar(view: View, duration: Int, action_lable: String?) {
+        if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+            PointSnackbar.make(view, duration, action_lable)?.show()
+        }
+    }
+
+    fun showAward(awarList: List<Award>, isFromUserProfile: Boolean = false) {
+        if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+            ShowAwardFragment.showDialog(
+                supportFragmentManager,
+                awarList,
+                isFromUserProfile
+            )
+        }
     }
 }
