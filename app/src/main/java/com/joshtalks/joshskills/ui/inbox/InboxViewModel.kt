@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.INSTANCE_ID
+import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
 import com.joshtalks.joshskills.core.JoshApplication
@@ -55,6 +56,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                         it.awards?.sortedBy { it.sortOrder }
                     }
                     userData.postValue(response.body()!!)
+                    PrefManager.put(IS_PROFILE_FEATURE_ACTIVE, response.body()?.isPointsActive?:false)
                     return@launch
                 } else if (response.errorBody() != null
                     && response.errorBody()!!.string().contains("mentor_id is not valid")
