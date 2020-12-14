@@ -19,7 +19,7 @@ data class UserProfileResponse(
     @SerializedName("name")
     val name: String?,
     @SerializedName("photo_url")
-    val photoUrl: String?,
+    var photoUrl: String?,
     @SerializedName("points")
     val points: Int?,
     @SerializedName("minutes_spoken")
@@ -35,7 +35,7 @@ data class UserProfileResponse(
     @SerializedName("is_points_active")
     val isPointsActive: Boolean? = false,
     @SerializedName("award_category_list")
-    val awardCategory: List<AwardCategory>?,
+    var awardCategory: List<AwardCategory>?,
     @SerializedName("certificates")
     val certificates: List<Certificate>?,
     @SerializedName("group_info")
@@ -82,7 +82,7 @@ data class AwardCategory(
     @SerializedName("sort_order")
     val sortOrder: Int?,
     @SerializedName("awards")
-    val awards: List<Award>?
+    var awards: List<Award>?
 )
 
 @Parcelize

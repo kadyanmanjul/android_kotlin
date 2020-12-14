@@ -14,17 +14,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/transparent_black_alfa_90">
+        <FrameLayout
+            android:id="@+id/circle_bg_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle2"
+            android:backgroundTint="@color/white"
+            android:padding="@dimen/_4sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.40"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/circle_bg"
             android:layout_width="@dimen/_200sdp"
             android:layout_height="@dimen/_200sdp"
             android:background="@drawable/circle"
-            android:backgroundTint="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:backgroundTint="@color/white"/>
+        </FrameLayout>
 
         <ImageView
             android:id="@+id/next"
@@ -34,7 +43,7 @@
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/image"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/circle_bg"
+            app:layout_constraintStart_toEndOf="@id/circle_bg_container"
             app:layout_constraintTop_toTopOf="@id/image"
             app:srcCompat="@drawable/ic_arrow_right"
             app:tint="@color/white" />
@@ -47,7 +56,7 @@
             android:rotation="180"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/image"
-            app:layout_constraintEnd_toStartOf="@id/circle_bg"
+            app:layout_constraintEnd_toStartOf="@id/circle_bg_container"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/image"
             app:srcCompat="@drawable/ic_arrow_right"
@@ -57,13 +66,14 @@
             android:id="@+id/image"
             android:layout_width="@dimen/_120sdp"
             android:layout_height="@dimen/_120sdp"
-            app:layout_constraintBottom_toBottomOf="@id/circle_bg"
-            app:layout_constraintEnd_toEndOf="@id/circle_bg"
-            app:layout_constraintStart_toStartOf="@id/circle_bg"
-            app:layout_constraintTop_toTopOf="@id/circle_bg"
+            app:layout_constraintBottom_toBottomOf="@id/circle_bg_container"
+            app:layout_constraintEnd_toEndOf="@id/circle_bg_container"
+            app:layout_constraintStart_toStartOf="@id/circle_bg_container"
+            app:layout_constraintTop_toTopOf="@id/circle_bg_container"
             app:srcCompat="@drawable/ic_new_shadow_tick" />
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_16sdp"
@@ -72,7 +82,7 @@
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/circle_bg" />
+            app:layout_constraintTop_toBottomOf="@id/circle_bg_container" />
 
         <ImageView
             android:id="@+id/close"
@@ -82,25 +92,26 @@
             android:onClick="@{()->fragment.dismiss()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintHorizontal_bias="0.9"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.10"
+            app:layout_constraintVertical_bias="0.05"
             app:rippleColor="@color/colorPrimary" />
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_28sdp"
             android:gravity="center"
             android:paddingHorizontal="@dimen/_46sdp"
             android:text="@string/congratulations"
+            app:layout_constraintVertical_bias="0.6"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/white"
             app:layout_constraintBottom_toTopOf="@id/btn_profile"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView2" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_profile"

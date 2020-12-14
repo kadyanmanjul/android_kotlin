@@ -31,6 +31,8 @@ class PointsSummaryDescViewHolder(var pointsHistory: PointsHistory,var position:
 
     @View(R.id.divider)
     lateinit var divider: android.view.View
+    @View(R.id.divider_top)
+    lateinit var dividerTop: android.view.View
 
     //@ParentPosition
     var mParentPosition :Int=0
@@ -39,6 +41,11 @@ class PointsSummaryDescViewHolder(var pointsHistory: PointsHistory,var position:
 
     @Resolve
     fun onViewInflated() {
+        if(position==0){
+            dividerTop.visibility=android.view.View.VISIBLE
+        } else {
+            dividerTop.visibility=android.view.View.GONE
+        }
         if (totalItems==position.plus(1)){
             val drawable = ContextCompat.getDrawable(
                 AppObjectController.joshApplication,
