@@ -2,18 +2,21 @@ package com.joshtalks.joshskills.ui.userprofile
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.FragmentAwardShowBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -123,8 +126,21 @@ class ShowAwardFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.close.visibility = View.VISIBLE
+        if(award?.get(0)?.is_achieved!!.not()){
+            binding.appCompatTextView2.visibility=View.GONE
+        } else{
+            binding.appCompatTextView2.visibility=View.VISIBLE
+        }
         if(isFromUserProfile) {
             binding.btnProfile.visibility = View.GONE
+            if(award?.get(0)?.is_achieved!!.not()){
+                binding.circleBgContainer.backgroundTintList= ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        AppObjectController.joshApplication,
+                        R.color.colorPrimary
+                    )
+                )
+            }
 
         } else{
             if (award?.size!! < 2) {
