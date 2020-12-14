@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import android.os.Handler
@@ -22,6 +21,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.voip.NotificationId
 import kotlinx.coroutines.CoroutineScope
@@ -33,7 +33,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
-import java.util.ArrayList
+import java.util.*
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.BlockingQueue
 
@@ -148,10 +148,18 @@ class FileUploadService : Service() {
                 val resp = AppObjectController.chatNetworkService.submitPracticeAsync(requestEngage)
                 if (resp.isSuccessful && resp.body() != null) {
                     // update question status and engagement data here from response
-                    // delete entry
+                    val engangementList = List(1) { resp.body()!! }
+                    val question = AppObjectController.appDatabase.chatDao()
+                        .getQuestionOnId(pendingTaskModel.requestObject.question)
+                    question?.let {
+                        question.practiceEngagement = engangementList
+                        question.status = QUESTION_STATUS.AT
+
+                        AppObjectController.appDatabase.chatDao()
+                            .updateQuestionObject(question)
+                    }
                     AppObjectController.appDatabase.pendingTaskDao().deleteTask(pendingTaskModel.id)
                 } else {
-                    // want to retry here retry ??
                 }
             } catch (ex: Exception) {
 
@@ -192,28 +200,33 @@ class FileUploadService : Service() {
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun createNotificationChannel(channelId: String, channelName: String): String{
-        val chan = NotificationChannel(channelId,
-            channelName, NotificationManager.IMPORTANCE_NONE)
+    private fun createNotificationChannel(channelId: String, channelName: String): String {
+        val chan = NotificationChannel(
+            channelId,
+            channelName, NotificationManager.IMPORTANCE_NONE
+        )
         chan.lightColor = Color.BLUE
         chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
         val service = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         service.createNotificationChannel(chan)
         return channelId
     }
+
     private fun showUploadNotification() {
         var messageText = ""
         if (fileQueue.size > 0) {
             messageText = """$messageText${fileQueue.size} is remaining."""
         }
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name: CharSequence = "Voip Login User"
             val importance: Int = NotificationManager.IMPORTANCE_LOW
-            val mChannel = NotificationChannel(NotificationId.INCOMING_CALL_CHANNEL_ID, name, importance)
+            val mChannel =
+                NotificationChannel(NotificationId.INCOMING_CALL_CHANNEL_ID, name, importance)
             mNotificationManager?.createNotificationChannel(mChannel)
         }
 
-        val lNotificationBuilder = NotificationCompat.Builder(this,
+        val lNotificationBuilder = NotificationCompat.Builder(
+            this,
             NotificationId.INCOMING_CALL_CHANNEL_ID
         )
             .setChannelId(NotificationId.INCOMING_CALL_CHANNEL_ID)

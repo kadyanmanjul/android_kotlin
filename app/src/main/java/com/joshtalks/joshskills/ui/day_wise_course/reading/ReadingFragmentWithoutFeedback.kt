@@ -66,14 +66,7 @@ import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ReadingPracticeFragmentWithoutFeedbackBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.AudioType
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.NPSEvent
-import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
-import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.RemovePracticeAudioEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
@@ -84,6 +77,7 @@ import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.ExoAudioPlayer.ProgressUpdateListener
+import com.joshtalks.joshskills.util.FileUploadService
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -578,43 +572,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
     private fun addObserver() {
         practiceViewModel.requestStatusLiveData.observe(viewLifecycleOwner, Observer {
             if (it) {
-                hidePracticeInputLayout()
-                binding.submitAnswerBtn.visibility = GONE
-                binding.progressLayout.visibility = GONE
-                //binding.feedbackResultProgressLl.visibility = VISIBLE
-                binding.rootView.postDelayed(Runnable {
-                    binding.rootView.smoothScrollTo(
-                        0,
-                        binding.rootView.height
-                    )
-                }, 100)
-
-                binding.feedbackResultLinearLl.visibility = GONE
-                hideCancelButtonInRV()
-                binding.feedbackLayout.setCardBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.white
-                    )
-                )
-                binding.feedbackResultProgressLl.visibility = GONE
-                binding.feedbackResultLinearLl.visibility = VISIBLE
-                binding.progressLayout.visibility = GONE
-                binding.submitAnswerBtn.visibility = GONE
-                //binding.improveAnswerBtn.visibility = VISIBLE
-                binding.continueBtn.visibility = View.VISIBLE
-
-                activityCallback?.onSectionStatusUpdate(2, true)
-
-                CoroutineScope(Dispatchers.IO).launch {
-                    chatModel.question?.interval?.run {
-                        WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
-                    }
-                    activityCallback?.onQuestionStatusUpdate(
-                        QUESTION_STATUS.AT,
-                        chatModel.question?.questionId?.toIntOrNull() ?: 0
-                    )
-                }
+                showCompletedPractise()
 
             } else {
                 enableSubmitButton()
@@ -642,6 +600,46 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
         practiceViewModel.practiceEngagementData.observe(viewLifecycleOwner, Observer {
             updatePracticeFeedback(it)
         })
+    }
+
+    private fun showCompletedPractise() {
+        hidePracticeInputLayout()
+        binding.submitAnswerBtn.visibility = GONE
+        binding.progressLayout.visibility = GONE
+        //binding.feedbackResultProgressLl.visibility = VISIBLE
+        binding.rootView.postDelayed(Runnable {
+            binding.rootView.smoothScrollTo(
+                0,
+                binding.rootView.height
+            )
+        }, 100)
+
+        binding.feedbackResultLinearLl.visibility = GONE
+        hideCancelButtonInRV()
+        binding.feedbackLayout.setCardBackgroundColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.white
+            )
+        )
+        binding.feedbackResultProgressLl.visibility = GONE
+        binding.feedbackResultLinearLl.visibility = VISIBLE
+        binding.progressLayout.visibility = GONE
+        binding.submitAnswerBtn.visibility = GONE
+        //binding.improveAnswerBtn.visibility = VISIBLE
+        binding.continueBtn.visibility = View.VISIBLE
+
+        activityCallback?.onSectionStatusUpdate(2, true)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            chatModel.question?.interval?.run {
+                WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
+            }
+            activityCallback?.onQuestionStatusUpdate(
+                QUESTION_STATUS.AT,
+                chatModel.question?.questionId?.toIntOrNull() ?: 0
+            )
+        }
     }
 
     private fun updatePracticeFeedback(practiceEngagement: PracticeEngagement) {
@@ -1349,7 +1347,16 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                 binding.feedbackGrade.visibility = GONE
                 binding.feedbackDescription.visibility = GONE
                 disableSubmitButton()
-                practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
+                //practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
+
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
+                        PendingTaskModel(requestEngage, PendingTask.READING_PRACTICE)
+                    )
+                }
+                FileUploadService.startUpload(AppObjectController.joshApplication)
+                showCompletedPractise()
             }
         }
     }
