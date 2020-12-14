@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white"
     android:elevation="@dimen/_2sdp"
-    android:layout_marginTop="@dimen/_12sdp"
+    android:layout_marginTop="@dimen/_8sdp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -28,10 +28,10 @@
         android:id="@+id/score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/_4ssp"
+        android:paddingHorizontal="@dimen/_2ssp"
         android:paddingVertical="@dimen/_8ssp"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-        android:textColor="#48A429"
+        android:textColor="@color/green_snackbar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/expand_unexpand_view"
         app:layout_constraintTop_toTopOf="parent"

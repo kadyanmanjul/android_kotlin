@@ -426,6 +426,10 @@
         <value>true</value>
     </entry>
     <entry>
+        <key>SMART_LOOK_FEATURE_ENABLE</key>
+        <value>true</value>
+    </entry>
+    <entry>
         <key>FORCE_SIGN_IN_FEATURE_ENABLE</key>
         <value>true</value>
     </entry>

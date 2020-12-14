@@ -49,6 +49,8 @@ class PointSnackbar(
                     parent,
                     customView
                 ).setDuration(duration)
+                    .setAnimationMode(ANIMATION_MODE_SLIDE)
+
             } catch (e: Exception) {
                 Log.v("exception ", e.message)
             }
@@ -56,4 +58,5 @@ class PointSnackbar(
             return null
         }
     }
+
 }
