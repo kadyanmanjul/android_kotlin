@@ -82,6 +82,7 @@ import java.text.DateFormat
 import java.util.Collections
 import java.util.Date
 import java.util.concurrent.TimeUnit
+import com.uxcam.UXCam
 
 const val KEY_AUTHORIZATION = "Authorization"
 const val KEY_APP_VERSION_CODE = "app-version-code"
@@ -293,8 +294,14 @@ class AppObjectController {
             com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
             ActivityLifecycleCallback.register(joshApplication)
             AppEventsLogger.activateApp(joshApplication)
+            initUXCam()
             initSmartLookCam()
             initFacebookService(joshApplication)
+        }
+
+
+        private fun initUXCam() {
+            UXCam.setAutomaticScreenNameTagging(true)
         }
 
 

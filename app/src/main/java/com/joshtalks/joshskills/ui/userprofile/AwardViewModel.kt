@@ -25,7 +25,7 @@ class AwardViewModel(application: Application) : AndroidViewModel(application) {
                 AppObjectController.commonNetworkService.patchAwardDetails(extras)
 
             } catch (ex: Exception) {
-                ex.showAppropriateMsg()
+                //ex.showAppropriateMsg()
             }
         }
     }
