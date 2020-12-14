@@ -18,11 +18,12 @@ class PointsViewModel(application: Application) : AndroidViewModel(application) 
     val pointsInfoLiveData: MutableLiveData<PointsInfoResponse> = MutableLiveData()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
 
-    fun getPointsSummary() {
+    fun getPointsSummary(mentorId: String? = null) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+
                 val response = AppObjectController.commonNetworkService.getUserPointsHistory(
-                    Mentor.getInstance().getId()
+                    mentorId ?: Mentor.getInstance().getId()
                 )
                 if (response.isSuccessful && response.body() != null) {
                     pointsHistoryLiveData.postValue(response.body())
