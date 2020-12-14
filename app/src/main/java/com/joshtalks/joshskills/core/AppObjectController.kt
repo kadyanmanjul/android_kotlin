@@ -70,6 +70,7 @@ import java.net.URL
 import java.text.DateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import com.uxcam.UXCam
 
 const val KEY_AUTHORIZATION = "Authorization"
 const val KEY_APP_VERSION_CODE = "app-version-code"
@@ -311,6 +312,11 @@ class AppObjectController {
         fun getRtcEngine(): RtcEngine? {
             initRtcEngine(joshApplication)
             return mRtcEngine
+        }
+
+
+        private fun initUXCam() {
+            UXCam.setAutomaticScreenNameTagging(true)
         }
 
 
