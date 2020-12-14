@@ -8,6 +8,17 @@
     android:background="@color/white"
     android:elevation="@dimen/_2sdp">
 
+    <View
+        android:id="@+id/divider_top"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_1sdp"
+        android:background="#C4C4C4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.93" />
+
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/title"
         android:layout_width="0dp"
@@ -15,7 +26,7 @@
         android:paddingHorizontal="@dimen/_10ssp"
         android:paddingTop="@dimen/_12ssp"
         android:paddingBottom="@dimen/_4ssp"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
         android:textColor="@color/black"
         app:layout_constraintEnd_toStartOf="@id/score"
         app:layout_constraintHorizontal_bias="0.0"
@@ -28,12 +39,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingHorizontal="@dimen/_10ssp"
-        android:paddingTop="@dimen/_12ssp"
-        android:paddingBottom="@dimen/_4ssp"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
-        android:textColor="#48A429"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+        android:textColor="@color/green_snackbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.47"
+        app:layout_constraintBottom_toBottomOf="parent"
         tools:text="+245" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -41,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingHorizontal="@dimen/_10ssp"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
         android:textColor="@color/grey_68"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"

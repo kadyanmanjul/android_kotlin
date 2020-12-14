@@ -107,7 +107,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginHorizontal="@dimen/_12sdp"
-            android:layout_marginTop="@dimen/_14sdp"
+            android:layout_marginTop="@dimen/_8sdp"
             android:layout_marginBottom="@dimen/_20sdp"
             android:elevation="@dimen/_1sdp"
             android:padding="@dimen/_2sdp"

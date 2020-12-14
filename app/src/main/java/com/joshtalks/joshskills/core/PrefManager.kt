@@ -46,7 +46,8 @@ const val USER_LOCALE_UPDATED = "user_locale_update"
 const val BETTERY_OPTIMIZATION_ALREADY_ASKED = "bettery_optimization_asked"
 const val RESUME_CERTIFICATION_EXAM = "resume_certification_exam_"
 const val LAST_ACTIVE_API_TIME = "last_active_time_"
-const val IS_LEADERBOARD_ACTIVE = "is_leaderboard_active"
+const val IS_PROFILE_FEATURE_ACTIVE = "is_leaderboard_active"
+const val USER_SCORE = "user_score"
 
 object PrefManager {
 
