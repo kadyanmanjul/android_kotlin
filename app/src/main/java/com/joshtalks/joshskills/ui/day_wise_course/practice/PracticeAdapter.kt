@@ -373,7 +373,7 @@ class PracticeAdapter(
                         itemList.size,
                         this.practiceWord
                     )
-                if (this.status == QUESTION_STATUS.AT) {
+                if (this.status != QUESTION_STATUS.NA) {
                     binding.practiceTitleTv.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_check,
                         0,
@@ -542,7 +542,7 @@ class PracticeAdapter(
                     params.topMargin = Utils.dpToPx(20)
                     binding.subPractiseSubmitLayout.layoutParams = params
                     binding.yourSubAnswerTv.text = context.getString(R.string.your_submitted_answer)
-                    if (practiceEngagement == null && this.status == QUESTION_STATUS.IP) {
+                    if (practiceEngagement.isNullOrEmpty() && this.status == QUESTION_STATUS.IP) {
                         filePath = chatModel.filePath
                         binding.submitPractiseSeekbar.max =
                             Utils.getDurationOfMedia(context, filePath!!)
