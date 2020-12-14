@@ -167,6 +167,8 @@ class FirebaseRemoteConfigKey {
 
         //Ux cam feature
         const val UX_CAM_FEATURE_ENABLE = "UX_CAM_FEATURE_ENABLE"
+        //SmartLook feature
+        const val SMART_LOOK_FEATURE_ENABLE = "SMART_LOOK_FEATURE_ENABLE"
 
         const val FORCE_SIGN_IN_FEATURE_ENABLE = "FORCE_SIGN_IN_FEATURE_ENABLE"
 

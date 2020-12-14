@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
-            android:id="@+id/menu_points_history"
-            android:actionLayout="@layout/base_toolbar"
-            android:orderInCategory="100"
-            android:title="@string/points_history"
-            app:showAsAction="collapseActionView" />
+        android:id="@+id/change_dp"
+        android:actionLayout="@layout/base_toolbar"
+        android:orderInCategory="100"
+        android:visible="true"
+        android:title="@string/change_profile_dp"
+        app:showAsAction="collapseActionView" />
+
+    <item
+        android:id="@+id/menu_points_history"
+        android:actionLayout="@layout/base_toolbar"
+        android:orderInCategory="100"
+        android:title="@string/points_history"
+        app:showAsAction="collapseActionView" />
+
 </menu>

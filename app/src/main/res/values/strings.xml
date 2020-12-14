@@ -551,7 +551,7 @@
     <string name="joined_on">Joined on:</string>
     <string name="highlights">Highlights</string>
     <string name="points">Points</string>
-    <string name="streaks">Streaks</string>
+    <string name="regular">Regular</string>
     <string name="awards">Awards</string>
     <string name="more_info">More Info </string>
     <string name="profile"> Profile</string>
@@ -564,7 +564,7 @@
     <string name="user_streak_text">Days Streak</string>
     <string name="user_min_text">Mins Spoken</string>
     <string name="see_leaderboard">See the Leaderboard >></string>
-    <string name="how_points_work">How Points Works ?</string>
+    <string name="how_points_work">How points work ?</string>
     <string name="how_points_work_title">How Points Work</string>
     <string name="points_history">Points History</string>
     <string name="group_chat">Group Chat</string>
@@ -803,6 +803,7 @@
     <string name="ongoing">Ongoing</string>
     <string name="audio_file">Audio File</string>
     <string name="description">Description</string>
+    <string name="change_profile_dp">Change Profile Picture</string>
     <string name="default_description">This group is for practice.</string>
     <string name="examination_not_unlocked">Examination Not Unlocked</string>
     <string name="okay">Okay</string>

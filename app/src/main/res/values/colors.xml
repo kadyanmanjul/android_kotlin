@@ -67,7 +67,7 @@
     <color name="light_grey">#9098B1</color>
     <color name="lighter_grey">#E2E4E9</color>
     <color name="green">#20BA70</color>
-    <color name="green_snackbar">#1A48A429</color>
+    <color name="green_snackbar">#48A429</color>
     <color name="transparent">#00000000</color>
     <color name="artboard_color">#F1F2F4</color>
     <color name="green_right_answer">#129E88</color>
