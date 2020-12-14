@@ -891,7 +891,7 @@ enum class MESSAGE_STATUS(val type: String) {
 }
 
 enum class QUESTION_STATUS(val type: String) {
-    NA("NA"), AT("AT")
+    NA("NA"), AT("AT"), IP("IP")
 }
 
 enum class LESSON_STATUS(val type: String) {

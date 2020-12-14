@@ -464,7 +464,7 @@ class PracticeAdapter(
                     binding.infoTv2.visibility = VISIBLE
                 }
 
-                if (this.practiceEngagement.isNullOrEmpty() || this.status == QUESTION_STATUS.NA) {
+                if (this.status == QUESTION_STATUS.NA) {
                     binding.submitAnswerBtn.visibility = VISIBLE
                     setViewAccordingExpectedAnswer(chatModel)
                 } else {
@@ -542,27 +542,33 @@ class PracticeAdapter(
                     params.topMargin = Utils.dpToPx(20)
                     binding.subPractiseSubmitLayout.layoutParams = params
                     binding.yourSubAnswerTv.text = context.getString(R.string.your_submitted_answer)
-                    val practiseEngagement = this.practiceEngagement?.get(0)
-                    if (EXPECTED_ENGAGE_TYPE.AU == it) {
-                        binding.submitAudioViewContainer.visibility = VISIBLE
-                    }
-                    filePath = practiseEngagement?.answerUrl
-                    if (PermissionUtils.isStoragePermissionEnabled(context) && AppDirectory.isFileExist(
-                            practiseEngagement?.localPath
-                        )
-                    ) {
-                        filePath = practiseEngagement?.localPath
+                    if (practiceEngagement == null && this.status == QUESTION_STATUS.IP) {
+                        filePath = chatModel.filePath
                         binding.submitPractiseSeekbar.max =
                             Utils.getDurationOfMedia(context, filePath!!)
                                 ?.toInt() ?: 0
                     } else {
-                        if (practiseEngagement?.duration != null) {
-                            binding.submitPractiseSeekbar.max = practiseEngagement.duration
+                        val practiseEngagement = this.practiceEngagement?.getOrNull(0)
+                        if (EXPECTED_ENGAGE_TYPE.AU == it) {
+                            binding.submitAudioViewContainer.visibility = VISIBLE
+                        }
+                        if (PermissionUtils.isStoragePermissionEnabled(context) && AppDirectory.isFileExist(
+                                practiseEngagement?.localPath
+                            )
+                        ) {
+                            filePath = practiseEngagement?.localPath
+                            binding.submitPractiseSeekbar.max =
+                                Utils.getDurationOfMedia(context, filePath!!)
+                                    ?.toInt() ?: 0
                         } else {
-                            binding.submitPractiseSeekbar.max = 1_00_000
+                            filePath = practiseEngagement?.answerUrl
+                            if (practiseEngagement?.duration != null) {
+                                binding.submitPractiseSeekbar.max = practiseEngagement.duration
+                            } else {
+                                binding.submitPractiseSeekbar.max = 1_00_000
+                            }
                         }
                     }
-
 
                     initializePractiseSeekBar(chatModel)
                     binding.ivCancel.visibility = GONE

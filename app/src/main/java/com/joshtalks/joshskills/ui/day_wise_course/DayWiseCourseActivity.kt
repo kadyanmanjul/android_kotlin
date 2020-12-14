@@ -132,7 +132,18 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                 getString(R.string.lesson_no, it.getOrNull(0)?.question?.lesson?.lessonNo)
 
             setUpTablayout(it)
-            viewModel.getLessonModelLiveData(lessonId)
+
+            viewModel.getLessonModelLiveData(lessonId).observe(this, {
+                if (it != null) {
+                    setTabCompletionStatus(tabs.getChildAt(0), it.grammarStatus == LESSON_STATUS.CO)
+                    setTabCompletionStatus(tabs.getChildAt(1), it.vocabStatus == LESSON_STATUS.CO)
+                    setTabCompletionStatus(tabs.getChildAt(2), it.readingStatus == LESSON_STATUS.CO)
+                    setTabCompletionStatus(
+                        tabs.getChildAt(3),
+                        it.speakingStatus == LESSON_STATUS.CO
+                    )
+                }
+            })
 
         })
 
@@ -144,12 +155,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             }
         })
 
-        viewModel.lessonLiveData.observe(this, {
-            setTabCompletionStatus(tabs.getChildAt(0), it.grammarStatus == LESSON_STATUS.CO)
-            setTabCompletionStatus(tabs.getChildAt(1), it.vocabStatus == LESSON_STATUS.CO)
-            setTabCompletionStatus(tabs.getChildAt(2), it.readingStatus == LESSON_STATUS.CO)
-            setTabCompletionStatus(tabs.getChildAt(3), it.speakingStatus == LESSON_STATUS.CO)
-        })
+
     }
 
     private fun setUpTablayout(chatModellist: List<ChatModel>) {
@@ -286,28 +292,19 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         sectionWiseChatList.add(vocabularyQuestions)
         sectionWiseChatList.add(readingQuestions)
 
-        var tabOpened = false
-        var incompleteFound: Boolean
-
-        sectionWiseChatList.forEachIndexed outer@{ index, sectionChats ->
-            incompleteFound = false
-            sectionChats.forEach inner@{
+        var isTabOpened = false
+        sectionWiseChatList.forEachIndexed { index, sectionChats ->
+            sectionChats.forEach {
                 if (it.question?.status == QUESTION_STATUS.NA) {
-                    if (tabOpened.not()) {
-                        onNextTabCall(index)
-                        tabOpened = true
-                    }
-                    incompleteFound = true
-                    setTabCompletionStatus(tabs.getChildAt(index), false)
-                    return@inner
+                    onNextTabCall(index)
+                    isTabOpened = true
+                    return
                 }
             }
-
-            if (incompleteFound.not())
-                setTabCompletionStatus(tabs.getChildAt(index), true)
-            incompleteFound = false
         }
 
+        if (isTabOpened.not())
+            onNextTabCall(3)
     }
 
     private fun setUnselectedColor(tab: TabLayout.Tab?) {
@@ -393,7 +390,6 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
     override fun onSectionStatusUpdate(tabPosition: Int, status: Boolean) {
         println("tabPosition = [${tabPosition}], status = [${status}]")
-//        setTabCompletionStatus(tabs.getChildAt(tabPosition), status)
         if (status) {
             viewModel.updateSectionStatus(lessonId, LESSON_STATUS.CO, tabPosition)
         } else {

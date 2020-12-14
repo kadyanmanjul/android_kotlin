@@ -129,37 +129,40 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
     private fun addObserver() {
         practiceViewModel.requestStatusLiveData.observe(viewLifecycleOwner, {
             if (it) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    currentChatModel?.question?.interval?.run {
-                        WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
-                    }
-                }
-
-                activityCallback?.onQuestionStatusUpdate(
-                    QUESTION_STATUS.AT,
-                    currentChatModel?.question?.questionId?.toIntOrNull() ?: 0
-                )
-
-                var openNextScreen = true
-                chatModelList?.forEach { item ->
-                    if (item.question?.status == QUESTION_STATUS.NA) {
-                        openNextScreen = false
-                        return@forEach
-                    }
-                }
-
-                if (openNextScreen && isVisible) {
-                    binding.vocabularyCompleteLayout.visibility = View.VISIBLE
-                    activityCallback?.onSectionStatusUpdate(1, true)
-                }
-                currentChatModel = null
-
-                adapter.notifyDataSetChanged()
-
+                onPracticeSubmitted()
             }
 
             binding.progressLayout.visibility = View.GONE
         })
+    }
+
+    private fun onPracticeSubmitted() {
+
+        CoroutineScope(Dispatchers.IO).launch {
+            currentChatModel?.question?.interval?.run {
+                WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
+            }
+        }
+        activityCallback?.onQuestionStatusUpdate(
+            QUESTION_STATUS.AT,
+            currentChatModel?.question?.questionId?.toIntOrNull() ?: 0
+        )
+
+        var openNextScreen = true
+        chatModelList?.forEach { item ->
+            if (item.question?.status == QUESTION_STATUS.NA) {
+                openNextScreen = false
+                return@forEach
+            }
+        }
+
+        if (openNextScreen && isVisible) {
+            binding.vocabularyCompleteLayout.visibility = View.VISIBLE
+            activityCallback?.onSectionStatusUpdate(1, true)
+        }
+        currentChatModel = null
+
+        adapter.notifyDataSetChanged()
     }
 
     override fun onPlayerPause() {
@@ -348,10 +351,12 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
                 }
                 CoroutineScope(Dispatchers.IO).launch {
                     AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
-                        PendingTaskModel(requestEngage,PendingTask.VOCABULARY_PRACTICE)
+                        PendingTaskModel(requestEngage, PendingTask.VOCABULARY_PRACTICE)
                     )
                 }
                 FileUploadService.startUpload(AppObjectController.joshApplication)
+                chatModel.question!!.status = QUESTION_STATUS.IP
+                onPracticeSubmitted()
                 //practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
 
 //                binding.progressLayout.visibility = View.VISIBLE

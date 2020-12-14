@@ -45,10 +45,11 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
         MutableLiveData(AssessmentStatus.NOT_STARTED)
     val lessonStatusLiveData: MutableLiveData<LESSON_STATUS> = MutableLiveData()
 
-    var lessonLiveData: LiveData<LessonModel> = MutableLiveData()
+    private lateinit var lessonLiveData: LiveData<LessonModel>
 
-    fun getLessonModelLiveData(lessonId: Int) {
+    fun getLessonModelLiveData(lessonId: Int): LiveData<LessonModel> {
         lessonLiveData = lessonDao.observeLesson(lessonId)
+        return lessonLiveData
     }
 
     fun getQuestions(lessonId: Int) {
