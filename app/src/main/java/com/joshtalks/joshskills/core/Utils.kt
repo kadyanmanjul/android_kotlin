@@ -20,6 +20,7 @@ import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
+import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.PictureDrawable
 import android.graphics.drawable.VectorDrawable
@@ -67,6 +68,7 @@ import com.bumptech.glide.request.target.Target
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.custom_ui.CustomTabHelper
+import com.joshtalks.joshskills.core.custom_ui.TextDrawable
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeStyle
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.repository.local.model.User
@@ -932,6 +934,27 @@ fun ImageView.setImage(url: String, context: Context = AppObjectController.joshA
             WebpDrawableTransformation(CircleCrop())
         )
         .into(this)
+}
+
+fun ImageView.setUserImageOrInitials(url: String?,userName:String,dpToPx:Int=16) {
+    if (url.isNullOrEmpty()) {
+        val font = Typeface.createFromAsset(AppObjectController.joshApplication.assets, "fonts/OpenSans-SemiBold.ttf")
+        val drawable: TextDrawable = TextDrawable.builder()
+            .beginConfig()
+            .textColor(ContextCompat.getColor(AppObjectController.joshApplication, R.color.white))
+            .useFont(font)
+            .fontSize(Utils.dpToPx(dpToPx))
+            .toUpperCase()
+            .endConfig()
+            .buildRound(
+                getUserNameInShort(userName),
+                ContextCompat.getColor(AppObjectController.joshApplication, R.color.button_color)
+            )
+        this.background = drawable
+        this.setImageDrawable(drawable)
+    } else {
+        this.setImage(url)
+    }
 }
 
 fun ImageView.setRoundImage(

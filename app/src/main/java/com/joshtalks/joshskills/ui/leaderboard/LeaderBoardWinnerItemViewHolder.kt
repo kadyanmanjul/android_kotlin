@@ -6,6 +6,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setImage
+import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
@@ -47,8 +48,8 @@ class LeaderBoardWinnerItemViewHolder(
         title.text = response.title.toString()
         name.text = response.name.toString()
         points.text = (response.points.toString()).plus(" points")
-        response.photoUrl?.let {
-            userPic.setImage(it)
+        userPic.post {
+            userPic.setUserImageOrInitials(response.photoUrl, response.name!!)
         }
         response.award_url?.let {
             award.setImage(it)
@@ -64,6 +65,12 @@ class LeaderBoardWinnerItemViewHolder(
 
     @Click(R.id.view_profile)
     fun onSecondClick() {
+        response?.id?.let {
+            RxBus2.publish(OpenUserProfile(it))
+        }
+    }
+    @Click(R.id.container)
+    fun onSecondClickContainer() {
         response?.id?.let {
             RxBus2.publish(OpenUserProfile(it))
         }
