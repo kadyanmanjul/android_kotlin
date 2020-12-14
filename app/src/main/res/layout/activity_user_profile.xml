@@ -52,6 +52,18 @@
                     tools:src="@drawable/circle" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/edit_pic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="@id/user_pic"
+                    app:layout_constraintEnd_toEndOf="@id/user_pic"
+                    app:layout_constraintBottom_toBottomOf="@id/user_pic"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="@dimen/_6sdp"
+                    android:visibility="gone"
+                    android:text="Edit"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -136,7 +148,11 @@
                     android:background="@drawable/rect_with_bound"
                     android:backgroundTint="#E57610"
                     android:elevation="@dimen/_4sdp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:orientation="vertical"
+                    app:rippleColor="@color/white"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.1"
                     app:layout_constraintStart_toStartOf="parent"
@@ -187,7 +203,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_4sdp"
                         android:gravity="center"
-                        android:text="@string/streaks"
+                        android:text="@string/regular"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/white" />
 

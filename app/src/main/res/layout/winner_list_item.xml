@@ -8,6 +8,9 @@
     android:layout_marginHorizontal="@dimen/_12sdp"
     android:layout_marginVertical="@dimen/_6sdp"
     android:background="@drawable/winner_rect_background"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
     android:orientation="vertical"
     android:padding="12dp">
 
@@ -25,12 +28,10 @@
 
     <ImageView
         android:id="@+id/award"
-        android:layout_width="@dimen/_36sdp"
-        android:layout_height="@dimen/_45ssp"
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_55ssp"
         android:layout_marginTop="@dimen/_12sdp"
         android:scaleType="fitXY"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
-        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title"
         tools:src="@drawable/josh_skill"
@@ -41,10 +42,10 @@
         android:layout_width="@dimen/_40sdp"
         android:layout_height="@dimen/_40sdp"
         android:layout_marginStart="@dimen/_8sdp"
-        android:layout_marginTop="@dimen/_4sdp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:gravity="center_vertical|start"
         android:src="@color/checkmark_blue"
+        app:layout_constraintBottom_toBottomOf="@+id/award"
         app:layout_constraintStart_toEndOf="@id/award"
         app:layout_constraintTop_toTopOf="@id/award"
         tools:visibility="visible" />
@@ -59,7 +60,7 @@
         android:maxLines="1"
         android:scrollHorizontally="true"
         android:singleLine="true"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/user_pic"

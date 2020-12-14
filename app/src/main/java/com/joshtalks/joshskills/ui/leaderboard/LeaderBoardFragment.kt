@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.setImage
+import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
@@ -112,7 +112,7 @@ class LeaderBoardFragment : Fragment() {
 
     private fun addObserver() {
         leaderboardResponse?.let {
-            binding.infoText.text = it.info
+            //binding.infoText.text = it.info
             userRank = it.current_mentor?.ranking ?: 0
             it.current_mentor?.let {
                 setCurrentUserDetails(it)
@@ -120,6 +120,13 @@ class LeaderBoardFragment : Fragment() {
             it.lastWinner?.let {
                 binding.recyclerView.addView(LeaderBoardWinnerItemViewHolder(it, requireContext()))
             }
+            binding.recyclerView.addView(
+                LeaderBoardItemViewHolder(
+                    LeaderboardMentor(
+                        null, null, null, null, null, 0, 0
+                    ), requireContext(), isHeader = true
+                )
+            )
             it.top_50_mentor_list?.forEach {
                 binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
             }
@@ -154,9 +161,7 @@ class LeaderBoardFragment : Fragment() {
         binding.rank.text = response.ranking.toString()
         binding.name.text = response.name.toString()
         binding.points.text = response.points.toString()
-        response.photoUrl?.let {
-            binding.userPic.setImage(it)
-        }
+        binding.userPic.setUserImageOrInitials(response.photoUrl, response.name!!)
         binding.userLayout.visibility = View.VISIBLE
     }
 
