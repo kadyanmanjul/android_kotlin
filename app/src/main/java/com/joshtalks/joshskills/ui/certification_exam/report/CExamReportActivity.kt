@@ -86,14 +86,11 @@ class CExamReportActivity : BaseActivity() {
             certificateList?.run {
                 setUpExamViewPager(this)
                 if (certificateList.get(0).award_mentor != null) {
-                    ShowAwardFragment.showDialog(
-                        supportFragmentManager,
-                        listOf(certificateList.get(0).award_mentor!!)
-                    )
+                    showAward(listOf(certificateList.get(0).award_mentor!!))
                 }
 
                 if(certificateList.get(0).pointsList.isNullOrEmpty().not()){
-                    PointSnackbar.make(binding.rootView, Snackbar.LENGTH_LONG,certificateList.get(0).pointsList?.get(0))?.show()
+                    showSnackBar(binding.rootView, Snackbar.LENGTH_LONG,certificateList.get(0).pointsList?.get(0))
                 }
             }
         })
