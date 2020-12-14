@@ -416,6 +416,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             }
 
             conversationBinding.ivBack.setOnClickListener {
+                val resultIntent = Intent()
+                setResult(Activity.RESULT_OK, resultIntent)
                 finish()
             }
             conversationBinding.toolbar.inflateMenu(R.menu.conversation_menu)
@@ -1528,7 +1530,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     }
                 val awardList = data.getParcelableArrayListExtra<Award>(ACHIEVED_AWARD_LIST)
                 if (awardList.isNullOrEmpty().not()){
-                    ShowAwardFragment.showDialog(supportFragmentManager,awardList)
+                    showAward(awardList)
                 }
                 addUnlockNextClassCard(interval, fromLesson = true)
                 uiHandler.postDelayed({
@@ -1864,6 +1866,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
 
     override fun onBackPressed() {
         audioPlayerManager?.onPause()
+        val resultIntent = Intent()
+        setResult(Activity.RESULT_OK, resultIntent)
         this@ConversationActivity.finishAndRemoveTask()
     }
 

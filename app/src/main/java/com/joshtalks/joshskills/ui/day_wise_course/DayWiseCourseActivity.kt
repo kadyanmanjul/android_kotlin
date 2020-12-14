@@ -150,7 +150,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                 awardList = it.awardMentorList!!
             }
             if (it.pointsList.isNullOrEmpty().not()) {
-                PointSnackbar.make(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))?.show()
+                showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
             }
         })
     }
