@@ -162,7 +162,7 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
 
         practiceViewModel.practiceEngagementData.observe(viewLifecycleOwner, Observer {
             if(it.pointsList.isNullOrEmpty().not()){
-                PointSnackbar.make(binding.rootView, Snackbar.LENGTH_LONG,it.pointsList?.get(0))?.show()
+               showSnackBar(binding.rootView, Snackbar.LENGTH_LONG,it.pointsList?.get(0))
             }
         })
     }
