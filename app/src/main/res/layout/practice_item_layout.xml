@@ -314,7 +314,7 @@
                             android:id="@+id/submit_audio_view_container"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:visibility="gone">
+                            android:visibility="visible">
 
                             <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
                                 android:id="@+id/submit_btn_play_info"

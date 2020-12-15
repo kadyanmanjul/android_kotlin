@@ -6,13 +6,9 @@ import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.SystemClock
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.SeekBar
@@ -29,22 +25,13 @@ import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.PracticeItemLayoutBinding
-import com.joshtalks.joshskills.repository.local.entity.AudioType
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
@@ -562,8 +549,8 @@ class PracticeAdapter(
                                     ?.toInt() ?: 0
                         } else {
                             filePath = practiseEngagement?.answerUrl
-                            if (practiseEngagement?.duration != null) {
-                                binding.submitPractiseSeekbar.max = practiseEngagement.duration
+                            if (practiseEngagement?.duration != null || practiseEngagement?.duration == 0) {
+                                binding.submitPractiseSeekbar.max = practiseEngagement.duration!!
                             } else {
                                 binding.submitPractiseSeekbar.max = 1_00_000
                             }

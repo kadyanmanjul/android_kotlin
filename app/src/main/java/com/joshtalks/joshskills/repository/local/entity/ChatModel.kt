@@ -2,20 +2,7 @@ package com.joshtalks.joshskills.repository.local.entity
 
 import android.os.Parcelable
 import androidx.lifecycle.LiveData
-import androidx.room.ColumnInfo
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.Index
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.PrimaryKey
-import androidx.room.Query
-import androidx.room.Transaction
-import androidx.room.TypeConverters
-import androidx.room.Update
+import androidx.room.*
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
@@ -27,7 +14,7 @@ import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEnti
 import com.joshtalks.joshskills.util.RandomString
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
-import java.util.Date
+import java.util.*
 
 @Parcelize
 @Entity(tableName = "chat_table", indices = [Index(value = ["chat_id", "conversation_id"])])
@@ -434,7 +421,7 @@ data class PracticeEngagement(
     @SerializedName("answer_url") val answerUrl: String?,
     @SerializedName("id") val id: Int?,
     @SerializedName("text") val text: String?,
-    @SerializedName("duration") val duration: Int?,
+    @SerializedName("duration") var duration: Int?,
     @SerializedName("feedback") var practiceFeedback: PracticeFeedback?,
     @SerializedName("practice_date") val practiceDate: String?,
     @SerializedName("transcript_id") val transcriptId: String?,

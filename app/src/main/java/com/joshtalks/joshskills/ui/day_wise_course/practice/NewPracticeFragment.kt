@@ -114,14 +114,14 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
     private fun addObserver() {
         practiceViewModel.requestStatusLiveData.observe(viewLifecycleOwner, {
             if (it) {
-                onPracticeSubmitted()
+//                onPracticeSubmitted()
             }
 
             binding.progressLayout.visibility = View.GONE
         })
     }
 
-    private fun onPracticeSubmitted() {
+    private fun onPracticeSubmitted(chatModel: ChatModel) {
 
         CoroutineScope(Dispatchers.IO).launch {
             currentChatModel?.question?.interval?.run {
@@ -147,7 +147,7 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
         }
         currentChatModel = null
 
-        adapter.notifyDataSetChanged()
+        adapter.notifyItemChanged(chatModelList?.indexOf(chatModel) ?: 0)
     }
 
     override fun onPlayerPause() {
@@ -346,7 +346,7 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
 
                 }
                 chatModel.question!!.status = QUESTION_STATUS.IP
-                onPracticeSubmitted()
+                onPracticeSubmitted(chatModel)
                 return true
             }
         }

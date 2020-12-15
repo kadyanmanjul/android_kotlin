@@ -170,7 +170,8 @@ class FileUploadService : Service() {
                     question?.let {
                         question.practiceEngagement = engangementList
                         question.status = QUESTION_STATUS.AT
-
+                        question.practiceEngagement!!.get(0).duration = requestEngage.duration
+                        question.practiceEngagement!!.get(0).localPath = requestEngage.localPath
                         AppObjectController.appDatabase.chatDao()
                             .updateQuestionObject(question)
                     }
