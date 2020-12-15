@@ -2,34 +2,19 @@ package com.joshtalks.joshskills.ui.day_wise_course.practice
 
 import android.content.Context
 import android.os.Bundle
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.exoplayer2.Player
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshFragment
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentPraticeBinding
-import com.joshtalks.joshskills.repository.local.entity.AudioType
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.NPSEvent
-import com.joshtalks.joshskills.repository.local.entity.PendingTask
-import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.ui.day_wise_course.CapsuleActivityCallback
@@ -45,7 +30,7 @@ import com.muddzdev.styleabletoast.StyleableToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.ArrayList
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
@@ -350,17 +335,18 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
                     requestEngage.answerUrl = chatModel.filePath
                 }
                 CoroutineScope(Dispatchers.IO).launch {
-                    AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
-                        PendingTaskModel(requestEngage, PendingTask.VOCABULARY_PRACTICE)
+                    val insertedId =
+                        AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
+                            PendingTaskModel(requestEngage, PendingTask.VOCABULARY_PRACTICE)
+                        )
+                    FileUploadService.uploadSinglePendingTasks(
+                        AppObjectController.joshApplication,
+                        insertedId
                     )
+
                 }
-                FileUploadService.startUpload(AppObjectController.joshApplication)
                 chatModel.question!!.status = QUESTION_STATUS.IP
                 onPracticeSubmitted()
-                //practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
-
-//                binding.progressLayout.visibility = View.VISIBLE
-
                 return true
             }
         }

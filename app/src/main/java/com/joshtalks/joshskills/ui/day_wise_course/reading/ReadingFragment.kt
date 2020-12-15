@@ -15,14 +15,9 @@ import android.os.SystemClock
 import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
-import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
@@ -52,18 +47,12 @@ import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshcamerax.utils.ImageQuality
 import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshFragment
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ReadingPracticeFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.*
@@ -89,7 +78,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
-import java.util.ArrayList
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEventListener,
@@ -1346,12 +1335,16 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
                 disableSubmitButton()
 
                 CoroutineScope(Dispatchers.IO).launch {
-                    AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
-                        PendingTaskModel(requestEngage, PendingTask.READING_PRACTICE)
+                    val insertedId =
+                        AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
+                            PendingTaskModel(requestEngage, PendingTask.READING_PRACTICE)
+                        )
+                    FileUploadService.uploadSinglePendingTasks(
+                        AppObjectController.joshApplication,
+                        insertedId
                     )
+                    chatModel.question!!.status = QUESTION_STATUS.IP
                 }
-                FileUploadService.startUpload(AppObjectController.joshApplication)
-                practiceViewModel.submitPractise(chatModel, requestEngage, engageType, true)
             }
         }
     }

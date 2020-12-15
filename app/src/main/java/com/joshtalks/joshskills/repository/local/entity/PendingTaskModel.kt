@@ -13,10 +13,10 @@ data class PendingTaskModel(
     @ColumnInfo(name = "type")
     var type: PendingTask
 
-){
+) {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    var id: Int=0
+    var id: Long = 0
 }
 
 enum class PendingTask {

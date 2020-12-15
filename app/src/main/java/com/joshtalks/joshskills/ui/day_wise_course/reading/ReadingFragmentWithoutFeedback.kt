@@ -15,14 +15,9 @@ import android.os.SystemClock
 import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
-import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
@@ -52,18 +47,12 @@ import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshcamerax.utils.ImageQuality
 import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshFragment
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ReadingPracticeFragmentWithoutFeedbackBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.*
@@ -89,10 +78,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
-import java.util.ArrayList
+import java.util.*
 import java.util.concurrent.TimeUnit
 
-class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener, AudioPlayerEventListener,
+class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
+    AudioPlayerEventListener,
     ProgressUpdateListener {
 
     private var compositeDisposable = CompositeDisposable()
@@ -173,7 +163,12 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
             chatModel = chatList!!.get(0)
 
         binding =
-            DataBindingUtil.inflate(inflater, R.layout.reading_practice_fragment_without_feedback, container, false)
+            DataBindingUtil.inflate(
+                inflater,
+                R.layout.reading_practice_fragment_without_feedback,
+                container,
+                false
+            )
         binding.lifecycleOwner = this
         binding.handler = this
         scaleAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale)
@@ -779,7 +774,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
     private fun addAudioListRV(practiceEngagement: List<PracticeEngagement>?) {
         showPracticeSubmitLayout()
         binding.yourSubAnswerTv.visibility = View.VISIBLE
-        if(practiceEngagement.isNullOrEmpty().not())
+        if (practiceEngagement.isNullOrEmpty().not())
             binding.practiseSubmitLayout.visibility = VISIBLE
         binding.subPractiseSubmitLayout.visibility = VISIBLE
         binding.audioList.visibility = VISIBLE
@@ -1349,13 +1344,18 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                 disableSubmitButton()
                 //practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
 
-
                 CoroutineScope(Dispatchers.IO).launch {
-                    AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
-                        PendingTaskModel(requestEngage, PendingTask.READING_PRACTICE)
+                    val insertedId =
+                        AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
+                            PendingTaskModel(requestEngage, PendingTask.READING_PRACTICE)
+                        )
+                    FileUploadService.uploadSinglePendingTasks(
+                        AppObjectController.joshApplication,
+                        insertedId
                     )
+
                 }
-                FileUploadService.startUpload(AppObjectController.joshApplication)
+                chatModel.question!!.status = QUESTION_STATUS.IP
                 showCompletedPractise()
             }
         }

@@ -61,6 +61,15 @@ class FileUploadService : Service() {
         if (!TextUtils.isEmpty(action)) {
             when (action) {
                 START_UPLOAD -> {
+                    if (intent.hasExtra(NEW_TASK_MODEL))
+                        CoroutineScope(Dispatchers.IO).launch {
+                            startFileUpload(
+                                AppObjectController.appDatabase.pendingTaskDao()
+                                    .getTask(intent.getLongExtra(NEW_TASK_MODEL, -1L))
+                            )
+                        }
+                }
+                UPLOAD_ALL_PENDING -> {
                     // get all files here to be uploaded
                     CoroutineScope(Dispatchers.IO).launch {
                         val fileList =
@@ -93,6 +102,13 @@ class FileUploadService : Service() {
             }
         }
         startUploadingFile()
+    }
+
+    private fun startFileUpload(pendingTask: PendingTaskModel?) {
+        pendingTask?.let {
+            fileQueue.add(it)
+            startUploadingFile()
+        }
     }
 
     private fun startUploadingFile() {
@@ -250,12 +266,21 @@ class FileUploadService : Service() {
     companion object {
         const val START_UPLOAD = "START_UPLOAD"
         const val CANCEL_UPLOAD = "CANCEL_UPLOAD"
+        const val UPLOAD_ALL_PENDING = "UPLOAD_ALL_PENDING"
+        const val NEW_TASK_MODEL = "UPLOAD_ALL_PENDING"
         private val TAG = "FileUploadService"
         private const val CHANNEL_ID = "FILE_UPLOAD"
         private const val NOTIFICATION_ID = 111
-        fun startUpload(context: Context) {
+        fun uploadAllPendingTasks(context: Context) {
+            val intent = Intent(context, FileUploadService::class.java)
+            intent.action = UPLOAD_ALL_PENDING
+            context.startService(intent)
+        }
+
+        fun uploadSinglePendingTasks(context: Context, insertedTaskLocalId: Long) {
             val intent = Intent(context, FileUploadService::class.java)
             intent.action = START_UPLOAD
+            intent.putExtra(NEW_TASK_MODEL, insertedTaskLocalId)
             context.startService(intent)
         }
 
