@@ -231,7 +231,7 @@ class FileUploadService : Service() {
         )
             .setChannelId(NotificationId.INCOMING_CALL_CHANNEL_ID)
             .setContentTitle(getString(R.string.app_name))
-            .setContentText("Syncing...")
+            .setContentText("Submitting a practice...")
             .setSmallIcon(R.drawable.ic_status_bar_notification)
             .setOngoing(false)
             .setColor(
