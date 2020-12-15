@@ -358,13 +358,15 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
 
     override fun startRecording(chatModel: ChatModel, position: Int, startTimeUnit: Long) {
         this.startTime = startTimeUnit
-        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        if (isAdded && activity != null)
+            requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         practiceViewModel.startRecordAudio(null)
     }
 
     override fun stopRecording(chatModel: ChatModel, position: Int, stopTime: Long) {
         practiceViewModel.stopRecordingAudio(false)
-        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        if (isAdded && activity != null)
+            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val timeDifference =
             TimeUnit.MILLISECONDS.toSeconds(stopTime) - TimeUnit.MILLISECONDS.toSeconds(
                 startTime
