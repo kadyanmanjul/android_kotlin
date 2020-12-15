@@ -7,7 +7,7 @@ apply plugin: 'com.google.gms.google-services'
 if (!project.hasProperty("devBuild")) {
     apply plugin: 'com.google.firebase.firebase-perf'
 }
-
+//-PdevBuild command
 def majorVersion = 3
 def minorVersion = 2
 def patchVersion = 2
