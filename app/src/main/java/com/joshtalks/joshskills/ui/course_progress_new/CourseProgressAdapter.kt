@@ -78,10 +78,14 @@ class CourseProgressAdapter(
                     item.vpPercentage.toDouble().toInt()
                 )
                 binding.radialProgressView.setInnerProgress(item.rpPercentageval.toDouble().toInt())
-                binding.radialProgressView.setInnerMostProgress(
-                    item.speakingPercentage.toDouble().toInt()
-                )
-
+                if (item.speakingPercentage == null) {
+                    binding.radialProgressView.hasThreeProgressView(true)
+                } else {
+                    binding.radialProgressView.hasThreeProgressView(false)
+                    binding.radialProgressView.setInnerMostProgress(
+                        item.speakingPercentage!!.toDouble().toInt()
+                    )
+                }
                 if (item.status == LESSON_STATUS.NO.name)
                     binding.progressIv.alpha = 0.5f
                 else
@@ -90,6 +94,7 @@ class CourseProgressAdapter(
                 binding.progressIndexTv.text = "${item.lessonNo}"
 
                 binding.progressIv.visibility = View.GONE
+
 
                 binding.root.setOnClickListener {
                     if (position > 0) {
@@ -106,6 +111,7 @@ class CourseProgressAdapter(
                 }
             }
 
+            binding.radialProgressView.hasThreeProgressView(true)
             val outerColor = ArrayList<Int>()
             outerColor.add(Color.parseColor("#E10717"))
             outerColor.add(Color.parseColor("#FD3085"))

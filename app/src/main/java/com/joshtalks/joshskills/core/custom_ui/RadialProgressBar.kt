@@ -54,6 +54,7 @@ open class RadialProgressBar : View {
     private var backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var hasOneProgressView = false
     private var hasTwoProgressView = false
+    private var hasThreeProgressView = false
     private var mCircleThickness = 1f
     private var mCirclePadding = 10f
 
@@ -121,6 +122,11 @@ open class RadialProgressBar : View {
         super.onDraw(canvas)
         initMeasurements()
         when {
+            hasThreeProgressView -> {
+                drawInnerProgressView(canvas)
+                drawCenterProgressView(canvas)
+                drawOuterProgressView(canvas)
+            }
             hasTwoProgressView -> {
                 drawOuterProgressView(canvas)
                 drawCenterProgressView(canvas)
@@ -990,6 +996,14 @@ open class RadialProgressBar : View {
      */
     fun hasTwoProgressView(value: Boolean) {
         hasTwoProgressView = value
+        invalidate()
+    }
+
+    /**
+    set the condition to draw only outer and inner progressview
+     */
+    fun hasThreeProgressView(value: Boolean) {
+        hasThreeProgressView = value
         invalidate()
     }
 

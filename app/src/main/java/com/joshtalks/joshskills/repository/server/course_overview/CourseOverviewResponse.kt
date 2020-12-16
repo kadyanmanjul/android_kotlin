@@ -71,7 +71,7 @@ data class CourseOverviewItem(
     var vpPercentage: String,
     @SerializedName("speaking_percentage")
     @Expose
-    var speakingPercentage: String
+    var speakingPercentage: String?
 )
 
 data class PdfInfo(
