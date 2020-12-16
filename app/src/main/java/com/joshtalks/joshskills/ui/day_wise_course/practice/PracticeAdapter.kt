@@ -51,7 +51,7 @@ class PracticeAdapter(
 
     var audioManager = ExoAudioPlayer.getInstance()
     var currentChatModel: ChatModel? = null
-    private var currentPlayingPosition: Int = 0
+    var currentPlayingPosition: Int = 0
     private var isFirstTime: Boolean = true
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PracticeViewHolder {
@@ -73,8 +73,10 @@ class PracticeAdapter(
         private var startTime: Long = 0L
         var filePath: String? = null
         var appAnalytics: AppAnalytics? = null
+        var chatModel: ChatModel? = null
 
         fun bind(chatModel: ChatModel, position: Int) {
+            this.chatModel = chatModel
             if (isFirstTime && chatModel.question?.status != QUESTION_STATUS.AT) {
                 isFirstTime = false
                 binding.practiceContentLl.visibility = VISIBLE
@@ -181,6 +183,12 @@ class PracticeAdapter(
                 }
 
                 if (clickListener.submitPractice(chatModel)) {
+                    if (isAudioPlaying()) {
+                        binding.submitPractiseSeekbar.progress = 0
+                        binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+                        chatModel.isPlaying=false
+                        audioManager?.resumeOrPause()
+                    }
                     appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
                     appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Submitted")
                     appAnalytics?.addParam(
@@ -243,7 +251,7 @@ class PracticeAdapter(
         }
 
         override fun onDurationUpdate(duration: Long?) {
-            duration?.toInt()?.let { binding.submitPractiseSeekbar.max = it }
+            //duration?.toInt()?.let { binding.submitPractiseSeekbar.max = it }
         }
 
         private fun checkIsPlayer(): Boolean {
@@ -347,6 +355,16 @@ class PracticeAdapter(
         fun removeAudioPractise() {
             if (isAudioPlaying()) {
                 audioManager?.resumeOrPause()
+            }
+        }
+
+        fun pauseAudio() {
+            chatModel?.let {
+                if (chatModel!!.isPlaying) {
+                    playSubmitPracticeAudio(it, layoutPosition)
+                    currentChatModel?.isPlaying = false
+                    binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+                }
             }
         }
 

@@ -306,7 +306,6 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
 
     override fun submitPractice(chatModel: ChatModel): Boolean {
         if (chatModel.question != null && chatModel.question!!.expectedEngageType != null) {
-            val engageType = chatModel.question?.expectedEngageType
             chatModel.question?.expectedEngageType?.let {
                 if (EXPECTED_ENGAGE_TYPE.TX == it) {
                     showToast(getString(R.string.submit_practise_msz))
@@ -407,6 +406,19 @@ class NewPracticeFragment : CoreJoshFragment(), Player.EventListener, AudioPlaye
                     token?.continuePermissionRequest()
                 }
             })
+    }
+
+    override fun onPause() {
+
+        if (audioManager != null) {
+            audioManager?.onPause()
+        }
+        try {
+            (binding.practiceRv.findViewHolderForAdapterPosition(adapter.currentPlayingPosition) as PracticeAdapter.PracticeViewHolder).pauseAudio()
+
+        } catch (ex: Exception) {
+        }
+        super.onPause()
     }
 
     override fun focusChild(position: Int) {
