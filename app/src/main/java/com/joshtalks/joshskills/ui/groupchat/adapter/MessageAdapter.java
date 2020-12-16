@@ -334,11 +334,11 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     if (isUserDetailVisible) {
                         viewHolder.tvUser.setVisibility(View.VISIBLE);
                         viewHolder.ivUser.setVisibility(View.VISIBLE);
-                        viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_normal_bg));
+                        viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_normal_bg_groupchat));
                     } else {
                         viewHolder.tvUser.setVisibility(View.GONE);
                         viewHolder.ivUser.setVisibility(View.INVISIBLE);
-                        viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_same_bg));
+                        viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_same_bg_groupchat));
                     }
                     setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName());
                     viewHolder.tvUser.setText(baseMessage.getSender().getName());
@@ -346,9 +346,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             } else {
                 if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_GROUP)) {
                     if (isUserDetailVisible) {
-                        viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_normal_bg));
+                        viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_normal_bg_groupchat));
                     } else {
-                        viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_same_bg));
+                        viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_same_bg_groupchat));
                     }
                 }
             }
@@ -572,11 +572,11 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     if (isUserDetailVisible) {
                         viewHolder.tvUser.setVisibility(View.VISIBLE);
                         viewHolder.ivUser.setVisibility(View.VISIBLE);
-                        viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_normal_bg));
+                        viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_normal_bg_groupchat));
                     } else {
                         viewHolder.tvUser.setVisibility(View.GONE);
                         viewHolder.ivUser.setVisibility(View.INVISIBLE);
-                        viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_same_bg));
+                        viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_same_bg_groupchat));
                     }
                     setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName());
                     viewHolder.tvUser.setText(baseMessage.getSender().getName());
@@ -603,9 +603,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             } else {
                 if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_GROUP)) {
                     if (isUserDetailVisible) {
-                        viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_normal_bg));
+                        viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_normal_bg_groupchat));
                     } else {
-                        viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_same_bg));
+                        viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_same_bg_groupchat));
                     }
                 }
             }

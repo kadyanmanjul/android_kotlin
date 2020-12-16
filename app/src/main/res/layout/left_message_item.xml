@@ -17,6 +17,7 @@
             android:id="@+id/iv_user"
             android:layout_width="@dimen/_28sdp"
             android:layout_height="@dimen/_28sdp"
+            android:layout_alignBottom="@+id/cv_message_container"
             android:layout_marginStart="@dimen/_4sdp"
             android:layout_marginBottom="@dimen/_4sdp"
             android:background="@drawable/round_rectangle"
@@ -27,10 +28,9 @@
             android:id="@+id/cv_message_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@id/iv_user"
             android:layout_marginEnd="@dimen/_6sdp"
             android:layout_toEndOf="@id/iv_user"
-            android:background="@drawable/incoming_message_normal_bg"
+            android:background="@drawable/incoming_message_normal_bg_groupchat"
             android:paddingStart="@dimen/_8sdp"
             android:paddingEnd="@dimen/_6sdp">
 
