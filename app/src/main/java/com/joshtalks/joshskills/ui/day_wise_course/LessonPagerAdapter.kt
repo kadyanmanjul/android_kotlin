@@ -21,7 +21,7 @@ class LessonPagerAdapter(
     FragmentStateAdapter(fragmentManager, lifecycle) {
 
     override fun getItemCount(): Int {
-        return 3
+        return chatList.size
     }
 
     override fun createFragment(position: Int): Fragment {

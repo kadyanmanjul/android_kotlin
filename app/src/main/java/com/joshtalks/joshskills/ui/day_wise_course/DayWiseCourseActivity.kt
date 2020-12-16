@@ -17,20 +17,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.COURSE_ID
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.LESSON_INTERVAL
-import com.joshtalks.joshskills.core.LESSON__CHAT_ID
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
-import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.ui.chat.LESSON_REQUEST_CODE
 import com.joshtalks.joshskills.ui.day_wise_course.unlock_next_class.ActivityUnlockNextClass
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
@@ -52,6 +41,8 @@ class DayWiseCourseActivity : CoreJoshActivity(),
     var conversastionId: String? = null
     var isBatchChanged: Boolean = false
 
+
+    val sectionWiseChatList = ArrayList<ArrayList<ChatModel>>()
 
     private val viewModel: CapsuleViewModel by lazy {
         ViewModelProvider(this).get(CapsuleViewModel::class.java)
@@ -131,7 +122,31 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             titleView.text =
                 getString(R.string.lesson_no, it.getOrNull(0)?.question?.lesson?.lessonNo)
 
-            setUpTablayout(it)
+            val grammarQuestions: ArrayList<ChatModel> = ArrayList()
+            val vocabularyQuestions: ArrayList<ChatModel> = ArrayList()
+            val readingQuestions: ArrayList<ChatModel> = ArrayList()
+
+            it.forEach {
+                when (it.question?.chatType) {
+                    CHAT_TYPE.GR -> {
+                        grammarQuestions.add(it)
+                    }
+                    CHAT_TYPE.VP -> {
+                        vocabularyQuestions.add(it)
+                    }
+                    CHAT_TYPE.RP -> {
+                        readingQuestions.add(it)
+                    }
+                    else -> {
+
+                    }
+                }
+            }
+            sectionWiseChatList.add(grammarQuestions)
+            sectionWiseChatList.add(vocabularyQuestions)
+            sectionWiseChatList.add(readingQuestions)
+
+            setUpTablayout()
 
             viewModel.getLessonModelLiveData(lessonId).observe(this, {
                 if (it != null) {
@@ -158,9 +173,9 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
     }
 
-    private fun setUpTablayout(chatModellist: List<ChatModel>) {
+    private fun setUpTablayout() {
         val adapter = LessonPagerAdapter(
-            supportFragmentManager, this.lifecycle, chatModellist,
+            supportFragmentManager, this.lifecycle, sectionWiseChatList,
             courseId = courseId?.toString() ?: EMPTY,
             lessonId = lessonId
         )
@@ -181,10 +196,10 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             layoutParams.weight = 0f
             layoutParams.marginEnd = Utils.dpToPx(2)
             layoutParams.marginStart = Utils.dpToPx(2)
-
             tab.layoutParams = layoutParams
-            binding.lessonTabLayout.requestLayout()
+
         }
+        binding.lessonTabLayout.requestLayout()
 
         TabLayoutMediator(
             binding.lessonTabLayout,
@@ -242,7 +257,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         })
 
         Handler().postDelayed({
-            openInCompleteTab(chatModellist)
+            openInCompleteTab(sectionWiseChatList)
         }, 50)
     }
 
@@ -266,32 +281,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         }
     }
 
-    private fun openInCompleteTab(chatModellist: List<ChatModel>) {
-        val sectionWiseChatList = ArrayList<ArrayList<ChatModel>>()
-        val grammarQuestions: ArrayList<ChatModel> = ArrayList()
-        val vocabularyQuestions: ArrayList<ChatModel> = ArrayList()
-        val readingQuestions: ArrayList<ChatModel> = ArrayList()
-
-        chatModellist.forEach {
-            when (it.question?.chatType) {
-                CHAT_TYPE.GR -> {
-                    grammarQuestions.add(it)
-                }
-                CHAT_TYPE.VP -> {
-                    vocabularyQuestions.add(it)
-                }
-                CHAT_TYPE.RP -> {
-                    readingQuestions.add(it)
-                }
-                else -> {
-
-                }
-            }
-        }
-        sectionWiseChatList.add(grammarQuestions)
-        sectionWiseChatList.add(vocabularyQuestions)
-        sectionWiseChatList.add(readingQuestions)
-
+    private fun openInCompleteTab(sectionWiseChatList: ArrayList<ArrayList<ChatModel>>) {
         var isTabOpened = false
         sectionWiseChatList.forEachIndexed { index, sectionChats ->
             sectionChats.forEach {
@@ -304,7 +294,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         }
 
         if (isTabOpened.not())
-            onNextTabCall(3)
+            onNextTabCall(sectionWiseChatList.size - 1)
     }
 
     private fun setUnselectedColor(tab: TabLayout.Tab?) {

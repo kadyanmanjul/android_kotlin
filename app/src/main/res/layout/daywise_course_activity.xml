@@ -22,9 +22,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.joshtalks.joshskills.ui.newonboarding.CustomTabLayout
+        <com.google.android.material.tabs.TabLayout
             android:id="@+id/lesson_tab_layout"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="@color/grey_E8"
@@ -37,11 +37,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar"
             app:tabBackground="@drawable/capsule_selection_tab"
-            app:tabGravity="center"
             app:tabIconTint="@color/green_right_answer"
             app:tabIndicatorHeight="0dp"
             app:tabMinWidth="@dimen/_30sdp"
-            app:tabMode="fixed"
             app:tabSelectedTextColor="@color/white"
             app:tabTextAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
             app:tabTextColor="@color/black" />
