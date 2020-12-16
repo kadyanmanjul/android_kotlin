@@ -51,7 +51,6 @@ import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
-import com.joshtalks.joshskills.ui.voip.WebRtcService
 import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.concurrent.ExecutorService
@@ -126,7 +125,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             AppAnalytics.create(AnalyticsEvent.INCOMING_CALL_NOTIFICATION.NAME)
                 .addUserDetails()
                 .push()
-            WebRtcService.startOnNotificationIncomingCall(data)
+//            WebRtcService.startOnNotificationIncomingCall(data)
         } catch (ex: Exception) {
             ex.printStackTrace()
         }

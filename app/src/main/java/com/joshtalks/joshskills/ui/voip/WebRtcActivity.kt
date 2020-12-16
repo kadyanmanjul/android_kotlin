@@ -1,46 +1,6 @@
 package com.joshtalks.joshskills.ui.voip
 
-import android.app.Activity
-import android.content.ComponentName
-import android.content.Intent
-import android.content.ServiceConnection
-import android.content.pm.ActivityInfo
-import android.graphics.Color
-import android.media.AudioManager
-import android.os.Build
-import android.os.Bundle
-import android.os.IBinder
-import android.os.SystemClock
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
-import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
-import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.CallType
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.TAG
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.custom_ui.TextDrawable
-import com.joshtalks.joshskills.core.printAll
-import com.joshtalks.joshskills.core.setImage
-import com.joshtalks.joshskills.databinding.ActivityCallingBinding
-import com.joshtalks.joshskills.ui.voip.util.AudioPlayer
-import com.joshtalks.joshskills.ui.voip.util.SoundPoolManager
-import com.joshtalks.joshskills.ui.voip.voip_rating.VoipRatingFragment
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import timber.log.Timber
-import java.util.HashMap
 
 const val IS_INCOMING_CALL = "is_incoming_call"
 const val INCOMING_CALL_JSON_OBJECT = "incoming_json_call_object"
@@ -52,7 +12,7 @@ const val INCOMING_CALL_USER_OBJ = "incoming_call_user_obj"
 
 class WebRtcActivity : BaseActivity() {
 
-    private lateinit var binding: ActivityCallingBinding
+    /*private lateinit var binding: ActivityCallingBinding
     private var mBoundService: WebRtcService? = null
     private var mServiceBound = false
 
@@ -364,5 +324,5 @@ class WebRtcActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-    }
+    }*/
 }

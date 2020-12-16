@@ -10,7 +10,7 @@ if (!project.hasProperty("devBuild")) {
 
 def majorVersion = 3
 def minorVersion = 1
-def patchVersion = 5
+def patchVersion = 6
 
 android {
     compileSdkVersion 29
@@ -340,7 +340,7 @@ dependencies {
     implementation 'com.github.YarikSOffice:lingver:1.3.0'
     implementation 'com.smartlook.recording:app:1.7.0-native'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
-    implementation 'com.plivo.endpoint:endpoint:2.0.19'
+//    implementation 'com.plivo.endpoint:endpoint:2.0.19'
     // CometChat for Group Chat
     implementation('com.cometchat:pro-android-chat-sdk:2.1.3', {
         exclude group: 'com.facebook.react', module: 'react-native-webrtc'

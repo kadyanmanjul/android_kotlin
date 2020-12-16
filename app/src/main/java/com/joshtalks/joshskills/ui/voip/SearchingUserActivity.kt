@@ -73,7 +73,7 @@ class SearchingUserActivity : BaseActivity() {
             val myBinder = service as WebRtcService.MyBinder
             mBoundService = myBinder.getService()
             mServiceBound = true
-            mBoundService?.addListener(callback)
+//            mBoundService?.addListener(callback)
             addRequesting()
         }
 
@@ -89,7 +89,7 @@ class SearchingUserActivity : BaseActivity() {
 
         override fun onConnect() {
             Timber.tag("SearchingUserActivity").e("onConnect")
-            WebRtcActivity.startOutgoingCallActivity(this@SearchingUserActivity, outgoingCallData)
+//            WebRtcActivity.startOutgoingCallActivity(this@SearchingUserActivity, outgoingCallData)
             this@SearchingUserActivity.finish()
         }
 
@@ -160,7 +160,7 @@ class SearchingUserActivity : BaseActivity() {
                     .addParam(AnalyticsEvent.PLIVO_ID.NAME, it.plivoUserName)
                     .push()
                 AudioPlayer.getInstance().playProgressTone()
-                WebRtcService.startOutgoingCall(getMapForOutgoing(it))
+//                WebRtcService.startOutgoingCall(getMapForOutgoing(it))
             }
         })
         viewModel.apiCallStatusLiveData.observe(this, {
@@ -252,7 +252,7 @@ class SearchingUserActivity : BaseActivity() {
     }
 
     fun stopCalling() {
-        mBoundService?.endCall()
+//        mBoundService?.endCall()
         AppAnalytics.create(AnalyticsEvent.STOP_USER_FOR_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()

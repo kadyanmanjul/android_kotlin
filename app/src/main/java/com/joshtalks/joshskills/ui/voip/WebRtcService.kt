@@ -1,61 +1,13 @@
 package com.joshtalks.joshskills.ui.voip
 
-import android.app.Notification
-import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.Service
-import android.content.ContentResolver
 import android.content.Intent
-import android.content.pm.ServiceInfo
-import android.media.AudioAttributes
-import android.media.AudioManager
-import android.net.Uri
 import android.os.Binder
-import android.os.Build
 import android.os.IBinder
-import android.telephony.PhoneStateListener
-import android.telephony.TelephonyManager
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
-import androidx.annotation.ColorRes
-import androidx.annotation.StringRes
-import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.BuildConfig
-import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CallType
-import com.joshtalks.joshskills.core.CountUpTimer
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.JoshSkillExecutors
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.notification.FCM_TOKEN
-import com.joshtalks.joshskills.core.printAll
 import com.joshtalks.joshskills.repository.local.model.UserPlivoDetailsModel
-import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CONNECTED_CALL_CHANNEL_ID
-import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CONNECTED_CALL_NOTIFICATION_ID
-import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.EMPTY_NOTIFICATION_ID
-import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_CHANNEL_ID
-import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_NOTIFICATION_ID
-import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.OUTGOING_CALL_CHANNEL_ID
-import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.OUTGOING_CALL_NOTIFICATION_ID
-import com.joshtalks.joshskills.ui.voip.extra.FullScreenActivity
-import com.joshtalks.joshskills.ui.voip.util.SoundPoolManager
-import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
-import com.plivo.endpoint.Endpoint
-import com.plivo.endpoint.EventListener
-import com.plivo.endpoint.Incoming
-import com.plivo.endpoint.Outgoing
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import timber.log.Timber
-import java.lang.ref.WeakReference
 import java.util.HashMap
 import java.util.concurrent.ExecutorService
 
@@ -76,7 +28,7 @@ class WebRtcService : Service() {
     private val executor: ExecutorService =
         JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-Calling Service")
 
-    private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
+    /*private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
         HangUpRtcOnPstnCallAnsweredListener()
     private var countUpTimer = CountUpTimer(false)
 
@@ -297,6 +249,9 @@ class WebRtcService : Service() {
         override fun mediaMetrics(p0: HashMap<*, *>) {
             Timber.tag(TAG).e("mediaMetrics")
         }
+    }*/
+    override fun onBind(intent: Intent): IBinder {
+        return mBinder
     }
 
     inner class MyBinder : Binder() {
@@ -305,7 +260,7 @@ class WebRtcService : Service() {
         }
     }
 
-
+/*
     private class HangUpRtcOnPstnCallAnsweredListener : PhoneStateListener() {
         override fun onCallStateChanged(state: Int, phoneNumber: String?) {
             super.onCallStateChanged(state, phoneNumber)
@@ -538,10 +493,6 @@ class WebRtcService : Service() {
         startForeground(CONNECTED_CALL_NOTIFICATION_ID, notification)
     }
 
-
-    override fun onBind(intent: Intent): IBinder {
-        return mBinder
-    }
 
     fun answerCall() {
         callData?.run {
@@ -1019,7 +970,7 @@ class NotificationId {
         val INCOMING_CALL_CHANNEL_ID = "incoming_call_channel_id"
         val OUTGOING_CALL_CHANNEL_ID = "outgoing_call_channel_id"
         val CONNECTED_CALL_CHANNEL_ID = "connected_call_channel_id"
-    }
+    }*/
 }
 
 interface WebRtcCallback {
