@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTag
 import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTestIdRequest
 import com.joshtalks.joshskills.repository.server.onboarding.LogGetStartedEventRequest
 import com.joshtalks.joshskills.repository.server.onboarding.OnBoardingStatusResponse
+import com.joshtalks.joshskills.repository.server.recommendation.RecommendationPostRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
@@ -164,5 +165,12 @@ interface SignUpNetworkService {
     @POST("$DIR/mentor/last-active")
     suspend fun activeUser(@Body params: ActiveUserRequest): Response<Any>
 
+    @POST("$DIR/recommendation/user-input-segment")
+    suspend fun postReccomendedTags(@Body params: RecommendationPostRequest): Response<Any>
+
+    @GET("$DIR/recommendation/user-input-segment")
+    suspend fun getReccomendedTagsList(
+        @Query("gaid") gaid: String
+    ): Response<List<Any>>
 
 }

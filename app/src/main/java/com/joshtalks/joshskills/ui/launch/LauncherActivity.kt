@@ -191,7 +191,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                 navigateToNextScreen()
             } else {
                 when (versionResponse.version!!.name) {
-                    ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V7 -> {
+                    ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V7,ONBOARD_VERSIONS.ONBOARDING_V9 -> {
                         startNextActivity()
                     }
                     ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V5, ONBOARD_VERSIONS.ONBOARDING_V6 -> {

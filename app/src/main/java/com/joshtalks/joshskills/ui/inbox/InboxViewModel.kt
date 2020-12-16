@@ -22,9 +22,11 @@ import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
+import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.OnBoardingStatusResponse
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.util.ReminderUtil
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -43,6 +45,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     private val jobs = arrayListOf<Job>()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
+    val userRecommendationList: MutableLiveData<List<Any>> = MutableLiveData()
 
     fun getProfileData(mentorId: String) {
         apiCallStatusLiveData.postValue(ApiCallStatus.START)
@@ -203,7 +206,8 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
 
                         val versionData = VersionResponse.getInstance()
                         versionData.version?.let {
-                            it.name = this.version.name
+                            // TODO remove hard codeed after testing
+                            it.name = ONBOARD_VERSIONS.ONBOARDING_V9
                             it.id = this.version.id
                             VersionResponse.update(versionData)
                         }
@@ -236,6 +240,25 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
             overAllWatchTime.postValue(
                 AppObjectController.appDatabase.videoEngageDao().getOverallWatchTime() ?: 0
             )
+        }
+    }
+
+    fun getRecommendationList() {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+                apiCallStatusLiveData.postValue(ApiCallStatus.START)
+                val gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
+                val resp =
+                    AppObjectController.signUpNetworkService.getReccomendedTagsList(gaid)
+                if (resp.isSuccessful && resp.body() != null) {
+                    apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
+                    userRecommendationList.postValue(resp.body())
+                    return@launch
+                }
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
+            apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
         }
     }
 }

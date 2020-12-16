@@ -40,6 +40,10 @@ open class VersionResponse {
     @Expose
     var courseInterestTags: List<CourseInterestTag>? = null
 
+    @SerializedName("segment_tags")
+    @Expose
+    var segmentTags: List<SegmentTag>? = null
+
     @SerializedName("course_categories")
     @Expose
     var courseCategories: List<CourseCategory>? = null
@@ -86,6 +90,19 @@ open class VersionResponse {
     }
 }
 
+data class SegmentTag(
+    @SerializedName("id")
+    @Expose
+    var id: Int? = null,
+
+    @SerializedName("sort_order")
+    @Expose
+    var sortOrder: Int? = null,
+
+    @SerializedName("onboarding_tag")
+    @Expose
+    var name: String? = null
+)
 data class CourseInterestTag(
     @SerializedName("id")
     @Expose
@@ -157,5 +174,6 @@ enum class ONBOARD_VERSIONS(val type: String) {
     ONBOARDING_V6("ONBOARDING_V6"),
     ONBOARDING_V7("ONBOARDING_V7"),
     ONBOARDING_V8("ONBOARDING_V8"),
+    ONBOARDING_V9("ONBOARDING_V9"),
 
 }

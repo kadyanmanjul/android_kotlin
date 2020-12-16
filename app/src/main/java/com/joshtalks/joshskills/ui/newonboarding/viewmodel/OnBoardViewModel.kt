@@ -12,7 +12,14 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
-import com.joshtalks.joshskills.repository.server.onboarding.*
+import com.joshtalks.joshskills.repository.server.onboarding.CourseEnrolledRequest
+import com.joshtalks.joshskills.repository.server.onboarding.CourseEnrolledResponse
+import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTagIdRequest
+import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTestIdRequest
+import com.joshtalks.joshskills.repository.server.onboarding.LogGetStartedEventRequest
+import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
+import com.joshtalks.joshskills.repository.server.recommendation.RecommendationPostRequest
+import com.joshtalks.joshskills.repository.server.recommendation.UserSegmentIDRequest
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -94,6 +101,30 @@ class OnBoardViewModel(application: Application) :
 
                 }
 
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
+            apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+        }
+    }
+
+    fun postRecommendedInterests(tagIds: List<Int>) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val userSegmentList = mutableListOf<UserSegmentIDRequest>()
+                tagIds.forEach {
+                    userSegmentList.add(UserSegmentIDRequest(it))
+                }
+                val data = RecommendationPostRequest(
+                    PrefManager.getStringValue(USER_UNIQUE_ID),
+                    userSegmentList
+                )
+                val response =
+                    AppObjectController.signUpNetworkService.postReccomendedTags(data)
+
+                if (response.isSuccessful) {
+                    apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
+                }
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }

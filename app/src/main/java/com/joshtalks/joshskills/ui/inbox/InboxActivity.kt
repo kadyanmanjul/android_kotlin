@@ -456,6 +456,11 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                             }
                         }
                     }
+                    ONBOARD_VERSIONS.ONBOARDING_V9 -> {
+                        find_more.setOnClickListener {
+                            viewModel.getRecommendationList()
+                        }
+                    }
                 }
             }
         } else {
@@ -757,6 +762,14 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             it?.let {
                 ///hideProgressBar()
                 initScoreCardView(it)
+            }
+        })
+
+        viewModel.userRecommendationList.observe(this, {
+            if (it.isNullOrEmpty()) {
+                openCourseSelectionExplorer()
+            } else {
+                openCourseExplorer()
             }
         })
     }

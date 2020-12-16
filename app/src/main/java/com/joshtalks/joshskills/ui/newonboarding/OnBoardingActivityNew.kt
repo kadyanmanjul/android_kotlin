@@ -149,6 +149,13 @@ class OnBoardingActivityNew : CoreJoshActivity() {
                     )
                 }
             }
+            ONBOARD_VERSIONS.ONBOARDING_V9 -> {
+                replaceFragment(
+                    R.id.onboarding_container,
+                    SelectInterestFragment.newInstance(true),
+                    SelectInterestFragment.TAG
+                )
+            }
             else ->{
                 this.finish()
             }
