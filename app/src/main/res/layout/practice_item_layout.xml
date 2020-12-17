@@ -298,7 +298,8 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:padding="@dimen/_8sdp"
-                        android:visibility="gone">
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
                         <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
                             android:id="@+id/video_player_submit"
