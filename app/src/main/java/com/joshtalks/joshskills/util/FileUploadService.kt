@@ -20,6 +20,8 @@ import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.repository.local.entity.PendingTask
 import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
@@ -39,6 +41,7 @@ import java.util.concurrent.BlockingQueue
 
 
 class FileUploadService : Service() {
+    private val MAX_NUMBER_OF_RETRIES = 5
     private val fileQueue: BlockingQueue<PendingTaskModel> = ArrayBlockingQueue(100)
     private val mFileUploadHandler = Handler()
     private var mFileUploadTask: FileUploadTask? = null
@@ -156,7 +159,7 @@ class FileUploadService : Service() {
                             responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                         requestEngage.answerUrl = url
                     } else {
-                        // want to retry here retry ??
+                        handleRetry(pendingTaskModel)
                         return@launch
                     }
                 }
@@ -166,7 +169,7 @@ class FileUploadService : Service() {
                     // update question status and engagement data here from response
                     val engangementList = List(1) { resp.body()!! }
                     val question = AppObjectController.appDatabase.chatDao()
-                        .getQuestionOnId(pendingTaskModel.requestObject.question)
+                        .getQuestionOnId(pendingTaskModel.requestObject.questionId)
                     question?.let {
                         question.practiceEngagement = engangementList
                         question.status = QUESTION_STATUS.AT
@@ -177,12 +180,51 @@ class FileUploadService : Service() {
                     }
                     AppObjectController.appDatabase.pendingTaskDao().deleteTask(pendingTaskModel.id)
                 } else {
+                    handleRetry(pendingTaskModel)
                 }
             } catch (ex: Exception) {
 
             }
         }
+    }
 
+    private suspend fun handleRetry(pendingTaskModel: PendingTaskModel) {
+        if (pendingTaskModel.numberOfRetries < MAX_NUMBER_OF_RETRIES) {
+            pendingTaskModel.numberOfRetries++
+            AppObjectController.appDatabase.pendingTaskDao()
+                .updateRetryCount(
+                    pendingTaskModel.id,
+                    pendingTaskModel.numberOfRetries
+                )
+            fileQueue.add(pendingTaskModel)
+        } else {
+            deleteRequestFromDbAndMarkQuestionIncomplete(pendingTaskModel)
+
+        }
+    }
+
+    private suspend fun deleteRequestFromDbAndMarkQuestionIncomplete(pendingTaskModel: PendingTaskModel) {
+        val lessonId = AppObjectController.appDatabase.chatDao()
+            .getLessonIdOfQuestion(pendingTaskModel.requestObject.questionId)
+
+        AppObjectController.appDatabase.chatDao().updateQuestionAndLessonStatus(
+            pendingTaskModel.requestObject.questionId,
+            QUESTION_STATUS.NA, LESSON_STATUS.AT
+        )
+        AppObjectController.appDatabase.lessonDao().updateLessonStatus(
+            lessonId,
+            LESSON_STATUS.AT
+        )
+
+        if (pendingTaskModel.type == PendingTask.READING_PRACTICE) {
+            AppObjectController.appDatabase.lessonDao()
+                .updateReadingSectionStatus(lessonId, LESSON_STATUS.NO)
+        } else {
+            AppObjectController.appDatabase.lessonDao()
+                .updateVocabularySectionStatus(lessonId, LESSON_STATUS.NO)
+        }
+        AppObjectController.appDatabase.pendingTaskDao()
+            .deleteTask(pendingTaskModel.id)
     }
 
     private suspend fun uploadOnS3Server(

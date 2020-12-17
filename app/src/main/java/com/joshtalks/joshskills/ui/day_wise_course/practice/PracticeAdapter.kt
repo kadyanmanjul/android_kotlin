@@ -79,14 +79,14 @@ class PracticeAdapter(
 
         fun bind(chatModel: ChatModel, position: Int) {
             this.chatModel = chatModel
-            if (isFirstTime && chatModel.question?.status != QUESTION_STATUS.AT) {
+            if (isFirstTime && chatModel.question?.status == QUESTION_STATUS.NA) {
                 isFirstTime = false
                 binding.practiceContentLl.visibility = VISIBLE
                 binding.expandIv.setImageDrawable(
-                        ContextCompat.getDrawable(
-                                context,
-                                R.drawable.ic_remove
-                        )
+                    ContextCompat.getDrawable(
+                        context,
+                        R.drawable.ic_remove
+                    )
                 )
                 if (position > 0)
                     clickListener.focusChild(position - 1)
@@ -768,11 +768,7 @@ class PracticeAdapter(
     }
 
     interface PracticeClickListeners {
-        fun playPracticeAudio(chatModel: ChatModel, position: Int)
-        fun playSubmitPracticeAudio(chatModel: ChatModel, position: Int)
-        fun removeAudioPractise(chatModel: ChatModel)
         fun submitPractice(chatModel: ChatModel): Boolean
-        fun onSeekChange(seekTo: Long)
         fun startRecording(chatModel: ChatModel, position: Int, startTimeUnit: Long)
         fun stopRecording(chatModel: ChatModel, position: Int, stopTime: Long)
         fun askRecordPermission()

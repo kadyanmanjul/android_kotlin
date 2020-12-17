@@ -16,7 +16,7 @@ class RequestEngage {
     var mentor: String = Mentor.getInstance().getId()
 
     @SerializedName("question")
-    var question: String = ""
+    var questionId: String = ""
 
     @SerializedName("text")
     var text: String? = null

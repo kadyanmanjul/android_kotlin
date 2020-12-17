@@ -26,7 +26,7 @@ interface LessonDao {
     fun insertAll(lesson: List<LessonModel>)
 
     @Query("UPDATE lessonmodel SET status = :status WHERE lesson_id= :lessonId")
-    suspend fun updateFeedbackStatus(lessonId: Int, status: LESSON_STATUS)
+    suspend fun updateLessonStatus(lessonId: Int, status: LESSON_STATUS)
 
     @Query("UPDATE lessonmodel SET grammarStatus = :status WHERE lesson_id= :lessonId")
     fun updateGrammarSectionStatus(lessonId: Int, status: LESSON_STATUS)

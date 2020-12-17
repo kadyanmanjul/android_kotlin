@@ -41,6 +41,11 @@ class ExoAudioPlayer {
                     playerListener?.complete()
                 if (playbackState == ExoPlayer.STATE_READY)
                     progressUpdateListener?.onDurationUpdate(player?.duration)
+
+                Log.d(
+                    TAG,
+                    "onPlayerStateChanged() called with: playWhenReady = $playWhenReady, playbackState = $playbackState, duration = ${player?.duration}"
+                )
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -83,9 +88,15 @@ class ExoAudioPlayer {
 
     fun seekTo(pos: Long) {
         Log.d(TAG, "seekTo() called with: pos = $pos")
-        Log.d(TAG, "seekTo() called with: player = ${player?.currentPosition}")
+        Log.d(
+            TAG,
+            "seekTo() called with: player = ${player?.currentPosition} duration = ${player?.duration}"
+        )
         player?.seekTo(pos)
-        Log.d(TAG, "seekTo() called with: player = ${player?.currentPosition}")
+        Log.d(
+            TAG,
+            "seekTo() called with: player = ${player?.currentPosition} duration = ${player?.duration}"
+        )
     }
 
     fun onPlay() {
@@ -138,10 +149,10 @@ class ExoAudioPlayer {
             progressTracker?.let { it.handler.removeCallbacks(it) }
     }
 
-    inner class ProgressTracker() : Runnable {
+    inner class ProgressTracker : Runnable {
         internal val handler: Handler = Handler()
         override fun run() {
-            val currentPosition = player?.currentPosition?:0
+            val currentPosition = player?.currentPosition ?: 0
             progressUpdateListener?.onProgressUpdate(currentPosition)
             handler.postDelayed(this, 500 /* ms */)
         }

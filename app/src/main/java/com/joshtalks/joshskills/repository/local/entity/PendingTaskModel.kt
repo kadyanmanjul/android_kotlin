@@ -11,7 +11,10 @@ data class PendingTaskModel(
     @ColumnInfo(name = "request_object")
     var requestObject: RequestEngage,
     @ColumnInfo(name = "type")
-    var type: PendingTask
+    var type: PendingTask,
+    @ColumnInfo(name = "retry_count")
+    var numberOfRetries: Int = 0
+
 
 ) {
     @PrimaryKey(autoGenerate = true)

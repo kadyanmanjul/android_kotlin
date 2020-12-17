@@ -18,4 +18,7 @@ interface PendingTaskDao {
 
     @Query("SELECT * FROM pending_task_table WHERE id=:id")
     suspend fun getTask(id: Long): PendingTaskModel?
+
+    @Query("UPDATE pending_task_table SET retry_count = :numberOfRetries WHERE id = :id")
+    fun updateRetryCount(id: Long, numberOfRetries: Int)
 }

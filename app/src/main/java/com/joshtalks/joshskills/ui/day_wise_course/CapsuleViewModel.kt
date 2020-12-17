@@ -212,7 +212,7 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
 
     fun updateQuestionLessonStatus(lessonId: Int, lessonStatus: LESSON_STATUS) {
         viewModelScope.launch(Dispatchers.IO) {
-            lessonDao.updateFeedbackStatus(lessonId, lessonStatus)
+            lessonDao.updateLessonStatus(lessonId, lessonStatus)
         }
     }
 

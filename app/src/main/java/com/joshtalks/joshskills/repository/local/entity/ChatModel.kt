@@ -2,7 +2,20 @@ package com.joshtalks.joshskills.repository.local.entity
 
 import android.os.Parcelable
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.Index
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.PrimaryKey
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.TypeConverters
+import androidx.room.Update
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
@@ -14,7 +27,7 @@ import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEnti
 import com.joshtalks.joshskills.util.RandomString
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
-import java.util.*
+import java.util.Date
 
 @Parcelize
 @Entity(tableName = "chat_table", indices = [Index(value = ["chat_id", "conversation_id"])])
@@ -769,6 +782,16 @@ interface ChatDao {
 
     @Query("UPDATE question_table set status = :questionStatus WHERE questionId=:questionId")
     suspend fun updateQuestionStatus(questionId: String, questionStatus: QUESTION_STATUS)
+
+    @Query("UPDATE question_table set status = :questionStatus AND lesson_status = :lessonStatus WHERE questionId=:questionId")
+    suspend fun updateQuestionAndLessonStatus(
+        questionId: String,
+        questionStatus: QUESTION_STATUS,
+        lessonStatus: LESSON_STATUS
+    )
+
+    @Query("SELECT lesson_id FROM question_table WHERE questionId = :questionId")
+    fun getLessonIdOfQuestion(questionId: String): Int
 
     @Query("UPDATE question_table SET practice_engagements = :practiseEngagement  WHERE questionId= :questionId")
     suspend fun updatePractiseObject(

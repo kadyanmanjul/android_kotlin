@@ -377,10 +377,11 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `vocabularyStatus` TEXT")
                 database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `readingStatus` TEXT")
                 database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `speakingStatus` TEXT")
-                database.execSQL("CREATE TABLE IF NOT EXISTS `pending_task_tabl` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `created` INTEGER NOT NULL, `request_object` RequestEngage NOT NULL, `tyoe` PendingTask NOT NULL)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `pending_task_table` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `request_object` RequestEngage NOT NULL, `type` PendingTask NOT NULL, `retry_count` INTEGER NOT NULL)")
             }
 
         }
+
         fun clearDatabase() {
             INSTANCE?.clearAllTables()
         }

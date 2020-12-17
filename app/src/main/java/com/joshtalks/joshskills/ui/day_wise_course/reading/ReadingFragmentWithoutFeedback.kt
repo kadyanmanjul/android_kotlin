@@ -1331,7 +1331,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                 requestEngage.duration =
                     Utils.getDurationOfMedia(requireActivity(), filePath)?.toInt()
                 requestEngage.feedbackRequire = chatModel.question?.feedback_require
-                requestEngage.question = chatModel.question?.questionId!!
+                requestEngage.questionId = chatModel.question?.questionId!!
                 requestEngage.mentor = Mentor.getInstance().getId()
                 if (it == EXPECTED_ENGAGE_TYPE.AU || it == EXPECTED_ENGAGE_TYPE.VI || it == EXPECTED_ENGAGE_TYPE.DX) {
                     requestEngage.answerUrl = filePath
