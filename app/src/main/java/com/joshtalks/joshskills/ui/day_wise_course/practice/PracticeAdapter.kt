@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.SystemClock
+import android.util.Log
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -74,6 +75,7 @@ class PracticeAdapter(
         var filePath: String? = null
         var appAnalytics: AppAnalytics? = null
         var chatModel: ChatModel? = null
+        private var mUserIsSeeking = false
 
         fun bind(chatModel: ChatModel, position: Int) {
             this.chatModel = chatModel
@@ -157,12 +159,14 @@ class PracticeAdapter(
                                 progress: Int,
                                 fromUser: Boolean
                         ) {
+                            Log.d("Manjul", "onProgressChanged() called with: seekBar2 = $seekBar, progress = $progress, fromUser = $fromUser")
                             if (fromUser) {
                                 userSelectedPosition = progress
                             }
                         }
 
                         override fun onStopTrackingTouch(seekBar: SeekBar) {
+                            Log.d(TAG, "onStopTrackingTouch() called with: userSelectedPosition = $userSelectedPosition, userSelectedPosition.toLong() = ${userSelectedPosition.toLong()}, layoutPosition = $layoutPosition")
                             if (currentPlayingPosition == layoutPosition)
                                 audioManager?.seekTo(userSelectedPosition.toLong())
                         }
@@ -244,8 +248,12 @@ class PracticeAdapter(
             currentChatModel?.playProgress = progress.toInt()
             if (currentPlayingPosition != -1) {
                 binding.progressBarImageView.progress = progress.toInt()
-                binding.practiseSeekbar.progress = progress.toInt()
+                if (chatModel?.question?.material_type == BASE_MESSAGE_TYPE.AU) {
+                    binding.practiseSeekbar.progress = progress.toInt()
+                }
+                Log.d(TAG, "onProgressUpdate() called with: progress = $progress")
                 binding.submitPractiseSeekbar.progress = progress.toInt()
+
 //                notifyItemChanged(layoutPosition)
             }
         }
@@ -271,7 +279,6 @@ class PracticeAdapter(
             currentChatModel = chatModel
             val audioList = java.util.ArrayList<AudioType>()
             audioList.add(audioObject)
-            audioManager = ExoAudioPlayer.getInstance()
             audioManager?.playerListener = this
             audioManager?.play(audioObject.audio_url)
             audioManager?.setProgressUpdateListener(this)
@@ -553,7 +560,7 @@ class PracticeAdapter(
                         filePath = chatModel.filePath
                         binding.submitPractiseSeekbar.max =
                                 Utils.getDurationOfMedia(context, filePath!!)
-                                        ?.toInt() ?: 0
+                                        ?.toInt() ?: 1_00_000
                     } else {
                         val practiseEngagement = this.practiceEngagement?.getOrNull(0)
                         if (EXPECTED_ENGAGE_TYPE.AU == it) {
@@ -669,6 +676,7 @@ class PracticeAdapter(
                     object : SeekBar.OnSeekBarChangeListener {
                         var userSelectedPosition = 0
                         override fun onStartTrackingTouch(seekBar: SeekBar) {
+                            mUserIsSeeking = true
                         }
 
                         override fun onProgressChanged(
@@ -676,13 +684,16 @@ class PracticeAdapter(
                                 progress: Int,
                                 fromUser: Boolean
                         ) {
+                            Log.d("Manjul", "onProgressChanged() called with: seekBar1 = $seekBar, progress = $progress, fromUser = $fromUser")
                             if (fromUser) {
                                 userSelectedPosition = progress
                             }
                         }
 
                         override fun onStopTrackingTouch(seekBar: SeekBar) {
-                            clickListener.onSeekChange(userSelectedPosition.toLong())
+                            mUserIsSeeking = false
+                            audioManager?.seekTo(userSelectedPosition.toLong())
+                            //clickListener.onSeekChange(userSelectedPosition.toLong())
                         }
                     })
         }

@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.util
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
+import android.util.Log
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -13,6 +14,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.TAG
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 
 class ExoAudioPlayer {
@@ -80,7 +82,10 @@ class ExoAudioPlayer {
     }
 
     fun seekTo(pos: Long) {
+        Log.d(TAG, "seekTo() called with: pos = $pos")
+        Log.d(TAG, "seekTo() called with: player = ${player?.currentPosition}")
         player?.seekTo(pos)
+        Log.d(TAG, "seekTo() called with: player = ${player?.currentPosition}")
     }
 
     fun onPlay() {
@@ -114,9 +119,9 @@ class ExoAudioPlayer {
         player?.prepare(audioSource)
         player?.repeatMode = ExoPlayer.REPEAT_MODE_OFF
         player?.seekTo(seekDuration)
+        Log.d(TAG, "play() called with: audioUrl = $audioUrl, id = $id, seekDuration = $seekDuration")
         player?.playWhenReady = true
-        progressTracker =
-            ProgressTracker(player!!)
+        progressTracker = ProgressTracker()
     }
 
     fun isPlaying(): Boolean {
@@ -133,10 +138,10 @@ class ExoAudioPlayer {
             progressTracker?.let { it.handler.removeCallbacks(it) }
     }
 
-    inner class ProgressTracker(private val player: SimpleExoPlayer) : Runnable {
+    inner class ProgressTracker() : Runnable {
         internal val handler: Handler = Handler()
         override fun run() {
-            val currentPosition = player.currentPosition
+            val currentPosition = player?.currentPosition?:0
             progressUpdateListener?.onProgressUpdate(currentPosition)
             handler.postDelayed(this, 500 /* ms */)
         }
