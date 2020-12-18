@@ -174,7 +174,7 @@ class CourseProgressActivityNew : AppCompatActivity(),
             pdfInfo = it.pdfInfo
 
             pdfInfo?.let {
-                binding.pdfView.visibility = View.GONE
+                binding.pdfView.visibility = View.VISIBLE
                 binding.progressLayout.visibility = View.GONE
                 if (PermissionUtils.isStoragePermissionEnabled(this) && AppDirectory.getFileSize(
                         File(
