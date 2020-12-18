@@ -48,7 +48,8 @@ class CourseProgressAdapter(
                 binding.progressIv.visibility = View.VISIBLE
                 binding.progressIv.visibility = View.GONE
                 binding.progressIndexTv.text = context.getString(R.string.exam)
-
+                binding.progressIndexTv.textSize = 9f
+                binding.progressIndexTv.maxLines = 2
                 if (itemList.size > 0) {
                     if (itemList[position - 1].status == LESSON_STATUS.CO.name)
                         binding.progressIv.alpha = 1f
@@ -104,15 +105,6 @@ class CourseProgressAdapter(
                             ContextCompat.getColor(
                                 context,
                                 R.color.white
-                            )
-                        )
-                    } else {
-                        binding.progressIndexTv.background =
-                            ContextCompat.getDrawable(context, R.color.white)
-                        binding.progressIndexTv.setTextColor(
-                            ContextCompat.getColor(
-                                context,
-                                R.color.black
                             )
                         )
                     }

@@ -422,7 +422,7 @@
             android:alwaysRetainTaskState="true"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.inbox.InboxActivity"
-            android:theme="@style/AppNoBarTheme" />
+            android:theme="@style/AppThemeDark" />
         <activity
             android:name=".ui.day_wise_course.unlock_next_class.ActivityUnlockNextClass"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"

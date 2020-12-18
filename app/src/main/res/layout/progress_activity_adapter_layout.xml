@@ -13,25 +13,21 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFF"
         android:padding="@dimen/_8sdp">
-
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/progress_title_tv"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-            android:textColor="@color/md_grey_600"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
             app:layout_constraintEnd_toEndOf="parent"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Beginer" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/progress_rv"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_4sdp"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
