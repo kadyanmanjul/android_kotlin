@@ -65,8 +65,13 @@
             android:id="@+id/delivery_tick"
             android:layout_width="@dimen/_14sdp"
             android:layout_height="@dimen/_14sdp"
-            android:layout_alignEnd="@id/audio_player"
-            android:layout_alignBottom="@+id/txt_time"
+            android:layout_below="@id/audio_player"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="@dimen/_6sdp"
+            android:layout_marginBottom="8dp"
+            android:gravity="end"
             app:srcCompat="@drawable/ic_sent_message_s_r_tick" />
 
     </RelativeLayout>
