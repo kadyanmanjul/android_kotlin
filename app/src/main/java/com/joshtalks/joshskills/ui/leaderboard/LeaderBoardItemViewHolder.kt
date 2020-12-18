@@ -16,6 +16,7 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 import de.hdodenhof.circleimageview.CircleImageView
+import java.util.Locale
 
 @Layout(R.layout.list_item)
 class LeaderBoardItemViewHolder(
@@ -60,7 +61,7 @@ class LeaderBoardItemViewHolder(
                 }
             }
             rank.text = response.ranking.toString()
-            name.text = response.name.toString()
+            name.text = response.name?.toLowerCase(Locale.getDefault())?.capitalize(Locale.getDefault())
             points.text = response.points.toString()
             user_pic.post {
                 user_pic.setUserImageOrInitials(response.photoUrl, response.name!!)

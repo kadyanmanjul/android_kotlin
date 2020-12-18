@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.Locale
 
 class LeaderBoardFragment : Fragment() {
 
@@ -159,7 +160,7 @@ class LeaderBoardFragment : Fragment() {
 
     private fun setCurrentUserDetails(response: LeaderboardMentor) {
         binding.rank.text = response.ranking.toString()
-        binding.name.text = response.name.toString()
+        binding.name.text = response.name?.toLowerCase(Locale.getDefault())?.capitalize(Locale.getDefault())
         binding.points.text = response.points.toString()
         binding.userPic.setUserImageOrInitials(response.photoUrl, response.name!!)
         binding.userLayout.visibility = View.VISIBLE
