@@ -43,6 +43,8 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.ui.groupchat.constant.StringContract;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -160,6 +162,22 @@ public class Utils {
         float density = resources.getDisplayMetrics().density;
         float pixel = dp * density;
         return pixel;
+    }
+
+    public static int pixelToDp(float value, @NotNull Context context) {
+        float density = checkDisplaySize(context);
+        return value == 0.0F ? 0 : (int) Math.ceil(density * value);
+    }
+
+
+    public static float checkDisplaySize(Context context) {
+        float density = 1f;
+        try {
+            density = context.getResources().getDisplayMetrics().density;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return density;
     }
 
 

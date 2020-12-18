@@ -30,7 +30,6 @@ import com.cometchat.pro.models.TextMessage;
 import com.cometchat.pro.models.User;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.ui.groupchat.constant.StringContract;
-import com.joshtalks.joshskills.ui.groupchat.listeners.OnMessageLongClick;
 import com.joshtalks.joshskills.ui.groupchat.listeners.StickyHeaderAdapter;
 import com.joshtalks.joshskills.ui.groupchat.messagelist.CometChatMessageListActivity;
 import com.joshtalks.joshskills.ui.groupchat.uikit.AudioV2PlayerView;
@@ -96,7 +95,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public Context context;
     public List<BaseMessage> longselectedItemList = new ArrayList<>();
     private boolean isLongClickEnabled;
-    private OnMessageLongClick messageLongClick;
+//    private OnMessageLongClick messageLongClick;
     private boolean isUserDetailVisible;
     private boolean isTextMessageClick;
     private boolean isImageMessageClick;
@@ -113,11 +112,11 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public MessageAdapter(CometChatMessageListActivity context, List<BaseMessage> messageList) {
         setMessageList(messageList);
         this.context = context;
-        try {
-            messageLongClick = context;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            messageLongClick = context;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     /**
@@ -135,10 +134,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return getItemViewTypes(position);
     }
 
+    public List<BaseMessage> getMessageList() {
+        return messageList;
+    }
+
     private void setMessageList(List<BaseMessage> messageList) {
         this.messageList.addAll(0, messageList);
         notifyItemRangeInserted(0, messageList.size());
-
     }
 
     /**
@@ -393,7 +395,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 if (!isLongClickEnabled && !isTextMessageClick) {
                     isImageMessageClick = true;
                     setLongClickSelectedItem(baseMessage);
-                    messageLongClick.setLongMessageClick(longselectedItemList);
+//                    messageLongClick.setLongMessageClick(longselectedItemList);
                     notifyDataSetChanged();
                 }
                 return true;
@@ -653,7 +655,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     isLongClickEnabled = true;
                     isTextMessageClick = true;
                     setLongClickSelectedItem(baseMessage);
-                    messageLongClick.setLongMessageClick(longselectedItemList);
+//                    messageLongClick.setLongMessageClick(longselectedItemList);
                     notifyDataSetChanged();
                 }
                 return true;
@@ -664,7 +666,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     isLongClickEnabled = true;
                     isTextMessageClick = true;
                     setLongClickSelectedItem(baseMessage);
-                    messageLongClick.setLongMessageClick(longselectedItemList);
+//                    messageLongClick.setLongMessageClick(longselectedItemList);
                     notifyDataSetChanged();
                 }
                 return true;
@@ -851,7 +853,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             viewHolder.rlMessageBubble.setOnClickListener(view -> {
                 if (isLongClickEnabled && !isImageMessageClick) {
                     setLongClickSelectedItem(baseMessage);
-                    messageLongClick.setLongMessageClick(longselectedItemList);
+//                    messageLongClick.setLongMessageClick(longselectedItemList);
                 } else {
                     setSelectedMessage(baseMessage.getId());
                 }
@@ -863,7 +865,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     isLongClickEnabled = true;
                     isTextMessageClick = true;
                     setLongClickSelectedItem(baseMessage);
-                    messageLongClick.setLongMessageClick(longselectedItemList);
+//                    messageLongClick.setLongMessageClick(longselectedItemList);
                     notifyDataSetChanged();
                 }
                 return true;
