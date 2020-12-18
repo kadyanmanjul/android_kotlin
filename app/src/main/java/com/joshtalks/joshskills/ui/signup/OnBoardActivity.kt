@@ -8,6 +8,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.text.color
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
@@ -26,10 +27,17 @@ import com.joshtalks.joshskills.databinding.ActivityOnboardBinding
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_NEW
+import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
+import com.joshtalks.joshskills.ui.newonboarding.viewmodel.OnBoardViewModel
 import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 
 class OnBoardActivity : CoreJoshActivity() {
     private lateinit var layout: ActivityOnboardBinding
+    private val viewModel: OnBoardViewModel by lazy {
+        ViewModelProvider(this).get(OnBoardViewModel::class.java)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
@@ -76,10 +84,39 @@ class OnBoardActivity : CoreJoshActivity() {
             .addBasicParam()
             .addUserDetails()
             .push()
+
+        if (isGuestUser()
+            && VersionResponse.getInstance().hasVersion()
+            && VersionResponse.getInstance().version!!.name == ONBOARD_VERSIONS.ONBOARDING_V9
+        ) {
+            viewModel.getRecommendationList()
+        } else {
+            openCourseExplorer()
+        }
+
+        viewModel.userRecommendationList.observe(this) {
+            if (it.isNullOrEmpty()) {
+                openCourseSelectionExplorer()
+            } else {
+                openCourseExplorer()
+            }
+        }
+
+    }
+
+    private fun openCourseSelectionExplorer(alreadyHaveCourses: Boolean = false) {
+        OnBoardingActivityNew.startOnBoardingActivity(
+            this,
+            COURSE_EXPLORER_NEW,
+            true,
+            alreadyHaveCourses
+        )
+    }
+
+    private fun openCourseExplorer() {
         startActivity(Intent(applicationContext, CourseExploreActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
         })
-
     }
 
     fun openReferralDialogue() {

@@ -34,6 +34,7 @@ class OnBoardViewModel(application: Application) :
     val courseListLiveData: MutableLiveData<List<CourseExploreModel>> = MutableLiveData()
     val courseEnrolledDetailLiveData: MutableLiveData<CourseEnrolledResponse> = MutableLiveData()
     val isEnrolled: MutableLiveData<Boolean> = MutableLiveData(false)
+    val userRecommendationList: MutableLiveData<List<Any>> = MutableLiveData()
 
     fun getCourseList() = courseListLiveData.value
 
@@ -203,6 +204,25 @@ class OnBoardViewModel(application: Application) :
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
                 apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+            }
+            apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+        }
+    }
+
+    fun getRecommendationList() {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+                apiCallStatusLiveData.postValue(ApiCallStatus.START)
+                val gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
+                val resp =
+                    AppObjectController.signUpNetworkService.getReccomendedTagsList(gaid)
+                if (resp.isSuccessful && resp.body() != null) {
+                    apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
+                    userRecommendationList.postValue(resp.body())
+                    return@launch
+                }
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
             }
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
         }
