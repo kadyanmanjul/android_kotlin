@@ -1,20 +1,60 @@
 package com.joshtalks.joshskills.ui.voip
 
+import android.app.Activity
+import android.content.ComponentName
+import android.content.Intent
+import android.content.ServiceConnection
+import android.content.pm.ActivityInfo
+import android.media.AudioManager
+import android.os.Build
+import android.os.Bundle
+import android.os.IBinder
+import android.os.SystemClock
+import android.view.View
+import android.view.Window
+import android.view.WindowManager
+import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
+import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.CallType
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.TAG
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.printAll
+import com.joshtalks.joshskills.databinding.ActivityCallingBinding
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
+import com.joshtalks.joshskills.ui.voip.util.AudioPlayer
+import com.joshtalks.joshskills.ui.voip.util.SoundPoolManager
+import com.joshtalks.joshskills.ui.voip.voip_rating.VoipRatingFragment
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import java.util.HashMap
 
 const val IS_INCOMING_CALL = "is_incoming_call"
-const val INCOMING_CALL_JSON_OBJECT = "incoming_json_call_object"
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
 const val CALL_USER_OBJ = "call_user_obj"
 const val CALL_TYPE = "call_type"
-const val INCOMING_CALL_USER_OBJ = "incoming_call_user_obj"
 
 
 class WebRtcActivity : BaseActivity() {
 
-    /*private lateinit var binding: ActivityCallingBinding
+    private lateinit var binding: ActivityCallingBinding
     private var mBoundService: WebRtcService? = null
     private var mServiceBound = false
+    private val compositeDisposable = CompositeDisposable()
 
     companion object {
         fun startOutgoingCallActivity(
@@ -45,10 +85,6 @@ class WebRtcActivity : BaseActivity() {
     }
 
     private var callback: WebRtcCallback = object : WebRtcCallback {
-        override fun onRinging() {
-            Timber.tag(TAG).e("onRinging")
-        }
-
         override fun onConnect() {
             Timber.tag(TAG).e("onConnect")
             runOnUiThread {
@@ -60,11 +96,6 @@ class WebRtcActivity : BaseActivity() {
         override fun onDisconnect(id: String?) {
             Timber.tag(TAG).e("onDisconnect")
             onStopCall()
-            checkAndShowRating(id)
-        }
-
-        override fun onCallDisconnect(id: String?) {
-            Timber.tag(TAG).e("onCallDisconnect")
             checkAndShowRating(id)
         }
 
@@ -83,15 +114,16 @@ class WebRtcActivity : BaseActivity() {
             checkAndShowRating(id)
         }
 
-        private fun checkAndShowRating(id: String?) {
-            Timber.tag(TAG).e("checkAndShowRating   %s", id)
-            if (id.isNullOrEmpty().not() && mBoundService!!.getTimeOfTalk() > 0) {
-                VoipRatingFragment.newInstance(id, mBoundService!!.getTimeOfTalk())
-                    .show(supportFragmentManager, "voip_rating_dialog_fragment")
-                return
-            }
-            this@WebRtcActivity.finishAndRemoveTask()
+    }
+
+    private fun checkAndShowRating(id: String?) {
+        Timber.tag(TAG).e("checkAndShowRating   %s", id + "  " + mBoundService?.getTimeOfTalk())
+        if (id.isNullOrEmpty().not() && mBoundService!!.getTimeOfTalk() > 0) {
+            VoipRatingFragment.newInstance(id, mBoundService!!.getTimeOfTalk())
+                .show(supportFragmentManager, "voip_rating_dialog_fragment")
+            return
         }
+        this@WebRtcActivity.finishAndRemoveTask()
     }
 
     fun onStopCall() {
@@ -134,6 +166,18 @@ class WebRtcActivity : BaseActivity() {
 
     override fun onNewIntent(nIntent: Intent) {
         super.onNewIntent(nIntent)
+        val nMap = nIntent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
+        val nChannel = nMap[RTC_CHANNEL_KEY]
+
+        val oMap = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
+        val oChannel = oMap[RTC_CHANNEL_KEY]
+
+        if (nChannel != oChannel) {
+            finish()
+            startActivity(nIntent)
+            overridePendingTransition(0, 0)
+            return
+        }
         this.intent = nIntent
         initCall()
     }
@@ -198,7 +242,8 @@ class WebRtcActivity : BaseActivity() {
     }
 
     private fun setImageInIV(imageUrl: String?) {
-        if (imageUrl.isNullOrEmpty()) {
+
+        /*if (imageUrl.isNullOrEmpty()) {
             val image = TextDrawable.builder()
                 .beginConfig()
                 .textColor(Color.WHITE)
@@ -212,7 +257,7 @@ class WebRtcActivity : BaseActivity() {
             binding.cImage.background = image
         } else {
             binding.cImage.setImage(imageUrl)
-        }
+        }*/
 
     }
 
@@ -236,6 +281,10 @@ class WebRtcActivity : BaseActivity() {
     fun switchTalkMode() {
         mBoundService?.switchSpeck()
         updateStatus(binding.btnMute, mBoundService!!.getMic().not())
+    }
+
+    fun onDeclineCall() {
+        WebRtcService.rejectCall()
     }
 
     fun acceptCall() {
@@ -271,18 +320,16 @@ class WebRtcActivity : BaseActivity() {
             })
     }
 
-    fun onDeclineCall() {
-        mBoundService?.rejectCall()
-    }
 
     fun onDisconnectCall() {
-        mBoundService?.endCall()
+        WebRtcService.disconnectCall()
+//        mBoundService?.endCall()
     }
 
     private fun answerCall() {
-        mBoundService?.answerCall()
+        val data = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
+        mBoundService?.answerCall(data)
         binding.callStatus.text = getText(R.string.practice)
-        AudioPlayer.getInstance().stopProgressTone()
         binding.groupForIncoming.visibility = View.GONE
         binding.groupForOutgoing.visibility = View.VISIBLE
         AppAnalytics.create(AnalyticsEvent.ANSWER_CALL_VOIP.NAME)
@@ -312,11 +359,23 @@ class WebRtcActivity : BaseActivity() {
         )
     }
 
+    override fun onResume() {
+        super.onResume()
+        subscribeRXBus()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        compositeDisposable.clear()
+
+    }
+
     override fun onStop() {
         super.onStop()
         binding.callTime.stop()
         unbindService(myConnection)
     }
+
 
     override fun onDestroy() {
         volumeControlStream = AudioManager.STREAM_MUSIC
@@ -324,5 +383,19 @@ class WebRtcActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-    }*/
+    }
+
+    private fun subscribeRXBus() {
+        compositeDisposable.add(
+            RxBus2.listen(WebrtcEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    onStopCall()
+                    checkAndShowRating(null)
+                }, {
+                    it.printStackTrace()
+                })
+        )
+    }
 }

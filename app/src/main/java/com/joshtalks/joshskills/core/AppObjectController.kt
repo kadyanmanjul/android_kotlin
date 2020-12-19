@@ -42,6 +42,7 @@ import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.service.ChatNetworkService
 import com.joshtalks.joshskills.repository.service.CommonNetworkService
 import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
+import com.joshtalks.joshskills.repository.service.P2PNetworkService
 import com.joshtalks.joshskills.repository.service.SignUpNetworkService
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.view_holders.IMAGE_SIZE
@@ -54,6 +55,9 @@ import com.tonyodev.fetch2.HttpUrlConnectionDownloader
 import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
+import io.agora.rtc.IRtcEngineEventHandler
+import io.agora.rtc.RtcEngine
+import io.agora.rtc.RtcEngineConfig
 import io.branch.referral.Branch
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
@@ -132,6 +136,10 @@ class AppObjectController {
         lateinit var commonNetworkService: CommonNetworkService
             private set
 
+        @JvmStatic
+        lateinit var p2pNetworkService: P2PNetworkService
+            private set
+
 
         @JvmStatic
         lateinit var chatNetworkService: ChatNetworkService
@@ -184,6 +192,11 @@ class AppObjectController {
         @JvmStatic
         var isSettingUpdate: Boolean = false
 
+        @JvmStatic
+        @Volatile
+        private var mRtcEngine: RtcEngine? = null
+
+
         fun initLibrary(context: Context): AppObjectController {
             joshApplication = context as JoshApplication
             appDatabase = AppDatabase.getDatabase(context)!!
@@ -194,7 +207,7 @@ class AppObjectController {
             initFirebaseRemoteConfig()
             configureCrashlytics()
             initFlurryAnalytics(context)
-         //   initNewRelic(context)
+            //   initNewRelic(context)
             initFonts()
             WorkManagerAdmin.deviceIdGenerateWorker()
             WorkManagerAdmin.runMemoryManagementWorker()
@@ -284,6 +297,8 @@ class AppObjectController {
             signUpNetworkService = retrofit.create(SignUpNetworkService::class.java)
             chatNetworkService = retrofit.create(ChatNetworkService::class.java)
             commonNetworkService = retrofit.create(CommonNetworkService::class.java)
+            p2pNetworkService = retrofit.create(P2PNetworkService::class.java)
+
             initObjectInThread(context)
             return INSTANCE
         }
@@ -295,6 +310,29 @@ class AppObjectController {
             AppEventsLogger.activateApp(joshApplication)
             initSmartLookCam()
             initFacebookService(joshApplication)
+            initRtcEngine(joshApplication)
+        }
+
+        private fun initRtcEngine(context: Context): RtcEngine? {
+            try {
+                mRtcEngine = RtcEngine.create(RtcEngineConfig().apply {
+                    mAppId = BuildConfig.AGORA_API_KEY
+                    mContext = context
+                    mAreaCode = RtcEngineConfig.AreaCode.AREA_CODE_IN
+                    mEventHandler = object : IRtcEngineEventHandler() {
+                    }
+                })
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
+            return mRtcEngine
+        }
+
+        fun getRtcEngine(): RtcEngine? {
+            if (mRtcEngine == null) {
+                initRtcEngine(joshApplication)
+            }
+            return mRtcEngine
         }
 
 

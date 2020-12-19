@@ -84,6 +84,7 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.patloew.rxlocation.RxLocation
+import io.agora.rtc.RtcEngine
 import io.reactivex.CompletableObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -147,7 +148,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
-//        WebRtcService.loginUserClient()
+        //WebRtcService.loginUserClient()
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         super.onCreate(savedInstanceState)
         AppObjectController.isSettingUpdate = false
@@ -162,7 +163,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         initNewUserTip()
         viewModel.getTotalWatchTime()
         viewModel.getProfileData(Mentor.getInstance().getId())
-
     }
 
     private fun initNewUserTip() {
@@ -1097,4 +1097,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         (overlay_tip as TopTrialTooltipView).setInboxOverayTipText(7.minus(remainingTrialDays))
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        RtcEngine.destroy()
+    }
 }

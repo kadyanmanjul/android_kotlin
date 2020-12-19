@@ -30,8 +30,6 @@ import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
@@ -51,8 +49,14 @@ import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
+import com.joshtalks.joshskills.ui.voip.RTC_CHANNEL_KEY
+import com.joshtalks.joshskills.ui.voip.RTC_TOKEN_KEY
+import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
+import com.joshtalks.joshskills.ui.voip.WebRtcService
+import org.json.JSONObject
 import timber.log.Timber
 import java.lang.reflect.Type
+import java.util.HashMap
 import java.util.concurrent.ExecutorService
 
 const val FCM_TOKEN = "fcmToken"
@@ -94,42 +98,19 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         Gson().toJson(remoteMessage.data)
                     )
                 }
-                onIncomingPlivoCall(remoteMessage)
-                val collapseKey = remoteMessage.collapseKey ?: ""
-                if (collapseKey.equals("incoming_call", ignoreCase = true)) {
-                    if (PrefManager.getStringValue(API_TOKEN).isNotEmpty()) {
-                        //   WebRtcService.onIncomingCall(remoteMessage.data)
-                    }
-
-                } else {
-                    val notificationTypeToken: Type =
-                        object : TypeToken<NotificationObject>() {}.type
-                    val nc: NotificationObject = AppObjectController.gsonMapper.fromJson(
-                        AppObjectController.gsonMapper.toJson(remoteMessage.data),
-                        notificationTypeToken
-                    )
-                    sendNotification(nc)
-                }
+                val notificationTypeToken: Type =
+                    object : TypeToken<NotificationObject>() {}.type
+                val nc: NotificationObject = AppObjectController.gsonMapper.fromJson(
+                    AppObjectController.gsonMapper.toJson(remoteMessage.data),
+                    notificationTypeToken
+                )
+                sendNotification(nc)
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
 
-    private fun onIncomingPlivoCall(remoteMessage: RemoteMessage) {
-        try {
-            val data: HashMap<String, String> = HashMap()
-            for ((key, value) in remoteMessage.data) {
-                data[key] = value
-            }
-            AppAnalytics.create(AnalyticsEvent.INCOMING_CALL_NOTIFICATION.NAME)
-                .addUserDetails()
-                .push()
-//            WebRtcService.startOnNotificationIncomingCall(data)
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-    }
 
     private fun sendNotification(notificationObject: NotificationObject) {
         executor.execute {
@@ -350,8 +331,36 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 }
             }
+            NotificationAction.INCOMING_CALL_NOTIFICATION -> {
+                incomingCallNotificationAction(notificationObject.actionData)
+                return null
+            }
+            NotificationAction.CALL_DISCONNECT_NOTIFICATION -> {
+                callDisconnectNotificationAction()
+                return null
+            }
+
             else -> {
                 return null
+            }
+        }
+    }
+
+    private fun callDisconnectNotificationAction() {
+        WebRtcService.disconnectCallFromCallie()
+    }
+
+    private fun incomingCallNotificationAction(actionData: String?) {
+        actionData?.let {
+            try {
+                val obj = JSONObject(it)
+                val data = HashMap<String, String>()
+                data[RTC_TOKEN_KEY] = obj.getString("token")
+                data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
+                data[RTC_UID_KEY] = obj.getString("uid")
+                WebRtcService.startOnNotificationIncomingCall(data)
+            } catch (t: Throwable) {
+                t.printStackTrace()
             }
         }
     }

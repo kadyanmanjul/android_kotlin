@@ -34,6 +34,8 @@ android {
         buildConfigField "String", "COMETCHAT_APP_ID", "\"25039c54194d899\""
         buildConfigField "String", "COMETCHAT_API_KEY", "\"eb53131bce1b40ffb7007d74729337ee8d29625b\""
         buildConfigField "String", "SMARTLOOK_API_KEY", "\"070b0f426bd4bfcd10e1ca37f3fc7e00cd2e5df3\""
+        buildConfigField "String", "AGORA_API_KEY", "\"56eb9bed99fd4dd889cd0375056039fe\""
+
         manifestPlaceholders = [file_provider: "com.joshtalks.joshskills"]
         javaCompileOptions {
             annotationProcessorOptions {
@@ -353,5 +355,9 @@ dependencies {
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test:runner:1.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation 'io.agora.rtc:voice-sdk:3.2.0'
+  //  implementation 'io.agora.rtc:full-sdk:3.2.0'
+    //implementation 'io.agora.rtm:rtm-sdk:1.2.2'
+  //implementation group: 'io.agora.uikit', name: 'agorauikit', version: '2.0.2'
 
 }

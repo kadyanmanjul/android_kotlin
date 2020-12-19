@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -63,4 +64,23 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
         }
         return resp.toString().substring(0, resp.toString().length - 1)
     }
+
+    fun getUserForTalk(aFunction: (String, String, Int) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestParams: HashMap<String, String> = HashMap()
+                requestParams["mentor_id"] = Mentor.getInstance().getId()
+                val response =
+                    AppObjectController.p2pNetworkService.getAgoraClientToken(requestParams)
+                aFunction.invoke(
+                    response["token"]!!,
+                    response["channel_name"]!!,
+                    response["uid"]!!.toInt()
+                )
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
 }
