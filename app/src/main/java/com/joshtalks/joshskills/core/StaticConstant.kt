@@ -247,5 +247,5 @@ data class Level7(
 
 
 enum class CallType {
-    INCOMING, OUTGOING
+    INCOMING, OUTGOING, SWITCH_CALL
 }
