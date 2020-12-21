@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.CallType
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -83,8 +84,9 @@ class SearchingUserActivity : BaseActivity() {
 
     private var callback: WebRtcCallback = object : WebRtcCallback {
 
-        override fun onConnect() {
+        override fun onConnect(connectId: String) {
             Timber.tag("SearchingUserActivity").e("onConnect")
+            outgoingCallData[RTC_CALLER_UID_KEY] = connectId
             WebRtcActivity.startOutgoingCallActivity(this@SearchingUserActivity, outgoingCallData)
             this@SearchingUserActivity.finish()
         }
@@ -95,17 +97,20 @@ class SearchingUserActivity : BaseActivity() {
         }
 
         override fun onCallReject(id: String?) {
-            Timber.tag("SearchingUserActivity").e("onCallReject")
 
         }
 
-        override fun onSelfDisconnect(id: String?) {
-            Timber.tag("SearchingUserActivity").e("onSelfDisconnect")
+        override fun switchChannel(data: HashMap<String, String?>) {
+            val callActivityIntent =
+                Intent(this@SearchingUserActivity, WebRtcActivity::class.java).apply {
+                    putExtra(CALL_TYPE, CallType.SWITCH_CALL)
+                    putExtra(AUTO_PICKUP_CALL, true)
+                    putExtra(CALL_USER_OBJ, data)
+                }
+            startActivity(callActivityIntent)
+            this@SearchingUserActivity.finish()
         }
 
-        override fun onIncomingCallHangup(id: String?) {
-            Timber.tag("SearchingUserActivity").e("onIncomingCallHangup")
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -247,7 +252,7 @@ class SearchingUserActivity : BaseActivity() {
     }
 
     fun stopCalling() {
-        mBoundService?.endCall()
+        mBoundService?.endCall(apiCall = true)
         AppAnalytics.create(AnalyticsEvent.STOP_USER_FOR_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()
