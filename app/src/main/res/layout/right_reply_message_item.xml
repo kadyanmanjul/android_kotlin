@@ -6,7 +6,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="start"
-    android:alpha="0.7"
+    android:alpha="0.8"
     android:background="@drawable/left_border_rmessage"
     android:gravity="start"
     android:paddingVertical="@dimen/_4sdp"
@@ -50,14 +50,13 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/reply_user_info"
         android:layout_alignParentStart="true"
-        android:drawablePadding="@dimen/_6sdp"
         android:ellipsize="end"
         android:gravity="start"
         android:maxWidth="@dimen/_178sdp"
         android:maxLines="3"
         android:textColor="@color/black"
         android:textStyle="italic"
-        app:drawableTint="@color/black"
+        app:drawableTint="@color/dark_grey"
         tools:text="@string/replyTxt" />
 
 </RelativeLayout>

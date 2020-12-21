@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -71,6 +72,11 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
     private int color;
     public CustomImageButton recordButton;
     public RecordView recordView;
+    public RelativeLayout replyMessageLayout;
+    public TextView replyTitle;
+    public TextView replyMessage;
+    public ImageView replyMedia;
+    public ImageView replyClose;
 
     public ComposeBox(Context context) {
         super(context);
@@ -144,6 +150,12 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
         rlActionContainer = this.findViewById(R.id.rlActionContainers);
         recordButton = this.findViewById(R.id.record_button);
         recordView = this.findViewById(R.id.record_view);
+
+        replyMessageLayout = findViewById(R.id.replyMessageLayout);
+        replyTitle = findViewById(R.id.tv_reply_layout_title);
+        replyMessage = findViewById(R.id.tv_reply_layout_subtitle);
+        replyMedia = findViewById(R.id.iv_reply_media);
+        replyClose = findViewById(R.id.iv_reply_close);
 
         ivAudio.setOnClickListener(this);
         ivArrow.setOnClickListener(this);
@@ -555,4 +567,5 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
     private void hideRecordView() {
         recordView.setVisibility(GONE);
     }
+
 }

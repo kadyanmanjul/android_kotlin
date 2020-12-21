@@ -7,9 +7,9 @@
         android:top="-6dp">
         <shape android:shape="rectangle">
             <stroke
-                android:width="@dimen/_3sdp"
+                android:width="@dimen/_1sdp"
                 android:color="@color/colorPrimary" />
-            <solid android:color="@color/sent_msg_background" />
+            <solid android:color="@color/reply_msg_background" />
         </shape>
     </item>
 </layer-list>

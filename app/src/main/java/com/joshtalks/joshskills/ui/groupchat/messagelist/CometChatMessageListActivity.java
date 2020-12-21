@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -132,11 +131,6 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     private String type;
     private String groupType;
     private String loggedInUserScope;
-    private RelativeLayout replyMessageLayout;
-    private TextView replyTitle;
-    private TextView replyMessage;
-    private ImageView replyMedia;
-    private ImageView replyClose;
     private BaseMessage baseMessage;
     private final List<BaseMessage> baseMessages = new ArrayList<>();
     private boolean isEdit;
@@ -196,14 +190,6 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         composeBox.usedIn(CometChatMessageListActivity.class.getName());
         setComposeBoxListener();
 
-        replyMessageLayout = findViewById(R.id.replyMessageLayout);
-        replyTitle = findViewById(R.id.tv_reply_layout_title);
-        replyMessage = findViewById(R.id.tv_reply_layout_subtitle);
-        replyMedia = findViewById(R.id.iv_reply_media);
-        replyClose = findViewById(R.id.iv_reply_close);
-        replyClose.setOnClickListener(this);
-
-
         rvChatListView = findViewById(R.id.rv_message_list);
         tvName = findViewById(R.id.tv_name);
         tvStatus = findViewById(R.id.tv_status);
@@ -212,6 +198,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         imgClose = findViewById(R.id.iv_close_message_action);
         imgClose.setOnClickListener(this);
         toolbar.setOnClickListener(this);
+        composeBox.replyClose.setOnClickListener(this);
         linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.setStackFromEnd(true);
         tvName.setText(name);
@@ -371,7 +358,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
                 editText.setHint(getString(R.string.message));
                 if (isReply) {
                     replyMessage(baseMessage, message);
-                    replyMessageLayout.setVisibility(GONE);
+                    composeBox.replyMessageLayout.setVisibility(GONE);
                 } else if (!message.isEmpty()) {
                     sendMessage(message);
                 }
@@ -726,7 +713,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
                     replyObject.put("avatar", baseMessage.getSender().getAvatar());
                 }
                 metadata.put("reply", replyObject);
-                replyMessageLayout.setVisibility(GONE);
+                composeBox.replyMessageLayout.setVisibility(GONE);
             }
 
             mediaMessage.setMetadata(metadata);
@@ -1311,7 +1298,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             }
             isReply = false;
             baseMessage = null;
-            replyMessageLayout.setVisibility(GONE);
+            composeBox.replyMessageLayout.setVisibility(GONE);
         } else if (id == R.id.chatList_toolbar) {
             Intent intent = new Intent(this, CometChatGroupDetailScreenActivity.class);
             intent.putExtra(StringContract.IntentStrings.GUID, Id);
@@ -1479,25 +1466,26 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     private void replyMessage() {
         if (baseMessage != null) {
             isReply = true;
-            replyTitle.setText(baseMessage.getSender().getName());
-            replyMedia.setVisibility(VISIBLE);
+            composeBox.replyTitle.setText(baseMessage.getSender().getName());
+            composeBox.replyMedia.setVisibility(VISIBLE);
             if (baseMessage.getType().equals(CometChatConstants.MESSAGE_TYPE_TEXT)) {
-                replyMessage.setText(((TextMessage) baseMessage).getText());
-                replyMedia.setVisibility(GONE);
+                composeBox.replyMessage.setText(((TextMessage) baseMessage).getText());
+                composeBox.replyMedia.setVisibility(GONE);
+                composeBox.replyMessage.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             } else if (baseMessage.getType().equals(CometChatConstants.MESSAGE_TYPE_AUDIO)) {
                 String messageStr = String.format(getResources().getString(R.string.shared_a_audio),
                         Utils.getFileSize(((MediaMessage) baseMessage).getAttachment().getFileSize()));
-                replyMessage.setText(messageStr);
-                replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_library_music_24dp, 0, 0, 0);
+                composeBox.replyMessage.setText(messageStr);
+                composeBox.replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_grey_24dp, 0, 0, 0);
             } else if (baseMessage.getType().equals(CometChatConstants.MESSAGE_TYPE_FILE)) {
                 String messageStr = String.format(getResources().getString(R.string.shared_a_file),
                         Utils.getFileSize(((MediaMessage) baseMessage).getAttachment().getFileSize()));
-                replyMessage.setText(messageStr);
-                replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_insert_drive_file_black_24dp, 0, 0, 0);
+                composeBox.replyMessage.setText(messageStr);
+                composeBox.replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_insert_drive_file_black_24dp, 0, 0, 0);
             }
 //            composeBox.ivMic.setVisibility(VISIBLE);
 //            composeBox.ivSend.setVisibility(GONE);
-            replyMessageLayout.setVisibility(VISIBLE);
+            composeBox.replyMessageLayout.setVisibility(VISIBLE);
             if (messageAdapter != null) {
                 messageAdapter.setSelectedMessage(baseMessage.getId());
                 messageAdapter.notifyDataSetChanged();

@@ -24,7 +24,11 @@
             android:id="@+id/tv_reply_layout_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxWidth="@dimen/_150sdp"
+            android:maxLines="1"
             android:textColor="@color/colorPrimary"
+            android:textSize="12sp"
             android:textStyle="bold"
             tools:text="@tools:sample/full_names" />
 
@@ -33,28 +37,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_4sdp"
-            android:drawablePadding="@dimen/_4sdp"
-            android:textColor="@color/black"
+            android:ellipsize="end"
+            android:maxWidth="@dimen/_178sdp"
+            android:maxLines="3"
+            android:textColor="@color/grey_68"
             android:textStyle="italic"
+            app:drawableTint="@color/dark_grey"
             tools:text="Perfect! I've been waiting to go" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/iv_reply_media"
-        android:layout_width="@dimen/_40sdp"
-        android:layout_height="@dimen/_40sdp"
+        android:layout_width="@dimen/_18sdp"
+        android:layout_height="@dimen/_18sdp"
         android:layout_alignParentEnd="true"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="@dimen/_12sdp"
         android:visibility="gone"
         tools:src="@tools:sample/avatars" />
 
     <ImageView
         android:id="@+id/iv_reply_close"
-        android:layout_width="@dimen/_20sdp"
-        android:layout_height="@dimen/_20sdp"
+        android:layout_width="@dimen/_16sdp"
+        android:layout_height="@dimen/_16sdp"
         android:layout_alignParentEnd="true"
         android:clickable="true"
         android:focusable="true"
         android:foreground="?attr/selectableItemBackground"
         android:src="@drawable/ic_sdk_close"
         app:tint="@color/black" />
+
 </RelativeLayout>
