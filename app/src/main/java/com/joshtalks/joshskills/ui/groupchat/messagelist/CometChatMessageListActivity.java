@@ -53,6 +53,7 @@ import com.joshtalks.joshskills.ui.groupchat.adapter.MessageAdapter;
 import com.joshtalks.joshskills.ui.groupchat.constant.StringContract;
 import com.joshtalks.joshskills.ui.groupchat.listeners.ComposeActionListener;
 import com.joshtalks.joshskills.ui.groupchat.listeners.MessageActionCloseListener;
+import com.joshtalks.joshskills.ui.groupchat.listeners.OnRepliedMessageClick;
 import com.joshtalks.joshskills.ui.groupchat.listeners.StickyHeaderDecoration;
 import com.joshtalks.joshskills.ui.groupchat.screens.CometChatGroupDetailScreenActivity;
 import com.joshtalks.joshskills.ui.groupchat.uikit.Avatar;
@@ -100,7 +101,11 @@ import static android.view.View.VISIBLE;
 
 
 public class CometChatMessageListActivity extends AppCompatActivity implements View.OnClickListener,
-        MessageActionCloseListener, /*OnMessageLongClick,*/ ExoAudioPlayer.ProgressUpdateListener, AudioPlayerEventListener {
+        MessageActionCloseListener,
+        /*OnMessageLongClick,*/
+        ExoAudioPlayer.ProgressUpdateListener,
+        AudioPlayerEventListener,
+        OnRepliedMessageClick {
 
     private static final String TAG = "CometChatMessageScreen";
 
@@ -711,6 +716,8 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
                     }
                     replyObject.put("name", baseMessage.getSender().getName());
                     replyObject.put("avatar", baseMessage.getSender().getAvatar());
+                    replyObject.put("deletedAt", baseMessage.getDeletedAt());
+                    replyObject.put("id", baseMessage.getId());
                 }
                 metadata.put("reply", replyObject);
                 composeBox.replyMessageLayout.setVisibility(GONE);
@@ -888,6 +895,8 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             }
             replyObject.put("name", baseMessage.getSender().getName());
             replyObject.put("avatar", baseMessage.getSender().getAvatar());
+            replyObject.put("deletedAt", baseMessage.getDeletedAt());
+            replyObject.put("id", baseMessage.getId());
             jsonObject.put("reply", replyObject);
             textMessage.setMetadata(jsonObject);
             sendTypingIndicator(true);
@@ -914,8 +923,13 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
 
     private void scrollToBottom() {
         if (messageAdapter != null && messageAdapter.getItemCount() > 0) {
-            rvChatListView.scrollToPosition(messageAdapter.getItemCount() - 1);
+            rvChatListView.smoothScrollToPosition(messageAdapter.getItemCount() - 1);
+        }
+    }
 
+    private void scrollToTop() {
+        if (messageAdapter != null && messageAdapter.getItemCount() > 0) {
+            rvChatListView.smoothScrollToPosition(0);
         }
     }
 
@@ -1560,6 +1574,23 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     private void setPlayProgress(int progress) {
         if (currentAudioPosition != -1) {
             messageAdapter.notifyItemChanged(currentAudioPosition);
+        }
+    }
+
+    @Override
+    public void onRepliedMessageClick(int messageId) {
+        int position = -1;
+        for (int i = 0; i < messageAdapter.getMessageList().size(); i++) {
+            if (messageAdapter.getMessageList().get(i).getId() == messageId) {
+                position = i;
+                break;
+            }
+        }
+        if (position >= 0) {
+            rvChatListView.smoothScrollToPosition(position);
+        } else {
+            // TODO(22/12/2020) - Find a way to scroll while message is not loaded yet.
+            scrollToTop();
         }
     }
 }
