@@ -257,16 +257,6 @@
                     app:layout_constraintTop_toBottomOf="@id/no_award_icon"
                     android:layout_marginTop="@dimen/_6sdp" />
 
-                <!--<com.mindorks.placeholderview.PlaceHolderView
-                    android:id="@+id/award_rv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_8ssp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:visibility="gone"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/awards_heading" />-->
-
                 <LinearLayout
                     android:id="@+id/multi_line_ll"
                     android:layout_width="match_parent"
