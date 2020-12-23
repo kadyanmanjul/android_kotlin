@@ -37,7 +37,7 @@ class PointsSummaryTitleViewHolder(var date: String, var point: Int, var index: 
     @View(R.id.expand_unexpand_view)
     lateinit var toggleView: AppCompatImageView
 
-    var isExpanded=false
+    var isExpanded = false
 
     private val drawableDown: Drawable? by lazy {
         ResourcesCompat.getDrawable(
@@ -66,19 +66,20 @@ class PointsSummaryTitleViewHolder(var date: String, var point: Int, var index: 
     @Resolve
     fun onResolved() {
         name.text = date
-        if (index == 0) {
-            name.textColorSet(R.color.colorPrimary)
-            onExpand()
-        } else {
-            name.textColorSet(R.color.black)
-            onCollapse()
-        }
+        name.textColorSet(R.color.black)
         rootView.background = drawable
+        toggleView.setImageDrawable(drawableDown)
         score.text = point.toString()
+        if (isExpanded){
+            rootView.background = drawableSqaure
+            toggleView.setImageDrawable(drawableUp)
+            name.textColorSet(R.color.colorPrimary)
+        }
     }
 
     @Expand
     fun onExpand() {
+        isExpanded=true
         rootView.background = drawableSqaure
         toggleView.setImageDrawable(drawableUp)
         name.textColorSet(R.color.colorPrimary)
@@ -86,6 +87,7 @@ class PointsSummaryTitleViewHolder(var date: String, var point: Int, var index: 
 
     @Collapse
     fun onCollapse() {
+        isExpanded=false
         rootView.background = drawable
         name.textColorSet(R.color.black)
         toggleView.setImageDrawable(drawableDown)
