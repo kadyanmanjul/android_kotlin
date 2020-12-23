@@ -4,14 +4,12 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Glide
@@ -26,21 +24,14 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_SCORE
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.YYYY_MM_DD
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.textColorSet
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.OpenLeaderBoardEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfileEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
@@ -48,9 +39,6 @@ import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.Date
 import java.util.Locale
@@ -85,14 +73,6 @@ class InboxViewHolder(
     @View(R.id.tv_last_message)
     lateinit var tvLastReceivedMessage: AppCompatTextView
 
-    @View(R.id.leaderboard)
-    lateinit var leaderBoardLayout: ConstraintLayout
-
-    @View(R.id.user_score_container)
-    lateinit var userScoreLayout: ConstraintLayout
-
-    @View(R.id.user_score)
-    lateinit var userScore: AppCompatTextView
 
     @JvmField
     var drawablePadding: Float = 2f
@@ -107,43 +87,12 @@ class InboxViewHolder(
 
     fun getAppContext() = AppObjectController.joshApplication
 
-    fun setView(points: String) {
-        if (inboxEntity.courseId.equals("151")) {
-            if(points.isBlank()){
-                if(::userScore.isInitialized)
-                userScore.text="0"
-            } else {
-                if(::userScore.isInitialized)
-                userScore.text = points
-                PrefManager.put(USER_SCORE, points)
-            }
-        }
-    }
-
     private fun getDrawablePadding() = Utils.dpToPx(getAppContext(), 4f)
 
     @Resolve
     fun onResolved() {
         tvName.text = inboxEntity.course_name
         courseProgressBar.progress = 0
-        if (inboxEntity.courseId.equals("151")&&PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
-            leaderBoardLayout.visibility = android.view.View.VISIBLE
-            userScoreLayout.visibility = android.view.View.VISIBLE
-            val points=PrefManager.getStringValue(USER_SCORE)
-            if (points.isNullOrBlank()){
-                userScore.text="0"
-            }else
-            userScore.text = points
-            leaderBoardLayout.setOnClickListener {
-                RxBus2.publish(OpenLeaderBoardEventBus())
-            }
-            userScoreLayout.setOnClickListener {
-                RxBus2.publish(OpenUserProfileEventBus())
-            }
-        } else {
-            leaderBoardLayout.visibility = android.view.View.GONE
-            userScoreLayout.visibility = android.view.View.GONE
-        }
         if (inboxEntity.course_icon.isNullOrEmpty()) {
             profileImage.setImageResource(R.drawable.ic_josh_course)
         } else {
@@ -160,10 +109,8 @@ class InboxViewHolder(
             )
         }
 
-        if ((totalItem -1) == indexPos) {
+        if ((totalItem - 1) == indexPos) {
             hLine.visibility = android.view.View.GONE
-        } else {
-            hLine.visibility = android.view.View.VISIBLE
         }
         if (progressBarStatus) {
             courseProgressBar.visibility = android.view.View.VISIBLE
@@ -227,6 +174,18 @@ class InboxViewHolder(
                     tvLastReceivedMessage.text =
                         HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
                 }
+
+            }
+            BASE_MESSAGE_TYPE.IM == baseMessageType -> {
+                tvLastReceivedMessage.setCompoundDrawablesWithIntrinsicBounds(
+                    R.drawable.ic_inbox_camera,
+                    0,
+                    0,
+                    0
+                )
+                tvLastReceivedMessage.compoundDrawablePadding =
+                    Utils.dpToPx(getAppContext(), drawablePadding)
+                tvLastReceivedMessage.text = "Photo"
             }
             BASE_MESSAGE_TYPE.AU == baseMessageType -> {
                 tvLastReceivedMessage.setCompoundDrawablesWithIntrinsicBounds(

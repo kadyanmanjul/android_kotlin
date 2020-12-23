@@ -15,7 +15,11 @@ import com.cometchat.pro.exceptions.CometChatException
 import com.cometchat.pro.models.User
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
+import com.joshtalks.joshskills.core.JoshApplication
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.LogException.catchException
 import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
@@ -23,11 +27,17 @@ import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LessonModel
+import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
+import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
+import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
 import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
@@ -37,14 +47,19 @@ import id.zelory.compressor.Compressor
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import timber.log.Timber
 import java.io.File
-import java.util.*
+import java.util.ConcurrentModificationException
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 
@@ -67,9 +82,33 @@ class ConversationViewModel(application: Application) :
     private val jobs = arrayListOf<Job>()
     val userLoginLiveData: MutableLiveData<GroupDetails> = MutableLiveData()
     val isLoading: MutableLiveData<Boolean> = MutableLiveData()
+    val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
 
     init {
         addObserver()
+    }
+
+
+    fun getProfileData(mentorId: String) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = AppObjectController.commonNetworkService.getUserProfileData(mentorId)
+                if (response.isSuccessful && response.body() != null) {
+                    response.body()?.awardCategory?.sortedBy { it.sortOrder }?.map {
+                        it.awards?.sortedBy { it.sortOrder }
+                    }
+                    userData.postValue(response.body()!!)
+                    PrefManager.put(
+                        IS_PROFILE_FEATURE_ACTIVE,
+                        response.body()?.isPointsActive ?: false
+                    )
+                    return@launch
+                }
+
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
+        }
     }
 
     @Synchronized
@@ -648,7 +687,7 @@ class ConversationViewModel(application: Application) :
         }
     }
 
-    fun getLessonStatus(lessonId: Int): Boolean {
+    suspend fun getLessonStatus(lessonId: Int): Boolean {
         when (appDatabase.lessonDao().getLesson(lessonId)?.status) {
             LESSON_STATUS.CO -> {
                 return true
@@ -659,7 +698,7 @@ class ConversationViewModel(application: Application) :
         }
     }
 
-    fun getLessonModel(lessonId: Int): LessonModel? {
+    suspend fun getLessonModel(lessonId: Int): LessonModel? {
         return appDatabase.lessonDao().getLesson(lessonId)
     }
 }

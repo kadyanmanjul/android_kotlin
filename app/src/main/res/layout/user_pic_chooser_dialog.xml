@@ -11,9 +11,9 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:background="@drawable/rect_with_bound"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rectangle_top_rounded">
 
         <ImageView
             android:id="@+id/close"
@@ -21,62 +21,112 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_16sdp"
             android:backgroundTint="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
             android:onClick="@{()->fragment.dismiss()}"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/freshchat_ic_calendar_close" />
 
-        <ImageView
-            android:id="@+id/plus"
-            android:layout_width="@dimen/_16sdp"
-            android:layout_height="@dimen/_16sdp"
-            android:layout_marginStart="@dimen/_18sdp"
-            android:layout_marginTop="@dimen/_24sdp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:onClick="@{()->fragment.change()}"
-            app:srcCompat="@drawable/ic_add"
-            app:tint="@color/dark_grey" />
-
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/plus_text"
+            android:id="@+id/heading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_24sdp"
-            android:layout_marginEnd="@dimen/_124sdp"
-            android:text="Change"
-            android:onClick="@{()->fragment.change()}"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:text="@string/profile_photo"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
             android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/plus"
-            app:layout_constraintTop_toTopOf="@id/plus" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/delete"
-            android:layout_width="@dimen/_16sdp"
-            android:layout_height="@dimen/_16sdp"
-            android:layout_margin="@dimen/_18sdp"
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/delete_icon"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/circle"
+            android:backgroundTint="#E95454"
             android:onClick="@{()->fragment.delete()}"
+            android:padding="@dimen/_6sdp"
+            android:tint="@color/white"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/heading"
+            app:srcCompat="@drawable/recv_ic_delete" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/gallery_icon"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/circle"
+            android:onClick="@{()->fragment.change()}"
+            app:layout_constraintStart_toEndOf="@id/delete_icon"
+            app:layout_constraintTop_toBottomOf="@id/heading"
+            app:srcCompat="@drawable/ic_gallary" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/camera_icon"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/circle"
+            android:onClick="@{()->fragment.captureImage()}"
+            app:layout_constraintStart_toEndOf="@id/gallery_icon"
+            app:layout_constraintTop_toBottomOf="@id/heading"
+            app:srcCompat="@drawable/ic_camera_2" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/remove_text"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            android:gravity="center"
+            android:onClick="@{()->fragment.delete()}"
+            android:text="Remove Photo"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/plus"
-            app:srcCompat="@drawable/ic_delete"
-            app:tint="@color/dark_grey" />
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@id/delete_icon"
+            app:layout_constraintTop_toBottomOf="@id/delete_icon"
+            app:layout_constraintVertical_bias="0" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/delete_text"
-            android:layout_width="wrap_content"
+            android:id="@+id/gallery_text"
+            android:layout_width="@dimen/_36sdp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_24sdp"
-            android:layout_marginEnd="@dimen/_124sdp"
-            android:text="Delete"
-            android:onClick="@{()->fragment.delete()}"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            android:gravity="center"
+            android:onClick="@{()->fragment.change()}"
+            android:text="Gallery"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
             android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/delete"
-            app:layout_constraintTop_toTopOf="@id/delete" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/gallery_icon"
+            app:layout_constraintTop_toBottomOf="@id/gallery_icon"
+            app:layout_constraintVertical_bias="0" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/camera_text"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            android:gravity="center"
+            android:onClick="@{()->fragment.captureImage()}"
+            android:text="Camera"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/camera_icon"
+            app:layout_constraintTop_toBottomOf="@id/camera_icon"
+            app:layout_constraintVertical_bias="0" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

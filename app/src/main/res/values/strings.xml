@@ -553,8 +553,9 @@
     <string name="points">Points</string>
     <string name="regular">Regular</string>
     <string name="awards">Awards</string>
-    <string name="more_info">More Info </string>
+    <string name="see_all">See All>> </string>
     <string name="profile"> Profile</string>
+    <string name="profile_photo">Profile photo</string>
     <string name="view_profile"> View Profile</string>
     <string name="with">with</string>
     <string name="vocabulary_completed">Congratulations you have completed vocabulary!</string>
@@ -564,8 +565,8 @@
     <string name="user_streak_text">Days Streak</string>
     <string name="user_min_text">Mins Spoken</string>
     <string name="see_leaderboard">See the Leaderboard >></string>
-    <string name="how_points_work">How points work ?</string>
-    <string name="how_points_work_title">How Points Work</string>
+    <string name="how_points_work">How to get points</string>
+    <string name="how_points_work_title">How to Get Points</string>
     <string name="points_history">Points History</string>
     <string name="group_chat">Group Chat</string>
     <string name="go_to_profile">Go to Profile</string>

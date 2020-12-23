@@ -17,14 +17,12 @@ class PointsSnackbarView @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr), ContentViewCallback {
 
     lateinit var tvMsg: TextView
-    lateinit var imLeft: ImageView
     lateinit var rootView: ConstraintLayout
 
     init {
         View.inflate(context, R.layout.point_snackbar, this)
         clipToPadding = false
         this.tvMsg = findViewById(R.id.tv_message)
-        this.imLeft = findViewById(R.id.iv_image)
         this.rootView = findViewById(R.id.snack_constraint)
 
     }

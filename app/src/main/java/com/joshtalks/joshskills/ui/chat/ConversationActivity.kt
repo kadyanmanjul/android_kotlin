@@ -109,8 +109,10 @@ import com.joshtalks.joshskills.repository.local.eventbus.UnlockNextClassEventBu
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.server.Award
+import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
@@ -135,7 +137,6 @@ import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment
-import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.LAST_VIDEO_INTERVAL
@@ -660,6 +661,17 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             sendTextMessage()
         }
 
+        conversationBinding.leaderboardBtnClose.setOnClickListener {
+            conversationBinding.userPointContainer.visibility = GONE
+        }
+
+        conversationBinding.leaderboardTxt.setOnClickListener {
+            openLeaderBoard()
+        }
+        conversationBinding.points.setOnClickListener {
+            openUserProfileActivity(Mentor.getInstance().getId())
+        }
+
         findViewById<View>(R.id.ll_audio).setOnClickListener {
             AppAnalytics.create(AnalyticsEvent.AUDIO_SELECTED.NAME).push()
             uploadAttachment()
@@ -851,6 +863,33 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             }
         }
 
+        conversationViewModel.userData.observe(this, {
+            it?.let {
+                ///hideProgressBar()
+                initScoreCardView(it)
+            }
+        })
+
+    }
+
+    private fun initScoreCardView(userData: UserProfileResponse) {
+        userData.isPointsActive?.let { isLeaderBoardActive ->
+            if (isLeaderBoardActive) {
+                conversationBinding.userPointContainer.visibility = VISIBLE
+                conversationBinding.points.text = userData.points.toString().plus(" Points")
+            } else {
+                conversationBinding.userPointContainer.visibility = GONE
+            }
+        }
+        var unseenAwards: ArrayList<Award>? = ArrayList()
+        userData.awardCategory?.forEach {
+            it.awards?.filter { it.isSeen == false && it.is_achieved == true }?.forEach {
+                unseenAwards?.add(it)
+            }
+        }
+        if (unseenAwards.isNullOrEmpty().not()) {
+            showAward(unseenAwards?.toList()!!)
+        }
     }
 
     private fun showGroupChatScreen(groupDetails: GroupDetails) {
@@ -1526,10 +1565,10 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                         } catch (ex: Exception) {
                         }
 
-                        }
                     }
+                }
                 val awardList = data.getParcelableArrayListExtra<Award>(ACHIEVED_AWARD_LIST)
-                if (awardList.isNullOrEmpty().not()){
+                if (awardList.isNullOrEmpty().not()) {
                     showAward(awardList)
                 }
                 addUnlockNextClassCard(interval, fromLesson = true)
@@ -1838,6 +1877,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             subscribeRXBus()
             observeNetwork()
         }
+        if (inboxEntity.isGroupActive)
+        conversationViewModel.getProfileData(Mentor.getInstance().getId())
     }
 
     override fun onPause() {

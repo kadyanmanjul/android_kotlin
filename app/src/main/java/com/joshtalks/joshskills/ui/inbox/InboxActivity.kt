@@ -12,8 +12,6 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModelProvider
@@ -73,7 +71,6 @@ import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.SubscriptionData
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
-import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_OBJECT
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.extra.TopTrialTooltipView
@@ -112,7 +109,6 @@ import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip
 import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip2
 import kotlinx.android.synthetic.main.find_more_layout.bb_tip_below_find_btn
 import kotlinx.android.synthetic.main.find_more_layout.find_more
-import kotlinx.android.synthetic.main.inbox_toolbar.iv_reminder
 import kotlinx.android.synthetic.main.inbox_toolbar.iv_setting
 import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
 import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.expiry_tool_tip_text
@@ -475,7 +471,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             openPopupMenu(it)
         }
         reminderIv = findViewById<ImageView>(R.id.iv_reminder)
-        reminderIv.visibility=View.GONE
+        reminderIv.visibility = View.GONE
         reminderIv.setOnClickListener {
             AppAnalytics.create(AnalyticsEvent.REMINDER_BELL_CLICKED.NAME)
                 .addBasicParam()
@@ -839,7 +835,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         recycler_view_inbox.removeAllViews()
         val total = items.size
         var capsuleIndex = 0
-        val newCourses = items.filter { (it.created == null || it.created == 0L)&& it.courseId.equals("151").not() }
+        val newCourses = items.filter {
+            (it.created == null || it.created == 0L) && it.courseId.equals("151").not()
+        }
         val capsuleCourse = items.filter { it.courseId.equals("151") }
         if (capsuleCourse.isNullOrEmpty().not()) {
             recycler_view_inbox.addView(
@@ -859,7 +857,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     )
                 )
         }
-        items.filter { it.created != null && it.created != 0L && it.courseId.equals("151").not()}
+        items.filter { it.created != null && it.created != 0L && it.courseId.equals("151").not() }
             .sortedByDescending { it.created }
             .forEachIndexed { index, inbox ->
                 if (inbox.courseId != TRIAL_COURSE_ID)
