@@ -56,13 +56,14 @@ import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class UserProfileActivity : BaseActivity() {
 
     lateinit var binding: ActivityUserProfileBinding
     private var mentorId: String = EMPTY
     private val compositeDisposable = CompositeDisposable()
-    private var awardCategory:List<AwardCategory>? = emptyList()
+    private var awardCategory: List<AwardCategory>? = emptyList()
 
     private val viewModel by lazy {
         ViewModelProvider(this).get(
@@ -222,7 +223,12 @@ class UserProfileActivity : BaseActivity() {
     }
 
     private fun initView(userData: UserProfileResponse) {
-        binding.userName.text = userData.name
+        val resp = StringBuilder()
+        userData.name?.split(" ")?.forEach {
+            resp.append(it.toLowerCase(Locale.getDefault()).capitalize(Locale.getDefault()))
+                .append(" ")
+        }
+        binding.userName.text = resp
         binding.userAge.text = userData.age.toString()
         binding.joinedOn.text = userData.joinedOn
         binding.points.text = userData.points.toString()
@@ -231,9 +237,10 @@ class UserProfileActivity : BaseActivity() {
         if (userData.awardCategory.isNullOrEmpty()) {
             binding.awardsHeading.visibility = View.GONE
         } else {
-            this.awardCategory=userData.awardCategory
-            if(mentorId.equals(Mentor.getInstance().getId())){
-                binding.moreInfo.visibility = View.VISIBLE
+            this.awardCategory = userData.awardCategory
+
+            if (mentorId.equals(Mentor.getInstance().getId())) {
+                        binding.moreInfo.visibility = View.VISIBLE
             }
             binding.awardsHeading.visibility = View.VISIBLE
             if (checkIsAwardAchieved(userData.awardCategory)) {
@@ -384,7 +391,7 @@ class UserProfileActivity : BaseActivity() {
 
     fun showAllAwards() {
         awardCategory?.let {
-            SeeAllAwardActivity.startSeeAllAwardActivity(this,it)
+            SeeAllAwardActivity.startSeeAllAwardActivity(this, it)
         }
     }
 
