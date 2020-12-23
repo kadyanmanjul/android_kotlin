@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.setImage
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
@@ -23,7 +23,7 @@ class LeaderBoardItemViewHolder(
     var response: LeaderboardMentor,
     var context: Context,
     var currentUser: Boolean = response.id.equals(Mentor.getInstance().getId()),
-    var isHeader:Boolean=false
+    var isHeader: Boolean = false
 ) {
 
     @View(R.id.rank)
@@ -45,12 +45,17 @@ class LeaderBoardItemViewHolder(
 
     @Resolve
     fun onViewInflated() {
-        if(isHeader){
+        if (isHeader) {
             rank.text = "Rank"
-            name.text = "Name"
+            name.text = "Students"
             points.text = "Points"
-            user_pic.visibility=android.view.View.INVISIBLE
+            user_pic.visibility = android.view.View.GONE
+            container.isClickable = false
+            container.isEnabled = false
+
         } else {
+            container.isClickable = true
+            container.isEnabled = true
             if (currentUser) {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                     container.setBackgroundColor(context.getColor(R.color.lightest_blue))
@@ -61,11 +66,15 @@ class LeaderBoardItemViewHolder(
                 }
             }
             rank.text = response.ranking.toString()
-            name.text = response.name?.toLowerCase(Locale.getDefault())?.capitalize(Locale.getDefault())
+            val resp = StringBuilder()
+            response.name?.split(" ")?.forEach {
+                resp.append(it.toLowerCase(Locale.getDefault()).capitalize(Locale.getDefault())).append(" ")
+            }
+            name.text =resp
             points.text = response.points.toString()
             user_pic.post {
                 user_pic.setUserImageOrInitials(response.photoUrl, response.name!!)
-                user_pic.visibility=android.view.View.VISIBLE
+                user_pic.visibility = android.view.View.VISIBLE
             }
         }
 
@@ -74,16 +83,16 @@ class LeaderBoardItemViewHolder(
     @Click(R.id.user_pic)
     fun onClick() {
         if (isHeader.not())
-        response.id?.let {
-            RxBus2.publish(OpenUserProfile(it))
-        }
+            response.id?.let {
+                RxBus2.publish(OpenUserProfile(it))
+            }
     }
 
     @Click(R.id.container)
     fun onContainerClick() {
         if (isHeader.not())
-        response.id?.let {
-            RxBus2.publish(OpenUserProfile(it))
-        }
+            response.id?.let {
+                RxBus2.publish(OpenUserProfile(it))
+            }
     }
 }

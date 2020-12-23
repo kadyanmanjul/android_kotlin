@@ -75,7 +75,7 @@ data class Certificate(
     @SerializedName("is_seen")
     val isSeen: Boolean?
 )
-
+@Parcelize
 data class AwardCategory(
     @SerializedName("id")
     val id: Int?,
@@ -85,7 +85,7 @@ data class AwardCategory(
     val sortOrder: Int?,
     @SerializedName("awards")
     var awards: List<Award>?
-)
+) :Parcelable
 
 @Parcelize
 data class Award(

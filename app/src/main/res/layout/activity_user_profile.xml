@@ -228,8 +228,34 @@
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                     android:textColor="@color/black"
                     android:visibility="gone"
+                    tools:visibility="visible"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/point_layout" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/no_award_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/awards_heading"
+                    android:layout_marginTop="@dimen/_32sdp"
+                    app:srcCompat="@drawable/ic_no_award" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/no_award_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:text="No Awards won yet"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                    android:textColor="@color/black"
+                    app:layout_constraintTop_toBottomOf="@id/no_award_icon"
+                    android:layout_marginTop="@dimen/_6sdp" />
 
                 <!--<com.mindorks.placeholderview.PlaceHolderView
                     android:id="@+id/award_rv"
@@ -249,6 +275,7 @@
                     android:orientation="vertical"
                     android:padding="@dimen/_2sdp"
                     android:visibility="visible"
+                    tools:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/awards_heading" />
@@ -259,17 +286,17 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_4sdp"
                     android:layout_marginBottom="@dimen/_4sdp"
-                    android:drawableEnd="@drawable/arrow_down"
-                    android:drawableTint="@color/black"
                     android:onClick="@{()->handler.showAllAwards()}"
-                    android:text="@string/more_info"
+                    android:text="@string/see_all"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
-                    android:textColor="@color/black"
+                    android:textColor="#D23232"
                     android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:visibility="visible"
+                    app:layout_constraintHorizontal_bias="0.95"
+                    app:layout_constraintBottom_toBottomOf="@id/awards_heading"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/multi_line_ll" />
+                    app:layout_constraintStart_toEndOf="@id/awards_heading"
+                    app:layout_constraintTop_toTopOf="@id/awards_heading" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>

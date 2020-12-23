@@ -10,23 +10,27 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ImageView
 import android.widget.ScrollView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
+import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
+import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.ActivityUserProfileBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -38,8 +42,10 @@ import com.joshtalks.joshskills.repository.server.AwardCategory
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
-import com.mindorks.placeholderview.PlaceHolderView
-import com.mindorks.placeholderview.SmoothLinearLayoutManager
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -55,8 +61,8 @@ class UserProfileActivity : BaseActivity() {
 
     lateinit var binding: ActivityUserProfileBinding
     private var mentorId: String = EMPTY
-    private var viewCount: Int = 0
     private val compositeDisposable = CompositeDisposable()
+    private var awardCategory:List<AwardCategory>? = emptyList()
 
     private val viewModel by lazy {
         ViewModelProvider(this).get(
@@ -78,6 +84,11 @@ class UserProfileActivity : BaseActivity() {
     }
 
     private fun setOnClickListeners() {
+
+        binding.pointLayout.setOnClickListener {
+            openPointHistory(mentorId)
+        }
+
         binding.userPic.setOnClickListener {
             if (mentorId.equals(Mentor.getInstance().getId())) {
                 if (viewModel.getUserProfileUrl().isNullOrBlank().not()) {
@@ -125,8 +136,8 @@ class UserProfileActivity : BaseActivity() {
                 }
             }
         }
-        binding.pointLayout.setOnClickListener {
-                openPointHistory(mentorId)
+        if (mentorId.equals(Mentor.getInstance().getId())) {
+            binding.editPic.visibility = View.VISIBLE
         }
     }
 
@@ -183,9 +194,9 @@ class UserProfileActivity : BaseActivity() {
         viewModel.userProfileUrl.observe(this) {
             if (mentorId.equals(Mentor.getInstance().getId())) {
                 if (it.isNullOrBlank()) {
-                    binding.editPic.visibility = View.VISIBLE
+                    binding.editPic.text = "Add"
                 } else {
-                    binding.editPic.visibility = View.GONE
+                    binding.editPic.text = "Edit"
                 }
             }
             binding.userPic.post {
@@ -220,22 +231,76 @@ class UserProfileActivity : BaseActivity() {
         if (userData.awardCategory.isNullOrEmpty()) {
             binding.awardsHeading.visibility = View.GONE
         } else {
+            this.awardCategory=userData.awardCategory
+            if(mentorId.equals(Mentor.getInstance().getId())){
+                binding.moreInfo.visibility = View.VISIBLE
+            }
             binding.awardsHeading.visibility = View.VISIBLE
-            binding.moreInfo.visibility = View.VISIBLE
-            userData.awardCategory?.forEach { awardCategory ->
-                val view = addLinerLayout(awardCategory)
-                if (view != null) {
-                    binding.multiLineLl.addView(view)
-                } else {
+            if (checkIsAwardAchieved(userData.awardCategory)) {
+                userData.awardCategory?.forEach { awardCategory ->
+                    val view = addLinerLayout(awardCategory)
+                    if (view != null) {
+                        binding.multiLineLl.addView(view)
+                    } else {
 
+                    }
                 }
+            } else {
+                binding.noAwardIcon.visibility = View.VISIBLE
+                binding.noAwardText.visibility = View.VISIBLE
             }
         }
         binding.scrollView.fullScroll(ScrollView.FOCUS_UP)
     }
 
+    private fun checkIsAwardAchieved(awardCategory: List<AwardCategory>?): Boolean {
+        if (mentorId.equals(Mentor.getInstance().getId())) {
+            return true
+        }
+        if (awardCategory.isNullOrEmpty()) {
+            return false
+        } else {
+            awardCategory.forEach {
+                it.awards?.forEach {
+                    if (it.is_achieved) {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+
     private fun openChooser() {
-        UserPicChooserFragment.showDialog(supportFragmentManager)
+        UserPicChooserFragment.showDialog(
+            supportFragmentManager,
+            viewModel.getUserProfileUrl().isNullOrBlank()
+        )
+    }
+
+    private fun getPermissionAndImage() {
+        PermissionUtils.storageReadAndWritePermission(this,
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (flag) {
+                            RxBus2.publish(DeleteProfilePicEventBus("No d"))
+                            return
+                        }
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.permissionPermanentlyDeniedDialog(this@UserProfileActivity)
+                            return
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            })
     }
 
 
@@ -245,38 +310,72 @@ class UserProfileActivity : BaseActivity() {
             AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = layoutInflater.inflate(R.layout.award_view_holder, binding.rootView, false)
         val title = view.findViewById(R.id.title) as AppCompatTextView
-        val recyclerView = view.findViewById(R.id.award_rv) as PlaceHolderView
         title.text = awardCategory.label
-        val linearLayoutManager = SmoothLinearLayoutManager(
-            this,
-            LinearLayoutManager.HORIZONTAL,
-            false
-        )
-        linearLayoutManager.isSmoothScrollbarEnabled = true
-        recyclerView.builder.setHasFixedSize(true)
-            .setLayoutManager(linearLayoutManager)
-
         var haveAchievedAwards = false
+        var index = 0
 
         awardCategory.awards?.forEach {
             if (mentorId.equals(Mentor.getInstance().getId())) {
-                recyclerView.addView(AwardItemViewHolder(it, this))
+                setAwardView(it, index, view!!)
+                index = index.plus(1)
             } else if (it.is_achieved) {
                 haveAchievedAwards = true
-                recyclerView.addView(AwardItemViewHolder(it, this))
+                setAwardView(it, index, view!!)
+                index = index.plus(1)
             }
         }
         if (haveAchievedAwards.not() && mentorId.equals(Mentor.getInstance().getId()).not()) {
             return null
         }
-        recyclerView.requestFocus(0)
-        if (view != null) {
-            viewCount = viewCount.plus(1)
-        }
-        if (viewCount > 3) {
-            view.visibility = View.GONE
-        }
         return view
+    }
+
+    private fun setAwardView(award: Award, index: Int, view: View) {
+        when (index) {
+            0 -> {
+                view.findViewById<ConstraintLayout>(R.id.award1).visibility = View.VISIBLE
+                setViewToLayout(
+                    award,
+                    view.findViewById(R.id.image_award1),
+                    view.findViewById(R.id.title_award1),
+                    view.findViewById(R.id.date_award1)
+                )
+            }
+            1 -> {
+                view.findViewById<ConstraintLayout>(R.id.award2).visibility = View.VISIBLE
+                setViewToLayout(
+                    award,
+                    view.findViewById(R.id.image_award2),
+                    view.findViewById(R.id.title_award2),
+                    view.findViewById(R.id.date_award2)
+                )
+            }
+            2 -> {
+                view.findViewById<ConstraintLayout>(R.id.award3).visibility = View.VISIBLE
+                setViewToLayout(
+                    award,
+                    view.findViewById(R.id.image_award3),
+                    view.findViewById(R.id.title_award3),
+                    view.findViewById(R.id.date_award3)
+                )
+            }
+            else -> {
+
+            }
+        }
+    }
+
+    private fun setViewToLayout(
+        award: Award,
+        image: ImageView,
+        title: AppCompatTextView,
+        date: AppCompatTextView
+    ) {
+        title.text = award.awardText
+        date.text = award.dateText
+        award.imageUrl?.let {
+            image.setImage(it, this)
+        }
     }
 
     private fun getProfileData() {
@@ -284,13 +383,9 @@ class UserProfileActivity : BaseActivity() {
     }
 
     fun showAllAwards() {
-        binding.moreInfo.visibility = View.GONE
-        //viewModel.getProfileData(mentorId)
-        for (i in 0 until binding.multiLineLl.childCount) {
-            val view: View = binding.multiLineLl.getChildAt(i)
-            view.visibility = View.VISIBLE
+        awardCategory?.let {
+            SeeAllAwardActivity.startSeeAllAwardActivity(this,it)
         }
-        binding.multiLineLl
     }
 
     override fun onResume() {
@@ -354,6 +449,18 @@ class UserProfileActivity : BaseActivity() {
             }
         }
     }
+    public var activityResultLauncher2: ActivityResultLauncher<Intent> = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        CoroutineScope(Dispatchers.IO).launch {
+
+            if (result.data?.hasExtra(JoshCameraActivity.IMAGE_RESULTS)!!) {
+                val returnValue =
+                    result.data?.getStringArrayListExtra(JoshCameraActivity.IMAGE_RESULTS)
+                returnValue?.get(0)?.let { addUserImageInView(it) }
+            }
+        }
+    }
 
     fun openSomeActivityForResult() {
         val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -361,7 +468,7 @@ class UserProfileActivity : BaseActivity() {
     }
 
     private fun openAwardPopUp(award: Award) {
-        showAward(listOf(award),true)
+        showAward(listOf(award), true)
     }
 
     override fun onStop() {

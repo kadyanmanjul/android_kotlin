@@ -32,6 +32,8 @@
             android:id="@+id/profile_image"
             android:layout_width="@dimen/_48sdp"
             android:layout_height="@dimen/_48sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@color/button_color" />
@@ -117,100 +119,15 @@
             app:layout_constraintTop_toTopOf="@+id/tv_name"
             tools:text="08/12/90" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/user_score_container"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_51sdp"
-            android:layout_marginHorizontal="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:layout_marginBottom="@dimen/_16sdp"
-            android:background="@drawable/rect_with_bound"
-            android:backgroundTint="@color/light_blue"
-            android:elevation="@dimen/_2sdp"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profile_image"
-            app:layout_constraintVertical_bias="0"
-            app:layout_constraintWidth_percent="0.4"
-            tools:visibility="gone">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/user_score"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-                android:textColor="@color/black"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="527" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/user_score_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:layout_marginBottom="@dimen/_4sdp"
-                android:text="@string/user_point_text"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                android:textColor="@color/black"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/user_score" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/leaderboard"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_51sdp"
-            android:layout_marginHorizontal="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:layout_marginBottom="@dimen/_16sdp"
-            android:background="@drawable/rect_with_bound"
-            android:backgroundTint="@color/light_blue"
-            android:elevation="@dimen/_2sdp"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profile_image"
-            app:layout_constraintVertical_bias="0"
-            app:layout_constraintWidth_percent="0.4"
-            tools:visibility="gone">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/leaderboard_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/leaderboard"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-                android:textColor="@color/black"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
         <LinearLayout
             android:id="@+id/horizontal_line"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_marginTop="@dimen/_8sdp"
             android:background="@color/gray_e6"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/leaderboard"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/profile_image" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

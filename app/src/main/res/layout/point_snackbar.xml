@@ -13,19 +13,6 @@
         android:background="@drawable/rect_with_green_bound"
         android:backgroundTint="@color/green_snackbar">
 
-        <androidx.appcompat.widget.AppCompatImageView
-
-            android:id="@+id/iv_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_8sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_start_eye_emoji"
-            tools:ignore="VectorDrawableCompat" />
-
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_message"
             android:layout_width="wrap_content"
@@ -37,8 +24,7 @@
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/iv_image"
-            app:layout_constraintStart_toEndOf="@+id/iv_image"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

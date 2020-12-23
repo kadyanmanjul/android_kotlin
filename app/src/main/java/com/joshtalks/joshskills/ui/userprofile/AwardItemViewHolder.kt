@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.userprofile
 import android.content.Context
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -24,6 +25,9 @@ class AwardItemViewHolder(var award: Award, var context: Context) {
 
     @View(R.id.image)
     lateinit var image: ImageView
+
+    @View(R.id.root_view)
+    lateinit var rootView: ConstraintLayout
 
     @Resolve
     fun onViewInflated() {

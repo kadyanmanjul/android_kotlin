@@ -130,6 +130,7 @@
             android:layout_above="@+id/bottom_bar"
             android:layout_below="@+id/toolbar">
 
+
             <com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout
                 android:id="@+id/refresh_layout"
                 android:layout_width="match_parent"
@@ -150,7 +151,6 @@
                     app:fastScrollVerticalTrackDrawable="@drawable/thumb_drawable_rv" />
             </com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout>
 
-
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/scroll_to_end_button"
                 android:layout_width="@dimen/_32sdp"
@@ -166,11 +166,81 @@
                 app:srcCompat="@drawable/ic_arrow_down"
                 tools:visibility="visible" />
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/user_point_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:backgroundTint="@color/white">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/points"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_5sdp"
+                    android:background="@drawable/rect_default_white"
+                    android:backgroundTint="#F0F7FF"
+                    android:elevation="@dimen/_8sdp"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:paddingVertical="@dimen/_6sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/leaderboard_btn_Close"
+                    app:layout_constraintHorizontal_bias="0.1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.38"
+                    android:text="0 Points" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/leaderboard_txt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_5sdp"
+                    android:background="@drawable/rect_default_white"
+                    android:backgroundTint="#F0F7FF"
+                    android:elevation="@dimen/_8sdp"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:paddingVertical="@dimen/_6sdp"
+                    android:text="@string/leaderboard"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/leaderboard_btn_Close"
+                    app:layout_constraintHorizontal_bias="0.9"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.38" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/leaderboard_btn_Close"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_marginEnd="@dimen/_6sdp"
+                    android:padding="@dimen/_4sdp"
+                    android:tint="@color/grey_68"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_cross" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgGroupChat"
                 android:layout_width="@dimen/_28sdp"
                 android:layout_height="@dimen/_28sdp"
                 android:layout_gravity="top|end"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginVertical="@dimen/_48sdp"
                 android:layout_marginHorizontal="@dimen/_12sdp"
                 android:layout_marginVertical="@dimen/_12sdp"
                 android:adjustViewBounds="true"

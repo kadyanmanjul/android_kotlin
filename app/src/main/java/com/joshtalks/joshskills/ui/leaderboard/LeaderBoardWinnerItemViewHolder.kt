@@ -47,7 +47,11 @@ class LeaderBoardWinnerItemViewHolder(
     @Resolve
     fun onViewInflated() {
         title.text = response.title.toString()
-        name.text = response.name?.toLowerCase(Locale.getDefault())?.capitalize(Locale.getDefault())
+        val resp = StringBuilder()
+        response.name?.split(" ")?.forEach {
+            resp.append(it.toLowerCase(Locale.getDefault()).capitalize(Locale.getDefault())).append(" ")
+        }
+        name.text =resp
         points.text = (response.points.toString()).plus(" points")
         userPic.post {
             userPic.setUserImageOrInitials(response.photoUrl, response.name!!)

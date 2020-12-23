@@ -160,7 +160,11 @@ class LeaderBoardFragment : Fragment() {
 
     private fun setCurrentUserDetails(response: LeaderboardMentor) {
         binding.rank.text = response.ranking.toString()
-        binding.name.text = response.name?.toLowerCase(Locale.getDefault())?.capitalize(Locale.getDefault())
+        val resp = StringBuilder()
+        response.name?.split(" ")?.forEach {
+            resp.append(it.toLowerCase(Locale.getDefault()).capitalize(Locale.getDefault())).append(" ")
+        }
+        binding.name.text = resp
         binding.points.text = response.points.toString()
         binding.userPic.setUserImageOrInitials(response.photoUrl, response.name!!)
         binding.userLayout.visibility = View.VISIBLE

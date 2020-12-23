@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/_6sdp"
-    android:layout_marginBottom="@dimen/_16sdp"
-    android:layout_marginEnd="@dimen/_12sdp">
+    android:layout_marginBottom="@dimen/_16sdp">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/title"
@@ -19,11 +18,188 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Well done Akshat, you scored" />
 
-    <com.mindorks.placeholderview.PlaceHolderView
-        android:id="@+id/award_rv"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/award1"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/title"
-        app:layout_constraintTop_toBottomOf="@id/title" />
+        android:layout_marginTop="@dimen/_16sdp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.3">
+
+        <ImageView
+            android:id="@+id/image_award1"
+            android:layout_width="@dimen/_64sdp"
+            android:layout_height="@dimen/_64sdp"
+            android:layout_marginBottom="@dimen/_6sdp"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toTopOf="@id/title_award1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/josh_skill" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/title_award1"
+            android:layout_width="@dimen/_64sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_2sdp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_8ssp"
+            app:layout_constraintBottom_toTopOf="@id/date_award1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Student of the year" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/date_award1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
+            android:textColor="@color/grey_68"
+            android:textSize="@dimen/_8ssp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Earned on 24th Aug" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/award2"
+        layout="@layout/award_item_view_holder"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:visibility="gone"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/award1"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.3">
+
+        <ImageView
+
+            android:id="@+id/image_award2"
+            android:layout_width="@dimen/_64sdp"
+            android:layout_height="@dimen/_64sdp"
+            android:layout_marginBottom="@dimen/_6sdp"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toTopOf="@id/title_award2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/josh_skill" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/title_award2"
+            android:layout_width="@dimen/_64sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_2sdp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_8ssp"
+            app:layout_constraintBottom_toTopOf="@id/date_award2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Student of the year" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/date_award2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
+            android:textColor="@color/grey_68"
+            android:textSize="@dimen/_8ssp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Earned on 24th Aug" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+
+        android:id="@+id/award3"
+        layout="@layout/award_item_view_holder"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@+id/award2"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.3">
+
+        <ImageView
+
+            android:id="@+id/image_award3"
+            android:layout_width="@dimen/_64sdp"
+            android:layout_height="@dimen/_64sdp"
+            android:layout_marginBottom="@dimen/_6sdp"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toTopOf="@id/title_award3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/josh_skill" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/title_award3"
+            android:layout_width="@dimen/_64sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_2sdp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_8ssp"
+            app:layout_constraintBottom_toTopOf="@id/date_award3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Student of the year" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/date_award3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
+            android:textColor="@color/grey_68"
+            android:textSize="@dimen/_8ssp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Earned on 24th Aug" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <com.mindorks.placeholderview.PlaceHolderView
+        android:id="@+id/rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_8ssp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"/>
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:background="@color/light_shade_of_gray"
+        app:layout_constraintEnd_toEndOf="@id/award1"
+        app:layout_constraintStart_toStartOf="@id/award1"
+        app:layout_constraintTop_toBottomOf="@id/award1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

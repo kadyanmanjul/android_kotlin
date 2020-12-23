@@ -37,6 +37,8 @@ class PointsSummaryTitleViewHolder(var date: String, var point: Int, var index: 
     @View(R.id.expand_unexpand_view)
     lateinit var toggleView: AppCompatImageView
 
+    var isExpanded=false
+
     private val drawableDown: Drawable? by lazy {
         ResourcesCompat.getDrawable(
             AppObjectController.joshApplication.resources,
@@ -73,7 +75,6 @@ class PointsSummaryTitleViewHolder(var date: String, var point: Int, var index: 
         }
         rootView.background = drawable
         score.text = point.toString()
-        toggleView.setImageDrawable(drawableDown)
     }
 
     @Expand
