@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
 import com.joshtalks.joshskills.core.JoshApplication
+import com.joshtalks.joshskills.core.MY_COLOR_CODE
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
 import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
@@ -53,6 +54,11 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                     response.body()?.awardCategory?.sortedBy { it.sortOrder }?.map {
                         it.awards?.sortedBy { it.sortOrder }
+                    }
+                    if (mentorId == Mentor.getInstance().getId()) {
+                        response.body()?.colorCode?.let {
+                            PrefManager.put(MY_COLOR_CODE, it, false)
+                        }
                     }
                     userData.postValue(response.body()!!)
                     return@launch
