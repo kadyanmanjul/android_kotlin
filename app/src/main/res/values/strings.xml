@@ -565,8 +565,8 @@
     <string name="user_streak_text">Days Streak</string>
     <string name="user_min_text">Mins Spoken</string>
     <string name="see_leaderboard">See the Leaderboard >></string>
-    <string name="how_points_work">How to get points</string>
-    <string name="how_points_work_title">How to Get Points</string>
+    <string name="how_points_work">How to earn points</string>
+    <string name="how_points_work_title">How to Earn Points</string>
     <string name="points_history">Points History</string>
     <string name="group_chat">Group Chat</string>
     <string name="go_to_profile">Go to Profile</string>
