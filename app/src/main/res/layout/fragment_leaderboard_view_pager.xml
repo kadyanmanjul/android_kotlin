@@ -89,24 +89,26 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/rank"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/_60sdp"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/_8sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/white"
                 android:gravity="center"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.01"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/user_pic_frame"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="1222" />
+
 
             <FrameLayout
                 android:id="@+id/user_pic_frame"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/_8sdp"
-                android:layout_marginStart="@dimen/_54sdp"
+                android:layout_marginStart="@dimen/_64sdp"
                 android:gravity="center_vertical|start"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:background="@drawable/circle2"
@@ -129,33 +131,30 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:layout_marginBottom="@dimen/_4sdp"
-                android:scrollHorizontally="true"
                 android:ellipsize="end"
                 android:maxLines="1"
+                android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/white"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/points"
                 app:layout_constraintEnd_toStartOf="@id/points"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toEndOf="@id/user_pic_frame"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_goneMarginStart="@dimen/_84sdp"
+                app:layout_constraintTop_toTopOf="@+id/points"
                 tools:text="@string/improve_answer" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/points"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginEnd="@dimen/_12sdp"
-                android:layout_marginBottom="@dimen/_4sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/white"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/rank"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/rank"
                 tools:text="500" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
