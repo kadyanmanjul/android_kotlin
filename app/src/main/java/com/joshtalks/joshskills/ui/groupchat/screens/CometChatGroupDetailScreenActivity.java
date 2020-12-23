@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.groupchat.screens;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -54,7 +53,7 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
     private static final int LIMIT = 30;
     private final String TAG = "CometChatGroupDetail";
     private final ArrayList<String> groupMemberUids = new ArrayList<>();
-    private final List<GroupMember> groupMembers = new ArrayList<>();
+    //private final List<GroupMember> groupMembers = new ArrayList<>();
     private final User loggedInUser = CometChat.getLoggedInUser();
     String[] s = new String[0];
     // private Avatar groupIcon;
@@ -63,11 +62,14 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
     private String ownerId;
     // private TextView tvGroupName;
     private TextView tvGroupDesc;
-    private TextView tvAdminCount;
-    private TextView tvModeratorCount;
-    private TextView tvBanMemberCount;
+    //private TextView tvAdminCount;
+    //private TextView tvModeratorCount;
+    //private TextView tvBanMemberCount;
     private RecyclerView rvMemberList;
-    private String guid, gName, gDesc, gPassword;
+    private String guid;
+    private String gName;
+    private String gDesc;
+    private String gPassword;
     private GroupMembersRequest groupMembersRequest;
     private GroupMemberAdapter groupMemberAdapter;
     private int adminCount;
@@ -79,11 +81,13 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
     private String loggedInUserScope;
     private GroupMember groupMember;
     private TextView tvDelete;
-    private TextView tvLoadMore;
-    private AlertDialog.Builder dialog;
+    //private TextView tvLoadMore;
+    //private AlertDialog.Builder dialog;
     private TextView tvMemberCount;
     private int groupMemberCount = 0;
     private FontUtils fontUtils;
+    private boolean isNoMoreMembers;
+    private boolean isInProgress;
 
     private ImageView videoCallBtn;
 
@@ -116,12 +120,12 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
         tvGroupDesc = findViewById(R.id.group_description);
         // tvGroupName.setOnClickListener(v -> updateGroupDialog());
         tvMemberCount = findViewById(R.id.tv_members);
-        tvAdminCount = findViewById(R.id.tv_admin_count);
-        tvModeratorCount = findViewById(R.id.tv_moderator_count);
-        tvBanMemberCount = findViewById(R.id.tv_ban_count);
+//        tvAdminCount = findViewById(R.id.tv_admin_count);
+//        tvModeratorCount = findViewById(R.id.tv_moderator_count);
+//        tvBanMemberCount = findViewById(R.id.tv_ban_count);
         rvMemberList = findViewById(R.id.member_list);
-        tvLoadMore = findViewById(R.id.tv_load_more);
-        tvLoadMore.setText(String.format(getResources().getString(R.string.load_more_members, ""), ""));
+//        tvLoadMore = findViewById(R.id.tv_load_more);
+//        tvLoadMore.setText(String.format(getResources().getString(R.string.load_more_members, ""), ""));
         TextView tvAddMember = findViewById(R.id.tv_add_member);
         callBtn = findViewById(R.id.callBtn_iv);
         videoCallBtn = findViewById(R.id.video_callBtn_iv);
@@ -178,7 +182,25 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
             }
         }));
 
-        tvLoadMore.setOnClickListener(view -> getGroupMembers());
+        rvMemberList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (!isNoMoreMembers && !isInProgress) {
+                    if (linearLayoutManager.findFirstVisibleItemPosition() == 10 || !rvMemberList.canScrollVertically(1)) {
+                        isInProgress = true;
+                        getGroupMembers();
+                    }
+                }
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
+
+//        tvLoadMore.setOnClickListener(view -> getGroupMembers());
         tvExit.setOnClickListener(view -> createDialog(getResources().getString(R.string.exit_group_title), getResources().getString(R.string.exit_group_message),
                 getResources().getString(R.string.exit), getResources().getString(R.string.cancel), R.drawable.ic_exit_to_app));
 
@@ -483,8 +505,8 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
         groupMembersRequest.fetchNext(new CometChat.CallbackListener<List<GroupMember>>() {
             @Override
             public void onSuccess(List<GroupMember> groupMembers) {
-                Log.e(TAG, "onSuccess: " + groupMembers.size());
-                if (groupMembers != null && groupMembers.size() != 0) {
+                isInProgress = false;
+                if (groupMembers != null && !groupMembers.isEmpty()) {
                     adminCount = 0;
                     moderatorCount = 0;
                     groupMemberUids.clear();
@@ -508,10 +530,12 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
                         groupMemberAdapter.addAll(groupMembers);
                     }
                     if (groupMembers.size() < LIMIT) {
-                        tvLoadMore.setVisibility(View.GONE);
+//                        tvLoadMore.setVisibility(View.GONE);
+                        isNoMoreMembers = true;
                     }
                 } else {
-                    tvLoadMore.setVisibility(View.GONE);
+//                    tvLoadMore.setVisibility(View.GONE);
+                    isNoMoreMembers = true;
                 }
             }
 

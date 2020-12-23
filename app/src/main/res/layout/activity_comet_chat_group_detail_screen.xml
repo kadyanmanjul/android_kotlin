@@ -356,7 +356,8 @@
                 android:layout_below="@id/member_list"
                 android:gravity="center"
                 android:paddingTop="8dp"
-                android:paddingBottom="8dp">
+                android:paddingBottom="8dp"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/tv_load_more"
