@@ -13,7 +13,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/rank"
-        android:layout_width="@dimen/_48sdp"
+        android:layout_width="@dimen/_60sdp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="@dimen/_8sdp"
@@ -24,14 +24,14 @@
         app:layout_constraintHorizontal_bias="0.01"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="1222" />
+        tools:text="122222" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/user_pic"
         android:layout_width="@dimen/_40sdp"
         android:layout_height="@dimen/_40sdp"
         android:layout_marginVertical="@dimen/_8sdp"
-        android:layout_marginStart="@dimen/_54sdp"
+        android:layout_marginStart="@dimen/_64sdp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:gravity="center_vertical|start"
         android:src="@color/checkmark_blue"
