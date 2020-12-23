@@ -22,12 +22,14 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/title"
-        android:layout_width="@dimen/_64sdp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginBottom="@dimen/_2sdp"
+        android:layout_width="@dimen/_76sdp"
+        android:layout_height="@dimen/_24ssp"
+        android:gravity="center|top"
+        android:padding="@dimen/_1sdp"
+        android:layout_marginBottom="@dimen/_1sdp"
         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
         android:textSize="@dimen/_8ssp"
+        android:minLines="2"
         android:textColor="@color/black"
         app:layout_constraintBottom_toTopOf="@id/date"
         app:layout_constraintEnd_toEndOf="parent"
@@ -36,8 +38,9 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/_76sdp"
+        android:layout_height="@dimen/_12ssp"
+        android:gravity="center|top"
         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
         android:textSize="@dimen/_8ssp"
         android:textColor="@color/grey_68"

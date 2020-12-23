@@ -184,22 +184,31 @@
         android:id="@+id/rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_8ssp"
+        android:layout_marginStart="@dimen/_12ssp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias="0"
+        app:layout_constraintHorizontal_bias="0.5"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title"/>
 
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="rv,award1" />
+
     <View
         android:id="@+id/view"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_1sdp"
         android:layout_marginTop="@dimen/_8sdp"
         android:background="@color/light_shade_of_gray"
-        app:layout_constraintEnd_toEndOf="@id/award1"
-        app:layout_constraintStart_toStartOf="@id/award1"
-        app:layout_constraintTop_toBottomOf="@id/award1" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
