@@ -113,7 +113,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     private final List<BaseMessage> messageList = new ArrayList<>();
     private final User loggedInUser = CometChat.getLoggedInUser();
     private final int currentAudioPosition = -1;
-    public int count = 0;
+    // public int count = 0;
     private String name = "";
     private String status = "";
     private MessagesRequest messagesRequest;    //Used to fetch messages.
@@ -137,11 +137,11 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     private String groupType;
     private String loggedInUserScope;
     private BaseMessage baseMessage;
-    private final List<BaseMessage> baseMessages = new ArrayList<>();
+    // private final List<BaseMessage> baseMessages = new ArrayList<>();
     private boolean isEdit;
     private boolean isReply;
     private String groupOwnerId;
-    private int memberCount;
+    // private int memberCount;
     private String memberNames;
     private int totalMembers;
     private int onlineMembers;
@@ -150,7 +150,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     private Timer typingTimer = new Timer();
     private boolean isNoMoreMessages;
     private boolean isInProgress;
-    private MessageActionFragment messageActionFragment;
+    // private MessageActionFragment messageActionFragment;
     private ExoAudioPlayer audioPlayerManager;
 
     @Override
@@ -1262,7 +1262,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
 
     @Override
     public void onPause() {
-        Log.d(TAG, "onPause: ");
+        // Log.d(TAG, "onPause: ");
         super.onPause();
         removeMessageListener();
         removeUserListener();
@@ -1277,7 +1277,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: ");
+        // Log.d(TAG, "onResume: ");
         rvChatListView.removeItemDecoration(stickyHeaderDecoration);
         messageAdapter = null;
         messagesRequest = null;
@@ -1285,8 +1285,8 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         fetchMessage();
         addMessageListener();
 
-        if (messageActionFragment != null)
-            messageActionFragment.dismiss();
+//        if (messageActionFragment != null)
+//            messageActionFragment.dismiss();
 
         if (type != null) {
             if (type.equals(CometChatConstants.RECEIVER_TYPE_USER)) {
