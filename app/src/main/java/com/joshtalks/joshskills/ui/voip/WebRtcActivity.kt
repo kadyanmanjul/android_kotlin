@@ -32,7 +32,6 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
 import com.joshtalks.joshskills.ui.voip.util.AudioPlayer
 import com.joshtalks.joshskills.ui.voip.util.SoundPoolManager
-import com.joshtalks.joshskills.ui.voip.voip_rating.VoipRatingFragment
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -114,7 +113,7 @@ class WebRtcActivity : BaseActivity() {
 
     private fun checkAndShowRating(id: String?) {
         Timber.tag(TAG).e("checkAndShowRating   %s", id + "  " + mBoundService?.getTimeOfTalk())
-        if (id.isNullOrEmpty().not() && mBoundService!!.getTimeOfTalk() > 0) {
+       /* if (id.isNullOrEmpty().not() && mBoundService!!.getTimeOfTalk() > 0) {
             val prev = supportFragmentManager.findFragmentByTag(VoipRatingFragment::class.java.name)
             if (prev != null) {
                 return
@@ -122,7 +121,7 @@ class WebRtcActivity : BaseActivity() {
             VoipRatingFragment.newInstance(id, mBoundService!!.getTimeOfTalk())
                 .show(supportFragmentManager, VoipRatingFragment::class.java.name)
             return
-        }
+        }*/
         this@WebRtcActivity.finishAndRemoveTask()
     }
 

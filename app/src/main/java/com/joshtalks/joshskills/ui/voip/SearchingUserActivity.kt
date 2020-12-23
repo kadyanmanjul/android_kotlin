@@ -103,7 +103,7 @@ class SearchingUserActivity : BaseActivity() {
         override fun switchChannel(data: HashMap<String, String?>) {
             val callActivityIntent =
                 Intent(this@SearchingUserActivity, WebRtcActivity::class.java).apply {
-                    putExtra(CALL_TYPE, CallType.SWITCH_CALL)
+                    putExtra(CALL_TYPE, CallType.INCOMING)
                     putExtra(AUTO_PICKUP_CALL, true)
                     putExtra(CALL_USER_OBJ, data)
                 }
@@ -149,23 +149,8 @@ class SearchingUserActivity : BaseActivity() {
     }
 
     private fun addObserver() {
-        viewModel.voipDetailsLiveData.observe(this, {
-            if (it != null) {
-                AppAnalytics.create(AnalyticsEvent.FIND_USER_FOR_P2P_CALL.NAME)
-                    .addUserDetails()
-                    .addParam(AnalyticsEvent.PLIVO_ID.NAME, it.plivoUserName)
-                    .push()
-                AudioPlayer.getInstance().playProgressTone()
-                //   WebRtcService.startOutgoingCall(getMapForOutgoing(it))
-            }
-        })
         viewModel.apiCallStatusLiveData.observe(this, {
-            if (ApiCallStatus.RETRY == it) {
-                AppObjectController.uiHandler.postDelayed({
-                    initApiForSearchUser()
-
-                }, 1000)
-            } else if (ApiCallStatus.FAILED_PERMANENT == it) {
+            if (ApiCallStatus.FAILED == it || ApiCallStatus.FAILED_PERMANENT == it) {
                 showToast("We did not find any user, please retry")
                 stopCalling()
             }
@@ -242,9 +227,9 @@ class SearchingUserActivity : BaseActivity() {
     }
 
     private fun initApiForSearchUser() {
-        //   courseId?.let {
-        viewModel.getUserForTalk(::callback)
-        //    }
+        courseId?.let {
+            viewModel.getUserForTalk(it, topicId, ::callback)
+        }
     }
 
     private fun callback(token: String, channelName: String, uid: Int) {

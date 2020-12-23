@@ -49,6 +49,7 @@ import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
+import com.joshtalks.joshskills.ui.voip.RTC_CALLER_UID_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_CHANNEL_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_TOKEN_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
@@ -339,11 +340,38 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 callDisconnectNotificationAction()
                 return null
             }
-
+            NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION -> {
+                callForceConnect(notificationObject.actionData)
+                return null
+            }
+            NotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION -> {
+                callForceDisconnect()
+                return null
+            }
             else -> {
                 return null
             }
         }
+    }
+
+    private fun callForceConnect(actionData: String?) {
+        actionData?.let {
+            try {
+                val obj = JSONObject(it)
+                val data = HashMap<String, String>()
+                data[RTC_TOKEN_KEY] = obj.getString("token")
+                data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
+                data[RTC_UID_KEY] = obj.getString("uid")
+                data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
+                WebRtcService.forceConnect(data)
+            } catch (t: Throwable) {
+                t.printStackTrace()
+            }
+        }
+    }
+
+    private fun callForceDisconnect() {
+        WebRtcService.forceDisconnect()
     }
 
     private fun callDisconnectNotificationAction() {
@@ -358,6 +386,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 data[RTC_TOKEN_KEY] = obj.getString("token")
                 data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
                 data[RTC_UID_KEY] = obj.getString("uid")
+                data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
                 WebRtcService.startOnNotificationIncomingCall(data)
             } catch (t: Throwable) {
                 t.printStackTrace()

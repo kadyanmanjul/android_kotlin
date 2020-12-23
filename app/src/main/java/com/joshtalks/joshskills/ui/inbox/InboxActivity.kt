@@ -78,6 +78,7 @@ import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivit
 import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
+import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -1099,6 +1100,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     override fun onDestroy() {
         super.onDestroy()
-        RtcEngine.destroy()
+        if (WebRtcService.isCallWasOnGoing.not()) {
+            RtcEngine.destroy()
+        }
     }
 }

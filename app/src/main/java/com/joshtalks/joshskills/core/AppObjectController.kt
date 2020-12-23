@@ -244,7 +244,7 @@ class AppObjectController {
                 .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
                 .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
                 .callTimeout(CALL_TIMEOUT, TimeUnit.SECONDS)
-                .retryOnConnectionFailure(true)
+               // .retryOnConnectionFailure(true)
                 .followSslRedirects(true)
                 .addInterceptor(StatusCodeInterceptor())
                 //   .addInterceptor(NewRelicHttpMetricsLogger())

@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.core;
 
 import android.os.Handler;
-import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -179,7 +178,7 @@ public class CountUpTimer {
     }
 
     void startTicking() {
-        if (tickHandler == null) tickHandler = new Handler(Looper.myLooper());
+        if (tickHandler == null) tickHandler = new Handler();
         tickHandler.removeCallbacksAndMessages(null);
 
         int time = getTime();
