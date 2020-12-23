@@ -435,6 +435,11 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     }
                     R.id.menu_help -> {
                         openHelpActivity()
+                    }R.id.profile_setting -> {
+                        openUserProfileActivity(Mentor.getInstance().getId())
+                    }
+                    R.id.leaderboard_setting -> {
+                        openLeaderBoard()
                     }
                 }
                 return@setOnMenuItemClickListener true
@@ -867,9 +872,17 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             it?.let {
                 ///hideProgressBar()
                 initScoreCardView(it)
+                initToolbarView()
             }
         })
 
+    }
+
+    private fun initToolbarView() {
+        conversationBinding.toolbar.menu.findItem(R.id.leaderboard_setting).isVisible = true
+        conversationBinding.toolbar.menu.findItem(R.id.leaderboard_setting).isEnabled = true
+        conversationBinding.toolbar.menu.findItem(R.id.profile_setting).isVisible = true
+        conversationBinding.toolbar.menu.findItem(R.id.profile_setting).isEnabled = true
     }
 
     private fun initScoreCardView(userData: UserProfileResponse) {

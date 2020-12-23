@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/_6sdp"
-    android:layout_marginBottom="@dimen/_16sdp">
+    android:layout_marginTop="@dimen/_6sdp">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/title"
@@ -24,6 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_16sdp"
         android:visibility="gone"
+        tools:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.05"
         app:layout_constraintStart_toStartOf="parent"
@@ -77,8 +77,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_16sdp"
         android:visibility="gone"
-        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@id/award1"
         app:layout_constraintTop_toBottomOf="@id/title"
         app:layout_constraintWidth_default="percent"
@@ -184,14 +184,15 @@
         android:id="@+id/rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_12ssp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0"
-        app:layout_constraintHorizontal_bias="0.5"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_4sdp"
         android:visibility="gone"
+        tools:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title"/>
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintVertical_bias="0" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier"
@@ -202,13 +203,13 @@
 
     <View
         android:id="@+id/view"
-        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_1sdp"
         android:layout_marginTop="@dimen/_8sdp"
         android:background="@color/light_shade_of_gray"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@id/barrier"
+        app:layout_constraintStart_toStartOf="@id/barrier"
         app:layout_constraintTop_toBottomOf="@id/barrier" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

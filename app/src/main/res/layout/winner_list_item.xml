@@ -29,7 +29,7 @@
     <ImageView
         android:id="@+id/award"
         android:layout_width="@dimen/_50sdp"
-        android:layout_height="@dimen/_55ssp"
+        android:layout_height="@dimen/_55sdp"
         android:layout_marginTop="@dimen/_12sdp"
         android:scaleType="fitXY"
         app:layout_constraintStart_toStartOf="parent"

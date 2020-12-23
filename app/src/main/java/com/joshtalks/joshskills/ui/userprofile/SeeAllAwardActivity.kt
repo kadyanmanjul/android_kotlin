@@ -76,7 +76,8 @@ class SeeAllAwardActivity : BaseActivity() {
             AppObjectController.joshApplication.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = layoutInflater.inflate(R.layout.award_view_holder, binding.rootView, false)
         val title = view.findViewById(R.id.title) as AppCompatTextView
-        (view.findViewById(R.id.view) as View).visibility = View.GONE
+        val viewDivider = view.findViewById(R.id.view) as View
+        viewDivider.visibility = View.VISIBLE
         val recyclerView = view.findViewById(R.id.rv) as PlaceHolderView
         recyclerView.visibility = View.VISIBLE
         title.text = awardCategory.label
