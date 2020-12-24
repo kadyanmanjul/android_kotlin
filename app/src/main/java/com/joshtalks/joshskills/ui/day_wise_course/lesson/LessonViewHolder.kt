@@ -119,6 +119,12 @@ class LessonViewHolder(
                     }
                 }
             } else {
+
+                grammarStatus.visibility=android.view.View.GONE
+                vocabStatus.visibility=android.view.View.GONE
+                readingStatus.visibility=android.view.View.GONE
+                speakingStatus.visibility=android.view.View.GONE
+
                 startLessonTv.text = getAppContext().getString(R.string.start_lesson)
             }
 

@@ -11,7 +11,7 @@
         android:layout_marginStart="@dimen/_8sdp"
         android:gravity="center"
         android:text="@string/course_overview"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
         app:layout_constraintBottom_toBottomOf="@+id/back_iv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
