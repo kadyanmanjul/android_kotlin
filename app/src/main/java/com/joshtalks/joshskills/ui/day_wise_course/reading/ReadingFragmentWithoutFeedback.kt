@@ -625,7 +625,6 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
         binding.continueBtn.visibility = View.VISIBLE
 
         activityCallback?.onSectionStatusUpdate(2, true)
-        activityCallback?.onSectionStatusUpdate(3, true)
 
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -1365,7 +1364,6 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
 
     fun onReadingContinueClick() {
         activityCallback?.onNextTabCall(3)
-        activityCallback?.onContinueClick()
     }
 
 /*
