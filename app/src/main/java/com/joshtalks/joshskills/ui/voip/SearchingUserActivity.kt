@@ -81,7 +81,6 @@ class SearchingUserActivity : BaseActivity() {
     }
 
     private var callback: WebRtcCallback = object : WebRtcCallback {
-
         override fun onConnect(connectId: String) {
             Timber.tag("SearchingUserActivity").e("onConnect")
             outgoingCallData[RTC_CALLER_UID_KEY] = connectId
