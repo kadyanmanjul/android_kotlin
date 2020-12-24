@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/_8sdp">
+        android:paddingVertical="@dimen/_8sdp">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/progress_title_tv"
