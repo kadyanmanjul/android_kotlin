@@ -17,20 +17,18 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.CallType
-import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivitySearchingUserBinding
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import timber.log.Timber
-import java.util.HashMap
+import java.util.*
+import kotlin.collections.LinkedHashMap
+import kotlin.collections.set
 
 const val COURSE_ID = "course_id"
 const val TOPIC_ID = "topic_id"
@@ -246,13 +244,6 @@ class SearchingUserActivity : BaseActivity() {
         return super.onKeyDown(keyCode, event)
     }
 
-    override fun onUserLeaveHint() {
-        super.onUserLeaveHint()
-        if (WebRtcService.isCallerJoin.not()) {
-            stopCalling()
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         timer?.cancel()
@@ -279,6 +270,7 @@ class SearchingUserActivity : BaseActivity() {
         super.onStop()
         unbindService(myConnection)
     }
+
     private fun getMapForOutgoing(
         token: String,
         channelName: String,

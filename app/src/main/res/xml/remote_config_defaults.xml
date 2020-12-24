@@ -131,7 +131,7 @@
     </entry>
     <entry>
         <key>IS_NOTIFICATION_CRASH</key>
-        <value>false</value>
+        <value>true</value>
     </entry>
     <entry>
         <key>start_7_day_trial</key>

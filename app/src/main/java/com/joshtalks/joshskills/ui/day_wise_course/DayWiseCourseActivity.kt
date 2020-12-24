@@ -125,6 +125,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             val grammarQuestions: ArrayList<ChatModel> = ArrayList()
             val vocabularyQuestions: ArrayList<ChatModel> = ArrayList()
             val readingQuestions: ArrayList<ChatModel> = ArrayList()
+            val speakingQuestions: ArrayList<ChatModel> = ArrayList()
 
             it.forEach {
                 when (it.question?.chatType) {
@@ -138,13 +139,14 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                         readingQuestions.add(it)
                     }
                     else -> {
-
+                        speakingQuestions.add(it)
                     }
                 }
             }
             sectionWiseChatList.add(grammarQuestions)
             sectionWiseChatList.add(vocabularyQuestions)
             sectionWiseChatList.add(readingQuestions)
+            sectionWiseChatList.add(speakingQuestions)
 
             setUpTablayout()
 
