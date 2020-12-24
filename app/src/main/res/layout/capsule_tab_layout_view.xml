@@ -24,6 +24,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         app:srcCompat="@drawable/ic_green_check_circle"
-        app:tint="@color/grey" />
+        app:tint="@color/green_right_answer" />
 
 </LinearLayout>

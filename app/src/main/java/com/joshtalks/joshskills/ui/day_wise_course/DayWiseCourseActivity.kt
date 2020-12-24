@@ -264,19 +264,9 @@ class DayWiseCourseActivity : CoreJoshActivity(),
     private fun setTabCompletionStatus(tab: View?, status: Boolean) {
         tab?.let {
             if (status) {
-                it.findViewById<ImageView>(R.id.tab_iv).drawable.setTint(
-                    ContextCompat.getColor(
-                        this,
-                        R.color.green_right_answer
-                    )
-                )
+                it.findViewById<ImageView>(R.id.tab_iv).visibility=View.VISIBLE
             } else {
-                it.findViewById<ImageView>(R.id.tab_iv).drawable.setTint(
-                    ContextCompat.getColor(
-                        this,
-                        R.color.grey
-                    )
-                )
+                it.findViewById<ImageView>(R.id.tab_iv).visibility=View.GONE
             }
         }
     }

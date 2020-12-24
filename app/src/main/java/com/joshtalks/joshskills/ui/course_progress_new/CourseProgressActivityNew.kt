@@ -168,12 +168,12 @@ class CourseProgressActivityNew : AppCompatActivity(),
         viewModel.progressLiveData.observe(this, {
 
             courseOverviewResponse = it.responseData
-            binding.pdfNameTv.text = it.pdfInfo.coursePdfName
-            binding.sizeTv.text = "${it.pdfInfo.coursePdfSize} kB"
-            binding.pageCountTv.text = "${it.pdfInfo.coursePdfPageCount} pages"
             pdfInfo = it.pdfInfo
 
             pdfInfo?.let {
+                binding.pdfNameTv.text = it.coursePdfName
+                binding.sizeTv.text = "${it.coursePdfSize} kB"
+                binding.pageCountTv.text = "${it.coursePdfPageCount} pages"
                 binding.pdfView.visibility = View.VISIBLE
                 binding.progressLayout.visibility = View.GONE
                 if (PermissionUtils.isStoragePermissionEnabled(this) && AppDirectory.getFileSize(
