@@ -718,6 +718,9 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
                     replyObject.put("avatar", baseMessage.getSender().getAvatar());
                     replyObject.put("deletedAt", baseMessage.getDeletedAt());
                     replyObject.put("id", baseMessage.getId());
+                    if (baseMessage.getSender().getMetadata() != null && baseMessage.getSender().getMetadata().has("color_code")) {
+                        replyObject.put("color_code", baseMessage.getSender().getMetadata().getString("color_code"));
+                    }
                 }
                 metadata.put("reply", replyObject);
                 composeBox.replyMessageLayout.setVisibility(GONE);
@@ -786,7 +789,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         if (avatarUrl != null && !avatarUrl.isEmpty())
             userAvatar.setAvatar(avatarUrl);
         else {
-            userAvatar.setInitials(name);
+            userAvatar.setInitials(name, "#0D63B9");
         }
     }
 
@@ -897,6 +900,9 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             replyObject.put("avatar", baseMessage.getSender().getAvatar());
             replyObject.put("deletedAt", baseMessage.getDeletedAt());
             replyObject.put("id", baseMessage.getId());
+            if (baseMessage.getSender().getMetadata() != null && baseMessage.getSender().getMetadata().has("color_code")) {
+                replyObject.put("color_code", baseMessage.getSender().getMetadata().getString("color_code"));
+            }
             jsonObject.put("reply", replyObject);
             textMessage.setMetadata(jsonObject);
             sendTypingIndicator(true);

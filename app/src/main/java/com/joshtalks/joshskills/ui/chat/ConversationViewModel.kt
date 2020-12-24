@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.LogException.catchException
 import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
@@ -558,26 +559,30 @@ class ConversationViewModel(application: Application) :
                 .setRegion(BuildConfig.COMETCHAT_REGION)
                 .build()
 
-            CometChat.init(
-                AppObjectController.joshApplication,
-                BuildConfig.COMETCHAT_APP_ID,
-                appSettings,
-                object : CometChat.CallbackListener<String>() {
-                    override fun onSuccess(p0: String?) {
-                        Timber.d("Initialization completed successfully")
-                        getGroupDetails(inboxEntity.conversation_id)
-                    }
+            try {
+                CometChat.init(
+                    AppObjectController.joshApplication,
+                    BuildConfig.COMETCHAT_APP_ID,
+                    appSettings,
+                    object : CometChat.CallbackListener<String>() {
+                        override fun onSuccess(p0: String?) {
+                            Timber.d("Initialization completed successfully")
+                            getGroupDetails(inboxEntity.conversation_id)
+                        }
 
-                    override fun onError(p0: CometChatException?) {
-                        Timber.d("Initialization failed with exception: %s", p0?.message)
-                        isLoading.postValue(false)
-                        showToast(
-                            context.getString(R.string.generic_message_for_error),
-                            Toast.LENGTH_SHORT
-                        )
-                    }
+                        override fun onError(p0: CometChatException?) {
+                            Timber.d("Initialization failed with exception: %s", p0?.message)
+                            isLoading.postValue(false)
+                            showToast(
+                                context.getString(R.string.generic_message_for_error),
+                                Toast.LENGTH_SHORT
+                            )
+                        }
 
-                })
+                    })
+            } catch (ex: Exception) {
+                catchException(ex)
+            }
 
         }
     }

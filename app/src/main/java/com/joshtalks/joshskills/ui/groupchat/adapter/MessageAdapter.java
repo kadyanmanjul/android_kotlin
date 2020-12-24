@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.groupchat.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.util.Log;
@@ -352,7 +353,18 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         viewHolder.ivUser.setVisibility(View.INVISIBLE);
                         viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_same_bg_groupchat));
                     }
-                    setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName());
+                    String colorCode = null;
+                    try {
+                        if (baseMessage.getSender().getMetadata() != null && baseMessage.getSender().getMetadata().has("color_code")) {
+                            colorCode = baseMessage.getSender().getMetadata().getString("color_code");
+                        }
+                    } catch (JSONException exception) {
+                        exception.printStackTrace();
+                    }
+                    if (colorCode != null) {
+                        viewHolder.tvUser.setTextColor(Color.parseColor(colorCode));
+                    }
+                    setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName(), colorCode);
                     viewHolder.tvUser.setText(baseMessage.getSender().getName());
                 }
             } else {
@@ -372,6 +384,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     String message = metaData.getString("message");
                     viewHolder.replyLayout.setVisibility(View.VISIBLE);
                     String replyUserName = metaData.getString("name");
+                    String colorCode = null;
+                    if (metaData.has("color_code")) {
+                        colorCode = metaData.getString("color_code");
+                    }
+                    if (colorCode != null) {
+                        viewHolder.replyUser.setTextColor(Color.parseColor(colorCode));
+                    }
                     if (replyUserName.equals(loggedInUser.getName())) {
                         viewHolder.replyUser.setText(context.getString(R.string.you));
                     } else {
@@ -444,7 +463,18 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         viewHolder.tvUser.setVisibility(View.GONE);
                         viewHolder.ivUser.setVisibility(View.INVISIBLE);
                     }
-                    setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName());
+                    String colorCode = null;
+                    try {
+                        if (baseMessage.getSender().getMetadata() != null && baseMessage.getSender().getMetadata().has("color_code")) {
+                            colorCode = baseMessage.getSender().getMetadata().getString("color_code");
+                        }
+                    } catch (JSONException exception) {
+                        exception.printStackTrace();
+                    }
+                    if (colorCode != null) {
+                        viewHolder.tvUser.setTextColor(Color.parseColor(colorCode));
+                    }
+                    setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName(), colorCode);
                     viewHolder.tvUser.setText(baseMessage.getSender().getName());
                 }
             }
@@ -603,7 +633,18 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         viewHolder.ivUser.setVisibility(View.INVISIBLE);
                         viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_same_bg_groupchat));
                     }
-                    setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName());
+                    String colorCode = null;
+                    try {
+                        if (baseMessage.getSender().getMetadata() != null && baseMessage.getSender().getMetadata().has("color_code")) {
+                            colorCode = baseMessage.getSender().getMetadata().getString("color_code");
+                        }
+                    } catch (JSONException exception) {
+                        exception.printStackTrace();
+                    }
+                    if (colorCode != null) {
+                        viewHolder.tvUser.setTextColor(Color.parseColor(colorCode));
+                    }
+                    setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName(), colorCode);
                     viewHolder.tvUser.setText(baseMessage.getSender().getName());
                 }
                 boolean isSentimentNegative = Extensions.checkSentiment(baseMessage);
@@ -641,6 +682,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     String message = metaData.getString("message");
                     viewHolder.replyLayout.setVisibility(View.VISIBLE);
                     String replyUserName = metaData.getString("name");
+                    String colorCode = null;
+                    if (metaData.has("color_code")) {
+                        colorCode = metaData.getString("color_code");
+                    }
+                    if (colorCode != null) {
+                        viewHolder.replyUser.setTextColor(Color.parseColor(colorCode));
+                    }
                     if (replyUserName.equals(loggedInUser.getName())) {
                         viewHolder.replyUser.setText(context.getString(R.string.you));
                     } else {
@@ -774,7 +822,18 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         viewHolder.tvUser.setVisibility(View.GONE);
                         viewHolder.ivUser.setVisibility(View.INVISIBLE);
                     }
-                    setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName());
+                    String colorCode = null;
+                    try {
+                        if (baseMessage.getSender().getMetadata() != null && baseMessage.getSender().getMetadata().has("color_code")) {
+                            colorCode = baseMessage.getSender().getMetadata().getString("color_code");
+                        }
+                    } catch (JSONException exception) {
+                        exception.printStackTrace();
+                    }
+                    if (colorCode != null) {
+                        viewHolder.tvUser.setTextColor(Color.parseColor(colorCode));
+                    }
+                    setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName(), colorCode);
                     viewHolder.tvUser.setText(baseMessage.getSender().getName());
                 }
             }
@@ -823,7 +882,18 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         viewHolder.tvUser.setVisibility(View.GONE);
                         viewHolder.ivUser.setVisibility(View.INVISIBLE);
                     }
-                    setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName());
+                    String colorCode = null;
+                    try {
+                        if (baseMessage.getSender().getMetadata() != null && baseMessage.getSender().getMetadata().has("color_code")) {
+                            colorCode = baseMessage.getSender().getMetadata().getString("color_code");
+                        }
+                    } catch (JSONException exception) {
+                        exception.printStackTrace();
+                    }
+                    if (colorCode != null) {
+                        viewHolder.tvUser.setTextColor(Color.parseColor(colorCode));
+                    }
+                    setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName(), colorCode);
                     viewHolder.tvUser.setText(baseMessage.getSender().getName());
                 }
             }
@@ -934,13 +1004,12 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      * @param name      is a String. It is a name of groupMember.
      * @see Avatar
      */
-    private void setAvatar(Avatar avatar, String avatarUrl, String name) {
-
-        if (avatarUrl != null && !avatarUrl.isEmpty())
+    private void setAvatar(Avatar avatar, String avatarUrl, String name, String bgColorCode) {
+        if (avatarUrl != null && !avatarUrl.isEmpty()) {
             Glide.with(context).load(avatarUrl).into(avatar);
-        else
-            avatar.setInitials(name);
-
+        } else {
+            avatar.setInitials(name, bgColorCode);
+        }
     }
 
 

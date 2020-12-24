@@ -24,6 +24,7 @@ import android.widget.Toast;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.BindingMethod;
 import androidx.databinding.BindingMethods;
 
@@ -103,7 +104,10 @@ public class Avatar extends AppCompatImageView {
      * We cache them in this field
      * */
     private int imageSize;
-    private int color;
+
+    private int color = Color.BLUE;
+
+    private int textColor = Color.WHITE;
 
     private int borderColor;
 
@@ -234,10 +238,13 @@ public class Avatar extends AppCompatImageView {
         cornerRadius = (int) Utils.dpToPixel(2, getResources());
 
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(getResources().getColor(R.color.colorPrimary));
+        if (context != null && color == Color.BLUE) {
+            color = ContextCompat.getColor(context, R.color.colorPrimary);
+        }
+        paint.setColor(color);
         textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setTextSize(16f * getResources().getDisplayMetrics().scaledDensity);
-        textPaint.setColor(Color.WHITE);
+        textPaint.setColor(textColor);
 
         borderPaint = new Paint();
         borderPaint.setStyle(Paint.Style.STROKE);
@@ -248,7 +255,6 @@ public class Avatar extends AppCompatImageView {
         borderPaint.setColor(borderColor);
         borderPaint.setAntiAlias(true);
         borderPaint.setStrokeWidth(borderWidth);
-        color = getResources().getColor(R.color.colorPrimary);
         setOutlineProvider(new OutlineProvider());
     }
 
@@ -367,13 +373,16 @@ public class Avatar extends AppCompatImageView {
      *
      * @param name is a object of String.class. Its first 2 character are used in image with no avatar or icon.
      */
-    public void setInitials(@NonNull String name) {
+    public void setInitials(@NonNull String name, String bgColorCode) {
 
         String[] nameSplitArray = name.split(" ");
         if (nameSplitArray.length > 1) {
             text = nameSplitArray[0].substring(0, 1) + nameSplitArray[1].substring(0, 1);
         } else {
             text = name.substring(0, 1);
+        }
+        if (bgColorCode != null) {
+            setBackgroundColor(Color.parseColor(bgColorCode));
         }
         setDrawable();
         setImageDrawable(drawable);
@@ -488,7 +497,8 @@ public class Avatar extends AppCompatImageView {
 
     @Override
     public void setBackgroundColor(int color) {
-        this.paint.setColor(color);
+        this.color = color;
+        this.paint.setColor(this.color);
     }
 
     /**
@@ -498,7 +508,7 @@ public class Avatar extends AppCompatImageView {
      */
     public void setBorderColor(@ColorInt int color) {
         this.borderColor = color;
-        this.borderPaint.setColor(color);
+        this.borderPaint.setColor(borderColor);
     }
 
     /**
@@ -507,10 +517,15 @@ public class Avatar extends AppCompatImageView {
      * @param borderWidth
      */
     public void setBorderWidth(int borderWidth) {
-
         this.borderWidth = borderWidth;
         this.borderPaint.setStrokeWidth(borderWidth);
         invalidate();
+    }
+
+
+    public void setTextColor(int color) {
+        this.textColor = color;
+        this.textPaint.setColor(textColor);
     }
 
     private class OutlineProvider extends ViewOutlineProvider {

@@ -17,6 +17,8 @@ import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.databinding.UserListRowBinding;
 import com.joshtalks.joshskills.ui.groupchat.utils.FontUtils;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -109,20 +111,18 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
         }
 
         groupMemberViewHolder.userListRowBinding.txtUserName.setTypeface(fontUtils.getTypeFace(FontUtils.robotoRegular));
+        String colorCode = null;
+        try {
+            if (groupMember.getMetadata() != null && groupMember.getMetadata().has("color_code")) {
+                colorCode = groupMember.getMetadata().getString("color_code");
+            }
+        } catch (JSONException exception) {
+            exception.printStackTrace();
+        }
         if (groupMember.getAvatar() == null || groupMember.getAvatar().isEmpty())
-            groupMemberViewHolder.userListRowBinding.avUser.setInitials(groupMember.getName());
+            groupMemberViewHolder.userListRowBinding.avUser.setInitials(groupMember.getName(), colorCode);
         else
             groupMemberViewHolder.userListRowBinding.avUser.setAvatar(groupMember.getAvatar());
-
-//        if (Utils.isDarkMode(context)) {
-//            groupMemberViewHolder.userListRowBinding.txtUserName.setTextColor(context.getResources().getColor(R.color.textColorWhite));
-//            groupMemberViewHolder.userListRowBinding.tvSeprator.setBackgroundColor(context.getResources().getColor(R.color.grey));
-//            groupMemberViewHolder.userListRowBinding.txtUserScope.setTextColor(context.getResources().getColor(R.color.textColorWhite));
-//        } else {
-//            groupMemberViewHolder.userListRowBinding.txtUserName.setTextColor(context.getResources().getColor(R.color.primaryTextColor));
-//            groupMemberViewHolder.userListRowBinding.tvSeprator.setBackgroundColor(context.getResources().getColor(R.color.light_grey));
-//            groupMemberViewHolder.userListRowBinding.txtUserScope.setTextColor(context.getResources().getColor(R.color.secondaryTextColor));
-//        }
 
         if (i == getItemCount() - 1)
             groupMemberViewHolder.userListRowBinding.tvSeprator.setVisibility(View.GONE);
