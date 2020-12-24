@@ -551,7 +551,6 @@
             android:theme="@style/AppNoBarTheme"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:launchMode="singleTask"
-            android:taskAffinity=".calling"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity android:name=".ui.deeplink.DeeplinkAnalyzeActivity">
