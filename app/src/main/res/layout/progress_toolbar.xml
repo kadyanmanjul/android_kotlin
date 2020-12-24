@@ -5,6 +5,17 @@
     android:layout_height="wrap_content"
     android:background="@color/transparent"
     android:paddingVertical="@dimen/_6sdp">
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:gravity="center"
+        android:text="@string/course_overview"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+        app:layout_constraintBottom_toBottomOf="@+id/back_iv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/back_iv" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/back_iv"
@@ -16,16 +27,4 @@
         app:srcCompat="@drawable/ic_arrow_back"
         app:tint="@color/white" />
 
-    <com.google.android.material.textview.MaterialTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_8sdp"
-        android:gravity="center"
-        android:text="@string/course_overview"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-        app:layout_constraintBottom_toBottomOf="@+id/back_iv"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.30"
-        app:layout_constraintStart_toEndOf="@+id/back_iv"
-        app:layout_constraintTop_toTopOf="@+id/back_iv" />
 </androidx.constraintlayout.widget.ConstraintLayout>

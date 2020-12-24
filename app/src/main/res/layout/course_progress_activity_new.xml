@@ -36,7 +36,8 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/include">
+            app:layout_constraintTop_toBottomOf="@+id/include"
+            tools:visibility="visible">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/pdf_icon"
@@ -69,16 +70,18 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:layout_marginTop="@dimen/_4sdp"
+                android:alpha="0.8"
                 android:layout_marginBottom="@dimen/_4sdp"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/pdf_icon"
-                app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv">
+                app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv"
+                tools:visibility="visible">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_start_download"
-                    android:layout_width="@dimen/_24sdp"
-                    android:layout_height="@dimen/_24sdp"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
                     android:layout_gravity="center"
                     android:background="@drawable/circle_pdf_bg"
                     android:padding="@dimen/_6sdp"
@@ -88,8 +91,8 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_download_completed"
-                    android:layout_width="@dimen/_24sdp"
-                    android:layout_height="@dimen/_24sdp"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
                     android:layout_gravity="center"
                     android:padding="@dimen/_6sdp"
                     android:tint="#7A7A7A"
@@ -98,8 +101,8 @@
 
                 <com.pnikosis.materialishprogress.ProgressWheel
                     android:id="@+id/progress_dialog"
-                    android:layout_width="@dimen/_24sdp"
-                    android:layout_height="@dimen/_24sdp"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
                     android:layout_gravity="center"
                     android:visibility="gone"
                     app:matProg_barWidth="@dimen/_2sdp"
@@ -110,8 +113,8 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_cancel_download"
-                    android:layout_width="@dimen/_24sdp"
-                    android:layout_height="@dimen/_24sdp"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
                     android:layout_gravity="center"
                     android:clickable="true"
                     android:focusable="true"
@@ -131,8 +134,9 @@
                 android:layout_marginStart="@dimen/_8sdp"
                 android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginBottom="@dimen/_6sdp"
+                android:alpha="0.5"
                 android:text="238 pages"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                 app:layout_constraintBottom_toBottomOf="@+id/download_container"
                 app:layout_constraintStart_toEndOf="@+id/download_container"
                 app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv"
@@ -145,10 +149,11 @@
                 android:layout_marginStart="@dimen/_6sdp"
                 android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginBottom="@dimen/_6sdp"
+                android:alpha="0.5"
                 android:drawableStart="@drawable/ic_unselected_dot"
                 android:drawablePadding="@dimen/_6sdp"
                 android:text="24Kb"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                 app:layout_constraintBottom_toBottomOf="@+id/download_container"
                 app:layout_constraintStart_toEndOf="@+id/page_count_tv"
                 app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv"
@@ -160,10 +165,11 @@
                 android:layout_marginStart="@dimen/_6sdp"
                 android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginBottom="@dimen/_6sdp"
+                android:alpha="0.5"
                 android:drawableStart="@drawable/ic_unselected_dot"
                 android:drawablePadding="@dimen/_6sdp"
                 android:text="PDF"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                 app:layout_constraintBottom_toBottomOf="@+id/download_container"
                 app:layout_constraintStart_toEndOf="@+id/size_tv"
                 app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv"
