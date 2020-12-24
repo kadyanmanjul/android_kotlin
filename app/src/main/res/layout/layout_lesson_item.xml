@@ -217,7 +217,6 @@
                 android:layout_height="@dimen/_12sdp"
                 android:layout_marginStart="@dimen/_4sdp"
                 android:layout_marginEnd="@dimen/_4sdp"
-                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/view11"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintHorizontal_chainStyle="packed"

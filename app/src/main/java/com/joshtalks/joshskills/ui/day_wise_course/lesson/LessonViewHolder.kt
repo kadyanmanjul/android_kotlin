@@ -94,7 +94,7 @@ class LessonViewHolder(
                 grammarStatus.visibility=android.view.View.VISIBLE
                 vocabStatus.visibility=android.view.View.VISIBLE
                 readingStatus.visibility=android.view.View.VISIBLE
-                //speakingStatus.visibility=android.view.View.VISIBLE
+                speakingStatus.visibility=android.view.View.VISIBLE
 
                 message.question?.lesson?.let {
                     if (it.grammarStatus == LESSON_STATUS.CO) {

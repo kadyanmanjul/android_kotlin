@@ -319,10 +319,8 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                 3 -> {
                     tab.view.background =
                         ContextCompat.getDrawable(this, R.drawable.speaking_tab_bg)
-
                 }
             }
-
         }
     }
 
