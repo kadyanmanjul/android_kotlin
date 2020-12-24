@@ -1,11 +1,12 @@
 package com.joshtalks.joshskills.ui.day_wise_course.lesson
 
 import android.graphics.drawable.Drawable
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
@@ -21,12 +22,12 @@ import java.lang.ref.WeakReference
 
 @Layout(R.layout.layout_lesson_item)
 class LessonViewHolder(
-    activityRef: WeakReference<FragmentActivity>,
-    message: ChatModel,
-    previousMessage: ChatModel?,
-    private val onItemClick: ((lessonId: Int, lessonInterval: Int, chatId: String) -> Unit)? = null
+        activityRef: WeakReference<FragmentActivity>,
+        message: ChatModel,
+        previousMessage: ChatModel?,
+        private val onItemClick: ((lessonId: Int, lessonInterval: Int, chatId: String) -> Unit)? = null
 ) :
-    BaseChatViewHolder(activityRef, message, previousMessage) {
+        BaseChatViewHolder(activityRef, message, previousMessage) {
 
 
     @View(R.id.lesson_iv)
@@ -40,6 +41,9 @@ class LessonViewHolder(
 
     @View(R.id.start_lesson_tv)
     lateinit var startLessonTv: AppCompatTextView
+
+    @View(R.id.continue_lesson_tv)
+    lateinit var continueLessonTv: AppCompatTextView
 
     @View(R.id.root_view)
     lateinit var rootViewUncompleted: FrameLayout
@@ -68,16 +72,16 @@ class LessonViewHolder(
 
     private val drawableAttempted: Drawable? by lazy {
         ResourcesCompat.getDrawable(
-            AppObjectController.joshApplication.resources,
-            R.drawable.ic_lesson_green_tick,
-            null
+                AppObjectController.joshApplication.resources,
+                R.drawable.ic_lesson_green_tick,
+                null
         )
     }
     val drawableUnattempted: Drawable? by lazy {
         ResourcesCompat.getDrawable(
-            AppObjectController.joshApplication.resources,
-            R.drawable.ic_lesson_disabled_tick,
-            null
+                AppObjectController.joshApplication.resources,
+                R.drawable.ic_lesson_disabled_tick,
+                null
         )
     }
 
@@ -85,16 +89,17 @@ class LessonViewHolder(
     override fun onViewInflated() {
         super.onViewInflated()
         if (message.question?.lesson?.status != LESSON_STATUS.CO) {
-            rootViewUncompleted.visibility = android.view.View.VISIBLE
-            rootViewCompleted.visibility = android.view.View.GONE
+            rootViewUncompleted.visibility = VISIBLE
+            rootViewCompleted.visibility = GONE
 
             if (message.question?.lesson?.status == LESSON_STATUS.AT) {
-                startLessonTv.text = getAppContext().getString(R.string.continue_lesson)
+                startLessonTv.visibility = GONE
+                continueLessonTv.visibility = VISIBLE
 
-                grammarStatus.visibility=android.view.View.VISIBLE
-                vocabStatus.visibility=android.view.View.VISIBLE
-                readingStatus.visibility=android.view.View.VISIBLE
-                speakingStatus.visibility=android.view.View.VISIBLE
+                grammarStatus.visibility = VISIBLE
+                vocabStatus.visibility = VISIBLE
+                readingStatus.visibility = VISIBLE
+                speakingStatus.visibility = VISIBLE
 
                 message.question?.lesson?.let {
                     if (it.grammarStatus == LESSON_STATUS.CO) {
@@ -120,19 +125,19 @@ class LessonViewHolder(
                 }
             } else {
 
-                grammarStatus.visibility=android.view.View.GONE
-                vocabStatus.visibility=android.view.View.GONE
-                readingStatus.visibility=android.view.View.GONE
-                speakingStatus.visibility=android.view.View.GONE
-
-                startLessonTv.text = getAppContext().getString(R.string.start_lesson)
+                grammarStatus.visibility = GONE
+                vocabStatus.visibility = GONE
+                readingStatus.visibility = GONE
+                speakingStatus.visibility = GONE
+                startLessonTv.visibility = VISIBLE
+                continueLessonTv.visibility = GONE
             }
 
             message.lessons?.let { lessonModel ->
                 lessonNameTv.text = getAppContext().getString(
-                    R.string.lesson_name,
-                    lessonModel.lessonNo,
-                    lessonModel.lessonName
+                        R.string.lesson_name,
+                        lessonModel.lessonNo,
+                        lessonModel.lessonName
                 )
                 Utils.setImage(imageView, lessonModel.varthumbnail)
 
@@ -140,26 +145,26 @@ class LessonViewHolder(
             rootViewUncompleted.setOnClickListener {
                 message.question?.lesson?.let {
                     onItemClick?.invoke(
-                        it.id, message.question?.lesson?.interval ?: -1,
-                        message.chatId
+                            it.id, message.question?.lesson?.interval ?: -1,
+                            message.chatId
                     )
                 }
             }
 
             rootViewUncompleted.setBackgroundResource(
-                getViewHolderBGResource(
-                    previousMessage?.sender,
-                    message.sender
-                )
+                    getViewHolderBGResource(
+                            previousMessage?.sender,
+                            message.sender
+                    )
             )
         } else {
-            rootViewCompleted.visibility = android.view.View.VISIBLE
-            rootViewUncompleted.visibility = android.view.View.GONE
+            rootViewCompleted.visibility = VISIBLE
+            rootViewUncompleted.visibility = GONE
             message.question?.lesson?.let { lessonModel ->
                 lessonNameTvCompleted.text = getAppContext().getString(
-                    R.string.lesson_name,
-                    lessonModel.lessonNo,
-                    lessonModel.lessonName
+                        R.string.lesson_name,
+                        lessonModel.lessonNo,
+                        lessonModel.lessonName
                 )
             }
             rootViewCompleted.setOnClickListener {

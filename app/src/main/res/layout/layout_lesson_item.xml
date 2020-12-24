@@ -53,6 +53,29 @@
                 tools:srcCompat="@drawable/have_a_referral" />
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/continue_lesson_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:background="@drawable/rounded_state_button_bg"
+                android:backgroundTint="@color/colorPrimary"
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingHorizontal="@dimen/_12sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                android:text="@string/continue_lesson"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintTop_toBottomOf="@+id/lesson_iv"
+                app:layout_constraintVertical_bias="0.272" />
+
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/start_lesson_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -69,11 +92,9 @@
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintTop_toBottomOf="@+id/lesson_iv"
-                app:layout_constraintVertical_bias="0.272"
-                tools:text="@string/continue_lesson" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/lesson_iv" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/view1"
@@ -83,11 +104,11 @@
                 android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginBottom="@dimen/_4sdp"
                 android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/start_lesson_tv"
+                app:layout_constraintBottom_toBottomOf="@+id/continue_lesson_tv"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/start_lesson_tv"
+                app:layout_constraintTop_toTopOf="@+id/continue_lesson_tv"
                 app:srcCompat="@drawable/ic_lesson_disabled_tick"
                 tools:visibility="visible" />
 
@@ -97,11 +118,11 @@
                 android:layout_height="@dimen/_12sdp"
                 android:layout_marginStart="@dimen/_3sdp"
                 android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/start_lesson_tv"
+                app:layout_constraintBottom_toBottomOf="@+id/continue_lesson_tv"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toEndOf="@+id/view1"
-                app:layout_constraintTop_toTopOf="@+id/start_lesson_tv"
+                app:layout_constraintTop_toTopOf="@+id/continue_lesson_tv"
                 app:srcCompat="@drawable/ic_lesson_disabled_tick"
                 tools:visibility="visible" />
 
@@ -111,11 +132,11 @@
                 android:layout_height="@dimen/_12sdp"
                 android:layout_marginStart="@dimen/_3sdp"
                 android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/start_lesson_tv"
+                app:layout_constraintBottom_toBottomOf="@+id/continue_lesson_tv"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toEndOf="@+id/view2"
-                app:layout_constraintTop_toTopOf="@+id/start_lesson_tv"
+                app:layout_constraintTop_toTopOf="@+id/continue_lesson_tv"
                 app:srcCompat="@drawable/ic_lesson_disabled_tick"
                 tools:visibility="visible" />
 
@@ -126,12 +147,12 @@
                 android:layout_marginStart="@dimen/_3sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
                 android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/start_lesson_tv"
+                app:layout_constraintBottom_toBottomOf="@+id/continue_lesson_tv"
+                app:layout_constraintEnd_toStartOf="@id/continue_lesson_tv"
                 app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintEnd_toStartOf="@id/start_lesson_tv"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toEndOf="@+id/view3"
-                app:layout_constraintTop_toTopOf="@+id/start_lesson_tv"
+                app:layout_constraintTop_toTopOf="@+id/continue_lesson_tv"
                 app:srcCompat="@drawable/ic_lesson_disabled_tick"
                 tools:visibility="visible" />
 
@@ -165,9 +186,9 @@
                 android:layout_marginStart="@dimen/_12sdp"
                 android:layout_marginTop="@dimen/_12sdp"
                 android:gravity="start"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
                 android:letterSpacing="0"
                 android:lineSpacingMultiplier="1.2"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -204,11 +225,11 @@
                 android:layout_width="@dimen/_12sdp"
                 android:layout_height="@dimen/_12sdp"
                 android:layout_marginStart="@dimen/_4sdp"
+                app:layout_constraintBottom_toBottomOf="@id/view11"
                 app:layout_constraintEnd_toStartOf="@+id/view14"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toEndOf="@+id/view12"
-                app:layout_constraintBottom_toBottomOf="@id/view11"
                 app:srcCompat="@drawable/ic_lesson_green_tick" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -225,7 +246,7 @@
                 app:srcCompat="@drawable/ic_lesson_green_tick" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/start_lesson_tv__completed"
+                android:id="@+id/continue_lesson_tv__completed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_14sdp"
