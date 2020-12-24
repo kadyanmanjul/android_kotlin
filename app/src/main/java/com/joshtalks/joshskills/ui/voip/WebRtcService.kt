@@ -473,7 +473,7 @@ class WebRtcService : Service() {
                                         callData = it
                                     }
                                     callCallback?.get()?.switchChannel(data)
-                                }, 500)
+                                }, 750)
                             }
                         }
                     } catch (ex: Exception) {

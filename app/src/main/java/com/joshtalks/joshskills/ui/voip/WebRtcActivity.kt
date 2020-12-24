@@ -52,7 +52,6 @@ const val AUTO_PICKUP_CALL = "auto_pickup_call"
 const val CALL_USER_OBJ = "call_user_obj"
 const val CALL_TYPE = "call_type"
 
-
 class WebRtcActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCallingBinding
