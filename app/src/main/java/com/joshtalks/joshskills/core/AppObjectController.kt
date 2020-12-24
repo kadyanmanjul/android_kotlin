@@ -23,12 +23,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
-import com.google.gson.JsonParseException
+import com.google.gson.*
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
@@ -39,11 +34,7 @@ import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.service.ChatNetworkService
-import com.joshtalks.joshskills.repository.service.CommonNetworkService
-import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
-import com.joshtalks.joshskills.repository.service.P2PNetworkService
-import com.joshtalks.joshskills.repository.service.SignUpNetworkService
+import com.joshtalks.joshskills.repository.service.*
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.view_holders.IMAGE_SIZE
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
@@ -55,24 +46,17 @@ import com.tonyodev.fetch2.HttpUrlConnectionDownloader
 import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
+import com.uxcam.UXCam
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.RtcEngineConfig
-import com.uxcam.UXCam
 import io.branch.referral.Branch
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
-import okhttp3.CertificatePinner
-import okhttp3.CipherSuite
-import okhttp3.ConnectionSpec
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import okhttp3.TlsVersion
+import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -84,8 +68,7 @@ import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import java.net.URL
 import java.text.DateFormat
-import java.util.Collections
-import java.util.Date
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 const val KEY_AUTHORIZATION = "Authorization"
@@ -245,7 +228,7 @@ class AppObjectController {
                 .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
                 .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
                 .callTimeout(CALL_TIMEOUT, TimeUnit.SECONDS)
-               // .retryOnConnectionFailure(true)
+                // .retryOnConnectionFailure(true)
                 .followSslRedirects(true)
                 .addInterceptor(StatusCodeInterceptor())
                 //   .addInterceptor(NewRelicHttpMetricsLogger())
@@ -331,9 +314,7 @@ class AppObjectController {
         }
 
         fun getRtcEngine(): RtcEngine? {
-            if (mRtcEngine == null) {
-                initRtcEngine(joshApplication)
-            }
+            initRtcEngine(joshApplication)
             return mRtcEngine
         }
 

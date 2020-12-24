@@ -10,7 +10,7 @@ if (!project.hasProperty("devBuild")) {
 
 def majorVersion = 3
 def minorVersion = 1
-def patchVersion = 6
+def patchVersion = 7
 
 android {
     compileSdkVersion 29
@@ -350,15 +350,9 @@ dependencies {
     })
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
-    // https://developer.android.com/studio/releases/gradle-plugin#j8-library-desugaring
-
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test:runner:1.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation 'com.uxcam:uxcam:3.3.3@aar'
     implementation 'io.agora.rtc:voice-sdk:3.2.0'
-  //  implementation 'io.agora.rtc:full-sdk:3.2.0'
-    //implementation 'io.agora.rtm:rtm-sdk:1.2.2'
-  //implementation group: 'io.agora.uikit', name: 'agorauikit', version: '2.0.2'
-
 }

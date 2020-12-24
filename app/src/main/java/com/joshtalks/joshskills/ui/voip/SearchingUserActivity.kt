@@ -6,11 +6,9 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
-import android.os.Build
-import android.os.Bundle
-import android.os.CountDownTimer
-import android.os.IBinder
+import android.os.*
 import android.view.KeyEvent
+import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -63,6 +61,7 @@ class SearchingUserActivity : BaseActivity() {
         ViewModelProvider(this).get(VoipCallingViewModel::class.java)
     }
     private var outgoingCallData: HashMap<String, String?> = HashMap()
+    private var uiHandler: Handler? = null
 
     private var myConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -103,6 +102,14 @@ class SearchingUserActivity : BaseActivity() {
             this@SearchingUserActivity.finishAndRemoveTask()
         }
 
+        override fun onChannelJoin() {
+            super.onChannelJoin()
+            uiHandler?.postDelayed({
+                if (isFinishing.not()) {
+                    binding.btnAction.visibility = View.VISIBLE
+                }
+            }, 1000)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -144,7 +151,7 @@ class SearchingUserActivity : BaseActivity() {
         viewModel.apiCallStatusLiveData.observe(this, {
             if (ApiCallStatus.FAILED == it || ApiCallStatus.FAILED_PERMANENT == it) {
                 showToast(getString(R.string.did_not_answer_message))
-                stopCalling()
+                finishAndRemoveTask()
             }
         })
     }
@@ -259,11 +266,17 @@ class SearchingUserActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
+        uiHandler = Handler(Looper.getMainLooper())
         bindService(
             Intent(this, WebRtcService::class.java),
             myConnection,
             BIND_AUTO_CREATE
         )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        uiHandler?.removeCallbacksAndMessages(null)
     }
 
     override fun onStop() {

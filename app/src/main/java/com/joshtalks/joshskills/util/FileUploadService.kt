@@ -47,7 +47,6 @@ class FileUploadService : Service() {
     private var isFileUploadRunning = false
     private var mNotificationManager: NotificationManager? = null
 
-
     @Nullable
     override fun onBind(intent: Intent): IBinder? {
         return null
@@ -59,32 +58,36 @@ class FileUploadService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        val action = intent.action
-        if (!TextUtils.isEmpty(action)) {
-            when (action) {
-                START_UPLOAD -> {
-                    if (intent.hasExtra(NEW_TASK_MODEL))
+        try {
+            val action = intent.action
+            if (!TextUtils.isEmpty(action)) {
+                when (action) {
+                    START_UPLOAD -> {
+                        if (intent.hasExtra(NEW_TASK_MODEL))
+                            CoroutineScope(Dispatchers.IO).launch {
+                                startFileUpload(
+                                    AppObjectController.appDatabase.pendingTaskDao()
+                                        .getTask(intent.getLongExtra(NEW_TASK_MODEL, -1L))
+                                )
+                            }
+                    }
+                    UPLOAD_ALL_PENDING -> {
+                        // get all files here to be uploaded
                         CoroutineScope(Dispatchers.IO).launch {
-                            startFileUpload(
-                                AppObjectController.appDatabase.pendingTaskDao()
-                                    .getTask(intent.getLongExtra(NEW_TASK_MODEL, -1L))
-                            )
-                        }
-                }
-                UPLOAD_ALL_PENDING -> {
-                    // get all files here to be uploaded
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val fileList =
-                            AppObjectController.appDatabase.pendingTaskDao().getPendingTasks()
-                        if (fileList.isNullOrEmpty().not()) {
-                            startFileUpload(ArrayList(fileList))
+                            val fileList =
+                                AppObjectController.appDatabase.pendingTaskDao().getPendingTasks()
+                            if (fileList.isNullOrEmpty().not()) {
+                                startFileUpload(ArrayList(fileList))
+                            }
                         }
                     }
+                    CANCEL_UPLOAD -> cancelFileUpload()
                 }
-                CANCEL_UPLOAD -> cancelFileUpload()
             }
+        } catch (ex: java.lang.Exception) {
+            ex.printStackTrace()
         }
-        return super.onStartCommand(intent, flags, startId)
+        return START_NOT_STICKY
     }
 
     private fun cancelFileUpload() {

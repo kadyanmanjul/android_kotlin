@@ -2,11 +2,7 @@
 
 package com.joshtalks.joshskills.ui.voip
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.content.ContentResolver
 import android.content.Intent
 import android.content.pm.ServiceInfo
@@ -27,15 +23,9 @@ import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CallType
-import com.joshtalks.joshskills.core.CountUpTimer
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.JoshApplication
-import com.joshtalks.joshskills.core.JoshSkillExecutors
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.printAll
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -57,7 +47,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.ref.WeakReference
-import java.util.HashMap
+import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
 
@@ -301,15 +291,26 @@ class WebRtcService : Service() {
             Timber.tag(TAG).e("onJoinChannelSuccess=  $channel = $uid   ")
             isCallWasOnGoing = true
             callData?.let {
-                val id = getUID(it)
-                if (callType == CallType.INCOMING && id == uid) {
-                    startCallTimer()
-                    callStatusNetworkApi(it, CallAction.ACCEPT)
-                    addNotification(CallConnect().action, callData)
+                try {
+                    val id = getUID(it)
+                    if (callType == CallType.INCOMING && id == uid) {
+                        startCallTimer()
+                        callStatusNetworkApi(it, CallAction.ACCEPT)
+                        addNotification(CallConnect().action, callData)
+                    }
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
                 }
             }
             callId = mRtcEngine?.callId
             switchChannel = false
+            try {
+                if (CallType.OUTGOING == callType) {
+                    callCallback?.get()?.onChannelJoin()
+                }
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
         }
 
         override fun onLeaveChannel(stats: RtcStats) {
@@ -413,6 +414,7 @@ class WebRtcService : Service() {
                     try {
                         when {
                             this == NotificationIncomingCall().action -> {
+                                resetTimer()
                                 val data =
                                     intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
                                 data.let {
@@ -450,6 +452,7 @@ class WebRtcService : Service() {
                                 isCallRecordOngoing = false
                             }
                             this == NoUserFound().action -> {
+                                resetTimer()
                                 mRtcEngine?.leaveChannel()
                                 callCallback?.get()?.onNoUserFound()
                                 disconnectService()
@@ -458,6 +461,7 @@ class WebRtcService : Service() {
                                 callStopWithoutIssue()
                             }
                             this == CallForceDisconnect().action -> {
+                                resetTimer()
                                 endCall(apiCall = false)
                                 RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
                             }
@@ -594,6 +598,13 @@ class WebRtcService : Service() {
         countUpTimer.pause()
     }
 
+    private fun resetTimer() {
+        try {
+            countUpTimer.reset()
+        } catch (ex: Exception) {
+        }
+    }
+
     fun getTimeOfTalk(): Int {
         return countUpTimer.time
     }
@@ -712,7 +723,7 @@ class WebRtcService : Service() {
     }
 
     private fun resetConfig() {
-        AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+        //  AppObjectController.uiHandler.removeCallbacksAndMessages(null)
         isCallerJoin = false
         eventListener = null
         stopRing()
@@ -1063,6 +1074,7 @@ class NotificationId {
 }
 
 interface WebRtcCallback {
+    fun onChannelJoin() {}
     fun onConnect(callId: String) {}
     fun onDisconnect(callId: String?, channelName: String?) {}
     fun onCallReject(callId: String?) {}

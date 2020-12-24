@@ -20,16 +20,10 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.CallType
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.TAG
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
-import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.ActivityCallingBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
@@ -46,7 +40,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.HashMap
+import java.util.*
 
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
 const val CALL_USER_OBJ = "call_user_obj"
@@ -195,7 +189,9 @@ class WebRtcActivity : BaseActivity() {
                 overridePendingTransition(0, 0)
                 return
             }
-            this.intent = nIntent
+            if (nIntent.hasExtra(CALL_USER_OBJ) && nIntent.getSerializableExtra(CALL_USER_OBJ) != null) {
+                this.intent = nIntent
+            }
             initCall()
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -363,7 +359,11 @@ class WebRtcActivity : BaseActivity() {
     }
 
     private fun answerCall() {
-        val data = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
+        val data = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
+        if (data == null) {
+            this.finishAndRemoveTask()
+            return
+        }
         mBoundService?.answerCall(data)
         binding.callStatus.text = getText(R.string.practice)
         binding.groupForIncoming.visibility = View.GONE
@@ -426,8 +426,13 @@ class WebRtcActivity : BaseActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    val prev =
+                        supportFragmentManager.findFragmentByTag(VoipRatingFragment::class.java.name)
+                    if (prev != null) {
+                        return@subscribe
+                    }
                     onStopCall()
-                    checkAndShowRating(null)
+                    finishAndRemoveTask()
                 }, {
                     it.printStackTrace()
                 })

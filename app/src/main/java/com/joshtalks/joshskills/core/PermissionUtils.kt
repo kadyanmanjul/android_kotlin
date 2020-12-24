@@ -201,6 +201,8 @@ object PermissionUtils {
                 Manifest.permission.ACCESS_NETWORK_STATE,
                 Manifest.permission.MODIFY_AUDIO_SETTINGS,
                 Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
             )
             .withListener(multiplePermissionsListener).check()
     }
