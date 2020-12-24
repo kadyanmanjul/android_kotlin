@@ -25,7 +25,6 @@ import com.joshtalks.joshskills.repository.local.entity.PendingTask
 import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
-import com.joshtalks.joshskills.ui.voip.NotificationId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -280,15 +279,15 @@ class FileUploadService : Service() {
             val name: CharSequence = "Voip Login User"
             val importance: Int = NotificationManager.IMPORTANCE_LOW
             val mChannel =
-                NotificationChannel(NotificationId.INCOMING_CALL_CHANNEL_ID, name, importance)
+                NotificationChannel(CHANNEL_ID, name, importance)
             mNotificationManager?.createNotificationChannel(mChannel)
         }
 
         val lNotificationBuilder = NotificationCompat.Builder(
             this,
-            NotificationId.INCOMING_CALL_CHANNEL_ID
+            CHANNEL_ID
         )
-            .setChannelId(NotificationId.INCOMING_CALL_CHANNEL_ID)
+            .setChannelId(CHANNEL_ID)
             .setContentTitle(getString(R.string.app_name))
             .setContentText("Submitting a practice...")
             .setSmallIcon(R.drawable.ic_status_bar_notification)

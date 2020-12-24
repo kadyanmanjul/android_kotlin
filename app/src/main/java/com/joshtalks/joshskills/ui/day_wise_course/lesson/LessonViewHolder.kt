@@ -1,12 +1,15 @@
 package com.joshtalks.joshskills.ui.day_wise_course.lesson
 
+import android.graphics.drawable.Drawable
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
@@ -63,6 +66,21 @@ class LessonViewHolder(
         return rootView
     }
 
+    private val drawableAttempted: Drawable? by lazy {
+        ResourcesCompat.getDrawable(
+            AppObjectController.joshApplication.resources,
+            R.drawable.ic_lesson_green_tick,
+            null
+        )
+    }
+    val drawableUnattempted: Drawable? by lazy {
+        ResourcesCompat.getDrawable(
+            AppObjectController.joshApplication.resources,
+            R.drawable.ic_lesson_disabled_tick,
+            null
+        )
+    }
+
     @Resolve
     override fun onViewInflated() {
         super.onViewInflated()
@@ -72,6 +90,34 @@ class LessonViewHolder(
 
             if (message.question?.lesson?.status == LESSON_STATUS.AT) {
                 startLessonTv.text = getAppContext().getString(R.string.continue_lesson)
+
+                grammarStatus.visibility=android.view.View.VISIBLE
+                vocabStatus.visibility=android.view.View.VISIBLE
+                readingStatus.visibility=android.view.View.VISIBLE
+                speakingStatus.visibility=android.view.View.VISIBLE
+
+                message.question?.lesson?.let {
+                    if (it.grammarStatus == LESSON_STATUS.CO) {
+                        grammarStatus.setImageDrawable(drawableAttempted)
+                    } else {
+                        grammarStatus.setImageDrawable(drawableUnattempted)
+                    }
+                    if (it.vocabStatus == LESSON_STATUS.CO) {
+                        vocabStatus.setImageDrawable(drawableAttempted)
+                    } else {
+                        vocabStatus.setImageDrawable(drawableUnattempted)
+                    }
+                    if (it.readingStatus == LESSON_STATUS.CO) {
+                        readingStatus.setImageDrawable(drawableAttempted)
+                    } else {
+                        readingStatus.setImageDrawable(drawableUnattempted)
+                    }
+                    if (it.speakingStatus == LESSON_STATUS.CO) {
+                        speakingStatus.setImageDrawable(drawableAttempted)
+                    } else {
+                        speakingStatus.setImageDrawable(drawableUnattempted)
+                    }
+                }
             } else {
                 startLessonTv.text = getAppContext().getString(R.string.start_lesson)
             }
@@ -114,64 +160,6 @@ class LessonViewHolder(
                 message.lessons?.let {
                     onItemClick?.invoke(it.id, message.lessons?.interval ?: -1, message.chatId)
                 }
-            }
-        }
-
-        message.question?.lesson?.let {
-            if (it.grammarStatus == LESSON_STATUS.CO) {
-                grammarStatus.drawable.setTint(
-                    ContextCompat.getColor(
-                        getAppContext(),
-                        R.color.green_right_answer
-                    )
-                )
-            } else {
-                grammarStatus.drawable.setTint(
-                    ContextCompat.getColor(
-                        getAppContext(),
-                        R.color.grey
-                    )
-                )
-            }
-            if (it.vocabStatus == LESSON_STATUS.CO) {
-                vocabStatus.drawable.setTint(
-                    ContextCompat.getColor(
-                        getAppContext(),
-                        R.color.green_right_answer
-                    )
-                )
-            } else {
-                vocabStatus.drawable.setTint(ContextCompat.getColor(getAppContext(), R.color.grey))
-            }
-            if (it.readingStatus == LESSON_STATUS.CO) {
-                readingStatus.drawable.setTint(
-                    ContextCompat.getColor(
-                        getAppContext(),
-                        R.color.green_right_answer
-                    )
-                )
-            } else {
-                readingStatus.drawable.setTint(
-                    ContextCompat.getColor(
-                        getAppContext(),
-                        R.color.grey
-                    )
-                )
-            }
-            if (it.speakingStatus == LESSON_STATUS.CO) {
-                speakingStatus.drawable.setTint(
-                    ContextCompat.getColor(
-                        getAppContext(),
-                        R.color.green_right_answer
-                    )
-                )
-            } else {
-                speakingStatus.drawable.setTint(
-                    ContextCompat.getColor(
-                        getAppContext(),
-                        R.color.grey
-                    )
-                )
             }
         }
     }
