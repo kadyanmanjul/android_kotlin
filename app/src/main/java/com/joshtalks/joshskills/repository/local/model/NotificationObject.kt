@@ -120,5 +120,8 @@ enum class NotificationAction(val type: String) {
     @SerializedName("call_force_disconnect_notification")
     CALL_FORCE_DISCONNECT_NOTIFICATION("call_force_disconnect_notification"),
 
+    @SerializedName("no_user_found_notification")
+    CALL_NO_USER_FOUND_NOTIFICATION("no_user_found_notification"),
+
 }
 

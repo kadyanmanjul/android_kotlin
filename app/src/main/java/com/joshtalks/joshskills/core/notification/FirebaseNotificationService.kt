@@ -348,6 +348,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 callForceDisconnect()
                 return null
             }
+            NotificationAction.CALL_NO_USER_FOUND_NOTIFICATION -> {
+                WebRtcService.noUserFoundCallDisconnect()
+                return null
+            }
             else -> {
                 return null
             }

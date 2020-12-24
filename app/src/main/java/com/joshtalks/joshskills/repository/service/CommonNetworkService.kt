@@ -163,7 +163,7 @@ interface CommonNetworkService {
     @POST("$DIR/voicecall/feedback")
     suspend fun feedbackVoipCallAsync(@Body request: RequestVoipRating): Any
 
-    @GET("$DIR/voicecall/topic/{id}/")
+    @GET("$DIR/voicecall/topic/v2/{id}/")
     suspend fun getTopicDetail(@Path("id") id: String): SpeakingTopicModel
 
     @GET("$DIR/voicecall/recipient_mentor")

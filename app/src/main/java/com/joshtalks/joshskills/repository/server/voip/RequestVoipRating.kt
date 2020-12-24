@@ -6,8 +6,8 @@ import com.google.gson.annotations.SerializedName
 data class RequestVoipRating(
     @SerializedName("mentor")
     val mentor: String,
-    @SerializedName("plivo_id")
-    val plivoId: String,
+    @SerializedName("channel_name")
+    val channelName: String,
     @SerializedName("confidence")
     val confidence: Int,
     @SerializedName("grammar")
