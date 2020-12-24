@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.assessment.AssessmentActivity">
 
@@ -19,7 +20,6 @@
         android:background="#0D5CB8"
         android:keepScreenOn="true"
         android:orientation="vertical">
-<!--
 
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="wrap_content"
@@ -213,7 +213,6 @@
             android:visibility="invisible"
             tools:visibility="visible"
             app:constraint_referenced_ids="btn_mute,btn_speaker,btn_action" />
--->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
