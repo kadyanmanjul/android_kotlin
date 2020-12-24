@@ -82,6 +82,7 @@
             android:id="@+id/c_image"
             android:layout_width="@dimen/_96sdp"
             android:layout_height="@dimen/_96sdp"
+            android:src="@drawable/ic_call_placeholder"
             android:background="@drawable/circle"
             android:backgroundTint="@color/colorPrimaryDark"
             app:layout_constraintBottom_toBottomOf="parent"

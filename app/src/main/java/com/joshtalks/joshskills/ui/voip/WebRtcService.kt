@@ -15,6 +15,7 @@ import android.media.AudioManager
 import android.net.Uri
 import android.os.Binder
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
@@ -58,6 +59,7 @@ import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.HashMap
 import java.util.concurrent.ExecutorService
+import java.util.concurrent.TimeUnit
 
 
 const val RTC_TOKEN_KEY = "token"
@@ -73,6 +75,7 @@ class WebRtcService : Service() {
         JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-Calling Service")
     private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
         HangUpRtcOnPstnCallAnsweredListener()
+    private val handler = Handler()
 
     companion object {
         private val TAG = WebRtcService::class.java.simpleName
@@ -85,6 +88,7 @@ class WebRtcService : Service() {
         private var isMicEnable = true
 
         @Volatile
+        @JvmStatic
         private var mRtcEngine: RtcEngine? = null
 
         @Volatile
@@ -101,6 +105,9 @@ class WebRtcService : Service() {
 
         @Volatile
         var isCallWasOnGoing: Boolean = false
+
+        @Volatile
+        var isCallerJoin: Boolean = false
 
         @Volatile
         var retryInitLibrary: Int = 0
@@ -241,6 +248,24 @@ class WebRtcService : Service() {
             }
         }
 
+        fun noUserFoundCallDisconnect() {
+            val serviceIntent = Intent(
+                AppObjectController.joshApplication,
+                WebRtcService::class.java
+            ).apply {
+                action = NoUserFound().action
+            }
+            if (JoshApplication.isAppVisible) {
+                AppObjectController.joshApplication.startService(serviceIntent)
+            } else {
+                ContextCompat.startForegroundService(
+                    AppObjectController.joshApplication,
+                    serviceIntent
+                )
+            }
+        }
+
+
     }
 
     fun addListener(callback: WebRtcCallback?) {
@@ -249,7 +274,7 @@ class WebRtcService : Service() {
 
 
     @Volatile
-    private var eventListener = object : IRtcEngineEventHandler() {
+    private var eventListener: IRtcEngineEventHandler? = object : IRtcEngineEventHandler() {
         override fun onWarning(warn: Int) {
             super.onWarning(warn)
             Timber.tag(TAG).e("onWarning=  $warn")
@@ -264,7 +289,7 @@ class WebRtcService : Service() {
                 return
             }
             if (callCallback?.get() != null) {
-                callCallback?.get()?.onDisconnect(callId)
+                callCallback?.get()?.onDisconnect(callId, callData?.let { getChannelName(it) })
             } else {
                 RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
             }
@@ -273,6 +298,7 @@ class WebRtcService : Service() {
 
         override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
             super.onJoinChannelSuccess(channel, uid, elapsed)
+            Timber.tag(TAG).e("onJoinChannelSuccess=  $channel = $uid   ")
             isCallWasOnGoing = true
             callData?.let {
                 val id = getUID(it)
@@ -284,15 +310,15 @@ class WebRtcService : Service() {
             }
             callId = mRtcEngine?.callId
             switchChannel = false
-            Timber.tag(TAG).e("onJoinChannelSuccess=  $channel = $uid   ")
         }
 
         override fun onLeaveChannel(stats: RtcStats) {
             super.onLeaveChannel(stats)
             Timber.tag(TAG).e("onLeaveChannel=  %s", stats.totalDuration)
             isCallWasOnGoing = false
+            isCallerJoin = false
             if (switchChannel.not()) {
-                callCallback?.get()?.onDisconnect(callId)
+                callCallback?.get()?.onDisconnect(callId, callData?.let { getChannelName(it) })
                 switchChannel = false
             }
             callData = null
@@ -301,15 +327,20 @@ class WebRtcService : Service() {
         override fun onUserJoined(uid: Int, elapsed: Int) {
             super.onUserJoined(uid, elapsed)
             Timber.tag(TAG).e("onUserJoined=  $uid  $elapsed")
-            startCallTimer()
-            callCallback?.get()?.onConnect(uid.toString())
             isCallWasOnGoing = true
+            isCallerJoin = true
+            startCallTimer()
             addNotification(CallConnect().action, callData)
+            callCallback?.get()?.onConnect(uid.toString())
+            AppObjectController.uiHandler.postDelayed({
+                callCallback?.get()?.onServerConnect()
+            }, 500)
         }
 
         override fun onUserOffline(uid: Int, reason: Int) {
             super.onUserOffline(uid, reason)
             Timber.tag(TAG).e("onUserOffline=  $uid  $reason")
+            isCallerJoin = false
             callData?.let {
                 val id = getUID(it)
                 if (id != uid && reason == USER_OFFLINE_QUIT) {
@@ -353,16 +384,24 @@ class WebRtcService : Service() {
     }
 
     private fun initEngine(callback: () -> Unit) {
-        mRtcEngine = AppObjectController.getRtcEngine()
-        mRtcEngine?.removeHandler(eventListener)
-        mRtcEngine?.addHandler(eventListener)
         try {
-            Thread.sleep(250)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
-        if (mRtcEngine != null) {
-            callback.invoke()
+            mRtcEngine = AppObjectController.getRtcEngine()
+            if (eventListener != null) {
+                mRtcEngine?.removeHandler(eventListener)
+            }
+            if (eventListener != null) {
+                mRtcEngine?.addHandler(eventListener)
+            }
+            try {
+                Thread.sleep(250)
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+            }
+            if (mRtcEngine != null) {
+                callback.invoke()
+            }
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
         }
     }
 
@@ -410,9 +449,13 @@ class WebRtcService : Service() {
                                 endCall()
                                 isCallRecordOngoing = false
                             }
-                            this == CallStop().action -> {
-                                RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
+                            this == NoUserFound().action -> {
+                                mRtcEngine?.leaveChannel()
+                                callCallback?.get()?.onNoUserFound()
                                 disconnectService()
+                            }
+                            this == CallStop().action -> {
+                                callStopWithoutIssue()
                             }
                             this == CallForceDisconnect().action -> {
                                 endCall(apiCall = false)
@@ -430,7 +473,7 @@ class WebRtcService : Service() {
                                         callData = it
                                     }
                                     callCallback?.get()?.switchChannel(data)
-                                }, 750)
+                                }, 500)
                             }
                         }
                     } catch (ex: Exception) {
@@ -442,11 +485,19 @@ class WebRtcService : Service() {
         return START_NOT_STICKY
     }
 
+    private fun callStopWithoutIssue() {
+        callCallback?.get()
+            ?.onDisconnect(callId, callData?.let { getChannelName(it) })
+        if (callCallback?.get() != null) {
+            RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
+        }
+        disconnectService()
+    }
+
     private fun callConnectService(data: HashMap<String, String?>?) {
         data?.let {
             callData = it
         }
-
         mNotificationManager?.cancel(ACTION_NOTIFICATION_ID)
         mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
         val callActivityIntent =
@@ -496,8 +547,10 @@ class WebRtcService : Service() {
         }
         if (isCallWasOnGoing) {
             mRtcEngine?.leaveChannel()
+            disconnectService()
+        } else {
+            callStopWithoutIssue()
         }
-        disconnectService()
     }
 
 
@@ -659,6 +712,9 @@ class WebRtcService : Service() {
     }
 
     private fun resetConfig() {
+        AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+        isCallerJoin = false
+        eventListener = null
         stopRing()
         stopTimer()
         isCallRecordOngoing = false
@@ -688,12 +744,17 @@ class WebRtcService : Service() {
     override fun onTaskRemoved(rootIntent: Intent?) {
         isCallRecordOngoing = false
         switchChannel = false
+        isCallerJoin = false
         RtcEngine.destroy()
         super.onTaskRemoved(rootIntent)
         Timber.tag(TAG).e("OnTaskRemoved")
     }
 
     override fun onDestroy() {
+        RtcEngine.destroy()
+        AppObjectController.mRtcEngine = null
+        isCallerJoin = false
+        countUpTimer.reset()
         isCallRecordOngoing = false
         retryInitLibrary = 0
         isCallWasOnGoing = false
@@ -946,8 +1007,11 @@ class WebRtcService : Service() {
                 val time = getTimeOfTalk()
                 data["mentor_id"] = Mentor.getInstance().getId()
                 data["call_response"] = callAction.action
-                data["duration"] = (time / 1000 % 60).toString()
+                data["duration"] = TimeUnit.MILLISECONDS.toSeconds(time.toLong()).toString()
                 AppObjectController.p2pNetworkService.getAgoraCallResponse(data)
+                if (CallAction.ACCEPT == callAction) {
+                    callCallback?.get()?.onServerConnect()
+                }
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -974,6 +1038,9 @@ data class CallForceConnect(val action: String = "calling.action.force_connect")
 data class CallForceDisconnect(val action: String = "calling.action.force_disconnect") :
     WebRtcCalling()
 
+data class NoUserFound(val action: String = "calling.action.no_user_found") :
+    WebRtcCalling()
+
 
 enum class CallState {
     CALL_STATE_IDLE, CALL_STATE_BUSY, CONNECT, DISCONNECT, REJECT
@@ -996,60 +1063,11 @@ class NotificationId {
 }
 
 interface WebRtcCallback {
-    fun onConnect(callId: String)
-    fun onDisconnect(callId: String?)
-    fun onCallReject(callId: String?)
-    fun switchChannel(data: HashMap<String, String?>)
+    fun onConnect(callId: String) {}
+    fun onDisconnect(callId: String?, channelName: String?) {}
+    fun onCallReject(callId: String?) {}
+    fun switchChannel(data: HashMap<String, String?>) {}
+    fun onNoUserFound() {}
+    fun onServerConnect() {}
+
 }
-
-/*
-
-const val RTC_RESOURCE_ID_KEY = "resourceId"
-const val RTC_SID_KEY = "sid"
-private fun callRecodingStartNetworkApi(data: HashMap<String, String?>) {
-    CoroutineScope(Dispatchers.IO).launch {
-        try {
-            if (WebRtcService.isCallRecordOngoing) {
-                return@launch
-            }
-            val response =
-                AppObjectController.p2pNetworkService.startP2PCallRecording(data)
-            WebRtcService.callData?.set(RTC_RESOURCE_ID_KEY, response["resourceId"])
-            WebRtcService.callData?.set(RTC_SID_KEY, response["sid"])
-            WebRtcService.isCallRecordOngoing = true
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-    }
-}
-
-private fun callRecodingStopNetworkApi(data: HashMap<String, String?>) {
-    CoroutineScope(Dispatchers.IO).launch {
-        try {
-            if (WebRtcService.isCallRecordOngoing && data.containsKey("resourceId")) {
-                val response =
-                    AppObjectController.p2pNetworkService.stopP2PCallRecording(data)
-                WebRtcService.isCallRecordOngoing = false
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-    }
-}
-
-
-   /* private fun processIncomingCall(incomingData: HashMap<String, String>?) {
-        val callActivityIntent =
-            Intent(this, WebRtcActivity::class.java).apply {
-                putExtra(IS_INCOMING_CALL, true)
-                putExtra(CALL_TYPE, CallType.INCOMING)
-                putExtra(CALL_USER_OBJ, incomingData)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-        if (isAppVisible()) {
-            startActivities(arrayOf(callActivityIntent))
-        }
-        mNotificationManager?.cancel(EMPTY_NOTIFICATION_ID)
-    }*/
-
-*/

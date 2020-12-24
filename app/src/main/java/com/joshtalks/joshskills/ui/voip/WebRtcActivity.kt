@@ -16,6 +16,9 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
@@ -30,8 +33,8 @@ import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.ActivityCallingBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
-import com.joshtalks.joshskills.ui.voip.util.AudioPlayer
 import com.joshtalks.joshskills.ui.voip.util.SoundPoolManager
+import com.joshtalks.joshskills.ui.voip.voip_rating.VoipRatingFragment
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -45,7 +48,6 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.HashMap
 
-const val IS_INCOMING_CALL = "is_incoming_call"
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
 const val CALL_USER_OBJ = "call_user_obj"
 const val CALL_TYPE = "call_type"
@@ -57,6 +59,7 @@ class WebRtcActivity : BaseActivity() {
     private var mBoundService: WebRtcService? = null
     private var mServiceBound = false
     private val compositeDisposable = CompositeDisposable()
+    private val userDetailLiveData: MutableLiveData<HashMap<String, String>> = MutableLiveData()
 
     companion object {
         fun startOutgoingCallActivity(
@@ -96,37 +99,40 @@ class WebRtcActivity : BaseActivity() {
             }
         }
 
-        override fun onDisconnect(callId: String?) {
+        override fun onDisconnect(callId: String?, channelName: String?) {
             Timber.tag(TAG).e("onDisconnect")
             onStopCall()
-            checkAndShowRating(callId)
+            checkAndShowRating(callId, channelName)
         }
 
         override fun onCallReject(callId: String?) {
+            Timber.tag(TAG).e("onCallReject")
             onStopCall()
             checkAndShowRating(callId)
         }
 
-        override fun switchChannel(data: HashMap<String, String?>) {
+        override fun onServerConnect() {
+            super.onServerConnect()
+            val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
+            setUserInfo(map?.get(RTC_CALLER_UID_KEY))
         }
     }
 
-    private fun checkAndShowRating(id: String?) {
-        Timber.tag(TAG).e("checkAndShowRating   %s", id + "  " + mBoundService?.getTimeOfTalk())
-       /* if (id.isNullOrEmpty().not() && mBoundService!!.getTimeOfTalk() > 0) {
+    private fun checkAndShowRating(id: String?, channelName: String? = null) {
+        Timber.tag(TAG).e("checkAndShowRating   %s %s", id, mBoundService?.getTimeOfTalk())
+        if (mBoundService!!.getTimeOfTalk() > 0) {
             val prev = supportFragmentManager.findFragmentByTag(VoipRatingFragment::class.java.name)
             if (prev != null) {
                 return
             }
-            VoipRatingFragment.newInstance(id, mBoundService!!.getTimeOfTalk())
+            VoipRatingFragment.newInstance(channelName, mBoundService!!.getTimeOfTalk())
                 .show(supportFragmentManager, VoipRatingFragment::class.java.name)
             return
-        }*/
+        }
         this@WebRtcActivity.finishAndRemoveTask()
     }
 
     fun onStopCall() {
-        AudioPlayer.getInstance().stopProgressTone()
         SoundPoolManager.getInstance(this).release()
         AppAnalytics.create(AnalyticsEvent.DISCONNECT_CALL_VOIP.NAME)
             .addBasicParam()
@@ -152,7 +158,6 @@ class WebRtcActivity : BaseActivity() {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         volumeControlStream = AudioManager.STREAM_VOICE_CALL
-
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_calling)
         binding.lifecycleOwner = this
@@ -161,31 +166,66 @@ class WebRtcActivity : BaseActivity() {
             .addBasicParam()
             .addUserDetails()
             .push()
+        removeRatingDialog()
+        addObserver()
+    }
+
+    private fun addObserver() {
+        userDetailLiveData.observe(this, Observer {
+            binding.topic.text = it["topic_name"]
+            binding.userDetail.text =
+                it["name"]?.plus(" \n")?.plus(it["locality"])
+            setImageInIV(it["profile_pic"])
+        })
+
     }
 
     override fun onNewIntent(nIntent: Intent) {
         super.onNewIntent(nIntent)
-        val nMap = nIntent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
-        val nChannel = nMap[RTC_CHANNEL_KEY]
+        removeRatingDialog()
+        try {
+            val nMap = nIntent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
+            val nChannel = nMap?.get(RTC_CHANNEL_KEY)
 
-        val oMap = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
-        val oChannel = oMap[RTC_CHANNEL_KEY]
+            val oMap = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
+            val oChannel = oMap?.get(RTC_CHANNEL_KEY)
 
-        if (nChannel != oChannel) {
-            finish()
-            startActivity(nIntent)
-            overridePendingTransition(0, 0)
-            return
+            if (nChannel != oChannel) {
+                finish()
+                startActivity(nIntent)
+                overridePendingTransition(0, 0)
+                return
+            }
+            this.intent = nIntent
+            initCall()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
-        this.intent = nIntent
-        initCall()
+    }
+
+    private fun removeRatingDialog() {
+        try {
+            val prev = supportFragmentManager.findFragmentByTag(VoipRatingFragment::class.java.name)
+            if (prev != null) {
+                val df = prev as DialogFragment
+                df.dismiss()
+                supportFragmentManager.beginTransaction().run {
+                    remove(prev)
+                    addToBackStack(null)
+                }
+                supportFragmentManager.executePendingTransactions()
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
     }
 
     private fun initCall() {
+        removeRatingDialog()
         val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
         callType?.run {
-            val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
-            setUserInfo(map[RTC_CALLER_UID_KEY])
+            //val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
+            //setUserInfo(map?.get(RTC_CALLER_UID_KEY))
             if (CallType.OUTGOING == this) {
                 binding.callStatus.text = getText(R.string.practice)
                 startCallTimer()
@@ -225,12 +265,7 @@ class WebRtcActivity : BaseActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = AppObjectController.p2pNetworkService.getUserDetailOnCall(uuid)
-                CoroutineScope(Dispatchers.Main).launch {
-                    binding.topic.text = response["topic_name"]
-                    binding.userDetail.text =
-                        response["name"]?.plus(" \n")?.plus(response["locality"])
-                    setImageInIV(response["profile_pic"])
-                }
+                userDetailLiveData.postValue(response)
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
@@ -369,7 +404,6 @@ class WebRtcActivity : BaseActivity() {
     override fun onPause() {
         super.onPause()
         compositeDisposable.clear()
-
     }
 
     override fun onStop() {

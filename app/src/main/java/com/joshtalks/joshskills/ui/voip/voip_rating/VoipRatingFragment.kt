@@ -22,20 +22,20 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-const val LAST_VOIP_CALL_ID = "last_call_id"
 const val LAST_VOIP_CALL_TIME = "last_call_time"
+const val LAST_VOIP_CALL_CHANNEL_NAME = "last_call_channel_name"
 
 class VoipRatingFragment : DialogFragment() {
     private lateinit var binding: VoipRatingFragmentBinding
-    private var plivoId: String = EMPTY
+    private var channelName: String = EMPTY
     private var lastCallTime: Long = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NO_FRAME, R.style.full_dialog)
-        arguments?.getString(LAST_VOIP_CALL_ID)?.run {
-            plivoId = this
+        arguments?.getString(LAST_VOIP_CALL_CHANNEL_NAME)?.run {
+            channelName = this
         }
         lastCallTime = arguments?.getLong(LAST_VOIP_CALL_TIME) ?: 0
     }
@@ -93,7 +93,7 @@ class VoipRatingFragment : DialogFragment() {
         FullScreenProgressDialog.showProgressBar(requireActivity())
         val request = RequestVoipRating(
             Mentor.getInstance().getId(),
-            plivoId,
+            channelName,
             binding.prConfidence.getRatingPoint(),
             binding.prGrammar.getRatingPoint(),
             binding.prPronunciation.getRatingPoint(),
@@ -125,10 +125,10 @@ class VoipRatingFragment : DialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(callId: String?, time: Int) = VoipRatingFragment()
+        fun newInstance(channelName: String?, time: Int) = VoipRatingFragment()
             .apply {
                 arguments = Bundle().apply {
-                    putString(LAST_VOIP_CALL_ID, callId)
+                    putString(LAST_VOIP_CALL_CHANNEL_NAME, channelName)
                     putLong(LAST_VOIP_CALL_TIME, time.toLong())
                 }
             }

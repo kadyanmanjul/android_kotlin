@@ -441,5 +441,6 @@
     <string name="lesson_no">"पाठ %1$d"</string>
 
     <string name="today_lesson">आज का पाठ: %1$s</string>
+    <string name="did_not_answer_message">हमें कोई उपयोगकर्ता नहीं मिला, कृपया पुनः प्रयास करें.</string>
 
 </resources>

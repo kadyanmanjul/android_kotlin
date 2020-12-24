@@ -807,5 +807,6 @@
         <item>Private Group</item>
         <item>Password Protected Group</item>
     </array>
+    <string name="did_not_answer_message">We did not find any user, please retry.</string>
 
 </resources>

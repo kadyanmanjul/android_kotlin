@@ -25,7 +25,6 @@ import com.joshtalks.joshskills.ui.feedback.QUESTION_ID
 import com.joshtalks.joshskills.ui.voip.COURSE_ID
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.TOPIC_ID
-import com.joshtalks.joshskills.ui.voip.voip_rating.LAST_VOIP_CALL_ID
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -68,7 +67,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.getString(LAST_VOIP_CALL_ID)?.run {
+        arguments?.getString(LESSON_ID)?.run {
             lessonId = this
         }
         arguments?.getString(COURSE_ID)?.run {

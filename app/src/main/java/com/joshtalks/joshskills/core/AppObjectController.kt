@@ -194,7 +194,7 @@ class AppObjectController {
 
         @JvmStatic
         @Volatile
-        private var mRtcEngine: RtcEngine? = null
+        var mRtcEngine: RtcEngine? = null
 
 
         fun initLibrary(context: Context): AppObjectController {

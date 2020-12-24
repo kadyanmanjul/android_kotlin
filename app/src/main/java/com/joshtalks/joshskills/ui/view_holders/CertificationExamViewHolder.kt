@@ -181,7 +181,7 @@ class CertificationExamViewHolder(
                             publishEvent(CExamStatus.CHECK_RESULT)
                         }
                         CExamStatus.ATTEMPTED == it -> {
-                            publishEvent(CExamStatus.REATTEMPTED)
+                            publishEvent(CExamStatus.FRESH)//publishEvent(CExamStatus.REATTEMPTED)
                         }
                         else -> {
                             publishEvent(CExamStatus.FRESH)

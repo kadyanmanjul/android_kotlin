@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.IBinder
+import android.view.KeyEvent
 import android.view.Window
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -17,7 +18,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.CallType
 import com.joshtalks.joshskills.core.PermissionUtils
@@ -25,8 +25,6 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivitySearchingUserBinding
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.voip.util.AudioPlayer
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -91,15 +89,6 @@ class SearchingUserActivity : BaseActivity() {
             this@SearchingUserActivity.finish()
         }
 
-        override fun onDisconnect(callId: String?) {
-            Timber.tag("SearchingUserActivity").e("onDisconnect")
-            //  stopCalling()
-        }
-
-        override fun onCallReject(id: String?) {
-
-        }
-
         override fun switchChannel(data: HashMap<String, String?>) {
             val callActivityIntent =
                 Intent(this@SearchingUserActivity, WebRtcActivity::class.java).apply {
@@ -109,6 +98,12 @@ class SearchingUserActivity : BaseActivity() {
                 }
             startActivity(callActivityIntent)
             this@SearchingUserActivity.finish()
+        }
+
+        override fun onNoUserFound() {
+            showToast(getString(R.string.did_not_answer_message))
+            stopCalling()
+            this@SearchingUserActivity.finishAndRemoveTask()
         }
 
     }
@@ -151,7 +146,7 @@ class SearchingUserActivity : BaseActivity() {
     private fun addObserver() {
         viewModel.apiCallStatusLiveData.observe(this, {
             if (ApiCallStatus.FAILED == it || ApiCallStatus.FAILED_PERMANENT == it) {
-                showToast("We did not find any user, please retry")
+                showToast(getString(R.string.did_not_answer_message))
                 stopCalling()
             }
         })
@@ -220,7 +215,6 @@ class SearchingUserActivity : BaseActivity() {
     }
 
     private fun requestForSearchUser() {
-        AppObjectController.uiHandler.removeCallbacksAndMessages(null)
         appAnalytics?.addParam(AnalyticsEvent.SEARCH_USER_FOR_VOIP.NAME, courseId)
         startProgressBarCountDown()
         initApiForSearchUser()
@@ -243,9 +237,22 @@ class SearchingUserActivity : BaseActivity() {
             .addUserDetails()
             .push()
         timer?.cancel()
-        this.finish()
+        finishAndRemoveTask()
     }
 
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_HOME) {
+            stopCalling()
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+        if (WebRtcService.isCallerJoin.not()) {
+            stopCalling()
+        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -271,31 +278,8 @@ class SearchingUserActivity : BaseActivity() {
 
     override fun onStop() {
         super.onStop()
-        AudioPlayer.getInstance().stopProgressTone()
-        AppObjectController.uiHandler.removeCallbacksAndMessages(null)
         unbindService(myConnection)
     }
-
-    /*  private fun getMapForOutgoing( ): HashMap<String, String?> {
-          if (outgoingCallData.isEmpty()) {
-              voipCallDetailModel?.topic = topicId?.toString()
-              voipCallDetailModel?.topicName = topicName
-              voipCallDetailModel?.callieName = getCallieName()
-              //   voipCallDetailModel?.plivoUserName = "514c55d8d96a40cb90b2ed193151019617540338749"
-              outgoingCallData = LinkedHashMap()
-              outgoingCallData.apply {
-                  put("X-PH-MOBILEUUID", voipCallDetailModel?.mobileUUID)
-                  put("X-PH-Destination", voipCallDetailModel?.plivoUserName)
-                  put("X-PH-TOPIC", topicId?.toString())
-                  put("X-PH-TOPICNAME", topicName)
-                  put("X-PH-CALLERNAME", getCallieName())
-                  put("X-PH-CALLIENAME", voipCallDetailModel?.name)
-                  put("X-PH-IMAGE_URL", voipCallDetailModel?.profilePic)
-                  put("X-PH-LOCALITY", voipCallDetailModel?.locality)
-              }
-          }
-          return outgoingCallData
-      }*/
     private fun getMapForOutgoing(
         token: String,
         channelName: String,
@@ -310,14 +294,5 @@ class SearchingUserActivity : BaseActivity() {
             }
         }
         return outgoingCallData
-    }
-
-
-    private fun getCallieName(): String {
-        val name = Mentor.getInstance().getUser()?.firstName
-        if (name.isNullOrEmpty()) {
-            return "User"
-        }
-        return name
     }
 }
