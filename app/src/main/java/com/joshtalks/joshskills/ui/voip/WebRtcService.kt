@@ -273,9 +273,12 @@ class WebRtcService : Service() {
         override fun onError(errorCode: Int) {
             super.onError(errorCode)
             Timber.tag(TAG).e("onError=  $errorCode")
-            isCallWasOnGoing = false
+            //  isCallWasOnGoing = false
             if (switchChannel) {
                 switchChannel = false
+                return
+            }
+            if (isCallWasOnGoing) {
                 return
             }
             if (callCallback?.get() != null) {
@@ -438,6 +441,7 @@ class WebRtcService : Service() {
                                 callConnectService(callData)
                             }
                             this == CallReject().action -> {
+                                addNotification(CallDisconnect().action, null)
                                 callData?.let {
                                     callStatusNetworkApi(it, CallAction.DECLINE)
                                     rejectCall()
@@ -445,6 +449,7 @@ class WebRtcService : Service() {
                                 disconnectService()
                             }
                             this == CallDisconnect().action -> {
+                                addNotification(CallDisconnect().action, null)
                                 callData?.let {
                                     callStatusNetworkApi(it, CallAction.DISCONNECT)
                                 }
@@ -789,6 +794,9 @@ class WebRtcService : Service() {
             CallForceConnect().action -> {
                 showNotification(actionNotification("Connecting Call"), ACTION_NOTIFICATION_ID)
             }
+            CallDisconnect().action -> {
+                showNotification(actionNotification("Disconnecting Call"), ACTION_NOTIFICATION_ID)
+            }
         }
     }
 
@@ -972,6 +980,7 @@ class WebRtcService : Service() {
             )
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_MIN)
+            .setProgress(0, 0, true)
         lNotificationBuilder.priority = NotificationCompat.PRIORITY_MIN
         return lNotificationBuilder.build()
     }

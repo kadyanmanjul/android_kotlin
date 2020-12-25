@@ -7,11 +7,14 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.DD_MM_YYYY
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.CExamStatus
@@ -23,7 +26,7 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 import java.lang.ref.WeakReference
-import java.util.Locale
+import java.util.*
 
 
 @Layout(R.layout.certification_exam_layout)
@@ -44,7 +47,7 @@ class CertificationExamViewHolder(
     lateinit var messageView: ConstraintLayout
 
     @View(R.id.tv_title)
-    lateinit var tvTitle: AppCompatTextView
+    lateinit var tvTitle: JoshTextView
 
     @View(R.id.tv_code)
     lateinit var tvCEamCode: AppCompatTextView
@@ -82,7 +85,7 @@ class CertificationExamViewHolder(
         tvAttemptedDate.visibility = android.view.View.GONE
 
         message.question?.run {
-            tvTitle.text = title
+            tvTitle.text = HtmlCompat.fromHtml(title ?: EMPTY, HtmlCompat.FROM_HTML_MODE_LEGACY)
         }
         message.question?.let { question ->
             if (question.cexamDetail == null) {
@@ -102,8 +105,7 @@ class CertificationExamViewHolder(
 
     private fun updateView(cexamDetail: CertificationExamDetailModel?) {
         cexamDetail?.run {
-            tvTitle.text = text
-
+            tvTitle.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
             when (examStatus) {
                 CExamStatus.PASSED -> {
                     tvTitle.setTextColor(ContextCompat.getColor(getAppContext(), R.color.white))

@@ -45,12 +45,16 @@ public class SoundPoolManager {
     }
 
     public void playRinging() {
-        stopRinging();
-        if (loaded && !playing) {
-            ringingStreamId = soundPool.play(ringingSoundId, volume, volume, 1, -1, 1f);
-            playing = true;
-        } else {
-            playingCalled = true;
+        try {
+            stopRinging();
+            if (loaded && !playing) {
+                ringingStreamId = soundPool.play(ringingSoundId, volume, volume, 1, -1, 1f);
+                playing = true;
+            } else {
+                playingCalled = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
