@@ -1350,7 +1350,7 @@ class ReadingFragment : CoreJoshFragment(), Player.EventListener, AudioPlayerEve
     }
 
     fun onReadingContinueClick() {
-        activityCallback?.onNextTabCall(2)
+        activityCallback?.onNextTabCall(3)
     }
 
 /*

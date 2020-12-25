@@ -1364,7 +1364,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
     }
 
     fun onReadingContinueClick() {
-        activityCallback?.onNextTabCall(2)
+        activityCallback?.onNextTabCall(3)
     }
 
 /*

@@ -11,21 +11,21 @@
         android:layout_width="@dimen/_60sdp"
         android:layout_height="@dimen/_16sdp"
         android:layout_gravity="center_horizontal"
+        android:ellipsize="end"
         android:gravity="center"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+        android:textSize="13dp"
         app:autoSizeMaxTextSize="@dimen/_14ssp"
         app:autoSizeMinTextSize="@dimen/_11ssp"
-        android:ellipsize="end"
         app:autoSizeTextType="uniform" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/tab_iv"
         android:layout_width="@dimen/_12sdp"
-        android:gravity="center"
-        android:visibility="gone"
         android:layout_height="@dimen/_12sdp"
         android:layout_gravity="center_horizontal"
-        app:srcCompat="@drawable/ic_green_check_circle"
-        app:tint="#25D366" />
+        android:gravity="center"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_lesson_green_tick" />
 
 </LinearLayout>

@@ -18,6 +18,7 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/progress_title_tv"
             android:layout_width="0dp"
+            android:layout_marginStart="@dimen/_7sdp"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
             app:layout_constraintEnd_toEndOf="parent"
