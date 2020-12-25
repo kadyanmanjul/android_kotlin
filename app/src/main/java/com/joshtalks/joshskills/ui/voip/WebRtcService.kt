@@ -555,6 +555,7 @@ class WebRtcService : Service() {
             }
         }
         if (isCallWasOnGoing) {
+            isCallWasOnGoing = false
             mRtcEngine?.leaveChannel()
             disconnectService()
         } else {
