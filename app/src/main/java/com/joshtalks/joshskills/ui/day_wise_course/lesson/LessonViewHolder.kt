@@ -162,9 +162,9 @@ class LessonViewHolder(
             rootViewUncompleted.visibility = GONE
             message.question?.lesson?.let { lessonModel ->
                 lessonNameTvCompleted.text = getAppContext().getString(
-                        R.string.lesson_name,
-                        lessonModel.lessonNo,
-                        lessonModel.lessonName
+                    R.string.lesson_name,
+                    lessonModel.lessonNo,
+                    lessonModel.lessonName
                 )
             }
             rootViewCompleted.setOnClickListener {
@@ -173,5 +173,9 @@ class LessonViewHolder(
                 }
             }
         }
+        grammarStatus.visibility = GONE
+        vocabStatus.visibility = GONE
+        readingStatus.visibility = GONE
+        speakingStatus.visibility = GONE
     }
 }

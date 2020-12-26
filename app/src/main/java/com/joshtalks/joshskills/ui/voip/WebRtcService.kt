@@ -785,18 +785,26 @@ class WebRtcService : Service() {
 
     private fun addNotification(action: String, data: HashMap<String, String?>?) {
         (getSystemService(NOTIFICATION_SERVICE) as NotificationManager?)?.cancelAll()
-        when (action) {
-            NotificationIncomingCall().action -> {
-                showNotification(incomingCallNotification(data), INCOMING_CALL_NOTIFICATION_ID)
-            }
-            CallConnect().action -> {
-                showNotification(callConnectedNotification(data), CONNECTED_CALL_NOTIFICATION_ID)
-            }
-            CallForceConnect().action -> {
-                showNotification(actionNotification("Connecting Call"), ACTION_NOTIFICATION_ID)
-            }
-            CallDisconnect().action -> {
-                showNotification(actionNotification("Disconnecting Call"), ACTION_NOTIFICATION_ID)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            when (action) {
+                NotificationIncomingCall().action -> {
+                    showNotification(incomingCallNotification(data), INCOMING_CALL_NOTIFICATION_ID)
+                }
+                CallConnect().action -> {
+                    showNotification(
+                        callConnectedNotification(data),
+                        CONNECTED_CALL_NOTIFICATION_ID
+                    )
+                }
+                CallForceConnect().action -> {
+                    showNotification(actionNotification("Connecting Call"), ACTION_NOTIFICATION_ID)
+                }
+                CallDisconnect().action -> {
+                    showNotification(
+                        actionNotification("Disconnecting Call"),
+                        ACTION_NOTIFICATION_ID
+                    )
+                }
             }
         }
     }

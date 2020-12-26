@@ -108,12 +108,11 @@ class VoipRatingFragment : DialogFragment() {
             try {
                 AppObjectController.commonNetworkService.feedbackVoipCallAsync(request)
                 FullScreenProgressDialog.hideProgressBar(requireActivity())
-                exitDialog()
             } catch (ex: Throwable) {
                 FullScreenProgressDialog.hideProgressBar(requireActivity())
-                exitDialog()
                 ex.showAppropriateMsg()
             }
+            exitDialog()
         }
     }
 

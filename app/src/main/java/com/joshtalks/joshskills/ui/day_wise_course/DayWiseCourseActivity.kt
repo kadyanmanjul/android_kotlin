@@ -266,7 +266,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
     private fun setTabCompletionStatus(tab: View?, status: Boolean) {
         tab?.let {
             if (status) {
-                it.findViewById<ImageView>(R.id.tab_iv).visibility=View.VISIBLE
+                it.findViewById<ImageView>(R.id.tab_iv).visibility = View.GONE
             } else {
                 it.findViewById<ImageView>(R.id.tab_iv).visibility=View.GONE
             }

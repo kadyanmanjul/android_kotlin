@@ -18,7 +18,6 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -164,7 +163,7 @@ class WebRtcActivity : BaseActivity() {
     }
 
     private fun addObserver() {
-        userDetailLiveData.observe(this, Observer {
+        userDetailLiveData.observe(this, {
             binding.topic.text = it["topic_name"]
             binding.userDetail.text =
                 it["name"]?.plus(" \n")?.plus(it["locality"])
