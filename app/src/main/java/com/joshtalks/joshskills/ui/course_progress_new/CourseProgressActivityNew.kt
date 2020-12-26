@@ -174,7 +174,7 @@ class CourseProgressActivityNew : AppCompatActivity(),
                 binding.pdfNameTv.text = it.coursePdfName
                 binding.sizeTv.text = "${it.coursePdfSize} kB"
                 binding.pageCountTv.text = "${it.coursePdfPageCount} pages"
-                binding.pdfView.visibility = View.VISIBLE
+                binding.pdfView.visibility = View.GONE
                 binding.progressLayout.visibility = View.GONE
                 if (PermissionUtils.isStoragePermissionEnabled(this) && AppDirectory.getFileSize(
                         File(

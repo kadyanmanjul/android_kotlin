@@ -2,6 +2,6 @@
     android:shape="oval">
     <solid android:color="#D6091C" />
     <size
-        android:width="@dimen/_16sdp"
-        android:height="@dimen/_16sdp" />
+        android:width="@dimen/_14sdp"
+        android:height="@dimen/_14sdp" />
 </shape>

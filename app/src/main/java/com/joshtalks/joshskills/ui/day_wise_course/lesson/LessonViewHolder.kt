@@ -173,9 +173,5 @@ class LessonViewHolder(
                 }
             }
         }
-        grammarStatus.visibility = GONE
-        vocabStatus.visibility = GONE
-        readingStatus.visibility = GONE
-        speakingStatus.visibility = GONE
     }
 }

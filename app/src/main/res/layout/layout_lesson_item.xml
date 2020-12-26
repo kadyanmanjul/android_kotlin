@@ -57,6 +57,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
                 android:background="@drawable/rounded_state_button_bg"
                 android:backgroundTint="@color/colorPrimary"
                 android:ellipsize="end"
@@ -68,8 +69,6 @@
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                 android:textColor="@color/white"
                 android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintWidth_percent="0.59"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -77,13 +76,14 @@
                 app:layout_constraintTop_toBottomOf="@+id/lesson_iv"
                 app:layout_constraintVertical_bias="0.272"
                 app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.59"
                 tools:visibility="visible" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/start_lesson_tv"
-
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8sdp"
                 android:layout_marginVertical="@dimen/_7sdp"
                 android:background="@drawable/rounded_state_button_bg"
                 android:backgroundTint="@color/colorPrimary"
@@ -95,14 +95,13 @@
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                 android:textColor="@color/white"
                 android:visibility="visible"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:visibility="visible"
-                android:layout_marginHorizontal="@dimen/_8sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/view4"
-                app:layout_constraintTop_toBottomOf="@+id/lesson_iv" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/lesson_iv"
+                tools:visibility="gone" />
 
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -205,7 +204,6 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/view11"
-                android:visibility="invisible"
                 android:layout_width="@dimen/_12sdp"
                 android:layout_height="@dimen/_12sdp"
                 android:layout_marginStart="@dimen/_10sdp"
@@ -217,7 +215,6 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/view12"
-                android:visibility="invisible"
                 android:layout_width="@dimen/_12sdp"
                 android:layout_height="@dimen/_12sdp"
                 android:layout_marginStart="@dimen/_4sdp"
@@ -230,7 +227,6 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/view13"
-                android:visibility="invisible"
                 android:layout_width="@dimen/_12sdp"
                 android:layout_height="@dimen/_12sdp"
                 android:layout_marginStart="@dimen/_4sdp"
@@ -243,7 +239,6 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/view14"
-                android:visibility="invisible"
                 android:layout_width="@dimen/_12sdp"
                 android:layout_height="@dimen/_12sdp"
                 android:layout_marginStart="@dimen/_4sdp"
