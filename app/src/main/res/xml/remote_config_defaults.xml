@@ -584,6 +584,24 @@
         <value>Incomplete lessons</value>
     </entry>
     <entry>
+        <key>AWARD_SPINNING_CODE</key>
+        <value><![CDATA[<p><head>
+            <title>js-cloudimage-360-view</title>
+            <meta charset="UTF-8" />
+        </head>
+        <body>
+            <div
+                class="cloudimage-360"
+                data-folder="https://s3.ap-south-1.amazonaws.com/www.staging.static.joshtalks.com/awards_360/awards_new/"
+                data-filename="{index}.png"
+                data-amount="91"
+                data-magnifier="1"
+                data-full-screen
+                ></div>
+            <script src="https://cdn.scaleflex.it/plugins/js-cloudimage-360-view/2/js-cloudimage-360-view.min.js"></script>
+        </body>/p>]]></value>
+    </entry>
+    <entry>
         <key>SMART_LOOK_FEATURE_ENABLE</key>
         <value>false</value>
     </entry>
