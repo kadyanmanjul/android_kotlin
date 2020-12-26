@@ -22,8 +22,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -122,6 +125,8 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     private MessageAdapter messageAdapter;
     private LinearLayoutManager linearLayoutManager;
     private ShimmerFrameLayout messageShimmer;
+    private final CometChatMessageListViewModel viewModel = new ViewModelProvider(this).get(CometChatMessageListViewModel.class);
+    private ConstraintLayout pinnedMessageView;
     /**
      * <b>Avatar</b> is a UI Kit Component which is used to display user and group avatars.
      */
@@ -152,6 +157,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     private boolean isInProgress;
     // private MessageActionFragment messageActionFragment;
     private ExoAudioPlayer audioPlayerManager;
+    private AppCompatTextView txtPinnedMsg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,6 +165,8 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         setContentView(R.layout.fragment_chat_screen);
         handleArguments();
         initViewComponent();
+        addObservers();
+        getPinnedMessages();
     }
 
     /**
@@ -201,6 +209,8 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         userAvatar = findViewById(R.id.iv_chat_avatar);
         toolbar = findViewById(R.id.chatList_toolbar);
         imgClose = findViewById(R.id.iv_close_message_action);
+        pinnedMessageView = findViewById(R.id.pinnedMessageView);
+        txtPinnedMsg = findViewById(R.id.txtPinnedMsg);
         imgClose.setOnClickListener(this);
         toolbar.setOnClickListener(this);
         composeBox.replyClose.setOnClickListener(this);
@@ -293,6 +303,28 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             }
         });
 
+    }
+
+    private void addObservers() {
+        viewModel.getPinnedMsgs().observe(this, baseMessages -> {
+            if (baseMessages != null && !baseMessages.isEmpty()) {
+//                Collections.sort(baseMessages, new Comparator<BaseMessage>() {
+//                    @Override
+//                    public int compare(BaseMessage o1, BaseMessage o2) {
+//                        return (int) (o1.getSentAt() - o2.getSentAt());
+//                    }
+//                });
+                BaseMessage lastPinnedMsg = baseMessages.get(baseMessages.size() - 1);
+                pinnedMessageView.setVisibility(VISIBLE);
+                if (lastPinnedMsg.getType().equals(CometChatConstants.MESSAGE_TYPE_TEXT)) {
+                    txtPinnedMsg.setText(((TextMessage) lastPinnedMsg).getText());
+                } else if (lastPinnedMsg.getType().equals(CometChatConstants.MESSAGE_TYPE_AUDIO)) {
+                    txtPinnedMsg.setText(getString(R.string.voice_message));
+                }
+            } else {
+                pinnedMessageView.setVisibility(GONE);
+            }
+        });
     }
 
     private void setComposeBoxListener() {
@@ -1598,5 +1630,9 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             // TODO(22/12/2020) - Find a way to scroll while message is not loaded yet.
             scrollToTop();
         }
+    }
+
+    private void getPinnedMessages() {
+        viewModel.getPinnedMessages(Id);
     }
 }

@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.repository.service
 
+import com.cometchat.pro.models.BaseMessage
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.UserPlivoDetailsModel
@@ -203,4 +204,8 @@ interface CommonNetworkService {
     @POST("$DIR/mentor/delete_mentor/")
     suspend fun deleteMentor(@Body params: Map<String, String>)
 
+    @GET("$DIR/group/{group_id}/pinnedmessages/")
+    suspend fun getPinnedMessages(
+        @Path("group_id") groupId: String
+    ): Response<List<BaseMessage>>
 }
