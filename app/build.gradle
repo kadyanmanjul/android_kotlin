@@ -187,7 +187,6 @@ android {
             enableSplit = true
         }
     }
-
 }
 
 dependencies {
@@ -342,17 +341,16 @@ dependencies {
     implementation 'com.github.YarikSOffice:lingver:1.3.0'
     implementation 'com.smartlook.recording:app:1.7.0-native'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
-//    implementation 'com.plivo.endpoint:endpoint:2.0.19'
     // CometChat for Group Chat
     implementation('com.cometchat:pro-android-chat-sdk:2.1.3', {
         exclude group: 'com.facebook.react', module: 'react-native-webrtc'
         exclude group: 'com.sinch', module: 'android-rtc'
     })
-
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
+    implementation 'com.uxcam:uxcam:3.3.3@aar'
+    implementation 'io.agora.rtc:voice-sdk:3.2.0'
+
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test:runner:1.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    implementation 'com.uxcam:uxcam:3.3.3@aar'
-    implementation 'io.agora.rtc:voice-sdk:3.2.0'
 }
