@@ -11,7 +11,6 @@ import android.media.AudioManager
 import android.net.Uri
 import android.os.Binder
 import android.os.Build
-import android.os.Handler
 import android.os.IBinder
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
@@ -65,7 +64,7 @@ class WebRtcService : Service() {
         JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-Calling Service")
     private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
         HangUpRtcOnPstnCallAnsweredListener()
-    private val handler = Handler()
+    private var countUpTimer = CountUpTimer(false)
 
     companion object {
         private val TAG = WebRtcService::class.java.simpleName
@@ -81,8 +80,6 @@ class WebRtcService : Service() {
         @JvmStatic
         private var mRtcEngine: RtcEngine? = null
 
-        @Volatile
-        private var countUpTimer = CountUpTimer(false)
 
         @Volatile
         private var callData: HashMap<String, String?>? = null
@@ -417,6 +414,12 @@ class WebRtcService : Service() {
                     try {
                         when {
                             this == NotificationIncomingCall().action -> {
+                                if (CallState.CALL_STATE_BUSY == phoneCallState || isCallWasOnGoing) {
+                                    callData?.let {
+                                        callStatusNetworkApi(it, CallAction.DECLINE)
+                                    }
+                                    return@initEngine
+                                }
                                 resetTimer()
                                 val data =
                                     intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
@@ -472,7 +475,9 @@ class WebRtcService : Service() {
                             }
                             this == CallForceConnect().action -> {
                                 switchChannel = true
-                                mRtcEngine?.leaveChannel()
+                                if (isCallWasOnGoing) {
+                                    mRtcEngine?.leaveChannel()
+                                }
                                 resetConfig()
                                 addNotification(CallForceConnect().action, null)
                                 AppObjectController.uiHandler.postDelayed({
@@ -481,7 +486,11 @@ class WebRtcService : Service() {
                                     data.let {
                                         callData = it
                                     }
-                                    callCallback?.get()?.switchChannel(data)
+                                    if (callCallback != null && callCallback?.get() != null) {
+                                        callCallback?.get()?.switchChannel(data)
+                                    } else {
+                                        startAutoPickCallActivity()
+                                    }
                                 }, 750)
                             }
                         }
@@ -509,6 +518,10 @@ class WebRtcService : Service() {
         }
         mNotificationManager?.cancel(ACTION_NOTIFICATION_ID)
         mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
+        startAutoPickCallActivity()
+    }
+
+    private fun startAutoPickCallActivity() {
         val callActivityIntent =
             Intent(
                 AppObjectController.joshApplication,
@@ -524,12 +537,6 @@ class WebRtcService : Service() {
 
 
     private fun handleIncomingCall(data: HashMap<String, String?>) {
-        if (CallState.CALL_STATE_BUSY == phoneCallState || isCallWasOnGoing) {
-            callData?.let {
-                callStatusNetworkApi(it, CallAction.DECLINE)
-            }
-            return
-        }
         stopTimer()
         startRing()
         executeEvent(AnalyticsEvent.INIT_CALL.NAME)

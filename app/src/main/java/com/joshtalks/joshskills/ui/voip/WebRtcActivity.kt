@@ -40,6 +40,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
 const val CALL_USER_OBJ = "call_user_obj"
@@ -52,6 +53,7 @@ class WebRtcActivity : BaseActivity() {
     private var mServiceBound = false
     private val compositeDisposable = CompositeDisposable()
     private val userDetailLiveData: MutableLiveData<HashMap<String, String>> = MutableLiveData()
+    private var channelName: String? = null
 
     companion object {
         fun startOutgoingCallActivity(
@@ -112,7 +114,13 @@ class WebRtcActivity : BaseActivity() {
 
     private fun checkAndShowRating(id: String?, channelName: String? = null) {
         Timber.tag(TAG).e("checkAndShowRating   %s %s", id, mBoundService?.getTimeOfTalk())
-        if (mBoundService!!.getTimeOfTalk() > 0) {
+        this.channelName = channelName
+        showCallRatingScreen()
+    }
+
+    private fun showCallRatingScreen() {
+        val callTime = mBoundService?.getTimeOfTalk() ?: 0
+        if (callTime > 0 || channelName.isNullOrEmpty().not()) {
             val prev = supportFragmentManager.findFragmentByTag(VoipRatingFragment::class.java.name)
             if (prev != null) {
                 return
@@ -158,7 +166,6 @@ class WebRtcActivity : BaseActivity() {
             .addBasicParam()
             .addUserDetails()
             .push()
-        removeRatingDialog()
         addObserver()
     }
 
@@ -215,7 +222,6 @@ class WebRtcActivity : BaseActivity() {
     }
 
     private fun initCall() {
-        removeRatingDialog()
         val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
         callType?.run {
             //val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
@@ -244,13 +250,18 @@ class WebRtcActivity : BaseActivity() {
             if (WebRtcService.isCallWasOnGoing) {
                 binding.groupForIncoming.visibility = View.GONE
                 binding.groupForOutgoing.visibility = View.VISIBLE
-                binding.callTime.base =
-                    SystemClock.elapsedRealtime() - (mBoundService?.getTimeOfTalk() ?: 0)
+                binding.callTime.base = SystemClock.elapsedRealtime() - getCallTime()
                 binding.callTime.start()
             }
         } catch (ex: Throwable) {
             ex.printStackTrace()
         }
+    }
+
+    private fun getCallTime(): Long {
+        return TimeUnit.MILLISECONDS.toSeconds(
+            (mBoundService?.getTimeOfTalk() ?: 1).toLong()
+        ) * 1000
     }
 
     private fun setUserInfo(uuid: String?) {
@@ -295,8 +306,9 @@ class WebRtcActivity : BaseActivity() {
 
     private fun startCallTimer() {
         binding.callTime.visibility = View.VISIBLE
-        binding.callTime.base = SystemClock.elapsedRealtime()
+        binding.callTime.base = SystemClock.elapsedRealtime() - getCallTime()
         binding.callTime.start()
+
     }
 
     private fun callDisViewEnable() {

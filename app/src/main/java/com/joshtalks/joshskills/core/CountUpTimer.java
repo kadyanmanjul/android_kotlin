@@ -51,6 +51,7 @@ public class CountUpTimer {
      * Reset the timer, also clears all laps information. Running status will not affected
      */
     public void reset() {
+        lastPauseTimestamp = 0;
         startTimestamp = SystemClock.elapsedRealtime();
         delayTime = 0;
         lastPauseTimestamp = startTimestamp;
