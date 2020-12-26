@@ -3,12 +3,14 @@ package com.joshtalks.joshskills.ui.userprofile
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.webkit.WebView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
@@ -17,6 +19,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.FragmentAwardShowBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -159,6 +162,54 @@ class ShowAwardFragment : DialogFragment() {
             award?.get(0)?.awardDescription.toString(),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
+
+        val descriptionUsingWebView = "<head>\n" +
+                "\n" +
+                "    <title>js-cloudimage-360-view</title>\n" +
+                "\n" +
+                "    <meta charset=\"UTF-8\" />\n" +
+                "\n" +
+                "  </head>\n" +
+                "\n" +
+                "  <body>\n" +
+                "\n" +
+                "    <div\n" +
+                "\n" +
+                "      class=\"cloudimage-360\"\n" +
+                "\n" +
+                "      data-folder=\"https://s3.ap-south-1.amazonaws.com/www.staging.static.joshtalks.com/awards_360/awards_new/\"\n" +
+                "\n" +
+                "      data-filename=\"{index}.png\"\n" +
+                "\n" +
+                "      data-amount=\"91\"\n" +
+                "\n" +
+                "      data-magnifier=\"1\"\n" +
+                "\n" +
+                "      data-full-screen\n" +
+                "\n" +
+                "    ></div>\n" +
+                "\n" +
+                "   \n" +
+                "\n" +
+                "    <script src=\"https://cdn.scaleflex.it/plugins/js-cloudimage-360-view/2/js-cloudimage-360-view.min.js\"></script>\n" +
+                "\n" +
+                "  </body>"
+
+
+        val code=AppObjectController.getFirebaseRemoteConfig()
+            .getString(FirebaseRemoteConfigKey.AWARD_SPINNING_CODE)
+
+        binding.webView.settings.javaScriptEnabled = true
+        binding.webView.setBackgroundColor(Color.TRANSPARENT)
+        binding.webView.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null);
+
+        binding.webView.loadDataWithBaseURL(
+            null,
+            code,
+            "text/html",
+            "utf-8",
+            null
+        );
 
     }
 

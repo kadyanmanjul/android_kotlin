@@ -33,7 +33,7 @@ import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import com.joshtalks.joshskills.util.FileUploadService
 import io.branch.referral.Branch
 import io.branch.referral.Defines
-import kotlinx.android.synthetic.main.activity_launcher.*
+import kotlinx.android.synthetic.main.activity_launcher.progress_bar
 import org.json.JSONObject
 import timber.log.Timber
 import java.io.File
@@ -58,6 +58,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         logNotificationData()
         FileUploadService.uploadAllPendingTasks(AppObjectController.joshApplication)
     }
+
 
     private fun logNotificationData() {
         try {
