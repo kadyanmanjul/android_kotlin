@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.custom_ui.tvproperty.BulletSpanWithRadius
 import com.joshtalks.joshskills.databinding.UnlockDialogLayoutBinding
 
@@ -20,7 +21,8 @@ class ExamUnlockDialogFragment(
     val marks: Int?,
     val totalQue: Int?,
     val time: Int?,
-    val totalLessons: Int?
+    val totalLessons: Int?,
+    val title:String= EMPTY
 ) : DialogFragment() {
 
     lateinit var binding: UnlockDialogLayoutBinding
@@ -41,6 +43,7 @@ class ExamUnlockDialogFragment(
         binding.handler = this
 
         binding.examInfoTv.text = getString(R.string.exam_info, totalQue, time, marks)
+        binding.examInfoCategory.text = getString(R.string.exam_title, title)
         binding.textview1.text =
             getString(R.string.you_can_only_attempt_the_certification_exam, totalLessons)
         if (instructionList != null)

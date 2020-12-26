@@ -257,7 +257,8 @@ class CourseProgressActivityNew : AppCompatActivity(),
         chatMessageId: String,
         certificationId: Int,
         cExamStatus: CExamStatus,
-        parentPosition: Int
+        parentPosition: Int,
+        title:String
 
     ) {
         if (previousLesson.status != LESSON_STATUS.CO.name) {
@@ -267,7 +268,8 @@ class CourseProgressActivityNew : AppCompatActivity(),
                     it[parentPosition].ceMarks,
                     it[parentPosition].ceQue,
                     it[parentPosition].ceMin,
-                    it[parentPosition].totalCount
+                    it[parentPosition].totalCount,
+                    title
                 ).show(
                     supportFragmentManager,
                     "ExamUnlockDialogFragment"

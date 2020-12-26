@@ -28,6 +28,19 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/exam_info_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/heading_tv"
+            tool:text="Beginner Certification Exam" />
+
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/exam_info_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,7 +50,7 @@
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/heading_tv"
+            app:layout_constraintTop_toBottomOf="@+id/exam_info_category"
             tool:text="60 Questions - 30 Minutes - 60 Marks" />
 
         <com.google.android.material.textview.MaterialTextView

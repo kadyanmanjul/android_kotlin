@@ -56,7 +56,9 @@ class ProgressActivityAdapter(
                 item.certificateExamId ?: 0,
                 item.examStatus ?: CExamStatus.FRESH,
                 lastAvailableLessonId = lastAvailableLessonId,
-                parentPosition = layoutPosition
+                parentPosition = layoutPosition,
+                unLockCardPOsition=item.totalCount,
+                title=item.title
             )
             binding.progressRv.adapter = adapter
 

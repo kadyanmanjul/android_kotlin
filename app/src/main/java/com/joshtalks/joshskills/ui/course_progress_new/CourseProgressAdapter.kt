@@ -22,7 +22,9 @@ class CourseProgressAdapter(
     val certificationId: Int,
     val cExamStatus: CExamStatus = CExamStatus.FRESH,
     val lastAvailableLessonId: Int?,
-    val parentPosition: Int
+    val parentPosition: Int,
+    val unLockCardPOsition: Int?,
+    val title: String
 ) :
     RecyclerView.Adapter<CourseProgressAdapter.CourseProgressViewHolder>() {
 
@@ -55,15 +57,21 @@ class CourseProgressAdapter(
                         binding.progressIv.alpha = 1f
                     else
                         binding.progressIv.alpha = 0.5f
+                    val item = mutableListOf<CourseOverviewItem>()
+                    item.addAll(itemList.filter { it.lessonNo == unLockCardPOsition })
+                    if (item.isNullOrEmpty()) {
+                        item.add(itemList.get(position - 1))
+                    }
 
                     binding.root.setOnClickListener {
                         onItemClickListener.onCertificateExamClick(
-                            itemList[position - 1],
+                            item.get(0),
                             conversationId,
                             chatMessageId,
                             certificationId,
                             cExamStatus,
-                            parentPosition
+                            parentPosition,
+                            title
                         )
                     }
                 } else {
@@ -162,7 +170,8 @@ class CourseProgressAdapter(
             chatMessageId: String,
             certificationId: Int,
             cExamStatus: CExamStatus = CExamStatus.FRESH,
-            parentPosition: Int
+            parentPosition: Int,
+            title:String
         )
     }
 
