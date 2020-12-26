@@ -363,6 +363,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                     if (colorCode != null) {
                         viewHolder.tvUser.setTextColor(Color.parseColor(colorCode));
+                    } else {
+                        viewHolder.tvUser.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
                     }
                     setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName(), colorCode);
                     viewHolder.tvUser.setText(baseMessage.getSender().getName());
@@ -390,6 +392,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                     if (colorCode != null) {
                         viewHolder.replyUser.setTextColor(Color.parseColor(colorCode));
+                    } else {
+                        viewHolder.replyUser.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
                     }
                     if (replyUserName.equals(loggedInUser.getName())) {
                         viewHolder.replyUser.setText(context.getString(R.string.you));
@@ -473,6 +477,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                     if (colorCode != null) {
                         viewHolder.tvUser.setTextColor(Color.parseColor(colorCode));
+                    } else {
+                        viewHolder.tvUser.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
                     }
                     setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName(), colorCode);
                     viewHolder.tvUser.setText(baseMessage.getSender().getName());
@@ -643,6 +649,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                     if (colorCode != null) {
                         viewHolder.tvUser.setTextColor(Color.parseColor(colorCode));
+                    } else {
+                        viewHolder.tvUser.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
                     }
                     setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName(), colorCode);
                     viewHolder.tvUser.setText(baseMessage.getSender().getName());
@@ -688,6 +696,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                     if (colorCode != null) {
                         viewHolder.replyUser.setTextColor(Color.parseColor(colorCode));
+                    } else {
+                        viewHolder.replyUser.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
                     }
                     if (replyUserName.equals(loggedInUser.getName())) {
                         viewHolder.replyUser.setText(context.getString(R.string.you));
@@ -832,6 +842,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                     if (colorCode != null) {
                         viewHolder.tvUser.setTextColor(Color.parseColor(colorCode));
+                    } else {
+                        viewHolder.tvUser.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
                     }
                     setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName(), colorCode);
                     viewHolder.tvUser.setText(baseMessage.getSender().getName());
@@ -892,6 +904,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                     if (colorCode != null) {
                         viewHolder.tvUser.setTextColor(Color.parseColor(colorCode));
+                    } else {
+                        viewHolder.tvUser.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
                     }
                     setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName(), colorCode);
                     viewHolder.tvUser.setText(baseMessage.getSender().getName());

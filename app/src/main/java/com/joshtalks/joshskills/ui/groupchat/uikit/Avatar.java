@@ -383,6 +383,8 @@ public class Avatar extends AppCompatImageView {
         }
         if (bgColorCode != null) {
             setBackgroundColor(Color.parseColor(bgColorCode));
+        } else {
+            setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary));
         }
         setDrawable();
         setImageDrawable(drawable);
