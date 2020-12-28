@@ -870,16 +870,16 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         else
             textMessage = new TextMessage(Id, message, CometChatConstants.RECEIVER_TYPE_GROUP);
 
-
         sendTypingIndicator(true);
 
         CometChat.sendMessage(textMessage, new CometChat.CallbackListener<TextMessage>() {
             @Override
             public void onSuccess(TextMessage textMessage) {
                 if (messageAdapter != null) {
-                    if (StringContract.Sounds.enableMessageSounds)
-                        // MediaUtils.playSendSound(context, R.raw.outgoing_message);
-                        messageAdapter.addMessage(textMessage);
+//                    if (StringContract.Sounds.enableMessageSounds) {
+//                        MediaUtils.playSendSound(CometChatMessageListActivity.this, R.raw.outgoing_message);
+//                    }
+                    messageAdapter.addMessage(textMessage);
                     scrollToBottom();
                 }
             }
@@ -946,9 +946,10 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
                 @Override
                 public void onSuccess(TextMessage textMessage) {
                     if (messageAdapter != null) {
-                        if (StringContract.Sounds.enableMessageSounds)
-                            // MediaUtils.playSendSound(context, R.raw.outgoing_message);
-                            messageAdapter.addMessage(textMessage);
+//                    if (StringContract.Sounds.enableMessageSounds) {
+//                        MediaUtils.playSendSound(CometChatMessageListActivity.this, R.raw.outgoing_message);
+//                    }
+                        messageAdapter.addMessage(textMessage);
                         scrollToBottom();
                     }
                 }
@@ -1211,19 +1212,20 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     }
 
     private void onMessageReceived(BaseMessage message) {
-        if (StringContract.Sounds.enableMessageSounds)
-            // MediaUtils.playSendSound(context, R.raw.incoming_message);
-            if (message.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_USER)) {
-                if (Id != null && Id.equalsIgnoreCase(message.getSender().getUid())) {
-                    setMessage(message);
-                } else if (Id != null && Id.equalsIgnoreCase(message.getReceiverUid()) && message.getSender().getUid().equalsIgnoreCase(loggedInUser.getUid())) {
-                    setMessage(message);
-                }
-            } else {
-                if (Id != null && Id.equalsIgnoreCase(message.getReceiverUid())) {
-                    setMessage(message);
-                }
+//                    if (StringContract.Sounds.enableMessageSounds) {
+//                        MediaUtils.playSendSound(CometChatMessageListActivity.this, R.raw.outgoing_message);
+//                    }
+        if (message.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_USER)) {
+            if (Id != null && Id.equalsIgnoreCase(message.getSender().getUid())) {
+                setMessage(message);
+            } else if (Id != null && Id.equalsIgnoreCase(message.getReceiverUid()) && message.getSender().getUid().equalsIgnoreCase(loggedInUser.getUid())) {
+                setMessage(message);
             }
+        } else {
+            if (Id != null && Id.equalsIgnoreCase(message.getReceiverUid())) {
+                setMessage(message);
+            }
+        }
     }
 
     /**

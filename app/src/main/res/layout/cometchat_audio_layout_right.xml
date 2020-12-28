@@ -72,7 +72,7 @@
             android:layout_marginHorizontal="@dimen/_4sdp"
             android:layout_marginBottom="@dimen/_4sdp"
             android:gravity="end"
-            app:srcCompat="@drawable/ic_sent_message_s_r_tick" />
+            app:srcCompat="@drawable/ic_sent_message_d_tick" />
 
     </RelativeLayout>
 

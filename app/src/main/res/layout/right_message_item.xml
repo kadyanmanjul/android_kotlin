@@ -95,7 +95,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/go_txt_message"
-                    app:srcCompat="@drawable/ic_sent_message_s_r_tick" />
+                    app:srcCompat="@drawable/ic_sent_message_d_tick" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -339,6 +340,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         BaseMessage baseMessage = messageList.get(i);
         if (baseMessage != null && baseMessage.getDeletedAt() == 0) {
             viewHolder.view.setTag(baseMessage.getId());
+            if (viewHolder.imgDeliveryTick != null) {
+                if (baseMessage.getSentAt() == 0) {
+                    viewHolder.imgDeliveryTick.setImageResource(R.drawable.ic_sent_message_s_tick);
+                } else {
+                    viewHolder.imgDeliveryTick.setImageResource(R.drawable.ic_sent_message_d_tick);
+                }
+            }
             if (!baseMessage.getSender().getUid().equals(loggedInUser.getUid())) {
                 if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_USER)) {
                     viewHolder.tvUser.setVisibility(View.GONE);
@@ -625,6 +633,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         BaseMessage baseMessage = messageList.get(i);
         if (baseMessage != null && baseMessage.getDeletedAt() == 0) {
             viewHolder.view.setTag(baseMessage.getId());
+            if (viewHolder.imgDeliveryTick != null) {
+                if (baseMessage.getSentAt() == 0) {
+                    viewHolder.imgDeliveryTick.setImageResource(R.drawable.ic_sent_message_s_tick);
+                } else {
+                    viewHolder.imgDeliveryTick.setImageResource(R.drawable.ic_sent_message_d_tick);
+                }
+            }
             if (!baseMessage.getSender().getUid().equals(loggedInUser.getUid())) {
                 if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_USER)) {
                     viewHolder.tvUser.setVisibility(View.GONE);
@@ -1072,7 +1087,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         BaseMessage baseMessage = messageList.get(position);
         HashMap<String, JSONObject> extensionList = Extensions.extensionCheck(baseMessage);
         if (baseMessage.getDeletedAt() == 0) {
-            if (baseMessage.getCategory().equals(CometChatConstants.CATEGORY_MESSAGE)) {
+            if (baseMessage.getCategory() != null && baseMessage.getCategory().equals(CometChatConstants.CATEGORY_MESSAGE)) {
                 switch (baseMessage.getType()) {
 
                     case CometChatConstants.MESSAGE_TYPE_TEXT:
@@ -1119,11 +1134,11 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         return -1;
                 }
             } else {
-                if (baseMessage.getCategory().equals(CometChatConstants.CATEGORY_ACTION)) {
+                if (baseMessage.getCategory() != null && baseMessage.getCategory().equals(CometChatConstants.CATEGORY_ACTION)) {
                     return ACTION_MESSAGE;
-                } else if (baseMessage.getCategory().equals(CometChatConstants.CATEGORY_CALL)) {
+                } else if (baseMessage.getCategory() != null && baseMessage.getCategory().equals(CometChatConstants.CATEGORY_CALL)) {
                     return CALL_MESSAGE;
-                } else if (baseMessage.getCategory().equals(CometChatConstants.CATEGORY_CUSTOM)) {
+                } else if (baseMessage.getCategory() != null && baseMessage.getCategory().equals(CometChatConstants.CATEGORY_CUSTOM)) {
                     if (baseMessage.getSender().getUid().equals(loggedInUser.getUid())) {
                         if (baseMessage.getType().equalsIgnoreCase(StringContract.IntentStrings.LOCATION))
                             return RIGHT_LOCATION_CUSTOM_MESSAGE;
@@ -1273,8 +1288,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private final RelativeLayout rlMessageBubble;
         private final TextView tvThreadReplyCount;
         private final LinearLayout lvReplyAvatar;
-        public TextView txtTime;
-        public TextView tvUser;
+        private final TextView txtTime;
+        private final TextView tvUser;
 
         DeleteMessageViewHolder(@NonNull View view) {
             super(view);
@@ -1310,8 +1325,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private final TextView replyUser;             //reply message sender name
         private final TextView replyMessage;          //reply message text
         private final LinearLayout lvReplyAvatar;
-        public TextView txtTime;                //Message Sent time.
-        public TextView tvUser;                 //sender name
+        private final TextView txtTime;                //Message Sent time.
+        private final TextView tvUser;                 //sender name
+        private final AppCompatImageView imgDeliveryTick;   //Delivery Tick
 
         TextMessageViewHolder(@NonNull View view) {
             super(view);
@@ -1330,6 +1346,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             lvReplyAvatar = view.findViewById(R.id.reply_avatar_layout);
             sentimentVw = view.findViewById(R.id.sentiment_layout);
             viewSentimentMessage = view.findViewById(R.id.view_sentiment);
+            imgDeliveryTick = view.findViewById(R.id.delivery_tick);
             this.view = view;
 
         }
@@ -1343,8 +1360,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private final ImageView imgStatus;
         private final Avatar ivUser;
         private final RelativeLayout rlMessageBubble;
-        public TextView txtTime;
-        public TextView tvUser;
+        private final TextView txtTime;
+        private final TextView tvUser;
 
 
         CustomMessageViewHolder(@NonNull View view) {
@@ -1374,6 +1391,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private final RelativeLayout replyLayout;     //reply message layout
         private final TextView replyUser;             //reply message sender name
         private final TextView replyMessage;          //reply message text
+        private final AppCompatImageView imgDeliveryTick;   //Delivery Tick
 
 
         public AudioMessageViewHolder(@NonNull View itemView) {
@@ -1388,6 +1406,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             replyLayout = itemView.findViewById(R.id.replyLayout);
             replyUser = itemView.findViewById(R.id.reply_user);
             replyMessage = itemView.findViewById(R.id.reply_message);
+            imgDeliveryTick = itemView.findViewById(R.id.delivery_tick);
             this.view = itemView;
         }
     }
@@ -1408,7 +1427,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private final RelativeLayout rlMessageBubble;
         private final TextView tvThreadReplyCount;
         private final LinearLayout lvReplyAvatar;
-        public TextView txtTime;
+        private final TextView txtTime;
 
         LinkMessageViewHolder(@NonNull View view) {
             super(view);
