@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.day_wise_course.practice.PracticeAdapter.QuizViewHolder" />
+    </data>
+
+        <LinearLayout
+            android:id="@+id/root_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/practise_info_layout"
+                style="@style/Widget.MaterialComponents.CardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_8sdp"
+                android:background="@color/white"
+                android:paddingHorizontal="@dimen/_12sdp"
+                android:paddingVertical="@dimen/_12sdp"
+                app:contentPadding="@dimen/_8sdp"
+                card_view:cardCornerRadius="@dimen/_4sdp"
+                card_view:cardElevation="8dp"
+                card_view:cardUseCompatPadding="false">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/title_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/practice_title_tv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="@dimen/_6sdp"
+                        android:gravity="start|center"
+                        android:text="@string/today_practise"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textColor="@color/black"
+                        app:drawableStartCompat="@drawable/ic_check_grey"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/expand_iv"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/expand_iv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_add" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+                    android:id="@+id/quiz_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rect_round_16"
+                    android:orientation="vertical"
+                    android:layout_marginTop="@dimen/_28ssp"
+                    android:paddingHorizontal="@dimen/_12sdp"
+                    android:paddingVertical="@dimen/_8sdp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_question"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start|center"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
+                        android:textColor="@color/black"
+                        android:visibility="visible"
+                        tools:text="What is the correct translation of “Hum sab apni english sudharna chahte hai”?" />
+
+                    <RadioGroup
+                        android:id="@+id/radio_group"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_12sdp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_next_question"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_42sdp"
+                        android:layout_marginTop="@dimen/_12sdp"
+                        android:backgroundTint="@color/button_color"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:text="@string/next_question"
+                        android:textAlignment="center"
+                        android:textAllCaps="false"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                        android:textColor="@color/white"
+                        android:visibility="gone"
+                        app:cornerRadius="@dimen/_4sdp"
+                        app:rippleColor="@color/white"
+                        tools:visibility="visible" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_12sdp"
+                        android:gravity="start"
+                        android:text="@string/explanation"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                        android:textColor="@color/black"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/btn_next_question"
+                        tools:visibility="visible" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_explanation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_6sdp"
+                        android:gravity="center_vertical"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                        android:textColor="@color/black"
+                        android:visibility="gone"
+                        tools:text="wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d  wd  wd  wd  wd w dw d w d wd w d  dwdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d wdw d wd wd w d wd w d w d wd  wd  wd  wd  wd w dw d w d wd w d "
+                        tools:visibility="visible" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+
+        </LinearLayout>
+
+</layout>

@@ -87,7 +87,10 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
             DataBindingUtil.inflate(inflater, R.layout.fragment_pratice, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
-
+        val chatModel=ChatModel()
+        chatModel.question= Question(type = BASE_MESSAGE_TYPE.QUIZ )
+        chatModelList?.add(chatModel)
+        chatModelList?.add(chatModel)
         adapter = PracticeAdapter(requireContext(), practiceViewModel, chatModelList!!, this)
         binding.practiceRv.layoutManager = LinearLayoutManager(requireContext())
         binding.practiceRv.adapter = adapter
