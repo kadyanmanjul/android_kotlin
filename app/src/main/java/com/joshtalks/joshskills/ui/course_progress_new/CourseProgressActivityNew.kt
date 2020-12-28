@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.custom_ui.decorator.StickHeaderItemDecoration
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.databinding.CourseProgressActivityNewBinding
@@ -32,6 +33,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.mindorks.placeholderview.`$`.R.id.recyclerView
 import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
@@ -40,6 +42,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
+
 
 class CourseProgressActivityNew : AppCompatActivity(),
     CourseProgressAdapter.ProgressItemClickListener {
@@ -188,16 +191,27 @@ class CourseProgressActivityNew : AppCompatActivity(),
                 }
 
             }
+            val data = ArrayList<CourseOverviewResponse>()
+            it.responseData?.forEach {
+                val courseOverviewResponse = CourseOverviewResponse()
+                courseOverviewResponse.title = it.title
+                courseOverviewResponse.type = 10
+                data.add(courseOverviewResponse)
+                data.add(it)
+            }
 
             adapter =
                 ProgressActivityAdapter(
                     this,
-                    it.responseData!!,
+                    data,
                     this,
                     it.conversationId ?: "0",
                     lastAvailableLessonId
                 )
             binding.progressRv.adapter = adapter
+
+            val stickHeaderDecoration = StickHeaderItemDecoration(adapter.getListner())
+            binding.progressRv.addItemDecoration(stickHeaderDecoration)
 
         })
 
@@ -258,7 +272,7 @@ class CourseProgressActivityNew : AppCompatActivity(),
         certificationId: Int,
         cExamStatus: CExamStatus,
         parentPosition: Int,
-        title:String
+        title: String
 
     ) {
         if (previousLesson.status != LESSON_STATUS.CO.name) {

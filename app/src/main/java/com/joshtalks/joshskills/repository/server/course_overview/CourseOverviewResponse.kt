@@ -55,8 +55,23 @@ data class CourseOverviewResponse(
     var ceMin: Int?,
     @SerializedName("ce_que")
     @Expose
-    var ceQue: Int?
-)
+    var ceQue: Int?,
+    var type: Int=-1
+) {
+    constructor() : this(
+        title="",
+        chatId=null,
+        totalCount=null,
+        certificateExamId=null,
+        examStatus=null,
+        data= emptyList(),
+        examInstructions= emptyList(),
+        ceMarks=null,
+        ceMin=null,
+        ceQue=null,
+        type=-1
+    )
+}
 
 data class CourseOverviewItem(
 

@@ -211,7 +211,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/progress_title_tv"
-            tools:listitem="@layout/progress_activity_adapter_layout" />
+            tools:listitem="@layout/progress_activity_adapter_main_view_layout" />
 
         <RelativeLayout
             android:id="@+id/progress_layout"
