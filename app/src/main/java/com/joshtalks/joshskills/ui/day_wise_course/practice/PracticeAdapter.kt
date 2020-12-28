@@ -166,7 +166,7 @@ class PracticeAdapter(
                         )
                 )
             }
-            if (chatModel.question?.status != QUESTION_STATUS.NA) {
+            if (chatModel.question?.status == QUESTION_STATUS.AT || chatModel.question?.status == QUESTION_STATUS.IP) {
                 binding.practiceTitleTv.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_check,
                         0,
@@ -186,8 +186,6 @@ class PracticeAdapter(
                     java.util.ArrayList()
 
             with(binding) {
-//                setPracticeInfoView(binding, certificationQuestion)
-
                 CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
                     try {
                         var assessmentRelations = getAssessmentFromDB(
@@ -208,10 +206,6 @@ class PracticeAdapter(
                                     showQuizUi()
                                     updateQuiz(assessmentQuestions[0])
                                 }
-                                /* if (chatModel.question?.status == QUESTION_STATUS.AT) {
-                                     setQuizScore(assessmentQuestions)
-                                     showQuizCompleteLayout()
-                                 }*/
                             }
                         } else {
                             val response = getAssessmentFromServer(
