@@ -69,6 +69,7 @@ import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.inbox.IS_FROM_NEW_ONBOARDING
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
+import com.joshtalks.joshskills.ui.newonboarding.fragment.SelectCourseFragment
 import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.points_history.PointsHistoryActivity
@@ -79,6 +80,7 @@ import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
+import com.joshtalks.joshskills.ui.userprofile.ShowNewLeaderBoardFragment
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.smartlook.sdk.smartlook.Smartlook
 import com.smartlook.sdk.smartlook.analytics.identify.UserProperties
@@ -735,5 +737,12 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
                 isFromUserProfile
             )
         }
+    }
+    fun showLeaderboardAchievement(containerId: Int,awarList: List<Award>?) {
+        replaceFragment(
+            containerId,
+            ShowNewLeaderBoardFragment.newInstance(null),
+            ShowNewLeaderBoardFragment.TAG
+        )
     }
 }
