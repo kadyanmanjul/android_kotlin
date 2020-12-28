@@ -23,13 +23,14 @@
 
         <TextView
             android:id="@+id/reply_user"
+            style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxWidth="@dimen/_150sdp"
             android:maxLines="1"
             android:textColor="@color/colorPrimary"
-            android:textSize="12sp"
+            android:textSize="@dimen/_11ssp"
             android:textStyle="bold"
             tools:text="@tools:sample/full_names" />
 
@@ -46,6 +47,7 @@
 
     <TextView
         android:id="@+id/reply_message"
+        style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/reply_user_info"
@@ -55,6 +57,7 @@
         android:maxWidth="@dimen/_178sdp"
         android:maxLines="3"
         android:textColor="@color/black"
+        android:textSize="@dimen/_11ssp"
         android:textStyle="italic"
         app:drawableTint="@color/dark_grey"
         tools:text="@string/replyTxt" />

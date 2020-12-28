@@ -37,6 +37,7 @@
         android:layout_height="@dimen/_42sdp"
         android:layout_below="@+id/chatList_toolbar"
         android:background="@color/white"
+        android:elevation="@dimen/_4sdp"
         android:visibility="gone"
         tools:visibility="visible">
 

@@ -9,22 +9,19 @@
         android:layout_width="@dimen/_28sdp"
         android:layout_height="@dimen/_28sdp"
         android:layout_alignBottom="@+id/cv_message_container"
-        android:layout_marginStart="4dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginStart="@dimen/_4sdp"
+        android:layout_marginBottom="@dimen/_4sdp"
         tools:src="@tools:sample/avatars" />
 
     <RelativeLayout
         android:id="@+id/cv_message_container"
         android:layout_width="@dimen/_190sdp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/_6sdp"
         android:layout_toEndOf="@id/iv_user"
         android:background="@drawable/incoming_message_normal_bg_groupchat"
         android:gravity="center"
-        android:paddingStart="@dimen/_8sdp"
-        android:paddingTop="@dimen/_4sdp"
-        android:paddingEnd="@dimen/_8sdp"
-        android:paddingBottom="@dimen/_4sdp">
+        android:paddingStart="@dimen/_6sdp"
+        android:paddingEnd="@dimen/_6sdp">
 
         <TextView
             android:id="@+id/tv_user"
@@ -33,11 +30,11 @@
             android:layout_marginBottom="0dp"
             android:gravity="center"
             android:paddingStart="@dimen/_6sdp"
-            android:paddingTop="@dimen/_4sdp"
-            android:paddingEnd="8dp"
+
+            android:paddingEnd="@dimen/_6sdp"
             android:paddingBottom="0dp"
             android:textColor="@color/colorPrimary"
-            android:textSize="12sp"
+            android:textSize="@dimen/_11ssp"
             android:textStyle="bold"
             android:visibility="gone"
             tools:text="Iron Man"
@@ -50,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_user"
             android:layout_marginStart="@dimen/_6sdp"
-            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:layout_marginEnd="@dimen/_6sdp" />
 
         <View
@@ -82,7 +79,8 @@
             android:gravity="end"
             android:maxLines="1"
             android:minWidth="@dimen/_32sdp"
-            android:paddingHorizontal="@dimen/_4sdp"
+            android:paddingStart="@dimen/_6sdp"
+            android:paddingEnd="@dimen/_4sdp"
             android:textColor="@color/gray_9E"
             android:textSize="@dimen/_8ssp"
             android:visibility="gone"

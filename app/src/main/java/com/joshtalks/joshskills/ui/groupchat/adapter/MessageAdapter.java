@@ -734,7 +734,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
 
             String txtMessage = ((TextMessage) baseMessage).getText().trim();
-            viewHolder.txtMessage.setTextSize(16f);
             viewHolder.txtMessage.setText(txtMessage);
             String profanityFilter = Extensions.checkProfanityMessage(baseMessage);
             viewHolder.txtMessage.setText(profanityFilter);
