@@ -414,6 +414,18 @@ class WebRtcService : Service() {
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
+            mRtcEngine?.apply {
+                disableVideo()
+                enableAudio()
+                enableAudioVolumeIndication(1000, 3, true)
+                setAudioProfile(
+                    Constants.AUDIO_PROFILE_SPEECH_STANDARD,
+                    Constants.AUDIO_SCENARIO_EDUCATION
+                )
+                setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION)
+                adjustRecordingSignalVolume(400)
+                adjustPlaybackSignalVolume(100)
+            }
             if (mRtcEngine != null) {
                 callback.invoke()
             }
@@ -691,16 +703,6 @@ class WebRtcService : Service() {
         if (callData == null) {
             callData = data
         }
-        mRtcEngine?.disableVideo()
-        mRtcEngine?.enableAudio()
-        mRtcEngine?.enableAudioVolumeIndication(1000, 3, true)
-        mRtcEngine?.setAudioProfile(
-            Constants.AUDIO_PROFILE_SPEECH_STANDARD,
-            Constants.AUDIO_SCENARIO_EDUCATION
-        )
-        mRtcEngine?.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION)
-        mRtcEngine?.adjustRecordingSignalVolume(400)
-        mRtcEngine?.adjustPlaybackSignalVolume(100)
         data.printAll()
         val statusCode = mRtcEngine?.joinChannel(
             getToken(data),
