@@ -89,6 +89,7 @@ class SeeAllAwardActivity : BaseActivity() {
         awardCategory.awards?.forEach {
             recyclerView.addView(AwardItemViewHolder(it, this))
         }
+        recyclerView.isNestedScrollingEnabled=true
         return view
     }
 

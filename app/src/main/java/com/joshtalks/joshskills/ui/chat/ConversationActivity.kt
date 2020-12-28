@@ -58,6 +58,7 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.IS_GROUP_CHAT_HINT_SEEN
+import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.LESSON_NUMBER
@@ -936,10 +937,17 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     }
 
     private fun initToolbarView() {
-        conversationBinding.toolbar.menu.findItem(R.id.leaderboard_setting).isVisible = true
-        conversationBinding.toolbar.menu.findItem(R.id.leaderboard_setting).isEnabled = true
-        conversationBinding.toolbar.menu.findItem(R.id.profile_setting).isVisible = true
-        conversationBinding.toolbar.menu.findItem(R.id.profile_setting).isEnabled = true
+        if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+            conversationBinding.toolbar.menu.findItem(R.id.leaderboard_setting).isVisible = true
+            conversationBinding.toolbar.menu.findItem(R.id.leaderboard_setting).isEnabled = true
+            conversationBinding.toolbar.menu.findItem(R.id.profile_setting).isVisible = true
+            conversationBinding.toolbar.menu.findItem(R.id.profile_setting).isEnabled = true
+        } else {
+            conversationBinding.toolbar.menu.findItem(R.id.leaderboard_setting).isVisible = false
+            conversationBinding.toolbar.menu.findItem(R.id.leaderboard_setting).isEnabled = false
+            conversationBinding.toolbar.menu.findItem(R.id.profile_setting).isVisible = false
+            conversationBinding.toolbar.menu.findItem(R.id.profile_setting).isEnabled = false
+        }
     }
 
     private fun initScoreCardView(userData: UserProfileResponse) {

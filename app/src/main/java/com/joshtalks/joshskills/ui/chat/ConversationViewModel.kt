@@ -98,11 +98,11 @@ class ConversationViewModel(application: Application) :
                     response.body()?.awardCategory?.sortedBy { it.sortOrder }?.map {
                         it.awards?.sortedBy { it.sortOrder }
                     }
-                    userData.postValue(response.body()!!)
                     PrefManager.put(
                         IS_PROFILE_FEATURE_ACTIVE,
                         response.body()?.isPointsActive ?: false
                     )
+                    userData.postValue(response.body()!!)
                     return@launch
                 }
 
