@@ -203,7 +203,6 @@ class PracticeAdapter(
                                     binding.quizRadioGroup.setOnCheckedChangeListener(
                                             quizCheckedChangeListener
                                     )
-                                    showQuizUi()
                                     updateQuiz(assessmentQuestions[0])
                                 }
                             }
@@ -226,7 +225,6 @@ class PracticeAdapter(
                                             binding.quizRadioGroup.setOnCheckedChangeListener(
                                                     quizCheckedChangeListener
                                             )
-                                            showQuizUi()
                                             updateQuiz(assessmentQuestions[0])
                                         }
                                     }
@@ -240,7 +238,6 @@ class PracticeAdapter(
                     }
                 }
 
-                binding.quizLayout.visibility = GONE
                 binding.practiceTitleTv.setOnClickListener {
                     if (binding.quizLayout.visibility == GONE) {
                         binding.quizLayout.visibility = VISIBLE
@@ -310,10 +307,6 @@ class PracticeAdapter(
                 binding.explanationTv.requestFocus()
                 requestFocus(binding.explanationTv)
             }
-        }
-
-        private fun showQuizUi() {
-            binding.quizLayout.visibility = VISIBLE
         }
 
         fun onContinueClick() {
