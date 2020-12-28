@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.userprofile
 
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.setImage
@@ -22,13 +23,13 @@ import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardItemViewHolder
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ShowNewLeaderBoardFragment: Fragment()  {
 
     private lateinit var binding: FragmentShowNewLeaderboardBinding
     private var award: Award? = null
+
     val leaderBoardData: MutableLiveData<LeaderboardResponse> = MutableLiveData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +71,7 @@ class ShowNewLeaderBoardFragment: Fragment()  {
 
     private fun initView(it: LeaderboardResponse) {
 
-        val linearLayoutManager = LinearLayoutManager(activity)
+        val linearLayoutManager = LinearLayoutManager(activity,LinearLayoutManager.VERTICAL,true)
         linearLayoutManager.isSmoothScrollbarEnabled = true
 
 
@@ -89,7 +90,14 @@ class ShowNewLeaderBoardFragment: Fragment()  {
         binding.titleTv.text=it.info
         binding.rankTv.text="Current rank : ${it.current_mentor?.ranking}"
         it.top_50_mentor_list?.forEach {
-            binding.recyclerView.addView(LeaderBoardItemViewHolder(it,requireContext(),false,false))
+            binding.recyclerView.addView(
+                LeaderBoardItemViewHolder(
+                    it,
+                    requireContext(),
+                    false,
+                    false
+                )
+            )
         }
         binding.rank.text=it.current_mentor?.ranking.toString()
         it.current_mentor?.photoUrl?.let { it1 -> binding.userPic.setImage(it1) }
@@ -100,22 +108,23 @@ class ShowNewLeaderBoardFragment: Fragment()  {
         val last_item_position=binding.recyclerView.getAdapter()?.getItemCount()?.minus(1)
         last_item_position?.let { it1 ->
             CoroutineScope(Dispatchers.Main).launch {
-                //scrollToPosition(0, it1)
-
+                binding.recyclerView.removeOnScrollListener(onScrollListener)
+                binding.recyclerView.addOnScrollListener(onScrollListener)
                 linearSmoothScroller.targetPosition = last_item_position //the last position of the item in the list
                 linearLayoutManager.startSmoothScroll(linearSmoothScroller)
             }
         }
     }
 
-    private suspend fun scrollToPosition(i: Int, lastItemPosition: Int) {
-        var lastItem=lastItemPosition
-
-        binding.recyclerView.smoothScrollToPosition(i)
-        while (false){
-            binding.recyclerView.smoothScrollToPosition(lastItem.minus(1))
-            lastItem=lastItem.minus(1)
-            delay(100)
+    var onScrollListener: RecyclerView.OnScrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            when (newState) {
+                SCROLL_STATE_IDLE -> {
+                    //we reached the target position
+                    recyclerView.removeOnScrollListener(this)
+                    binding.userItem.visibility=View.GONE
+                }
+            }
         }
     }
 
