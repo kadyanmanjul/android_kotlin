@@ -113,6 +113,7 @@ class SearchingUserActivity : BaseActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        WebRtcService.initLibrary()
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         this.window.setFlags(

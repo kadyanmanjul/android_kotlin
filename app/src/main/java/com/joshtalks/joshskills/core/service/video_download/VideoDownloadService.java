@@ -5,6 +5,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+
+import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ext.workmanager.WorkManagerScheduler;
 import com.google.android.exoplayer2.offline.Download;
@@ -24,14 +27,17 @@ import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS;
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus;
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity;
 import com.joshtalks.joshskills.ui.chat.ConversationActivity;
-import io.reactivex.schedulers.Schedulers;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import org.jetbrains.annotations.NotNull;
+
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 import static com.joshtalks.joshskills.core.StaticConstantKt.MINIMUM_VIDEO_DOWNLOAD_PROGRESS;
@@ -46,7 +52,7 @@ public class VideoDownloadService extends DownloadService {
     private static final int FOREGROUND_NOTIFICATION_ID = 1;
 
     private static int nextNotificationId = FOREGROUND_NOTIFICATION_ID + 1;
-    private static HashMap<String, Integer> notificationListMap = new HashMap<>();
+    private static final HashMap<String, Integer> notificationListMap = new HashMap<>();
 
 
     private DownloadNotificationHelper notificationHelper;
@@ -66,6 +72,11 @@ public class VideoDownloadService extends DownloadService {
     public void onCreate() {
         super.onCreate();
         notificationHelper = new DownloadNotificationHelper(this, CHANNEL_ID);
+    }
+
+    @Override
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+        return START_NOT_STICKY;
     }
 
     @NotNull
@@ -145,7 +156,6 @@ public class VideoDownloadService extends DownloadService {
                 DatabaseUtils.updateAllVideoStatusWhichIsDownloading();
             }
         }, 0, 30 * 60 * 1000);
-
     }
 
     private void clearNotification(String s) {

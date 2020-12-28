@@ -1,10 +1,6 @@
 package com.joshtalks.joshskills.core.notification
 
-import android.app.ActivityManager
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
@@ -23,13 +19,8 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.API_TOKEN
-import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
-import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.COURSE_ID
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.JoshSkillExecutors
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
@@ -57,7 +48,7 @@ import com.joshtalks.joshskills.ui.voip.WebRtcService
 import org.json.JSONObject
 import timber.log.Timber
 import java.lang.reflect.Type
-import java.util.HashMap
+import java.util.*
 import java.util.concurrent.ExecutorService
 
 const val FCM_TOKEN = "fcmToken"
@@ -80,7 +71,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Timber.tag("notifiation").e(token)
+        Timber.tag(FirebaseNotificationService::class.java.name).e(token)
         PrefManager.put(FCM_TOKEN, token)
         if (AppObjectController.freshChat != null) {
             AppObjectController.freshChat?.setPushRegistrationToken(token)
@@ -115,10 +106,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     private fun sendNotification(notificationObject: NotificationObject) {
         executor.execute {
-            val style = NotificationCompat.BigTextStyle()
-            style.setBigContentTitle(notificationObject.contentTitle)
-            style.bigText(notificationObject.contentText)
-            style.setSummaryText(notificationObject.contentText)
 
             val intent = getIntentAccordingAction(
                 notificationObject,
@@ -127,13 +114,16 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             )
 
             intent?.run {
-                this.putExtra(HAS_NOTIFICATION, true)
-                val activityList = if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
-                    arrayOf(this)
-                } else {
-                    /* if (isAppRunning().not()) {
+                putExtra(HAS_NOTIFICATION, true)
+                putExtra(NOTIFICATION_ID, notificationObject.id)
+
+                val activityList = arrayOf(this)
+                /*   val activityList = if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                       arrayOf(this)
+                   } else {
+                       *//* if (isAppRunning().not()) {
                          arrayOf(this)
-                     } else {*/
+                     } else {*//*
                     val backIntent =
                         Intent(
                             this@FirebaseNotificationService,
@@ -142,11 +132,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         }
-                    arrayOf(backIntent, this)
+                    arrayOf( this)
                     //  }
-                }
+                }*/
 
-                intent.putExtra(NOTIFICATION_ID, notificationObject.id)
                 val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
                 val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
                 val pendingIntent = PendingIntent.getActivities(
@@ -154,6 +143,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     uniqueInt, activityList,
                     PendingIntent.FLAG_UPDATE_CURRENT
                 )
+
+                val style = NotificationCompat.BigTextStyle()
+                style.setBigContentTitle(notificationObject.contentTitle)
+                style.bigText(notificationObject.contentText)
+                style.setSummaryText(notificationObject.contentText)
 
                 val notificationBuilder =
                     NotificationCompat.Builder(
@@ -168,24 +162,23 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         .setContentText(notificationObject.contentText)
                         .setContentIntent(pendingIntent)
                         .setStyle(style)
+                        .setWhen(System.currentTimeMillis())
+                        .setDefaults(Notification.DEFAULT_ALL)
                         .setColor(
                             ContextCompat.getColor(
                                 this@FirebaseNotificationService,
                                 R.color.colorAccent
                             )
                         )
-                        .setWhen(System.currentTimeMillis())
-                notificationBuilder.setDefaults(Notification.DEFAULT_ALL)
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
+                    notificationBuilder.priority = NotificationManager.IMPORTANCE_DEFAULT
                 }
 
                 val dismissIntent =
                     Intent(applicationContext, DismissNotifEventReceiver::class.java).apply {
                         putExtra(NOTIFICATION_ID, notificationObject.id)
                         putExtra(HAS_NOTIFICATION, true)
-
                     }
                 val dismissPendingIntent: PendingIntent =
                     PendingIntent.getBroadcast(applicationContext, uniqueInt, dismissIntent, 0)

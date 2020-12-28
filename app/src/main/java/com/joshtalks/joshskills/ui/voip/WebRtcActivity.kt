@@ -120,7 +120,7 @@ class WebRtcActivity : BaseActivity() {
 
     private fun showCallRatingScreen() {
         val callTime = mBoundService?.getTimeOfTalk() ?: 0
-        if (callTime > 0 || channelName.isNullOrEmpty().not()) {
+        if (callTime > 0 && channelName.isNullOrEmpty().not()) {
             val prev = supportFragmentManager.findFragmentByTag(VoipRatingFragment::class.java.name)
             if (prev != null) {
                 return

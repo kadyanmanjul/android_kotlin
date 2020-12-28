@@ -28,11 +28,9 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.ACTION_CALL_CHANNEL_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.ACTION_NOTIFICATION_ID
-import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CONNECTED_CALL_CHANNEL_ID
+import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CALL_NOTIFICATION_CHANNEL
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CONNECTED_CALL_NOTIFICATION_ID
-import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_CHANNEL_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_NOTIFICATION_ID
 import com.joshtalks.joshskills.ui.voip.extra.FullScreenActivity
 import com.joshtalks.joshskills.ui.voip.util.SoundPoolManager
@@ -109,6 +107,17 @@ class WebRtcService : Service() {
 
         @Volatile
         private var callCallback: WeakReference<WebRtcCallback>? = null
+
+        fun initLibrary() {
+            val serviceIntent = Intent(
+                AppObjectController.joshApplication,
+                WebRtcService::class.java
+            ).apply {
+                action = InitLibrary().action
+            }
+            AppObjectController.joshApplication.startService(serviceIntent)
+        }
+
 
         fun startOutgoingCall(map: HashMap<String, String?>) {
             val serviceIntent = Intent(
@@ -413,6 +422,9 @@ class WebRtcService : Service() {
                 initEngine {
                     try {
                         when {
+                            this == InitLibrary().action -> {
+                                Timber.tag(TAG).e("LibraryInit")
+                            }
                             this == NotificationIncomingCall().action -> {
                                 if (CallState.CALL_STATE_BUSY == phoneCallState || isCallWasOnGoing) {
                                     callData?.let {
@@ -466,9 +478,15 @@ class WebRtcService : Service() {
                                 disconnectService()
                             }
                             this == CallStop().action -> {
+                                if (JoshApplication.isAppVisible.not()) {
+                                    addNotification(CallDisconnect().action, null)
+                                }
                                 callStopWithoutIssue()
                             }
                             this == CallForceDisconnect().action -> {
+                                if (JoshApplication.isAppVisible.not()) {
+                                    addNotification(CallDisconnect().action, null)
+                                }
                                 resetTimer()
                                 endCall(apiCall = false)
                                 RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
@@ -489,7 +507,7 @@ class WebRtcService : Service() {
                                     if (callCallback != null && callCallback?.get() != null) {
                                         callCallback?.get()?.switchChannel(data)
                                     } else {
-                                        startAutoPickCallActivity()
+                                        startAutoPickCallActivity(false)
                                     }
                                 }, 750)
                             }
@@ -518,17 +536,17 @@ class WebRtcService : Service() {
         }
         mNotificationManager?.cancel(ACTION_NOTIFICATION_ID)
         mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
-        startAutoPickCallActivity()
+        startAutoPickCallActivity(true)
     }
 
-    private fun startAutoPickCallActivity() {
+    private fun startAutoPickCallActivity(autoPick: Boolean) {
         val callActivityIntent =
             Intent(
                 AppObjectController.joshApplication,
                 WebRtcActivity::class.java
             ).apply {
                 putExtra(CALL_TYPE, CallType.INCOMING)
-                putExtra(AUTO_PICKUP_CALL, true)
+                putExtra(AUTO_PICKUP_CALL, autoPick)
                 putExtra(CALL_USER_OBJ, callData)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
@@ -647,6 +665,7 @@ class WebRtcService : Service() {
     }
 
     private fun joinCall(data: HashMap<String, String?>) {
+        resetTimer()
         if (callData == null) {
             callData = data
         }
@@ -777,6 +796,7 @@ class WebRtcService : Service() {
     override fun onDestroy() {
         RtcEngine.destroy()
         AppObjectController.mRtcEngine = null
+        executor.shutdown()
         isCallerJoin = false
         countUpTimer.reset()
         isCallRecordOngoing = false
@@ -842,7 +862,7 @@ class WebRtcService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name: CharSequence = "Voip Incoming Call"
             val mChannel = NotificationChannel(
-                INCOMING_CALL_CHANNEL_ID,
+                CALL_NOTIFICATION_CHANNEL,
                 name,
                 NotificationManager.IMPORTANCE_HIGH
             )
@@ -882,8 +902,8 @@ class WebRtcService : Service() {
         val answerActionPendingIntent: PendingIntent =
             PendingIntent.getService(this, 0, answerActionIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val lNotificationBuilder = NotificationCompat.Builder(this, INCOMING_CALL_CHANNEL_ID)
-            .setChannelId(INCOMING_CALL_CHANNEL_ID)
+        val lNotificationBuilder = NotificationCompat.Builder(this, CALL_NOTIFICATION_CHANNEL)
+            .setChannelId(CALL_NOTIFICATION_CHANNEL)
             //.setContentTitle(incomingData?.get("X-PH-CALLERNAME"))
             .setContentText("Incoming voice call")
             .setSmallIcon(R.drawable.ic_status_bar_notification)
@@ -926,7 +946,7 @@ class WebRtcService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name: CharSequence = "Voip call connect"
             val importance: Int = NotificationManager.IMPORTANCE_LOW
-            val mChannel = NotificationChannel(CONNECTED_CALL_CHANNEL_ID, name, importance)
+            val mChannel = NotificationChannel(CALL_NOTIFICATION_CHANNEL, name, importance)
             mNotificationManager?.createNotificationChannel(mChannel)
         }
 
@@ -949,8 +969,8 @@ class WebRtcService : Service() {
                 declineActionIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
-        val lNotificationBuilder = NotificationCompat.Builder(this, CONNECTED_CALL_CHANNEL_ID)
-            .setChannelId(CONNECTED_CALL_CHANNEL_ID)
+        val lNotificationBuilder = NotificationCompat.Builder(this, CALL_NOTIFICATION_CHANNEL)
+            .setChannelId(CALL_NOTIFICATION_CHANNEL)
             .setContentIntent(pendingIntent)
             .setContentTitle(getNameAfterConnectedCall(data))
             .setContentText("Ongoing voice call")
@@ -978,14 +998,14 @@ class WebRtcService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name: CharSequence = "Voip Call Status"
             val mChannel = NotificationChannel(
-                ACTION_CALL_CHANNEL_ID,
+                CALL_NOTIFICATION_CHANNEL,
                 name,
                 NotificationManager.IMPORTANCE_MIN
             )
             mNotificationManager?.createNotificationChannel(mChannel)
         }
-        val lNotificationBuilder = NotificationCompat.Builder(this, ACTION_CALL_CHANNEL_ID)
-            .setChannelId(ACTION_CALL_CHANNEL_ID)
+        val lNotificationBuilder = NotificationCompat.Builder(this, CALL_NOTIFICATION_CHANNEL)
+            .setChannelId(CALL_NOTIFICATION_CHANNEL)
             .setContentTitle(title)
             .setSmallIcon(R.drawable.ic_status_bar_notification)
             .setColor(
@@ -1061,6 +1081,8 @@ sealed class WebRtcCalling
 data class NotificationIncomingCall(val action: String = "calling.action.notification_incoming_call") :
     WebRtcCalling()
 
+
+data class InitLibrary(val action: String = "calling.action.initLibrary") : WebRtcCalling()
 data class IncomingCall(val action: String = "calling.action.incoming_call") : WebRtcCalling()
 data class CallConnect(val action: String = "calling.action.connect") : WebRtcCalling()
 data class CallDisconnect(val action: String = "calling.action.disconnect") : WebRtcCalling()
@@ -1088,13 +1110,10 @@ enum class CallAction(val action: String) {
 
 class NotificationId {
     companion object {
-        val ACTION_NOTIFICATION_ID = 200000
-        val INCOMING_CALL_NOTIFICATION_ID = 200001
-        val CONNECTED_CALL_NOTIFICATION_ID = 200002
-
-        val ACTION_CALL_CHANNEL_ID = "action_call_channel_id"
-        val INCOMING_CALL_CHANNEL_ID = "incoming_call_channel_id"
-        val CONNECTED_CALL_CHANNEL_ID = "connected_call_channel_id"
+        const val ACTION_NOTIFICATION_ID = 200000
+        const val INCOMING_CALL_NOTIFICATION_ID = 200001
+        const val CONNECTED_CALL_NOTIFICATION_ID = 200002
+        const val CALL_NOTIFICATION_CHANNEL = "Call Notifications"
     }
 }
 
