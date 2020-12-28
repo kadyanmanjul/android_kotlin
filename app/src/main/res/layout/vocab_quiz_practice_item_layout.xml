@@ -11,60 +11,59 @@
             type="com.joshtalks.joshskills.ui.day_wise_course.practice.PracticeAdapter.QuizViewHolder" />
     </data>
 
-        <LinearLayout
-            android:id="@+id/root_view"
+    <LinearLayout
+        android:id="@+id/root_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:orientation="vertical">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/practise_info_layout"
+            style="@style/Widget.MaterialComponents.CardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:animateLayoutChanges="true"
-            android:orientation="vertical">
+            android:layout_margin="@dimen/_8sdp"
+            android:background="@color/white"
+            android:paddingHorizontal="@dimen/_12sdp"
+            android:paddingVertical="@dimen/_12sdp"
+            app:contentPadding="@dimen/_8sdp"
+            card_view:cardCornerRadius="@dimen/_4sdp"
+            card_view:cardElevation="8dp"
+            card_view:cardUseCompatPadding="false">
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/practise_info_layout"
-                style="@style/Widget.MaterialComponents.CardView"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/title_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_8sdp"
-                android:background="@color/white"
-                android:paddingHorizontal="@dimen/_12sdp"
-                android:paddingVertical="@dimen/_12sdp"
-                app:contentPadding="@dimen/_8sdp"
-                card_view:cardCornerRadius="@dimen/_4sdp"
-                card_view:cardElevation="8dp"
-                card_view:cardUseCompatPadding="false">
+                android:orientation="vertical">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/title_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/practice_title_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/_6sdp"
+                    android:gravity="start|center"
+                    android:text="@string/today_practise"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                    android:textColor="@color/black"
+                    app:drawableStartCompat="@drawable/ic_check_grey"
+                    app:layout_constraintEnd_toStartOf="@+id/expand_iv"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/practice_title_tv"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:drawablePadding="@dimen/_6sdp"
-                        android:gravity="start|center"
-                        android:text="@string/today_practise"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                        android:textColor="@color/black"
-                        app:drawableStartCompat="@drawable/ic_check_grey"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/expand_iv"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/expand_iv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_add" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/expand_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_add" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/quiz_layout"
                     android:layout_width="match_parent"
+                    app:layout_constraintTop_toBottomOf="@+id/practice_title_tv"
                     android:layout_height="match_parent">
 
                     <com.google.android.material.textview.MaterialTextView
@@ -100,8 +99,8 @@
                             android:minHeight="0dp"
                             android:paddingVertical="@dimen/_6sdp"
                             android:paddingEnd="@dimen/_8sdp"
-                            tools:text="We all want to improve our english"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular" />
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                            tools:text="We all want to improve our english" />
 
                         <androidx.appcompat.widget.AppCompatRadioButton
                             android:id="@+id/option_2"
@@ -113,8 +112,8 @@
                             android:minHeight="0dp"
                             android:paddingVertical="@dimen/_6sdp"
                             android:paddingEnd="@dimen/_8sdp"
-                            tools:text="We all will want to improve our english"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular" />
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                            tools:text="We all will want to improve our english" />
 
                         <androidx.appcompat.widget.AppCompatRadioButton
                             android:id="@+id/option_3"
@@ -126,8 +125,8 @@
                             android:minHeight="0dp"
                             android:paddingVertical="@dimen/_6sdp"
                             android:paddingEnd="@dimen/_8sdp"
-                            tools:text="Option third"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular" />
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                            tools:text="Option third" />
 
                         <androidx.appcompat.widget.AppCompatRadioButton
                             android:id="@+id/option_4"
@@ -139,8 +138,8 @@
                             android:minHeight="0dp"
                             android:paddingVertical="@dimen/_6sdp"
                             android:paddingEnd="@dimen/_8sdp"
-                            tools:text="Option fourth"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular" />
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                            tools:text="Option fourth" />
                     </RadioGroup>
 
                     <com.google.android.material.textview.MaterialTextView
@@ -248,9 +247,13 @@
                         app:layout_constraintTop_toBottomOf="@+id/explanation_lbl" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+
+    </LinearLayout>
 
 </layout>

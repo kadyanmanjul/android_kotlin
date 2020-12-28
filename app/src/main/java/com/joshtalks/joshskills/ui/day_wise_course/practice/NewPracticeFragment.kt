@@ -79,12 +79,12 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_pratice, container, false)
+                DataBindingUtil.inflate(inflater, R.layout.fragment_pratice, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
         adapter = PracticeAdapter(requireContext(), practiceViewModel, chatModelList!!, this)
@@ -97,7 +97,7 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
         }
 
         binding.vocabularyCompletedTv.text = AppObjectController.getFirebaseRemoteConfig()
-            .getString(FirebaseRemoteConfigKey.VOCABULARY_COMPLETED)
+                .getString(FirebaseRemoteConfigKey.VOCABULARY_COMPLETED)
         return binding.root
     }
 
@@ -111,18 +111,30 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
         })
     }
 
-    private fun onPracticeSubmitted(chatModel: ChatModel) {
+    override fun submitQuiz(chatModel: ChatModel) {
+        onQuestionSubmitted(chatModel)
+    }
+
+    private fun onQuestionSubmitted(chatModel: ChatModel) {
 
         CoroutineScope(Dispatchers.IO).launch {
-            currentChatModel?.question?.interval?.run {
+            chatModel.question?.interval?.run {
                 WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
             }
         }
         activityCallback?.onQuestionStatusUpdate(
-            QUESTION_STATUS.AT,
-            currentChatModel?.question?.questionId?.toIntOrNull() ?: 0
+                QUESTION_STATUS.AT,
+                chatModel.question?.questionId?.toIntOrNull() ?: 0
         )
 
+        chatModel.question?.status = QUESTION_STATUS.AT
+
+        currentChatModel = null
+
+        adapter.notifyDataSetChanged()
+    }
+
+    override fun openNextScreen() {
         var openNextScreen = true
         chatModelList?.forEach { item ->
             if (item.question?.status == QUESTION_STATUS.NA) {
@@ -135,9 +147,6 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
             binding.vocabularyCompleteLayout.visibility = View.VISIBLE
             activityCallback?.onSectionStatusUpdate(1, true)
         }
-        currentChatModel = null
-
-        adapter.notifyDataSetChanged()
     }
 
     fun onContinueClick() {
@@ -170,7 +179,7 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
 //                requestEngage.text = binding.etPractise.text.toString()
                 requestEngage.localPath = chatModel.filePath
                 requestEngage.duration =
-                    Utils.getDurationOfMedia(requireActivity(), chatModel.filePath)?.toInt()
+                        Utils.getDurationOfMedia(requireActivity(), chatModel.filePath)?.toInt()
                 requestEngage.feedbackRequire = chatModel.question?.feedback_require
                 requestEngage.questionId = chatModel.question?.questionId!!
                 requestEngage.mentor = Mentor.getInstance().getId()
@@ -179,16 +188,16 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
                 }
 
                 chatModel.question!!.status = QUESTION_STATUS.IP
-                onPracticeSubmitted(chatModel)
-
+                onQuestionSubmitted(chatModel)
+                openNextScreen()
                 CoroutineScope(Dispatchers.IO).launch {
                     val insertedId =
-                        AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
-                            PendingTaskModel(requestEngage, PendingTask.VOCABULARY_PRACTICE)
-                        )
+                            AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
+                                    PendingTaskModel(requestEngage, PendingTask.VOCABULARY_PRACTICE)
+                            )
                     FileUploadService.uploadSinglePendingTasks(
-                        AppObjectController.joshApplication,
-                        insertedId
+                            AppObjectController.joshApplication,
+                            insertedId
                     )
 
                 }
@@ -211,9 +220,9 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
         if (isAdded && activity != null)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val timeDifference =
-            TimeUnit.MILLISECONDS.toSeconds(stopTime) - TimeUnit.MILLISECONDS.toSeconds(
-                startTime
-            )
+                TimeUnit.MILLISECONDS.toSeconds(stopTime) - TimeUnit.MILLISECONDS.toSeconds(
+                        startTime
+                )
         if (timeDifference > 1) {
             practiceViewModel.recordFile?.let {
 //                                isAudioRecordDone = true
@@ -228,27 +237,27 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
     override fun askRecordPermission() {
 
         PermissionUtils.audioRecordStorageReadAndWritePermission(
-            requireActivity(),
-            object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let {
-                        if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.permissionPermanentlyDeniedDialog(
-                                requireActivity(),
-                                R.string.record_permission_message
-                            )
-                            return
+                requireActivity(),
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let {
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.permissionPermanentlyDeniedDialog(
+                                        requireActivity(),
+                                        R.string.record_permission_message
+                                )
+                                return
+                            }
                         }
                     }
-                }
 
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
-                ) {
-                    token?.continuePermissionRequest()
-                }
-            })
+                    override fun onPermissionRationaleShouldBeShown(
+                            permissions: MutableList<PermissionRequest>?,
+                            token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
+                })
     }
 
     override fun focusChild(position: Int) {

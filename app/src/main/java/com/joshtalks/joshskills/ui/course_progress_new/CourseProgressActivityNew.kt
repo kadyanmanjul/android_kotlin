@@ -20,7 +20,6 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.databinding.CourseProgressActivityNewBinding
 import com.joshtalks.joshskills.repository.local.entity.CExamStatus
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewItem
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewResponse
 import com.joshtalks.joshskills.repository.server.course_overview.PdfInfo
@@ -33,7 +32,6 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.mindorks.placeholderview.`$`.R.id.recyclerView
 import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
@@ -275,41 +273,47 @@ class CourseProgressActivityNew : AppCompatActivity(),
         title: String
 
     ) {
-        if (previousLesson.status != LESSON_STATUS.CO.name) {
-            courseOverviewResponse?.let {
-                ExamUnlockDialogFragment(
-                    it[parentPosition].examInstructions,
-                    it[parentPosition].ceMarks,
-                    it[parentPosition].ceQue,
-                    it[parentPosition].ceMin,
-                    it[parentPosition].totalCount,
-                    title
-                ).show(
-                    supportFragmentManager,
-                    "ExamUnlockDialogFragment"
-                )
-            }
-        } else {
-            val cExamActivityListener: ActivityResultLauncher<Intent> =
-                registerForActivityResult(
-                    ActivityResultContracts.StartActivityForResult()
-                ) { result ->
-                    if (result.resultCode == Activity.RESULT_OK) {
-                        result.data?.getStringExtra(MESSAGE_ID)?.let { chatId ->
-                            viewModel.getCourseOverview(courseId)
-                        }
+        CoroutineScope(Dispatchers.IO).launch {
+            val lessonModel = viewModel.getLesson(previousLesson.lessonId)
+            runOnUiThread {
+                if (lessonModel != null) {
+                    courseOverviewResponse?.let {
+                        ExamUnlockDialogFragment(
+                                it[parentPosition].examInstructions,
+                                it[parentPosition].ceMarks,
+                                it[parentPosition].ceQue,
+                                it[parentPosition].ceMin,
+                                it[parentPosition].totalCount,
+                                title
+                        ).show(
+                                supportFragmentManager,
+                                "ExamUnlockDialogFragment"
+                        )
                     }
+                } else {
+                    val cExamActivityListener: ActivityResultLauncher<Intent> =
+                            registerForActivityResult(
+                                    ActivityResultContracts.StartActivityForResult()
+                            ) { result ->
+                                if (result.resultCode == Activity.RESULT_OK) {
+                                    result.data?.getStringExtra(MESSAGE_ID)?.let { chatId ->
+                                        viewModel.getCourseOverview(courseId)
+                                    }
+                                }
+                            }
+                    cExamActivityListener.launch(
+                            CertificationBaseActivity.certificationExamIntent(
+                                    this@CourseProgressActivityNew,
+                                    conversationId = conversationId,
+                                    chatMessageId = chatMessageId,
+                                    certificationId = certificationId,
+                                    cExamStatus = cExamStatus
+                            )
+                    )
                 }
-            cExamActivityListener.launch(
-                CertificationBaseActivity.certificationExamIntent(
-                    this,
-                    conversationId = conversationId,
-                    chatMessageId = chatMessageId,
-                    certificationId = certificationId,
-                    cExamStatus = cExamStatus
-                )
-            )
+            }
         }
+
     }
 
     private fun showAlertMessage(title: String, message: String) {
