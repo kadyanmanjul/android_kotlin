@@ -1,6 +1,6 @@
 package com.joshtalks.joshskills.repository.service
 
-import com.cometchat.pro.models.BaseMessage
+import com.google.gson.JsonArray
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.UserPlivoDetailsModel
@@ -207,5 +207,5 @@ interface CommonNetworkService {
     @GET("$DIR/group/{group_id}/pinnedmessages/")
     suspend fun getPinnedMessages(
         @Path("group_id") groupId: String
-    ): Response<List<BaseMessage>>
+    ): Response<JsonArray>
 }

@@ -9,10 +9,12 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.ui.groupchat.utils.Utils.getMessagesFromJSONArray
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 
 class CometChatMessageListViewModel(application: Application) : AndroidViewModel(application) {
     private val jobs = arrayListOf<Job>()
@@ -26,7 +28,10 @@ class CometChatMessageListViewModel(application: Application) : AndroidViewModel
                 val response = AppObjectController.commonNetworkService.getPinnedMessages(groupId)
                 if (response.isSuccessful && response.body() != null) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
-                    pinnedMsgs.postValue(response.body()!!)
+                    val messagesList =
+                        getMessagesFromJSONArray(JSONArray(response.body()!!.toString()))
+                    messagesList.sortBy { it.sentAt }
+                    pinnedMsgs.postValue(messagesList)
                     return@launch
                 } else if (response.errorBody() != null
                     && response.errorBody()!!.string().contains("mentor_id is not valid")

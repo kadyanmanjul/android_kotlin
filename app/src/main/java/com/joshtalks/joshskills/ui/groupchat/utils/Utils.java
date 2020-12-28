@@ -31,10 +31,12 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 
 import com.cometchat.pro.constants.CometChatConstants;
+import com.cometchat.pro.core.Call;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.helpers.Logger;
 import com.cometchat.pro.models.Action;
 import com.cometchat.pro.models.BaseMessage;
+import com.cometchat.pro.models.CustomMessage;
 import com.cometchat.pro.models.GroupMember;
 import com.cometchat.pro.models.MediaMessage;
 import com.cometchat.pro.models.TextMessage;
@@ -44,6 +46,9 @@ import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.ui.groupchat.constant.StringContract;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -54,6 +59,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -700,5 +706,55 @@ public class Utils {
         intent.setComponent(new ComponentName("com.joshtalks.joshskills", "com.joshtalks.joshskills.ui.userprofile.UserProfileActivity"));
         intent.putExtra("leaderboard-mentor-id", uuid);
         context.startActivity(intent);
+    }
+
+    public static List<BaseMessage> getMessagesFromJSONArray(JSONArray messagesArray) throws JSONException {
+        List<BaseMessage> messages = new ArrayList();
+
+        for (int i = 0; i < messagesArray.length(); ++i) {
+            JSONObject messageObject = messagesArray.getJSONObject(i);
+            if (messageObject.has("data")) {
+                BaseMessage baseMessage = processMessage(messageObject.getJSONObject("data"));
+                messages.add(baseMessage);
+            }
+        }
+
+        return messages;
+    }
+
+    public static BaseMessage processMessage(JSONObject messageObject) throws JSONException {
+        if (messageObject.has("category")) {
+            String category = messageObject.getString("category");
+            if (category.equalsIgnoreCase("message")) {
+                if (messageObject.has("type")) {
+                    String type = messageObject.getString("type");
+                    if (type.equalsIgnoreCase("text")) {
+                        return TextMessage.fromJson(messageObject);
+                    }
+
+                    if (type.equalsIgnoreCase("custom")) {
+                        return CustomMessage.fromJson(messageObject);
+                    }
+
+                    return MediaMessage.fromJson(messageObject);
+                }
+            } else {
+                if (category.equalsIgnoreCase("action")) {
+                    return Action.fromJson(messageObject);
+                }
+
+                if (category.equalsIgnoreCase("call")) {
+                    return Call.fromJson(messageObject.toString());
+                }
+
+                if (category.equalsIgnoreCase("custom")) {
+                    return CustomMessage.fromJson(messageObject);
+                }
+            }
+
+            return null;
+        } else {
+            throw new JSONException("Category missing in JSON");
+        }
     }
 }

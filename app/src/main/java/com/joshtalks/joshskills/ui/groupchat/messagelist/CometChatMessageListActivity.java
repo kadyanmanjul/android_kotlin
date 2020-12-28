@@ -125,7 +125,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     private MessageAdapter messageAdapter;
     private LinearLayoutManager linearLayoutManager;
     private ShimmerFrameLayout messageShimmer;
-    private final CometChatMessageListViewModel viewModel = new ViewModelProvider(this).get(CometChatMessageListViewModel.class);
+    private CometChatMessageListViewModel viewModel;
     private ConstraintLayout pinnedMessageView;
     /**
      * <b>Avatar</b> is a UI Kit Component which is used to display user and group avatars.
@@ -163,11 +163,13 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_chat_screen);
+        this.viewModel = new ViewModelProvider(this).get(CometChatMessageListViewModel.class);
         handleArguments();
         initViewComponent();
         addObservers();
         getPinnedMessages();
     }
+
 
     /**
      * This method is used to handle arguments passed to this fragment.
@@ -320,6 +322,8 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
                     txtPinnedMsg.setText(((TextMessage) lastPinnedMsg).getText());
                 } else if (lastPinnedMsg.getType().equals(CometChatConstants.MESSAGE_TYPE_AUDIO)) {
                     txtPinnedMsg.setText(getString(R.string.voice_message));
+                } else {
+                    pinnedMessageView.setVisibility(GONE);
                 }
             } else {
                 pinnedMessageView.setVisibility(GONE);
