@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -400,8 +401,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                     if (colorCode != null) {
                         viewHolder.replyUser.setTextColor(Color.parseColor(colorCode));
+                        viewHolder.indicatorView.setBackgroundColor(Color.parseColor(colorCode));
                     } else {
                         viewHolder.replyUser.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
+                        viewHolder.indicatorView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary));
                     }
                     if (replyUserName.equals(loggedInUser.getName())) {
                         viewHolder.replyUser.setText(context.getString(R.string.you));
@@ -413,7 +416,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         viewHolder.replyMessage.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                     } else if (messageType.equals(CometChatConstants.MESSAGE_TYPE_AUDIO)) {
                         viewHolder.replyMessage.setText(String.format(context.getResources().getString(R.string.shared_a_audio), ""));
-                        viewHolder.replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_grey_24dp, 0, 0, 0);
+                        viewHolder.replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_grey, 0, 0, 0);
                     }
                     viewHolder.replyLayout.setOnClickListener(view -> {
                         if (metaData.has("id")) {
@@ -711,8 +714,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                     if (colorCode != null) {
                         viewHolder.replyUser.setTextColor(Color.parseColor(colorCode));
+                        viewHolder.indicatorView.setBackgroundColor(Color.parseColor(colorCode));
                     } else {
                         viewHolder.replyUser.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
+                        viewHolder.indicatorView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary));
                     }
                     if (replyUserName.equals(loggedInUser.getName())) {
                         viewHolder.replyUser.setText(context.getString(R.string.you));
@@ -724,7 +729,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         viewHolder.replyMessage.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                     } else if (messageType.equals(CometChatConstants.MESSAGE_TYPE_AUDIO)) {
                         viewHolder.replyMessage.setText(String.format(context.getResources().getString(R.string.shared_a_audio), ""));
-                        viewHolder.replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_grey_24dp, 0, 0, 0);
+                        viewHolder.replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_grey, 0, 0, 0);
                     }
                     viewHolder.replyLayout.setOnClickListener(view -> {
                         if (metaData.has("id")) {
@@ -1321,9 +1326,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private final Avatar ivUser;                  //sender avatar
         private final RelativeLayout sentimentVw;     //sentiment extension layout
         private final TextView viewSentimentMessage;  //sentiment extension text
-        private final RelativeLayout replyLayout;     //reply message layout
+        private final CardView replyLayout;     //reply message layout
         private final TextView replyUser;             //reply message sender name
         private final TextView replyMessage;          //reply message text
+        private final View indicatorView;             //indicatorView
         private final LinearLayout lvReplyAvatar;
         private final TextView txtTime;                //Message Sent time.
         private final TextView tvUser;                 //sender name
@@ -1342,6 +1348,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             replyLayout = view.findViewById(R.id.replyLayout);
             replyUser = view.findViewById(R.id.reply_user);
             replyMessage = view.findViewById(R.id.reply_message);
+            indicatorView = view.findViewById(R.id.indicatorView);
             tvThreadReplyCount = view.findViewById(R.id.thread_reply_count);
             lvReplyAvatar = view.findViewById(R.id.reply_avatar_layout);
             sentimentVw = view.findViewById(R.id.sentiment_layout);
@@ -1388,9 +1395,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private final TextView tvThreadReplyCount;
         private final LinearLayout lvReplyAvatar;
         private final AudioV2PlayerView audioV2PlayerView;
-        private final RelativeLayout replyLayout;     //reply message layout
+        private final CardView replyLayout;           //reply message layout
         private final TextView replyUser;             //reply message sender name
         private final TextView replyMessage;          //reply message text
+        private final View indicatorView;             //indicatorView
         private final AppCompatImageView imgDeliveryTick;   //Delivery Tick
 
 
@@ -1406,6 +1414,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             replyLayout = itemView.findViewById(R.id.replyLayout);
             replyUser = itemView.findViewById(R.id.reply_user);
             replyMessage = itemView.findViewById(R.id.reply_message);
+            indicatorView = itemView.findViewById(R.id.indicatorView);
             imgDeliveryTick = itemView.findViewById(R.id.delivery_tick);
             this.view = itemView;
         }

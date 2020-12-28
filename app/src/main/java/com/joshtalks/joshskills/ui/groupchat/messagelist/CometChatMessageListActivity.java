@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.util.Log;
@@ -25,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -1526,6 +1528,21 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             isReply = true;
             composeBox.replyTitle.setText(baseMessage.getSender().getName());
             composeBox.replyMedia.setVisibility(VISIBLE);
+            String colorCode = null;
+            try {
+                if (baseMessage.getSender().getMetadata() != null && baseMessage.getSender().getMetadata().has("color_code")) {
+                    colorCode = baseMessage.getSender().getMetadata().getString("color_code");
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            if (colorCode != null) {
+                composeBox.replyTitle.setTextColor(Color.parseColor(colorCode));
+                composeBox.indicatorView.setBackgroundColor(Color.parseColor(colorCode));
+            } else {
+                composeBox.replyTitle.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+                composeBox.indicatorView.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+            }
             if (baseMessage.getType().equals(CometChatConstants.MESSAGE_TYPE_TEXT)) {
                 composeBox.replyMessage.setText(((TextMessage) baseMessage).getText());
                 composeBox.replyMedia.setVisibility(GONE);
@@ -1534,7 +1551,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
                 String messageStr = String.format(getResources().getString(R.string.shared_a_audio),
                         Utils.getFileSize(((MediaMessage) baseMessage).getAttachment().getFileSize()));
                 composeBox.replyMessage.setText(messageStr);
-                composeBox.replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_grey_24dp, 0, 0, 0);
+                composeBox.replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_grey, 0, 0, 0);
             } else if (baseMessage.getType().equals(CometChatConstants.MESSAGE_TYPE_FILE)) {
                 String messageStr = String.format(getResources().getString(R.string.shared_a_file),
                         Utils.getFileSize(((MediaMessage) baseMessage).getAttachment().getFileSize()));

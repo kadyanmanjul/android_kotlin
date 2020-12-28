@@ -22,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 
 import com.cometchat.pro.core.CometChat;
@@ -72,11 +73,12 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
     private int color;
     public CustomImageButton recordButton;
     public RecordView recordView;
-    public RelativeLayout replyMessageLayout;
+    public CardView replyMessageLayout;
     public TextView replyTitle;
     public TextView replyMessage;
     public ImageView replyMedia;
     public ImageView replyClose;
+    public View indicatorView;
 
     public ComposeBox(Context context) {
         super(context);
@@ -156,6 +158,7 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
         replyMessage = findViewById(R.id.tv_reply_layout_subtitle);
         replyMedia = findViewById(R.id.iv_reply_media);
         replyClose = findViewById(R.id.iv_reply_close);
+        indicatorView = findViewById(R.id.indicatorView);
 
         ivAudio.setOnClickListener(this);
         ivArrow.setOnClickListener(this);
