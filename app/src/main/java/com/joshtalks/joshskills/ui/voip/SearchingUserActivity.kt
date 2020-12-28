@@ -23,8 +23,11 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import io.reactivex.Completable
+import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.collections.LinkedHashMap
 import kotlin.collections.set
 
@@ -62,6 +65,8 @@ class SearchingUserActivity : BaseActivity() {
     }
     private var outgoingCallData: HashMap<String, String?> = HashMap()
     private var uiHandler: Handler? = null
+    private var compositeDisposable = CompositeDisposable()
+
 
     private var myConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -232,6 +237,7 @@ class SearchingUserActivity : BaseActivity() {
     }
 
     private fun callback(token: String, channelName: String, uid: Int) {
+        ifDidNotFindActiveUser()
         WebRtcService.startOutgoingCall(getMapForOutgoing(token, channelName, uid))
     }
 
@@ -282,6 +288,7 @@ class SearchingUserActivity : BaseActivity() {
 
     override fun onStop() {
         super.onStop()
+        compositeDisposable.clear()
         unbindService(myConnection)
     }
 
@@ -299,5 +306,19 @@ class SearchingUserActivity : BaseActivity() {
             }
         }
         return outgoingCallData
+    }
+
+    private fun ifDidNotFindActiveUser() {
+        compositeDisposable.add(
+            Completable.complete()
+                .delay(2, TimeUnit.MINUTES)
+                .doOnComplete {
+                    mBoundService?.isCallNotConnected()?.let {
+                        if (it.not()) {
+                            WebRtcService.noUserFoundCallDisconnect()
+                        }
+                    }
+                }
+                .subscribe())
     }
 }

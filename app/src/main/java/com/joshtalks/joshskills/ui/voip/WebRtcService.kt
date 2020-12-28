@@ -583,16 +583,19 @@ class WebRtcService : Service() {
     }
 
     private fun addTimeObservable() {
-        Timber.tag(TAG).e("Time to complete " + (System.currentTimeMillis()))
         compositeDisposable.add(
             Completable.complete()
                 .delay(10, TimeUnit.SECONDS)
                 .doOnComplete {
-                    if (mRtcEngine?.connectionState == CONNECTION_STATE_DISCONNECTED || isCallWasOnGoing.not()) {
+                    if (isCallNotConnected()) {
                         WebRtcService.rejectCall()
                     }
                 }
                 .subscribe())
+    }
+
+    fun isCallNotConnected(): Boolean {
+        return (mRtcEngine?.connectionState == CONNECTION_STATE_DISCONNECTED || isCallWasOnGoing.not())
     }
 
 
