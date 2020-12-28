@@ -162,7 +162,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         viewModel.getTotalWatchTime()
         //viewModel.getProfileData(Mentor.getInstance().getId())
         //PointSnackbar.make(nested_scroll_view,Snackbar.LENGTH_INDEFINITE,"Updated successfully")?.show()
-        showLeaderboardAchievement(R.id.content,null)
+        //showLeaderboardAchievement(R.id.content,null)
     }
 
     private fun initNewUserTip() {
@@ -519,13 +519,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun openPopupMenu(view: View) {
         popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
         popupMenu.inflate(R.menu.more_options_menu)
-        if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
-            popupMenu.menu.findItem(R.id.menu_leaderboard).isVisible = true
-            popupMenu.menu.findItem(R.id.menu_leaderboard).isEnabled = true
-        } else {
-            popupMenu.menu.findItem(R.id.menu_leaderboard).isVisible = false
-            popupMenu.menu.findItem(R.id.menu_leaderboard).isEnabled = false
-        }
         popupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_referral -> {
@@ -546,9 +539,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 }
                 R.id.menu_help -> {
                     openHelpActivity()
-                }
-                R.id.menu_leaderboard -> {
-                    openLeaderBoard()
                 }
                 R.id.menu_settings ->
                     openSettingActivity()
