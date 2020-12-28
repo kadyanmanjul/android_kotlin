@@ -36,9 +36,12 @@ import com.joshtalks.joshskills.ui.voip.extra.FullScreenActivity
 import com.joshtalks.joshskills.ui.voip.util.SoundPoolManager
 import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
 import io.agora.rtc.Constants
+import io.agora.rtc.Constants.CONNECTION_STATE_DISCONNECTED
 import io.agora.rtc.Constants.USER_OFFLINE_QUIT
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
+import io.reactivex.Completable
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -63,6 +66,7 @@ class WebRtcService : Service() {
     private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
         HangUpRtcOnPstnCallAnsweredListener()
     private var countUpTimer = CountUpTimer(false)
+    private var compositeDisposable = CompositeDisposable()
 
     companion object {
         private val TAG = WebRtcService::class.java.simpleName
@@ -77,7 +81,6 @@ class WebRtcService : Service() {
         @Volatile
         @JvmStatic
         private var mRtcEngine: RtcEngine? = null
-
 
         @Volatile
         private var callData: HashMap<String, String?>? = null
@@ -116,6 +119,7 @@ class WebRtcService : Service() {
                 action = InitLibrary().action
             }
             AppObjectController.joshApplication.startService(serviceIntent)
+
         }
 
 
@@ -298,11 +302,13 @@ class WebRtcService : Service() {
         override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
             super.onJoinChannelSuccess(channel, uid, elapsed)
             Timber.tag(TAG).e("onJoinChannelSuccess=  $channel = $uid   ")
+            compositeDisposable.clear()
             isCallWasOnGoing = true
             callData?.let {
                 try {
                     val id = getUID(it)
                     if (callType == CallType.INCOMING && id == uid) {
+                        //       callCallback?.get()?.onConnect(uid.toString())
                         startCallTimer()
                         callStatusNetworkApi(it, CallAction.ACCEPT)
                         addNotification(CallConnect().action, callData)
@@ -353,6 +359,7 @@ class WebRtcService : Service() {
             isCallerJoin = false
             callData?.let {
                 val id = getUID(it)
+                Timber.tag(TAG).e("onUserOffline =  $id")
                 if (id != uid && reason == USER_OFFLINE_QUIT) {
                     endCall()
                     isCallWasOnGoing = false
@@ -560,7 +567,22 @@ class WebRtcService : Service() {
         executeEvent(AnalyticsEvent.INIT_CALL.NAME)
         showIncomingCallScreen(data)
         addNotification(NotificationIncomingCall().action, callData)
+        addTimeObservable()
     }
+
+    private fun addTimeObservable() {
+        Timber.tag(TAG).e("Time to complete " + (System.currentTimeMillis()))
+        compositeDisposable.add(
+            Completable.complete()
+                .delay(10, TimeUnit.SECONDS)
+                .doOnComplete {
+                    if (mRtcEngine?.connectionState == CONNECTION_STATE_DISCONNECTED || isCallWasOnGoing.not()) {
+                        WebRtcService.rejectCall()
+                    }
+                }
+                .subscribe())
+    }
+
 
     private fun rejectCall() {
         try {
@@ -621,7 +643,7 @@ class WebRtcService : Service() {
             //countUpTimer.lap()
             countUpTimer.resume()
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            //   ex.printStackTrace()
         }
     }
 
@@ -656,7 +678,7 @@ class WebRtcService : Service() {
             try {
                 stopRing()
                 joinCall(data)
-                callCallback?.get()?.onConnect(EMPTY)
+                //callCallback?.get()?.onConnect(EMPTY)
                 executeEvent(AnalyticsEvent.USER_ANSWER_EVENT_P2P.NAME)
             } catch (ex: Throwable) {
                 ex.printStackTrace()
@@ -693,12 +715,9 @@ class WebRtcService : Service() {
                 return
             }
             retryInitLibrary++
-            try {
-                Thread.sleep(250)
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
+            initEngine {
+                joinCall(data)
             }
-            joinCall(data)
         }
         isCallWasOnGoing = true
     }
@@ -720,7 +739,6 @@ class WebRtcService : Service() {
         try {
             SoundPoolManager.getInstance(AppObjectController.joshApplication).stopRinging()
         } catch (ex: Exception) {
-            ex.printStackTrace()
         }
     }
 
@@ -764,6 +782,7 @@ class WebRtcService : Service() {
         isSpeakerEnable = false
         isMicEnable = true
         phoneCallState = CallState.CALL_STATE_IDLE
+        compositeDisposable.clear()
     }
 
     private fun disconnectService() {

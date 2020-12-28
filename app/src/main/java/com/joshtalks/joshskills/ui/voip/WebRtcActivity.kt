@@ -119,12 +119,13 @@ class WebRtcActivity : BaseActivity() {
     }
 
     private fun showCallRatingScreen() {
+        val prev = supportFragmentManager.findFragmentByTag(VoipRatingFragment::class.java.name)
+        if (prev != null) {
+            return
+        }
         val callTime = mBoundService?.getTimeOfTalk() ?: 0
         if (callTime > 0 && channelName.isNullOrEmpty().not()) {
-            val prev = supportFragmentManager.findFragmentByTag(VoipRatingFragment::class.java.name)
-            if (prev != null) {
-                return
-            }
+
             VoipRatingFragment.newInstance(channelName, mBoundService!!.getTimeOfTalk())
                 .show(supportFragmentManager, VoipRatingFragment::class.java.name)
             return
@@ -434,6 +435,7 @@ class WebRtcActivity : BaseActivity() {
     private fun subscribeRXBus() {
         compositeDisposable.add(
             RxBus2.listen(WebrtcEventBus::class.java)
+                .delay(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({

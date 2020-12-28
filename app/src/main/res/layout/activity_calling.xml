@@ -25,6 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_8sdp"
+            android:visibility="gone"
             android:padding="@dimen/_4sdp"
             android:onClick="@{()->handler.onDisconnectCall()}"
             app:layout_constraintStart_toStartOf="parent"
