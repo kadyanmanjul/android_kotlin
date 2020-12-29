@@ -109,6 +109,10 @@ class WebRtcService : Service() {
         var switchChannel: Boolean = false
 
         @Volatile
+        var isTimeOutToPickCall: Boolean = false
+
+
+        @Volatile
         private var callCallback: WeakReference<WebRtcCallback>? = null
 
         fun initLibrary() {
@@ -121,7 +125,6 @@ class WebRtcService : Service() {
             AppObjectController.joshApplication.startService(serviceIntent)
 
         }
-
 
         fun startOutgoingCall(map: HashMap<String, String?>) {
             val serviceIntent = Intent(
@@ -322,7 +325,6 @@ class WebRtcService : Service() {
             if (CallType.OUTGOING == callType) {
                 callCallback?.get()?.onChannelJoin()
             }
-
         }
 
         override fun onLeaveChannel(stats: RtcStats) {
@@ -454,9 +456,11 @@ class WebRtcService : Service() {
                                     callData = it
                                 }
                                 callType = CallType.INCOMING
+                                isTimeOutToPickCall = false
                                 handleIncomingCall(data)
                             }
                             this == OutgoingCall().action -> {
+                                isTimeOutToPickCall = false
                                 val data: HashMap<String, String?> =
                                     intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
                                 data.let {
@@ -505,6 +509,7 @@ class WebRtcService : Service() {
                                 RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
                             }
                             this == CallForceConnect().action -> {
+                                compositeDisposable.clear()
                                 switchChannel = true
                                 if (isCallWasOnGoing) {
                                     mRtcEngine?.leaveChannel()
@@ -536,7 +541,7 @@ class WebRtcService : Service() {
 
     private fun phoneBusySoDisconnect(intent: Intent) {
         (intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?)?.let {
-            callStatusNetworkApi(it, CallAction.DECLINE)
+            //   callStatusNetworkApi(it, CallAction.DECLINE)
         }
     }
 
@@ -577,6 +582,7 @@ class WebRtcService : Service() {
         stopTimer()
         startRing()
         executeEvent(AnalyticsEvent.INIT_CALL.NAME)
+        //   callCallback?.get()?.onIncomingCall()
         showIncomingCallScreen(data)
         addNotification(NotificationIncomingCall().action, callData)
         addTimeObservable()
@@ -588,7 +594,8 @@ class WebRtcService : Service() {
                 .delay(10, TimeUnit.SECONDS)
                 .doOnComplete {
                     if (isCallNotConnected()) {
-                        WebRtcService.rejectCall()
+                        isTimeOutToPickCall = true
+                        disconnectCallFromCallie()
                     }
                 }
                 .subscribe())
@@ -707,6 +714,11 @@ class WebRtcService : Service() {
     }
 
     private fun joinCall(data: HashMap<String, String?>) {
+        if (isTimeOutToPickCall) {
+            isTimeOutToPickCall = false
+            RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
+            return
+        }
         resetTimer()
         if (callData == null) {
             callData = data
@@ -721,7 +733,7 @@ class WebRtcService : Service() {
 
         if (statusCode < 0) {
             if (retryInitLibrary == 3) {
-                WebRtcService.rejectCall()
+                disconnectCall()
                 return
             }
             retryInitLibrary++
@@ -819,10 +831,12 @@ class WebRtcService : Service() {
 
 
     override fun onTaskRemoved(rootIntent: Intent?) {
+        AppObjectController.mRtcEngine = null
+        RtcEngine.destroy()
+        isTimeOutToPickCall = false
         isCallRecordOngoing = false
         switchChannel = false
         isCallerJoin = false
-        RtcEngine.destroy()
         super.onTaskRemoved(rootIntent)
         Timber.tag(TAG).e("OnTaskRemoved")
     }
@@ -831,6 +845,7 @@ class WebRtcService : Service() {
         RtcEngine.destroy()
         AppObjectController.mRtcEngine = null
         executor.shutdown()
+        isTimeOutToPickCall = false
         isCallerJoin = false
         countUpTimer.reset()
         isCallRecordOngoing = false
@@ -1159,5 +1174,6 @@ interface WebRtcCallback {
     fun switchChannel(data: HashMap<String, String?>) {}
     fun onNoUserFound() {}
     fun onServerConnect() {}
+    fun onIncomingCall() {}
 
 }

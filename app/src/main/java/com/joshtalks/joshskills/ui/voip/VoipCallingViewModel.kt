@@ -9,7 +9,9 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.HashMap
+import retrofit2.HttpException
+import java.net.ProtocolException
+import java.util.*
 
 
 class VoipCallingViewModel(application: Application) : AndroidViewModel(application) {
@@ -25,7 +27,7 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
                 requestParams["topic_id"] = topicId?.toString() ?: ""
                 val response =
                     AppObjectController.p2pNetworkService.getAgoraClientToken(requestParams)
-                if (response.isSuccessful && response.code() in 200..204) {
+                if (response.isSuccessful && response.code() in 200..203) {
                     response.body()?.let {
                         aFunction.invoke(
                             it["token"]!!,
@@ -33,12 +35,20 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
                             it["uid"]!!.toInt()
                         )
                     }
+                } else if (response.code() == 204) {
+                    apiCallStatusLiveData.postValue(ApiCallStatus.INVALIDED)
                 } else {
                     apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
                 }
-            } catch (ex: Throwable) {
-                apiCallStatusLiveData.postValue(ApiCallStatus.FAILED_PERMANENT)
-                ex.printStackTrace()
+            } catch (ex: Exception) {
+                when (ex) {
+                    is ProtocolException, is HttpException -> {
+                        apiCallStatusLiveData.postValue(ApiCallStatus.INVALIDED)
+                    }
+                    else -> {
+                        apiCallStatusLiveData.postValue(ApiCallStatus.FAILED_PERMANENT)
+                    }
+                }
             }
         }
     }

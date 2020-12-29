@@ -8,7 +8,7 @@ enum class SignUpStepStatus {
 }
 
 enum class ApiCallStatus {
-    START, SUCCESS, FAILED, RETRY, FAILED_PERMANENT
+    START, SUCCESS, FAILED, RETRY, FAILED_PERMANENT, INVALIDED
 }
 
 const val TIMEOUT_TIME = 60_000L

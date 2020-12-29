@@ -85,7 +85,14 @@ class SearchingUserActivity : BaseActivity() {
     }
 
     private var callback: WebRtcCallback = object : WebRtcCallback {
+
+        override fun onIncomingCall() {
+            super.onIncomingCall()
+            this@SearchingUserActivity.finish()
+        }
+
         override fun onConnect(connectId: String) {
+            compositeDisposable.clear()
             Timber.tag("SearchingUserActivity").e("onConnect")
             outgoingCallData[RTC_CALLER_UID_KEY] = connectId
             WebRtcActivity.startOutgoingCallActivity(this@SearchingUserActivity, outgoingCallData)
@@ -93,6 +100,7 @@ class SearchingUserActivity : BaseActivity() {
         }
 
         override fun switchChannel(data: HashMap<String, String?>) {
+            compositeDisposable.clear()
             val callActivityIntent =
                 Intent(this@SearchingUserActivity, WebRtcActivity::class.java).apply {
                     putExtra(CALL_TYPE, CallType.INCOMING)
@@ -111,12 +119,15 @@ class SearchingUserActivity : BaseActivity() {
 
         override fun onChannelJoin() {
             super.onChannelJoin()
+            Timber.tag("SearchingUserActivity").e("onChannelJoin")
             addReceiverTimeout()
             uiHandler?.postDelayed({
-                if (isFinishing.not()) {
+                try {
                     binding.btnAction.visibility = View.VISIBLE
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
                 }
-            }, 1000)
+            }, 500)
         }
     }
 
@@ -161,6 +172,8 @@ class SearchingUserActivity : BaseActivity() {
             if (ApiCallStatus.FAILED == it || ApiCallStatus.FAILED_PERMANENT == it) {
                 showToast(getString(R.string.did_not_answer_message))
                 finishAndRemoveTask()
+            } else if (ApiCallStatus.INVALIDED == it) {
+                this@SearchingUserActivity.finishAndRemoveTask()
             }
         })
     }
@@ -327,9 +340,9 @@ class SearchingUserActivity : BaseActivity() {
 
     private fun addReceiverTimeout() {
         compositeDisposable.add(
-            Observable.interval(12, TimeUnit.SECONDS, Schedulers.computation())
+            Observable.interval(11, TimeUnit.SECONDS, Schedulers.computation())
                 .timeInterval()
-                .subscribe({ it ->
+                .subscribe({
                     mBoundService?.isCallNotConnected()?.let { flag ->
                         if (flag.not()) {
                             mBoundService?.timeoutCaller()
