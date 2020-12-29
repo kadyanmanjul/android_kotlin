@@ -208,7 +208,6 @@
                         android:background="@drawable/rounded_state_new_button_bg"
                         android:enabled="true"
                         android:gravity="center"
-                        android:onClick="@{()->handler.showExplanation()}"
                         android:padding="@dimen/_8sdp"
                         android:text="@string/show_explanation"
                         android:textAllCaps="false"
