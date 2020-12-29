@@ -31,7 +31,7 @@ class ShowAwardFragment : DialogFragment() {
     private var award: ArrayList<Award>? = null
     private var position: Int = 0
     private var isFromUserProfile: Boolean = false
-    private val viewModel by lazy { ViewModelProvider(requireActivity()).get(AwardViewModel::class.java) }
+    private val viewModel by lazy { ViewModelProvider(requireActivity()).get(UserProfileViewModel::class.java) }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

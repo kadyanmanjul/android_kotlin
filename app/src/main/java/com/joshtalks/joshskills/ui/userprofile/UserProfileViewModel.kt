@@ -8,6 +8,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
+import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_SCORE
 import com.joshtalks.joshskills.core.Utils
@@ -17,6 +18,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.AwardCategory
+import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import id.zelory.compressor.Compressor
@@ -29,6 +31,8 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
+import java.util.ArrayList
+import java.util.HashMap
 
 class UserProfileViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -37,7 +41,42 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
     val userProfileUrl: MutableLiveData<String?> = MutableLiveData()
     val apiCallStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
+    val leaderBoardData: MutableLiveData<LeaderboardResponse> = MutableLiveData()
 
+    var context: JoshApplication = getApplication()
+
+    fun getMentorData(mentorId: String, type: String) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response =
+                    AppObjectController.commonNetworkService.getLeaderBoardData(mentorId, type)
+                if (response.isSuccessful && response.body() != null) {
+                    leaderBoardData.postValue(response.body())
+                }
+
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
+        }
+    }
+
+    fun patchAwardDetails(awardIds: ArrayList<Int>) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val extras: HashMap<String, List<Int>> = HashMap()
+                extras["award_mentor_list"] = awardIds
+                AppObjectController.commonNetworkService.patchAwardDetails(extras)
+
+            } catch (ex: Exception) {
+                //ex.showAppropriateMsg()
+            }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        jobs.forEach { it.cancel() }
+    }
     fun getUserProfileUrl() = userProfileUrl.value
 
     fun uploadMedia(mediaPath: String) {
