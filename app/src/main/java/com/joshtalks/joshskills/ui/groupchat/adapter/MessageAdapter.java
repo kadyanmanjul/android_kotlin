@@ -151,8 +151,30 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private void setMessageList(List<BaseMessage> messageList) {
+        for (int i = 0; i < messageList.size(); i++) {
+            boolean isVisibleToLoggedInUser = isMessageVisible(messageList.get(i));
+            if (!isVisibleToLoggedInUser) {
+                messageList.remove(messageList.get(i));
+            }
+        }
         this.messageList.addAll(0, messageList);
         notifyItemRangeInserted(0, messageList.size());
+    }
+
+    private boolean isMessageVisible(BaseMessage message) {
+        boolean isVisibleToLoggedInUser = true;
+        if (message.getMetadata() != null && message.getMetadata().has("onlyVisibleTo")) {
+            String userId = null;
+            try {
+                userId = message.getMetadata().getString("onlyVisibleTo");
+            } catch (JSONException exception) {
+                exception.printStackTrace();
+            }
+            if (userId != null && !(CometChat.getLoggedInUser().getUid().equals(message.getSender().getUid()) || CometChat.getLoggedInUser().getUid().equals(userId))) {
+                isVisibleToLoggedInUser = false;
+            }
+        }
+        return isVisibleToLoggedInUser;
     }
 
     /**
@@ -1225,11 +1247,11 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      * @see BaseMessage
      */
     public void addMessage(BaseMessage baseMessage) {
-//        if (!messageList.contains(baseMessage)) {
-        messageList.add(baseMessage);
-        selectedItemList.clear();
-//        }
-        notifyDataSetChanged();
+        if (isMessageVisible(baseMessage) && !messageList.contains(baseMessage)) {
+            messageList.add(baseMessage);
+            selectedItemList.clear();
+            notifyDataSetChanged();
+        }
     }
 
     /**
@@ -1239,7 +1261,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      */
     public void setUpdatedMessage(BaseMessage baseMessage) {
 
-        if (messageList.contains(baseMessage)) {
+        if (isMessageVisible(baseMessage) && messageList.contains(baseMessage)) {
             int index = messageList.indexOf(baseMessage);
             messageList.remove(baseMessage);
             messageList.add(index, baseMessage);
