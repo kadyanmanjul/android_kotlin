@@ -54,7 +54,8 @@ class PracticeAdapter(
     val context: Context,
     val practiceViewModel: PracticeViewModel,
     val itemList: ArrayList<ChatModel>,
-    val clickListener: PracticeClickListeners
+    val clickListener: PracticeClickListeners,
+    val quizsItemSize: Int
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -64,6 +65,7 @@ class PracticeAdapter(
     private var isFirstTime: Boolean = true
     private var QUIZ_TYPE: Int = 1
     private var VOCAB_TYPE: Int = 0
+    val wordsItemSize = itemList.size.minus(quizsItemSize)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
@@ -221,6 +223,14 @@ class PracticeAdapter(
                         //ex.showAppropriateMsg()
                     }
                 }
+
+                binding.practiceTitleTv.text =
+                    context.getString(
+                        R.string.quiz_tag,
+                        chatModel.question?.vocabOrder ?: 0,
+                        quizsItemSize,
+                        context.getString(R.string.today_practise)
+                    )
 
                 binding.practiceTitleTv.setOnClickListener {
                     if (binding.quizLayout.visibility == GONE) {
@@ -833,8 +843,8 @@ class PracticeAdapter(
                 binding.practiceTitleTv.text =
                     context.getString(
                         R.string.word_tag,
-                        layoutPosition + 1,
-                        itemList.size,
+                        this.vocabOrder,
+                        wordsItemSize,
                         this.practiceWord
                     )
                 if (this.status != QUESTION_STATUS.NA) {

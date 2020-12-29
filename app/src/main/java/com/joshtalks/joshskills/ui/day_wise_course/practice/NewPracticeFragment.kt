@@ -87,10 +87,23 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
                 DataBindingUtil.inflate(inflater, R.layout.fragment_pratice, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
-        adapter = PracticeAdapter(requireContext(), practiceViewModel, chatModelList!!, this)
+        val itemSize=chatModelList?.filter { it.question?.type==BASE_MESSAGE_TYPE.QUIZ }?.size?:0
+        var quizSort=1
+        var wordSort=1
+        chatModelList?.forEach {
+            it.question?.let {
+                if (it.type==BASE_MESSAGE_TYPE.QUIZ){
+                    it.vocabOrder=quizSort
+                    quizSort=quizSort.plus(1)
+                }else{
+                    it.vocabOrder=wordSort
+                    wordSort=wordSort.plus(1)
+                }
+            }
+        }
+        adapter = PracticeAdapter(requireContext(), practiceViewModel, chatModelList!!, this,quizsItemSize = itemSize)
         binding.practiceRv.layoutManager = LinearLayoutManager(requireContext())
         binding.practiceRv.adapter = adapter
-
         addObserver()
         binding.progressLayout.setOnClickListener {
 

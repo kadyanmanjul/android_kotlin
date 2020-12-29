@@ -269,6 +269,10 @@ data class Question(
     @Expose
     var cexamDetail: CertificationExamDetailModel? = null,
 
+    @Expose
+    @Ignore
+    var vocabOrder: Int? = null
+
     ) : Parcelable
 
 
