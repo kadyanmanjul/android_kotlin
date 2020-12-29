@@ -13,7 +13,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.animation.AnimationUtils
 import android.widget.*
-import androidx.appcompat.widget.AppCompatRadioButton
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.children
@@ -39,8 +38,6 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQues
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
-import com.joshtalks.joshskills.repository.server.certification_exam.Answer
-import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestion
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
@@ -286,6 +283,14 @@ class PracticeAdapter(
                 }
             }
 
+            binding.continueBtn.setOnClickListener {
+                onContinueClick()
+            }
+
+            binding.showExplanationBtn.setOnClickListener {
+                showExplanation()
+            }
+
 
         }
 
@@ -310,8 +315,8 @@ class PracticeAdapter(
         }
 
         fun onContinueClick() {
-            clickListener.openNextScreen()
             notifyDataSetChanged()
+            binding.continueBtn.visibility = GONE
         }
 
 
@@ -368,7 +373,6 @@ class PracticeAdapter(
             }
 
             binding.submitAnswerBtn.isEnabled = false
-            binding.continueBtn.visibility = GONE
             if (question.question.isAttempted) {
                 binding.submitAnswerBtn.visibility = GONE
                 question.reviseConcept?.let {
@@ -460,83 +464,6 @@ class PracticeAdapter(
             }
             if (choice.isCorrect)
                 binding.quizRadioGroup.tag = radioButton.id
-        }
-
-        private fun setPracticeInfoView(
-                binding: VocabQuizPracticeItemLayoutBinding,
-                certificationQuestion: CertificationQuestion
-        ) {
-            binding.practiceTitleTv.text =
-                    context.getString(
-                            R.string.word_tag,
-                            layoutPosition + 1,
-                            itemList.size,
-                            "Quiz"
-                    )
-            if (certificationQuestion.isAttempted) {
-                binding.practiceTitleTv.setCompoundDrawablesWithIntrinsicBounds(
-                        R.drawable.ic_check,
-                        0,
-                        0,
-                        0
-                )
-            } else {
-                binding.practiceTitleTv.setCompoundDrawablesWithIntrinsicBounds(
-                        R.drawable.ic_check_grey,
-                        0,
-                        0,
-                        0
-                )
-            }
-        }
-
-        private fun getRadioButton(
-                answer: Answer,
-                userSelectedOption: Int,
-                correctOptionId: Int,
-        ): AppCompatRadioButton {
-            val radioButton: AppCompatRadioButton = LayoutInflater.from(context)
-                    .inflate(R.layout.radio_button_view, null, false) as AppCompatRadioButton
-            val params: RadioGroup.LayoutParams = RadioGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            params.setMargins(0, Utils.dpToPx(6), 0, Utils.dpToPx(6))
-            radioButton.layoutParams = params
-            radioButton.id = answer.id
-            radioButton.text = answer.text
-            radioButton.isChecked = false
-            radioButton.tag = answer.id
-            radioButton.isFocusable = false
-
-            if (userSelectedOption == answer.id) {
-                radioButton.isChecked = true
-            }
-            if (true) {
-                radioButton.isClickable = false
-                if (correctOptionId == answer.id) {
-                    radioButton.isFocusable = true
-                    radioButton.setBackgroundResource(R.drawable.rb_selector_result)
-                    radioButton.setCompoundDrawablesWithIntrinsicBounds(
-                            0,
-                            0,
-                            R.drawable.ic_tick_extra_smallest,
-                            0
-                    )
-                    radioButton.buttonTintList = colorStateList
-                } else {
-                    radioButton.setBackgroundResource(R.drawable.rb_selector_disable)
-                    radioButton.buttonTintList = resultColorStateList
-                }
-                if (correctOptionId == answer.id && correctOptionId != userSelectedOption) {
-                    radioButton.backgroundTintList =
-                            ColorStateList.valueOf(Color.parseColor("#B3DFC4"))
-                }
-            } else {
-                radioButton.setBackgroundResource(R.drawable.radio_button_selector)
-                radioButton.buttonTintList = colorStateList
-            }
-            return radioButton
         }
     }
 

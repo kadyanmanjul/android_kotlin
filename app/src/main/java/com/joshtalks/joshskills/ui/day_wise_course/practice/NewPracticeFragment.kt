@@ -113,6 +113,7 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
 
     override fun submitQuiz(chatModel: ChatModel) {
         onQuestionSubmitted(chatModel)
+        openNextScreen()
     }
 
     private fun onQuestionSubmitted(chatModel: ChatModel) {
