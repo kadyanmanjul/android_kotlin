@@ -23,7 +23,8 @@ class LeaderBoardItemViewHolder(
     var response: LeaderboardMentor,
     var context: Context,
     var currentUser: Boolean = response.id.equals(Mentor.getInstance().getId()),
-    var isHeader: Boolean = false
+    var isHeader: Boolean = false,
+    var isLeaderAnimation: Boolean = false
 ) {
 
     @View(R.id.rank)
@@ -45,6 +46,11 @@ class LeaderBoardItemViewHolder(
 
     @Resolve
     fun onViewInflated() {
+        if (isLeaderAnimation){
+            container.visibility=android.view.View.INVISIBLE
+        } else {
+            container.visibility=android.view.View.VISIBLE
+        }
         if (isHeader) {
             rank.text = "Rank"
             name.text = "Students"
@@ -78,6 +84,13 @@ class LeaderBoardItemViewHolder(
             }
         }
 
+    }
+
+    fun showCurrentUserItem(){
+        if (isLeaderAnimation){
+            container.visibility=android.view.View.VISIBLE
+            isLeaderAnimation=false
+        }
     }
 
     @Click(R.id.user_pic)

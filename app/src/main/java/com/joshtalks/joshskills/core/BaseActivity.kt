@@ -738,11 +738,13 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
             )
         }
     }
-    fun showLeaderboardAchievement(containerId: Int,awarList: List<Award>?) {
-        replaceFragment(
-            containerId,
-            ShowNewLeaderBoardFragment.newInstance(null),
-            ShowNewLeaderBoardFragment.TAG
-        )
+    fun showLeaderboardAchievement(containerId: Int,awarList: Award?) {
+        if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+        //if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+            ShowNewLeaderBoardFragment.showDialog(
+                supportFragmentManager,
+                awarList
+            )
+        }
     }
 }

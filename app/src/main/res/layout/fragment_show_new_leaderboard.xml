@@ -59,6 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/_16sdp"
             android:text="@string/continue_label"
+            android:onClick="@{()->fragment.dismiss()}"
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.JoshTypography.Button"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -85,93 +86,87 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/rank_tv"
-                app:stackFromEnd="true"
                 tools:listitem="@layout/list_item" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/user_item"
+                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content"
+                android:background="@color/lightest_blue"
+                android:paddingHorizontal="@dimen/_4sdp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/rank"
+                    android:layout_width="@dimen/_60sdp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="@dimen/_8sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.01"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="122222" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/user_pic"
+                    android:layout_width="@dimen/_40sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_marginVertical="@dimen/_8sdp"
+                    android:layout_marginStart="@dimen/_64sdp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:gravity="center_vertical|start"
+                    android:src="@color/checkmark_blue"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="visible" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="@+id/points"
+                    app:layout_constraintEnd_toStartOf="@id/points"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toEndOf="@id/user_pic"
+                    app:layout_constraintTop_toTopOf="@+id/points"
+                    app:layout_goneMarginStart="@dimen/_84sdp"
+                    tools:text="@string/improve_answer" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/points"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_12sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="@+id/rank"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/rank"
+                    tools:text="500" />
+
+                <LinearLayout
+                    android:id="@+id/horizontal_line"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_1ssp"
+                    android:background="@color/gray_e6"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </FrameLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/user_item"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_13sdp"
-            android:background="@color/lightest_blue"
-            android:paddingHorizontal="@dimen/_4sdp"
-            app:layout_constraintBottom_toBottomOf="@id/container_rc"
-            app:layout_constraintEnd_toEndOf="@id/container_rc"
-            app:layout_constraintStart_toStartOf="@id/container_rc"
-            app:layout_constraintTop_toTopOf="@id/container_rc"
-            app:layout_constraintVertical_bias="0.48">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/rank"
-                android:layout_width="@dimen/_60sdp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="@dimen/_8sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                android:textColor="@color/black"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.01"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="122222" />
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/user_pic"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_marginVertical="@dimen/_8sdp"
-                android:layout_marginStart="@dimen/_64sdp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:gravity="center_vertical|start"
-                android:src="@color/checkmark_blue"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="visible" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:scrollHorizontally="true"
-                android:singleLine="true"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                android:textColor="@color/black"
-                app:layout_constraintBottom_toBottomOf="@+id/points"
-                app:layout_constraintEnd_toStartOf="@id/points"
-                app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintStart_toEndOf="@id/user_pic"
-                app:layout_constraintTop_toTopOf="@+id/points"
-                app:layout_goneMarginStart="@dimen/_84sdp"
-                tools:text="@string/improve_answer" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/points"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/_12sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                android:textColor="@color/black"
-                app:layout_constraintBottom_toBottomOf="@+id/rank"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/rank"
-                tools:text="500" />
-
-            <LinearLayout
-                android:id="@+id/horizontal_line"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_1ssp"
-                android:background="@color/gray_e6"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
