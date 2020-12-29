@@ -166,7 +166,7 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
         ivGallery.setOnClickListener(this);
         ivCamera.setOnClickListener(this);
 
-
+        etComposeBox.setHint(String.format(context.getString(R.string.message), CometChat.getLoggedInUser().getName().split(" ")[0]));
         composeBoxActionFragment = new ComposeBoxActionFragment();
         composeBoxActionFragment.setComposeBoxActionListener(new ComposeBoxActionFragment.ComposeBoxActionListener() {
             @Override

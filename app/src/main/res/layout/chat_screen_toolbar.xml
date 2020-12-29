@@ -26,8 +26,8 @@
 
         <com.joshtalks.joshskills.ui.groupchat.uikit.Avatar
             android:id="@+id/iv_chat_avatar"
-            android:layout_width="@dimen/_24sdp"
-            android:layout_height="@dimen/_24sdp"
+            android:layout_width="@dimen/_28sdp"
+            android:layout_height="@dimen/_28sdp"
             android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/_4sdp"
             android:layout_marginTop="8dp"

@@ -32,6 +32,7 @@ import com.cometchat.pro.models.MessageReceipt;
 import com.cometchat.pro.models.TextMessage;
 import com.cometchat.pro.models.User;
 import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils;
 import com.joshtalks.joshskills.ui.groupchat.constant.StringContract;
 import com.joshtalks.joshskills.ui.groupchat.listeners.OnRepliedMessageClick;
 import com.joshtalks.joshskills.ui.groupchat.listeners.StickyHeaderAdapter;
@@ -382,6 +383,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     } else {
                         viewHolder.tvUser.setVisibility(View.GONE);
                         viewHolder.ivUser.setVisibility(View.INVISIBLE);
+                        viewHolder.ivUser.setVisibility(View.INVISIBLE);
                         viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_same_bg_groupchat));
                     }
                     String colorCode = null;
@@ -438,6 +440,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         viewHolder.replyMessage.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                     } else if (messageType.equals(CometChatConstants.MESSAGE_TYPE_AUDIO)) {
                         viewHolder.replyMessage.setText(String.format(context.getResources().getString(R.string.shared_a_audio), ""));
+                        if (metaData.has("audioDurationInMs")) {
+                            long audioDurationInMs = metaData.getLong("audioDurationInMs");
+                            viewHolder.replyMessage.setText(String.format(context.getResources().getString(R.string.shared_a_audio), "(" + audioDurationInMs + ")"));
+                        }
                         viewHolder.replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_grey, 0, 0, 0);
                     }
                     viewHolder.replyLayout.setOnClickListener(view -> {
@@ -465,6 +471,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             showMessageTime(viewHolder, baseMessage);
 
             viewHolder.audioV2PlayerView.bindView(baseMessage.getId(), ((MediaMessage) baseMessage).getAttachment().getFileUrl(), baseMessage.getMetadata());
+            viewHolder.audioV2PlayerView.setThemeColor(R.color.grey_68);
             viewHolder.txtTime.setVisibility(View.VISIBLE);
             viewHolder.rlMessageBubble.setOnLongClickListener(v -> {
                 if (!isLongClickEnabled && !isTextMessageClick) {
@@ -750,7 +757,15 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         viewHolder.replyMessage.setText(message);
                         viewHolder.replyMessage.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                     } else if (messageType.equals(CometChatConstants.MESSAGE_TYPE_AUDIO)) {
-                        viewHolder.replyMessage.setText(String.format(context.getResources().getString(R.string.shared_a_audio), ""));
+                        String strMsg = String.format(context.getResources().getString(R.string.shared_a_audio), "");
+                        if (metaData.has("audioDurationInMs")) {
+                            long audioDurationInMs = metaData.getLong("audioDurationInMs");
+                            strMsg = String.format(
+                                    context.getResources().getString(R.string.shared_a_audio),
+                                    "(" + com.joshtalks.joshskills.core.Utils.INSTANCE.formatDuration((int) audioDurationInMs) + ")"
+                            );
+                        }
+                        viewHolder.replyMessage.setText(strMsg);
                         viewHolder.replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_grey, 0, 0, 0);
                     }
                     viewHolder.replyLayout.setOnClickListener(view -> {
@@ -1092,9 +1107,14 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindHeaderViewHolder(DateItemHolder var1, int var2, long var3) {
         BaseMessage baseMessage = messageList.get(var2);
         Date date = new Date(baseMessage.getSentAt() * 1000L);
-        String formattedDate = Utils.getDate(date.getTime());
-        // var1.txtMessageDate.setBackground(context.getResources().getDrawable(R.drawable.cc_rounded_date_button));
-        var1.txtMessageDate.setText(formattedDate);
+        if (DateTimeUtils.isToday(date)) {
+            var1.txtMessageDate.setText("Today");
+        } else if (DateTimeUtils.isYesterday(date)) {
+            var1.txtMessageDate.setText("Yesterday");
+        } else {
+            String formattedDate = Utils.getDate(date.getTime());
+            var1.txtMessageDate.setText(formattedDate);
+        }
     }
 
     /**

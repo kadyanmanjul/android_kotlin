@@ -114,7 +114,7 @@
                         android:maxLines="6"
                         android:text="@string/default_description"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                        android:textColor="@color/black"
+                        android:textColor="@color/grey_68"
                         tools:text="@tools:sample/lorem/random" />
                 </LinearLayout>
 
@@ -280,7 +280,7 @@
                 android:layout_marginTop="@dimen/_8sdp"
                 android:background="@color/white"
                 android:orientation="horizontal"
-                android:paddingVertical="@dimen/_8sdp"
+                android:paddingVertical="@dimen/_10sdp"
                 android:paddingStart="@dimen/_16sdp"
                 android:paddingEnd="@dimen/_8sdp">
 
@@ -290,7 +290,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/members"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorPrimary"
                     android:textStyle="bold" />
 
                 <TextView
@@ -304,11 +304,19 @@
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/tvSeprator"
+                android:layout_width="match_parent"
+                android:layout_height="0.8dp"
+                android:layout_alignBottom="@+id/membersLayout"
+                android:background="@color/gray_e6" />
+
             <RelativeLayout
                 android:id="@+id/rl_add_member"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/membersLayout"
+                android:background="@color/white"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
@@ -346,7 +354,6 @@
                 android:overScrollMode="never"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                tools:itemCount="5"
                 tools:listitem="@layout/user_list_row" />
 
             <RelativeLayout

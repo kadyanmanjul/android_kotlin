@@ -59,8 +59,7 @@
                 android:maxWidth="@dimen/_178sdp"
                 android:maxLines="3"
                 android:textColor="@color/grey_68"
-                android:textSize="@dimen/_11ssp"
-                android:textStyle="italic"
+                android:textSize="@dimen/_10ssp"
                 app:drawableTint="@color/dark_grey"
                 tools:text="Perfect! I've been waiting to go" />
 

@@ -46,7 +46,7 @@
                 android:maxWidth="@dimen/_150sdp"
                 android:maxLines="1"
                 android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/_11ssp"
+                android:textSize="@dimen/_10ssp"
                 android:textStyle="bold"
                 tools:text="@tools:sample/full_names" />
 
@@ -73,8 +73,7 @@
             android:paddingStart="@dimen/_8sdp"
             android:paddingBottom="@dimen/_4sdp"
             android:textColor="@color/black"
-            android:textSize="@dimen/_11ssp"
-            android:textStyle="italic"
+            android:textSize="@dimen/_9ssp"
             app:drawableTint="@color/dark_grey"
             tools:text="@string/replyTxt" />
 

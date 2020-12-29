@@ -23,6 +23,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -160,6 +161,8 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     // private MessageActionFragment messageActionFragment;
     private ExoAudioPlayer audioPlayerManager;
     private AppCompatTextView txtPinnedMsg;
+    private AppCompatTextView txtPinnedMsgUserName;
+    private AppCompatImageView imgPinnedClose;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -215,8 +218,11 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         imgClose = findViewById(R.id.iv_close_message_action);
         pinnedMessageView = findViewById(R.id.pinnedMessageView);
         txtPinnedMsg = findViewById(R.id.txtPinnedMsg);
+        txtPinnedMsgUserName = findViewById(R.id.txtPinnedMsgUserName);
+        imgPinnedClose = findViewById(R.id.iv_pinned_close);
         imgClose.setOnClickListener(this);
         toolbar.setOnClickListener(this);
+        imgPinnedClose.setOnClickListener(this);
         composeBox.replyClose.setOnClickListener(this);
         linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.setStackFromEnd(true);
@@ -320,6 +326,20 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
 //                });
                 BaseMessage lastPinnedMsg = baseMessages.get(baseMessages.size() - 1);
                 pinnedMessageView.setVisibility(VISIBLE);
+                txtPinnedMsgUserName.setText(lastPinnedMsg.getSender().getName());
+                String colorCode = null;
+                try {
+                    if (lastPinnedMsg.getSender().getMetadata() != null && lastPinnedMsg.getSender().getMetadata().has("color_code")) {
+                        colorCode = lastPinnedMsg.getSender().getMetadata().getString("color_code");
+                    }
+                } catch (JSONException exception) {
+                    exception.printStackTrace();
+                }
+                if (colorCode != null) {
+                    txtPinnedMsgUserName.setTextColor(Color.parseColor(colorCode));
+                } else {
+                    txtPinnedMsgUserName.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+                }
                 if (lastPinnedMsg.getType().equals(CometChatConstants.MESSAGE_TYPE_TEXT)) {
                     txtPinnedMsg.setText(((TextMessage) lastPinnedMsg).getText());
                 } else if (lastPinnedMsg.getType().equals(CometChatConstants.MESSAGE_TYPE_AUDIO)) {
@@ -941,6 +961,10 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             if (baseMessage.getSender().getMetadata() != null && baseMessage.getSender().getMetadata().has("color_code")) {
                 replyObject.put("color_code", baseMessage.getSender().getMetadata().getString("color_code"));
             }
+            if (baseMessage.getMetadata() != null && baseMessage.getMetadata().has("audioDurationInMs")) {
+                long audioDurationInMs = baseMessage.getMetadata().getLong("audioDurationInMs");
+                replyObject.put("audioDurationInMs", audioDurationInMs);
+            }
             jsonObject.put("reply", replyObject);
             textMessage.setMetadata(jsonObject);
             sendTypingIndicator(true);
@@ -1374,6 +1398,8 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             startActivity(intent);
         } else if (id == R.id.iv_close_message_action) {
             onBackPressed();
+        } else if (id == R.id.iv_pinned_close) {
+            pinnedMessageView.setVisibility(View.GONE);
         }
     }
 
@@ -1548,10 +1574,17 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
                 composeBox.replyMedia.setVisibility(GONE);
                 composeBox.replyMessage.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             } else if (baseMessage.getType().equals(CometChatConstants.MESSAGE_TYPE_AUDIO)) {
-                String messageStr = String.format(getResources().getString(R.string.shared_a_audio),
-                        Utils.getFileSize(((MediaMessage) baseMessage).getAttachment().getFileSize()));
-                composeBox.replyMessage.setText(messageStr);
-                composeBox.replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_grey, 0, 0, 0);
+                try {
+                    String messageStr = String.format(getResources().getString(R.string.shared_a_audio), "");
+                    if (baseMessage.getMetadata() != null && baseMessage.getMetadata().has("audioDurationInMs")) {
+                        long durationMs = baseMessage.getMetadata().getLong("audioDurationInMs");
+                        messageStr = String.format(getResources().getString(R.string.shared_a_audio), "(" + com.joshtalks.joshskills.core.Utils.INSTANCE.formatDuration((int) durationMs) + ")");
+                    }
+                    composeBox.replyMessage.setText(messageStr);
+                    composeBox.replyMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_mic_grey, 0, 0, 0);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
             } else if (baseMessage.getType().equals(CometChatConstants.MESSAGE_TYPE_FILE)) {
                 String messageStr = String.format(getResources().getString(R.string.shared_a_file),
                         Utils.getFileSize(((MediaMessage) baseMessage).getAttachment().getFileSize()));

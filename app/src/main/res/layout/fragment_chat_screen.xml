@@ -23,7 +23,8 @@
         android:layout_marginTop="-1dp"
         android:layout_marginBottom="1dp"
         android:clipToPadding="false"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/left_message_item" />
 
     <include
         android:id="@+id/chatList_toolbar"
@@ -53,21 +54,21 @@
             app:tint="@color/grey_68" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/txtLabelPinnedMsg"
+            android:id="@+id/txtPinnedMsgUserName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_4sdp"
             android:layout_marginEnd="@dimen/_8sdp"
-            android:text="Pinned Message"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
             android:textColor="@color/colorPrimary"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/txtPinnedMsg"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/iv_pinned_close"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@+id/imgPin"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Harsh Gupta" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtPinnedMsg"
@@ -81,11 +82,27 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
             android:textColor="@color/grey_68"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/iv_pinned_close"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@+id/imgPin"
-            app:layout_constraintTop_toBottomOf="@+id/txtLabelPinnedMsg"
+            app:layout_constraintTop_toBottomOf="@+id/txtPinnedMsgUserName"
             tools:text="Would you rather have money or knowledge? Fame or Power?" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_pinned_close"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_16sdp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_sdk_close"
+            app:tint="@color/black" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -95,8 +112,6 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/bottom_layout"
         android:layout_below="@+id/pinnedMessageView" />
-
-    <include layout="@layout/reply_message_layout" />
 
     <LinearLayout
         android:id="@+id/bottom_layout"

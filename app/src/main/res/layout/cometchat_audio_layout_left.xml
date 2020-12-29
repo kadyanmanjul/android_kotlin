@@ -30,14 +30,29 @@
             android:layout_marginBottom="0dp"
             android:gravity="center"
             android:paddingStart="@dimen/_6sdp"
-
             android:paddingEnd="@dimen/_6sdp"
             android:paddingBottom="0dp"
             android:textColor="@color/colorPrimary"
-            android:textSize="@dimen/_11ssp"
+            android:textSize="@dimen/_10ssp"
             android:textStyle="bold"
             android:visibility="gone"
             tools:text="Iron Man"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tv_user_role"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="0dp"
+            android:gravity="center"
+            android:paddingStart="@dimen/_6sdp"
+            android:paddingEnd="@dimen/_6sdp"
+            android:paddingBottom="0dp"
+            android:textColor="@color/grey_68"
+            android:textSize="@dimen/_10ssp"
+            android:visibility="gone"
+            tools:text="Admin"
             tools:visibility="visible" />
 
         <include

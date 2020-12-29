@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.view_holders
 
 
+import android.content.res.ColorStateList
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -239,7 +240,7 @@ class AudioPlayerViewHolder(
             } else {
                 audioViewReceived.visibility = android.view.View.VISIBLE
             }
-            setViewHolderBG(previousMessage?.sender,it, rootView, rootSubView, null)
+            setViewHolderBG(previousMessage?.sender, it, rootView, rootSubView, null)
         }
 
         seekBar.setOnSeekBarChangeListener(
@@ -368,6 +369,8 @@ class AudioPlayerViewHolder(
 
     private fun mediaDownloaded() {
         seekBar.thumb = ContextCompat.getDrawable(getAppContext(), R.drawable.seek_thumb)
+        seekBar.thumbTintList =
+            ColorStateList.valueOf(ContextCompat.getColor(getAppContext(), R.color.colorPrimary))
         btnPlayImageView.visibility = android.view.View.VISIBLE
         seekBar.visibility = android.view.View.VISIBLE
         btnPauseImageView.visibility = android.view.View.INVISIBLE

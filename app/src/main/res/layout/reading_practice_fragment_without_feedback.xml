@@ -119,7 +119,8 @@
                                 android:paddingStart="@dimen/_6sdp"
                                 android:paddingEnd="@dimen/_6sdp"
                                 android:progressDrawable="@drawable/seek_bar_draw"
-                                android:thumb="@drawable/seek_thumb" />
+                                android:thumb="@drawable/seek_thumb"
+                                android:thumbTint="@color/colorPrimary" />
 
 
                             <androidx.appcompat.widget.AppCompatTextView
@@ -495,10 +496,10 @@
                         android:id="@+id/feedback_result_linear_ll"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        tools:visibility="gone"
                         android:layout_marginTop="@dimen/_16sdp"
                         android:orientation="vertical"
-                        android:padding="@dimen/_8sdp">
+                        android:padding="@dimen/_8sdp"
+                        tools:visibility="gone">
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/feedback_grade"
@@ -534,18 +535,18 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_16sdp"
                         android:orientation="vertical"
+                        android:padding="@dimen/_8sdp"
                         android:visibility="gone"
-                        tools:visibility="visible"
-                        android:padding="@dimen/_8sdp">
+                        tools:visibility="visible">
 
                         <FrameLayout
                             android:id="@+id/container"
-                            android:layout_gravity="center"
                             android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
                             android:background="@drawable/circle2"
-                            android:padding="@dimen/_4sdp"
                             android:backgroundTint="@color/white"
-                            android:layout_height="match_parent">
+                            android:padding="@dimen/_4sdp">
 
                             <com.pnikosis.materialishprogress.ProgressWheel
                                 android:id="@+id/_feedback_progress_bar"
@@ -553,21 +554,22 @@
                                 android:layout_height="@dimen/_52sdp"
                                 android:layout_gravity="center"
                                 wheel:matProg_barColor="@color/button_color"
-                                wheel:matProg_rimColor="#33128C7E"
                                 wheel:matProg_fillRadius="true"
-                                wheel:matProg_rimWidth="@dimen/_4sdp"
                                 wheel:matProg_linearProgress="false"
-                                wheel:matProg_progressIndeterminate="true" />
+                                wheel:matProg_progressIndeterminate="true"
+                                wheel:matProg_rimColor="#33128C7E"
+                                wheel:matProg_rimWidth="@dimen/_4sdp" />
 
                         </FrameLayout>
+
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_margin="@dimen/_4sdp"
                             android:layout_width="wrap_content"
-                            android:minLines="2"
-                            android:gravity="center"
-                            android:layout_gravity="center"
                             android:layout_height="wrap_content"
-                            android:text="@string/plz_wait_feedback"/>
+                            android:layout_gravity="center"
+                            android:layout_margin="@dimen/_4sdp"
+                            android:gravity="center"
+                            android:minLines="2"
+                            android:text="@string/plz_wait_feedback" />
 
 
                     </LinearLayout>
@@ -586,9 +588,9 @@
                     android:backgroundTint="@color/seek_bar_background"
                     android:gravity="center"
                     android:onClick="@{()->handler.submitPractise()}"
+                    android:paddingVertical="@dimen/_8sdp"
                     android:paddingStart="@dimen/_24sdp"
                     android:paddingEnd="@dimen/_24sdp"
-                    android:paddingVertical="@dimen/_8sdp"
                     android:text="@string/submit_answer"
                     android:textAllCaps="false"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"
@@ -609,9 +611,9 @@
                     android:focusable="true"
                     android:gravity="center"
                     android:onClick="@{()->handler.improvePractice()}"
+                    android:paddingVertical="@dimen/_8sdp"
                     android:paddingStart="@dimen/_24sdp"
                     android:paddingEnd="@dimen/_24sdp"
-                    android:paddingVertical="@dimen/_8sdp"
                     android:text="@string/improve_answer"
                     android:textAllCaps="false"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"

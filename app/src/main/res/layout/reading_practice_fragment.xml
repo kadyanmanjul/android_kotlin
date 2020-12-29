@@ -119,7 +119,8 @@
                                 android:paddingStart="@dimen/_6sdp"
                                 android:paddingEnd="@dimen/_6sdp"
                                 android:progressDrawable="@drawable/seek_bar_draw"
-                                android:thumb="@drawable/seek_thumb" />
+                                android:thumb="@drawable/seek_thumb"
+                                android:thumbTint="@color/colorPrimary" />
 
 
                             <androidx.appcompat.widget.AppCompatTextView
@@ -495,10 +496,10 @@
                         android:id="@+id/feedback_result_linear_ll"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        tools:visibility="gone"
                         android:layout_marginTop="@dimen/_16sdp"
                         android:orientation="vertical"
-                        android:padding="@dimen/_8sdp">
+                        android:padding="@dimen/_8sdp"
+                        tools:visibility="gone">
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/feedback_grade"
@@ -534,9 +535,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_16sdp"
                         android:orientation="vertical"
+                        android:padding="@dimen/_8sdp"
                         android:visibility="gone"
-                        tools:visibility="visible"
-                        android:padding="@dimen/_8sdp">
+                        tools:visibility="visible">
 
                         <FrameLayout
                             android:id="@+id/container"
@@ -587,9 +588,9 @@
                     android:backgroundTint="@color/seek_bar_background"
                     android:gravity="center"
                     android:onClick="@{()->handler.submitPractise()}"
+                    android:paddingVertical="@dimen/_8sdp"
                     android:paddingStart="@dimen/_24sdp"
                     android:paddingEnd="@dimen/_24sdp"
-                    android:paddingVertical="@dimen/_8sdp"
                     android:text="@string/submit_answer"
                     android:textAllCaps="false"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"
@@ -610,9 +611,9 @@
                     android:focusable="true"
                     android:gravity="center"
                     android:onClick="@{()->handler.improvePractice()}"
+                    android:paddingVertical="@dimen/_8sdp"
                     android:paddingStart="@dimen/_24sdp"
                     android:paddingEnd="@dimen/_24sdp"
-                    android:paddingVertical="@dimen/_8sdp"
                     android:text="@string/improve_answer"
                     android:textAllCaps="false"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"

@@ -118,7 +118,8 @@
                                 android:paddingStart="@dimen/_6sdp"
                                 android:paddingEnd="@dimen/_6sdp"
                                 android:progressDrawable="@drawable/seek_bar_draw"
-                                android:thumb="@drawable/seek_thumb" />
+                                android:thumb="@drawable/seek_thumb"
+                                android:thumbTint="@color/colorPrimary" />
 
 
                             <androidx.appcompat.widget.AppCompatTextView
@@ -369,7 +370,8 @@
                                 android:paddingStart="@dimen/_12sdp"
                                 android:paddingEnd="@dimen/_12sdp"
                                 android:progressDrawable="@drawable/seek_bar_draw"
-                                android:thumb="@drawable/seek_thumb" />
+                                android:thumb="@drawable/seek_thumb"
+                                android:thumbTint="@color/colorPrimary" />
 
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:id="@+id/iv_cancel"

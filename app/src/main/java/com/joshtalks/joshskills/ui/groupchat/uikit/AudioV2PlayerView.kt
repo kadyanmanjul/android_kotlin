@@ -1,12 +1,14 @@
 package com.joshtalks.joshskills.ui.groupchat.uikit
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -97,6 +99,15 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
         pausingAudio()
         seekPlayerProgress.progress = lastPosition.toInt()
         seekPlayerProgress.max = mediaDuration.toInt()
+    }
+
+    fun setThemeColor(colorId: Int) {
+        playButton.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(context, colorId))
+        pauseButton.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(context, colorId))
+        seekPlayerProgress.thumbTintList =
+            ColorStateList.valueOf(ContextCompat.getColor(context, colorId))
+        seekPlayerProgress.progressTintList =
+            ColorStateList.valueOf(ContextCompat.getColor(context, colorId))
     }
 
     override fun onClick(v: View) {
