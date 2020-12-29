@@ -265,6 +265,9 @@ data class Question(
     @ColumnInfo(name = "topic_id")
     @SerializedName("topic_id") var topicId: String? = null,
 
+    @ColumnInfo(name = "vp_sort_order")
+    @SerializedName("vp_sort_order") var vpSortOrder: Int = -1,
+
     @Embedded(prefix = "cexam_")
     @Expose
     var cexamDetail: CertificationExamDetailModel? = null,

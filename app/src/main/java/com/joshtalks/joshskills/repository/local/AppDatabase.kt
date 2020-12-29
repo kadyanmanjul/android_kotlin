@@ -79,7 +79,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class,
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class
     ],
-    version = 24,
+    version = 25,
     exportSchema = true
 )
 @TypeConverters(
@@ -144,7 +144,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_20_21,
                                 MIGRATION_21_22,
                                 MIGRATION_22_23,
-                                MIGRATION_23_24
+                                MIGRATION_23_24,
+                                MIGRATION_24_25
                             )
                             //  .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -378,6 +379,12 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `readingStatus` TEXT")
                 database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `speakingStatus` TEXT")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `pending_task_table` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `request_object` TEXT NOT NULL, `type` TEXT NOT NULL, `retry_count` INTEGER NOT NULL)")
+            }
+
+        }
+        private val MIGRATION_24_25: Migration = object : Migration( 24,25) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE `question_table` ADD COLUMN `vp_sort_order` INTEGER NOT NULL DEFAULT -1")
             }
 
         }

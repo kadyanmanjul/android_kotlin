@@ -102,6 +102,9 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
             }
         }
         adapter = PracticeAdapter(requireContext(), practiceViewModel, chatModelList!!, this,quizsItemSize = itemSize)
+        chatModelList?.let {
+            it.sortedBy { it.question?.vpSortOrder }
+        }
         binding.practiceRv.layoutManager = LinearLayoutManager(requireContext())
         binding.practiceRv.adapter = adapter
         addObserver()
