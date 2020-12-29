@@ -14,6 +14,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -36,8 +37,7 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
 
     private lateinit var binding: FragmentShowNewLeaderboardBinding
     private var award: Award? = null
-
-    val leaderBoardData: MutableLiveData<LeaderboardResponse> = MutableLiveData()
+    private val viewModel by lazy { ViewModelProvider(requireActivity()).get(UserProfileViewModel::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +47,7 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
         arguments?.let {
             award = it.getParcelable(LEADERBOARD_DETAILS)
         }
+        viewModel.getMentorData(Mentor.getInstance().getId(), "TODAY")
     }
 
 
@@ -86,14 +87,11 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        leaderBoardData.observe(viewLifecycleOwner, {
+        viewModel.leaderBoardData.observe(viewLifecycleOwner, {
             it?.let {
                 initView(it)
             }
         })
-        CoroutineScope(Dispatchers.IO).launch {
-            leaderBoardData.postValue(getMentorData(Mentor.getInstance().getId(), "TODAY"))
-        }
 
     }
 
@@ -160,7 +158,7 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
         delay(1000)
         binding.recyclerView.removeOnScrollListener(onScrollListener)
         binding.recyclerView.addOnScrollListener(onScrollListener)
-        linearSmoothScroller.targetPosition = 0
+        linearSmoothScroller.targetPosition = 0 //targetposition
         linearLayoutManager.startSmoothScroll(linearSmoothScroller)
     }
 
@@ -168,7 +166,6 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             when (newState) {
                 SCROLL_STATE_IDLE -> {
-                    //we reached the target position
                     recyclerView.removeOnScrollListener(this)
                     animateCard()
                 }
@@ -177,11 +174,6 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
     }
 
     private fun animateCard() {
-
-        /*val animation = TranslateAnimation(
-            binding.recyclerView.x, binding.userItem.x,
-            binding.recyclerView.top.toFloat(), binding.userItem.top.toFloat()
-        )*/
         val animation = TranslateAnimation(
             0f, (binding.recyclerView.left.toFloat().minus(binding.userItem.left.toFloat())),
             0f, (binding.recyclerView.top.toFloat().minus(binding.userItem.top.toFloat()))
@@ -189,36 +181,20 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
         animation.setDuration(1000)
         animation.setFillAfter(false)
         animation.setAnimationListener(object :Animation.AnimationListener{
-            override fun onAnimationStart(p0: Animation?) {
-                //TODO("Not yet implemented")
-            }
+            override fun onAnimationStart(p0: Animation?) {}
 
             override fun onAnimationEnd(p0: Animation?) {
                 (binding.recyclerView.getViewResolverAtPosition(0) as LeaderBoardItemViewHolder).showCurrentUserItem()
                 binding.userItem.visibility=View.GONE
             }
 
-            override fun onAnimationRepeat(p0: Animation?) {
-                //TODO("Not yet implemented")
-            }
+            override fun onAnimationRepeat(p0: Animation?) {}
 
         })
         binding.userItem.startAnimation(animation)
     }
 
-    suspend fun getMentorData(mentorId: String, type: String): LeaderboardResponse? {
-        try {
-            val response =
-                AppObjectController.commonNetworkService.getLeaderBoardData(mentorId, type)
-            if (response.isSuccessful && response.body() != null) {
-                return response.body()!!
-            }
 
-        } catch (ex: Throwable) {
-            ex.showAppropriateMsg()
-        }
-        return null
-    }
 
     companion object {
         const val LEADERBOARD_DETAILS = "leader_board_details"
