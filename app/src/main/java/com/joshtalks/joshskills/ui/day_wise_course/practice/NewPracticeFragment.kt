@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.FragmentPraticeBinding
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.ui.day_wise_course.CapsuleActivityCallback
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
@@ -24,8 +25,8 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
 const val PRACTISE_OBJECT = "practise_object"
 
@@ -87,6 +88,31 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
                 DataBindingUtil.inflate(inflater, R.layout.fragment_pratice, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
+        binding.progressLayout.setOnClickListener {
+
+        }
+
+        addObserver()
+        practiceViewModel.getAssessmentData(chatModelList)
+        binding.vocabularyCompletedTv.text = AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.VOCABULARY_COMPLETED)
+        return binding.root
+    }
+
+    private fun addObserver() {
+        practiceViewModel.requestStatusLiveData.observe(viewLifecycleOwner, {
+            if (it) {
+//                onPracticeSubmitted()
+            }
+            binding.progressLayout.visibility = View.GONE
+        })
+
+        practiceViewModel.assessmentData.observe(viewLifecycleOwner, {
+            initAdapter(it)
+        })
+    }
+
+    private fun initAdapter(arrayList: ArrayList<AssessmentWithRelations>) {
         val itemSize=chatModelList?.filter { it.question?.type==BASE_MESSAGE_TYPE.QUIZ }?.size?:0
         var quizSort=1
         var wordSort=1
@@ -101,30 +127,12 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
                 }
             }
         }
-        adapter = PracticeAdapter(requireContext(), practiceViewModel, chatModelList!!, this,quizsItemSize = itemSize)
+        adapter = PracticeAdapter(requireContext(), practiceViewModel, chatModelList!!, this,quizsItemSize = itemSize,arrayList)
         chatModelList?.let {
             it.sortedBy { it.question?.vpSortOrder }
         }
         binding.practiceRv.layoutManager = LinearLayoutManager(requireContext())
         binding.practiceRv.adapter = adapter
-        addObserver()
-        binding.progressLayout.setOnClickListener {
-
-        }
-
-        binding.vocabularyCompletedTv.text = AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.VOCABULARY_COMPLETED)
-        return binding.root
-    }
-
-    private fun addObserver() {
-        practiceViewModel.requestStatusLiveData.observe(viewLifecycleOwner, {
-            if (it) {
-//                onPracticeSubmitted()
-            }
-
-            binding.progressLayout.visibility = View.GONE
-        })
     }
 
     override fun submitQuiz(chatModel: ChatModel) {

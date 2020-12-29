@@ -15,21 +15,16 @@ import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
-import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback
-import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.RequestEngage
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -37,6 +32,8 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Response
 import java.io.File
 import java.lang.reflect.Type
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class PracticeViewModel(application: Application) :
@@ -47,6 +44,7 @@ class PracticeViewModel(application: Application) :
     val requestStatusLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val practiceFeedback2LiveData: MutableLiveData<PracticeFeedback2> = MutableLiveData()
     val practiceEngagementData: MutableLiveData<PracticeEngagement> = MutableLiveData()
+    val assessmentData: MutableLiveData<ArrayList<AssessmentWithRelations>> = MutableLiveData()
     private var isRecordingStarted = false
     private val mAudioRecording: com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording =
         com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording()
@@ -266,6 +264,73 @@ class PracticeViewModel(application: Application) :
             ).execute()
             return@async responseUpload.code()
         }.await()
+    }
+
+    fun getAssessmentData(chatModelList: ArrayList<ChatModel>?) {
+        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+            val listOfAssessments:ArrayList<AssessmentWithRelations> = ArrayList()
+            chatModelList?.forEach {
+                if (it.question?.type == BASE_MESSAGE_TYPE.QUIZ) {
+                    it.question?.assessmentId?.let { assessentId ->
+                        getAssessmentDataViaId(
+                            assessentId
+                        )?.let {
+                            listOfAssessments.add(it)
+                        }
+                    }
+                }
+            }
+            if (listOfAssessments.isNullOrEmpty().not()){
+                assessmentData.postValue(listOfAssessments)
+            } else {
+                assessmentData.postValue(ArrayList())
+            }
+        }
+    }
+
+    suspend fun getAssessmentDataViaId(assessentId: Int): AssessmentWithRelations? {
+        try {
+            var assessmentRelations = getAssessmentFromDB(assessentId)
+            if (assessmentRelations != null && assessmentRelations.questionList.isNullOrEmpty()
+                    .not()
+            ) {
+                return assessmentRelations
+            } else {
+                val response = getAssessmentFromServer(
+                    assessentId
+                )
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        insertAssessmentToDB(it)
+                        assessmentRelations =
+                            getAssessmentFromDB(assessentId)
+                        return assessmentRelations
+                    }
+                }
+            }
+        } catch (ex: Throwable) {
+            //ex.showAppropriateMsg()
+            return null
+        }
+        return null
+    }
+
+
+    private suspend fun getAssessmentFromServer(assessmentId: Int) =
+        AppObjectController.chatNetworkService.getAssessmentId(assessmentId)
+
+    private suspend fun insertAssessmentToDB(assessmentResponse: AssessmentResponse) =
+        AppObjectController.appDatabase.assessmentDao()
+            .insertAssessmentFromResponse(assessmentResponse)
+
+    private fun getAssessmentFromDB(assessmentId: Int) =
+        AppObjectController.appDatabase.assessmentDao().getAssessmentById(assessmentId)
+
+    fun saveAssessmentQuestion(assessmentQuestion: AssessmentQuestionWithRelations) {
+        CoroutineScope(Dispatchers.IO).launch {
+            AppObjectController.appDatabase.assessmentDao()
+                .insertAssessmentQuestion(assessmentQuestion)
+        }
     }
 
 }
