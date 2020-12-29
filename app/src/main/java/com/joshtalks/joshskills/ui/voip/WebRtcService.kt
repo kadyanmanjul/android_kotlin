@@ -319,13 +319,10 @@ class WebRtcService : Service() {
             }
             callId = mRtcEngine?.callId
             switchChannel = false
-            try {
-                if (CallType.OUTGOING == callType) {
-                    callCallback?.get()?.onChannelJoin()
-                }
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
+            if (CallType.OUTGOING == callType) {
+                callCallback?.get()?.onChannelJoin()
             }
+
         }
 
         override fun onLeaveChannel(stats: RtcStats) {
@@ -379,10 +376,11 @@ class WebRtcService : Service() {
         override fun onCallStateChanged(state: Int, phoneNumber: String?) {
             super.onCallStateChanged(state, phoneNumber)
             Timber.tag(TAG).e("RTC=    %s", state)
-            phoneCallState = if (state == TelephonyManager.CALL_STATE_IDLE) {
-                CallState.CALL_STATE_IDLE
+            if (state == TelephonyManager.CALL_STATE_IDLE) {
+                phoneCallState = CallState.CALL_STATE_IDLE
             } else {
-                CallState.CALL_STATE_BUSY
+                phoneCallState = CallState.CALL_STATE_BUSY
+                disconnectCall()
             }
         }
     }
@@ -446,9 +444,7 @@ class WebRtcService : Service() {
                             }
                             this == NotificationIncomingCall().action -> {
                                 if (CallState.CALL_STATE_BUSY == phoneCallState || isCallWasOnGoing) {
-                                    callData?.let {
-                                        callStatusNetworkApi(it, CallAction.DECLINE)
-                                    }
+                                    phoneBusySoDisconnect(intent)
                                     return@initEngine
                                 }
                                 resetTimer()
@@ -497,9 +493,7 @@ class WebRtcService : Service() {
                                 disconnectService()
                             }
                             this == CallStop().action -> {
-                                if (JoshApplication.isAppVisible.not()) {
-                                    addNotification(CallDisconnect().action, null)
-                                }
+                                addNotification(CallDisconnect().action, null)
                                 callStopWithoutIssue()
                             }
                             this == CallForceDisconnect().action -> {
@@ -538,6 +532,12 @@ class WebRtcService : Service() {
             }
         }
         return START_NOT_STICKY
+    }
+
+    private fun phoneBusySoDisconnect(intent: Intent) {
+        (intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?)?.let {
+            callStatusNetworkApi(it, CallAction.DECLINE)
+        }
     }
 
     private fun callStopWithoutIssue() {
@@ -598,6 +598,11 @@ class WebRtcService : Service() {
         return (mRtcEngine?.connectionState == CONNECTION_STATE_DISCONNECTED || isCallWasOnGoing.not())
     }
 
+    fun timeoutCaller() {
+        callData?.let {
+            callStatusNetworkApi(it, CallAction.TIMEOUT)
+        }
+    }
 
     private fun rejectCall() {
         try {
@@ -720,6 +725,11 @@ class WebRtcService : Service() {
                 return
             }
             retryInitLibrary++
+            try {
+                Thread.sleep(250)
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+            }
             initEngine {
                 joinCall(data)
             }
@@ -1129,7 +1139,7 @@ enum class CallState {
 }
 
 enum class CallAction(val action: String) {
-    ACCEPT("ACCEPT"), DECLINE("DECLINE"), DISCONNECT("DISCONNECT")
+    ACCEPT("ACCEPT"), DECLINE("DECLINE"), DISCONNECT("DISCONNECT"), TIMEOUT("TIMEOUT")
 }
 
 class NotificationId {

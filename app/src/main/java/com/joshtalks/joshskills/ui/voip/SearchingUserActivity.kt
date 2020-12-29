@@ -24,7 +24,9 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -109,6 +111,7 @@ class SearchingUserActivity : BaseActivity() {
 
         override fun onChannelJoin() {
             super.onChannelJoin()
+            addReceiverTimeout()
             uiHandler?.postDelayed({
                 if (isFinishing.not()) {
                     binding.btnAction.visibility = View.VISIBLE
@@ -320,5 +323,21 @@ class SearchingUserActivity : BaseActivity() {
                     }
                 }
                 .subscribe())
+    }
+
+    private fun addReceiverTimeout() {
+        compositeDisposable.add(
+            Observable.interval(12, TimeUnit.SECONDS, Schedulers.computation())
+                .timeInterval()
+                .subscribe({ it ->
+                    mBoundService?.isCallNotConnected()?.let { flag ->
+                        if (flag.not()) {
+                            mBoundService?.timeoutCaller()
+                        }
+                    }
+                }, {
+                    it.printStackTrace()
+                })
+        )
     }
 }
