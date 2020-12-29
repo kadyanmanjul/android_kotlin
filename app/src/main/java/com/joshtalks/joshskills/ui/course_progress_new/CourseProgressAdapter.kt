@@ -65,7 +65,7 @@ class CourseProgressAdapter(
 
                     binding.root.setOnClickListener {
                         onItemClickListener.onCertificateExamClick(
-                                itemList.get(position - 1),
+                                itemList.get(layoutPosition - 1),
                                 conversationId,
                                 chatMessageId,
                                 certificationId,

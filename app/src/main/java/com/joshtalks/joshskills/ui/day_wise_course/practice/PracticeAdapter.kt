@@ -163,21 +163,6 @@ class PracticeAdapter(
                         )
                 )
             }
-            if (chatModel.question?.status == QUESTION_STATUS.AT || chatModel.question?.status == QUESTION_STATUS.IP) {
-                binding.practiceTitleTv.setCompoundDrawablesWithIntrinsicBounds(
-                        R.drawable.ic_check,
-                        0,
-                        0,
-                        0
-                )
-            } else {
-                binding.practiceTitleTv.setCompoundDrawablesWithIntrinsicBounds(
-                        R.drawable.ic_check_grey,
-                        0,
-                        0,
-                        0
-                )
-            }
 
             val assessmentQuestions: java.util.ArrayList<AssessmentQuestionWithRelations> =
                     java.util.ArrayList()
@@ -355,25 +340,45 @@ class PracticeAdapter(
             hideExplanation()
             binding.explanationTv.text = question.reviseConcept?.description
             binding.quizRadioGroup.check(-1)
+            var correctAns = false
             question.choiceList.forEachIndexed { index, choice ->
                 when (index) {
                     0 -> {
-                        setupOption(binding.option1, choice, question)
+                        if (correctAns.not())
+                            correctAns = setupOption(binding.option1, choice, question)
                     }
                     1 -> {
-                        setupOption(binding.option2, choice, question)
+                        if (correctAns.not())
+                            correctAns = setupOption(binding.option2, choice, question)
                     }
                     2 -> {
-                        setupOption(binding.option3, choice, question)
+                        if (correctAns.not())
+                            correctAns = setupOption(binding.option3, choice, question)
                     }
                     3 -> {
-                        setupOption(binding.option4, choice, question)
+                        if (correctAns.not())
+                            correctAns = setupOption(binding.option4, choice, question)
                     }
                 }
             }
 
             binding.submitAnswerBtn.isEnabled = false
             if (question.question.isAttempted) {
+                if (correctAns) {
+                    binding.practiceTitleTv.setCompoundDrawablesWithIntrinsicBounds(
+                            R.drawable.ic_check,
+                            0,
+                            0,
+                            0
+                    )
+                } else {
+                    binding.practiceTitleTv.setCompoundDrawablesWithIntrinsicBounds(
+                            R.drawable.ic_cross_red,
+                            0,
+                            0,
+                            0
+                    )
+                }
                 binding.submitAnswerBtn.visibility = GONE
                 question.reviseConcept?.let {
                     binding.showExplanationBtn.visibility = VISIBLE
@@ -381,6 +386,12 @@ class PracticeAdapter(
             } else {
                 binding.showExplanationBtn.visibility = GONE
                 binding.submitAnswerBtn.visibility = VISIBLE
+                binding.practiceTitleTv.setCompoundDrawablesWithIntrinsicBounds(
+                        R.drawable.ic_check_grey,
+                        0,
+                        0,
+                        0
+                )
             }
 
         }
@@ -419,7 +430,8 @@ class PracticeAdapter(
                 radioButton: RadioButton,
                 choice: Choice,
                 question: AssessmentQuestionWithRelations
-        ) {
+        ): Boolean {
+            var correctAns = false
             radioButton.text = choice.text
             if (question.question.isAttempted) {
                 radioButton.isClickable = false
@@ -439,6 +451,7 @@ class PracticeAdapter(
                         )
                         radioButton.elevation = 8F
                         radioButton.alpha = 1f
+                        correctAns = true
                     } else {
                         resetRadioBackground(radioButton)
                         radioButton.alpha = 0.5f
@@ -464,6 +477,8 @@ class PracticeAdapter(
             }
             if (choice.isCorrect)
                 binding.quizRadioGroup.tag = radioButton.id
+
+            return correctAns
         }
     }
 
