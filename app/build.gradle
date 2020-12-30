@@ -163,12 +163,12 @@ android {
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
         }
-        prod {
+        skills {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"https://skills.joshtalks.org\""
         }
-        prod2 {
+        prod {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"https://app.joshtalks.org\""
