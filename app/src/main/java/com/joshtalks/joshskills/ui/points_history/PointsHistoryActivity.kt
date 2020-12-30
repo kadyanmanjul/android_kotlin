@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.ui.points_history.viewmodel.PointsViewModel
 import kotlinx.android.synthetic.main.base_toolbar.iv_back
 import kotlinx.android.synthetic.main.base_toolbar.iv_help
 import kotlinx.android.synthetic.main.base_toolbar.text_message_title
+import java.text.DecimalFormat
 
 const val MENTOR_ID = "mentor_id"
 
@@ -58,7 +59,7 @@ class PointsHistoryActivity : BaseActivity() {
 
     private fun addObserver() {
         viewModel.pointsHistoryLiveData.observe(this, Observer {
-            binding.userScore.text = it.totalPoints.toString()
+            binding.userScore.text = DecimalFormat("#,##,##,###").format(it.totalPoints)
             binding.userScoreText.text = it.totalPointsText
 
             it.pointsHistoryDateList?.forEachIndexed { index, list ->
@@ -85,7 +86,7 @@ class PointsHistoryActivity : BaseActivity() {
 
     }
 
-    public fun openPointsInfoTable() {
+    fun openPointsInfoTable() {
         startActivity(Intent(this, PointsInfoActivity::class.java))
     }
 

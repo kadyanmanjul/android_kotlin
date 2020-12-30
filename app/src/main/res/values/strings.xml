@@ -562,7 +562,7 @@
     <string name="lesson_no">"Lesson %1$d"</string>
     <string name="today_lesson">Today\'s lesson: %1$s</string>
     <string name="user_point_text">Total Points Earned</string>
-    <string name="user_streak_text">Days Streak</string>
+    <string name="user_streak_text">Regular for %1$d Days</string>
     <string name="user_min_text">Mins Spoken</string>
     <string name="see_leaderboard">See the Leaderboard >></string>
     <string name="how_points_work">How to earn points</string>

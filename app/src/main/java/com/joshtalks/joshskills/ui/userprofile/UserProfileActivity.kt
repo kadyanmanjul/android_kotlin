@@ -56,6 +56,7 @@ import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.DecimalFormat
 import java.util.Locale
 
 class UserProfileActivity : BaseActivity() {
@@ -231,8 +232,9 @@ class UserProfileActivity : BaseActivity() {
         binding.userName.text = resp
         binding.userAge.text = userData.age.toString()
         binding.joinedOn.text = userData.joinedOn
-        binding.points.text = userData.points.toString()
-        binding.streaks.text = userData.streak.toString().plus(" Days")
+
+        binding.points.text = DecimalFormat("#,##,##,###").format(userData.points)
+        binding.streaksText.text = getString(R.string.user_streak_text, userData.streak)
 
         if (userData.awardCategory.isNullOrEmpty()) {
             binding.awardsHeading.visibility = View.GONE
