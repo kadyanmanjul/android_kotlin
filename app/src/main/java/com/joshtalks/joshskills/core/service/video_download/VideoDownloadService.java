@@ -6,8 +6,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-import androidx.annotation.Nullable;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ext.workmanager.WorkManagerScheduler;
 import com.google.android.exoplayer2.offline.Download;
@@ -72,11 +70,6 @@ public class VideoDownloadService extends DownloadService {
     public void onCreate() {
         super.onCreate();
         notificationHelper = new DownloadNotificationHelper(this, CHANNEL_ID);
-    }
-
-    @Override
-    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        return START_NOT_STICKY;
     }
 
     @NotNull
