@@ -225,6 +225,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         imgClose.setOnClickListener(this);
         toolbar.setOnClickListener(this);
         imgPinnedClose.setOnClickListener(this);
+        pinnedMessageView.setOnClickListener(this);
         composeBox.replyClose.setOnClickListener(this);
         linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.setStackFromEnd(true);
@@ -334,6 +335,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
 //                });
                 BaseMessage lastPinnedMsg = baseMessages.get(baseMessages.size() - 1);
                 pinnedMessageView.setVisibility(VISIBLE);
+                pinnedMessageView.setTag(lastPinnedMsg.getId());
                 txtPinnedMsgUserName.setText(lastPinnedMsg.getSender().getName());
                 String colorCode = null;
                 try {
@@ -654,6 +656,85 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
                     BaseMessage baseMessage = baseMessages.get(baseMessages.size() - 1);
                     markMessageAsRead(baseMessage);
                 }
+            }
+
+            @Override
+            public void onError(CometChatException e) {
+//                Log.d(TAG, "onError: " + e.getMessage());
+            }
+        });
+    }
+
+    private void fetchParticularMessageList(int messageId) {
+        nextMessagesRequest = null;
+        previousMessagesRequest = null;
+        isNoMoreNextMessages = false;
+        isNoMorePreviousMessages = false;
+        if (type != null) {
+            if (type.equals(CometChatConstants.RECEIVER_TYPE_USER)) {
+                nextMessagesRequest = new MessagesRequest.MessagesRequestBuilder().setLimit(LIMIT)
+                        .setTypes(StringContract.MessageRequest.messageTypesForUser)
+                        .setCategories(StringContract.MessageRequest.messageCategoriesForUser)
+                        .setMessageId(messageId)
+                        .hideReplies(true).setUID(Id).build();
+
+                previousMessagesRequest = new MessagesRequest.MessagesRequestBuilder().setLimit(LIMIT)
+                        .setTypes(StringContract.MessageRequest.messageTypesForUser)
+                        .setCategories(StringContract.MessageRequest.messageCategoriesForUser)
+                        .setMessageId(messageId)
+                        .hideReplies(true).setUID(Id).build();
+            } else {
+                nextMessagesRequest = new MessagesRequest.MessagesRequestBuilder().setLimit(LIMIT)
+                        .setTypes(StringContract.MessageRequest.messageTypesForGroup)
+                        .setCategories(StringContract.MessageRequest.messageCategoriesForGroup)
+                        .setMessageId(messageId)
+                        .hideReplies(true).setGUID(Id).hideMessagesFromBlockedUsers(true).build();
+
+                previousMessagesRequest = new MessagesRequest.MessagesRequestBuilder().setLimit(LIMIT)
+                        .setTypes(StringContract.MessageRequest.messageTypesForGroup)
+                        .setCategories(StringContract.MessageRequest.messageCategoriesForGroup)
+                        .setMessageId(messageId)
+                        .hideReplies(true).setGUID(Id).hideMessagesFromBlockedUsers(true).build();
+            }
+        }
+
+        messageAdapter.resetList();
+        nextMessagesRequest.fetchNext(new CometChat.CallbackListener<List<BaseMessage>>() {
+
+            @Override
+            public void onSuccess(List<BaseMessage> baseMessages) {
+                messageAdapter.updateList(baseMessages, true);
+                stopHideShimmer();
+                if (baseMessages.isEmpty()) {
+                    isNoMoreNextMessages = true;
+                } else {
+                    BaseMessage baseMessage = baseMessages.get(baseMessages.size() - 1);
+                    markMessageAsRead(baseMessage);
+                }
+
+                previousMessagesRequest.fetchPrevious(new CometChat.CallbackListener<List<BaseMessage>>() {
+
+                    @Override
+                    public void onSuccess(List<BaseMessage> baseMessages) {
+                        isInProgress = false;
+                        messageAdapter.updateList(baseMessages, false);
+                        stopHideShimmer();
+                        if (baseMessages.isEmpty()) {
+                            isNoMoreNextMessages = true;
+                        } else {
+                            BaseMessage baseMessage = baseMessages.get(baseMessages.size() - 1);
+                            markMessageAsRead(baseMessage);
+                        }
+                        // TODO - Fetch nextMessages inclusive of selected msg.
+                        // scrollToMsg(messageId);
+                    }
+
+                    @Override
+                    public void onError(CometChatException e) {
+//                Log.d(TAG, "onError: " + e.getMessage());
+                    }
+                });
+
             }
 
             @Override
@@ -1454,6 +1535,11 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             onBackPressed();
         } else if (id == R.id.iv_pinned_close) {
             pinnedMessageView.setVisibility(View.GONE);
+        } else if (id == R.id.pinnedMessageView) {
+            if (pinnedMessageView.getTag() != null) {
+                int pinnedMsgId = Integer.parseInt(pinnedMessageView.getTag().toString());
+                scrollToMsg(pinnedMsgId);
+            }
         }
     }
 
@@ -1727,6 +1813,14 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
 
     @Override
     public void onRepliedMessageClick(int messageId) {
+        scrollToMsg(messageId);
+    }
+
+    private void getPinnedMessages() {
+        viewModel.getPinnedMessages(Id);
+    }
+
+    private void scrollToMsg(int messageId) {
         int position = -1;
         for (int i = 0; i < messageAdapter.getMessageList().size(); i++) {
             if (messageAdapter.getMessageList().get(i).getId() == messageId) {
@@ -1738,11 +1832,9 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             rvChatListView.smoothScrollToPosition(position);
         } else {
             // TODO(22/12/2020) - Find a way to scroll while message is not loaded yet.
-            scrollToTop();
+            isInProgress = true;
+            fetchParticularMessageList(messageId);
         }
     }
 
-    private void getPinnedMessages() {
-        viewModel.getPinnedMessages(Id);
-    }
 }
