@@ -114,7 +114,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
             group_two.visibility = View.VISIBLE
             group_one.visibility = View.GONE
 
-            if (response.alreadyTalked >= response.duration) {
+            if (true) {
                 btn_continue.visibility = View.VISIBLE
                 activityCallback?.onQuestionStatusUpdate(
                     QUESTION_STATUS.AT,

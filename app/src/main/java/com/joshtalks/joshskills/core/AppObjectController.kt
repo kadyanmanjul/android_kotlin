@@ -70,7 +70,6 @@ import java.net.URL
 import java.text.DateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
-import com.uxcam.UXCam
 
 const val KEY_AUTHORIZATION = "Authorization"
 const val KEY_APP_VERSION_CODE = "app-version-code"
@@ -314,11 +313,9 @@ class AppObjectController {
             return mRtcEngine
         }
 
-
         private fun initUXCam() {
             UXCam.setAutomaticScreenNameTagging(true)
         }
-
 
         private fun initDebugService() {
             if (BuildConfig.DEBUG) {
@@ -478,10 +475,6 @@ class AppObjectController {
 
         fun getFirebaseRemoteConfig(): FirebaseRemoteConfig {
             return FirebaseRemoteConfig.getInstance()
-        }
-
-        private fun initUXCam() {
-            UXCam.setAutomaticScreenNameTagging(true)
         }
 
         private fun initSmartLookCam() {

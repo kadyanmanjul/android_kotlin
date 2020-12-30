@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.userprofile
 
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -11,23 +12,19 @@ import android.view.animation.Animation
 import android.view.animation.TranslateAnimation
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.FragmentShowNewLeaderboardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardItemViewHolder
-import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -36,9 +33,13 @@ import kotlinx.coroutines.launch
 class ShowNewLeaderBoardFragment : DialogFragment() {
 
     private lateinit var binding: FragmentShowNewLeaderboardBinding
+    private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var linearSmoothScroller: LinearSmoothScroller
     private var award: Award? = null
     private val viewModel by lazy { ViewModelProvider(requireActivity()).get(UserProfileViewModel::class.java) }
-
+    private val targetRank: Int = 0
+    private var previousRank: Int = 0
+    private var position: Int = -1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NO_FRAME, R.style.full_dialog)
@@ -97,12 +98,11 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
 
     private fun initView(it: LeaderboardResponse) {
 
-        val linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+        linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         linearLayoutManager.isSmoothScrollbarEnabled = true
         linearLayoutManager.stackFromEnd = true
 
-
-        val linearSmoothScroller: LinearSmoothScroller =
+        linearSmoothScroller =
             object : LinearSmoothScroller(requireContext()) {
                 override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics): Float {
                     return 500.div(displayMetrics.densityDpi).toFloat()
@@ -117,6 +117,7 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
         binding.titleTv.text = it.info
         binding.rankTv.text = "Current rank : ${it.current_mentor?.ranking}"
         it.current_mentor?.let { current_mentor ->
+            previousRank=current_mentor.ranking
             binding.recyclerView.addView(
                 LeaderBoardItemViewHolder(
                     current_mentor,
@@ -145,20 +146,23 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
 
         val last_item_position = binding.recyclerView.getAdapter()?.getItemCount()?.minus(1)
         last_item_position?.let { it1 ->
+            position = last_item_position.minus(6)
             CoroutineScope(Dispatchers.Main).launch {
-                scroolAnimation(linearLayoutManager,linearSmoothScroller)
+                delay(1000)
+                Log.d("Manjul", "initView() called ${linearLayoutManager.findFirstCompletelyVisibleItemPosition()}")
+                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition()>targetRank){
+                    delay(1000)
+                    animateCard()
+                }
+                else animateToPosition()
             }
         }
     }
 
-    suspend fun scroolAnimation(
-        linearLayoutManager: LinearLayoutManager,
-        linearSmoothScroller: LinearSmoothScroller
-    ) {
-        delay(1000)
+    fun animateToPosition() {
         binding.recyclerView.removeOnScrollListener(onScrollListener)
         binding.recyclerView.addOnScrollListener(onScrollListener)
-        linearSmoothScroller.targetPosition = 0 //targetposition
+        linearSmoothScroller.targetPosition = position
         linearLayoutManager.startSmoothScroll(linearSmoothScroller)
     }
 
@@ -167,7 +171,13 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
             when (newState) {
                 SCROLL_STATE_IDLE -> {
                     recyclerView.removeOnScrollListener(this)
-                    animateCard()
+                    if (position == targetRank) {
+                        animateCard()
+                    } else {
+                        binding.rank.text=position.plus(2).toString()
+                        position = position.minus(1)
+                        animateToPosition()
+                    }
                 }
             }
         }
@@ -180,12 +190,13 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
         )
         animation.setDuration(1000)
         animation.setFillAfter(false)
-        animation.setAnimationListener(object :Animation.AnimationListener{
+        animation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(p0: Animation?) {}
 
             override fun onAnimationEnd(p0: Animation?) {
                 (binding.recyclerView.getViewResolverAtPosition(0) as LeaderBoardItemViewHolder).showCurrentUserItem()
-                binding.userItem.visibility=View.GONE
+                binding.userItem.visibility = View.GONE
+                binding.recyclerView.removeView(binding.recyclerView.getAdapter()?.getItemCount()?.minus(3))
             }
 
             override fun onAnimationRepeat(p0: Animation?) {}
@@ -193,7 +204,6 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
         })
         binding.userItem.startAnimation(animation)
     }
-
 
 
     companion object {
@@ -211,18 +221,19 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
                     }
                 }
 
-            fun showDialog(
-                supportFragmentManager: FragmentManager,
-                award: Award?) {
-                val fragmentTransaction = supportFragmentManager.beginTransaction()
-                val prev = supportFragmentManager.findFragmentByTag(TAG)
-                if (prev != null) {
-                    fragmentTransaction.remove(prev)
-                }
-                fragmentTransaction.addToBackStack(null)
-                newInstance(award)
-                    .show(supportFragmentManager, TAG)
+        fun showDialog(
+            supportFragmentManager: FragmentManager,
+            award: Award?
+        ) {
+            val fragmentTransaction = supportFragmentManager.beginTransaction()
+            val prev = supportFragmentManager.findFragmentByTag(TAG)
+            if (prev != null) {
+                fragmentTransaction.remove(prev)
             }
+            fragmentTransaction.addToBackStack(null)
+            newInstance(award)
+                .show(supportFragmentManager, TAG)
+        }
 
     }
 
