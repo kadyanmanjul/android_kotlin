@@ -98,10 +98,8 @@ class PracticeAdapter(
                 (holder as PracticeViewHolder).bind(itemList[position], position)
             }
             else -> {
-                Log.d(TAG, "onBindViewHolder() called with: holder = $holder, position = $position")
                 if (assessmentQuizList.isNotEmpty()) {
                     assessmentQuizList.filter { it.assessment.remoteId==itemList[position].question?.assessmentId }?.let {
-                        Log.d(TAG, "onBindViewHolder() called $it")
                         (holder as QuizViewHolder).bind(itemList[position], it.get(0), position)
 
                     }
@@ -133,6 +131,7 @@ class PracticeAdapter(
 
         private val accentColor =
                 ContextCompat.getColor(context, R.color.colorAccent)
+        private lateinit var chatModel: ChatModel
         private val colorStateList = ColorStateList(
                 arrayOf(
                         intArrayOf(android.R.attr.state_checked),
@@ -153,10 +152,10 @@ class PracticeAdapter(
         )
 
         fun bind(chatModel: ChatModel, assessmentRelations: AssessmentWithRelations?, position: Int) {
-            Log.d(TAG, "bind() called with: chatModel = $chatModel, assessmentRelations = $assessmentRelations, position = $position")
             if (assessmentRelations==null){
                 return
             }
+            this.chatModel=chatModel
             if (isFirstTime && chatModel.question?.status == QUESTION_STATUS.NA) {
                 isFirstTime = false
                 binding.quizLayout.visibility = VISIBLE
@@ -182,6 +181,7 @@ class PracticeAdapter(
                     java.util.ArrayList()
 
             with(binding) {
+                binding.handler=this@QuizViewHolder
 
                 assessmentRelations?.questionList?.sortedBy { it.question.sortOrder }
                         ?.forEach { item -> assessmentQuestions.add(item) }
@@ -252,7 +252,7 @@ class PracticeAdapter(
                     )]
                     selectedChoice.isSelectedByUser = true
                     selectedChoice.userSelectedOrder = 1
-                    clickListener.submitQuiz(chatModel)
+                    clickListener.quizOptionSelected(chatModel)
                     practiceViewModel.saveAssessmentQuestion(question)
                     binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.tag as Int)
                             .setBackgroundResource(R.drawable.rb_correct_rect_bg)
@@ -267,15 +267,32 @@ class PracticeAdapter(
                 }
             }
 
-            binding.continueBtn.setOnClickListener {
-                onContinueClick()
-            }
-
             binding.showExplanationBtn.setOnClickListener {
                 showExplanation()
             }
 
+            if (chatModel.question?.status == QUESTION_STATUS.IP) {
+                binding.quizLayout.visibility = VISIBLE
+                binding.continueBtn.visibility = VISIBLE
+                assessmentQuestions[0].reviseConcept?.let {
+                    binding.showExplanationBtn.visibility = VISIBLE
+                }
+                binding.submitAnswerBtn.visibility = GONE
+                binding.expandIv.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        context,
+                        R.drawable.ic_remove
+                    )
+                )
+                if (position > 0)
+                    clickListener.focusChild(position - 1)
+            }
+        }
 
+        fun onContinueClicked(){
+            isFirstTime=false
+            clickListener.submitQuiz(chatModel)
+            onContinueClick()
         }
 
         fun hideExplanation() {
@@ -1180,6 +1197,7 @@ class PracticeAdapter(
         fun askRecordPermission()
         fun focusChild(position: Int)
         fun submitQuiz(chatModel: ChatModel)
+        fun quizOptionSelected(chatModel: ChatModel)
         fun openNextScreen()
     }
 }

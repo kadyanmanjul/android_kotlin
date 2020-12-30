@@ -140,6 +140,10 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
         openNextScreen()
     }
 
+    override fun quizOptionSelected(chatModel: ChatModel) {
+        onQuestionChoiceSelected(chatModel)
+    }
+
     private fun onQuestionSubmitted(chatModel: ChatModel) {
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -156,6 +160,16 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
 
         currentChatModel = null
 
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun onQuestionChoiceSelected(chatModel: ChatModel) {
+        activityCallback?.onQuestionStatusUpdate(
+                QUESTION_STATUS.IP,
+                chatModel.question?.questionId?.toIntOrNull() ?: 0
+        )
+        chatModel.question?.status = QUESTION_STATUS.IP
+        currentChatModel = null
         adapter.notifyDataSetChanged()
     }
 

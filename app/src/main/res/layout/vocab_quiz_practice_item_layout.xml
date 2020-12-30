@@ -177,7 +177,7 @@
                         android:layout_marginBottom="@dimen/_16sdp"
                         android:background="@drawable/rounded_state_button_bg"
                         android:gravity="center"
-                        android:onClick="@{()->handler.onContinueClick()}"
+                        android:onClick="@{()->handler.onContinueClicked()}"
                         android:padding="@dimen/_8sdp"
                         android:text="@string/continue_label"
                         android:textAllCaps="false"
