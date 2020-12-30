@@ -65,7 +65,6 @@ class CourseProgressAdapter(
                     }
 
                     binding.root.setOnClickListener {
-                        Log.d("Manjul", "onCertificateExamClick() called $parentPosition ")
                         onItemClickListener.onCertificateExamClick(
                                 itemList.get(layoutPosition - 1),
                                 conversationId,

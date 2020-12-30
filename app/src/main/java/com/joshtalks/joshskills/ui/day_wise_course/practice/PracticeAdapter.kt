@@ -563,10 +563,6 @@ class PracticeAdapter(
                                 progress: Int,
                                 fromUser: Boolean
                         ) {
-                            Log.d(
-                                    "Manjul",
-                                    "onProgressChanged() called with: seekBar2 = $seekBar, progress = $progress, fromUser = $fromUser"
-                            )
                             if (fromUser) {
                                 userSelectedPosition = progress
                             }
@@ -1095,10 +1091,6 @@ class PracticeAdapter(
                                 progress: Int,
                                 fromUser: Boolean
                         ) {
-                            Log.d(
-                                    "Manjul",
-                                    "onProgressChanged() called with: seekBar1 = $seekBar, progress = $progress, fromUser = $fromUser"
-                            )
                             if (fromUser) {
                                 userSelectedPosition = progress
                             }

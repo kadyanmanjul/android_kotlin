@@ -280,7 +280,6 @@ class CourseProgressActivityNew : AppCompatActivity(),
             runOnUiThread {
                 if (lessonModel == null) {
                     courseOverviewResponse?.let {
-                        Log.d("Manjul", "onCertificateExamClick() called $parentPosition   $it ${it.size}")
                         ExamUnlockDialogFragment(
                                 it[parentPosition].examInstructions,
                                 it[parentPosition].ceMarks,
