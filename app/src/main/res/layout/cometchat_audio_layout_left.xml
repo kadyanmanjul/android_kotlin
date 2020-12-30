@@ -30,6 +30,7 @@
             android:layout_marginBottom="0dp"
             android:gravity="center"
             android:paddingStart="@dimen/_6sdp"
+            android:paddingTop="@dimen/_4sdp"
             android:paddingEnd="@dimen/_6sdp"
             android:paddingBottom="0dp"
             android:textColor="@color/colorPrimary"
@@ -47,6 +48,7 @@
             android:layout_marginBottom="0dp"
             android:gravity="center"
             android:paddingStart="@dimen/_6sdp"
+            android:paddingTop="@dimen/_4sdp"
             android:paddingEnd="@dimen/_6sdp"
             android:paddingBottom="0dp"
             android:textColor="@color/grey_68"
@@ -68,9 +70,9 @@
         <View
             android:id="@+id/dummy_view"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/_15sdp"
+            android:layout_height="@dimen/_10sdp"
             android:layout_below="@id/replyLayout"
-            android:visibility="invisible" />
+            android:visibility="visible" />
 
         <com.joshtalks.joshskills.ui.groupchat.uikit.AudioV2PlayerView
             android:id="@+id/audio_player"
@@ -80,6 +82,7 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:gravity="center_vertical"
+            android:paddingTop="@dimen/_4sdp"
             android:paddingEnd="@dimen/_8sdp"
             tools:layout_height="@dimen/_40sdp" />
 

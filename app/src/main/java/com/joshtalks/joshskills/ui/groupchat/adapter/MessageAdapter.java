@@ -364,6 +364,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         BaseMessage baseMessage = messageList.get(i);
         if (baseMessage != null && baseMessage.getDeletedAt() == 0) {
             viewHolder.view.setTag(baseMessage.getId());
+            viewHolder.dummyView.setVisibility(View.VISIBLE);
             if (viewHolder.imgDeliveryTick != null) {
                 if (baseMessage.getSentAt() == 0) {
                     viewHolder.imgDeliveryTick.setImageResource(R.drawable.ic_sent_message_s_tick);
@@ -375,15 +376,17 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_USER)) {
                     viewHolder.tvUser.setVisibility(View.GONE);
                     viewHolder.ivUser.setVisibility(View.GONE);
+                    viewHolder.dummyView.setVisibility(View.VISIBLE);
                 } else if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_GROUP)) {
                     if (isUserDetailVisible) {
                         viewHolder.tvUser.setVisibility(View.VISIBLE);
                         viewHolder.ivUser.setVisibility(View.VISIBLE);
+                        viewHolder.dummyView.setVisibility(View.GONE);
                         viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_normal_bg_groupchat));
                     } else {
                         viewHolder.tvUser.setVisibility(View.GONE);
                         viewHolder.ivUser.setVisibility(View.INVISIBLE);
-                        viewHolder.ivUser.setVisibility(View.INVISIBLE);
+                        viewHolder.dummyView.setVisibility(View.VISIBLE);
                         viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_same_bg_groupchat));
                     }
                     String colorCode = null;
@@ -418,6 +421,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     String messageType = metaData.getString("type");
                     String message = metaData.getString("message");
                     viewHolder.replyLayout.setVisibility(View.VISIBLE);
+                    viewHolder.dummyView.setVisibility(View.VISIBLE);
                     String replyUserName = metaData.getString("name");
                     String colorCode = null;
                     if (metaData.has("color_code")) {
@@ -1442,6 +1446,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private final TextView replyMessage;          //reply message text
         private final View indicatorView;             //indicatorView
         private final AppCompatImageView imgDeliveryTick;   //Delivery Tick
+        private final View dummyView;                 //dummyView for Spacing
 
 
         public AudioMessageViewHolder(@NonNull View itemView) {
@@ -1458,6 +1463,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             replyMessage = itemView.findViewById(R.id.reply_message);
             indicatorView = itemView.findViewById(R.id.indicatorView);
             imgDeliveryTick = itemView.findViewById(R.id.delivery_tick);
+            dummyView = itemView.findViewById(R.id.dummy_view);
             this.view = itemView;
         }
     }
