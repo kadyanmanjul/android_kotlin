@@ -18,7 +18,13 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CLEAR_CACHE
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
+import com.joshtalks.joshskills.core.JoshSkillExecutors
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_LOCALE_UPDATED
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException

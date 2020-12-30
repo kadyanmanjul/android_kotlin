@@ -140,34 +140,10 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             titleView.text =
                 getString(R.string.lesson_no, it.getOrNull(0)?.question?.lesson?.lessonNo)
 
-            setUpTablayout(it)
-
-
-        })
-
-        viewModel.updatedLessonResponseLiveData.observe(this, {
-
-            viewModel.updateQuestionLessonStatus(lessonId, it.responseData)
-            if (it.responseData == LESSON_STATUS.CO) {
-                lessonCompleted = true
-            }
-            if (it.awardMentorList.isNullOrEmpty().not()) {
-                awardList = it.awardMentorList!!
-            }
-            if (it.pointsList.isNullOrEmpty().not()) {
-                showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
-            }
-            if(it.awardMentorList.isNullOrEmpty().not()){
-                ShowAwardFragment.showDialog(supportFragmentManager,it.awardMentorList!!)
-            }
-        })
-    }
-
-    private fun setUpTablayout(chatModellist: List<ChatModel>) {
-        val sectionWiseChatList = ArrayList<ArrayList<ChatModel>>()
-        val grammarQuestions: ArrayList<ChatModel> = ArrayList()
-        val vocabularyQuestions: ArrayList<ChatModel> = ArrayList()
-        val readingQuestions: ArrayList<ChatModel> = ArrayList()
+            val grammarQuestions: ArrayList<ChatModel> = ArrayList()
+            val vocabularyQuestions: ArrayList<ChatModel> = ArrayList()
+            val readingQuestions: ArrayList<ChatModel> = ArrayList()
+            val speakingQuestions: ArrayList<ChatModel> = ArrayList()
 
             it.forEach {
                 when (it.question?.chatType) {
@@ -206,54 +182,89 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
         })
 
+
+        viewModel.updatedLessonResponseLiveData.observe(this, {
+
+            viewModel.updateQuestionLessonStatus(lessonId, it.responseData)
+            if (it.responseData == LESSON_STATUS.CO) {
+                lessonCompleted = true
+            }
+            if (it.awardMentorList.isNullOrEmpty().not()) {
+                awardList = it.awardMentorList!!
+            }
+            if (it.pointsList.isNullOrEmpty().not()) {
+                showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
+            }
+            if(it.awardMentorList.isNullOrEmpty().not()){
+                ShowAwardFragment.showDialog(supportFragmentManager,it.awardMentorList!!)
+            }
+        })
+
+
+    }
+
+    private fun setUpTablayout() {
         val adapter = LessonPagerAdapter(
-            supportFragmentManager, this.lifecycle, chatModellist,
+            supportFragmentManager, this.lifecycle, sectionWiseChatList,
             courseId = courseId?.toString() ?: EMPTY,
             lessonId = lessonId
         )
 
         binding.lessonViewpager.adapter = adapter
 
-        val tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
+        tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
         val layoutParam: LinearLayout.LayoutParams =
             LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT
             )
 
+        for (i in 0 until tabs.childCount) {
+            val tab = tabs.getChildAt(i)
+            tab.layoutParams = layoutParam
+            val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
+            layoutParams.weight = 0f
+            layoutParams.marginEnd = Utils.dpToPx(2)
+            layoutParams.marginStart = Utils.dpToPx(2)
+            tab.layoutParams = layoutParams
 
+        }
+        binding.lessonTabLayout.requestLayout()
 
         TabLayoutMediator(
             binding.lessonTabLayout,
-            binding.lessonViewpager,
-            object : TabLayoutMediator.TabConfigurationStrategy {
-                override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {
-                    when (position) {
-                        0 -> {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                setColor(tab)
-                            }
-                            tab.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
-                        }
-                        1 -> {
-                            setUnselectedColor(tab)
-                            tab.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.VOCABULARY_TITLE)
-                        }
-                        2 -> {
-                            setUnselectedColor(tab)
-                            tab.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.READING_TITLE)
-                        }
-                        3 -> {
-                            setUnselectedColor(tab)
-                            tab.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
-                        }
+            binding.lessonViewpager
+        ) { tab, position ->
+            tab.setCustomView(R.layout.capsule_tab_layout_view)
+            when (position) {
+                0 -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        setColor(tab)
                     }
+                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
                 }
-            }).attach()
+                1 -> {
+                    setUnselectedColor(tab)
+                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.VOCABULARY_TITLE)
+                }
+                2 -> {
+                    setUnselectedColor(tab)
+                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.READING_TITLE)
+                }
+                3 -> {
+                    setUnselectedColor(tab)
+                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
+                }
+            }
+        }.attach()
 
         binding.lessonTabLayout.addOnTabSelectedListener(object :
             TabLayout.OnTabSelectedListener {
@@ -274,27 +285,30 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                 setUnselectedColor(tab)
             }
         })
-        for (i in 0 until tabs.childCount) {
-            val tab = tabs.getChildAt(i)
-            tab.layoutParams = layoutParam
-            val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
 
-            layoutParams.weight = 0f
-            layoutParams.marginEnd = Utils.dpToPx(2)
-            layoutParams.marginStart = Utils.dpToPx(2)
+        Handler().postDelayed({
+            openInCompleteTab(sectionWiseChatList)
+        }, 50)
+    }
 
-            tab.layoutParams = layoutParams
-            binding.lessonTabLayout.requestLayout()
+    private fun setTabCompletionStatus(tab: View?, status: Boolean) {
+        tab?.let {
+            if (status) {
+                it.findViewById<ImageView>(R.id.tab_iv).visibility = View.VISIBLE
+            } else {
+                it.findViewById<ImageView>(R.id.tab_iv).visibility=View.GONE
+            }
         }
-        var tabOpened = false
-        sectionWiseChatList.forEachIndexed outer@{ index, sectionChats ->
+    }
+
+    private fun openInCompleteTab(sectionWiseChatList: ArrayList<ArrayList<ChatModel>>) {
+        var isTabOpened = false
+        sectionWiseChatList.forEachIndexed { index, sectionChats ->
             sectionChats.forEach {
                 if (it.question?.status == QUESTION_STATUS.NA) {
-                    if (tabOpened.not()) {
-                        onNextTabCall(index)
-                        tabOpened = true
-                    }
-                    return@outer
+                    onNextTabCall(index)
+                    isTabOpened = true
+                    return
                 }
             }
         }
@@ -350,9 +364,6 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                 putExtra(LAST_LESSON_INTERVAL, lessonInterval)
                 putExtra(LAST_LESSON_STATUS, lessonCompleted)
                 putExtra(LESSON__CHAT_ID, chatId)
-                if (awardList.isNullOrEmpty().not()) {
-                    putParcelableArrayListExtra(ACHIEVED_AWARD_LIST, ArrayList(awardList))
-                }
             })
             finish()
         }
@@ -400,227 +411,9 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         resultIntent.putExtra(LAST_LESSON_INTERVAL, lessonInterval)
         resultIntent.putExtra(LAST_LESSON_STATUS, lessonCompleted)
         resultIntent.putExtra(LESSON__CHAT_ID, chatId)
-        if (awardList.isNullOrEmpty().not()) {
-            resultIntent.putParcelableArrayListExtra(ACHIEVED_AWARD_LIST, ArrayList(awardList))
-        }
         setResult(RESULT_OK, resultIntent)
         this@DayWiseCourseActivity.finish()
     }
-
-
-private fun setUpTablayout() {
-    val adapter = LessonPagerAdapter(
-        supportFragmentManager, this.lifecycle, sectionWiseChatList,
-        courseId = courseId?.toString() ?: EMPTY,
-        lessonId = lessonId
-    )
-
-    binding.lessonViewpager.adapter = adapter
-
-    tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
-    val layoutParam: LinearLayout.LayoutParams =
-        LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.MATCH_PARENT
-        )
-
-    for (i in 0 until tabs.childCount) {
-        val tab = tabs.getChildAt(i)
-        tab.layoutParams = layoutParam
-        val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
-        layoutParams.weight = 0f
-        layoutParams.marginEnd = Utils.dpToPx(2)
-        layoutParams.marginStart = Utils.dpToPx(2)
-        tab.layoutParams = layoutParams
-
-    }
-    binding.lessonTabLayout.requestLayout()
-
-    TabLayoutMediator(
-        binding.lessonTabLayout,
-        binding.lessonViewpager
-    ) { tab, position ->
-        tab.setCustomView(R.layout.capsule_tab_layout_view)
-        when (position) {
-            0 -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    setColor(tab)
-                }
-                tab.view.findViewById<TextView>(R.id.title_tv).text =
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
-            }
-            1 -> {
-                setUnselectedColor(tab)
-                tab.view.findViewById<TextView>(R.id.title_tv).text =
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.VOCABULARY_TITLE)
-            }
-            2 -> {
-                setUnselectedColor(tab)
-                tab.view.findViewById<TextView>(R.id.title_tv).text =
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.READING_TITLE)
-            }
-            3 -> {
-                setUnselectedColor(tab)
-                tab.view.findViewById<TextView>(R.id.title_tv).text =
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
-            }
-        }
-    }.attach()
-
-    binding.lessonTabLayout.addOnTabSelectedListener(object :
-        TabLayout.OnTabSelectedListener {
-
-        override fun onTabSelected(tab: TabLayout.Tab?) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                setColor(tab)
-            }
-        }
-
-        override fun onTabReselected(tab: TabLayout.Tab?) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                setColor(tab)
-            }
-        }
-
-        override fun onTabUnselected(tab: TabLayout.Tab?) {
-            setUnselectedColor(tab)
-        }
-    })
-
-    Handler().postDelayed({
-        openInCompleteTab(sectionWiseChatList)
-    }, 50)
-}
-
-private fun setTabCompletionStatus(tab: View?, status: Boolean) {
-    tab?.let {
-        if (status) {
-            it.findViewById<ImageView>(R.id.tab_iv).visibility = View.VISIBLE
-        } else {
-            it.findViewById<ImageView>(R.id.tab_iv).visibility=View.GONE
-        }
-    }
-}
-
-private fun openInCompleteTab(sectionWiseChatList: ArrayList<ArrayList<ChatModel>>) {
-    var isTabOpened = false
-    sectionWiseChatList.forEachIndexed { index, sectionChats ->
-        sectionChats.forEach {
-            if (it.question?.status == QUESTION_STATUS.NA) {
-                onNextTabCall(index)
-                isTabOpened = true
-                return
-            }
-        }
-    }
-
-    if (isTabOpened.not())
-        onNextTabCall(sectionWiseChatList.size - 1)
-}
-
-private fun setUnselectedColor(tab: TabLayout.Tab?) {
-    tab?.let {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            tab.view.background = ContextCompat.getDrawable(this, R.drawable.unselected_tab_bg)
-            tab.view.findViewById<TextView>(R.id.title_tv)
-                ?.setTextColor(ContextCompat.getColor(this, R.color.black))
-        }
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.M)
-private fun setColor(tab: TabLayout.Tab?) {
-    tab?.let {
-
-        tab.view.findViewById<TextView>(R.id.title_tv)
-            ?.setTextColor(ContextCompat.getColor(this, R.color.white))
-
-        when (tab.position) {
-            0 -> {
-                tab.view.background =
-                    ContextCompat.getDrawable(this, R.drawable.capsule_selection_tab)
-            }
-            1 -> {
-                tab.view.background =
-                    ContextCompat.getDrawable(this, R.drawable.vocabulary_tab_bg)
-            }
-            2 -> {
-                tab.view.background = ContextCompat.getDrawable(this, R.drawable.reading_tab_bg)
-            }
-            3 -> {
-                tab.view.background =
-                    ContextCompat.getDrawable(this, R.drawable.speaking_tab_bg)
-            }
-        }
-    }
-}
-
-override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    if (requestCode == LESSON_REQUEST_CODE && resultCode == AppCompatActivity.RESULT_OK && data?.hasExtra(
-            IS_BATCH_CHANGED
-        ) == true
-    ) {
-        setResult(AppCompatActivity.RESULT_OK, Intent().apply {
-            putExtra(IS_BATCH_CHANGED, false)
-            putExtra(LAST_LESSON_INTERVAL, lessonInterval)
-            putExtra(DayWiseCourseActivity.LAST_LESSON_STATUS, lessonCompleted)
-            putExtra(LESSON__CHAT_ID, chatId)
-        })
-        finish()
-    }
-
-    super.onActivityResult(requestCode, resultCode, data)
-}
-
-override fun onNextTabCall(tabNumber: Int) {
-    try {
-        binding.lessonViewpager.currentItem = tabNumber
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
-}
-
-override fun onQuestionStatusUpdate(status: QUESTION_STATUS, questionId: Int) {
-    viewModel.updateQuestionStatus(status, questionId, courseId!!, lessonId)
-}
-
-override fun onContinueClick() {
-    if (lessonModel != null) {
-        conversastionId?.let { id ->
-            startActivityForResult(
-                ActivityUnlockNextClass.getActivityUnlockNextClassIntent(
-                    this,
-                    id, lessonModel!!
-                ), LESSON_REQUEST_CODE
-            )
-        }
-    }
-}
-
-override fun onSectionStatusUpdate(tabPosition: Int, status: Boolean) {
-    println("tabPosition = [${tabPosition}], status = [${status}]")
-    if (status) {
-        viewModel.updateSectionStatus(lessonId, LESSON_STATUS.CO, tabPosition)
-    } else {
-        viewModel.updateSectionStatus(lessonId, LESSON_STATUS.NO, tabPosition)
-    }
-}
-
-override fun onBackPressed() {
-    val resultIntent = Intent()
-    resultIntent.putExtra(IS_BATCH_CHANGED, isBatchChanged)
-    resultIntent.putExtra(LAST_LESSON_INTERVAL, lessonInterval)
-    resultIntent.putExtra(DayWiseCourseActivity.LAST_LESSON_STATUS, lessonCompleted)
-    resultIntent.putExtra(LESSON__CHAT_ID, chatId)
-    setResult(AppCompatActivity.RESULT_OK, resultIntent)
-    this@DayWiseCourseActivity.finish()
-}
-
-}
 
 }
 

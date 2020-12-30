@@ -19,7 +19,7 @@ data class UserProfileResponse(
     @SerializedName("name")
     val name: String?,
     @SerializedName("photo_url")
-    val photoUrl: String?,
+    var photoUrl: String?,
     @SerializedName("color_code")
     val colorCode: String?,
     @SerializedName("points")

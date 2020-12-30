@@ -81,6 +81,7 @@ class LeaderBoardFragment : Fragment() {
     private fun setListener() {
         binding.userLayout.setOnClickListener {
             scrollToUserPosition()
+            binding.userLayout.visibility = View.GONE
         }
     }
 

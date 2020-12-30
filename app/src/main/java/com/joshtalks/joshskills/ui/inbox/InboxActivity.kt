@@ -23,27 +23,8 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import com.joshtalks.joshcamerax.utils.SharedPrefsManager
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.COURSE_ID
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.EXPLORE_TYPE
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.MINIMUM_TIME_TO_SHOW_REVIEW
-import com.joshtalks.joshskills.core.IN_APP_REVIEW_COUNT
-import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
-import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
-import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
-import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
-import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
-import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
-import com.joshtalks.joshskills.core.SHOW_OVERLAY
-import com.joshtalks.joshskills.core.SINGLE_SPACE
-import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.inapp_update.Constants
@@ -52,21 +33,13 @@ import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
-import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.OpenLeaderBoardEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfileEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.*
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.server.Award
-import com.joshtalks.joshskills.repository.server.ProfileResponse
-import com.joshtalks.joshskills.repository.server.SearchLocality
-import com.joshtalks.joshskills.repository.server.UpdateUserLocality
-import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.SubscriptionData
@@ -94,24 +67,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_inbox.expiry_tool_tip
-import kotlinx.android.synthetic.main.activity_inbox.hint_text
-import kotlinx.android.synthetic.main.activity_inbox.new_user_layout
-import kotlinx.android.synthetic.main.activity_inbox.overlay_layout
-import kotlinx.android.synthetic.main.activity_inbox.overlay_tip
-import kotlinx.android.synthetic.main.activity_inbox.progress_bar
-import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
-import kotlinx.android.synthetic.main.activity_inbox.subscriptionTipContainer
-import kotlinx.android.synthetic.main.activity_inbox.text_btn
-import kotlinx.android.synthetic.main.activity_inbox.txtConvert
-import kotlinx.android.synthetic.main.activity_inbox.txtConvert2
-import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip
-import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip2
-import kotlinx.android.synthetic.main.find_more_layout.bb_tip_below_find_btn
-import kotlinx.android.synthetic.main.find_more_layout.find_more
-import kotlinx.android.synthetic.main.inbox_toolbar.iv_setting
-import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
-import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.expiry_tool_tip_text
+import kotlinx.android.synthetic.main.activity_inbox.*
+import kotlinx.android.synthetic.main.find_more_layout.*
+import kotlinx.android.synthetic.main.inbox_toolbar.*
+import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -162,7 +121,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         viewModel.getTotalWatchTime()
         //viewModel.getProfileData(Mentor.getInstance().getId())
         //PointSnackbar.make(nested_scroll_view,Snackbar.LENGTH_INDEFINITE,"Updated successfully")?.show()
-        showLeaderboardAchievement(R.id.content,null)
+        showLeaderboardAchievement(R.id.content, null)
     }
 
     private fun initNewUserTip() {
@@ -759,55 +718,17 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             if (AppObjectController.getFirebaseRemoteConfig()
                     .getBoolean(FirebaseRemoteConfigKey.SHOW_AWARDS_FULL_SCREEN)
             ) {
-                if (userData.isPointsActive) {
-                    user_data_container.visibility = View.VISIBLE
-                    user_points.text = userData.points.toString()
-                    user_streak_data.text = userData.streak.toString()
-                    user_min_data.text = userData.minutesSpoken.toString()
-                    see_leaderboard.setOnClickListener {
-                        openLeaderBoard()
-                    }
-                    user_data_container.setOnClickListener {
-                        openUserProfileActivity(Mentor.getInstance().getId())
-            if (isLeaderBoardActive) {
-                recycler_view_inbox.allViewResolvers?.let {
-                    it.forEachIndexed { index, view ->
-                        if (view is InboxViewHolder) {
-                            view.setView(userData.points.toString())
+                var unseenAwards: ArrayList<Award>? = ArrayList()
+                userData.awardCategory?.forEach {
+                    it.awards?.filter { it.isSeen == false && it.is_achieved == true }
+                        ?.forEach {
+                            unseenAwards?.add(it)
                         }
-                    }
-                } else {
-                    user_data_container.visibility = View.GONE
-                    try {
-                        if (::popupMenu.isInitialized) {
-                            popupMenu.menu.findItem(R.id.menu_leaderboard).isVisible = false
-                            popupMenu.menu.findItem(R.id.menu_leaderboard).isEnabled = false
-                        }
-                        //popupMenu..findItem(R.id.menu_leaderboard).setVisible(false)
-                    } catch (ex: Exception) {
                 }
-            } else {
-                try {
-                    if (::popupMenu.isInitialized) {
-                        popupMenu.menu.findItem(R.id.menu_leaderboard).isVisible = false
-                        popupMenu.menu.findItem(R.id.menu_leaderboard).isEnabled = false
-                    } else {
-
-                    }
-                    //popupMenu..findItem(R.id.menu_leaderboard).setVisible(false)
-                } catch (ex: Exception) {
-
+                if (unseenAwards.isNullOrEmpty().not()) {
+                    showAward(unseenAwards?.toList()!!)
                 }
             }
-        }
-        var unseenAwards: ArrayList<Award>? = ArrayList()
-        userData.awardCategory?.forEach {
-            it.awards?.filter { it.isSeen == false && it.is_achieved == true }?.forEach {
-                unseenAwards?.add(it)
-            }
-        }
-        if (unseenAwards.isNullOrEmpty().not()) {
-            showAward(unseenAwards?.toList()!!)
         }
     }
 

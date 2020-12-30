@@ -26,11 +26,7 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentPraticeBinding
-import com.joshtalks.joshskills.repository.local.entity.AudioType
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.NPSEvent
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.RequestEngage
@@ -143,7 +139,7 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
         var wordSort=1
         chatModelList?.forEach {
             it.question?.let {
-                if (it.type==BASE_MESSAGE_TYPE.QUIZ){
+                if (it.type== BASE_MESSAGE_TYPE.QUIZ){
                     it.vocabOrder=quizSort
                     quizSort=quizSort.plus(1)
                 }else{
