@@ -1,5 +1,8 @@
 package com.joshtalks.joshskills.ui.groupchat.adapter;
 
+import android.animation.Animator;
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +35,7 @@ import com.cometchat.pro.models.MessageReceipt;
 import com.cometchat.pro.models.TextMessage;
 import com.cometchat.pro.models.User;
 import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.core.AppObjectController;
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils;
 import com.joshtalks.joshskills.ui.groupchat.constant.StringContract;
 import com.joshtalks.joshskills.ui.groupchat.listeners.OnRepliedMessageClick;
@@ -106,6 +110,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private boolean isUserDetailVisible;
     private boolean isTextMessageClick;
     private boolean isImageMessageClick;
+    public int selectedMsgId = -1;
 
     /**
      * It is used to initialize the adapter wherever we needed. It has parameter like messageList
@@ -355,6 +360,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
 
         }
+        if (messageList.get(i).getId() == selectedMsgId) {
+            highlightedViewForSomeTime(viewHolder.itemView);
+        }
     }
 
     /**
@@ -369,7 +377,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private void setAudioData(AudioMessageViewHolder viewHolder, int i) {
         BaseMessage baseMessage = messageList.get(i);
         if (baseMessage != null && baseMessage.getDeletedAt() == 0) {
-            viewHolder.view.setTag(baseMessage.getId());
+            viewHolder.itemView.setTag(baseMessage.getId());
             viewHolder.dummyView.setVisibility(View.VISIBLE);
             if (viewHolder.imgDeliveryTick != null) {
                 if (baseMessage.getSentAt() == 0) {
@@ -504,7 +512,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private void setDeleteData(DeleteMessageViewHolder viewHolder, int i) {
         BaseMessage baseMessage = messageList.get(i);
         if (baseMessage != null) {
-            viewHolder.view.setTag(baseMessage.getId());
+            viewHolder.itemView.setTag(baseMessage.getId());
             if (!baseMessage.getSender().getUid().equals(loggedInUser.getUid())) {
                 if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_USER)) {
                     viewHolder.tvUser.setVisibility(View.GONE);
@@ -671,10 +679,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      * @see BaseMessage
      */
     private void setTextData(TextMessageViewHolder viewHolder, int i) {
-
         BaseMessage baseMessage = messageList.get(i);
         if (baseMessage != null && baseMessage.getDeletedAt() == 0) {
-            viewHolder.view.setTag(baseMessage.getId());
+            viewHolder.itemView.setTag(baseMessage.getId());
             if (viewHolder.imgDeliveryTick != null) {
                 if (baseMessage.getSentAt() == 0) {
                     viewHolder.imgDeliveryTick.setImageResource(R.drawable.ic_sent_message_s_tick);
@@ -876,7 +883,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //                         return true;
 //                 }
 //             });
-            viewHolder.itemView.setTag(R.string.message, baseMessage);
         }
     }
 
@@ -885,7 +891,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         BaseMessage baseMessage = messageList.get(i);
         if (baseMessage != null && baseMessage.getDeletedAt() == 0) {
-            viewHolder.view.setTag(baseMessage.getId());
+            viewHolder.itemView.setTag(baseMessage.getId());
             if (!baseMessage.getSender().getUid().equals(loggedInUser.getUid())) {
                 if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_USER)) {
                     viewHolder.tvUser.setVisibility(View.GONE);
@@ -936,7 +942,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 notifyDataSetChanged();
 
             });
-            viewHolder.itemView.setTag(R.string.message, baseMessage);
         }
     }
 
@@ -947,7 +952,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         String url = null;
 
         if (baseMessage != null && baseMessage.getDeletedAt() == 0) {
-            viewHolder.view.setTag(baseMessage.getId());
+            viewHolder.itemView.setTag(baseMessage.getId());
             if (!baseMessage.getSender().getUid().equals(loggedInUser.getUid())) {
                 if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_USER)) {
                     viewHolder.tvUser.setVisibility(View.GONE);
@@ -1054,7 +1059,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
                 return true;
             });
-            viewHolder.itemView.setTag(R.string.message, baseMessage);
         }
     }
 
@@ -1310,6 +1314,53 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         isImageMessageClick = false;
         longselectedItemList.clear();
         notifyDataSetChanged();
+    }
+
+    public void highlightedViewForSomeTime(View view) {
+        try {
+            int colorFrom = ContextCompat.getColor(
+                    AppObjectController.getJoshApplication(),
+                    R.color.media_tv_bg
+            );
+            int colorTo = Color.TRANSPARENT;
+            long duration = 1000L;
+
+            //view.setBackground(new ColorDrawable(colorFrom));
+
+            ObjectAnimator animate = ObjectAnimator.ofObject(
+                    view,
+                    "backgroundColor",
+                    new ArgbEvaluator(),
+                    colorFrom,
+                    colorTo
+            );
+            animate.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    selectedMsgId = -1;
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+            animate.setStartDelay(500);
+            animate.setDuration(duration);
+            animate.start();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public BaseMessage getLastMessage() {

@@ -1472,6 +1472,9 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         removeUserListener();
         removeGroupListener();
         sendTypingIndicator(true);
+        if (messageAdapter != null) {
+            messageAdapter.selectedMsgId = -1;
+        }
     }
 
     private void removeGroupListener() {
@@ -1829,11 +1832,13 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             }
         }
         if (position >= 0) {
-            rvChatListView.smoothScrollToPosition(position);
+            messageAdapter.selectedMsgId = messageId;
+            linearLayoutManager.scrollToPositionWithOffset(position, 40);
         } else {
             // TODO(22/12/2020) - Find a way to scroll while message is not loaded yet.
-            isInProgress = true;
-            fetchParticularMessageList(messageId);
+            scrollToTop();
+            //isInProgress = true;
+            //fetchParticularMessageList(messageId);
         }
     }
 
