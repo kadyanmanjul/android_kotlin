@@ -117,7 +117,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      * @param messageList is a list of messages used in this adapter.
      */
     public MessageAdapter(CometChatMessageListActivity context, List<BaseMessage> messageList) {
-        setMessageList(messageList);
+        setMessageList(messageList, false);
         this.context = context;
 //        try {
 //            messageLongClick = context;
@@ -151,15 +151,21 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return messageList;
     }
 
-    private void setMessageList(List<BaseMessage> messageList) {
+    private void setMessageList(List<BaseMessage> messageList, boolean listContainsNextMessages) {
         for (int i = 0; i < messageList.size(); i++) {
             boolean isVisibleToLoggedInUser = isMessageVisible(messageList.get(i));
             if (!isVisibleToLoggedInUser) {
                 messageList.remove(messageList.get(i));
             }
         }
-        this.messageList.addAll(0, messageList);
-        notifyItemRangeInserted(0, messageList.size());
+        if (listContainsNextMessages) {
+            int lastItemIndex = this.messageList.size();
+            this.messageList.addAll(messageList); // Adds messages to end of the list
+            notifyItemRangeInserted(lastItemIndex, messageList.size());
+        } else {
+            this.messageList.addAll(0, messageList);  // Adds messages to start of the list
+            notifyItemRangeInserted(0, messageList.size());
+        }
     }
 
     private boolean isMessageVisible(BaseMessage message) {
@@ -1221,8 +1227,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      *
      * @param baseMessageList is list of baseMessages.
      */
-    public void updateList(List<BaseMessage> baseMessageList) {
-        setMessageList(baseMessageList);
+    public void updateList(List<BaseMessage> baseMessageList, boolean listContainsNextMessages) {
+        setMessageList(baseMessageList, listContainsNextMessages);
     }
 
     /**
@@ -1308,7 +1314,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public BaseMessage getLastMessage() {
         if (messageList.size() > 0) {
-            Log.e(TAG, "getLastMessage: " + messageList.get(messageList.size() - 1));
+//            Log.e(TAG, "getLastMessage: " + messageList.get(messageList.size() - 1));
             return messageList.get(messageList.size() - 1);
         } else
             return null;

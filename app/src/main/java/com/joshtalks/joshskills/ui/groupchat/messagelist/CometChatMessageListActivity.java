@@ -122,7 +122,8 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     // public int count = 0;
     private String name = "";
     private String status = "";
-    private MessagesRequest messagesRequest;    //Used to fetch messages.
+    private MessagesRequest previousMessagesRequest;    //Used to fetch previous messages.
+    private MessagesRequest nextMessagesRequest;    //Used to fetch previous messages.
     private ComposeBox composeBox;
     private RecyclerView rvChatListView;    //Used to display list of messages.
     private MessageAdapter messageAdapter;
@@ -156,7 +157,8 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     private String groupDesc;
     private String groupPassword;
     private Timer typingTimer = new Timer();
-    private boolean isNoMoreMessages;
+    private boolean isNoMorePreviousMessages;
+    private boolean isNoMoreNextMessages;
     private boolean isInProgress;
     // private MessageActionFragment messageActionFragment;
     private ExoAudioPlayer audioPlayerManager;
@@ -272,10 +274,16 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
 
-                if (!isNoMoreMessages && !isInProgress) {
+                if (!isNoMorePreviousMessages && !isInProgress) {
                     if (linearLayoutManager.findFirstVisibleItemPosition() == 10 || !rvChatListView.canScrollVertically(-1)) {
                         isInProgress = true;
                         fetchMessage();
+                    }
+                }
+                if (!isNoMoreNextMessages && !isInProgress) {
+                    if (linearLayoutManager.findLastVisibleItemPosition() == linearLayoutManager.getItemCount() - 1 || !rvChatListView.canScrollVertically(1)) {
+                        isInProgress = true;
+                        fetchNextMessages();
                     }
                 }
             }
@@ -568,21 +576,21 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
      */
     private void fetchMessage() {
 
-        if (messagesRequest == null) {
+        if (previousMessagesRequest == null) {
             if (type != null) {
                 if (type.equals(CometChatConstants.RECEIVER_TYPE_USER))
-                    messagesRequest = new MessagesRequest.MessagesRequestBuilder().setLimit(LIMIT)
+                    previousMessagesRequest = new MessagesRequest.MessagesRequestBuilder().setLimit(LIMIT)
                             .setTypes(StringContract.MessageRequest.messageTypesForUser)
                             .setCategories(StringContract.MessageRequest.messageCategoriesForUser)
                             .hideReplies(true).setUID(Id).build();
                 else
-                    messagesRequest = new MessagesRequest.MessagesRequestBuilder().setLimit(LIMIT)
+                    previousMessagesRequest = new MessagesRequest.MessagesRequestBuilder().setLimit(LIMIT)
                             .setTypes(StringContract.MessageRequest.messageTypesForGroup)
                             .setCategories(StringContract.MessageRequest.messageCategoriesForGroup)
                             .hideReplies(true).setGUID(Id).hideMessagesFromBlockedUsers(true).build();
             }
         }
-        messagesRequest.fetchPrevious(new CometChat.CallbackListener<List<BaseMessage>>() {
+        previousMessagesRequest.fetchPrevious(new CometChat.CallbackListener<List<BaseMessage>>() {
 
             @Override
             public void onSuccess(List<BaseMessage> baseMessages) {
@@ -590,15 +598,61 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
 //                List<BaseMessage> filteredMessageList = filterBaseMessages(baseMessages);
 //                initMessageAdapter(filteredMessageList);
                 initMessageAdapter(baseMessages);
-                if (baseMessages.size() != 0) {
-                    stopHideShimmer();
+                stopHideShimmer();
+                if (baseMessages.isEmpty()) {
+                    isNoMorePreviousMessages = true;
+                } else {
                     BaseMessage baseMessage = baseMessages.get(baseMessages.size() - 1);
                     markMessageAsRead(baseMessage);
                 }
+            }
 
-                if (baseMessages.size() == 0) {
-                    stopHideShimmer();
-                    isNoMoreMessages = true;
+            @Override
+            public void onError(CometChatException e) {
+//                Log.d(TAG, "onError: " + e.getMessage());
+            }
+        });
+    }
+
+    /**
+     * This method is used to fetch message of users & groups. For user it fetches next 100 messages at
+     * a time and for groups it fetches next 30 messages. You can change limit of messages by modifying
+     * number in <code>setLimit()</code>
+     * This method also mark last message as read using markMessageAsRead() present in this class.
+     * So all the below messages get marked as read.
+     *
+     * @see MessagesRequest#fetchNext(CometChat.CallbackListener)
+     */
+    private void fetchNextMessages() {
+
+        if (nextMessagesRequest == null) {
+            if (type != null) {
+                if (type.equals(CometChatConstants.RECEIVER_TYPE_USER))
+                    nextMessagesRequest = new MessagesRequest.MessagesRequestBuilder().setLimit(LIMIT)
+                            .setTypes(StringContract.MessageRequest.messageTypesForUser)
+                            .setCategories(StringContract.MessageRequest.messageCategoriesForUser)
+                            .setMessageId(messageAdapter.getLastMessage().getId())
+                            .hideReplies(true).setUID(Id).build();
+                else
+                    nextMessagesRequest = new MessagesRequest.MessagesRequestBuilder().setLimit(LIMIT)
+                            .setTypes(StringContract.MessageRequest.messageTypesForGroup)
+                            .setCategories(StringContract.MessageRequest.messageCategoriesForGroup)
+                            .setMessageId(messageAdapter.getLastMessage().getId())
+                            .hideReplies(true).setGUID(Id).hideMessagesFromBlockedUsers(true).build();
+            }
+        }
+        nextMessagesRequest.fetchNext(new CometChat.CallbackListener<List<BaseMessage>>() {
+
+            @Override
+            public void onSuccess(List<BaseMessage> baseMessages) {
+                isInProgress = false;
+                messageAdapter.updateList(baseMessages, true);
+                stopHideShimmer();
+                if (baseMessages.isEmpty()) {
+                    isNoMoreNextMessages = true;
+                } else {
+                    BaseMessage baseMessage = baseMessages.get(baseMessages.size() - 1);
+                    markMessageAsRead(baseMessage);
                 }
             }
 
@@ -629,8 +683,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             scrollToBottom();
             messageAdapter.notifyDataSetChanged();
         } else {
-            messageAdapter.updateList(messageList);
-
+            messageAdapter.updateList(messageList, false);
         }
     }
 
@@ -1350,7 +1403,8 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         // Log.d(TAG, "onResume: ");
         rvChatListView.removeItemDecoration(stickyHeaderDecoration);
         messageAdapter = null;
-        messagesRequest = null;
+        previousMessagesRequest = null;
+        nextMessagesRequest = null;
         // checkOnGoingCall();
         fetchMessage();
         addMessageListener();
