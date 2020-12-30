@@ -154,83 +154,60 @@
                     android:orientation="vertical"
                     app:rippleColor="@color/white"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.1"
+                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/highlight_heading"
                     app:layout_constraintWidth_default="percent"
                     app:layout_constraintWidth_percent="0.42">
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/point_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_4sdp"
-                        android:gravity="center"
-                        android:text="@string/points"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                        android:textColor="@color/white" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/points"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/_1sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
                         android:gravity="center"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
                         android:textColor="@color/white"
-                        tools:text="22234" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/_70sdp"
-                    android:layout_marginTop="@dimen/_20sdp"
-                    android:background="@drawable/rect_with_bound"
-                    android:backgroundTint="@color/colorPrimary"
-                    android:elevation="@dimen/_4sdp"
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.9"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/highlight_heading"
-                    app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.42">
+                        tools:text="22,234" />
 
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/streaks_text"
+                        android:id="@+id/point_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_4sdp"
                         android:gravity="center"
-                        android:text="@string/regular"
+                        android:text="@string/points"
+                        android:layout_marginTop="@dimen/_4sdp"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/white" />
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/streaks"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/_1sdp"
-                        android:gravity="center"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
-                        android:textColor="@color/white"
-                        tools:text="22234" />
-
                 </LinearLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/streaks_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/point_layout"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                    android:textColor="@color/colorPrimary"
+                    tools:text="@string/user_streak_text"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/awards_heading"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/_16sdp"
+                    android:layout_marginHorizontal="@dimen/_16sdp"
+                    android:layout_marginVertical="@dimen/_10sdp"
                     android:text="@string/awards"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                     android:textColor="@color/black"
                     android:visibility="gone"
                     tools:visibility="visible"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/point_layout" />
+                    app:layout_constraintTop_toBottomOf="@id/streaks_text" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/no_award_icon"
