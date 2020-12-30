@@ -22,6 +22,7 @@ class ExamUnlockDialogFragment(
     val totalQue: Int?,
     val time: Int?,
     val totalLessons: Int?,
+    val unLockCount: Int?,
     val title:String= EMPTY
 ) : DialogFragment() {
 
@@ -45,7 +46,7 @@ class ExamUnlockDialogFragment(
         binding.examInfoTv.text = getString(R.string.exam_info, totalQue, time, marks)
         binding.examInfoCategory.text = getString(R.string.exam_title, title)
         binding.textview1.text =
-            getString(R.string.you_can_only_attempt_the_certification_exam, totalLessons)
+            getString(R.string.you_can_only_attempt_the_certification_exam, unLockCount)
         if (instructionList != null)
             setInstructions(instructionList)
         return binding.root

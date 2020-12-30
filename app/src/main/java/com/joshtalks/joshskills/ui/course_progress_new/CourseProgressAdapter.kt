@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.course_progress_new
 
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -64,13 +65,14 @@ class CourseProgressAdapter(
                     }
 
                     binding.root.setOnClickListener {
+                        Log.d("Manjul", "onCertificateExamClick() called $parentPosition ")
                         onItemClickListener.onCertificateExamClick(
                                 itemList.get(layoutPosition - 1),
                                 conversationId,
                                 chatMessageId,
                                 certificationId,
                                 cExamStatus,
-                                parentPosition,
+                                parentPosition.div(2),
                                 title
                         )
                     }

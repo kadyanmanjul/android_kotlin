@@ -95,6 +95,11 @@ class ProgressActivityAdapter(
                 title = item.title
             )
             binding.progressRv.adapter = adapter
+            if (position==list.size.minus(1)){
+                binding.view.visibility=View.VISIBLE
+            } else{
+                binding.view.visibility=View.GONE
+            }
 
         }
     }

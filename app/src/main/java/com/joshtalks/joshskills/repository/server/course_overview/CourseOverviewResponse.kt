@@ -36,6 +36,9 @@ data class CourseOverviewResponse(
     @SerializedName("total_count")
     @Expose
     var totalCount: Int?,
+    @SerializedName("total_left")
+    @Expose
+    var unLockCount: Int=-1,
     @SerializedName("certificateExamId")
     @Expose
     var certificateExamId: Int?,
@@ -62,6 +65,7 @@ data class CourseOverviewResponse(
         title="",
         chatId=null,
         totalCount=null,
+        unLockCount=-1,
         certificateExamId=null,
         examStatus=null,
         data= emptyList(),

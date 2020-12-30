@@ -98,9 +98,10 @@ class PracticeAdapter(
                 (holder as PracticeViewHolder).bind(itemList[position], position)
             }
             else -> {
-
+                Log.d(TAG, "onBindViewHolder() called with: holder = $holder, position = $position")
                 if (assessmentQuizList.isNotEmpty()) {
                     assessmentQuizList.filter { it.assessment.remoteId==itemList[position].question?.assessmentId }?.let {
+                        Log.d(TAG, "onBindViewHolder() called $it")
                         (holder as QuizViewHolder).bind(itemList[position], it.get(0), position)
 
                     }
@@ -152,6 +153,7 @@ class PracticeAdapter(
         )
 
         fun bind(chatModel: ChatModel, assessmentRelations: AssessmentWithRelations?, position: Int) {
+            Log.d(TAG, "bind() called with: chatModel = $chatModel, assessmentRelations = $assessmentRelations, position = $position")
             if (assessmentRelations==null){
                 return
             }
@@ -181,6 +183,8 @@ class PracticeAdapter(
 
             with(binding) {
 
+                assessmentRelations?.questionList?.sortedBy { it.question.sortOrder }
+                        ?.forEach { item -> assessmentQuestions.add(item) }
                 if (assessmentQuestions.size > 0) {
                     CoroutineScope(Dispatchers.Main).launch {
                         binding.quizRadioGroup.setOnCheckedChangeListener(
@@ -194,8 +198,7 @@ class PracticeAdapter(
                         context.getString(
                                 R.string.quiz_tag,
                                 chatModel.question?.vocabOrder ?: 0,
-                                quizsItemSize,
-                                context.getString(R.string.today_practise)
+                                quizsItemSize
                         )
 
                 binding.practiceTitleTv.setOnClickListener {
@@ -1031,6 +1034,7 @@ class PracticeAdapter(
                         binding.uploadPractiseView.clearAnimation()
                         binding.counterContainer.visibility = GONE
                         binding.audioPractiseHint.visibility = VISIBLE
+                        binding.ivCancel.visibility = VISIBLE
 //                        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
                         val timeDifference =

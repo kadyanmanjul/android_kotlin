@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.activity.result.ActivityResultLauncher
@@ -193,6 +194,7 @@ class CourseProgressActivityNew : AppCompatActivity(),
             it.responseData?.forEach {
                 val courseOverviewResponse = CourseOverviewResponse()
                 courseOverviewResponse.title = it.title
+                courseOverviewResponse.unLockCount = it.unLockCount
                 courseOverviewResponse.type = 10
                 data.add(courseOverviewResponse)
                 data.add(it)
@@ -276,14 +278,16 @@ class CourseProgressActivityNew : AppCompatActivity(),
         CoroutineScope(Dispatchers.IO).launch {
             val lessonModel = viewModel.getLesson(previousLesson.lessonId)
             runOnUiThread {
-                if (lessonModel != null) {
+                if (lessonModel == null) {
                     courseOverviewResponse?.let {
+                        Log.d("Manjul", "onCertificateExamClick() called $parentPosition   $it ${it.size}")
                         ExamUnlockDialogFragment(
                                 it[parentPosition].examInstructions,
                                 it[parentPosition].ceMarks,
                                 it[parentPosition].ceQue,
                                 it[parentPosition].ceMin,
                                 it[parentPosition].totalCount,
+                                it[parentPosition].unLockCount,
                                 title
                         ).show(
                                 supportFragmentManager,
