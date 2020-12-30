@@ -1,7 +1,9 @@
 package com.joshtalks.joshskills.ui.groupchat.screens;
 
 import android.content.DialogInterface;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -40,6 +42,7 @@ import com.joshtalks.joshskills.ui.groupchat.listeners.RecyclerTouchListener;
 import com.joshtalks.joshskills.ui.groupchat.utils.FontUtils;
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -343,7 +346,15 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
             String avatar = getIntent().getStringExtra(StringContract.IntentStrings.AVATAR);
             if (avatar != null && !avatar.isEmpty()) {
                 // groupIcon.setAvatar(avatar);
-                groupImage.setImageURI(Uri.parse(avatar));
+                // groupImage.setImageURI(Uri.parse(avatar));
+                try {
+                    URL url = new URL(avatar);
+                    Bitmap bmImg = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                    BitmapDrawable background = new BitmapDrawable(bmImg);
+                    groupImage.setBackgroundDrawable(background);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } else {
                 // groupIcon.setInitials(gName);
             }
@@ -729,7 +740,15 @@ public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
                 toolbar.setTitle(gName);
                 if (group.getIcon() != null && !group.getIcon().isEmpty()) {
                     // groupIcon.setAvatar(group.getIcon());
-                    groupImage.setImageURI(Uri.parse(group.getIcon()));
+                    // groupImage.setImageURI(Uri.parse(group.getIcon()));
+                    try {
+                        URL url = new URL(group.getIcon());
+                        Bitmap bmImg = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                        BitmapDrawable background = new BitmapDrawable(bmImg);
+                        groupImage.setBackgroundDrawable(background);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     // groupIcon.setInitials(group.getName());
                 }

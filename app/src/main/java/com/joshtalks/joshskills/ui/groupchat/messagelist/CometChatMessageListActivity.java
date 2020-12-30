@@ -418,7 +418,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             public void onSendActionClicked(EditText editText) {
                 String message = editText.getText().toString().trim();
                 editText.setText("");
-                editText.setHint(getString(R.string.message));
+                editText.setHint(String.format(getString(R.string.message), CometChat.getLoggedInUser().getName().split(" ")[0]));
                 if (isReply) {
                     replyMessage(baseMessage, message);
                     composeBox.replyMessageLayout.setVisibility(GONE);
@@ -524,7 +524,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
 
             @Override
             public void onError(CometChatException e) {
-                Log.d(TAG, "Group Member list fetching failed with exception: " + e.getMessage());
+//                Log.d(TAG, "Group Member list fetching failed with exception: " + e.getMessage());
                 Toast.makeText(CometChatMessageListActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
@@ -604,7 +604,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
 
             @Override
             public void onError(CometChatException e) {
-                Log.d(TAG, "onError: " + e.getMessage());
+//                Log.d(TAG, "onError: " + e.getMessage());
             }
         });
     }
@@ -682,7 +682,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivityResult: ");
+//        Log.d(TAG, "onActivityResult: ");
 
         switch (requestCode) {
             case StringContract.RequestCode.AUDIO:
@@ -790,7 +790,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
                 @Override
                 public void onSuccess(MediaMessage mediaMessage) {
                     progressDialog.dismiss();
-                    Log.d(TAG, "sendMediaMessage onSuccess: " + mediaMessage.toString());
+//                    Log.d(TAG, "sendMediaMessage onSuccess: " + mediaMessage.toString());
                     if (messageAdapter != null) {
                         messageAdapter.addMessage(mediaMessage);
                         scrollToBottom();
@@ -832,7 +832,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
                 }
                 name = user.getName();
                 tvName.setText(name);
-                Log.d(TAG, "onSuccess: " + user.toString());
+//                Log.d(TAG, "onSuccess: " + user.toString());
 
             }
 
@@ -908,7 +908,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
 
             @Override
             public void onError(CometChatException e) {
-                Log.d(TAG, "onError: " + e.getMessage());
+//                Log.d(TAG, "onError: " + e.getMessage());
             }
         });
 
@@ -982,11 +982,11 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
 
                 @Override
                 public void onError(CometChatException e) {
-                    Log.e(TAG, "onError: " + e.getMessage());
+//                    Log.e(TAG, "onError: " + e.getMessage());
                 }
             });
         } catch (Exception e) {
-            Log.e(TAG, "replyMessage: " + e.getMessage());
+//            Log.e(TAG, "replyMessage: " + e.getMessage());
         }
     }
 
@@ -1026,7 +1026,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             @Override
             public void onGroupMemberLeft(Action action, User leftUser, Group leftGroup) {
                 super.onGroupMemberLeft(action, leftUser, leftGroup);
-                Log.d(TAG, "onGroupMemberLeft: " + leftUser.getName());
+//                Log.d(TAG, "onGroupMemberLeft: " + leftUser.getName());
                 if (leftGroup.getGuid().equals(Id)) {
                     if (totalMembers > 1) {
                         totalMembers--;
@@ -1045,7 +1045,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             @Override
             public void onGroupMemberKicked(Action action, User kickedUser, User kickedBy, Group kickedFrom) {
                 super.onGroupMemberKicked(action, kickedUser, kickedBy, kickedFrom);
-                Log.d(TAG, "onGroupMemberKicked: " + kickedUser.getName());
+//                Log.d(TAG, "onGroupMemberKicked: " + kickedUser.getName());
                 if (kickedUser.getUid().equals(CometChat.getLoggedInUser().getUid())) {
                     CometChatMessageListActivity.this.finish();
                 }
