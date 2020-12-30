@@ -15,24 +15,15 @@ import com.cometchat.pro.exceptions.CometChatException
 import com.cometchat.pro.models.User
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.JoshApplication
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.LogException.catchException
 import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
-import com.joshtalks.joshskills.repository.local.entity.Question
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -46,19 +37,14 @@ import id.zelory.compressor.Compressor
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import timber.log.Timber
 import java.io.File
-import java.util.ConcurrentModificationException
-import java.util.Date
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 
@@ -554,12 +540,12 @@ class ConversationViewModel(application: Application) :
     fun initCometChat() {
         isLoading.postValue(true)
         jobs += viewModelScope.launch(Dispatchers.IO) {
-            val appSettings = AppSettings.AppSettingsBuilder()
-                .subscribePresenceForAllUsers()
-                .setRegion(BuildConfig.COMETCHAT_REGION)
-                .build()
-
             try {
+                val appSettings = AppSettings.AppSettingsBuilder()
+                    .subscribePresenceForAllUsers()
+                    .setRegion(BuildConfig.COMETCHAT_REGION)
+                    .build()
+
                 CometChat.init(
                     AppObjectController.joshApplication,
                     BuildConfig.COMETCHAT_APP_ID,
@@ -606,53 +592,63 @@ class ConversationViewModel(application: Application) :
 
     private fun loginUser(groupDetails: GroupDetails) {
 
-        if (CometChat.getLoggedInUser() == null) {
-            // User not logged in
-            CometChat.login(
-                groupDetails.userId,
-                BuildConfig.COMETCHAT_API_KEY,
-                object : CometChat.CallbackListener<User>() {
-                    override fun onSuccess(p0: User?) {
-                        Timber.d("Login Successful : %s", p0?.toString())
-                        isLoading.postValue(false)
-                        userLoginLiveData.postValue(groupDetails)
-                    }
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            if (CometChat.getLoggedInUser() == null) {
+                // User not logged in
+                try {
+                    CometChat.login(
+                        groupDetails.userId,
+                        BuildConfig.COMETCHAT_API_KEY,
+                        object : CometChat.CallbackListener<User>() {
+                            override fun onSuccess(p0: User?) {
+                                Timber.d("Login Successful : %s", p0?.toString())
+                                isLoading.postValue(false)
+                                userLoginLiveData.postValue(groupDetails)
+                            }
 
-                    override fun onError(p0: CometChatException?) {
-                        Timber.d("Login failed with exception: %s", p0?.message)
-                        isLoading.postValue(false)
-                        showToast(
-                            context.getString(R.string.generic_message_for_error),
-                            Toast.LENGTH_SHORT
-                        )
-                    }
+                            override fun onError(p0: CometChatException?) {
+                                Timber.d("Login failed with exception: %s", p0?.message)
+                                isLoading.postValue(false)
+                                showToast(
+                                    context.getString(R.string.generic_message_for_error),
+                                    Toast.LENGTH_SHORT
+                                )
+                            }
 
-                })
-        } else if (CometChat.getLoggedInUser().uid != groupDetails.userId) {
-            // Any other user is logged in. So we have to logout first
-            CometChat.logout(object : CometChat.CallbackListener<String>() {
-                override fun onSuccess(p0: String?) {
-                    loginUser(groupDetails)
+                        })
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
                 }
+            } else if (CometChat.getLoggedInUser().uid != groupDetails.userId) {
+                // Any other user is logged in. So we have to logout first
+                try {
+                    CometChat.logout(object : CometChat.CallbackListener<String>() {
+                        override fun onSuccess(p0: String?) {
+                            loginUser(groupDetails)
+                        }
 
-                override fun onError(p0: CometChatException?) {
-                    Timber.d("Logout previous user failed with exception: %s", p0?.message)
-                    isLoading.postValue(false)
-                    showToast(
-                        context.getString(R.string.generic_message_for_error),
-                        Toast.LENGTH_SHORT
-                    )
+                        override fun onError(p0: CometChatException?) {
+                            Timber.d("Logout previous user failed with exception: %s", p0?.message)
+                            isLoading.postValue(false)
+                            showToast(
+                                context.getString(R.string.generic_message_for_error),
+                                Toast.LENGTH_SHORT
+                            )
+                        }
+
+                    })
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
                 }
-
-            })
-        } else {
-            // User already logged in
-            isLoading.postValue(false)
-            userLoginLiveData.postValue(groupDetails)
+            } else {
+                // User already logged in
+                isLoading.postValue(false)
+                userLoginLiveData.postValue(groupDetails)
+            }
         }
     }
 
-    suspend fun getLessonStatus(lessonId: Int): Boolean {
+    fun getLessonStatus(lessonId: Int): Boolean {
         when (appDatabase.lessonDao().getLesson(lessonId)?.status) {
             LESSON_STATUS.CO -> {
                 return true
@@ -663,7 +659,7 @@ class ConversationViewModel(application: Application) :
         }
     }
 
-    suspend fun getLessonModel(lessonId: Int): LessonModel? {
+    fun getLessonModel(lessonId: Int): LessonModel? {
         return appDatabase.lessonDao().getLesson(lessonId)
     }
 }
