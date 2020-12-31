@@ -38,6 +38,8 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
     val assessmentStatus: MutableLiveData<AssessmentStatus> =
         MutableLiveData(AssessmentStatus.NOT_STARTED)
     val updatedLessonResponseLiveData: MutableLiveData<UpdateLessonResponse> = MutableLiveData()
+    val lessonStatusLiveData: MutableLiveData<LESSON_STATUS> = MutableLiveData()
+
 
     private lateinit var lessonLiveData: LiveData<LessonModel>
 
