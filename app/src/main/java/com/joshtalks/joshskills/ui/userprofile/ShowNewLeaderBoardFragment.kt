@@ -22,8 +22,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.FragmentShowNewLeaderboardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
 import com.joshtalks.joshskills.repository.server.Award
-import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardItemViewHolder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +48,7 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
         arguments?.let {
             award = it.getParcelable(LEADERBOARD_DETAILS)
         }
-        viewModel.getMentorData(Mentor.getInstance().getId(), "TODAY")
+        viewModel.getMentorData(Mentor.getInstance().getId())
     }
 
 
@@ -88,7 +88,7 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.leaderBoardData.observe(viewLifecycleOwner, {
+        viewModel.animatedLeaderBoardData.observe(viewLifecycleOwner, {
             it?.let {
                 initView(it)
             }
@@ -96,7 +96,7 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
 
     }
 
-    private fun initView(it: LeaderboardResponse) {
+    private fun initView(it: AnimatedLeaderBoardResponse) {
 
         linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         linearLayoutManager.isSmoothScrollbarEnabled = true
@@ -113,11 +113,11 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
             .setLayoutManager(linearLayoutManager)
 
 
-        it.lastWinner?.award_url?.let { it1 -> binding.image.setImage(it1) }
-        binding.titleTv.text = it.info
-        binding.rankTv.text = "Current rank : ${it.current_mentor?.ranking}"
-        it.current_mentor?.let { current_mentor ->
-            previousRank=current_mentor.ranking
+        it.awardUrl?.let { it1 -> binding.image.setImage(it1) }
+        binding.titleTv.text = it.title
+        binding.rankTv.text = "Current rank : ${it.currentMentor?.ranking}"
+        it.currentMentor?.let { current_mentor ->
+            previousRank = current_mentor.ranking
             binding.recyclerView.addView(
                 LeaderBoardItemViewHolder(
                     current_mentor,
@@ -128,7 +128,7 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
                 )
             )
         }
-        it.top_50_mentor_list?.forEach {
+        it.leaderBoardMentorList?.forEach {
             binding.recyclerView.addView(
                 LeaderBoardItemViewHolder(
                     it,
@@ -138,10 +138,10 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
                 )
             )
         }
-        binding.rank.text = it.current_mentor?.ranking.toString()
-        it.current_mentor?.photoUrl?.let { it1 -> binding.userPic.setImage(it1) }
-        binding.name.text = it.current_mentor?.name
-        binding.points.text = it.current_mentor?.points.toString()
+        binding.rank.text = it.currentMentor?.ranking.toString()
+        it.currentMentor?.photoUrl?.let { it1 -> binding.userPic.setImage(it1) }
+        binding.name.text = it.currentMentor?.name
+        binding.points.text = it.currentMentor?.points.toString()
         binding.recyclerView.isNestedScrollingEnabled = false
 
         val last_item_position = binding.recyclerView.getAdapter()?.getItemCount()?.minus(1)
@@ -149,12 +149,14 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
             position = last_item_position.minus(6)
             CoroutineScope(Dispatchers.Main).launch {
                 delay(1000)
-                Log.d("Manjul", "initView() called ${linearLayoutManager.findFirstCompletelyVisibleItemPosition()}")
-                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition()>targetRank){
+                Log.d(
+                    "Manjul",
+                    "initView() called ${linearLayoutManager.findFirstCompletelyVisibleItemPosition()}"
+                )
+                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() > targetRank) {
                     delay(1000)
                     animateCard()
-                }
-                else animateToPosition()
+                } else animateToPosition()
             }
         }
     }
@@ -174,7 +176,7 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
                     if (position == targetRank) {
                         animateCard()
                     } else {
-                        binding.rank.text=position.plus(2).toString()
+                        binding.rank.text = position.plus(2).toString()
                         position = position.minus(1)
                         animateToPosition()
                     }
@@ -196,7 +198,9 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
             override fun onAnimationEnd(p0: Animation?) {
                 (binding.recyclerView.getViewResolverAtPosition(0) as LeaderBoardItemViewHolder).showCurrentUserItem()
                 binding.userItem.visibility = View.GONE
-                binding.recyclerView.removeView(binding.recyclerView.getAdapter()?.getItemCount()?.minus(3))
+                binding.recyclerView.removeView(
+                    binding.recyclerView.getAdapter()?.getItemCount()?.minus(3)
+                )
             }
 
             override fun onAnimationRepeat(p0: Animation?) {}

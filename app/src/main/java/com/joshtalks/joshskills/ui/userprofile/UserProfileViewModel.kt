@@ -17,11 +17,14 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
+import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
 import com.joshtalks.joshskills.repository.server.AwardCategory
-import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import id.zelory.compressor.Compressor
+import java.io.File
+import java.util.ArrayList
+import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -30,9 +33,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
-import java.util.ArrayList
-import java.util.HashMap
 
 class UserProfileViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -41,17 +41,17 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
     val userProfileUrl: MutableLiveData<String?> = MutableLiveData()
     val apiCallStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
-    val leaderBoardData: MutableLiveData<LeaderboardResponse> = MutableLiveData()
+    val animatedLeaderBoardData: MutableLiveData<AnimatedLeaderBoardResponse> = MutableLiveData()
 
     var context: JoshApplication = getApplication()
 
-    fun getMentorData(mentorId: String, type: String) {
+    fun getMentorData(mentorId: String) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response =
-                    AppObjectController.commonNetworkService.getLeaderBoardData(mentorId, type)
+                    AppObjectController.commonNetworkService.getAnimatedLeaderBoardData(mentorId)
                 if (response.isSuccessful && response.body() != null) {
-                    leaderBoardData.postValue(response.body())
+                    animatedLeaderBoardData.postValue(response.body())
                 }
 
             } catch (ex: Throwable) {
@@ -77,6 +77,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         super.onCleared()
         jobs.forEach { it.cancel() }
     }
+
     fun getUserProfileUrl() = userProfileUrl.value
 
     fun uploadMedia(mediaPath: String) {
@@ -194,8 +195,9 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                     response.body()?.awardCategory = newList
                     userData.postValue(response.body()!!)
                     if (mentorId.equals(Mentor.getInstance().getId()))
-                    PrefManager.put(IS_PROFILE_FEATURE_ACTIVE, response.body()?.isPointsActive ?: false
-                    )
+                        PrefManager.put(
+                            IS_PROFILE_FEATURE_ACTIVE, response.body()?.isPointsActive ?: false
+                        )
                     if (mentorId.equals(Mentor.getInstance().getId()))
                         PrefManager.put(USER_SCORE, response.body()!!.points.toString())
                     userProfileUrl.postValue(response.body()!!.photoUrl)

@@ -182,7 +182,6 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
         })
 
-
         viewModel.updatedLessonResponseLiveData.observe(this, {
 
             viewModel.updateQuestionLessonStatus(lessonId, it.responseData)

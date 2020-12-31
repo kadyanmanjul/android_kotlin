@@ -5,6 +5,7 @@ import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.UserPlivoDetailsModel
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
+import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
 import com.joshtalks.joshskills.repository.server.BaseResponse
 import com.joshtalks.joshskills.repository.server.CertificateDetail
 import com.joshtalks.joshskills.repository.server.ComplaintResponse
@@ -155,6 +156,10 @@ interface CommonNetworkService {
         @Query("mentor_id") mentorId: String,
         @Query("interval_type") interval: String
     ): Response<LeaderboardResponse>
+
+    @GET("$DIR/leaderboard/get_animated_leaderboard")
+    suspend fun getAnimatedLeaderBoardData(
+        @Query("mentor_id") mentorId: String): Response<AnimatedLeaderBoardResponse>
 
     @POST("$DIR/version/onboarding/")
     suspend fun getOnBoardingVersionDetails(@Body params: Map<String, String>): VersionResponse
