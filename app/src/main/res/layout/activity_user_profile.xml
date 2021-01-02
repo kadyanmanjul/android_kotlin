@@ -124,27 +124,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_1sdp"
                     android:layout_margin="@dimen/_8sdp"
+                    android:visibility="invisible"
                     android:background="@color/grey"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/user_pic" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/highlight_heading"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/_16sdp"
-                    android:text="@string/highlights"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-                    android:textColor="@color/black"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/divider" />
-
                 <LinearLayout
                     android:id="@+id/point_layout"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/_70sdp"
-                    android:layout_marginTop="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
                     android:background="@drawable/rect_with_bound"
                     android:backgroundTint="#E57610"
                     android:elevation="@dimen/_4sdp"
@@ -156,7 +146,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/highlight_heading"
+                    app:layout_constraintTop_toBottomOf="@id/divider"
                     app:layout_constraintWidth_default="percent"
                     app:layout_constraintWidth_percent="0.42">
 
@@ -178,7 +168,7 @@
                         android:gravity="center"
                         android:text="@string/points"
                         android:layout_marginTop="@dimen/_4sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                         android:textColor="@color/white" />
 
                 </LinearLayout>
@@ -209,6 +199,18 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/streaks_text" />
 
+
+                <View
+                    android:id="@+id/award_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_marginVertical="@dimen/_3sdp"
+                    android:layout_marginStart="@dimen/_6sdp"
+                    android:background="@color/light_shade_of_gray"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/awards_heading" />
+
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/no_award_icon"
                     android:layout_width="wrap_content"
@@ -217,7 +219,7 @@
                     tools:visibility="visible"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/awards_heading"
+                    app:layout_constraintTop_toBottomOf="@id/award_divider"
                     android:layout_marginTop="@dimen/_32sdp"
                     app:srcCompat="@drawable/ic_no_award" />
                 <androidx.appcompat.widget.AppCompatTextView
@@ -245,7 +247,7 @@
                     tools:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/awards_heading" />
+                    app:layout_constraintTop_toBottomOf="@id/award_divider" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/more_info"
