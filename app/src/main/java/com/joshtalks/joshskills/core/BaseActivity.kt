@@ -55,6 +55,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
 import com.joshtalks.joshskills.repository.server.Award
+import com.joshtalks.joshskills.repository.server.OutrankedDataResponse
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
@@ -69,7 +70,6 @@ import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.inbox.IS_FROM_NEW_ONBOARDING
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
-import com.joshtalks.joshskills.ui.newonboarding.fragment.SelectCourseFragment
 import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.points_history.PointsHistoryActivity
@@ -738,12 +738,12 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
             )
         }
     }
-    fun showLeaderboardAchievement(containerId: Int,awarList: Award?) {
+    fun showLeaderboardAchievement(outrankData: OutrankedDataResponse) {
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
         //if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             ShowNewLeaderBoardFragment.showDialog(
                 supportFragmentManager,
-                awarList
+                outrankData
             )
         }
     }

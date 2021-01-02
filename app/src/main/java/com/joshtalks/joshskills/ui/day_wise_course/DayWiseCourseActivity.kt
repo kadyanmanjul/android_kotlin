@@ -39,6 +39,7 @@ import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.ui.chat.LESSON_REQUEST_CODE
 import com.joshtalks.joshskills.ui.day_wise_course.unlock_next_class.ActivityUnlockNextClass
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
+import com.joshtalks.joshskills.ui.userprofile.ShowNewLeaderBoardFragment
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 
@@ -196,6 +197,11 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             }
             if(it.awardMentorList.isNullOrEmpty().not()){
                 ShowAwardFragment.showDialog(supportFragmentManager,it.awardMentorList!!)
+            }
+            if(it.outranked!!){
+                it.outrankedData?.let {
+                    showLeaderboardAchievement(it)
+                }
             }
         })
 

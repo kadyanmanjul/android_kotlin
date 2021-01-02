@@ -19,5 +19,5 @@ data class LeaderboardMentor(
     @SerializedName("points")
     val points: Int,
     @SerializedName("ranking")
-    val ranking: Int
+    var ranking: Int
 ) : Parcelable
