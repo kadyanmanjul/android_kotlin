@@ -135,29 +135,27 @@
                     android:layout_width="0dp"
                     android:layout_height="@dimen/_70sdp"
                     android:layout_marginTop="@dimen/_4sdp"
-                    android:background="@drawable/rect_with_bound"
-                    android:backgroundTint="#E57610"
+                    android:background="@drawable/ic_points_bg"
                     android:elevation="@dimen/_4sdp"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:orientation="vertical"
-                    app:rippleColor="@color/white"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/divider"
                     app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.42">
+                    app:layout_constraintWidth_percent="0.45">
 
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/points"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginTop="@dimen/_8sdp"
                         android:gravity="center"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_bold"
                         android:textColor="@color/white"
                         tools:text="22,234" />
 
@@ -167,8 +165,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="@string/points"
-                        android:layout_marginTop="@dimen/_4sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                         android:textColor="@color/white" />
 
                 </LinearLayout>

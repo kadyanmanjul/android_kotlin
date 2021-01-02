@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -123,6 +124,21 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
 
         binding.recyclerView.builder.setHasFixedSize(true)
             .setLayoutManager(linearLayoutManager)
+
+        binding.recyclerView.addOnItemTouchListener(object :RecyclerView.OnItemTouchListener{
+            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                return true
+            }
+
+            override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
+
+            }
+
+            override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+
+            }
+
+        })
 
 
         it.awardUrl?.let { it1 -> binding.image.setImage(it1) }
