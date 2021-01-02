@@ -23,7 +23,7 @@ import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.FragmentShowNewLeaderboardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
-import com.joshtalks.joshskills.repository.server.Award
+import com.joshtalks.joshskills.repository.server.OutrankedDataResponse
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardItemViewHolder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,18 +35,29 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
     private lateinit var binding: FragmentShowNewLeaderboardBinding
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var linearSmoothScroller: LinearSmoothScroller
-    private var award: Award? = null
+    private var outrankData: OutrankedDataResponse? = null
     private val viewModel by lazy { ViewModelProvider(requireActivity()).get(UserProfileViewModel::class.java) }
-    private val targetRank: Int = 0
     private var previousRank: Int = 0
-    private var position: Int = -1
+    private var position: Int = 0
+    private var startRank: Int = 0
+
+    private var startIndexRank: Int = 0
+    private var newCardIndex: Int = 0
+    private var oldRankIndex: Int = -1
+    private var currentRankIndex: Int = 0
+    private var animatePosition = false
+    private var isNewCardAdded = false
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NO_FRAME, R.style.full_dialog)
         changeDialogConfiguration()
-
         arguments?.let {
-            award = it.getParcelable(LEADERBOARD_DETAILS)
+            outrankData = it.getParcelable(RANK_DETAILS)
+        }
+        if (outrankData == null) {
+            //dismiss()
         }
         viewModel.getMentorData(Mentor.getInstance().getId())
     }
@@ -116,8 +127,16 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
         it.awardUrl?.let { it1 -> binding.image.setImage(it1) }
         binding.titleTv.text = it.title
         binding.rankTv.text = "Current rank : ${it.currentMentor?.ranking}"
+        previousRank = outrankData?.old?.rank!!
+
+
+        binding.rank.text = outrankData?.old?.rank.toString()
+        it.currentMentor?.photoUrl?.let { it1 -> binding.userPic.setImage(it1) }
+        binding.name.text = it.currentMentor?.name
+        binding.points.text = it.currentMentor?.points.toString()
+        binding.recyclerView.isNestedScrollingEnabled = false
+
         it.currentMentor?.let { current_mentor ->
-            previousRank = current_mentor.ranking
             binding.recyclerView.addView(
                 LeaderBoardItemViewHolder(
                     current_mentor,
@@ -128,35 +147,59 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
                 )
             )
         }
-        it.leaderBoardMentorList?.forEach {
+
+        it.leaderBoardMentorList?.forEachIndexed { index, item ->
+            if (item.ranking == outrankData?.old?.rank) {
+                oldRankIndex = index.plus(1)
+                startIndexRank = item.ranking
+                newCardIndex = index.plus(1)
+                position = index.plus(4)
+                if (oldRankIndex > 2) {
+                    isNewCardAdded=true
+                    binding.recyclerView.addView(
+                            LeaderBoardItemViewHolder(
+                                it.currentMentor!!,
+                                requireContext(),
+                                false,
+                                false
+                            )
+                    )
+                }
+            }
             binding.recyclerView.addView(
                 LeaderBoardItemViewHolder(
-                    it,
+                    item,
                     requireContext(),
                     false,
                     false
                 )
             )
         }
-        binding.rank.text = it.currentMentor?.ranking.toString()
-        it.currentMentor?.photoUrl?.let { it1 -> binding.userPic.setImage(it1) }
-        binding.name.text = it.currentMentor?.name
-        binding.points.text = it.currentMentor?.points.toString()
-        binding.recyclerView.isNestedScrollingEnabled = false
 
-        val last_item_position = binding.recyclerView.getAdapter()?.getItemCount()?.minus(1)
-        last_item_position?.let { it1 ->
-            position = last_item_position.minus(6)
-            CoroutineScope(Dispatchers.Main).launch {
+
+        if (oldRankIndex == -1) {
+            position = binding.recyclerView.adapter?.itemCount?.minus(1)!!
+            animatePosition = true
+        } else if (oldRankIndex == 1) {
+            position = position
+        } else if (oldRankIndex <= 3) {
+            position = position.plus(1)
+            animatePosition = true
+        } else {
+            position = oldRankIndex.plus(2)
+            animatePosition = true
+        }
+        binding.recyclerView.scrollToPosition(position)
+
+
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(1000)
+            if (animatePosition) {
+                position = position.minus(4)
+                animateToPosition()
+            } else {
                 delay(1000)
-                Log.d(
-                    "Manjul",
-                    "initView() called ${linearLayoutManager.findFirstCompletelyVisibleItemPosition()}"
-                )
-                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() > targetRank) {
-                    delay(1000)
-                    animateCard()
-                } else animateToPosition()
+                animateCard()
             }
         }
     }
@@ -173,10 +216,11 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
             when (newState) {
                 SCROLL_STATE_IDLE -> {
                     recyclerView.removeOnScrollListener(this)
-                    if (position == targetRank) {
+                    if (position == currentRankIndex) {
                         animateCard()
                     } else {
-                        binding.rank.text = position.plus(2).toString()
+                        binding.rank.text =startIndexRank.minus(1).toString()
+                        startIndexRank=startIndexRank.minus(1)
                         position = position.minus(1)
                         animateToPosition()
                     }
@@ -196,11 +240,12 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
             override fun onAnimationStart(p0: Animation?) {}
 
             override fun onAnimationEnd(p0: Animation?) {
+                if (animatePosition)
                 (binding.recyclerView.getViewResolverAtPosition(0) as LeaderBoardItemViewHolder).showCurrentUserItem()
                 binding.userItem.visibility = View.GONE
-                binding.recyclerView.removeView(
-                    binding.recyclerView.getAdapter()?.getItemCount()?.minus(3)
-                )
+                if (isNewCardAdded) {
+                    binding.recyclerView.removeView(newCardIndex)
+                }
             }
 
             override fun onAnimationRepeat(p0: Animation?) {}
@@ -211,23 +256,21 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
 
 
     companion object {
-        const val LEADERBOARD_DETAILS = "leader_board_details"
+        const val RANK_DETAILS = "rank_details"
         const val TAG = "ShowNewLeaderBoardFragment"
 
         @JvmStatic
-        fun newInstance(award: Award?) =
+        fun newInstance(outrankedDataResponse: OutrankedDataResponse) =
             ShowNewLeaderBoardFragment()
                 .apply {
-                    award?.let {
-                        arguments = Bundle().apply {
-                            putParcelable(LEADERBOARD_DETAILS, award)
-                        }
+                    arguments = Bundle().apply {
+                        putParcelable(RANK_DETAILS, outrankedDataResponse)
                     }
                 }
 
         fun showDialog(
             supportFragmentManager: FragmentManager,
-            award: Award?
+            outrankedDataResponse: OutrankedDataResponse
         ) {
             val fragmentTransaction = supportFragmentManager.beginTransaction()
             val prev = supportFragmentManager.findFragmentByTag(TAG)
@@ -235,7 +278,7 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
                 fragmentTransaction.remove(prev)
             }
             fragmentTransaction.addToBackStack(null)
-            newInstance(award)
+            newInstance(outrankedDataResponse)
                 .show(supportFragmentManager, TAG)
         }
 
