@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.userprofile
 
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setImage
+import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentShowNewLeaderboardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
@@ -30,7 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class ShowNewLeaderBoardFragment : DialogFragment() {
+class ShowAnimatedLeaderBoardFragment : DialogFragment() {
 
     private lateinit var binding: FragmentShowNewLeaderboardBinding
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -45,6 +45,7 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
     private var newCardIndex: Int = 0
     private var oldRankIndex: Int = -1
     private var currentRankIndex: Int = 0
+    private var currentRank: Int = 0
     private var animatePosition = false
     private var isNewCardAdded = false
 
@@ -131,12 +132,15 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
 
 
         binding.rank.text = outrankData?.old?.rank.toString()
-        it.currentMentor?.photoUrl?.let { it1 -> binding.userPic.setImage(it1) }
+        binding.userPic.post {
+            binding.userPic.setUserImageOrInitials(it.currentMentor?.photoUrl, it.currentMentor?.name!!)
+        }
         binding.name.text = it.currentMentor?.name
         binding.points.text = it.currentMentor?.points.toString()
         binding.recyclerView.isNestedScrollingEnabled = false
 
         it.currentMentor?.let { current_mentor ->
+            currentRank = it.currentMentor.ranking
             binding.recyclerView.addView(
                 LeaderBoardItemViewHolder(
                     current_mentor,
@@ -154,17 +158,6 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
                 startIndexRank = item.ranking
                 newCardIndex = index.plus(1)
                 position = index.plus(4)
-                if (oldRankIndex > 2) {
-                    isNewCardAdded=true
-                    binding.recyclerView.addView(
-                            LeaderBoardItemViewHolder(
-                                it.currentMentor!!,
-                                requireContext(),
-                                false,
-                                false
-                            )
-                    )
-                }
             }
             binding.recyclerView.addView(
                 LeaderBoardItemViewHolder(
@@ -207,22 +200,28 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
     fun animateToPosition() {
         binding.recyclerView.removeOnScrollListener(onScrollListener)
         binding.recyclerView.addOnScrollListener(onScrollListener)
-        linearSmoothScroller.targetPosition = position
+        linearSmoothScroller.targetPosition = 0
+        position = 0
         linearLayoutManager.startSmoothScroll(linearSmoothScroller)
     }
 
     var onScrollListener: RecyclerView.OnScrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+            val scrolledPosition2 =
+                (recyclerView.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition()
+                    ?: return
+            binding.rank.text =
+                outrankData?.old?.rank?.minus(oldRankIndex.minus(scrolledPosition2.plus(2)))
+                    .toString()
+        }
+
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             when (newState) {
                 SCROLL_STATE_IDLE -> {
                     recyclerView.removeOnScrollListener(this)
                     if (position == currentRankIndex) {
                         animateCard()
-                    } else {
-                        binding.rank.text =startIndexRank.minus(1).toString()
-                        startIndexRank=startIndexRank.minus(1)
-                        position = position.minus(1)
-                        animateToPosition()
                     }
                 }
             }
@@ -237,11 +236,13 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
         animation.setDuration(1000)
         animation.setFillAfter(false)
         animation.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(p0: Animation?) {}
+            override fun onAnimationStart(p0: Animation?) {
+                binding.rank.text = currentRank.plus(1).toString()
+            }
 
             override fun onAnimationEnd(p0: Animation?) {
                 if (animatePosition)
-                (binding.recyclerView.getViewResolverAtPosition(0) as LeaderBoardItemViewHolder).showCurrentUserItem()
+                    (binding.recyclerView.getViewResolverAtPosition(0) as LeaderBoardItemViewHolder).showCurrentUserItem()
                 binding.userItem.visibility = View.GONE
                 if (isNewCardAdded) {
                     binding.recyclerView.removeView(newCardIndex)
@@ -261,7 +262,7 @@ class ShowNewLeaderBoardFragment : DialogFragment() {
 
         @JvmStatic
         fun newInstance(outrankedDataResponse: OutrankedDataResponse) =
-            ShowNewLeaderBoardFragment()
+            ShowAnimatedLeaderBoardFragment()
                 .apply {
                     arguments = Bundle().apply {
                         putParcelable(RANK_DETAILS, outrankedDataResponse)

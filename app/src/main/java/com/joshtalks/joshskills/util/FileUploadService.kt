@@ -20,10 +20,12 @@ import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.PendingTask
 import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -179,6 +181,10 @@ class FileUploadService : Service() {
                         question.practiceEngagement!!.get(0).localPath = requestEngage.localPath
                         AppObjectController.appDatabase.chatDao()
                             .updateQuestionObject(question)
+
+                        if(resp.body()!!.pointsList.isNullOrEmpty().not()){
+                            RxBus2.publish(SnackBarEvent(resp.body()!!.pointsList?.get(0)))
+                        }
                     }
                     AppObjectController.appDatabase.pendingTaskDao().deleteTask(pendingTaskModel.id)
                 } else {

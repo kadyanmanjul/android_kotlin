@@ -80,7 +80,7 @@ import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
-import com.joshtalks.joshskills.ui.userprofile.ShowNewLeaderBoardFragment
+import com.joshtalks.joshskills.ui.userprofile.ShowAnimatedLeaderBoardFragment
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.smartlook.sdk.smartlook.Smartlook
 import com.smartlook.sdk.smartlook.analytics.identify.UserProperties
@@ -741,7 +741,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
     fun showLeaderboardAchievement(outrankData: OutrankedDataResponse) {
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
         //if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
-            ShowNewLeaderBoardFragment.showDialog(
+            ShowAnimatedLeaderBoardFragment.showDialog(
                 supportFragmentManager,
                 outrankData
             )

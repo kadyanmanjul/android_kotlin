@@ -2,17 +2,14 @@ package com.joshtalks.joshskills.ui.day_wise_course.practice
 
 import android.content.Context
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -20,13 +17,19 @@ import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
-import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentPraticeBinding
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.NPSEvent
+import com.joshtalks.joshskills.repository.local.entity.PendingTask
+import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.RequestEngage
@@ -37,17 +40,20 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayList
 
 const val PRACTISE_OBJECT = "practise_object"
 
 class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickListeners {
     private var currentPlayingPosition: Int = -1
     private lateinit var adapter: PracticeAdapter
+
+    private var compositeDisposable = CompositeDisposable()
 
     private lateinit var binding: FragmentPraticeBinding
     private var chatModelList: ArrayList<ChatModel>? = null
@@ -95,12 +101,12 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         binding =
-                DataBindingUtil.inflate(inflater, R.layout.fragment_pratice, container, false)
+            DataBindingUtil.inflate(inflater, R.layout.fragment_pratice, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
         binding.progressLayout.setOnClickListener {
@@ -110,7 +116,7 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
         addObserver()
         practiceViewModel.getAssessmentData(chatModelList)
         binding.vocabularyCompletedTv.text = AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.VOCABULARY_COMPLETED)
+            .getString(FirebaseRemoteConfigKey.VOCABULARY_COMPLETED)
         return binding.root
     }
 
@@ -127,28 +133,36 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
         })
 
         practiceViewModel.practiceEngagementData.observe(viewLifecycleOwner, Observer {
-            if(it.pointsList.isNullOrEmpty().not()){
-               showSnackBar(binding.rootView, Snackbar.LENGTH_LONG,it.pointsList?.get(0))
+            if (it.pointsList.isNullOrEmpty().not()) {
+                showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
             }
         })
     }
 
     private fun initAdapter(arrayList: ArrayList<AssessmentWithRelations>) {
-        val itemSize=chatModelList?.filter { it.question?.type==BASE_MESSAGE_TYPE.QUIZ }?.size?:0
-        var quizSort=1
-        var wordSort=1
+        val itemSize =
+            chatModelList?.filter { it.question?.type == BASE_MESSAGE_TYPE.QUIZ }?.size ?: 0
+        var quizSort = 1
+        var wordSort = 1
         chatModelList?.forEach {
             it.question?.let {
-                if (it.type== BASE_MESSAGE_TYPE.QUIZ){
-                    it.vocabOrder=quizSort
-                    quizSort=quizSort.plus(1)
-                }else{
-                    it.vocabOrder=wordSort
-                    wordSort=wordSort.plus(1)
+                if (it.type == BASE_MESSAGE_TYPE.QUIZ) {
+                    it.vocabOrder = quizSort
+                    quizSort = quizSort.plus(1)
+                } else {
+                    it.vocabOrder = wordSort
+                    wordSort = wordSort.plus(1)
                 }
             }
         }
-        adapter = PracticeAdapter(requireContext(), practiceViewModel, chatModelList!!, this,quizsItemSize = itemSize,arrayList)
+        adapter = PracticeAdapter(
+            requireContext(),
+            practiceViewModel,
+            chatModelList!!,
+            this,
+            quizsItemSize = itemSize,
+            arrayList
+        )
         chatModelList?.let {
             it.sortedBy { it.question?.vpSortOrder }
         }
@@ -173,8 +187,8 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
             }
         }
         activityCallback?.onQuestionStatusUpdate(
-                QUESTION_STATUS.AT,
-                chatModel.question?.questionId?.toIntOrNull() ?: 0
+            QUESTION_STATUS.AT,
+            chatModel.question?.questionId?.toIntOrNull() ?: 0
         )
 
         chatModel.question?.status = QUESTION_STATUS.AT
@@ -186,8 +200,8 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
 
     private fun onQuestionChoiceSelected(chatModel: ChatModel) {
         activityCallback?.onQuestionStatusUpdate(
-                QUESTION_STATUS.IP,
-                chatModel.question?.questionId?.toIntOrNull() ?: 0
+            QUESTION_STATUS.IP,
+            chatModel.question?.questionId?.toIntOrNull() ?: 0
         )
         chatModel.question?.status = QUESTION_STATUS.IP
         currentChatModel = null
@@ -239,7 +253,7 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
 //                requestEngage.text = binding.etPractise.text.toString()
                 requestEngage.localPath = chatModel.filePath
                 requestEngage.duration =
-                        Utils.getDurationOfMedia(requireActivity(), chatModel.filePath)?.toInt()
+                    Utils.getDurationOfMedia(requireActivity(), chatModel.filePath)?.toInt()
                 requestEngage.feedbackRequire = chatModel.question?.feedback_require
                 requestEngage.questionId = chatModel.question?.questionId!!
                 requestEngage.mentor = Mentor.getInstance().getId()
@@ -252,12 +266,12 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
                 openNextScreen()
                 CoroutineScope(Dispatchers.IO).launch {
                     val insertedId =
-                            AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
-                                    PendingTaskModel(requestEngage, PendingTask.VOCABULARY_PRACTICE)
-                            )
+                        AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
+                            PendingTaskModel(requestEngage, PendingTask.VOCABULARY_PRACTICE)
+                        )
                     FileUploadService.uploadSinglePendingTasks(
-                            AppObjectController.joshApplication,
-                            insertedId
+                        AppObjectController.joshApplication,
+                        insertedId
                     )
 
                 }
@@ -280,9 +294,9 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
         if (isAdded && activity != null)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val timeDifference =
-                TimeUnit.MILLISECONDS.toSeconds(stopTime) - TimeUnit.MILLISECONDS.toSeconds(
-                        startTime
-                )
+            TimeUnit.MILLISECONDS.toSeconds(stopTime) - TimeUnit.MILLISECONDS.toSeconds(
+                startTime
+            )
         if (timeDifference > 1) {
             practiceViewModel.recordFile?.let {
 //                                isAudioRecordDone = true
@@ -297,30 +311,56 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
     override fun askRecordPermission() {
 
         PermissionUtils.audioRecordStorageReadAndWritePermission(
-                requireActivity(),
-                object : MultiplePermissionsListener {
-                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                        report?.areAllPermissionsGranted()?.let {
-                            if (report.isAnyPermissionPermanentlyDenied) {
-                                PermissionUtils.permissionPermanentlyDeniedDialog(
-                                        requireActivity(),
-                                        R.string.record_permission_message
-                                )
-                                return
-                            }
+            requireActivity(),
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let {
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.permissionPermanentlyDeniedDialog(
+                                requireActivity(),
+                                R.string.record_permission_message
+                            )
+                            return
                         }
                     }
+                }
 
-                    override fun onPermissionRationaleShouldBeShown(
-                            permissions: MutableList<PermissionRequest>?,
-                            token: PermissionToken?
-                    ) {
-                        token?.continuePermissionRequest()
-                    }
-                })
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            })
     }
 
     override fun focusChild(position: Int) {
         binding.practiceRv.smoothScrollToPosition(position)
+    }
+
+    private fun subscribeRXBus() {
+        compositeDisposable.add(
+            RxBus2.listen(SnackBarEvent::class.java)
+                .subscribeOn(Schedulers.computation())
+                .subscribe({
+                    showSnackBar(
+                        binding.rootView,
+                        Snackbar.LENGTH_LONG,
+                        it.pointsSnackBarText.toString()
+                    )
+                }, {
+                    it.printStackTrace()
+                })
+        )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        subscribeRXBus()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        compositeDisposable.clear()
     }
 }

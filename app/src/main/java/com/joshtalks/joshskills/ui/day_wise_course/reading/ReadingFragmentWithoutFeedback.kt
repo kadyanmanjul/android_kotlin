@@ -59,6 +59,7 @@ import com.joshtalks.joshskills.databinding.ReadingPracticeFragmentWithoutFeedba
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.RemovePracticeAudioEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.ui.day_wise_course.CapsuleActivityCallback
@@ -403,6 +404,16 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                             }
                         }
                     }
+                }, {
+                    it.printStackTrace()
+                })
+        )
+
+        compositeDisposable.add(
+            RxBus2.listen(SnackBarEvent::class.java)
+                .subscribeOn(Schedulers.computation())
+                .subscribe({
+                    showSnackBar(binding.rootView, Snackbar.LENGTH_LONG,it.pointsSnackBarText)
                 }, {
                     it.printStackTrace()
                 })
