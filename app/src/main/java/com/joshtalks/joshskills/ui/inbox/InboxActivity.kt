@@ -121,7 +121,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         viewModel.getTotalWatchTime()
         //viewModel.getProfileData(Mentor.getInstance().getId())
         //PointSnackbar.make(nested_scroll_view,Snackbar.LENGTH_INDEFINITE,"Updated successfully")?.show()
-        //showLeaderboardAchievement( OutrankedDataResponse(RankData(1,1),RankData(1,65)))
+        showLeaderboardAchievement( OutrankedDataResponse(RankData(1,1),RankData(1,65)))
     }
 
     private fun initNewUserTip() {
