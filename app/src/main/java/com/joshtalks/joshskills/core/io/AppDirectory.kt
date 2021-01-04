@@ -4,10 +4,7 @@ import android.net.Uri
 import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.text.format.DateUtils
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -337,10 +334,13 @@ object AppDirectory {
 
 
     fun deleteFile(filePath: String?): Boolean {
-        if (filePath.isNullOrEmpty()) {
-            return true
+        JoshSkillExecutors.BOUNDED.execute {
+            if (filePath.isNullOrEmpty()) {
+                return@execute
+            }
+            File(filePath).deleteRecursively()
         }
-        return File(filePath).deleteRecursively()
+        return true
     }
 
     fun deleteFileFile(file: File): Boolean {

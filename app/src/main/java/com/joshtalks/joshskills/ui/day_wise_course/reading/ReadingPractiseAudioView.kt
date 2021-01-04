@@ -56,9 +56,10 @@ class ReadingPractiseAudioView : FrameLayout, LifecycleObserver,
             playPauseButton = findViewById(R.id.btn_play_pause)
             seekbar.progress = 0
             playPauseButton.setOnClickListener {
-                if (playPauseButton.state == MaterialPlayPauseDrawable.State.Pause) {
+                if (playPauseButton.state == MaterialPlayPauseDrawable.State.Play) {
                     playAudio()
                 } else {
+                    playPauseButton.state = MaterialPlayPauseDrawable.State.Play
                     onPausePlayer()
                 }
             }
@@ -123,9 +124,9 @@ class ReadingPractiseAudioView : FrameLayout, LifecycleObserver,
                 if (ExoAudioPlayer2.LAST_ID == id) {
                     exoAudioManager?.resumeOrPause()
                     if (exoAudioManager?.isPlaying() == true) {
-                        playPauseButton.state = MaterialPlayPauseDrawable.State.Play
-                    } else
                         playPauseButton.state = MaterialPlayPauseDrawable.State.Pause
+                    } else
+                        playPauseButton.state = MaterialPlayPauseDrawable.State.Play
                 } else {
                     initAndPlay()
                 }
@@ -167,12 +168,6 @@ class ReadingPractiseAudioView : FrameLayout, LifecycleObserver,
     }
 
 
-    override fun onProgressUpdate(progress: Long) {
-    }
-
-    override fun onDurationUpdate(duration: Long?) {
-    }
-
     override fun onPlayerPause() {
     }
 
@@ -201,8 +196,21 @@ class ReadingPractiseAudioView : FrameLayout, LifecycleObserver,
         TODO("Not yet implemented")
     }
 
+
     override fun complete() {
-        TODO("Not yet implemented")
+        playPauseButton.state = MaterialPlayPauseDrawable.State.Play
+        seekbar.progress = 0
+        exoAudioManager?.seekTo(0)
+        exoAudioManager?.onPause()
+        exoAudioManager?.setProgressUpdateListener(null)
+    }
+
+    override fun onProgressUpdate(progress: Long) {
+        seekbar.progress = progress.toInt()
+    }
+
+    override fun onDurationUpdate(duration: Long?) {
+
     }
 
     override fun onAttachedToWindow() {

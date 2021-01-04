@@ -64,6 +64,8 @@ class PracticeViewModel(application: Application) :
 
             override fun onError(e: Int) {
                 recordListener?.onError(e)
+                isRecordingStarted = false
+
             }
 
             override fun onRecordingStarted() {

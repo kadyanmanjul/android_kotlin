@@ -9,7 +9,6 @@ import android.os.CountDownTimer
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
@@ -59,7 +58,6 @@ import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
-import com.joshtalks.joshskills.ui.translation.LanguageTranslation
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.karumi.dexter.Dexter
@@ -80,7 +78,6 @@ import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
