@@ -72,7 +72,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     PendingTaskRequestTypeConverter::class,
     ListConverters::class,
     ConvectorForWrongWord::class,
-    ConvectorForPhonetic::class
+    ConvectorForPhoneticClass::class
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -706,30 +706,45 @@ class ListConverters {
 
 class ConvectorForWrongWord {
     @TypeConverter
-    fun fromEngagement(value: List<WrongWord>?): String {
+    fun fromWrongWord(value: List<WrongWord>?): String? {
+        if (value.isNullOrEmpty()) {
+            return null
+        }
         val type = object : TypeToken<List<WrongWord>>() {}.type
         return AppObjectController.gsonMapper.toJson(value, type)
     }
 
     @TypeConverter
-    fun toEngagement(value: String?): List<WrongWord> {
-        if (value == null) {
-            return Collections.emptyList()
+    fun toWrongWord(value: String?): List<WrongWord>? {
+        try {
+            if (value.isNullOrEmpty()) {
+                return null
+            }
+            val type = object : TypeToken<List<WrongWord>>() {}.type
+            return AppObjectController.gsonMapperForLocal.fromJson(value, type)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            return null
         }
-        val type = object : TypeToken<List<WrongWord>>() {}.type
-        return AppObjectController.gsonMapper.fromJson(value, type)
     }
 }
 
-class ConvectorForPhonetic {
+
+class ConvectorForPhoneticClass {
     @TypeConverter
-    fun fromPhonetic(value: List<Phonetic>): String {
+    fun fromPhonetic(value: List<Phonetic>?): String? {
+        if (value.isNullOrEmpty()) {
+            return null
+        }
         val type = object : TypeToken<List<Phonetic>>() {}.type
         return AppObjectController.gsonMapper.toJson(value, type)
     }
 
     @TypeConverter
-    fun toWrongWord(value: String): List<Phonetic> {
+    fun toPhonetic(value: String?): List<Phonetic>? {
+        if (value.isNullOrEmpty()) {
+            return null
+        }
         val type = object : TypeToken<List<Phonetic>>() {}.type
         return AppObjectController.gsonMapper.fromJson(value, type)
     }
