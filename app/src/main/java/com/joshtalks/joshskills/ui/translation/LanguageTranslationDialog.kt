@@ -3,9 +3,14 @@ package com.joshtalks.joshskills.ui.translation
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
@@ -70,8 +75,54 @@ class LanguageTranslationDialog : BlurDialogFragment() {
             binding.txtEnglish.text = it.word
             binding.txtHindi.text = it.hinMeaning
             binding.txtPhonetic.text = it.hinTransilteration
-            binding.txtMeaning.text = it.engMeaning[0].noun
+            val sBuilder = SpannableStringBuilder()
+            it.engMeaning.forEach { engMeaning ->
+                engMeaning.adjective?.run {
+                    sBuilder.append("Adjective: ").append("\n").append(this).append("\n\n")
+                    sBuilder.setSpan(
+                        ForegroundColorSpan(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.black
+                            )
+                        ), 9, sBuilder.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+                engMeaning.noun?.run {
+                    val start = sBuilder.length
+                    sBuilder.append("Noun: ").append("\n").append(this).append("\n\n")
+                    sBuilder.setSpan(
+                        ForegroundColorSpan(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.black
+                            )
+                        ), start, sBuilder.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+                engMeaning.verb?.run {
+                    val start = sBuilder.length
+                    sBuilder.append("Verb: ").append("\n").append(this)
+                    sBuilder.setSpan(
+                        ForegroundColorSpan(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.black
+                            )
+                        ), start, sBuilder.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+            }
+
+            binding.txtMeaning.setText(
+                sBuilder,
+                TextView.BufferType.SPANNABLE
+            )
             binding.group.visibility = View.VISIBLE
+
         })
 
         word?.let {

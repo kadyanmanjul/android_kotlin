@@ -69,7 +69,7 @@
             android:letterSpacing="0"
             android:paddingVertical="@dimen/_2sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-            android:textColor="@color/black"
+            android:textColor="@color/grey_68"
             app:layout_constraintStart_toStartOf="@id/txtMeaningTitle"
             app:layout_constraintTop_toBottomOf="@id/txtMeaningTitle"
             tools:text="engage in activity for enjoyment and recreation rather than a serious or practical purpose." />

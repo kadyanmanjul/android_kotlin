@@ -411,13 +411,17 @@ public class BlurDialogEngine {
         }
         if (mDebugEnable) {
             String blurTime = (System.currentTimeMillis() - startMs) + " ms";
-            Log.d(TAG, "Blur method : " + (mUseRenderScript ? "RenderScript" : "FastBlur"));
-            Log.d(TAG, "Radius : " + mBlurRadius);
-            Log.d(TAG, "Down Scale Factor : " + mDownScaleFactor);
-            Log.d(TAG, "Blurred achieved in : " + blurTime);
-            Log.d(TAG, "Allocation : " + bkg.getRowBytes() + "ko (screen capture) + "
-                    + overlay.getRowBytes() + "ko (blurred bitmap)"
-                    + (!mUseRenderScript ? " + temp buff " + overlay.getRowBytes() + "ko." : "."));
+            try {
+                Log.d(TAG, "Blur method : " + (mUseRenderScript ? "RenderScript" : "FastBlur"));
+                Log.d(TAG, "Radius : " + mBlurRadius);
+                Log.d(TAG, "Down Scale Factor : " + mDownScaleFactor);
+                Log.d(TAG, "Blurred achieved in : " + blurTime);
+                Log.d(TAG, "Allocation : " + bkg.getRowBytes() + "ko (screen capture) + "
+                        + overlay.getRowBytes() + "ko (blurred bitmap)"
+                        + (!mUseRenderScript ? " + temp buff " + overlay.getRowBytes() + "ko." : "."));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             Rect bounds = new Rect();
             Canvas canvas1 = new Canvas(overlay);
             paint.setColor(Color.BLACK);
@@ -563,14 +567,18 @@ public class BlurDialogEngine {
 
         @Override
         protected Void doInBackground(Void... params) {
-            //process to the blue
-            if (!isCancelled()) {
-                blur(mBackground, mBackgroundView);
-            } else {
-                return null;
+            try {
+                //process to the blue
+                if (!isCancelled()) {
+                    blur(mBackground, mBackgroundView);
+                } else {
+                    return null;
+                }
+                //clear memory
+                mBackground.recycle();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            //clear memory
-            mBackground.recycle();
             return null;
         }
 
