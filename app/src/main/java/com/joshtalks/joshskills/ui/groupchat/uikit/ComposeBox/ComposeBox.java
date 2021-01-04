@@ -10,19 +10,18 @@ import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentManager;
 
 import com.cometchat.pro.core.CometChat;
@@ -49,7 +48,7 @@ import static com.joshtalks.recordview.CustomImageButton.FIRST_STATE;
 import static com.joshtalks.recordview.CustomImageButton.SECOND_STATE;
 
 
-public class ComposeBox extends RelativeLayout implements View.OnClickListener {
+public class ComposeBox extends ConstraintLayout implements View.OnClickListener {
 
     private static final String TAG = ComposeBox.class.getName();
     private final Handler seekHandler = new Handler(Looper.getMainLooper());
@@ -64,8 +63,7 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
     private Timer timer = new Timer();
     private ComposeBoxActionFragment composeBoxActionFragment;
     private String audioFileNameWithPath;
-    private Chronometer recordTime;
-    private RelativeLayout composeBox;
+    private ConstraintLayout composeBox;
     private RelativeLayout flBox;
     private RelativeLayout rlActionContainer;
     private ComposeActionListener composeActionListener;
@@ -142,7 +140,6 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
         }
         composeBox = this.findViewById(R.id.message_box);
         flBox = this.findViewById(R.id.flBox);
-        recordTime = this.findViewById(R.id.record_time);
         ivCamera = this.findViewById(R.id.ivCamera);
         ivGallery = this.findViewById(R.id.ivImage);
         ivAudio = this.findViewById(R.id.ivAudio);
@@ -424,13 +421,10 @@ public class ComposeBox extends RelativeLayout implements View.OnClickListener {
 
     public void startRecord() {
         showRecordView();
-        recordTime.setBase(SystemClock.elapsedRealtime());
-        recordTime.start();
         startRecording();
     }
 
     public void stopRecord(boolean isCancel) {
-        recordTime.stop();
         stopRecording(isCancel);
     }
 
