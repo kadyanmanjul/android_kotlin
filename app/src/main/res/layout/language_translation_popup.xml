@@ -1,21 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.circularreveal.cardview.CircularRevealCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    app:cardUseCompatPadding="true"
-    app:contentPadding="@dimen/_8sdp">
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.translation.LanguageTranslationDialog" />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/grey_rounded_bg"
+        android:backgroundTint="@color/white"
+        android:paddingHorizontal="@dimen/_8sdp"
+        android:paddingVertical="@dimen/_12sdp">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtEnglish"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -26,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingHorizontal="@dimen/_8sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
             android:textColor="@color/black"
             app:layout_constraintStart_toEndOf="@id/txtEnglish"
             app:layout_constraintTop_toTopOf="parent"
@@ -37,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingVertical="@dimen/_4sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="@id/txtEnglish"
             app:layout_constraintTop_toBottomOf="@id/txtEnglish"
@@ -48,18 +55,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingVertical="@dimen/_4sdp"
+            android:text="Meaning"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:textColor="@color/gray_79"
             app:layout_constraintStart_toStartOf="@id/txtPhonetic"
-            app:layout_constraintTop_toBottomOf="@id/txtPhonetic"
-            tools:text="Meaning" />
+            app:layout_constraintTop_toBottomOf="@id/txtPhonetic" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtMeaning"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:letterSpacing="0"
             android:paddingVertical="@dimen/_2sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="@id/txtMeaningTitle"
             app:layout_constraintTop_toBottomOf="@id/txtMeaningTitle"
@@ -70,43 +78,51 @@
             android:id="@+id/txtPronounce"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingVertical="@dimen/_4sdp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:text="How to pronounce:"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:textColor="@color/gray_79"
             app:layout_constraintStart_toStartOf="@id/txtMeaning"
-            app:layout_constraintTop_toBottomOf="@id/txtMeaning"
-            tools:text="How to pronounce:" />
+            app:layout_constraintTop_toBottomOf="@id/txtMeaning" />
 
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgSpeak"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_20sdp"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
             android:layout_marginStart="@dimen/_24sdp"
             android:background="@drawable/circle2"
             android:backgroundTint="@color/colorPrimary"
-            android:padding="@dimen/_4sdp"
+            android:onClick="@{()->handler.speakNormally()}"
+            android:padding="@dimen/_6sdp"
             app:layout_constraintBottom_toBottomOf="@id/txtPronounce"
             app:layout_constraintStart_toEndOf="@+id/txtPronounce"
             app:layout_constraintTop_toTopOf="@id/txtPronounce"
-            app:srcCompat="@drawable/ic_rec_mic"
+            app:srcCompat="@drawable/ic_speaker"
             tools:text="How to pronounce:" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgSpeakSlow"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_20sdp"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
             android:layout_marginStart="@dimen/_12sdp"
             android:background="@drawable/circle2"
             android:backgroundTint="@color/colorPrimary"
-            android:padding="@dimen/_4sdp"
+            android:onClick="@{()->handler.speakSlow()}"
+            android:padding="@dimen/_6sdp"
             app:layout_constraintBottom_toBottomOf="@id/imgSpeak"
             app:layout_constraintStart_toEndOf="@+id/imgSpeak"
             app:layout_constraintTop_toTopOf="@id/imgSpeak"
-            app:srcCompat="@drawable/ic_rec_mic"
+            app:srcCompat="@drawable/ic_snail"
             tools:text="How to pronounce:" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupDemoVoiceNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="txtEnglish,txtHindi,txtMeaning,txtMeaningTitle,txtPhonetic,txtPronounce,imgSpeak,imgSpeakSlow"
+            tools:visibility="visible" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-</com.google.android.material.circularreveal.cardview.CircularRevealCardView>
+</layout>

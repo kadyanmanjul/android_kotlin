@@ -3,10 +3,7 @@ package com.joshtalks.joshskills.ui.groupchat.uikit
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -16,6 +13,7 @@ import com.google.android.exoplayer2.util.Util
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
+import com.joshtalks.joshskills.core.videoplayer.PlaybackSpeed
 
 class ExoAudioPlayer2 {
     private var progressTracker: ProgressTracker? = null
@@ -122,7 +120,22 @@ class ExoAudioPlayer2 {
         player.addListener(playerEventListener)
     }
 
-    fun play(audioUrl: String, id: String = "", seekDuration: Long = 0) {
+
+    fun onChangePlaybackSpeed(playbackSpeed: PlaybackSpeed) {
+
+    }
+
+    fun play(
+        audioUrl: String,
+        id: String = "",
+        seekDuration: Long = 0,
+        isPlaybackSpeed: Boolean = false
+    ) {
+        var param = PlaybackParameters(1F)
+        if (isPlaybackSpeed) {
+            param = PlaybackParameters(0.50F, 1F)//pitch sexy hai
+        }
+        player.setPlaybackParameters(param)
         currentPlayingUrl = audioUrl
         val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(
             context,
