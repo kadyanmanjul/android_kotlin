@@ -15,5 +15,7 @@ data class AnimatedLeaderBoardResponse(
     @SerializedName("current_mentor")
     val currentMentor: LeaderboardMentor?,
     @SerializedName("leader_board_mentor_list")
-    val leaderBoardMentorList: List<LeaderboardMentor>?
+    val leaderBoardMentorList: List<LeaderboardMentor>?,
+    @SerializedName("above_mentor_list")
+    val aboveMentorList: List<LeaderboardMentor>?
 ) : Parcelable
