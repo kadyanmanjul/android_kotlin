@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.day_wise_course.grammar
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -312,8 +313,20 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                                 .subscribe({ eventBus ->
                                     if (eventBus.progress > 3000 && this.status == QUESTION_STATUS.NA) {
                                         updateVideoQuestionStatus(this)
+                                        this.status = QUESTION_STATUS.IP
+                                    }
+                                    val percentVideoWatched =
+                                        binding.videoPlayer.player?.duration?.let {
+                                            eventBus.progress.div(
+                                                it
+                                            ).times(100).toInt()
+                                        } ?: -1
+
+                                    if (percentVideoWatched!=-1 && percentVideoWatched>=70 && this.status == QUESTION_STATUS.IP){
+                                        updateVideoQuestionStatus(this, true)
                                         this.status = QUESTION_STATUS.AT
                                     }
+
                                     if (eventBus.progress + 1000 >= this.videoList?.get(0)?.duration ?: 0) {
                                         binding.quizShader.visibility = View.GONE
                                         compositeDisposable.clear()
@@ -804,10 +817,13 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
         }
     }
 
-    private fun updateVideoQuestionStatus(question: Question) {
+    private fun updateVideoQuestionStatus(
+        question: Question,
+        isVideoPercentComplete: Boolean = false
+    ) {
         activityCallback?.onQuestionStatusUpdate(
             QUESTION_STATUS.AT,
-            question.questionId.toIntOrNull() ?: 0
+            question.questionId.toIntOrNull() ?: 0, isVideoPercentComplete
         )
 
         pdfQuestion?.question?.let {

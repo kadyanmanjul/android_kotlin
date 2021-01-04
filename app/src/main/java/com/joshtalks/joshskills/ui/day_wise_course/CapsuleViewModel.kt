@@ -179,20 +179,20 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
         status: QUESTION_STATUS,
         questionId: Int,
         courseId: Int,
-        lessonId: Int
+        lessonId: Int,
+        isVideoPercentComplete:Boolean=false
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                if (status==QUESTION_STATUS.IP){
-                    chatDao.updateQuestionStatus("$questionId", status)
-                }else {
+                if (isVideoPercentComplete){
                     val resp = AppObjectController.chatNetworkService.updateQuestionStatus(
                         UpdateQuestionStatus(
                             status.name,
                             lessonId,
                             Mentor.getInstance().getId(),
                             questionId,
-                            courseId
+                            courseId,
+                            isVideoPercentComplete
                         )
                     )
                     if (resp.isSuccessful && resp.body() != null) {
@@ -200,7 +200,27 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
                         updatedLessonResponseLiveData.postValue(resp.body())
                         return@launch
                     }
+                }else {
+                    if (status==QUESTION_STATUS.IP){
+                        chatDao.updateQuestionStatus("$questionId", status)
+                    }else {
+                        val resp = AppObjectController.chatNetworkService.updateQuestionStatus(
+                            UpdateQuestionStatus(
+                                status.name,
+                                lessonId,
+                                Mentor.getInstance().getId(),
+                                questionId,
+                                courseId
+                            )
+                        )
+                        if (resp.isSuccessful && resp.body() != null) {
+                            chatDao.updateQuestionStatus("$questionId", status)
+                            updatedLessonResponseLiveData.postValue(resp.body())
+                            return@launch
+                        }
+                    }
                 }
+
             } catch (e: Exception) {
                 e.printStackTrace()
                 return@launch
