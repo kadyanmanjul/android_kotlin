@@ -7,13 +7,7 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
-import com.joshtalks.joshskills.repository.local.entity.Sender
-import com.joshtalks.joshskills.repository.local.entity.User
-import com.joshtalks.joshskills.repository.local.entity.VideoType
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBus
 import com.joshtalks.joshskills.repository.server.ChatMessageReceiver
@@ -111,8 +105,13 @@ object NetworkRequestHelper {
 
                         question.lesson?.let {
                             AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
-
                         }
+                        question.practiseEngagementV2?.forEach { pe ->
+                            pe.questionForId = question.questionId
+                            AppObjectController.appDatabase.practiceEngagementDao()
+                                .insertPractise(pe)
+                        }
+
                         if (question.type == BASE_MESSAGE_TYPE.CE) {
                             question.certificateExamId?.run {
                                 DatabaseUtils.getCExamDetails(

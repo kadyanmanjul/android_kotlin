@@ -111,5 +111,6 @@
     <color name="message_bubble_grey">#e0e0e0</color>
     <color name="shimmer">#ECECEC</color>
     <color name="purple">#8867C5</color>
+    <color name="practice_complete_bg">#FFF9EB</color>
 
 </resources>

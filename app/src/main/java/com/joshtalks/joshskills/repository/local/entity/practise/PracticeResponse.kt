@@ -1,0 +1,207 @@
+package com.joshtalks.joshskills.repository.local.entity.practise
+
+import android.os.Parcelable
+import androidx.room.*
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.repository.local.ConvectorForPhonetic
+import com.joshtalks.joshskills.repository.local.ConvectorForWrongWord
+import com.joshtalks.joshskills.repository.local.ListConverters
+import com.joshtalks.joshskills.repository.local.entity.Question
+import kotlinx.android.parcel.Parcelize
+import java.util.*
+
+
+@Entity(
+    tableName = "practise_engagement_table",
+    indices = [Index(value = ["practiseId", "question"])],
+    foreignKeys = [ForeignKey(
+        entity = Question::class,
+        parentColumns = arrayOf("questionId"),
+        childColumns = arrayOf("questionForId"),
+        onDelete = ForeignKey.CASCADE
+    )]
+)
+@Parcelize
+data class PracticeEngagementV2(
+    @ColumnInfo()
+    var questionForId: String = EMPTY,
+
+    @PrimaryKey()
+    @SerializedName("id")
+    val practiseId: Int = 0,
+
+    @ColumnInfo()
+    @SerializedName("question")
+    val question: Int = 0,
+
+    @ColumnInfo()
+    @SerializedName("answer_url")
+    val answerUrl: String = EMPTY,
+
+    @ColumnInfo()
+    @SerializedName("duration")
+    val duration: Int = 0,
+
+    @ColumnInfo()
+    @SerializedName("practice_date")
+    val practiceDate: String = EMPTY,
+
+    @ColumnInfo()
+    @SerializedName("feedback_require")
+    val feedbackRequire: String? = EMPTY,
+
+    @ColumnInfo()
+    @SerializedName("text")
+    val text: String? = EMPTY,
+    @ColumnInfo()
+    @Expose var localPath: String? = EMPTY,
+
+    @ColumnInfo()
+    @SerializedName("transcript_id") val transcriptId: String? = EMPTY,
+
+    @TypeConverters(
+        ListConverters::class
+    )
+    @ColumnInfo
+    @SerializedName("points_list")
+    val pointsList: List<String> = arrayListOf(),
+
+    @Embedded(prefix = "feedback_")
+    @SerializedName("feedback")
+    var practiseFeedback: PractiseFeedback? = null,
+) : Parcelable {
+    constructor() : this(
+        questionForId = EMPTY,
+        practiseId = 0,
+        question = 0,
+        answerUrl = EMPTY,
+        duration = 0,
+        practiceDate = EMPTY,
+        feedbackRequire = null,
+        text = null,
+        localPath = null,
+        transcriptId = null,
+        pointsList = emptyList(),
+    )
+}
+
+@Parcelize
+data class PractiseFeedback(
+    @SerializedName("id")
+    val feedbackId: Int = 0,
+    @SerializedName("created")
+    val created: Date = Date(),
+    @SerializedName("feedback_title")
+    val feedbackTitle: String = EMPTY,
+    @SerializedName("feedback_text")
+    val feedbackText: String = EMPTY,
+    @SerializedName("student_audio_url")
+    val studentAudioUrl: String = EMPTY,
+    @SerializedName("teacher_audio_url")
+    val teacherAudioUrl: String = EMPTY,
+
+    @Embedded(prefix = "pro_")
+    @SerializedName("pronunciation")
+    val pronunciation: Pronunciation = Pronunciation(),
+
+    @Embedded(prefix = "rec_")
+    @SerializedName("recommendation")
+    val recommendation: Recommendation = Recommendation(),
+
+    @Embedded(prefix = "spd_")
+    @SerializedName("speed")
+    val speed: Speed = Speed(),
+
+    @TypeConverters(
+        ConvectorForWrongWord::class
+    )
+    @ColumnInfo
+    @SerializedName("wrong_word_list")
+    val pointsList: List<WrongWord> = emptyList(),
+) : Parcelable {
+    constructor() : this(
+        feedbackId = 0,
+        created = Date(),
+        feedbackTitle = EMPTY,
+        feedbackText = EMPTY,
+        studentAudioUrl = EMPTY,
+        teacherAudioUrl = EMPTY,
+        pronunciation = Pronunciation(),
+        recommendation = Recommendation(),
+        speed = Speed(),
+        pointsList = arrayListOf(),
+    )
+}
+
+@Parcelize
+data class Pronunciation(
+    @SerializedName("text")
+    val text: String = EMPTY,
+    @SerializedName("description")
+    val description: String = EMPTY
+) : Parcelable
+
+@Parcelize
+data class Recommendation(
+    @SerializedName("text")
+    val text: String = EMPTY
+) : Parcelable
+
+@Parcelize
+data class Speed(
+    @SerializedName("text")
+    val text: String = EMPTY,
+    @SerializedName("description")
+    val description: String = EMPTY
+) : Parcelable
+
+@Parcelize
+data class WrongWord(
+    @TypeConverters(
+        ConvectorForPhonetic::class
+    )
+    @ColumnInfo()
+    @SerializedName("phones")
+    val phones: List<Phonetic> = emptyList(),
+    @SerializedName("student_start_time")
+    val studentStartTime: Int = 0,
+    @SerializedName("student_end_time")
+    val studentEndTime: Int = 0,
+    @SerializedName("teacher_start_time")
+    val teacherStartTime: Int = 0,
+    @SerializedName("teacher_end_time")
+    val teacherEndTime: Int = 0,
+    @SerializedName("word")
+    val word: String = EMPTY
+) : Parcelable {
+    constructor() : this(
+        phones = emptyList(),
+        studentStartTime = 0,
+        studentEndTime = 0,
+        teacherStartTime = 0,
+        teacherEndTime = 0,
+        word = EMPTY
+    )
+}
+
+@Parcelize
+data class Phonetic(
+    @SerializedName("phone")
+    val phone: String = EMPTY,
+    @SerializedName("quality")
+    val quality: String = EMPTY
+) : Parcelable
+
+
+@Dao
+interface PracticeEngagementDao {
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPractise(practiceEngagementV2: PracticeEngagementV2): Long
+
+    @Query(value = "SELECT * FROM practise_engagement_table where  questionForId= :questionId")
+    suspend fun getPractice(questionId: String): List<PracticeEngagementV2>?
+}
+

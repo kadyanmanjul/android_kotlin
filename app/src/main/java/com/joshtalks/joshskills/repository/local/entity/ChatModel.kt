@@ -22,6 +22,8 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.ConvectorForEngagement
+import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
+//import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
 import com.joshtalks.joshskills.util.RandomString
@@ -218,14 +220,6 @@ data class Question(
     @ColumnInfo
     @SerializedName("expected_ans_type") var expectedEngageType: EXPECTED_ENGAGE_TYPE? = null,
 
-
-    @TypeConverters(
-        ConvectorForEngagement::class
-    )
-    @ColumnInfo(name = "practice_engagements")
-    @SerializedName("practice_engagements")
-    var practiceEngagement: List<PracticeEngagement>? = emptyList(),
-
     @ColumnInfo(name = "practice_no")
     @SerializedName("practice_no") var practiceNo: Int? = null,
 
@@ -282,7 +276,18 @@ data class Question(
 
     @Expose
     @Ignore
-    var vocabOrder: Int? = null
+    var vocabOrder: Int? = null,
+
+    @TypeConverters(
+        ConvectorForEngagement::class
+    )
+    @ColumnInfo(name = "practice_engagements")
+    // @SerializedName("practice_engagements")
+    var practiceEngagement: List<PracticeEngagement>? = emptyList(),
+
+    @Ignore
+    @SerializedName("practice_engagements")
+    var practiseEngagementV2: List<PracticeEngagementV2>? = emptyList(),
 
 ) : Parcelable
 
@@ -349,7 +354,6 @@ data class AudioType(
     @PrimaryKey
     @ColumnInfo(name = "audioId")
     @SerializedName("id") var id: String = "",
-
 
     @ColumnInfo
     @SerializedName("duration") var duration: Int = 0,
@@ -482,7 +486,6 @@ data class PracticeFeedback(
         gifUrl = null
     )
 }
-
 data class PracticeFeedback2(
     @SerializedName("status") val status: String?,
     @SerializedName("engagement") val engagementId: Int?,
@@ -498,6 +501,7 @@ data class PracticeFeedback2(
         grade = null
     )
 }
+
 
 open class DataBaseClass(
     @ColumnInfo
@@ -669,7 +673,6 @@ interface ChatDao {
                         question.imageList =
                             getImagesOfQuestion(questionId = question.questionId)
                     BASE_MESSAGE_TYPE.VI -> question.videoList =
-
                         getVideosOfQuestion(questionId = question.questionId)
                     BASE_MESSAGE_TYPE.AU -> question.audioList =
                         getAudiosOfQuestion(questionId = question.questionId)
@@ -704,7 +707,6 @@ interface ChatDao {
                         question.imageList =
                             getImagesOfQuestion(questionId = question.questionId)
                     BASE_MESSAGE_TYPE.VI -> question.videoList =
-
                         getVideosOfQuestion(questionId = question.questionId)
                     BASE_MESSAGE_TYPE.AU -> question.audioList =
                         getAudiosOfQuestion(questionId = question.questionId)

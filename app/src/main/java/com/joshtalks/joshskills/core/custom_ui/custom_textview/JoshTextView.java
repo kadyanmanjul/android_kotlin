@@ -11,8 +11,10 @@ import android.text.TextUtils;
 import android.text.style.StyleSpan;
 import android.util.AttributeSet;
 import android.view.View;
+
 import androidx.annotation.ColorInt;
 import androidx.appcompat.widget.AppCompatTextView;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -137,7 +139,7 @@ public class JoshTextView extends AppCompatTextView {
 
         for (AutoLinkMode anAutoLinkMode : autoLinkModes) {
             String regex = Utils.getRegexByAutoLinkMode(anAutoLinkMode, customRegex);
-            Pattern pattern = Pattern.compile(regex);
+            Pattern pattern = Pattern.compile(regex, Pattern.DOTALL);
             Matcher matcher = pattern.matcher(text);
 
             if (anAutoLinkMode == AutoLinkMode.MODE_PHONE) {

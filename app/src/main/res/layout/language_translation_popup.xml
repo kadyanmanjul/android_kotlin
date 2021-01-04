@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.circularreveal.cardview.CircularRevealCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:cardUseCompatPadding="true"
+    app:contentPadding="@dimen/_8sdp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txtEnglish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Play" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txtHindi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/_8sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toEndOf="@id/txtEnglish"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="खेल" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txtPhonetic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="@dimen/_4sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="@id/txtEnglish"
+            app:layout_constraintTop_toBottomOf="@id/txtEnglish"
+            tools:text="plei" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txtMeaningTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="@dimen/_4sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textColor="@color/gray_79"
+            app:layout_constraintStart_toStartOf="@id/txtPhonetic"
+            app:layout_constraintTop_toBottomOf="@id/txtPhonetic"
+            tools:text="Meaning" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txtMeaning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="@dimen/_2sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="@id/txtMeaningTitle"
+            app:layout_constraintTop_toBottomOf="@id/txtMeaningTitle"
+            tools:text="engage in activity for enjoyment and recreation rather than a serious or practical purpose." />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txtPronounce"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="@dimen/_4sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textColor="@color/gray_79"
+            app:layout_constraintStart_toStartOf="@id/txtMeaning"
+            app:layout_constraintTop_toBottomOf="@id/txtMeaning"
+            tools:text="How to pronounce:" />
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgSpeak"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_marginStart="@dimen/_24sdp"
+            android:background="@drawable/circle2"
+            android:backgroundTint="@color/colorPrimary"
+            android:padding="@dimen/_4sdp"
+            app:layout_constraintBottom_toBottomOf="@id/txtPronounce"
+            app:layout_constraintStart_toEndOf="@+id/txtPronounce"
+            app:layout_constraintTop_toTopOf="@id/txtPronounce"
+            app:srcCompat="@drawable/ic_rec_mic"
+            tools:text="How to pronounce:" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgSpeakSlow"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:background="@drawable/circle2"
+            android:backgroundTint="@color/colorPrimary"
+            android:padding="@dimen/_4sdp"
+            app:layout_constraintBottom_toBottomOf="@id/imgSpeak"
+            app:layout_constraintStart_toEndOf="@+id/imgSpeak"
+            app:layout_constraintTop_toTopOf="@id/imgSpeak"
+            app:srcCompat="@drawable/ic_rec_mic"
+            tools:text="How to pronounce:" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.circularreveal.cardview.CircularRevealCardView>

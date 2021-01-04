@@ -819,5 +819,10 @@
     <string name="did_not_answer_message">We did not find any user, please retry.</string>
     <string name="group_chat_tagline">Practice with other users and Improve your skill here</string>
     <string name="max_unread_count">99+</string>
+    <string name="reading_practice">Reading Practice</string>
+    <string name="reading_sub_title">Neeche diye gai lino ko padhe</string>
+    <string name="record_your_answer">Record your answer</string>
+    <string name="recording_start">Tap to record your answer</string>
+    <string name="recording_stop">Tap to stop recording&#8230;</string>
 
 </resources>

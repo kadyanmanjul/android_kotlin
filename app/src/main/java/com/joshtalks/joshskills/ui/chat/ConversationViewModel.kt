@@ -210,6 +210,12 @@ class ConversationViewModel(application: Application) :
                     chat.parentQuestionObject =
                         appDatabase.chatDao().getQuestionOnId(this.parent_id!!)
                 }
+                if (type == BASE_MESSAGE_TYPE.PR) {
+                    question.practiseEngagementV2 =
+                        AppObjectController.appDatabase.practiceEngagementDao()
+                            .getPractice(questionId)
+                }
+
                 if (assessmentId != null) {
                     question.vAssessmentCount = AppObjectController.appDatabase.assessmentDao()
                         .countOfAssessment(assessmentId)

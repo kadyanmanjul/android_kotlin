@@ -16,12 +16,14 @@ import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.util.AudioRecording
+import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.*
@@ -46,9 +48,10 @@ class PracticeViewModel(application: Application) :
     val practiceEngagementData: MutableLiveData<PracticeEngagement> = MutableLiveData()
     val assessmentData: MutableLiveData<ArrayList<AssessmentWithRelations>> = MutableLiveData()
     private var isRecordingStarted = false
+
+
     private val mAudioRecording: com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording =
         com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording()
-
 
     @Synchronized
     fun startRecordAudio(recordListener: OnAudioRecordListener?) {
@@ -94,6 +97,12 @@ class PracticeViewModel(application: Application) :
             return@let true
         }
         return false
+    }
+
+    @Synchronized
+    fun stopRecording(cancel: Boolean) {
+        mAudioRecording.stopRecording(cancel)
+        isRecordingStarted = false
     }
 
     fun stopRecording() {
@@ -207,8 +216,8 @@ class PracticeViewModel(application: Application) :
 
                 val resp = AppObjectController.chatNetworkService.getAudioFeedback(data)
                 if (resp.status == "completed" || resp.status == "error") {
-                    response.body()?.practiceFeedback =
-                        PracticeFeedback(resp.score, resp.grade, resp.text, resp.status)
+                    /*   response.body()?.practiseFeedback =
+                           PracticeFeedback(resp.score, resp.grade, resp.text, resp.status)*/
                     response.body()?.let {
                         list.add(it)
                         chatModel.question?.let {
@@ -268,7 +277,7 @@ class PracticeViewModel(application: Application) :
 
     fun getAssessmentData(chatModelList: ArrayList<ChatModel>?) {
         CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
-            val listOfAssessments:ArrayList<AssessmentWithRelations> = ArrayList()
+            val listOfAssessments: ArrayList<AssessmentWithRelations> = ArrayList()
             chatModelList?.forEach {
                 if (it.question?.type == BASE_MESSAGE_TYPE.QUIZ) {
                     it.question?.assessmentId?.let { assessentId ->
@@ -280,7 +289,7 @@ class PracticeViewModel(application: Application) :
                     }
                 }
             }
-            if (listOfAssessments.isNullOrEmpty().not()){
+            if (listOfAssessments.isNullOrEmpty().not()) {
                 assessmentData.postValue(listOfAssessments)
             } else {
                 assessmentData.postValue(ArrayList())
@@ -330,6 +339,26 @@ class PracticeViewModel(application: Application) :
         CoroutineScope(Dispatchers.IO).launch {
             AppObjectController.appDatabase.assessmentDao()
                 .insertAssessmentQuestion(assessmentQuestion)
+        }
+    }
+
+    fun submitReadingPractise(questionId: String, path: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val requestEngage = RequestEngage()
+            requestEngage.localPath = path
+            requestEngage.duration =
+                Utils.getDurationOfMedia(AppObjectController.joshApplication, path)?.toInt()
+            requestEngage.questionId = questionId
+            requestEngage.mentor = Mentor.getInstance().getId()
+            requestEngage.answerUrl = path
+            val insertedId =
+                AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
+                    PendingTaskModel(
+                        requestEngage,
+                        PendingTask.READING_PRACTICE
+                    )
+                )
+            FileUploadService.uploadSinglePendingTasks(insertedTaskLocalId = insertedId)
         }
     }
 

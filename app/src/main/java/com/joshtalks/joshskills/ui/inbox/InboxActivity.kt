@@ -9,6 +9,7 @@ import android.os.CountDownTimer
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
@@ -33,13 +34,18 @@ import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
-import com.joshtalks.joshskills.repository.local.eventbus.*
+import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.server.*
+import com.joshtalks.joshskills.repository.server.ProfileResponse
+import com.joshtalks.joshskills.repository.server.SearchLocality
+import com.joshtalks.joshskills.repository.server.UpdateUserLocality
+import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.SubscriptionData
@@ -53,6 +59,8 @@ import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
+import com.joshtalks.joshskills.ui.translation.LanguageTranslation
+import com.joshtalks.joshskills.ui.translation.RelativePopupWindow
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.karumi.dexter.Dexter
@@ -73,6 +81,7 @@ import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
@@ -120,8 +129,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         initNewUserTip()
         viewModel.getTotalWatchTime()
         //viewModel.getProfileData(Mentor.getInstance().getId())
-        //PointSnackbar.make(nested_scroll_view,Snackbar.LENGTH_INDEFINITE,"Updated successfully")?.show()
-        //showLeaderboardAchievement( OutrankedDataResponse(RankData(1,1),RankData(1,2)))
     }
 
     private fun initNewUserTip() {

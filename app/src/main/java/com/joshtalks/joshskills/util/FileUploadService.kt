@@ -176,7 +176,9 @@ class FileUploadService : Service() {
                 val resp = AppObjectController.chatNetworkService.submitPracticeAsync(requestEngage)
                 if (resp.isSuccessful && resp.body() != null) {
                     // update question status and engagement data here from response
-                    val engangementList = List(1) { resp.body()!! }
+                    val engangementList = List(1) {
+                        resp.body()!!
+                    }
                     val question = AppObjectController.appDatabase.chatDao()
                         .getQuestionOnId(pendingTaskModel.requestObject.questionId)
                     question?.let {
@@ -336,7 +338,10 @@ class FileUploadService : Service() {
             context.startService(intent)
         }
 
-        fun uploadSinglePendingTasks(context: Context, insertedTaskLocalId: Long) {
+        fun uploadSinglePendingTasks(
+            context: Context = AppObjectController.joshApplication,
+            insertedTaskLocalId: Long = 0
+        ) {
             val intent = Intent(context, FileUploadService::class.java)
             intent.action = START_UPLOAD
             intent.putExtra(NEW_TASK_MODEL, insertedTaskLocalId)
