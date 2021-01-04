@@ -7,11 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.custom_ui.blurdialog.BlurDialogFragment
 import com.joshtalks.joshskills.databinding.LanguageTranslationPopupBinding
 import com.joshtalks.joshskills.repository.server.translation.TranslationData
 import com.joshtalks.joshskills.ui.groupchat.uikit.ExoAudioPlayer2
@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 
 const val ARG_WORD = "word"
 
-class LanguageTranslationDialog : DialogFragment() {
+class LanguageTranslationDialog : BlurDialogFragment() {
     private var word: String? = null
     private lateinit var binding: LanguageTranslationPopupBinding
     private val wordDetailLiveData: MutableLiveData<TranslationData> = MutableLiveData()
@@ -35,7 +35,6 @@ class LanguageTranslationDialog : DialogFragment() {
             word = it.getString(ARG_WORD)
         }
     }
-
 
     override fun onStart() {
         super.onStart()
@@ -110,6 +109,26 @@ class LanguageTranslationDialog : DialogFragment() {
         wordDetailLiveData.value?.slowPronunciation?.let {
             exoAudioManager?.play(it, isPlaybackSpeed = true)
         }
+    }
+
+    override fun getDownScaleFactor(): Float {
+        return 4.0F
+    }
+
+    override fun getBlurRadius(): Int {
+        return 20
+    }
+
+    override fun isRenderScriptEnable(): Boolean {
+        return true
+    }
+
+    override fun isDebugEnable(): Boolean {
+        return true
+    }
+
+    override fun isActionBarBlurred(): Boolean {
+        return true
     }
 
     companion object {
