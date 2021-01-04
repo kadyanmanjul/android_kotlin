@@ -37,6 +37,7 @@ import com.joshtalks.joshskills.repository.server.points.PointsInfoResponse
 import com.joshtalks.joshskills.repository.server.reminder.DeleteReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
+import com.joshtalks.joshskills.repository.server.translation.WordDetailsResponse
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopicModel
 import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
@@ -217,5 +218,9 @@ interface CommonNetworkService {
     @PATCH("$DIR/reputation/award_mentor/")
     suspend fun patchAwardDetails(
         @Body params: HashMap<String, List<Int>>): Response<PointsInfoResponse>
+
+
+    @GET("$DIR/question/word-detail/")
+    suspend fun getWordDetail(@Query("word") word: String): WordDetailsResponse
 
 }
