@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.ui.groupchat.uikit.ExoAudioPlayer2
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 const val ARG_WORD = "word"
@@ -66,10 +67,12 @@ class LanguageTranslationDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         wordDetailLiveData.observe(this, {
+            binding.progressBar.visibility = View.GONE
             binding.txtEnglish.text = it.word
             binding.txtHindi.text = it.hinMeaning
             binding.txtPhonetic.text = it.hinTransilteration
             binding.txtMeaning.text = it.engMeaning[0].noun
+            binding.group.visibility = View.VISIBLE
         })
 
         word?.let {
@@ -82,6 +85,7 @@ class LanguageTranslationDialog : DialogFragment() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = AppObjectController.commonNetworkService.getWordDetail(word)
+                delay(400)
                 response.translationData[0].let {
                     wordDetailLiveData.postValue(it)
                 }

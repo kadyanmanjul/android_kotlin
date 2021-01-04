@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:wheel="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -32,7 +33,7 @@
             android:id="@+id/txtHindi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/_8sdp"
+            android:paddingHorizontal="@dimen/_12sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
             android:textColor="@color/black"
             app:layout_constraintStart_toEndOf="@id/txtEnglish"
@@ -117,12 +118,27 @@
             tools:text="How to pronounce:" />
 
         <androidx.constraintlayout.widget.Group
-            android:id="@+id/groupDemoVoiceNote"
+            android:id="@+id/group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="invisible"
             app:constraint_referenced_ids="txtEnglish,txtHindi,txtMeaning,txtMeaningTitle,txtPhonetic,txtPronounce,imgSpeak,imgSpeakSlow"
             tools:visibility="visible" />
 
+        <com.pnikosis.materialishprogress.ProgressWheel
+            android:id="@+id/progress_bar"
+            android:layout_width="@dimen/_48sdp"
+            android:layout_height="@dimen/_48sdp"
+            android:layout_gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:matProg_spinSpeed="0.25"
+            wheel:matProg_barColor="@color/button_color"
+            wheel:matProg_fillRadius="true"
+            wheel:matProg_linearProgress="false"
+            wheel:matProg_progressIndeterminate="true" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
