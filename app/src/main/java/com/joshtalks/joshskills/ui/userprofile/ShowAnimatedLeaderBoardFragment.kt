@@ -250,7 +250,7 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
             0f, (binding.recyclerView.left.toFloat().minus(binding.userItem.left.toFloat())),
             0f, (binding.recyclerView.top.toFloat().minus(binding.userItem.top.toFloat()))
         )
-        animation.setDuration(1000)
+        animation.setDuration(400)
         animation.setFillAfter(false)
         animation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(p0: Animation?) {

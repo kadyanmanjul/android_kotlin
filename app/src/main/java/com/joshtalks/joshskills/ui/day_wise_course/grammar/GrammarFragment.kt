@@ -311,9 +311,10 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ eventBus ->
-                                    if (eventBus.progress > 3000 && this.status == QUESTION_STATUS.NA) {
+                                    if (eventBus.progress > 3000 && this.status != QUESTION_STATUS.AT) {
                                         updateVideoQuestionStatus(this)
-                                        this.status = QUESTION_STATUS.IP
+                                        this.status = QUESTION_STATUS.AT
+                                        this.isVideoWatchTimeSend=true
                                     }
                                     val percentVideoWatched =
                                         binding.videoPlayer.player?.duration?.let {
@@ -322,9 +323,9 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                                             ).times(100).toInt()
                                         } ?: -1
 
-                                    if (percentVideoWatched!=-1 && percentVideoWatched>=70 && this.status == QUESTION_STATUS.IP){
+                                    if (percentVideoWatched!=-1 && percentVideoWatched>=70 && this.isVideoWatchTimeSend){
                                         updateVideoQuestionStatus(this, true)
-                                        this.status = QUESTION_STATUS.AT
+                                        this.isVideoWatchTimeSend=false
                                     }
 
                                     if (eventBus.progress + 1000 >= this.videoList?.get(0)?.duration ?: 0) {
@@ -532,10 +533,17 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
             selectedChoice.userSelectedOrder = 1
 
             viewModel.saveAssessmentQuestion(question)
+            val correctQuestionList= ArrayList<Int>()
+            assessmentQuestions.forEach { questionWithRealtion->
+                if (questionWithRealtion.question.isAttempted&&questionWithRealtion.question.status==QuestionStatus.CORRECT){
+                    correctQuestionList.add(questionWithRealtion.question.remoteId)
+                }
+            }
             if (currentQuizQuestion == assessmentQuestions.size - 1)
                 activityCallback?.onQuestionStatusUpdate(
                     QUESTION_STATUS.AT,
-                    quizQuestion?.questionId?.toIntOrNull() ?: 0
+                    quizQuestion?.questionId?.toIntOrNull() ?: 0,
+                    quizCorrectQuestionIds = correctQuestionList
                 )
 
             binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.tag as Int)
@@ -573,7 +581,6 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
     }
 
     fun onGrammarContinueClick() {
-
         activityCallback?.onNextTabCall(1)
     }
 
