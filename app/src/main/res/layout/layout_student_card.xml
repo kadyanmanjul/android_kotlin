@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view_fl"
+    android:layout_width="@dimen/_200sdp"
+    android:layout_height="@dimen/_221sdp"
+    android:layout_marginTop="@dimen/_2sdp"
+    android:layout_marginBottom="@dimen/_2sdp"
+    android:background="@drawable/ic_student_card_bg"
+    android:paddingEnd="@dimen/_7sdp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/decorator"
+            android:layout_width="@dimen/_180sdp"
+            android:layout_height="@dimen/_48sdp"
+            android:layout_marginTop="@dimen/_17sdp"
+            android:background="@drawable/ic_student_card_rectangle_text_bg"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_congrats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_7sdp"
+            android:gravity="start"
+            android:lineHeight="@dimen/_9ssp"
+            android:textAllCaps="true"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@id/tv_student_of"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/decorator"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="@string/congratulations" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_student_of"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_7sdp"
+            android:gravity="start"
+            android:textAllCaps="true"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@id/decorator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/tv_congrats"
+            app:layout_constraintTop_toBottomOf="@id/tv_congrats"
+            tools:text="Student of the day" />
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_pic"
+            android:layout_width="@dimen/_72sdp"
+            android:layout_height="@dimen/_72sdp"
+            android:layout_marginTop="@dimen/_18sdp"
+            android:gravity="center_vertical|start"
+            app:layout_constraintEnd_toStartOf="@+id/iv_award"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_student_of"
+            tools:src="@color/checkmark_blue"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_award"
+            android:layout_width="@dimen/_56sdp"
+            android:layout_height="@dimen/_72sdp"
+            android:layout_marginStart="@dimen/_19sdp"
+            android:gravity="center_vertical|start"
+            app:layout_constraintBottom_toBottomOf="@id/user_pic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/user_pic"
+            app:layout_constraintTop_toTopOf="@id/user_pic"
+            tools:src="@color/checkmark_blue"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/student_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_7sdp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:paddingHorizontal="@dimen/_1sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/user_pic"
+            tools:text="Vedant Maheshwari" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:layout_marginStart="@dimen/_7sdp"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/student_name" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/total_points"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_7sdp"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:paddingHorizontal="@dimen/_1sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            tools:text="Total points - 9530" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/user_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_7sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/total_points"
+            tools:text="Vedant won this award by earning 470 points through his hardwork yesterday" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
