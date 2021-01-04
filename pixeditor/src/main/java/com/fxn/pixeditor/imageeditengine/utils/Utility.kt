@@ -65,8 +65,8 @@ object Utility {
 
     fun dpToPx(context: Context, dp: Int): Int {
         val density = context.resources
-            .displayMetrics
-            .density
+                .displayMetrics
+                .density
         return Math.round(dp.toFloat() * density)
     }
 
@@ -88,13 +88,13 @@ object Utility {
 
     fun getCacheFilePath(context: Context): String {
         return File(
-            Environment.getExternalStorageDirectory(),
-            "edited_" + System.currentTimeMillis() + ".jpg"
+                Environment.getExternalStorageDirectory(),
+                "edited_" + System.currentTimeMillis() + ".jpg"
         ).absolutePath
     }
 
     fun calculateInSampleSize(
-        options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int
+            options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int
     ): Int {
         // Raw height and width of image
         val height = options.outHeight
@@ -117,8 +117,8 @@ object Utility {
     }
 
     fun decodeBitmap(
-        imagePath: String,
-        reqWidth: Int, reqHeight: Int
+            imagePath: String,
+            reqWidth: Int, reqHeight: Int
     ): Bitmap {
 
         // First decode with inJustDecodeBounds=true to check dimensions
@@ -145,15 +145,15 @@ object Utility {
          window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
          // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
          window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)*/
-        // finally change the color
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.statusBarColor = Color.BLACK
-        }
-        try {
-            pixEditor.supportActionBar!!.hide()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+            // finally change the color
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                window.statusBarColor = Color.BLACK
+            }
+            try {
+                pixEditor.supportActionBar!!.hide()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
     }
@@ -167,5 +167,3 @@ object Utility {
             decorView.systemUiVisibility = uiOptions
         }
     }
-
-}

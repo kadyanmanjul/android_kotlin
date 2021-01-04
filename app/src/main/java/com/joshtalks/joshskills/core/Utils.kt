@@ -20,7 +20,6 @@ import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
-import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.PictureDrawable
 import android.graphics.drawable.VectorDrawable
@@ -69,6 +68,7 @@ import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.custom_ui.CustomTabHelper
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
+import com.joshtalks.joshskills.core.custom_ui.custom_textview.TouchableSpan
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeStyle
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.repository.local.model.User
@@ -128,8 +128,8 @@ object Utils {
             formattedNumber = formatter.format(value)
             formattedNumber += suffix[power / 3]
             val output = if (formattedNumber.length > 4) formattedNumber.replace(
-                "\\.[0-9]+".toRegex(),
-                ""
+                    "\\.[0-9]+".toRegex(),
+                    ""
             ) else formattedNumber
 
             return output.trim { it <= ' ' }
@@ -151,8 +151,8 @@ object Utils {
         if (PrefManager.hasKey("deviceId"))
             return PrefManager.getStringValue("deviceId")
         val deviceId = Settings.Secure.getString(
-            AppObjectController.joshApplication.contentResolver,
-            Settings.Secure.ANDROID_ID
+                AppObjectController.joshApplication.contentResolver,
+                Settings.Secure.ANDROID_ID
         )
         PrefManager.put("deviceId", deviceId)
 
@@ -1087,3 +1087,10 @@ fun Intent.serviceStart() {
     }
 }
 
+fun getTouchableSpannable(string: String, currentColor: Int, defaultSelectedColor: Int, isUnderLineEnabled: Boolean, clickListener: OnWordClick? = null): TouchableSpan {
+    return object : TouchableSpan(currentColor, defaultSelectedColor, isUnderLineEnabled) {
+        override fun onClick(widget: View) {
+            clickListener?.clickedWord(string)
+        }
+    }
+}

@@ -8,14 +8,14 @@ import android.text.style.ClickableSpan;
  * Created by Chatikyan on 26.09.2016-19:10.
  */
 
-abstract class TouchableSpan extends ClickableSpan {
+public abstract class TouchableSpan extends ClickableSpan {
 
     private boolean isPressed;
-    private int normalTextColor;
-    private int pressedTextColor;
-    private boolean isUnderLineEnabled;
+    private final int normalTextColor;
+    private final int pressedTextColor;
+    private final boolean isUnderLineEnabled;
 
-    TouchableSpan(int normalTextColor, int pressedTextColor, boolean isUnderLineEnabled) {
+    public TouchableSpan(int normalTextColor, int pressedTextColor, boolean isUnderLineEnabled) {
         this.normalTextColor = normalTextColor;
         this.pressedTextColor = pressedTextColor;
         this.isUnderLineEnabled = isUnderLineEnabled;
