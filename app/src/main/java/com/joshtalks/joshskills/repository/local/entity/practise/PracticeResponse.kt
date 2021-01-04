@@ -5,7 +5,7 @@ import androidx.room.*
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.repository.local.ConvectorForPhonetic
+import com.joshtalks.joshskills.repository.local.ConvectorForPhoneticClass
 import com.joshtalks.joshskills.repository.local.ConvectorForWrongWord
 import com.joshtalks.joshskills.repository.local.ListConverters
 import com.joshtalks.joshskills.repository.local.entity.Question
@@ -55,6 +55,7 @@ data class PracticeEngagementV2(
     @ColumnInfo()
     @SerializedName("text")
     val text: String? = EMPTY,
+
     @ColumnInfo()
     @Expose var localPath: String? = EMPTY,
 
@@ -90,36 +91,44 @@ data class PracticeEngagementV2(
 @Parcelize
 data class PractiseFeedback(
     @SerializedName("id")
-    val feedbackId: Int = 0,
-    @SerializedName("created")
-    val created: Date = Date(),
+    val feedbackId: Int? = 0,
     @SerializedName("feedback_title")
-    val feedbackTitle: String = EMPTY,
+    val feedbackTitle: String? = EMPTY,
     @SerializedName("feedback_text")
-    val feedbackText: String = EMPTY,
+    val feedbackText: String? = EMPTY,
     @SerializedName("student_audio_url")
-    val studentAudioUrl: String = EMPTY,
+    val studentAudioUrl: String? = EMPTY,
     @SerializedName("teacher_audio_url")
-    val teacherAudioUrl: String = EMPTY,
+    val teacherAudioUrl: String? = EMPTY,
 
     @Embedded(prefix = "pro_")
     @SerializedName("pronunciation")
-    val pronunciation: Pronunciation = Pronunciation(),
+    val pronunciation: Pronunciation? = null,
 
     @Embedded(prefix = "rec_")
     @SerializedName("recommendation")
-    val recommendation: Recommendation = Recommendation(),
+    val recommendation: Recommendation? = null,
 
     @Embedded(prefix = "spd_")
     @SerializedName("speed")
-    val speed: Speed = Speed(),
+    val speed: Speed? = null,
+
 
     @TypeConverters(
         ConvectorForWrongWord::class
     )
-    @ColumnInfo
+    @ColumnInfo(name = "wrong_word_list")
+
     @SerializedName("wrong_word_list")
-    val pointsList: List<WrongWord> = emptyList(),
+    val pointsList: List<WrongWord>? = null,
+
+    @SerializedName("created")
+    val created: Date = Date(),
+
+    @ColumnInfo
+    @SerializedName("error")
+    val error: Boolean = false
+
 ) : Parcelable {
     constructor() : this(
         feedbackId = 0,
@@ -131,7 +140,8 @@ data class PractiseFeedback(
         pronunciation = Pronunciation(),
         recommendation = Recommendation(),
         speed = Speed(),
-        pointsList = arrayListOf(),
+        pointsList = emptyList(),
+        error = false
     )
 }
 
@@ -141,13 +151,22 @@ data class Pronunciation(
     val text: String = EMPTY,
     @SerializedName("description")
     val description: String = EMPTY
-) : Parcelable
+) : Parcelable {
+    constructor() : this(
+        text = EMPTY,
+        description = EMPTY
+    )
+}
 
 @Parcelize
 data class Recommendation(
     @SerializedName("text")
     val text: String = EMPTY
-) : Parcelable
+) : Parcelable {
+    constructor() : this(
+        text = EMPTY,
+    )
+}
 
 @Parcelize
 data class Speed(
@@ -155,16 +174,24 @@ data class Speed(
     val text: String = EMPTY,
     @SerializedName("description")
     val description: String = EMPTY
-) : Parcelable
+) : Parcelable {
+    constructor() : this(
+        text = EMPTY,
+        description = EMPTY
+    )
+}
 
 @Parcelize
 data class WrongWord(
+    @SerializedName("word")
+    val word: String = EMPTY,
+
     @TypeConverters(
-        ConvectorForPhonetic::class
+        ConvectorForPhoneticClass::class
     )
-    @ColumnInfo()
     @SerializedName("phones")
-    val phones: List<Phonetic> = emptyList(),
+    val phones: List<Phonetic>? = emptyList(),
+
     @SerializedName("student_start_time")
     val studentStartTime: Int = 0,
     @SerializedName("student_end_time")
@@ -173,11 +200,9 @@ data class WrongWord(
     val teacherStartTime: Int = 0,
     @SerializedName("teacher_end_time")
     val teacherEndTime: Int = 0,
-    @SerializedName("word")
-    val word: String = EMPTY
-) : Parcelable {
+
+    ) : Parcelable {
     constructor() : this(
-        phones = emptyList(),
         studentStartTime = 0,
         studentEndTime = 0,
         teacherStartTime = 0,
@@ -192,8 +217,12 @@ data class Phonetic(
     val phone: String = EMPTY,
     @SerializedName("quality")
     val quality: String = EMPTY
-) : Parcelable
-
+) : Parcelable {
+    constructor() : this(
+        phone = EMPTY,
+        quality = EMPTY
+    )
+}
 
 @Dao
 interface PracticeEngagementDao {

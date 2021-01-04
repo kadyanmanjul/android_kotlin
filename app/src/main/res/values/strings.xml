@@ -825,4 +825,6 @@
     <string name="recording_start">Tap to record your answer</string>
     <string name="recording_stop">Tap to stop recording&#8230;</string>
 
+    <string name="pro_mis_word">Pronunciation and missing words</string>
+    <string name="speed">Speed</string>
 </resources>

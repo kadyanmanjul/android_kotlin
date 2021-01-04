@@ -6,14 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.repository.local.entity.PdfType
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
-import com.joshtalks.joshskills.repository.local.entity.Question
-import com.joshtalks.joshskills.repository.local.entity.VideoType
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
@@ -95,6 +88,11 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
                         if (this.parent_id.isNullOrEmpty().not()) {
                             chat.parentQuestionObject =
                                 appDatabase.chatDao().getQuestionOnId(this.parent_id!!)
+                        }
+                        if (type == BASE_MESSAGE_TYPE.PR) {
+                            question.practiseEngagementV2 =
+                                AppObjectController.appDatabase.practiceEngagementDao()
+                                    .getPractice(questionId)
                         }
                         if (assessmentId != null) {
                             question.vAssessmentCount =

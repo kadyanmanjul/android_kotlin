@@ -32,9 +32,9 @@ data class TranslationData(
 
 data class EngMeaning(
     @SerializedName("Adjective")
-    val adjective: String,
+    val adjective: String? = null,
     @SerializedName("Noun")
-    val noun: String,
+    val noun: String? = null,
     @SerializedName("Verb")
-    val verb: String
+    val verb: String? = null
 )

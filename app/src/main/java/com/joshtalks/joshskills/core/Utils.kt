@@ -33,6 +33,8 @@ import android.os.Build
 import android.os.Environment
 import android.provider.Browser
 import android.provider.Settings
+import android.text.Spannable
+import android.text.SpannableString
 import android.text.format.DateUtils
 import android.util.Log
 import android.util.TypedValue
@@ -83,11 +85,7 @@ import io.reactivex.schedulers.Schedulers
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import okhttp3.RequestBody.Companion.toRequestBody
 import timber.log.Timber
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
+import java.io.*
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.URL
@@ -95,10 +93,9 @@ import java.nio.charset.Charset
 import java.text.DateFormat
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
+import java.util.*
 import java.util.concurrent.TimeUnit
+import java.util.regex.Pattern
 import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -166,7 +163,7 @@ object Utils {
 
     fun messageTimeConversion(old: Date): String {
         return CHAT_TIME_FORMATTER.format(old.time).toLowerCase(Locale.getDefault())
-            .replace("AM", "am").replace("PM", "pm")
+                .replace("AM", "am").replace("PM", "pm")
 
     }
 
@@ -239,7 +236,7 @@ object Utils {
 
     fun getPathFromUri(path: String): String {
         return Environment.getExternalStorageDirectory().toString().plus("/")
-            .plus(path.split(Regex("/"), 3)[2])
+                .plus(path.split(Regex("/"), 3)[2])
 
     }
 
@@ -258,24 +255,24 @@ object Utils {
 
     fun createCircleBitmap(bitmapimg: Bitmap): Bitmap {
         val output = Bitmap.createBitmap(
-            bitmapimg.width,
-            bitmapimg.height, Bitmap.Config.ARGB_8888
+                bitmapimg.width,
+                bitmapimg.height, Bitmap.Config.ARGB_8888
         )
         val canvas = Canvas(output)
 
         val color = -0xbdbdbe
         val paint = Paint()
         val rect = Rect(
-            0, 0, bitmapimg.width,
-            bitmapimg.height
+                0, 0, bitmapimg.width,
+                bitmapimg.height
         )
 
         paint.isAntiAlias = true
         canvas.drawARGB(0, 0, 0, 0)
         paint.color = color
         canvas.drawCircle(
-            (bitmapimg.width / 2).toFloat(),
-            (bitmapimg.height / 2).toFloat(), (bitmapimg.width / 2).toFloat(), paint
+                (bitmapimg.width / 2).toFloat(),
+                (bitmapimg.height / 2).toFloat(), (bitmapimg.width / 2).toFloat(), paint
         )
         paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
         canvas.drawBitmap(bitmapimg, rect, rect, paint)
@@ -289,9 +286,9 @@ object Utils {
         fOut = FileOutputStream(file)
 
         bitmap.compress(
-            Bitmap.CompressFormat.JPEG,
-            85,
-            fOut
+                Bitmap.CompressFormat.JPEG,
+                85,
+                fOut
         )
         fOut.flush()
         fOut.close()
@@ -309,8 +306,8 @@ object Utils {
 
     fun dpToPx(context: Context, dp: Float): Int {
         return (TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, dp,
-            context.resources.displayMetrics
+                TypedValue.COMPLEX_UNIT_DIP, dp,
+                context.resources.displayMetrics
         ) + 0.5f).roundToInt()
     }
 
@@ -343,7 +340,7 @@ object Utils {
 
     fun openUri(context: Context, uri: Uri) {
         val intent =
-            Intent(ACTION_VIEW, uri)
+                Intent(ACTION_VIEW, uri)
         intent.putExtra(Browser.EXTRA_APPLICATION_ID, context.packageName)
         try {
             context.startActivity(intent)
@@ -360,10 +357,10 @@ object Utils {
         }
         val builder = CustomTabsIntent.Builder()
         builder.setToolbarColor(
-            ContextCompat.getColor(
-                AppObjectController.joshApplication,
-                R.color.colorPrimary
-            )
+                ContextCompat.getColor(
+                        AppObjectController.joshApplication,
+                        R.color.colorPrimary
+                )
         )
         builder.setShowTitle(true)
         builder.setExitAnimations(activity, android.R.anim.fade_in, android.R.anim.fade_out)
@@ -385,7 +382,7 @@ object Utils {
 
     fun isInternetAvailable(): Boolean {
         val connectivityManager =
-            AppObjectController.joshApplication.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                AppObjectController.joshApplication.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val nw = connectivityManager.activeNetwork ?: return false
             val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
@@ -419,8 +416,8 @@ object Utils {
                 false
             }
         }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
     }
 
 
@@ -431,9 +428,9 @@ object Utils {
             return (drawable).bitmap
         } else if (drawable is VectorDrawableCompat || drawable is VectorDrawable) {
             val bitmap = Bitmap.createBitmap(
-                drawable.intrinsicWidth,
-                drawable.intrinsicHeight,
-                Bitmap.Config.ARGB_8888
+                    drawable.intrinsicWidth,
+                    drawable.intrinsicHeight,
+                    Bitmap.Config.ARGB_8888
             )
             val canvas = Canvas(bitmap)
             drawable.setBounds(0, 0, canvas.width, canvas.height)
@@ -454,24 +451,24 @@ object Utils {
             }
             val builder = CustomTabsIntent.Builder()
             builder.setToolbarColor(
-                ContextCompat.getColor(
-                    AppObjectController.joshApplication,
-                    R.color.colorPrimary
-                )
+                    ContextCompat.getColor(
+                            AppObjectController.joshApplication,
+                            R.color.colorPrimary
+                    )
             )
             builder.setShowTitle(true)
             val actionIntent = Intent(Intent.ACTION_DIAL).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             val phoneNumber =
-                AppObjectController.getFirebaseRemoteConfig().getString("helpline_number")
+                    AppObjectController.getFirebaseRemoteConfig().getString("helpline_number")
             actionIntent.data = Uri.parse("tel:$phoneNumber")
 
             val pi =
-                PendingIntent.getActivity(activityContext, 0, actionIntent, 0)
+                    PendingIntent.getActivity(activityContext, 0, actionIntent, 0)
             val icon = getBitmapFromDrawable(
-                AppObjectController.joshApplication,
-                R.drawable.ic_local_phone
+                    AppObjectController.joshApplication,
+                    R.drawable.ic_local_phone
             )
             builder.setActionButton(icon, "Call helpline", pi, true)
 
@@ -488,8 +485,8 @@ object Utils {
 
             val customTabsIntent = builder.build()
             com.joshtalks.joshskills.core.chrome.CustomTabsHelper.addKeepAliveExtra(
-                activityContext,
-                customTabsIntent.intent
+                    activityContext,
+                    customTabsIntent.intent
             )
             customTabsIntent.launchUrl(activityContext, Uri.parse(updateUrl))
         } catch (ex: Exception) {
@@ -1087,10 +1084,49 @@ fun Intent.serviceStart() {
     }
 }
 
-fun getTouchableSpannable(string: String, currentColor: Int, defaultSelectedColor: Int, isUnderLineEnabled: Boolean, clickListener: OnWordClick? = null): TouchableSpan {
+fun getTouchableSpannable(
+    string: String,
+    currentColor: Int,
+    defaultSelectedColor: Int,
+    isUnderLineEnabled: Boolean,
+    clickListener: OnWordClick? = null
+): TouchableSpan {
     return object : TouchableSpan(currentColor, defaultSelectedColor, isUnderLineEnabled) {
         override fun onClick(widget: View) {
             clickListener?.clickedWord(string)
         }
     }
+}
+
+fun String.getSpannableString(
+    separatorRegex: String,
+    startSeparator: String,
+    endSeparator: String,
+    selectedColor: Int = Color.LTGRAY,
+    defaultSelectedColor: Int = Color.BLUE,
+    clickListener: OnWordClick? = null
+): SpannableString {
+    var sourString = this
+    val pattern: Pattern = Pattern.compile(separatorRegex)
+    val splitted = ArrayList<String>()
+    val matcher = pattern.matcher(sourString)
+    while (matcher.find()) {
+        splitted.add(matcher.group())
+    }
+
+    sourString = sourString.replace(startSeparator, EMPTY).replace(endSeparator, EMPTY)
+    val generatedSpanString = SpannableString(sourString)
+
+    splitted.forEach { s ->
+        val word = s.removePrefix(startSeparator).removeSuffix(endSeparator)
+        val index = sourString.indexOf(word)
+        generatedSpanString.setSpan(
+            getTouchableSpannable(
+                s.removePrefix("<a>").removeSuffix("</a>"), selectedColor,
+                defaultSelectedColor, true, clickListener
+            ), index, index + word.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+    }
+    return generatedSpanString
 }
