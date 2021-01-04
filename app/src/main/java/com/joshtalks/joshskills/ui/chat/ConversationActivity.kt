@@ -676,7 +676,15 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         }
 
         conversationBinding.leaderboardBtnClose.setOnClickListener {
-            conversationBinding.userPointContainer.visibility = GONE
+            //conversationBinding.userPointContainer.visibility = GONE
+            conversationBinding.userPointContainer.animate()
+                .alpha(0.0f)
+                .setDuration(700)
+                .translationX(conversationBinding.userPointContainer.width.div(2).times(0.9).toFloat())
+                .translationY(-conversationBinding.userPointContainer.height.toFloat())
+                .scaleX(0.0f)
+                .scaleY(0.0f)
+
         }
 
         conversationBinding.leaderboardTxt.setOnClickListener {
