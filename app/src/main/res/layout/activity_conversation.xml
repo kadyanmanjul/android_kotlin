@@ -123,7 +123,6 @@
             </RelativeLayout>
 
         </com.google.android.material.appbar.MaterialToolbar>
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -165,74 +164,6 @@
                 app:elevation="@dimen/_4sdp"
                 app:srcCompat="@drawable/ic_arrow_down"
                 tools:visibility="visible" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/user_point_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:visibility="gone"
-                tools:visibility="visible"
-                android:backgroundTint="@color/white">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/points"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/_5sdp"
-                    android:background="@drawable/rect_default_white"
-                    android:backgroundTint="#F0F7FF"
-                    android:elevation="@dimen/_8sdp"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:gravity="center"
-                    android:paddingVertical="@dimen/_6sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
-                    android:textColor="@color/black"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/leaderboard_btn_Close"
-                    app:layout_constraintHorizontal_bias="0.1"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.38"
-                    android:text="0 Points" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/leaderboard_txt"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/_5sdp"
-                    android:background="@drawable/rect_default_white"
-                    android:backgroundTint="#F0F7FF"
-                    android:elevation="@dimen/_8sdp"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:gravity="center"
-                    android:paddingVertical="@dimen/_6sdp"
-                    android:text="@string/leaderboard"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
-                    android:textColor="@color/black"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/leaderboard_btn_Close"
-                    app:layout_constraintHorizontal_bias="0.9"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.38" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/leaderboard_btn_Close"
-                    android:layout_width="@dimen/_24sdp"
-                    android:layout_height="@dimen/_24sdp"
-                    android:layout_marginEnd="@dimen/_6sdp"
-                    android:padding="@dimen/_4sdp"
-                    android:tint="@color/grey_68"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_cross" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgGroupChat"
@@ -428,6 +359,88 @@
                 app:srcCompat="@drawable/ic_send" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <FrameLayout
+            android:elevation="@dimen/_6sdp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/user_point_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_new_button_bg"
+                android:layout_marginTop="@dimen/_50sdp"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:backgroundTint="@color/white">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/points"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_5sdp"
+                    android:elevation="@dimen/_8sdp"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:paddingVertical="@dimen/_6sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/leaderboard_btn_Close"
+                    app:layout_constraintHorizontal_bias="0.1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.38"
+                    android:text="0 Points" />
+
+                <View
+                    android:layout_width="@dimen/_2sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:background="#EAE7E7"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/leaderboard_txt"
+                    app:layout_constraintStart_toEndOf="@id/points"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/leaderboard_txt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_5sdp"
+                    android:elevation="@dimen/_8sdp"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:paddingVertical="@dimen/_6sdp"
+                    android:text="@string/leaderboard"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/leaderboard_btn_Close"
+                    app:layout_constraintHorizontal_bias="0.93"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.38" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/leaderboard_btn_Close"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_marginEnd="@dimen/_6sdp"
+                    android:padding="@dimen/_2sdp"
+                    android:tint="@color/grey_68"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_cross" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </FrameLayout>
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/overlay_layout"

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.TranslateAnimation
+import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
@@ -142,7 +143,7 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
 
 
         it.awardUrl?.let { it1 -> binding.image.setImage(it1) }
-        binding.titleTv.text = it.title
+        binding.titleTv.text = HtmlCompat.fromHtml(it.title.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
         binding.rankTv.text = "Current rank : ${it.currentMentor?.ranking}"
         previousRank = outrankData?.old?.rank!!
 
