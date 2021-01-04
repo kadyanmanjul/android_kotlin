@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentShowNewLeaderboardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
+import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.OutrankedDataResponse
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardItemViewHolder
 import kotlinx.coroutines.CoroutineScope
@@ -42,12 +43,13 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
     private var previousRank: Int = 0
     private var position: Int = 0
     private var startRank: Int = 0
-
     private var startIndexRank: Int = 0
     private var newCardIndex: Int = 0
     private var oldRankIndex: Int = -1
     private var currentRankIndex: Int = 0
     private var currentRank: Int = 0
+    private var currentMentor: LeaderboardMentor? = null
+    private var addingMentorIndex: Int = -1
     private var animatePosition = false
     private var isNewCardAdded = false
 
@@ -110,6 +112,21 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
 
     }
 
+    val listener = object : RecyclerView.OnItemTouchListener {
+        override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+            return true
+        }
+
+        override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
+
+        }
+
+        override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+
+        }
+
+    }
+
     private fun initView(it: AnimatedLeaderBoardResponse) {
 
         linearLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
@@ -126,47 +143,39 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
         binding.recyclerView.builder.setHasFixedSize(true)
             .setLayoutManager(linearLayoutManager)
 
-        binding.recyclerView.addOnItemTouchListener(object :RecyclerView.OnItemTouchListener{
-            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-                return true
-            }
-
-            override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
-
-            }
-
-            override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
-
-            }
-
-        })
-
+        binding.recyclerView.addOnItemTouchListener(listener)
 
         it.awardUrl?.let { it1 -> binding.image.setImage(it1) }
-        binding.titleTv.text = HtmlCompat.fromHtml(it.title.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        binding.titleTv.text =
+            HtmlCompat.fromHtml(it.title.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
         binding.rankTv.text = "Current rank : ${it.currentMentor?.ranking}"
         previousRank = outrankData?.old?.rank!!
 
 
         binding.rank.text = outrankData?.old?.rank.toString()
         binding.userPic.post {
-            binding.userPic.setUserImageOrInitials(it.currentMentor?.photoUrl, it.currentMentor?.name!!)
+            binding.userPic.setUserImageOrInitials(
+                it.currentMentor?.photoUrl,
+                it.currentMentor?.name!!
+            )
         }
         binding.name.text = it.currentMentor?.name
         binding.points.text = it.currentMentor?.points.toString()
         binding.recyclerView.isNestedScrollingEnabled = false
 
-        it.currentMentor?.let { current_mentor ->
-            currentRank = it.currentMentor.ranking
+        it.aboveMentorList?.forEach { current_mentor ->
+            addingMentorIndex = 1
             binding.recyclerView.addView(
                 LeaderBoardItemViewHolder(
                     current_mentor,
                     requireContext(),
-                    true,
-                    false,
-                    true
                 )
             )
+        }
+
+        it.currentMentor?.let { current_mentor ->
+            this.currentMentor = current_mentor
+            currentRank = it.currentMentor.ranking
         }
 
         it.leaderBoardMentorList?.forEachIndexed { index, item ->
@@ -186,7 +195,6 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
             )
         }
 
-
         if (oldRankIndex == -1) {
             position = binding.recyclerView.adapter?.itemCount?.minus(1)!!
             animatePosition = true
@@ -200,7 +208,6 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
             animatePosition = true
         }
         binding.recyclerView.scrollToPosition(position)
-
 
         CoroutineScope(Dispatchers.Main).launch {
             delay(1000)
@@ -246,30 +253,92 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
     }
 
     private fun animateCard() {
-        val animation = TranslateAnimation(
-            0f, (binding.recyclerView.left.toFloat().minus(binding.userItem.left.toFloat())),
-            0f, (binding.recyclerView.top.toFloat().minus(binding.userItem.top.toFloat()))
-        )
-        animation.setDuration(400)
-        animation.setFillAfter(false)
-        animation.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(p0: Animation?) {
-                binding.rank.text = currentRank.plus(1).toString()
-            }
+        when (addingMentorIndex) {
+            0 -> {
+                val animation = TranslateAnimation(
+                    0f,
+                    (binding.recyclerView.left.toFloat().minus(binding.userItem.left.toFloat())),
+                    0f,
+                    (binding.recyclerView.top.toFloat().minus(binding.userItem.top.toFloat()))
+                )
+                animation.setDuration(400)
+                animation.setFillAfter(false)
+                animation.setAnimationListener(object : Animation.AnimationListener {
+                    override fun onAnimationStart(p0: Animation?) {
+                        binding.rank.text = currentRank.plus(1).toString()
+                    }
 
-            override fun onAnimationEnd(p0: Animation?) {
-                if (animatePosition)
-                    (binding.recyclerView.getViewResolverAtPosition(0) as LeaderBoardItemViewHolder).showCurrentUserItem()
-                binding.userItem.visibility = View.GONE
-                if (isNewCardAdded) {
-                    binding.recyclerView.removeView(newCardIndex)
+                    override fun onAnimationEnd(p0: Animation?) {
+                        if (animatePosition)
+                            (binding.recyclerView.getViewResolverAtPosition(0) as LeaderBoardItemViewHolder).showCurrentUserItem()
+                        binding.userItem.visibility = View.GONE
+                        if (isNewCardAdded) {
+                            binding.recyclerView.removeView(newCardIndex)
+                        }
+                    }
+
+                    override fun onAnimationRepeat(p0: Animation?) {}
+
+                })
+                binding.userItem.startAnimation(animation)
+            }
+            1 -> {
+                val animation = TranslateAnimation(
+                    0f,
+                    (binding.recyclerView.left.toFloat().minus(binding.userItem.left.toFloat())),
+                    0f,
+                    (binding.recyclerView.top.toFloat().minus(binding.userPic.bottom.toFloat()))
+
+                )
+                animation.setDuration(400)
+                animation.setFillAfter(false)
+                animation.setAnimationListener(object : Animation.AnimationListener {
+                    override fun onAnimationStart(p0: Animation?) {
+                        binding.rank.text = currentRank.plus(1).toString()
+                    }
+
+                    override fun onAnimationEnd(p0: Animation?) {
+                        if (animatePosition) {
+                            binding.recyclerView.addView(1,
+                                currentMentor?.let {
+                                    LeaderBoardItemViewHolder(
+                                        it,
+                                        requireContext(),
+                                        true,
+                                    )
+                                }
+                            )
+                            binding.recyclerView.scrollToPosition(0)
+                            binding.userItem.visibility = View.GONE
+                        }
+                        binding.userItem.visibility = View.GONE
+                        if (isNewCardAdded) {
+                            binding.recyclerView.removeView(newCardIndex)
+                        }
+                    }
+
+                    override fun onAnimationRepeat(p0: Animation?) {}
+
+                })
+                binding.userItem.startAnimation(animation)
+            }
+            2 -> {
+                if (animatePosition) {
+                    binding.recyclerView.addView(2,
+                        currentMentor?.let {
+                            LeaderBoardItemViewHolder(
+                                it,
+                                requireContext(),
+                                true,
+                            )
+                        }
+                    )
+                    binding.recyclerView.scrollToPosition(0)
+                    binding.userItem.visibility = View.GONE
                 }
             }
-
-            override fun onAnimationRepeat(p0: Animation?) {}
-
-        })
-        binding.userItem.startAnimation(animation)
+        }
+        binding.recyclerView.removeOnItemTouchListener(listener)
     }
 
 
