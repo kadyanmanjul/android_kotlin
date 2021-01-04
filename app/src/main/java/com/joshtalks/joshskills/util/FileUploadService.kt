@@ -68,8 +68,8 @@ class FileUploadService : Service() {
                         if (intent.hasExtra(NEW_TASK_MODEL))
                             CoroutineScope(Dispatchers.IO).launch {
                                 startFileUpload(
-                                    AppObjectController.appDatabase.pendingTaskDao()
-                                        .getTask(intent.getLongExtra(NEW_TASK_MODEL, -1L))
+                                        AppObjectController.appDatabase.pendingTaskDao()
+                                                .getTask(intent.getLongExtra(NEW_TASK_MODEL, -1L))
                                 )
                             }
                     }
@@ -77,7 +77,7 @@ class FileUploadService : Service() {
                         // get all files here to be uploaded
                         CoroutineScope(Dispatchers.IO).launch {
                             val fileList =
-                                AppObjectController.appDatabase.pendingTaskDao().getPendingTasks()
+                                    AppObjectController.appDatabase.pendingTaskDao().getPendingTasks()
                             if (fileList.isNullOrEmpty().not()) {
                                 startFileUpload(ArrayList(fileList))
                             }
@@ -139,7 +139,11 @@ class FileUploadService : Service() {
             try {
                 val filePath = fileQueue.take()
                 Log.e(TAG, "Upload File: $filePath")
-                callUploadFileApi(filePath)
+                if (filePath.type == PendingTask.READING_PRACTICE) {
+                    callUploadFileApiForReadingPractice(filePath)
+                } else {
+                    callUploadFileApi(filePath)
+                }
                 showUploadNotification()
                 Thread.sleep(2000)
                 mFileUploadHandler.post(this)
@@ -165,7 +169,7 @@ class FileUploadService : Service() {
                     val statusCode: Int = uploadOnS3Server(responseObj, requestEngage.localPath!!)
                     if (statusCode in 200..210) {
                         val url =
-                            responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
+                                responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                         requestEngage.answerUrl = url
                     } else {
                         handleRetry(pendingTaskModel)
@@ -196,6 +200,51 @@ class FileUploadService : Service() {
                             ))
                         }
                     }
+                    AppObjectController.appDatabase.pendingTaskDao().deleteTask(pendingTaskModel.id)
+                } else {
+                    handleRetry(pendingTaskModel)
+                }
+            } catch (ex: Exception) {
+
+            }
+        }
+    }
+    private fun callUploadFileApiForReadingPractice(pendingTaskModel: PendingTaskModel) {
+        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+            try {
+                val requestEngage = pendingTaskModel.requestObject
+                if (requestEngage.localPath.isNullOrEmpty().not()) {
+                    val obj = mapOf("media_path" to File(requestEngage.localPath!!).name)
+                    val responseObj =
+                        AppObjectController.chatNetworkService.requestUploadMediaAsync(obj).await()
+                    val statusCode: Int = uploadOnS3Server(responseObj, requestEngage.localPath!!)
+                    if (statusCode in 200..210) {
+                        val url =
+                            responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
+                        requestEngage.answerUrl = url
+                    } else {
+                        handleRetry(pendingTaskModel)
+                        return@launch
+                    }
+                }
+
+                val resp = AppObjectController.chatNetworkService.submitNewReadingPractice(requestEngage)
+                Log.e(TAG, "callUploadFileApiForReadingPractice: $resp")
+                if (resp.isSuccessful && resp.body() != null) {
+                    // update question status and engagement data here from response
+                    val engangementList = List(1) {
+                        resp.body()!!
+                    }
+                    /*val question = AppObjectController.appDatabase.chatDao()
+                            .getQuestionOnId(pendingTaskModel.requestObject.questionId)
+                    question?.let {
+                        question.practiceEngagement = engangementList
+                        question.status = QUESTION_STATUS.AT
+                        question.practiceEngagement!!.get(0).duration = requestEngage.duration
+                        question.practiceEngagement!!.get(0).localPath = requestEngage.localPath
+                        AppObjectController.appDatabase.chatDao()
+                                .updateQuestionObject(question)
+                    }*/
                     AppObjectController.appDatabase.pendingTaskDao().deleteTask(pendingTaskModel.id)
                 } else {
                     handleRetry(pendingTaskModel)

@@ -87,6 +87,9 @@ interface ChatNetworkService {
     @POST("$DIR/practice/engagement/")
     suspend fun submitPracticeAsync(@Body requestEngage: RequestEngage): Response<PracticeEngagement>
 
+    @POST("$DIR/practice/engagement/")
+    suspend fun submitNewReadingPractice(@Body requestEngage: RequestEngage): Response<PracticeEngagementV2>
+
     //http://staging.joshtalks.org/api/skill/v1/practice/audio_practice_feedback/'
     @POST("$DIR/practice/audio_practice_feedback/")
     suspend fun getAudioFeedback(@Body params: Map<String, String>): PracticeFeedback2

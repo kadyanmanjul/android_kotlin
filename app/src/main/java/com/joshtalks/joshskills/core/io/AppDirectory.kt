@@ -8,14 +8,9 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
-import java.io.Closeable
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.IOException
+import java.io.*
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 object AppDirectory {
     const val APP_DIRECTORY = "JoshSkill"
@@ -29,7 +24,7 @@ object AppDirectory {
 
     const val TODAY_DATE = "today_date"
     const val APP_SHORT_NAME = "JS"
-    const val AUDIO_EXTENSION = ".aac"
+    const val AUDIO_EXTENSION = ".m4a"
 
 
     enum class FileType {

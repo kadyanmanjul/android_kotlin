@@ -29,6 +29,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.android.synthetic.main.activity_reminder.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,12 +51,14 @@ class ReadingFragment : CoreJoshFragment(), OnAudioRecordListener {
 
     private var compositeDisposable = CompositeDisposable()
     private lateinit var binding: ReadingPracticeFragmentBinding
-    private lateinit var chatModel: ChatModel
+    private var chatModel: ChatModel? = null
     private var chatList: ArrayList<ChatModel>? = null
     private var isRecording = false
     private var startTime: Long = 0
     private var filePath: String? = null
     var activityCallback: CapsuleActivityCallback? = null
+
+    val separatorRegex = "<a>([\\s\\S]*?)<\\/a>"
 
     private val practiceViewModel: PracticeViewModel by lazy {
         ViewModelProvider(this).get(PracticeViewModel::class.java)
@@ -69,19 +72,19 @@ class ReadingFragment : CoreJoshFragment(), OnAudioRecordListener {
                 chatList = it.getParcelableArrayList<ChatModel>(PRACTISE_OBJECT)
             }
         }
-        chatModel = chatList?.get(0)!!
+        chatModel = chatList?.getOrNull(0)
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.reading_practice_fragment,
-            container,
-            false
+                inflater,
+                R.layout.reading_practice_fragment,
+                container,
+                false
         )
 
         binding.lifecycleOwner = this
@@ -94,29 +97,21 @@ class ReadingFragment : CoreJoshFragment(), OnAudioRecordListener {
         initView()
         setUpAudioRecordTouchListener()
         addObserver()
-        chatModel.question?.run {
+        chatModel?.question?.run {
             coreJoshActivity?.feedbackEngagementStatus(this)
         }
     }
 
     private fun initView() {
-        chatModel.question?.run {
+        chatModel?.question?.run {
             binding.txtReadingParagraph.addAutoLinkMode(AutoLinkMode.MODE_CUSTOM)
 
             binding.txtReadingParagraph.enableUnderLine()
-            var str = StringBuilder()
-            var split = qText?.split("<a>(.+?)</a>")
-            split?.forEach {
-                str.append("\\s").append(it).append("\\b")
-            }
-            /*    binding.txtReadingParagraph.text =
-                      HtmlCompat.fromHtml(qText ?: EMPTY, HtmlCompat.FROM_HTML_MODE_LEGACY)
-            */
 
-            binding.txtReadingParagraph.setCustomRegex("<a>(.+?)</a>")
+            binding.txtReadingParagraph.setCustomRegex(separatorRegex)
             binding.txtReadingParagraph.text = HtmlCompat.fromHtml(
-                "String I want to <a>extract</a>",
-                HtmlCompat.FROM_HTML_MODE_LEGACY
+                    "String I want to <a>extract</a>",
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
             )
             audioList?.getOrNull(0)?.let {
                 binding.readingAudioNote.initAudioPlayer(it.audio_url, it.duration)
@@ -143,31 +138,31 @@ class ReadingFragment : CoreJoshFragment(), OnAudioRecordListener {
 
     private fun requestAudioRecord() {
         PermissionUtils.audioRecordStorageReadAndWritePermission(
-            requireActivity(),
-            object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let { flag ->
-                        if (flag) {
-                            startAudioRecording()
-                            return
-                        }
-                        if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.permissionPermanentlyDeniedDialog(
-                                requireActivity(),
-                                R.string.record_permission_message
-                            )
-                            return
+                requireActivity(),
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (flag) {
+                                startAudioRecording()
+                                return
+                            }
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.permissionPermanentlyDeniedDialog(
+                                        requireActivity(),
+                                        R.string.record_permission_message
+                                )
+                                return
+                            }
                         }
                     }
-                }
 
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
-                ) {
-                    token?.continuePermissionRequest()
-                }
-            })
+                    override fun onPermissionRationaleShouldBeShown(
+                            permissions: MutableList<PermissionRequest>?,
+                            token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
+                })
     }
 
     private fun startAudioRecording() {
@@ -197,9 +192,9 @@ class ReadingFragment : CoreJoshFragment(), OnAudioRecordListener {
         binding.counterTv.stop()
         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val timeDifference =
-            TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) - TimeUnit.MILLISECONDS.toSeconds(
-                startTime
-            )
+                TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) - TimeUnit.MILLISECONDS.toSeconds(
+                        startTime
+                )
         if (timeDifference > 1) {
             practiceViewModel.recordFile?.let {
                 isRecording = true
@@ -227,11 +222,12 @@ class ReadingFragment : CoreJoshFragment(), OnAudioRecordListener {
         CoroutineScope(Dispatchers.Main).launch {
             binding.counterTv.visibility = View.GONE
             binding.groupRecordView.visibility = View.GONE
+            binding.btnSubmitButton.visibility = View.VISIBLE
             binding.cardViewAnswerVoiceNote.visibility = View.VISIBLE
             filePath?.let {
                 binding.submitAudioNote.initAudioPlayer(
-                    it,
-                    Utils.getDurationOfMedia(requireActivity(), filePath)?.toInt() ?: 0
+                        it,
+                        Utils.getDurationOfMedia(requireActivity(), filePath)?.toInt() ?: 0
                 )
             }
 
@@ -269,9 +265,9 @@ class ReadingFragment : CoreJoshFragment(), OnAudioRecordListener {
     fun playPracticeAudio() {
         if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
             StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
-                .text(getString(R.string.volume_up_message)).cornerRadius(16)
-                .length(Toast.LENGTH_LONG)
-                .solidBackground().show()
+                    .text(getString(R.string.volume_up_message)).cornerRadius(16)
+                    .length(Toast.LENGTH_LONG)
+                    .solidBackground().show()
         }
     }
 
@@ -300,7 +296,7 @@ class ReadingFragment : CoreJoshFragment(), OnAudioRecordListener {
 
     fun submitAnswer() {
         startSubmitProgress()
-        chatModel.question?.questionId?.let {
+        chatModel?.question?.questionId?.let {
             practiceViewModel.submitReadingPractise(it, filePath!!)
         }
     }
@@ -308,7 +304,7 @@ class ReadingFragment : CoreJoshFragment(), OnAudioRecordListener {
     private fun startSubmitProgress() {
         binding.btnSubmitButton.showProgress {
             progressColors =
-                intArrayOf(ContextCompat.getColor(requireContext(), R.color.text_color_10))
+                    intArrayOf(ContextCompat.getColor(requireContext(), R.color.text_color_10))
             gravity = DrawableButton.GRAVITY_CENTER
             progressRadiusRes = R.dimen.dp8
             progressStrokeRes = R.dimen.dp2

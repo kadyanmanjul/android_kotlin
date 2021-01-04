@@ -8,6 +8,7 @@ import android.media.MediaFormat;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.util.Log;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -26,7 +27,7 @@ public class AudioRecordThread implements Runnable {
     private final AudioRecord audioRecord;
     private final OutputStream outputStream;
 
-    private OnRecorderFailedListener onRecorderFailedListener;
+    private final OnRecorderFailedListener onRecorderFailedListener;
 
 
     AudioRecordThread(OutputStream outputStream, OnRecorderFailedListener onRecorderFailedListener) throws IOException {
@@ -93,6 +94,7 @@ public class AudioRecordThread implements Runnable {
         mediaFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, bufferSize);
         mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, BIT_RATE);
         mediaFormat.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC);
+
 
         try {
             mediaCodec.configure(mediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
