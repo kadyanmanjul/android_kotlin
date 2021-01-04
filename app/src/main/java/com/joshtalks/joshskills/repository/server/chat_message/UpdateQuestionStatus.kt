@@ -18,5 +18,8 @@ data class UpdateQuestionStatus(
     private var questionId: Int,
     @SerializedName("course_id")
     @Expose
-    private var courseId: Int
+    private var courseId: Int,
+    @SerializedName("video")
+    @Expose
+    private var video: Boolean=false
 )
