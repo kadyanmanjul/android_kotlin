@@ -68,8 +68,8 @@ class FileUploadService : Service() {
                         if (intent.hasExtra(NEW_TASK_MODEL))
                             CoroutineScope(Dispatchers.IO).launch {
                                 startFileUpload(
-                                        AppObjectController.appDatabase.pendingTaskDao()
-                                                .getTask(intent.getLongExtra(NEW_TASK_MODEL, -1L))
+                                    AppObjectController.appDatabase.pendingTaskDao()
+                                        .getTask(intent.getLongExtra(NEW_TASK_MODEL, -1L))
                                 )
                             }
                     }
@@ -77,7 +77,7 @@ class FileUploadService : Service() {
                         // get all files here to be uploaded
                         CoroutineScope(Dispatchers.IO).launch {
                             val fileList =
-                                    AppObjectController.appDatabase.pendingTaskDao().getPendingTasks()
+                                AppObjectController.appDatabase.pendingTaskDao().getPendingTasks()
                             if (fileList.isNullOrEmpty().not()) {
                                 startFileUpload(ArrayList(fileList))
                             }
@@ -169,7 +169,7 @@ class FileUploadService : Service() {
                     val statusCode: Int = uploadOnS3Server(responseObj, requestEngage.localPath!!)
                     if (statusCode in 200..210) {
                         val url =
-                                responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
+                            responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                         requestEngage.answerUrl = url
                     } else {
                         handleRetry(pendingTaskModel)
@@ -191,6 +191,7 @@ class FileUploadService : Service() {
                         question.practiceEngagement!!.get(0).duration = requestEngage.duration
                         question.practiceEngagement!!.get(0).localPath = requestEngage.localPath
                         AppObjectController.appDatabase.chatDao()
+                            .updateQuestionObject(question)
                             .updateQuestionObject(question)
 
                         if(resp.body()!!.pointsList.isNullOrEmpty().not()){
@@ -228,12 +229,13 @@ class FileUploadService : Service() {
                     }
                 }
 
-                val resp = AppObjectController.chatNetworkService.submitNewReadingPractice(requestEngage)
+                val resp =
+                    AppObjectController.chatNetworkService.submitNewReadingPractice(requestEngage)
                 Log.e(TAG, "callUploadFileApiForReadingPractice: $resp")
                 if (resp.isSuccessful && resp.body() != null) {
-                    // update question status and engagement data here from response
-                    val engangementList = List(1) {
-                        resp.body()!!
+                    resp.body()?.let {
+                        it.questionForId = requestEngage.questionId
+                        AppObjectController.appDatabase.practiceEngagementDao().insertPractise(it)
                     }
                     /*val question = AppObjectController.appDatabase.chatDao()
                             .getQuestionOnId(pendingTaskModel.requestObject.questionId)
@@ -285,18 +287,18 @@ class FileUploadService : Service() {
 
         if (pendingTaskModel.type == PendingTask.READING_PRACTICE) {
             AppObjectController.appDatabase.lessonDao()
-                .updateReadingSectionStatus(lessonId, LESSON_STATUS.NO)
+                    .updateReadingSectionStatus(lessonId, LESSON_STATUS.NO)
         } else {
             AppObjectController.appDatabase.lessonDao()
-                .updateVocabularySectionStatus(lessonId, LESSON_STATUS.NO)
+                    .updateVocabularySectionStatus(lessonId, LESSON_STATUS.NO)
         }
         AppObjectController.appDatabase.pendingTaskDao()
-            .deleteTask(pendingTaskModel.id)
+                .deleteTask(pendingTaskModel.id)
     }
 
     private suspend fun uploadOnS3Server(
-        responseObj: AmazonPolicyResponse,
-        mediaPath: String
+            responseObj: AmazonPolicyResponse,
+            mediaPath: String
     ): Int {
         return CoroutineScope(Dispatchers.IO).async {
             val parameters = emptyMap<String, RequestBody>().toMutableMap()
@@ -306,14 +308,14 @@ class FileUploadService : Service() {
 
             val requestFile = File(mediaPath).asRequestBody("*".toMediaTypeOrNull())
             val body = MultipartBody.Part.createFormData(
-                "file",
-                responseObj.fields["key"],
-                requestFile
+                    "file",
+                    responseObj.fields["key"],
+                    requestFile
             )
             val responseUpload = AppObjectController.mediaDUNetworkService.uploadMediaAsync(
-                responseObj.url,
-                parameters,
-                body
+                    responseObj.url,
+                    parameters,
+                    body
             ).execute()
             return@async responseUpload.code()
         }.await()
@@ -328,8 +330,8 @@ class FileUploadService : Service() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel(channelId: String, channelName: String): String {
         val chan = NotificationChannel(
-            channelId,
-            channelName, NotificationManager.IMPORTANCE_NONE
+                channelId,
+                channelName, NotificationManager.IMPORTANCE_NONE
         )
         chan.lightColor = Color.BLUE
         chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
@@ -347,27 +349,27 @@ class FileUploadService : Service() {
             val name: CharSequence = "Voip Login User"
             val importance: Int = NotificationManager.IMPORTANCE_LOW
             val mChannel =
-                NotificationChannel(CHANNEL_ID, name, importance)
+                    NotificationChannel(CHANNEL_ID, name, importance)
             mNotificationManager?.createNotificationChannel(mChannel)
         }
 
         val lNotificationBuilder = NotificationCompat.Builder(
-            this,
-            CHANNEL_ID
+                this,
+                CHANNEL_ID
         )
-            .setChannelId(CHANNEL_ID)
-            .setContentTitle(getString(R.string.app_name))
-            .setContentText("Submitting a practice...")
-            .setSmallIcon(R.drawable.ic_status_bar_notification)
-            .setOngoing(false)
-            .setColor(
-                ContextCompat.getColor(
-                    AppObjectController.joshApplication,
-                    R.color.colorPrimary
+                .setChannelId(CHANNEL_ID)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText("Submitting a practice...")
+                .setSmallIcon(R.drawable.ic_status_bar_notification)
+                .setOngoing(false)
+                .setColor(
+                        ContextCompat.getColor(
+                                AppObjectController.joshApplication,
+                                R.color.colorPrimary
+                        )
                 )
-            )
-            .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_MIN)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_MIN)
 
 
         startForeground(NOTIFICATION_ID, lNotificationBuilder.build())
@@ -388,8 +390,8 @@ class FileUploadService : Service() {
         }
 
         fun uploadSinglePendingTasks(
-            context: Context = AppObjectController.joshApplication,
-            insertedTaskLocalId: Long = 0
+                context: Context = AppObjectController.joshApplication,
+                insertedTaskLocalId: Long = 0
         ) {
             val intent = Intent(context, FileUploadService::class.java)
             intent.action = START_UPLOAD
