@@ -21,5 +21,8 @@ data class UpdateQuestionStatus(
     private var courseId: Int,
     @SerializedName("video")
     @Expose
-    private var video: Boolean=false
+    private var video: Boolean=false,
+    @SerializedName("correct_questions")
+    @Expose
+    private var correctQuestions: ArrayList<Int> = ArrayList()
 )

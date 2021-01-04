@@ -380,8 +380,8 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         }
     }
 
-    override fun onQuestionStatusUpdate(status: QUESTION_STATUS, questionId: Int,isVideoPercentComplete:Boolean) {
-        viewModel.updateQuestionStatus(status, questionId, courseId!!, lessonId,isVideoPercentComplete)
+    override fun onQuestionStatusUpdate(status: QUESTION_STATUS, questionId: Int,isVideoPercentComplete:Boolean,quizCorrectQuestionIds:ArrayList<Int>) {
+        viewModel.updateQuestionStatus(status, questionId, courseId!!, lessonId,isVideoPercentComplete,quizCorrectQuestionIds)
     }
 
     override fun onContinueClick() {

@@ -180,7 +180,8 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
         questionId: Int,
         courseId: Int,
         lessonId: Int,
-        isVideoPercentComplete:Boolean=false
+        isVideoPercentComplete:Boolean=false,
+        quizCorrectQuestionIds:ArrayList<Int> = ArrayList()
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -210,7 +211,8 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
                                 lessonId,
                                 Mentor.getInstance().getId(),
                                 questionId,
-                                courseId
+                                courseId,
+                                correctQuestions = quizCorrectQuestionIds
                             )
                         )
                         if (resp.isSuccessful && resp.body() != null) {
