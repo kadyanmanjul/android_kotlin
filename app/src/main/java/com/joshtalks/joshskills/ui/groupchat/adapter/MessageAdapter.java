@@ -511,8 +511,11 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private void setDeleteData(DeleteMessageViewHolder viewHolder, int i) {
         BaseMessage baseMessage = messageList.get(i);
-        if (baseMessage != null) {
+        if (baseMessage != null && baseMessage.getDeletedAt() != 0) {
             viewHolder.itemView.setTag(baseMessage.getId());
+            if (viewHolder.imgDeliveryTick != null) {
+                viewHolder.imgDeliveryTick.setVisibility(View.GONE);
+            }
             if (!baseMessage.getSender().getUid().equals(loggedInUser.getUid())) {
                 if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_USER)) {
                     viewHolder.tvUser.setVisibility(View.GONE);
@@ -521,9 +524,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     if (isUserDetailVisible) {
                         viewHolder.tvUser.setVisibility(View.VISIBLE);
                         viewHolder.ivUser.setVisibility(View.VISIBLE);
+                        viewHolder.txtTime.setVisibility(View.INVISIBLE);
+                        viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_normal_bg_groupchat));
                     } else {
                         viewHolder.tvUser.setVisibility(View.GONE);
                         viewHolder.ivUser.setVisibility(View.INVISIBLE);
+                        viewHolder.txtTime.setVisibility(View.GONE);
+                        viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_same_bg_groupchat));
                     }
                     String colorCode = null;
                     try {
@@ -541,21 +548,31 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName(), colorCode);
                     viewHolder.tvUser.setText(baseMessage.getSender().getName());
                 }
+            } else {
+                if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_GROUP)) {
+                    if (isUserDetailVisible) {
+                        viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_normal_bg_groupchat));
+                    } else {
+                        viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_same_bg_groupchat));
+                    }
+                }
             }
-            if (baseMessage.getDeletedAt() != 0) {
-                viewHolder.tvThreadReplyCount.setVisibility(View.GONE);
-                viewHolder.lvReplyAvatar.setVisibility(View.GONE);
-                viewHolder.txtMessage.setText(R.string.message_deleted);
-                viewHolder.txtMessage.setTextColor(context.getResources().getColor(R.color.dark_grey));
-                viewHolder.txtMessage.setTypeface(null, Typeface.ITALIC);
-            }
-            showMessageTime(viewHolder, baseMessage);
+            viewHolder.txtMessage.setVisibility(View.VISIBLE);
+            viewHolder.replyLayout.setVisibility(View.GONE);
 
-//        if (selectedItemList.contains(baseMessage.getId()))
-            viewHolder.txtTime.setVisibility(View.VISIBLE);
-//        else
-//            viewHolder.txtTime.setVisibility(View.GONE);
-//
+            viewHolder.lvReplyAvatar.setVisibility(View.GONE);
+            viewHolder.tvThreadReplyCount.setVisibility(View.GONE);
+
+            viewHolder.txtMessage.setText(R.string.message_deleted);
+            viewHolder.txtMessage.setTextColor(ContextCompat.getColor(context, R.color.dark_grey));
+            viewHolder.txtMessage.setTypeface(null, Typeface.ITALIC);
+
+            if (viewHolder.ivUser != null)
+                viewHolder.ivUser.setOnClickListener(view -> Utils.moveToUserProfile(baseMessage.getSender().getUid(), context));
+
+            if (viewHolder.tvUser != null)
+                viewHolder.tvUser.setOnClickListener(view -> Utils.moveToUserProfile(baseMessage.getSender().getUid(), context));
+            showMessageTime(viewHolder, baseMessage);
         }
     }
 
@@ -1398,6 +1415,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private final LinearLayout lvReplyAvatar;
         private final TextView txtTime;
         private final TextView tvUser;
+        private final AppCompatImageView imgDeliveryTick;   //Delivery Tick
+        private final CardView replyLayout;                 //reply message layout
 
         DeleteMessageViewHolder(@NonNull View view) {
             super(view);
@@ -1411,6 +1430,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             rlMessageBubble = view.findViewById(R.id.rl_message);
             tvThreadReplyCount = view.findViewById(R.id.thread_reply_count);
             lvReplyAvatar = view.findViewById(R.id.reply_avatar_layout);
+            imgDeliveryTick = view.findViewById(R.id.delivery_tick);
+            replyLayout = view.findViewById(R.id.replyLayout);
             this.view = view;
         }
     }
@@ -1429,7 +1450,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private final Avatar ivUser;                  //sender avatar
         private final RelativeLayout sentimentVw;     //sentiment extension layout
         private final TextView viewSentimentMessage;  //sentiment extension text
-        private final CardView replyLayout;     //reply message layout
+        private final CardView replyLayout;           //reply message layout
         private final TextView replyUser;             //reply message sender name
         private final TextView replyMessage;          //reply message text
         private final View indicatorView;             //indicatorView
