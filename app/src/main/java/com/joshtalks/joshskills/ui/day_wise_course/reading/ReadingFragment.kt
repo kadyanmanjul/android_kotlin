@@ -117,12 +117,13 @@ class ReadingFragment : CoreJoshFragment(), OnAudioRecordListener {
                 separatorRegex,
                 "<a>",
                 "</a>",
+                defaultSelectedColor = ContextCompat.getColor(requireContext(), R.color.e1_red),
+                selectedColor = ContextCompat.getColor(requireContext(), R.color.e1_red),
                 clickListener = object : OnWordClick {
                     override fun clickedWord(word: String) {
                         LanguageTranslationDialog.showLanguageDialog(childFragmentManager, word)
                     }
                 })
-
 
             audioList?.getOrNull(0)?.let {
                 binding.readingAudioNote.initAudioPlayer(it.audio_url, it.duration)
@@ -139,7 +140,28 @@ class ReadingFragment : CoreJoshFragment(), OnAudioRecordListener {
 
                         feedback.pronunciation?.let { pronunciation ->
                             binding.txtWordsPronounced.text = pronunciation.text
-                            binding.txtPronunciationFeedback.text = pronunciation.description
+                            binding.txtPronunciationFeedback.text =
+                                pronunciation.description.getSpannableString(
+                                    separatorRegex,
+                                    "<a>",
+                                    "</a>",
+                                    selectedColor = ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.e1_red
+                                    ),
+                                    defaultSelectedColor = ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.e1_red
+                                    ),
+                                    clickListener = object : OnWordClick {
+                                        override fun clickedWord(word: String) {
+                                            LanguageTranslationDialog.showLanguageDialog(
+                                                childFragmentManager,
+                                                word
+                                            )
+                                        }
+                                    })
+
                             binding.pronunciationFeedbackView.visibility = View.VISIBLE
                         }
                         feedback.speed?.let { speed ->

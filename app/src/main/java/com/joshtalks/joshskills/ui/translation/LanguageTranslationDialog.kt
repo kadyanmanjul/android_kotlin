@@ -78,7 +78,7 @@ class LanguageTranslationDialog : BlurDialogFragment() {
             val sBuilder = SpannableStringBuilder()
             it.engMeaning.forEach { engMeaning ->
                 engMeaning.adjective?.run {
-                    sBuilder.append("Adjective: ").append("\n").append(this).append("\n\n")
+                    sBuilder.append("Adjective: ").append("\n").append(this)
                     sBuilder.setSpan(
                         ForegroundColorSpan(
                             ContextCompat.getColor(
@@ -91,7 +91,7 @@ class LanguageTranslationDialog : BlurDialogFragment() {
                 }
                 engMeaning.noun?.run {
                     val start = sBuilder.length
-                    sBuilder.append("Noun: ").append("\n").append(this).append("\n\n")
+                    sBuilder.append("\n\n").append("Noun: ").append("\n").append(this)
                     sBuilder.setSpan(
                         ForegroundColorSpan(
                             ContextCompat.getColor(
@@ -104,7 +104,7 @@ class LanguageTranslationDialog : BlurDialogFragment() {
                 }
                 engMeaning.verb?.run {
                     val start = sBuilder.length
-                    sBuilder.append("Verb: ").append("\n").append(this)
+                    sBuilder.append("\n\n").append("Verb: ").append("\n").append(this)
                     sBuilder.setSpan(
                         ForegroundColorSpan(
                             ContextCompat.getColor(
