@@ -428,7 +428,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             public void onSendActionClicked(EditText editText) {
                 String message = editText.getText().toString().trim();
                 editText.setText("");
-                editText.setHint(String.format(getString(R.string.message), CometChat.getLoggedInUser().getName().split(" ")[0]));
+                // editText.setHint(String.format(getString(R.string.message), CometChat.getLoggedInUser().getName().split(" ")[0]));
                 if (isReply) {
                     replyMessage(baseMessage, message);
                     composeBox.replyMessageLayout.setVisibility(GONE);

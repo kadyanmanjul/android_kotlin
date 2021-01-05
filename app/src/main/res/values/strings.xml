@@ -582,7 +582,7 @@
     <!-- Messages Preferences -->
 
     <!-- Sync Preferences -->
-    <string name="message">%s, type message here…</string>
+    <string name="message">Message</string>
     <string name="you_won_t_be_able_send_or_receive_messages">You won\'t be able send or receive messages</string>
     <string name="unblock">Unblock</string>
     <string name="unabl_to_join_message">Unable to join group</string>
