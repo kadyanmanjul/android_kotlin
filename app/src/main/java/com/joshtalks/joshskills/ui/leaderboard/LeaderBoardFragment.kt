@@ -103,7 +103,7 @@ class LeaderBoardFragment : Fragment() {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() < userPosition && linearLayoutManager.findLastCompletelyVisibleItemPosition() > userPosition) {
+                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() < userPosition.plus(4) && linearLayoutManager.findLastCompletelyVisibleItemPosition() > userPosition.plus(2)) {
                     binding.userLayout.visibility = View.GONE
                 } else {
                     binding.userLayout.visibility = View.VISIBLE
@@ -133,9 +133,9 @@ class LeaderBoardFragment : Fragment() {
                 binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
             }
             if (userRank in 1..47) {
-                userPosition = userRank
+                userPosition = userRank.minus(3)
             } else if (userRank in 48..50) {
-                userPosition = userRank
+                userPosition = userRank.minus(3)
             } else {
                 userPosition = 53
                 binding.recyclerView.addView(EmptyItemViewHolder())

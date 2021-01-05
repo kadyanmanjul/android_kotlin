@@ -30,7 +30,14 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import kotlinx.android.synthetic.main.speaking_practise_fragment.*
+import kotlinx.android.synthetic.main.speaking_practise_fragment.btn_continue
+import kotlinx.android.synthetic.main.speaking_practise_fragment.btn_start
+import kotlinx.android.synthetic.main.speaking_practise_fragment.group_one
+import kotlinx.android.synthetic.main.speaking_practise_fragment.group_two
+import kotlinx.android.synthetic.main.speaking_practise_fragment.progress_bar
+import kotlinx.android.synthetic.main.speaking_practise_fragment.text_view
+import kotlinx.android.synthetic.main.speaking_practise_fragment.tv_practise_time
+import kotlinx.android.synthetic.main.speaking_practise_fragment.tv_today_topic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -114,7 +121,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
             group_two.visibility = View.VISIBLE
             group_one.visibility = View.GONE
 
-            if (response.alreadyTalked >= 0) {
+            if (response.alreadyTalked >= response.duration) {
                 btn_continue.visibility = View.VISIBLE
                 activityCallback?.onQuestionStatusUpdate(
                     QUESTION_STATUS.AT,

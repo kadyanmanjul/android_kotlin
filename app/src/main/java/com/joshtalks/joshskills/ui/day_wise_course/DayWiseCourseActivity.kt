@@ -192,7 +192,8 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
             }
             if(it.awardMentorList.isNullOrEmpty().not()){
-                ShowAwardFragment.showDialog(supportFragmentManager,it.awardMentorList!!)
+                //TODO add when awards functionality is over
+                //ShowAwardFragment.showDialog(supportFragmentManager,it.awardMentorList!!)
             }
             if(it.outranked!!){
                 it.outrankedData?.let {

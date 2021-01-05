@@ -66,15 +66,25 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:onClick="@{()-> handler.openPointsInfoTable()}"
+            app:layout_constraintTop_toBottomOf="@id/user_score_container"
+            android:layout_height="wrap_content">
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/info_icon"
             android:layout_width="@dimen/_16sdp"
             android:layout_height="@dimen/_16sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:onClick="@{()-> handler.openPointsInfoTable()}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             android:tint="@color/colorPrimary"
-            app:layout_constraintStart_toStartOf="@+id/user_score_container"
-            app:layout_constraintTop_toBottomOf="@id/user_score_container"
             app:srcCompat="@drawable/ic_help_outline" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -100,8 +110,10 @@
             android:textColor="@color/black"
             android:tint="@color/grey"
             app:layout_constraintBottom_toBottomOf="@+id/info_icon"
-            app:layout_constraintEnd_toEndOf="@+id/user_score_container"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/info_icon" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ScrollView
             android:layout_width="match_parent"
@@ -114,7 +126,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/info_icon">
+            app:layout_constraintTop_toBottomOf="@id/container">
 
             <com.mindorks.placeholderview.ExpandablePlaceHolderView
                 android:id="@+id/recycler_view"
