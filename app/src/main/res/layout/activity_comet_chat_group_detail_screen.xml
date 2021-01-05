@@ -290,7 +290,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/members"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
                 <TextView
