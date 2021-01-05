@@ -316,124 +316,128 @@ public class BlurDialogEngine {
      * @param view background view.
      */
     private void blur(Bitmap bkg, View view) {
-        long startMs = System.currentTimeMillis();
-        //define layout params to the previous imageView in order to match its parent
-        mBlurredBackgroundLayoutParams = new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT
-        );
-
-        //overlay used to build scaled preview and blur background
-        Bitmap overlay = null;
-
-        //evaluate top offset due to action bar, 0 if the actionBar should be blurred.
-        int actionBarHeight;
-        if (mBlurredActionBar) {
-            actionBarHeight = 0;
-        } else {
-            actionBarHeight = getActionBarHeight();
-        }
-
-        //evaluate top offset due to status bar
-        int statusBarHeight = 0;
-        if ((mHoldingActivity.getWindow().getAttributes().flags
-                & WindowManager.LayoutParams.FLAG_FULLSCREEN) == 0) {
-            //not in fullscreen mode
-            statusBarHeight = getStatusBarHeight();
-        }
-
-        // check if status bar is translucent to remove status bar offset in order to provide blur
-        // on content bellow the status.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-                && isStatusBarTranslucent()) {
-            statusBarHeight = 0;
-        }
-
-        final int topOffset = actionBarHeight + statusBarHeight;
-        // evaluate bottom or right offset due to navigation bar.
-        int bottomOffset = 0;
-        int rightOffset = 0;
-        final int navBarSize = getNavigationBarOffset();
-
-        if (false) {
-            bottomOffset = navBarSize;
-        } else {
-            rightOffset = navBarSize;
-        }
-
-        //add offset to the source boundaries since we don't want to blur actionBar pixels
-        Rect srcRect = new Rect(
-                0,
-                topOffset,
-                bkg.getWidth() - rightOffset,
-                bkg.getHeight() - bottomOffset
-        );
-
-        //in order to keep the same ratio as the one which will be used for rendering, also
-        //add the offset to the overlay.
-        double height = Math.ceil((view.getHeight() - topOffset - bottomOffset) / mDownScaleFactor);
-        double width = Math.ceil(((view.getWidth() - rightOffset) * height
-                / (view.getHeight() - topOffset - bottomOffset)));
-
-        // Render script doesn't work with RGB_565
-        if (mUseRenderScript) {
-            overlay = Bitmap.createBitmap((int) width, (int) height, Bitmap.Config.ARGB_8888);
-        } else {
-            overlay = Bitmap.createBitmap((int) width, (int) height, Bitmap.Config.RGB_565);
-        }
         try {
-            if (mHoldingActivity instanceof AppCompatActivity) {
-                //add offset as top margin since actionBar height must also considered when we display
-                // the blurred background. Don't want to draw on the actionBar.
-                mBlurredBackgroundLayoutParams.setMargins(0, actionBarHeight, 0, 0);
-                mBlurredBackgroundLayoutParams.gravity = Gravity.TOP;
+            long startMs = System.currentTimeMillis();
+            //define layout params to the previous imageView in order to match its parent
+            mBlurredBackgroundLayoutParams = new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+            );
+
+            //overlay used to build scaled preview and blur background
+            Bitmap overlay = null;
+
+            //evaluate top offset due to action bar, 0 if the actionBar should be blurred.
+            int actionBarHeight;
+            if (mBlurredActionBar) {
+                actionBarHeight = 0;
+            } else {
+                actionBarHeight = getActionBarHeight();
             }
-        } catch (NoClassDefFoundError e) {
-            // no dependency to appcompat, that means no additional top offset due to actionBar.
-            mBlurredBackgroundLayoutParams.setMargins(0, 0, 0, 0);
-        }
-        //scale and draw background view on the canvas overlay
-        Canvas canvas = new Canvas(overlay);
-        Paint paint = new Paint();
-        paint.setFlags(Paint.FILTER_BITMAP_FLAG);
 
-        //build drawing destination boundaries
-        final RectF destRect = new RectF(0, 0, overlay.getWidth(), overlay.getHeight());
+            //evaluate top offset due to status bar
+            int statusBarHeight = 0;
+            if ((mHoldingActivity.getWindow().getAttributes().flags
+                    & WindowManager.LayoutParams.FLAG_FULLSCREEN) == 0) {
+                //not in fullscreen mode
+                statusBarHeight = getStatusBarHeight();
+            }
 
-        //draw background from source area in source background to the destination area on the overlay
-        canvas.drawBitmap(bkg, srcRect, destRect, paint);
+            // check if status bar is translucent to remove status bar offset in order to provide blur
+            // on content bellow the status.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+                    && isStatusBarTranslucent()) {
+                statusBarHeight = 0;
+            }
 
-        //apply fast blur on overlay
-        if (mUseRenderScript) {
-            overlay = RenderScriptBlurHelper.doBlur(overlay, mBlurRadius, true, mHoldingActivity);
-        } else {
-            overlay = FastBlurHelper.doBlur(overlay, mBlurRadius, true);
-        }
-        if (mDebugEnable) {
-            String blurTime = (System.currentTimeMillis() - startMs) + " ms";
+            final int topOffset = actionBarHeight + statusBarHeight;
+            // evaluate bottom or right offset due to navigation bar.
+            int bottomOffset = 0;
+            int rightOffset = 0;
+            final int navBarSize = getNavigationBarOffset();
+
+            if (false) {
+                bottomOffset = navBarSize;
+            } else {
+                rightOffset = navBarSize;
+            }
+
+            //add offset to the source boundaries since we don't want to blur actionBar pixels
+            Rect srcRect = new Rect(
+                    0,
+                    topOffset,
+                    bkg.getWidth() - rightOffset,
+                    bkg.getHeight() - bottomOffset
+            );
+
+            //in order to keep the same ratio as the one which will be used for rendering, also
+            //add the offset to the overlay.
+            double height = Math.ceil((view.getHeight() - topOffset - bottomOffset) / mDownScaleFactor);
+            double width = Math.ceil(((view.getWidth() - rightOffset) * height
+                    / (view.getHeight() - topOffset - bottomOffset)));
+
+            // Render script doesn't work with RGB_565
+            if (mUseRenderScript) {
+                overlay = Bitmap.createBitmap((int) width, (int) height, Bitmap.Config.ARGB_8888);
+            } else {
+                overlay = Bitmap.createBitmap((int) width, (int) height, Bitmap.Config.RGB_565);
+            }
             try {
-                Log.d(TAG, "Blur method : " + (mUseRenderScript ? "RenderScript" : "FastBlur"));
-                Log.d(TAG, "Radius : " + mBlurRadius);
-                Log.d(TAG, "Down Scale Factor : " + mDownScaleFactor);
-                Log.d(TAG, "Blurred achieved in : " + blurTime);
-                Log.d(TAG, "Allocation : " + bkg.getRowBytes() + "ko (screen capture) + "
-                        + overlay.getRowBytes() + "ko (blurred bitmap)"
-                        + (!mUseRenderScript ? " + temp buff " + overlay.getRowBytes() + "ko." : "."));
-            } catch (Exception e) {
-                e.printStackTrace();
+                if (mHoldingActivity instanceof AppCompatActivity) {
+                    //add offset as top margin since actionBar height must also considered when we display
+                    // the blurred background. Don't want to draw on the actionBar.
+                    mBlurredBackgroundLayoutParams.setMargins(0, actionBarHeight, 0, 0);
+                    mBlurredBackgroundLayoutParams.gravity = Gravity.TOP;
+                }
+            } catch (NoClassDefFoundError e) {
+                // no dependency to appcompat, that means no additional top offset due to actionBar.
+                mBlurredBackgroundLayoutParams.setMargins(0, 0, 0, 0);
             }
-            Rect bounds = new Rect();
-            Canvas canvas1 = new Canvas(overlay);
-            paint.setColor(Color.BLACK);
-            paint.setAntiAlias(true);
-            paint.setTextSize(20.0f);
-            paint.getTextBounds(blurTime, 0, blurTime.length(), bounds);
-            canvas1.drawText(blurTime, 2, bounds.height(), paint);
+            //scale and draw background view on the canvas overlay
+            Canvas canvas = new Canvas(overlay);
+            Paint paint = new Paint();
+            paint.setFlags(Paint.FILTER_BITMAP_FLAG);
+
+            //build drawing destination boundaries
+            final RectF destRect = new RectF(0, 0, overlay.getWidth(), overlay.getHeight());
+
+            //draw background from source area in source background to the destination area on the overlay
+            canvas.drawBitmap(bkg, srcRect, destRect, paint);
+
+            //apply fast blur on overlay
+            if (mUseRenderScript) {
+                overlay = RenderScriptBlurHelper.doBlur(overlay, mBlurRadius, true, mHoldingActivity);
+            } else {
+                overlay = FastBlurHelper.doBlur(overlay, mBlurRadius, true);
+            }
+            if (mDebugEnable) {
+                String blurTime = (System.currentTimeMillis() - startMs) + " ms";
+                try {
+                    Log.d(TAG, "Blur method : " + (mUseRenderScript ? "RenderScript" : "FastBlur"));
+                    Log.d(TAG, "Radius : " + mBlurRadius);
+                    Log.d(TAG, "Down Scale Factor : " + mDownScaleFactor);
+                    Log.d(TAG, "Blurred achieved in : " + blurTime);
+                    Log.d(TAG, "Allocation : " + bkg.getRowBytes() + "ko (screen capture) + "
+                            + overlay.getRowBytes() + "ko (blurred bitmap)"
+                            + (!mUseRenderScript ? " + temp buff " + overlay.getRowBytes() + "ko." : "."));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Rect bounds = new Rect();
+                Canvas canvas1 = new Canvas(overlay);
+                paint.setColor(Color.BLACK);
+                paint.setAntiAlias(true);
+                paint.setTextSize(20.0f);
+                paint.getTextBounds(blurTime, 0, blurTime.length(), bounds);
+                canvas1.drawText(blurTime, 2, bounds.height(), paint);
+            }
+            //set bitmap in an image view for final rendering
+            mBlurredBackgroundView = new ImageView(mHoldingActivity);
+            mBlurredBackgroundView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            mBlurredBackgroundView.setImageDrawable(new BitmapDrawable(mHoldingActivity.getResources(), overlay));
+        } catch (Exception e) {
+
         }
-        //set bitmap in an image view for final rendering
-        mBlurredBackgroundView = new ImageView(mHoldingActivity);
-        mBlurredBackgroundView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        mBlurredBackgroundView.setImageDrawable(new BitmapDrawable(mHoldingActivity.getResources(), overlay));
     }
 
     /**

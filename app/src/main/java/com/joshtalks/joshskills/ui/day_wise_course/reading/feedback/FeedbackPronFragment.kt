@@ -18,17 +18,20 @@ import com.joshtalks.joshskills.core.custom_ui.blurdialog.BlurDialogFragment
 import com.joshtalks.joshskills.databinding.FragmentFeedbackPronBinding
 import com.joshtalks.joshskills.repository.local.entity.practise.WrongWord
 import com.joshtalks.joshskills.ui.groupchat.uikit.ExoAudioPlayer2
-import com.joshtalks.joshskills.ui.translation.ARG_WORD
 
 class FeedbackPronFragment : BlurDialogFragment() {
     private var word: WrongWord? = null
     private lateinit var binding: FragmentFeedbackPronBinding
     private var exoAudioManager: ExoAudioPlayer2? = ExoAudioPlayer2.getInstance()
+    private var teacherAudioUrl: String? = null
+    private var userAudioUrl: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            word = it.getParcelable<WrongWord>(ARG_WORD)
+            word = it.getParcelable(ARG_WORD_DETAILS)
+            teacherAudioUrl = it.getString(ARG_AUDIO_TEACHER)
+            userAudioUrl = it.getString(ARG_AUDIO_USER)
         }
     }
 
@@ -63,8 +66,8 @@ class FeedbackPronFragment : BlurDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         word?.let {
+            binding.wordTv.text = it.word
             it.phones?.forEach { phonetic -> addTableRow(phonetic.phone, phonetic.quality) }
         }
     }
@@ -89,7 +92,7 @@ class FeedbackPronFragment : BlurDialogFragment() {
         return true
     }
 
-    fun addTableRow(char: String, quality: String) {
+    private fun addTableRow(char: String, quality: String) {
         val tableRow: TableRow =
             View.inflate(requireContext(), R.layout.table_row, null) as TableRow
         val charTv = (tableRow.getChildAt(0) as TextView)
@@ -109,30 +112,61 @@ class FeedbackPronFragment : BlurDialogFragment() {
         val layoutParams = ConstraintLayout.LayoutParams(
             binding.root.layoutParams
         )
-
         layoutParams.startToEnd = R.id.word_tv
-
         tableRow.layoutParams = layoutParams
         binding.tableLayout.addView(tableRow)
     }
 
+    override fun onPause() {
+        super.onPause()
+        exoAudioManager?.release()
+    }
+
+
+    fun teacherSpeak() {
+        teacherAudioUrl?.let {
+            exoAudioManager?.play(it)
+        }
+
+    }
+
+    fun userSpeak() {
+
+    }
+
+
     companion object {
+        const val ARG_WORD_DETAILS = "word_detail"
+        const val ARG_AUDIO_TEACHER = "audio_teacher"
+        const val ARG_AUDIO_USER = "audio_user"
+
+
         @JvmStatic
-        private fun newInstance(word: WrongWord) =
+        private fun newInstance(word: WrongWord, teacherAudioUrl: String?, userAudioUrl: String?) =
             FeedbackPronFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable(ARG_WORD, word)
+                    putParcelable(ARG_WORD_DETAILS, word)
+                    putString(ARG_AUDIO_TEACHER, teacherAudioUrl)
+                    putString(ARG_AUDIO_USER, userAudioUrl)
                 }
             }
 
         @JvmStatic
-        fun showLanguageDialog(fragmentManager: FragmentManager, word: WrongWord) {
+        fun showLanguageDialog(
+            fragmentManager: FragmentManager,
+            word: WrongWord,
+            teacherAudioUrl: String?,
+            userAudioUrl: String?
+        ) {
             val prev =
                 fragmentManager.findFragmentByTag(FeedbackPronFragment::class.java.name)
             if (prev != null) {
                 return
             }
-            newInstance(word).show(fragmentManager, FeedbackPronFragment::class.java.name)
+            newInstance(word, teacherAudioUrl, userAudioUrl).show(
+                fragmentManager,
+                FeedbackPronFragment::class.java.name
+            )
         }
     }
 }

@@ -5,19 +5,19 @@
     android:layout_width="0dp"
     android:layout_height="wrap_content">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:background="@drawable/left_top_border_bg"
         android:gravity="center"
-        android:text="Phone"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold" />
+        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+        android:textSize="@dimen/_10sdp" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:background="@drawable/left_top_border_bg"
         android:gravity="center"
-        android:text="Phone"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold" />
+        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+        android:textSize="@dimen/_10sdp" />
 </TableRow>

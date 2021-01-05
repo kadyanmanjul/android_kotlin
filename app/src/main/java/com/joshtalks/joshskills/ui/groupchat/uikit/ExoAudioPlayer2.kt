@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.groupchat.uikit
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
+import android.util.Log
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.source.MediaSource
@@ -14,7 +15,6 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.videoplayer.PlaybackSpeed
-
 class ExoAudioPlayer2 {
     private var progressTracker: ProgressTracker? = null
     private var progressUpdateListener: ProgressUpdateListener? = null
@@ -135,6 +135,13 @@ class ExoAudioPlayer2 {
         if (isPlaybackSpeed) {
             param = PlaybackParameters(0.50F, 1F)//pitch sexy hai
         }
+        player.createMessage { messageType, payload ->
+            Log.e("aaaa", "Aa")
+        }
+            .setHandler(Handler())
+            .setPosition(/* windowIndex= */ 0, /* positionMs= */ 1_000)
+            .setDeleteAfterDelivery(false)
+            .send()
         player.setPlaybackParameters(param)
         currentPlayingUrl = audioUrl
         val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(

@@ -26,6 +26,7 @@
             android:contentDescription="@string/play_button_description"
             android:padding="@dimen/_4sdp"
             android:tint="@color/button_color"
+            android:onClick="@{()->handler.teacherSpeak()}"
             app:layout_constraintEnd_toStartOf="@+id/audio2"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
@@ -36,6 +37,8 @@
             android:layout_width="@dimen/_28sdp"
             android:layout_height="@dimen/_28sdp"
             android:layout_marginStart="@dimen/_8sdp"
+            android:onClick="@{()->handler.userSpeak()}"
+
             android:background="@drawable/play_pause_button_background"
             android:backgroundTint="@color/button_color"
             android:contentDescription="@string/play_button_description"
@@ -46,7 +49,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/textview1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -59,7 +62,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/audio2" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/textview2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -70,7 +73,7 @@
             app:layout_constraintStart_toEndOf="@id/textview1"
             app:layout_constraintTop_toTopOf="@+id/textview1" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/textview3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -91,12 +94,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textview1" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/word_tv"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="Word"
+            android:textSize="@dimen/_10sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
             android:textColor="#000"
             app:layout_constraintBottom_toBottomOf="@+id/table_layout"
