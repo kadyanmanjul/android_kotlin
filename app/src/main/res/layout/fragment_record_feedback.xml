@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.day_wise_course.reading.feedback.RecordAndFeedbackFragment" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            android:id="@+id/txtLabelRecord"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            android:layout_marginVertical="@dimen/_16ssp"
+            android:gravity="center"
+            android:text="@string/record_your_answer"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgRecordButton"
+            android:layout_width="@dimen/_56sdp"
+            android:layout_height="@dimen/_56sdp"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            android:layout_marginVertical="@dimen/_16sdp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/recv_bg_mic"
+            android:scaleType="center"
+            android:src="@drawable/ic_mic_white_24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtLabelRecord" />
+
+        <Chronometer
+            android:id="@+id/counterTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_state_button_bg"
+            android:backgroundTint="@color/light_blue"
+            android:drawableStart="@drawable/lesson_number_bg"
+            android:drawablePadding="@dimen/_4sdp"
+            android:drawableTint="@color/checkbox_color"
+            android:padding="@dimen/_4sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textColor="@color/dark_grey"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/txtCaptionRecord"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imgRecordButton"
+            app:layout_constraintTop_toTopOf="@+id/imgRecordButton"
+            tools:visibility="gone" />
+
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            android:id="@+id/txtCaptionRecord"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            android:layout_marginVertical="@dimen/_8sdp"
+            android:gravity="center"
+            android:text="@string/recording_start"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imgRecordButton" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupRecordView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="txtLabelRecord,imgRecordButton,txtCaptionRecord"
+            tools:visibility="visible" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewAnswerVoiceNote"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            android:layout_marginVertical="@dimen/_12sdp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtCaptionRecord"
+            tools:visibility="gone">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/txtLabelAnswer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:layout_marginVertical="@dimen/_12sdp"
+                    android:gravity="start"
+                    android:text="@string/your_answer"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                    android:textColor="@color/black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.joshtalks.joshskills.ui.day_wise_course.reading.ReadingPractiseAudioView
+                    android:id="@+id/submit_audio_note"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_38sdp"
+                    android:layout_marginVertical="@dimen/_8sdp"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:background="@drawable/rounded_state_button_bg"
+                    android:backgroundTint="@color/light_blue"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/imgCancel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtLabelAnswer" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imgCancel"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:adjustViewBounds="true"
+                    android:onClick="@{()->handler.cancelAudio()}"
+                    android:padding="@dimen/_4sdp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ic_cross"
+                    android:tint="@color/black"
+                    app:layout_constraintBottom_toBottomOf="@+id/submit_audio_note"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/submit_audio_note" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewFeedback"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            android:layout_marginVertical="@dimen/_12sdp"
+            android:visibility="gone"
+            app:contentPaddingLeft="@dimen/_4sdp"
+            app:contentPaddingRight="@dimen/_4sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardViewAnswerVoiceNote"
+            tools:visibility="visible">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/txtLabelFeedback"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_12sdp"
+                    android:gravity="start"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+                    android:textColor="@color/black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Vedant’s Feedback" />
+
+                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/txtFeedback"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_4sdp"
+                    android:gravity="start"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                    android:textColor="@color/grey_68"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtLabelFeedback"
+                    tools:text="This was not good, Harsh!" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/pronunciationFeedbackView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_16sdp"
+                    android:background="@drawable/round_rect_default"
+                    android:backgroundTint="@color/practice_complete_bg"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtFeedback"
+                    tools:visibility="visible">
+
+                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                        android:id="@+id/txtLabelPronunciation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/_8sdp"
+                        android:drawablePadding="@dimen/_4sdp"
+                        android:text="@string/pro_mis_word"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                        android:textColor="@color/black"
+                        app:drawableEndCompat="@drawable/ic_info_small"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Pronunciation and missing words Pronunciation " />
+
+                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                        android:id="@+id/txtWordsPronounced"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/_4sdp"
+                        android:gravity="start"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                        android:textColor="@color/grey_68"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/txtLabelPronunciation"
+                        tools:text="74 / 99 words correctly pronounced" />
+
+                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                        android:id="@+id/txtPronunciationFeedback"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/_12sdp"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                        android:textColor="@color/black"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/txtWordsPronounced"
+                        tools:text="There was once a fisherman who was also an excellent flute player. One day he took his flute and a fish basket, jumped up on a rock and began to play his flute. Convinced that the fish would be enchanted by his music and leap into the basket willingly." />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/readingSpeedFeedbackView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_16sdp"
+                    android:background="@drawable/round_rect_default"
+                    android:backgroundTint="@color/practice_complete_bg"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/pronunciationFeedbackView"
+                    tools:visibility="visible">
+
+                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                        android:id="@+id/txtLabelReadingSpeed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/_8sdp"
+                        android:drawableEnd="@drawable/ic_info_small"
+                        android:drawablePadding="@dimen/_4sdp"
+                        android:text="@string/speed"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                        android:textColor="@color/black"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Speed" />
+
+                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                        android:id="@+id/txtReadingSpeed"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/_4sdp"
+                        android:gravity="start"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                        android:textColor="@color/grey_68"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/txtLabelReadingSpeed"
+                        tools:text="59 words per minute" />
+
+                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                        android:id="@+id/txtReadingSpeedFeedback"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/_12sdp"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                        android:textColor="@color/black"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/txtReadingSpeed"
+                        tools:text="Harsh, your speed is great. Vedant sir was speak" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/txtRecommendation"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_16sdp"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/readingSpeedFeedbackView"
+                    tools:text="Recommendation: Harsh, I want you to reattempt this practice and try to correct your mistakes." />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/btnSubmitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            android:layout_marginVertical="@dimen/_16sdp"
+            android:background="@drawable/rounded_state_button_bg"
+            android:backgroundTint="@color/colorPrimary"
+            android:gravity="center"
+            android:onClick="@{()->handler.submitAnswer()}"
+            android:paddingHorizontal="@dimen/_24sdp"
+            android:paddingVertical="@dimen/_8sdp"
+            android:text="@string/submit_answer"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+            android:textColor="@color/white"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardViewFeedback"
+            app:rippleColor="@color/white"
+            tools:visibility="visible" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/txtImproveButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/_16sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:background="@drawable/rounded_state_button_bg"
+            android:backgroundTint="@color/colorPrimary"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/_16sdp"
+            android:paddingVertical="@dimen/_8sdp"
+            android:text="@string/improve_answer"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+            android:textColor="@color/white"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/txtContinueButton"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardViewFeedback"
+            app:rippleColor="@color/white"
+            tools:visibility="invisible" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/txtContinueButton"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:paddingHorizontal="@dimen/_16sdp"
+            android:paddingVertical="@dimen/_8sdp"
+            android:text="@string/continue_label"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+            android:visibility="invisible"
+            app:cornerRadius="@dimen/_16sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintTop_toBottomOf="@+id/cardViewFeedback"
+            app:rippleColor="@color/white"
+            app:strokeColor="@color/text_color_10"
+            tools:visibility="invisible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

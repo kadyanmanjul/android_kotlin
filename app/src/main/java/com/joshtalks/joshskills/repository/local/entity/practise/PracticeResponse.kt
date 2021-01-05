@@ -30,49 +30,56 @@ data class PracticeEngagementV2(
 
     @PrimaryKey()
     @SerializedName("id")
-    val practiseId: Int = 0,
+    var practiseId: Int = 0,
 
     @ColumnInfo()
     @SerializedName("question")
-    val question: Int = 0,
+    var question: Int = 0,
 
     @ColumnInfo()
     @SerializedName("answer_url")
-    val answerUrl: String = EMPTY,
+    var answerUrl: String = EMPTY,
 
     @ColumnInfo()
     @SerializedName("duration")
-    val duration: Int = 0,
+    var duration: Int = 0,
 
     @ColumnInfo()
     @SerializedName("practice_date")
-    val practiceDate: String = EMPTY,
+    var practiceDate: String = EMPTY,
 
     @ColumnInfo()
     @SerializedName("feedback_require")
-    val feedbackRequire: String? = EMPTY,
+    var feedbackRequire: String? = EMPTY,
 
     @ColumnInfo()
     @SerializedName("text")
-    val text: String? = EMPTY,
+    var text: String? = EMPTY,
 
     @ColumnInfo()
     @Expose var localPath: String? = EMPTY,
 
     @ColumnInfo()
-    @SerializedName("transcript_id") val transcriptId: String? = EMPTY,
+    @SerializedName("transcript_id")
+    var transcriptId: String? = EMPTY,
 
     @TypeConverters(
         ListConverters::class
     )
     @ColumnInfo
     @SerializedName("points_list")
-    val pointsList: List<String> = arrayListOf(),
+    var pointsList: List<String> = arrayListOf(),
 
     @Embedded(prefix = "feedback_")
     @SerializedName("feedback")
     var practiseFeedback: PractiseFeedback? = null,
-) : Parcelable {
+
+    @Expose
+    @Ignore
+    var practiseType: PractiseType = PractiseType.SUBMITTED,
+
+
+    ) : Parcelable {
     constructor() : this(
         questionForId = EMPTY,
         practiseId = 0,
@@ -85,6 +92,7 @@ data class PracticeEngagementV2(
         localPath = null,
         transcriptId = null,
         pointsList = emptyList(),
+        practiseType = PractiseType.SUBMITTED
     )
 }
 
@@ -223,6 +231,11 @@ data class Phonetic(
         quality = EMPTY
     )
 }
+
+enum class PractiseType {
+    SUBMITTED, NOT_SUBMITTED
+}
+
 
 @Dao
 interface PracticeEngagementDao {

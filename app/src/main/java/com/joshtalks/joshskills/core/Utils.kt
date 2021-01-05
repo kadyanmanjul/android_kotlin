@@ -83,6 +83,10 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import okhttp3.RequestBody.Companion.toRequestBody
 import timber.log.Timber
 import java.io.*
@@ -1098,7 +1102,7 @@ fun getTouchableSpannable(
     }
 }
 
-fun String.getSpannableString(
+suspend fun String.getSpannableString(
     separatorRegex: String,
     startSeparator: String,
     endSeparator: String,
@@ -1106,27 +1110,30 @@ fun String.getSpannableString(
     defaultSelectedColor: Int = Color.BLUE,
     clickListener: OnWordClick? = null
 ): SpannableString {
-    var sourString = this
-    val pattern: Pattern = Pattern.compile(separatorRegex)
-    val splitted = ArrayList<String>()
-    val matcher = pattern.matcher(sourString)
-    while (matcher.find()) {
-        splitted.add(matcher.group())
-    }
+    return CoroutineScope(Dispatchers.IO).async(Dispatchers.IO) {
+        var sourString = this@getSpannableString
+        val pattern: Pattern = Pattern.compile(separatorRegex)
+        val splitted = ArrayList<String>()
+        val matcher = pattern.matcher(sourString)
+        while (matcher.find()) {
+            splitted.add(matcher.group())
+        }
 
-    sourString = sourString.replace(startSeparator, EMPTY).replace(endSeparator, EMPTY)
-    val generatedSpanString = SpannableString(sourString)
+        sourString = sourString.replace(startSeparator, EMPTY).replace(endSeparator, EMPTY)
+        val generatedSpanString = SpannableString(sourString)
 
-    splitted.forEach { s ->
-        val word = s.removePrefix(startSeparator).removeSuffix(endSeparator)
-        val index = sourString.indexOf(word)
-        generatedSpanString.setSpan(
-            getTouchableSpannable(
-                s.removePrefix(startSeparator).removeSuffix(endSeparator), selectedColor,
-                defaultSelectedColor, true, clickListener
-            ), index, index + word.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-    }
-    return generatedSpanString
+        splitted.forEach { s ->
+            val word = s.removePrefix(startSeparator).removeSuffix(endSeparator)
+            val index = sourString.indexOf(word)
+            generatedSpanString.setSpan(
+                getTouchableSpannable(
+                    s.removePrefix(startSeparator).removeSuffix(endSeparator), selectedColor,
+                    defaultSelectedColor, true, clickListener
+                ), index, index + word.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        delay(150)
+        return@async generatedSpanString
+    }.await()
 }

@@ -2,9 +2,11 @@ package com.joshtalks.joshskills.ui.day_wise_course.reading
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.SeekBar
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -15,10 +17,10 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.ui.groupchat.uikit.ExoAudioPlayer2
+import com.muddzdev.styleabletoast.StyleableToast
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
-
 
 class ReadingPractiseAudioView : FrameLayout, LifecycleObserver,
     ExoAudioPlayer2.ProgressUpdateListener, AudioPlayerEventListener {
@@ -57,6 +59,7 @@ class ReadingPractiseAudioView : FrameLayout, LifecycleObserver,
             seekbar.progress = 0
             playPauseButton.setOnClickListener {
                 if (playPauseButton.state == MaterialPlayPauseDrawable.State.Play) {
+                    playPracticeAudio()
                     playAudio()
                 } else {
                     playPauseButton.state = MaterialPlayPauseDrawable.State.Play
@@ -67,6 +70,16 @@ class ReadingPractiseAudioView : FrameLayout, LifecycleObserver,
             ex.printStackTrace()
         }
     }
+
+    fun playPracticeAudio() {
+        if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
+            StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
+                .text(context.getString(R.string.volume_up_message)).cornerRadius(16)
+                .length(Toast.LENGTH_LONG)
+                .solidBackground().show()
+        }
+    }
+
 
     fun initAudioPlayer(url: String, duration: Int) {
         id = System.currentTimeMillis().toString()
