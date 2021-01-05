@@ -6,8 +6,8 @@
 
     <com.joshtalks.joshskills.ui.groupchat.uikit.Avatar
         android:id="@+id/iv_user"
-        android:layout_width="@dimen/_28sdp"
-        android:layout_height="@dimen/_28sdp"
+        android:layout_width="@dimen/_32sdp"
+        android:layout_height="@dimen/_32sdp"
         android:layout_alignBottom="@+id/cv_message_container"
         android:layout_marginStart="@dimen/_4sdp"
         android:layout_marginBottom="@dimen/_4sdp"
@@ -108,6 +108,7 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/threadReplyLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/cv_message_container"

@@ -395,11 +395,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         viewHolder.tvUser.setVisibility(View.VISIBLE);
                         viewHolder.ivUser.setVisibility(View.VISIBLE);
                         viewHolder.dummyView.setVisibility(View.GONE);
+                        viewHolder.threadReplyLayout.setVisibility(View.VISIBLE);
                         viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_normal_bg_groupchat));
                     } else {
                         viewHolder.tvUser.setVisibility(View.GONE);
                         viewHolder.ivUser.setVisibility(View.INVISIBLE);
                         viewHolder.dummyView.setVisibility(View.VISIBLE);
+                        viewHolder.threadReplyLayout.setVisibility(View.GONE);
                         viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_same_bg_groupchat));
                     }
                     String colorCode = null;
@@ -422,8 +424,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_GROUP)) {
                     if (isUserDetailVisible) {
                         viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_normal_bg_groupchat));
+                        viewHolder.threadReplyLayout.setVisibility(View.VISIBLE);
                     } else {
                         viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_same_bg_groupchat));
+                        viewHolder.threadReplyLayout.setVisibility(View.GONE);
                     }
                 }
             }
@@ -524,11 +528,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         viewHolder.tvUser.setVisibility(View.VISIBLE);
                         viewHolder.ivUser.setVisibility(View.VISIBLE);
                         viewHolder.txtTime.setVisibility(View.INVISIBLE);
+                        viewHolder.threadReplyLayout.setVisibility(View.VISIBLE);
                         viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_normal_bg_groupchat));
                     } else {
                         viewHolder.tvUser.setVisibility(View.GONE);
                         viewHolder.ivUser.setVisibility(View.INVISIBLE);
                         viewHolder.txtTime.setVisibility(View.GONE);
+                        viewHolder.threadReplyLayout.setVisibility(View.GONE);
                         viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_same_bg_groupchat));
                     }
                     String colorCode = null;
@@ -550,8 +556,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             } else {
                 if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_GROUP)) {
                     if (isUserDetailVisible) {
+                        viewHolder.threadReplyLayout.setVisibility(View.VISIBLE);
                         viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_normal_bg_groupchat));
                     } else {
+                        viewHolder.threadReplyLayout.setVisibility(View.GONE);
                         viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_same_bg_groupchat));
                     }
                 }
@@ -711,10 +719,12 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     if (isUserDetailVisible) {
                         viewHolder.tvUser.setVisibility(View.VISIBLE);
                         viewHolder.ivUser.setVisibility(View.VISIBLE);
+                        viewHolder.threadReplyLayout.setVisibility(View.VISIBLE);
                         viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_normal_bg_groupchat));
                     } else {
                         viewHolder.tvUser.setVisibility(View.GONE);
                         viewHolder.ivUser.setVisibility(View.INVISIBLE);
+                        viewHolder.threadReplyLayout.setVisibility(View.GONE);
                         viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_same_bg_groupchat));
                     }
                     String colorCode = null;
@@ -755,8 +765,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             } else {
                 if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_GROUP)) {
                     if (isUserDetailVisible) {
+                        viewHolder.threadReplyLayout.setVisibility(View.VISIBLE);
                         viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_normal_bg_groupchat));
                     } else {
+                        viewHolder.threadReplyLayout.setVisibility(View.GONE);
                         viewHolder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_same_bg_groupchat));
                     }
                 }
@@ -914,9 +926,11 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     if (isUserDetailVisible) {
                         viewHolder.tvUser.setVisibility(View.VISIBLE);
                         viewHolder.ivUser.setVisibility(View.VISIBLE);
+                        viewHolder.threadReplyLayout.setVisibility(View.VISIBLE);
                     } else {
                         viewHolder.tvUser.setVisibility(View.GONE);
                         viewHolder.ivUser.setVisibility(View.INVISIBLE);
+                        viewHolder.threadReplyLayout.setVisibility(View.GONE);
                     }
                     String colorCode = null;
                     try {
@@ -933,6 +947,12 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                     setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName(), colorCode);
                     viewHolder.tvUser.setText(baseMessage.getSender().getName());
+                }
+            } else {
+                if (isUserDetailVisible) {
+                    viewHolder.threadReplyLayout.setVisibility(View.VISIBLE);
+                } else {
+                    viewHolder.threadReplyLayout.setVisibility(View.GONE);
                 }
             }
 
@@ -1408,6 +1428,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private final TextView tvUser;
         private final AppCompatImageView imgDeliveryTick;   //Delivery Tick
         private final CardView replyLayout;                 //reply message layout
+        private final LinearLayout threadReplyLayout;       //thread reply layout
 
         DeleteMessageViewHolder(@NonNull View view) {
             super(view);
@@ -1423,6 +1444,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             lvReplyAvatar = view.findViewById(R.id.reply_avatar_layout);
             imgDeliveryTick = view.findViewById(R.id.delivery_tick);
             replyLayout = view.findViewById(R.id.replyLayout);
+            threadReplyLayout = view.findViewById(R.id.threadReplyLayout);
             this.view = view;
         }
     }
@@ -1449,6 +1471,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private final TextView txtTime;                //Message Sent time.
         private final TextView tvUser;                 //sender name
         private final AppCompatImageView imgDeliveryTick;   //Delivery Tick
+        private final LinearLayout threadReplyLayout;       //thread reply layout
 
         TextMessageViewHolder(@NonNull View view) {
             super(view);
@@ -1469,6 +1492,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             sentimentVw = view.findViewById(R.id.sentiment_layout);
             viewSentimentMessage = view.findViewById(R.id.view_sentiment);
             imgDeliveryTick = view.findViewById(R.id.delivery_tick);
+            threadReplyLayout = view.findViewById(R.id.threadReplyLayout);
             this.view = view;
 
         }
@@ -1484,7 +1508,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private final RelativeLayout rlMessageBubble;
         private final TextView txtTime;
         private final TextView tvUser;
-
+        private final LinearLayout threadReplyLayout;
 
         CustomMessageViewHolder(@NonNull View view) {
             super(view);
@@ -1496,6 +1520,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             imgStatus = view.findViewById(R.id.img_pending);
             ivUser = view.findViewById(R.id.iv_user);
             rlMessageBubble = view.findViewById(R.id.rl_message);
+            threadReplyLayout = view.findViewById(R.id.threadReplyLayout);
             this.view = view;
         }
     }
@@ -1516,7 +1541,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private final View indicatorView;             //indicatorView
         private final AppCompatImageView imgDeliveryTick;   //Delivery Tick
         private final View dummyView;                 //dummyView for Spacing
-
+        private final LinearLayout threadReplyLayout;       //thread reply layout
 
         public AudioMessageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -1533,6 +1558,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             indicatorView = itemView.findViewById(R.id.indicatorView);
             imgDeliveryTick = itemView.findViewById(R.id.delivery_tick);
             dummyView = itemView.findViewById(R.id.dummy_view);
+            threadReplyLayout = itemView.findViewById(R.id.threadReplyLayout);
             this.view = itemView;
         }
     }
