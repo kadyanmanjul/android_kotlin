@@ -484,7 +484,7 @@
     <string name="explanation">Explanation</string>
     <string name="lessons">Lessons</string>
     <string name="exam">Certification Exam</string>
-    <string name="congratulations">Congratulations !!</string>
+    <string name="congratulations">Congratulations </string>
     <string name="grammer_completions_message">Congratulations!!! you have completed grammar part.</string>
     <string name="unlock_next_lesson">Unlock next lesson</string>
     <string name="lesson_completed">Lesson Completed!</string>

@@ -888,7 +888,7 @@ enum class OPTION_TYPE(val type: String) {
 enum class BASE_MESSAGE_TYPE(val type: String) {
     A("A"), TX("TX"), VI("VI"), AU("AU"), IM("IM"), Q("Q"), PD("PD"), PR("PR"), AR("AR"),
     CP("CP"), QUIZ("QUIZ"), TEST("TEST"), OTHER("OTHER"), UNLOCK("UN"), P2P("P2P"),
-    LESSON("LESSON"), CE("CE")
+    LESSON("LESSON"), CE("CE"), BEST_PERFORMER("BEST_PERFORMER")
 }
 
 
@@ -920,5 +920,5 @@ enum class LESSON_STATUS(val type: String) {
 }
 
 enum class CHAT_TYPE(val type: String) {
-    GR("GR"), VP("VP"), RP("RP"), OTHER("OTHER")
+    GR("GR"), VP("VP"), RP("RP"), OTHER("OTHER"), STOD("STOD"), STOW("STOW"), STOM("STOM"), STOY("STOY")
 }

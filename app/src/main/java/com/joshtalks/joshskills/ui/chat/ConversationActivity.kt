@@ -167,6 +167,7 @@ import com.joshtalks.joshskills.ui.view_holders.NewMessageViewHolder
 import com.joshtalks.joshskills.ui.view_holders.P2PViewHolder
 import com.joshtalks.joshskills.ui.view_holders.PdfViewHolder
 import com.joshtalks.joshskills.ui.view_holders.PracticeViewHolder
+import com.joshtalks.joshskills.ui.view_holders.StudentCardViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TextViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TimeViewHolder
 import com.joshtalks.joshskills.ui.view_holders.UnlockNextClassViewHolder
@@ -1575,6 +1576,9 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     BASE_MESSAGE_TYPE.CP -> {
                         type = chatModel.question?.type
                     }
+                    BASE_MESSAGE_TYPE.BEST_PERFORMER -> {
+                        type = chatModel.question?.type
+                    }
                     else -> {
                         type = chatModel.question?.material_type
                     }
@@ -1618,6 +1622,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
 
             BASE_MESSAGE_TYPE.P2P -> P2PViewHolder(activityRef, chatModel, lastMessage)
             BASE_MESSAGE_TYPE.CE -> CertificationExamViewHolder(activityRef, chatModel, lastMessage)
+            BASE_MESSAGE_TYPE.BEST_PERFORMER -> StudentCardViewHolder(activityRef, chatModel, lastMessage)
 
             else -> return null
         }

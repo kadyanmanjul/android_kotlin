@@ -5,6 +5,10 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.setImage
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
@@ -49,5 +53,44 @@ class StudentCardViewHolder(
     @Resolve
     override fun onViewInflated() {
         super.onViewInflated()
+        message.url?.let {
+            userPic.setImage(it, AppObjectController.joshApplication)
+        }
+        message.question?.imageList?.get(0)?.let {
+            awardImage.setImage(it.imageUrl, AppObjectController.joshApplication)
+        }
+        val textList = message.text?.split("$")
+        textList?.forEachIndexed { index, text ->
+            when (index) {
+                0 -> {
+                    studentName.text = text
+                }
+                1 -> {
+                    totalPoints.text = text
+                }
+                2 -> {
+                    userText.text = text
+                }
+                else -> {
+
+                }
+            }
+        }
+
+        when (message.question?.chatType) {
+            CHAT_TYPE.STOD-> {
+                studentOfDash.text = "STUDENT OF THE DAY"
+            }
+            CHAT_TYPE.STOW -> {
+                studentOfDash.text ="STUDENT OF THE WEEK"
+            }
+            CHAT_TYPE.STOM -> {
+                studentOfDash.text ="STUDENT OF THE MONTH"
+            }
+            CHAT_TYPE.STOY -> {
+                studentOfDash.text ="STUDENT OF THE YEAR"
+            }
+        }
+
     }
 }
