@@ -8,13 +8,13 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/title_tv"
-        android:layout_width="@dimen/_60sdp"
+        android:layout_width="@dimen/_64sdp"
         android:layout_height="@dimen/_16sdp"
         android:layout_gravity="center_horizontal"
         android:ellipsize="end"
         android:gravity="center"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-        android:textSize="12dp"
+        android:textSize="@dimen/_12sdp"
         app:autoSizeMaxTextSize="@dimen/_13ssp"
         app:autoSizeMinTextSize="@dimen/_11ssp"
         app:autoSizeTextType="uniform" />
