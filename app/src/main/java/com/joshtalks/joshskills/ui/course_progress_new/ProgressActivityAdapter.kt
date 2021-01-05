@@ -89,7 +89,7 @@ class ProgressActivityAdapter(
                 item.chatId ?: "0",
                 item.certificateExamId ?: 0,
                 item.examStatus ?: CExamStatus.FRESH,
-                lastAvailableLessonId = lastAvailableLessonId,
+                lastAvailableLessonNo = lastAvailableLessonId,
                 parentPosition = layoutPosition,
                 unLockCardPOsition = item.totalCount,
                 title = item.title
@@ -135,6 +135,6 @@ class ProgressActivityAdapter(
     }
 
     override fun isHeader(itemPosition: Int): Boolean {
-        return list.get(itemPosition).type != -1;
+        return list.get(itemPosition).type != -1
     }
 }

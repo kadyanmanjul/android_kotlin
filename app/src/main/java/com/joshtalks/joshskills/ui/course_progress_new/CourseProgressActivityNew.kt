@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.activity.result.ActivityResultLauncher
@@ -48,7 +47,7 @@ class CourseProgressActivityNew : AppCompatActivity(),
 
     private var courseOverviewResponse: List<CourseOverviewResponse>? = null
 
-    private var lastAvailableLessonId: Int? = null
+    private var lastAvailableLessonNo: Int? = null
     lateinit var binding: CourseProgressActivityNewBinding
     lateinit var adapter: ProgressActivityAdapter
     var courseId: Int = 0
@@ -161,7 +160,7 @@ class CourseProgressActivityNew : AppCompatActivity(),
         courseId = intent.getIntExtra(COURSE_ID, 0)
 
         CoroutineScope(Dispatchers.IO).launch {
-            lastAvailableLessonId = viewModel.getLastLessonForCourse(courseId)
+            lastAvailableLessonNo = viewModel.getLastLessonForCourse(courseId)
         }
 
         viewModel.getCourseOverview(courseId)
@@ -206,7 +205,7 @@ class CourseProgressActivityNew : AppCompatActivity(),
                     data,
                     this,
                     it.conversationId ?: "0",
-                    lastAvailableLessonId
+                    lastAvailableLessonNo
                 )
             binding.progressRv.adapter = adapter
 

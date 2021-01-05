@@ -40,7 +40,7 @@ interface LessonDao {
     @Query("UPDATE lessonmodel SET speakingStatus = :status WHERE lesson_id= :lessonId")
     fun updateSpeakingSectionStatus(lessonId: Int, status: LESSON_STATUS)
 
-    @Query("SELECT MAX(lesson_id) FROM lessonmodel WHERE course =:courseId")
+    @Query("SELECT MAX(lesson_no) FROM lessonmodel WHERE course =:courseId")
     fun getLastLessonForCourse(courseId: Int): Int
 
 }

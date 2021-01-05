@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.course_progress_new
 
 import android.content.Context
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +21,7 @@ class CourseProgressAdapter(
     val chatMessageId: String,
     val certificationId: Int,
     val cExamStatus: CExamStatus = CExamStatus.FRESH,
-    val lastAvailableLessonId: Int?,
+    val lastAvailableLessonNo: Int?,
     val parentPosition: Int,
     val unLockCardPOsition: Int?,
     val title: String
@@ -106,8 +105,8 @@ class CourseProgressAdapter(
                     binding.progressIv.alpha = 1f
 
                 binding.progressIndexTv.text = "${item.lessonNo}"
-                lastAvailableLessonId?.let {
-                    if (it == item.lessonId) {
+                lastAvailableLessonNo?.let {
+                    if (it == item.lessonNo) {
                         binding.progressIndexTv.background =
                             ContextCompat.getDrawable(context, R.drawable.lesson_number_bg)
                         binding.progressIndexTv.setTextColor(
