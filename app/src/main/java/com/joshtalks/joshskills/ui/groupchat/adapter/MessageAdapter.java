@@ -590,13 +590,11 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      */
     private void setActionData(ActionMessageViewHolder viewHolder, int i) {
         BaseMessage baseMessage = messageList.get(i);
-//        if (Utils.isDarkMode(context))
-//            viewHolder.textView.setTextColor(context.getResources().getColor(R.color.textColorWhite));
-//        else
-//            viewHolder.textView.setTextColor(context.getResources().getColor(R.color.primaryTextColor));
-        if (baseMessage instanceof Action)
-            viewHolder.textView.setText(((Action) baseMessage).getMessage());
-        else if (baseMessage instanceof Call) {
+        if (baseMessage instanceof Action) {
+            String msgText = ((Action) baseMessage).getMessage();
+            msgText.replace("System", "Vedant Maheshwari");
+            viewHolder.textView.setText(msgText);
+        } else if (baseMessage instanceof Call) {
             Call call = ((Call) baseMessage);
             String callMessageText = "";
             boolean isMissed = false, isIncoming = false, isVideo = false;
