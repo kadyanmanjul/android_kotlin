@@ -35,7 +35,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/pinnedMessageView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_42sdp"
+        android:layout_height="@dimen/_40sdp"
         android:layout_below="@+id/chatList_toolbar"
         android:background="@color/white"
         android:elevation="@dimen/_4sdp"
@@ -103,6 +103,12 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_sdk_close"
             app:tint="@color/black" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/light_grey"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
