@@ -22,6 +22,7 @@ class SettingsActivity : BaseActivity() {
         iv_back.setOnClickListener {
             onBackPressed()
         }
+
         replaceFragment(R.id.settings_container, SettingsFragment(), SettingsFragment.TAG)
     }
 

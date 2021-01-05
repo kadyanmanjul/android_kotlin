@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -16,6 +17,102 @@
         android:paddingHorizontal="@dimen/_8sdp"
         android:paddingVertical="@dimen/_12sdp">
 
+        <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
+            android:id="@+id/audio1"
+            android:layout_width="@dimen/_28sdp"
+            android:layout_height="@dimen/_28sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:background="@drawable/verifiy_progress_bar_drawable"
+            android:contentDescription="@string/play_button_description"
+            android:padding="@dimen/_4sdp"
+            android:tint="@color/button_color"
+            app:layout_constraintEnd_toStartOf="@+id/audio2"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
+            android:id="@+id/audio2"
+            android:layout_width="@dimen/_28sdp"
+            android:layout_height="@dimen/_28sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:background="@drawable/play_pause_button_background"
+            android:backgroundTint="@color/button_color"
+            android:contentDescription="@string/play_button_description"
+            android:padding="@dimen/_4sdp"
+            android:tint="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/audio1"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/textview1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Syllabus"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+            app:layout_constraintEnd_toStartOf="@+id/textview2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/audio2" />
+
+        <TextView
+            android:id="@+id/textview2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Phone"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+            app:layout_constraintEnd_toStartOf="@+id/textview3"
+            app:layout_constraintStart_toEndOf="@id/textview1"
+            app:layout_constraintTop_toTopOf="@+id/textview1" />
+
+        <TextView
+            android:id="@+id/textview3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Phone"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textview2"
+            app:layout_constraintTop_toTopOf="@+id/textview1" />
+
+        <View
+            android:id="@+id/line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:background="@color/grey"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textview1" />
+
+        <TextView
+            android:id="@+id/word_tv"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Word"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textColor="#000"
+            app:layout_constraintBottom_toBottomOf="@+id/table_layout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/table_layout"
+            app:layout_constraintWidth_percent="0.33" />
+
+        <TableLayout
+            android:id="@+id/table_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/word_tv"
+            app:layout_constraintTop_toBottomOf="@+id/line"
+            app:layout_constraintWidth_percent="0.67" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
