@@ -730,7 +730,9 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
     }
 
     fun showAward(awarList: List<Award>, isFromUserProfile: Boolean = false) {
-        if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+        if (false){
+            //TODO add when awards functionality is over
+        //if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             ShowAwardFragment.showDialog(
                 supportFragmentManager,
                 awarList,

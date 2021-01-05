@@ -19,6 +19,13 @@ import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.WindowManager
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.Animation
+import android.view.animation.AnimationSet
+import android.view.animation.AnticipateOvershootInterpolator
+import android.view.animation.LinearInterpolator
+import android.view.animation.ScaleAnimation
+import android.view.animation.TranslateAnimation
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -444,7 +451,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     }
                     R.id.menu_help -> {
                         openHelpActivity()
-                    }R.id.profile_setting -> {
+                    }
+                    R.id.profile_setting -> {
                         openUserProfileActivity(Mentor.getInstance().getId())
                     }
                     R.id.leaderboard_setting -> {
@@ -677,14 +685,33 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
 
         conversationBinding.leaderboardBtnClose.setOnClickListener {
             //conversationBinding.userPointContainer.visibility = GONE
+            //
+           /* val params = conversationBinding.userPointContainer.layoutParams
             conversationBinding.userPointContainer.animate()
                 .alpha(0.0f)
                 .setDuration(700)
-                .translationX(conversationBinding.userPointContainer.width.div(2).times(0.9).toFloat())
+                .translationX(
+                    conversationBinding.userPointContainer.width.div(2).times(0.9).toFloat()
+                )
                 .translationY(-conversationBinding.userPointContainer.height.toFloat())
                 .scaleX(0.0f)
                 .scaleY(0.0f)
+                .withEndAction()
+                .setListener(object : Animation.AnimationListener{
+                    override fun onAnimationStart(p0: Animation?) {
+                        TODO("Not yet implemented")
+                    }
 
+                    override fun onAnimationEnd(p0: Animation?) {
+                        TODO("Not yet implemented")
+                    }
+
+                    override fun onAnimationRepeat(p0: Animation?) {
+                        TODO("Not yet implemented")
+                    }
+
+                })*/
+            moveViewToScreenCenter(conversationBinding.userPointContainer)
         }
 
         conversationBinding.leaderboardTxt.setOnClickListener {
@@ -814,6 +841,51 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             )
         }
         conversationBinding.chatEdit.setText(EMPTY)
+    }
+
+    private fun moveViewToScreenCenter(view: View) {
+        val fromLocattion = IntArray(2)
+        view.getLocationOnScreen(fromLocattion)
+        val animSet = AnimationSet(false)
+        animSet.setFillAfter(false)
+        animSet.setDuration(700)
+        animSet.interpolator = LinearInterpolator()
+        val translate = TranslateAnimation(
+            Animation.ABSOLUTE,  //from xType
+            0f,
+            Animation.ABSOLUTE,  //to xType
+            view.width.div(2).times(0.9).toFloat(),
+            Animation.ABSOLUTE,  //from yType
+            0f,
+            Animation.ABSOLUTE,  //to yType
+            -view.height.toFloat()
+        )
+        val scaleAnimation = ScaleAnimation(
+            1f,
+            0f,
+            1f,
+            0f,
+            Animation.RELATIVE_TO_SELF,
+            1f,
+            Animation.RELATIVE_TO_SELF,
+            1f
+        )
+        animSet.setAnimationListener(object :Animation.AnimationListener{
+            override fun onAnimationEnd(p0: Animation?) {
+                view.visibility= GONE
+            }
+
+            override fun onAnimationStart(p0: Animation?) {
+
+            }
+
+            override fun onAnimationRepeat(p0: Animation?) {
+            }
+        })
+        scaleAnimation.interpolator = AccelerateDecelerateInterpolator()
+        animSet.addAnimation(translate)
+        animSet.addAnimation(scaleAnimation)
+        view.startAnimation(animSet)
     }
 
     @SuppressLint("CheckResult")

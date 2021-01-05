@@ -50,6 +50,7 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
     private var currentRank: Int = 0
     private var currentMentor: LeaderboardMentor? = null
     private var addingMentorIndex: Int = -1
+    private var startingRank: Int = -1
     private var animatePosition = false
     private var isNewCardAdded = false
 
@@ -163,8 +164,11 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
         binding.points.text = it.currentMentor?.points.toString()
         binding.recyclerView.isNestedScrollingEnabled = false
 
-        it.aboveMentorList?.forEach { current_mentor ->
-            addingMentorIndex = 1
+        it.aboveMentorList?.forEachIndexed { index,current_mentor ->
+            if (index==0){
+                startingRank=current_mentor.ranking
+            }
+            addingMentorIndex = it.aboveMentorList.size
             binding.recyclerView.addView(
                 LeaderBoardItemViewHolder(
                     current_mentor,
@@ -235,9 +239,9 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
             val scrolledPosition2 =
                 (recyclerView.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition()
                     ?: return
-            binding.rank.text =
-                outrankData?.old?.rank?.minus(oldRankIndex.minus(scrolledPosition2.plus(2)))
-                    .toString()
+            binding.rank.text =startingRank.plus(scrolledPosition2.plus(2)).toString()
+               /* outrankData?.old?.rank?.minus(oldRankIndex.minus(scrolledPosition2.plus(2)))
+                    .toString()*/
         }
 
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
