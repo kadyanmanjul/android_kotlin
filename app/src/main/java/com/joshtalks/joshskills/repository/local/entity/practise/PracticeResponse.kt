@@ -26,7 +26,7 @@ import java.util.*
 @Parcelize
 data class PracticeEngagementV2(
     @ColumnInfo()
-    var questionForId: String = EMPTY,
+    var questionForId: String? = EMPTY,
 
     @PrimaryKey()
     @SerializedName("id")

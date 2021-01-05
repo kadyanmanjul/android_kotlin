@@ -191,7 +191,7 @@ class ExoAudioPlayer2 {
     }
 
     interface ProgressUpdateListener {
-        fun onProgressUpdate(progress: Long)
-        fun onDurationUpdate(duration: Long?)
+        fun onProgressUpdate(progress: Long) {}
+        fun onDurationUpdate(duration: Long?) {}
     }
 }

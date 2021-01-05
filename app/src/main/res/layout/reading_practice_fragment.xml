@@ -13,7 +13,7 @@
     <ScrollView
         android:id="@+id/root_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -136,24 +136,29 @@
 
 
             <com.google.android.material.tabs.TabLayout
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_40sdp"
-                android:clipToPadding="false"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:background="@drawable/rectangle_with_side_line"
+                android:paddingHorizontal="@dimen/_4sdp"
                 android:tabStripEnabled="false"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cardViewDemoVoiceNote"
                 app:tabGravity="fill"
+                app:tabIndicatorAnimationDuration="500"
                 app:tabIndicatorColor="@color/colorAccent"
-                app:tabIndicatorFullWidth="true"
-                app:tabIndicatorHeight="@dimen/_1sdp"
-                app:tabMode="scrollable"
+                app:tabIndicatorFullWidth="false"
+                app:tabIndicatorHeight="@dimen/_2sdp"
+                app:tabMode="fixed"
                 app:tabPaddingEnd="0dp"
                 app:tabPaddingStart="0dp"
                 app:tabSelectedTextColor="@color/colorAccent"
-                app:tabTextAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-                app:tabTextColor="@color/dark_grey" />
+                app:tabTextAppearance="@style/TabLayoutStyleBold"
+                app:tabTextColor="@color/dark_grey"
+                tools:visibility="visible" />
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/view_pager"
@@ -161,9 +166,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/_10sdp"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </ScrollView>
 
 </layout>

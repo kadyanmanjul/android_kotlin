@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.day_wise_course.reading.feedback
 
+import android.content.Context
 import android.os.Bundle
 import android.os.SystemClock
 import android.text.Spannable
@@ -29,10 +30,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.concurrent.TimeUnit
 
 class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
@@ -41,16 +39,26 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
     private var filePath: String? = null
     private var practiceEngagement: PracticeEngagementV2? = null
     private var startTime: Long = 0
+    private var isImproveEnable: Boolean = false
+    var callback: ReadingPractiseCallback? = null
+
 
     private val practiceViewModel: PracticeViewModel by lazy {
         ViewModelProvider(requireActivity()).get(PracticeViewModel::class.java)
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (parentFragment is ReadingPractiseCallback) {
+            callback = parentFragment as ReadingPractiseCallback
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             practiceEngagement = it.getParcelable(ARG_FEEDBACK)
+            isImproveEnable = it.getBoolean(ARG_IMPROVE, false)
         }
     }
 
@@ -83,6 +91,11 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
             if (PractiseType.SUBMITTED == practiseType) {
                 binding.groupRecordView.visibility = View.GONE
                 binding.cardViewFeedback.visibility = View.VISIBLE
+
+                if (isImproveEnable) {
+                    binding.txtImproveButton.visibility = View.VISIBLE
+                    binding.txtContinueButton.visibility = View.VISIBLE
+                }
 
                 practiseFeedback?.let { feedback ->
                     binding.txtLabelFeedback.text = feedback.feedbackTitle
@@ -275,20 +288,21 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
     }
 
     fun submitAnswer() {
+        startSubmitProgress()
+        practiceEngagement?.questionForId?.let {
+            practiceViewModel.submitReadingPractise(it, filePath!!)
+        }
 
     }
 
     private fun startSubmitProgress() {
+        binding.btnSubmitButton.visibility = View.VISIBLE
         binding.btnSubmitButton.showProgress {
             progressColors =
                 intArrayOf(ContextCompat.getColor(requireContext(), R.color.text_color_10))
             gravity = DrawableButton.GRAVITY_CENTER
-            progressRadiusRes = R.dimen.dp8
-            progressStrokeRes = R.dimen.dp2
-            textMarginRes = R.dimen.dp8
         }
         binding.btnSubmitButton.isEnabled = false
-
     }
 
 
@@ -297,19 +311,32 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
         binding.btnSubmitButton.hideProgress(getString(R.string.submit_answer))
     }
 
+    fun improveAnswer() {
+        callback?.onImproveAnswer()
+    }
+
     /**   end **/
 
 
     companion object {
         const val ARG_FEEDBACK = "feedback"
+        const val ARG_IMPROVE = "improve"
+
         const val separatorRegex = "<a>([\\s\\S]*?)<\\/a>"
 
         @JvmStatic
-        fun newInstance(obj: PracticeEngagementV2) =
+        fun newInstance(obj: PracticeEngagementV2, isImprove: Boolean) =
             RecordAndFeedbackFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_FEEDBACK, obj)
+                    putBoolean(ARG_IMPROVE, isImprove)
                 }
             }
     }
+}
+
+
+interface ReadingPractiseCallback {
+    fun onImproveAnswer()
+    fun onContinue()
 }

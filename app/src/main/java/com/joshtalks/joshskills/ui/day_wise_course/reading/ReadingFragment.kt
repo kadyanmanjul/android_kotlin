@@ -25,18 +25,19 @@ import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagem
 import com.joshtalks.joshskills.repository.local.entity.practise.PractiseType
 import com.joshtalks.joshskills.ui.day_wise_course.CapsuleActivityCallback
 import com.joshtalks.joshskills.ui.day_wise_course.reading.feedback.FeedbackListAdapter
+import com.joshtalks.joshskills.ui.day_wise_course.reading.feedback.ReadingPractiseCallback
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.translation.LanguageTranslationDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
 
-class ReadingFragment : CoreJoshFragment() {
+class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
 
     companion object {
         const val PRACTISE_OBJECT = "practise_object"
-        const val MAX_ATTEMPT = 4
         const val separatorRegex = "<a>([\\s\\S]*?)<\\/a>"
 
         @JvmStatic
@@ -94,6 +95,11 @@ class ReadingFragment : CoreJoshFragment() {
     }
 
     private fun initView() {
+        binding.viewPager.measure(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+
         chatModel?.question?.run {
             binding.txtReadingParagraph.addAutoLinkMode(AutoLinkMode.MODE_CUSTOM)
             binding.txtReadingParagraph.enableUnderLine()
@@ -110,41 +116,48 @@ class ReadingFragment : CoreJoshFragment() {
                             LanguageTranslationDialog.showLanguageDialog(childFragmentManager, word)
                         }
                     })
+
+                audioList?.getOrNull(0)?.let {
+                    binding.readingAudioNote.initAudioPlayer(it.audio_url, it.duration)
+                }
+
+                delay(500)
+                initAdapter(practiseEngagementV2)
             }
-
-            audioList?.getOrNull(0)?.let {
-                binding.readingAudioNote.initAudioPlayer(it.audio_url, it.duration)
-            }
-
-            initAdapter(practiseEngagementV2)
-
         }
     }
 
     private fun initAdapter(practiseEngagementV2: List<PracticeEngagementV2>?) {
         binding.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-        binding.viewPager.offscreenPageLimit = practiseEngagementV2?.size ?: 1
-        binding.viewPager.setPageTransformer(MarginPageTransformer(Utils.dpToPx(40)))
-
         if (practiseEngagementV2.isNullOrEmpty()) {
             binding.viewPager.adapter = FeedbackListAdapter(
                 this,
-                arrayListOf(PracticeEngagementV2(practiseType = PractiseType.NOT_SUBMITTED))
+                arrayListOf(
+                    PracticeEngagementV2(
+                        questionForId = chatModel?.question?.questionId,
+                        practiseType = PractiseType.NOT_SUBMITTED
+                    )
+                )
             )
         } else {
+            binding.viewPager.offscreenPageLimit = practiseEngagementV2.size
+            binding.viewPager.setPageTransformer(MarginPageTransformer(Utils.dpToPx(40)))
             binding.viewPager.adapter =
                 FeedbackListAdapter(this, practiseEngagementV2)
         }
+        enableTab(binding.viewPager.adapter?.itemCount ?: 0)
+    }
+
+    private fun enableTab(count: Int) {
+        if (count < 2) {
+            return
+        }
+        binding.tabLayout.visibility = View.VISIBLE
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             val pos = position + 1
             tab.text = "Attempt $pos"
         }.attach()
-        binding.viewPager.measure(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
     }
-
 
     private fun addObserver() {
         practiceViewModel.requestStatusLiveData.observe(viewLifecycleOwner, Observer {
@@ -161,6 +174,31 @@ class ReadingFragment : CoreJoshFragment() {
         super.onAttach(context)
         if (context is CapsuleActivityCallback)
             activityCallback = context
+    }
+
+    override fun onImproveAnswer() {
+        CoroutineScope(Dispatchers.Main).launch {
+            chatModel?.question?.run {
+                val tempList = arrayListOf<PracticeEngagementV2>()
+                if (practiseEngagementV2.isNullOrEmpty().not()) {
+                    tempList.addAll(practiseEngagementV2!!.toMutableList())
+                }
+                tempList.add(
+                    PracticeEngagementV2(
+                        questionForId = chatModel?.question?.questionId,
+                        practiseType = PractiseType.NOT_SUBMITTED
+                    )
+                )
+                initAdapter(tempList)
+                delay(100)
+                binding.viewPager.currentItem = tempList.size - 1
+                delay(100)
+                binding.rootView.scrollTo(0, binding.cardViewDemoVoiceNote.bottom)
+            }
+        }
+    }
+
+    override fun onContinue() {
     }
 
 }

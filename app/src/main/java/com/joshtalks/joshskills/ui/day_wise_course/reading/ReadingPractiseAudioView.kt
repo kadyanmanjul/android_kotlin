@@ -181,34 +181,9 @@ class ReadingPractiseAudioView : FrameLayout, LifecycleObserver,
     }
 
 
-    override fun onPlayerPause() {
-    }
 
     override fun onPlayerResume() {
     }
-
-    override fun onCurrentTimeUpdated(lastPosition: Long) {
-    }
-
-    override fun onTrackChange(tag: String?) {
-    }
-
-    override fun onPositionDiscontinuity(lastPos: Long, reason: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onPositionDiscontinuity(reason: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onPlayerReleased() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onPlayerEmptyTrack() {
-        TODO("Not yet implemented")
-    }
-
 
     override fun complete() {
         playPauseButton.state = MaterialPlayPauseDrawable.State.Play
@@ -220,10 +195,6 @@ class ReadingPractiseAudioView : FrameLayout, LifecycleObserver,
 
     override fun onProgressUpdate(progress: Long) {
         seekbar.progress = progress.toInt()
-    }
-
-    override fun onDurationUpdate(duration: Long?) {
-
     }
 
     override fun onAttachedToWindow() {
