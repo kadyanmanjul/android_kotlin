@@ -36,7 +36,6 @@ import com.cometchat.pro.models.TextMessage;
 import com.cometchat.pro.models.User;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.core.AppObjectController;
-import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils;
 import com.joshtalks.joshskills.ui.groupchat.constant.StringContract;
 import com.joshtalks.joshskills.ui.groupchat.listeners.OnRepliedMessageClick;
 import com.joshtalks.joshskills.ui.groupchat.listeners.StickyHeaderAdapter;
@@ -1136,14 +1135,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindHeaderViewHolder(DateItemHolder var1, int var2, long var3) {
         BaseMessage baseMessage = messageList.get(var2);
         Date date = new Date(baseMessage.getSentAt() * 1000L);
-        if (DateTimeUtils.isToday(date)) {
-            var1.txtMessageDate.setText("Today");
-        } else if (DateTimeUtils.isYesterday(date)) {
-            var1.txtMessageDate.setText("Yesterday");
-        } else {
-            String formattedDate = Utils.getDate(date.getTime());
-            var1.txtMessageDate.setText(formattedDate);
-        }
+        String formattedDate = com.joshtalks.joshskills.core.Utils.INSTANCE.dateHeaderDateFormat(date);
+        var1.txtMessageDate.setText(formattedDate);
     }
 
     /**
