@@ -1122,7 +1122,7 @@ fun String.getSpannableString(
         val index = sourString.indexOf(word)
         generatedSpanString.setSpan(
             getTouchableSpannable(
-                s.removePrefix("<a>").removeSuffix("</a>"), selectedColor,
+                s.removePrefix(startSeparator).removeSuffix(endSeparator), selectedColor,
                 defaultSelectedColor, true, clickListener
             ), index, index + word.length,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
