@@ -30,7 +30,7 @@ class LeaderBoardFragment : Fragment() {
     private var leaderboardResponse: LeaderboardResponse? = null
     private var compositeDisposable = CompositeDisposable()
     private lateinit var linearLayoutManager: LinearLayoutManager
-    private var userPosition: Int = Int.MAX_VALUE
+    private var userPosition: Int = 0
     private var userRank: Int = Int.MAX_VALUE
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,7 +86,10 @@ class LeaderBoardFragment : Fragment() {
     }
 
     private fun scrollToUserPosition() {
+        if (userPosition>0)
         linearLayoutManager.scrollToPositionWithOffset(userPosition, 0)
+        else         linearLayoutManager.scrollToPositionWithOffset(0, 0)
+
     }
 
     private fun initRV() {

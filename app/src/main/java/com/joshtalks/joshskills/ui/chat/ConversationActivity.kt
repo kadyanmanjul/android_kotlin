@@ -19,10 +19,9 @@ import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.WindowManager
-import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationSet
-import android.view.animation.AnticipateOvershootInterpolator
 import android.view.animation.LinearInterpolator
 import android.view.animation.ScaleAnimation
 import android.view.animation.TranslateAnimation
@@ -687,31 +686,31 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         conversationBinding.leaderboardBtnClose.setOnClickListener {
             //conversationBinding.userPointContainer.visibility = GONE
             //
-           /* val params = conversationBinding.userPointContainer.layoutParams
-            conversationBinding.userPointContainer.animate()
-                .alpha(0.0f)
-                .setDuration(700)
-                .translationX(
-                    conversationBinding.userPointContainer.width.div(2).times(0.9).toFloat()
-                )
-                .translationY(-conversationBinding.userPointContainer.height.toFloat())
-                .scaleX(0.0f)
-                .scaleY(0.0f)
-                .withEndAction()
-                .setListener(object : Animation.AnimationListener{
-                    override fun onAnimationStart(p0: Animation?) {
-                        TODO("Not yet implemented")
-                    }
+            /* val params = conversationBinding.userPointContainer.layoutParams
+             conversationBinding.userPointContainer.animate()
+                 .alpha(0.0f)
+                 .setDuration(700)
+                 .translationX(
+                     conversationBinding.userPointContainer.width.div(2).times(0.9).toFloat()
+                 )
+                 .translationY(-conversationBinding.userPointContainer.height.toFloat())
+                 .scaleX(0.0f)
+                 .scaleY(0.0f)
+                 .withEndAction()
+                 .setListener(object : Animation.AnimationListener{
+                     override fun onAnimationStart(p0: Animation?) {
+                         TODO("Not yet implemented")
+                     }
 
-                    override fun onAnimationEnd(p0: Animation?) {
-                        TODO("Not yet implemented")
-                    }
+                     override fun onAnimationEnd(p0: Animation?) {
+                         TODO("Not yet implemented")
+                     }
 
-                    override fun onAnimationRepeat(p0: Animation?) {
-                        TODO("Not yet implemented")
-                    }
+                     override fun onAnimationRepeat(p0: Animation?) {
+                         TODO("Not yet implemented")
+                     }
 
-                })*/
+                 })*/
             moveViewToScreenCenter(conversationBinding.userPointContainer)
         }
 
@@ -850,17 +849,19 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         val animSet = AnimationSet(false)
         animSet.setFillAfter(false)
         animSet.setDuration(700)
-        animSet.interpolator = LinearInterpolator()
+        //animSet.interpolator = LinearInterpolator()
         val translate = TranslateAnimation(
             Animation.ABSOLUTE,  //from xType
             0f,
             Animation.ABSOLUTE,  //to xType
-            view.width.div(2).times(0.9).toFloat(),
+            0f,
             Animation.ABSOLUTE,  //from yType
             0f,
             Animation.ABSOLUTE,  //to yType
-            -view.height.toFloat()
+            -view.height.times(2).toFloat()
         )
+
+        val fade = AlphaAnimation(1f, 0f)
         val scaleAnimation = ScaleAnimation(
             1f,
             0f,
@@ -871,9 +872,9 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             Animation.RELATIVE_TO_SELF,
             1f
         )
-        animSet.setAnimationListener(object :Animation.AnimationListener{
+        animSet.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationEnd(p0: Animation?) {
-                view.visibility= GONE
+                view.visibility = GONE
             }
 
             override fun onAnimationStart(p0: Animation?) {
@@ -883,9 +884,11 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             override fun onAnimationRepeat(p0: Animation?) {
             }
         })
-        scaleAnimation.interpolator = AccelerateDecelerateInterpolator()
-        animSet.addAnimation(translate)
+        translate.interpolator = LinearInterpolator()
+        scaleAnimation.interpolator = LinearInterpolator()
         animSet.addAnimation(scaleAnimation)
+        animSet.addAnimation(translate)
+        animSet.addAnimation(fade)
         view.startAnimation(animSet)
     }
 
@@ -1622,7 +1625,11 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
 
             BASE_MESSAGE_TYPE.P2P -> P2PViewHolder(activityRef, chatModel, lastMessage)
             BASE_MESSAGE_TYPE.CE -> CertificationExamViewHolder(activityRef, chatModel, lastMessage)
-            BASE_MESSAGE_TYPE.BEST_PERFORMER -> StudentCardViewHolder(activityRef, chatModel, lastMessage)
+            BASE_MESSAGE_TYPE.BEST_PERFORMER -> StudentCardViewHolder(
+                activityRef,
+                chatModel,
+                lastMessage
+            )
 
             else -> return null
         }

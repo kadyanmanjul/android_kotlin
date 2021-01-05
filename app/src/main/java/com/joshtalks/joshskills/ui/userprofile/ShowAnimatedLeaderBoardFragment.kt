@@ -273,8 +273,17 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
                     }
 
                     override fun onAnimationEnd(p0: Animation?) {
-                        if (animatePosition)
-                            (binding.recyclerView.getViewResolverAtPosition(0) as LeaderBoardItemViewHolder).showCurrentUserItem()
+                        binding.recyclerView.addView(0,
+                            currentMentor?.let {
+                                LeaderBoardItemViewHolder(
+                                    it,
+                                    requireContext(),
+                                    true,
+                                )
+                            }
+                        )
+                        binding.recyclerView.scrollToPosition(0)
+                        binding.userItem.visibility = View.GONE
                         binding.userItem.visibility = View.GONE
                         if (isNewCardAdded) {
                             binding.recyclerView.removeView(newCardIndex)
@@ -302,7 +311,6 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
                     }
 
                     override fun onAnimationEnd(p0: Animation?) {
-                        if (animatePosition) {
                             binding.recyclerView.addView(1,
                                 currentMentor?.let {
                                     LeaderBoardItemViewHolder(
@@ -314,7 +322,6 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
                             )
                             binding.recyclerView.scrollToPosition(0)
                             binding.userItem.visibility = View.GONE
-                        }
                         binding.userItem.visibility = View.GONE
                         if (isNewCardAdded) {
                             binding.recyclerView.removeView(newCardIndex)
