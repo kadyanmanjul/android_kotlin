@@ -119,7 +119,7 @@ class ExoAudioPlayer {
     fun play(audioUrl: String, id: String = "", seekDuration: Long = 0) {
         currentPlayingUrl = audioUrl
         val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(
-            context,
+            context!!,
             Util.getUserAgent(context!!, "joshskills")
         )
 

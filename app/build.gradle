@@ -241,8 +241,8 @@ dependencies {
     implementation 'com.zlc.glide:webpdecoder:1.6.4.9.0'
     implementation 'com.github.corouteam:GlideToVectorYou:v2.0.0'
 
-    implementation 'com.google.android.exoplayer:exoplayer:2.11.7'
-    implementation 'com.google.android.exoplayer:extension-workmanager:2.11.7'
+    implementation 'com.google.android.exoplayer:exoplayer:2.12.2'
+    implementation 'com.google.android.exoplayer:extension-workmanager:2.12.2'
 
     implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
     implementation 'com.google.firebase:firebase-appindexing:19.1.0'

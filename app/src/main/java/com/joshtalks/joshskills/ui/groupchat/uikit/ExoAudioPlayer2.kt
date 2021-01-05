@@ -3,9 +3,10 @@ package com.joshtalks.joshskills.ui.groupchat.uikit
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
-import android.util.Log
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
+import com.google.android.exoplayer2.source.ClippingMediaSource
+import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
@@ -15,6 +16,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.videoplayer.PlaybackSpeed
+
 class ExoAudioPlayer2 {
     private var progressTracker: ProgressTracker? = null
     private var progressUpdateListener: ProgressUpdateListener? = null
@@ -135,31 +137,58 @@ class ExoAudioPlayer2 {
         if (isPlaybackSpeed) {
             param = PlaybackParameters(0.50F, 1F)//pitch sexy hai
         }
-        player.createMessage { messageType, payload ->
-            Log.e("aaaa", "Aa")
-        }
-            .setHandler(Handler())
-            .setPosition(/* windowIndex= */ 0, /* positionMs= */ 1_000)
-            .setDeleteAfterDelivery(false)
-            .send()
         player.setPlaybackParameters(param)
         currentPlayingUrl = audioUrl
         val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(
-            context,
+            context!!,
             Util.getUserAgent(context!!, "joshskills")
         )
 
         LAST_ID = id
         val factory = ProgressiveMediaSource.Factory(dataSourceFactory)
-        val audioSource: MediaSource =
-            factory.createMediaSource(Uri.parse(audioUrl))
-        player.prepare(audioSource)
+        val mediaItem: MediaItem = MediaItem.Builder()
+            .setUri(Uri.parse(audioUrl))
+            .build()
+        val audioSource: MediaSource = factory.createMediaSource(mediaItem)
+        player.setMediaSource(audioSource)
         player.repeatMode = ExoPlayer.REPEAT_MODE_OFF
         player.seekTo(seekDuration)
         player.playWhenReady = true
         progressTracker =
             ProgressTracker(player)
+        player.prepare()
 
+    }
+
+    fun playClipAudio(
+        audioUrl: String,
+        id: String = "",
+        startDuration: Long = 0,
+        endDuration: Long = 0
+    ) {
+        val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(
+            context!!, Util.getUserAgent(context!!, "joshskills")
+        )
+        LAST_ID = id
+        val factory = ProgressiveMediaSource.Factory(dataSourceFactory)
+
+        val mediaItem: MediaItem = MediaItem.Builder()
+            .setUri(Uri.parse(audioUrl))
+            .setClipStartPositionMs(1000)
+            .setClipEndPositionMs(3000)
+            .build()
+        val audioSource: MediaSource =
+            factory.createMediaSource(mediaItem)
+
+        val concatenatingMediaSource = ConcatenatingMediaSource()
+
+        val clip = ClippingMediaSource(audioSource, 1000L, 3000L)
+        concatenatingMediaSource.addMediaSource(clip)
+        player.setMediaSource(concatenatingMediaSource)
+        player.repeatMode = ExoPlayer.REPEAT_MODE_OFF
+        player.playWhenReady = true
+        progressTracker = ProgressTracker(player)
+        player.prepare()
     }
 
     fun isPlaying(): Boolean {

@@ -24,8 +24,6 @@ import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
 import com.google.android.exoplayer2.audio.AudioAttributes;
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
-import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.offline.Download;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
@@ -39,6 +37,7 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.ui.TimeBar;
 import com.google.android.exoplayer2.util.Util;
 import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.core.AppObjectController;
 import com.joshtalks.joshskills.core.CountUpTimer;
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent;
 import com.joshtalks.joshskills.core.analytics.AppAnalytics;
@@ -163,8 +162,11 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 DefaultTrackSelector.Parameters trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder().build();
                 trackSelector.setParameters(trackSelectorParameters);
                 lastSeenTrackGroupArray = null;
-                DefaultDrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
-                player = ExoPlayerFactory.newSimpleInstance(getContext(), renderersFactory, trackSelector, drmSessionManager);
+
+                player = new SimpleExoPlayer.Builder(AppObjectController.getJoshApplication(), renderersFactory)
+                        .setUseLazyPreparation(true)
+                        .setTrackSelector(trackSelector)
+                        .build();
 
             } catch (Exception e) {
                 player = ExoPlayerFactory.newSimpleInstance(getContext());

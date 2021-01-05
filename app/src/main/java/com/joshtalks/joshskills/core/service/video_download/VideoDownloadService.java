@@ -75,7 +75,7 @@ public class VideoDownloadService extends DownloadService {
 
     @Override
     protected Scheduler getScheduler() {
-        return new WorkManagerScheduler("Download Video");
+        return new WorkManagerScheduler(AppObjectController.getJoshApplication(), "Download Video");
     }
 
     @NotNull
@@ -99,7 +99,7 @@ public class VideoDownloadService extends DownloadService {
                 101,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-        return notificationHelper.buildProgressNotification(R.drawable.ic_download, pendingIntent, "", downloads);
+        return notificationHelper.buildProgressNotification(this, R.drawable.ic_download, pendingIntent, "", downloads);
     }
 
 

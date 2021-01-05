@@ -201,13 +201,13 @@ data class WrongWord(
     val phones: List<Phonetic>? = emptyList(),
 
     @SerializedName("student_start_time")
-    val studentStartTime: Int = 0,
+    val studentStartTime: Long = 0,
     @SerializedName("student_end_time")
-    val studentEndTime: Int = 0,
+    val studentEndTime: Long = 0,
     @SerializedName("teacher_start_time")
-    val teacherStartTime: Int = 0,
+    val teacherStartTime: Long = 0,
     @SerializedName("teacher_end_time")
-    val teacherEndTime: Int = 0,
+    val teacherEndTime: Long = 0,
 
     ) : Parcelable {
     constructor() : this(

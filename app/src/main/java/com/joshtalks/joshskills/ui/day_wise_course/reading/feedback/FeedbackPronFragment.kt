@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.day_wise_course.reading.feedback
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,17 +15,21 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.custom_ui.blurdialog.BlurDialogFragment
 import com.joshtalks.joshskills.databinding.FragmentFeedbackPronBinding
 import com.joshtalks.joshskills.repository.local.entity.practise.WrongWord
 import com.joshtalks.joshskills.ui.groupchat.uikit.ExoAudioPlayer2
 
-class FeedbackPronFragment : BlurDialogFragment() {
+class FeedbackPronFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpdateListener {
     private var word: WrongWord? = null
     private lateinit var binding: FragmentFeedbackPronBinding
     private var exoAudioManager: ExoAudioPlayer2? = ExoAudioPlayer2.getInstance()
     private var teacherAudioUrl: String? = null
     private var userAudioUrl: String? = null
+    private var startTime: Long = 0L
+    private var endTime: Long = 0L
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +71,8 @@ class FeedbackPronFragment : BlurDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        exoAudioManager?.setProgressUpdateListener(this)
+
         word?.let {
             binding.wordTv.text = it.word
             it.phones?.forEach { phonetic -> addTableRow(phonetic.phone, phonetic.quality) }
@@ -125,15 +132,30 @@ class FeedbackPronFragment : BlurDialogFragment() {
 
     fun teacherSpeak() {
         teacherAudioUrl?.let {
-            exoAudioManager?.play(it)
+            startTime = word!!.teacherStartTime * 1000
+            endTime = word!!.teacherEndTime * 6000
+            exoAudioManager?.play(it, seekDuration = 1000)
         }
-
     }
 
     fun userSpeak() {
-
+        userAudioUrl?.let {
+            startTime = word!!.studentStartTime * 1000
+            endTime = word!!.studentEndTime * 1000
+            exoAudioManager?.play(it, seekDuration = startTime)
+        }
     }
 
+    override fun onProgressUpdate(progress: Long) {
+        super.onProgressUpdate(progress)
+        Log.e("aaa", "aaaa$progress  " + "      " + startTime + "  " + endTime)
+        JoshSkillExecutors.BOUNDED.execute {
+            startTime += progress
+            if (startTime >= endTime) {
+                //   exoAudioManager?.onPause()
+            }
+        }
+    }
 
     companion object {
         const val ARG_WORD_DETAILS = "word_detail"
@@ -169,4 +191,5 @@ class FeedbackPronFragment : BlurDialogFragment() {
             )
         }
     }
+
 }
