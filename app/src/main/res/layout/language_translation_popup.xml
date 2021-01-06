@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:wheel="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:wheel="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -80,27 +80,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_16sdp"
-            android:text="How to pronounce:"
+            android:text="@string/how_to_pronounce"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:textColor="@color/gray_79"
             app:layout_constraintStart_toStartOf="@id/txtMeaning"
             app:layout_constraintTop_toBottomOf="@id/txtMeaning" />
 
-
-        <androidx.appcompat.widget.AppCompatImageView
+        <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/imgSpeak"
             android:layout_width="@dimen/_24sdp"
             android:layout_height="@dimen/_24sdp"
-            android:layout_marginStart="@dimen/_24sdp"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            android:layout_marginVertical="@dimen/_16sdp"
+            android:layout_marginStart="@dimen/_28sdp"
             android:background="@drawable/circle2"
             android:backgroundTint="@color/colorPrimary"
             android:onClick="@{()->handler.speakNormally()}"
             android:padding="@dimen/_6sdp"
             app:layout_constraintBottom_toBottomOf="@id/txtPronounce"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/txtPronounce"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/txtPronounce"
-            app:srcCompat="@drawable/ic_speaker"
-            tools:text="How to pronounce:" />
+            app:lottie_autoPlay="false"
+            app:lottie_colorFilter="@color/white"
+            app:lottie_fileName="lottie/speaker.json"
+            app:lottie_imageAssetsFolder="lottie"
+            app:lottie_loop="true"
+            app:lottie_repeatMode="restart"
+            app:lottie_scale="1"
+            app:lottie_speed="2" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgSpeakSlow"

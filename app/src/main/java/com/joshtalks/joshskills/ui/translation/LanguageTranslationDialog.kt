@@ -17,6 +17,7 @@ import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.custom_ui.blurdialog.BlurDialogFragment
+import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.databinding.LanguageTranslationPopupBinding
 import com.joshtalks.joshskills.repository.server.translation.TranslationData
 import com.joshtalks.joshskills.ui.groupchat.uikit.ExoAudioPlayer2
@@ -28,7 +29,7 @@ import kotlinx.coroutines.launch
 
 const val ARG_WORD = "word"
 
-class LanguageTranslationDialog : BlurDialogFragment() {
+class LanguageTranslationDialog : BlurDialogFragment(), AudioPlayerEventListener {
     private var word: String? = null
     private lateinit var binding: LanguageTranslationPopupBinding
     private val wordDetailLiveData: MutableLiveData<TranslationData> = MutableLiveData()
@@ -70,6 +71,7 @@ class LanguageTranslationDialog : BlurDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        exoAudioManager?.playerListener = this
         wordDetailLiveData.observe(this, {
             binding.progressBar.visibility = View.GONE
             binding.txtEnglish.text = it.word
@@ -78,7 +80,7 @@ class LanguageTranslationDialog : BlurDialogFragment() {
             val sBuilder = SpannableStringBuilder()
             it.engMeaning.forEach { engMeaning ->
                 engMeaning.adjective?.run {
-                    sBuilder.append("Adjective: ").append("\n").append(this)
+                    sBuilder.append("Adjective: ").append("\n").append(this).append("\n\n")
                     sBuilder.setSpan(
                         ForegroundColorSpan(
                             ContextCompat.getColor(
@@ -91,7 +93,7 @@ class LanguageTranslationDialog : BlurDialogFragment() {
                 }
                 engMeaning.noun?.run {
                     val start = sBuilder.length
-                    sBuilder.append("\n\n").append("Noun: ").append("\n").append(this)
+                    sBuilder.append("Noun: ").append("\n").append(this).append("\n\n")
                     sBuilder.setSpan(
                         ForegroundColorSpan(
                             ContextCompat.getColor(
@@ -104,7 +106,7 @@ class LanguageTranslationDialog : BlurDialogFragment() {
                 }
                 engMeaning.verb?.run {
                     val start = sBuilder.length
-                    sBuilder.append("\n\n").append("Verb: ").append("\n").append(this)
+                    sBuilder.append("Verb: ").append("\n").append(this).append("\n")
                     sBuilder.setSpan(
                         ForegroundColorSpan(
                             ContextCompat.getColor(
@@ -151,6 +153,7 @@ class LanguageTranslationDialog : BlurDialogFragment() {
     }
 
     fun speakNormally() {
+        binding.imgSpeak.playAnimation()
         wordDetailLiveData.value?.fastPronunciation?.let {
             exoAudioManager?.play(it)
         }
@@ -200,5 +203,10 @@ class LanguageTranslationDialog : BlurDialogFragment() {
             }
             newInstance(word).show(fragmentManager, LanguageTranslationDialog::class.java.name)
         }
+    }
+
+    override fun complete() {
+        binding.imgSpeak.pauseAnimation()
+        binding.imgSpeak.progress = 0.0F
     }
 }
