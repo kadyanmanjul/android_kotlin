@@ -590,16 +590,14 @@ public class BlurDialogEngine {
         @SuppressLint("NewApi")
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            try {
+                mBackgroundView.destroyDrawingCache();
+                mBackgroundView.setDrawingCacheEnabled(false);
 
-            mBackgroundView.destroyDrawingCache();
-            mBackgroundView.setDrawingCacheEnabled(false);
-
-            mHoldingActivity.getWindow().addContentView(
-                    mBlurredBackgroundView,
-                    mBlurredBackgroundLayoutParams
-            );
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
+                mHoldingActivity.getWindow().addContentView(
+                        mBlurredBackgroundView,
+                        mBlurredBackgroundLayoutParams
+                );
                 mBlurredBackgroundView.setAlpha(0f);
                 mBlurredBackgroundView
                         .animate()
@@ -607,9 +605,10 @@ public class BlurDialogEngine {
                         .setDuration(mAnimationDuration)
                         .setInterpolator(new LinearInterpolator())
                         .start();
+                mBackgroundView = null;
+                mBackground = null;
+            } catch (Exception e) {
             }
-            mBackgroundView = null;
-            mBackground = null;
         }
     }
 }
