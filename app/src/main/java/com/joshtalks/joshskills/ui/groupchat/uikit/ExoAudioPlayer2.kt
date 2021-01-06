@@ -5,8 +5,6 @@ import android.net.Uri
 import android.os.Handler
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
-import com.google.android.exoplayer2.source.ClippingMediaSource
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
@@ -131,7 +129,9 @@ class ExoAudioPlayer2 {
         audioUrl: String,
         id: String = "",
         seekDuration: Long = 0,
-        isPlaybackSpeed: Boolean = false
+        isPlaybackSpeed: Boolean = false,
+        delayProgress: Long = 50
+
     ) {
         var param = PlaybackParameters(1F)
         if (isPlaybackSpeed) {
@@ -155,40 +155,9 @@ class ExoAudioPlayer2 {
         player.seekTo(seekDuration)
         player.playWhenReady = true
         progressTracker =
-            ProgressTracker(player)
+            ProgressTracker(player, delayProgress)
         player.prepare()
 
-    }
-
-    fun playClipAudio(
-        audioUrl: String,
-        id: String = "",
-        startDuration: Long = 0,
-        endDuration: Long = 0
-    ) {
-        val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(
-            context!!, Util.getUserAgent(context!!, "joshskills")
-        )
-        LAST_ID = id
-        val factory = ProgressiveMediaSource.Factory(dataSourceFactory)
-
-        val mediaItem: MediaItem = MediaItem.Builder()
-            .setUri(Uri.parse(audioUrl))
-            .setClipStartPositionMs(1000)
-            .setClipEndPositionMs(3000)
-            .build()
-        val audioSource: MediaSource =
-            factory.createMediaSource(mediaItem)
-
-        val concatenatingMediaSource = ConcatenatingMediaSource()
-
-        val clip = ClippingMediaSource(audioSource, 1000L, 3000L)
-        concatenatingMediaSource.addMediaSource(clip)
-        player.setMediaSource(concatenatingMediaSource)
-        player.repeatMode = ExoPlayer.REPEAT_MODE_OFF
-        player.playWhenReady = true
-        progressTracker = ProgressTracker(player)
-        player.prepare()
     }
 
     fun isPlaying(): Boolean {
@@ -205,12 +174,15 @@ class ExoAudioPlayer2 {
             progressTracker?.let { it.handler.removeCallbacks(it) }
     }
 
-    inner class ProgressTracker(private val player: SimpleExoPlayer) : Runnable {
+    inner class ProgressTracker(
+        private val player: SimpleExoPlayer,
+        private val delayMillis: Long = 50
+    ) : Runnable {
         internal val handler: Handler = Handler()
         override fun run() {
             val currentPosition = player.currentPosition
             progressUpdateListener?.onProgressUpdate(currentPosition)
-            handler.postDelayed(this, 50 /* ms */)
+            handler.postDelayed(this, delayMillis /* ms */)
         }
 
         init {
