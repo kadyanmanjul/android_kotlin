@@ -52,6 +52,7 @@ const val COURSE_PROGRESS_OPENED = "course_progress_opened"
 const val IS_GROUP_CHAT_HINT_SEEN = "joshskills_is_groupchat_hint_seen"
 const val IS_PROFILE_FEATURE_ACTIVE = "is_leaderboard_active"
 const val USER_SCORE = "user_score"
+const val SPEAKING_POINTS = "speaking_points"
 
 object PrefManager {
 

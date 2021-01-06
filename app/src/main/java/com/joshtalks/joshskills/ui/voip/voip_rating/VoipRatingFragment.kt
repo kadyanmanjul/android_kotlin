@@ -15,6 +15,9 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SPEAKING_POINTS
+import com.joshtalks.joshskills.core.USER_SCORE
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.databinding.VoipRatingFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -32,6 +35,7 @@ const val LAST_VOIP_CALL_CHANNEL_NAME = "last_call_channel_name"
 class VoipRatingFragment : DialogFragment() {
     private lateinit var binding: VoipRatingFragmentBinding
     private var channelName: String = EMPTY
+    private var pointsString: String = EMPTY
     private var lastCallTime: Long = 0
 
 
@@ -118,7 +122,7 @@ class VoipRatingFragment : DialogFragment() {
                         )
                     }
                     if(res.body()!!.pointsList.isNullOrEmpty().not()){
-                        RxBus2.publish(SnackBarEvent(res.body()!!.pointsList?.get(0)))
+                        PrefManager.put(SPEAKING_POINTS, res.body()!!.pointsList?.get(0).toString())
                     }
                 }
                 FullScreenProgressDialog.hideProgressBar(requireActivity())
@@ -132,6 +136,7 @@ class VoipRatingFragment : DialogFragment() {
 
     fun exitDialog() {
         val intent = Intent()
+        intent.putExtra("points_list",pointsString)
         requireActivity().setResult(Activity.RESULT_OK, intent)
         requireActivity().finishAndRemoveTask()
     }

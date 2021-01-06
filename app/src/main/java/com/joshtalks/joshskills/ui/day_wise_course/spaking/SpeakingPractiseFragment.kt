@@ -4,6 +4,7 @@ package com.joshtalks.joshskills.ui.day_wise_course.spaking
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,8 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SPEAKING_POINTS
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.RemovePracticeAudioEventBus
@@ -128,6 +131,11 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
             }
             group_two.visibility = View.VISIBLE
             group_one.visibility = View.GONE
+            val points=PrefManager.getStringValue(SPEAKING_POINTS,defaultValue = EMPTY)
+            if (points.isNullOrEmpty().not()){
+                showSnackBar(root_view, Snackbar.LENGTH_LONG,points)
+                PrefManager.put(SPEAKING_POINTS, EMPTY)
+            }
 
             if (response.alreadyTalked >= response.duration) {
                 btn_continue.visibility = View.VISIBLE
@@ -213,7 +221,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
             RxBus2.listen(SnackBarEvent::class.java)
                 .subscribeOn(Schedulers.computation())
                 .subscribe({
-                    showSnackBar(root_view, Snackbar.LENGTH_LONG,it.pointsSnackBarText)
+                    showSnackBar(root_view, Snackbar.LENGTH_LONG, it.pointsSnackBarText)
                 }, {
                     it.printStackTrace()
                 })

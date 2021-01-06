@@ -2040,9 +2040,9 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             subscribeRXBus()
             observeNetwork()
         }
-        if (inboxEntity.isGroupActive)
-        conversationViewModel.getProfileData(Mentor.getInstance().getId())
         conversationViewModel.getUnreadMessageCount(inboxEntity.conversation_id)
+        if (inboxEntity.courseId.equals("151"))
+            conversationViewModel.getProfileData(Mentor.getInstance().getId())
     }
 
     override fun onPause() {
