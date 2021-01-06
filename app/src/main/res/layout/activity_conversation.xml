@@ -361,6 +361,22 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <FrameLayout
+            android:id="@+id/shader"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/toolbar"
+            android:alpha="0.80"
+            android:background="@color/transparent_black_alfa_80"
+            android:visibility="gone" />
+
+        <com.joshtalks.joshskills.ui.course_progress_new.CourseProgressTooltip
+            android:id="@+id/course_progress_tooltip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toolbar"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            android:visibility="gone" />
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/overlay_layout"
             android:layout_width="match_parent"

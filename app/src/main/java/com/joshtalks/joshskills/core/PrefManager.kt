@@ -48,6 +48,7 @@ const val RESUME_CERTIFICATION_EXAM = "resume_certification_exam_"
 const val LAST_ACTIVE_API_TIME = "last_active_time_"
 const val IS_LEADERBOARD_ACTIVE = "is_leaderboard_active"
 const val MY_COLOR_CODE = "joshskills_my_color_code"
+const val COURSE_PROGRESS_OPENED = "course_progress_opened"
 
 object PrefManager {
 

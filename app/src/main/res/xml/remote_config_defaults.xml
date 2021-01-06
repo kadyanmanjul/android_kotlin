@@ -584,4 +584,9 @@
         <value>false</value>
     </entry>
 
+    <entry>
+        <key>COURSE_PROGRESS_TOOLTIP_TEXT</key>
+        <value>Check when are your certificate examinations and which lesson you are currently at
+        </value>
+    </entry>
 </defaultsMap>

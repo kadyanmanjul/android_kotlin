@@ -22,6 +22,7 @@ const val STARTED_FROM = "started_from"
 const val COURSE_ID = "course_ID"
 const val LESSON_INTERVAL = "lesson_interval"
 const val LESSON__CHAT_ID = "lesson_chat_id"
+const val LESSON_NUMBER = "lesson_no"
 const val SHOW_OVERLAY = "show_overlay"
 const val MIN_LINES = 4
 const val RC_HINT = 2
@@ -196,6 +197,8 @@ class FirebaseRemoteConfigKey {
         const val INCOMPLETE_LESSONS_TITLE = "INCOMPLETE_LESSONS_TITLE"
         const val INCOMPLETE_CERTIFICATION_MESSAGE = "INCOMPLETE_CERTIFICATION_MESSAGE"
         const val INCOMPLETE_CERTIFICATION_TITLE = "INCOMPLETE_CERTIFICATION_TITLE"
+
+        val COURSE_PROGRESS_TOOLTIP_TEXT = "COURSE_PROGRESS_TOOLTIP_TEXT"
 
         //SMARTLOOK FEATURE
         const val SMART_LOOK_FEATURE_ENABLE = "SMART_LOOK_FEATURE_ENABLE"

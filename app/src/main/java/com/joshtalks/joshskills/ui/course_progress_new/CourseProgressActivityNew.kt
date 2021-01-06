@@ -12,9 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.decorator.StickHeaderItemDecoration
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
@@ -161,6 +159,8 @@ class CourseProgressActivityNew : AppCompatActivity(),
 
         CoroutineScope(Dispatchers.IO).launch {
             lastAvailableLessonNo = viewModel.getLastLessonForCourse(courseId)
+
+            PrefManager.put(COURSE_PROGRESS_OPENED, true)
         }
 
         viewModel.getCourseOverview(courseId)
@@ -280,37 +280,37 @@ class CourseProgressActivityNew : AppCompatActivity(),
                 if (lessonModel == null) {
                     courseOverviewResponse?.let {
                         ExamUnlockDialogFragment(
-                                it[parentPosition].examInstructions,
-                                it[parentPosition].ceMarks,
-                                it[parentPosition].ceQue,
-                                it[parentPosition].ceMin,
-                                it[parentPosition].totalCount,
-                                it[parentPosition].unLockCount,
-                                title
+                            it[parentPosition].examInstructions,
+                            it[parentPosition].ceMarks,
+                            it[parentPosition].ceQue,
+                            it[parentPosition].ceMin,
+                            it[parentPosition].totalCount,
+                            it[parentPosition].unLockCount,
+                            title
                         ).show(
-                                supportFragmentManager,
-                                "ExamUnlockDialogFragment"
+                            supportFragmentManager,
+                            "ExamUnlockDialogFragment"
                         )
                     }
                 } else {
                     val cExamActivityListener: ActivityResultLauncher<Intent> =
-                            registerForActivityResult(
-                                    ActivityResultContracts.StartActivityForResult()
-                            ) { result ->
-                                if (result.resultCode == Activity.RESULT_OK) {
-                                    result.data?.getStringExtra(MESSAGE_ID)?.let { chatId ->
-                                        viewModel.getCourseOverview(courseId)
-                                    }
+                        registerForActivityResult(
+                            ActivityResultContracts.StartActivityForResult()
+                        ) { result ->
+                            if (result.resultCode == Activity.RESULT_OK) {
+                                result.data?.getStringExtra(MESSAGE_ID)?.let { chatId ->
+                                    viewModel.getCourseOverview(courseId)
                                 }
                             }
+                        }
                     cExamActivityListener.launch(
-                            CertificationBaseActivity.certificationExamIntent(
-                                    this@CourseProgressActivityNew,
-                                    conversationId = conversationId,
-                                    chatMessageId = chatMessageId,
-                                    certificationId = certificationId,
-                                    cExamStatus = cExamStatus
-                            )
+                        CertificationBaseActivity.certificationExamIntent(
+                            this@CourseProgressActivityNew,
+                            conversationId = conversationId,
+                            chatMessageId = chatMessageId,
+                            certificationId = certificationId,
+                            cExamStatus = cExamStatus
+                        )
                     )
                 }
             }

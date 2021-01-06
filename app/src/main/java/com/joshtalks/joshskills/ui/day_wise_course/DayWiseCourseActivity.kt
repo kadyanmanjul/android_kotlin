@@ -37,6 +37,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
     private lateinit var binding: DaywiseCourseActivityBinding
     var lessonId: Int = 0
     var lessonInterval: Int = -1
+    var lessonStatus = LESSON_STATUS.NO
     var chatId: String = EMPTY
     var conversastionId: String? = null
     var isBatchChanged: Boolean = false
@@ -119,6 +120,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             conversastionId = it.getOrNull(0)?.conversationId
 
             lessonModel = it.getOrNull(0)?.question?.lesson
+            lessonStatus = lessonModel?.status ?: LESSON_STATUS.NO
             titleView.text =
                 getString(R.string.lesson_no, it.getOrNull(0)?.question?.lesson?.lessonNo)
 
@@ -166,6 +168,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
         viewModel.lessonStatusLiveData.observe(this, {
 
+            lessonStatus = it
             viewModel.updateQuestionLessonStatus(lessonId, it)
             if (it == LESSON_STATUS.CO) {
                 lessonCompleted = true
@@ -268,7 +271,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             if (status) {
                 it.findViewById<ImageView>(R.id.tab_iv).visibility = View.VISIBLE
             } else {
-                it.findViewById<ImageView>(R.id.tab_iv).visibility=View.GONE
+                it.findViewById<ImageView>(R.id.tab_iv).visibility = View.GONE
             }
         }
     }
@@ -381,8 +384,9 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         val resultIntent = Intent()
         resultIntent.putExtra(IS_BATCH_CHANGED, isBatchChanged)
         resultIntent.putExtra(LAST_LESSON_INTERVAL, lessonInterval)
-        resultIntent.putExtra(LAST_LESSON_STATUS, lessonCompleted)
+        resultIntent.putExtra(LAST_LESSON_STATUS, lessonStatus.name)
         resultIntent.putExtra(LESSON__CHAT_ID, chatId)
+        resultIntent.putExtra(LESSON_NUMBER, lessonModel?.lessonNo ?: 0)
         setResult(RESULT_OK, resultIntent)
         this@DayWiseCourseActivity.finish()
     }
