@@ -486,6 +486,7 @@ data class PracticeFeedback(
         gifUrl = null
     )
 }
+
 data class PracticeFeedback2(
     @SerializedName("status") val status: String?,
     @SerializedName("engagement") val engagementId: Int?,
@@ -679,7 +680,11 @@ interface ChatDao {
                     BASE_MESSAGE_TYPE.PD -> question.pdfList =
                         getPdfOfQuestion(questionId = question.questionId)
                 }
-
+                if (question.type == BASE_MESSAGE_TYPE.PR) {
+                    question.practiseEngagementV2 =
+                        AppObjectController.appDatabase.practiceEngagementDao()
+                            .getPractice(question.questionId)
+                }
                 if (question.lesson != null) {
                     chatModel.lessons = question.lesson
                 }
@@ -689,7 +694,6 @@ interface ChatDao {
                     AppObjectController.appDatabase.lessonDao().getLesson(question.lesson_id)
                 chatModel.lessons = lessonModel
                 chatModel.question?.lesson = lessonModel
-
             }
         }
         return chatModel
