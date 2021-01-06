@@ -13,22 +13,21 @@ import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.CoreJoshFragment
-import com.joshtalks.joshskills.core.OnWordClick
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.AutoLinkMode
-import com.joshtalks.joshskills.core.getSpannableString
 import com.joshtalks.joshskills.databinding.ReadingPracticeFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
 import com.joshtalks.joshskills.repository.local.entity.practise.PractiseType
 import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventBus
 import com.joshtalks.joshskills.ui.day_wise_course.CapsuleActivityCallback
 import com.joshtalks.joshskills.ui.day_wise_course.reading.feedback.FeedbackListAdapter
 import com.joshtalks.joshskills.ui.day_wise_course.reading.feedback.ReadingPractiseCallback
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.translation.LanguageTranslationDialog
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
@@ -222,6 +221,18 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
                     it.printStackTrace()
                 })
         )
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(ViewPagerDisableEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    binding.rootView.requestDisallowInterceptTouchEvent(it.flag.not())
+                    binding.viewPager.isUserInputEnabled = it.flag
+                }, {
+                    it.printStackTrace()
+                })
+        )
+
     }
 
     private fun callback(chatModel: ChatModel) {
@@ -229,6 +240,8 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
             this@ReadingFragment.chatModel = chatModel
             this@ReadingFragment.chatModel?.question?.practiseEngagementV2?.run {
                 initAdapter(this)
+                delay(100)
+                binding.viewPager.currentItem = this.size - 1
             }
         }
     }
