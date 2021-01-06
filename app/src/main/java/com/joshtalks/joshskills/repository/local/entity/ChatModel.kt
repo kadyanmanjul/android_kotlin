@@ -920,5 +920,5 @@ enum class LESSON_STATUS(val type: String) {
 }
 
 enum class CHAT_TYPE(val type: String) {
-    GR("GR"), VP("VP"), RP("RP"), OTHER("OTHER"), STOD("STOD"), STOW("STOW"), STOM("STOM"), STOY("STOY")
+    GR("GR"), VP("VP"), RP("RP"), OTHER("OTHER"), SOTD("SOTD"), SOTW("SOTW"), SOTM("SOTM"), SOTY("SOTY")
 }
