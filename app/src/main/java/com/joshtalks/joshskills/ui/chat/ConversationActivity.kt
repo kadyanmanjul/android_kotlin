@@ -676,33 +676,6 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         }
 
         conversationBinding.leaderboardBtnClose.setOnClickListener {
-            //conversationBinding.userPointContainer.visibility = GONE
-            //
-            /* val params = conversationBinding.userPointContainer.layoutParams
-             conversationBinding.userPointContainer.animate()
-                 .alpha(0.0f)
-                 .setDuration(700)
-                 .translationX(
-                     conversationBinding.userPointContainer.width.div(2).times(0.9).toFloat()
-                 )
-                 .translationY(-conversationBinding.userPointContainer.height.toFloat())
-                 .scaleX(0.0f)
-                 .scaleY(0.0f)
-                 .withEndAction()
-                 .setListener(object : Animation.AnimationListener{
-                     override fun onAnimationStart(p0: Animation?) {
-                         TODO("Not yet implemented")
-                     }
-
-                     override fun onAnimationEnd(p0: Animation?) {
-                         TODO("Not yet implemented")
-                     }
-
-                     override fun onAnimationRepeat(p0: Animation?) {
-                         TODO("Not yet implemented")
-                     }
-
-                 })*/
             moveViewToScreenCenter(conversationBinding.userPointContainer)
         }
 
