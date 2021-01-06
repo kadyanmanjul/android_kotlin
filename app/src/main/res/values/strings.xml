@@ -827,4 +827,6 @@
 
     <string name="pro_mis_word">Pronunciation and missing words</string>
     <string name="speed">Speed</string>
+    <string name="practise_uploading">Practice Uploading &#8230; </string>
+
 </resources>
