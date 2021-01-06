@@ -125,6 +125,7 @@ import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.chat.extra.CallingFeatureShowcaseView
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
+import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressTooltip
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
 import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity.Companion.LAST_LESSON_STATUS
@@ -201,7 +202,8 @@ const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
 
 
 class ConversationActivity : CoreJoshActivity(), Player.EventListener,
-    ExoAudioPlayer.ProgressUpdateListener, AudioPlayerEventListener, OnDismissWithSuccess {
+    ExoAudioPlayer.ProgressUpdateListener, AudioPlayerEventListener, OnDismissWithSuccess,
+    CourseProgressTooltip.OnDismissClick {
 
     companion object {
         fun startConversionActivity(activity: Activity, inboxEntity: InboxEntity) {
@@ -846,6 +848,15 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 if (isNewChatViewAdd) {
                     scrollToEnd()
                 }
+
+                val tempval = conversationList.filter { it.lessons?.lessonNo == 2 }
+                if (tempval.isNullOrEmpty()
+                        .not() && PrefManager.getBoolValue(COURSE_PROGRESS_OPENED)
+                        .not() && inboxEntity.courseId == "151"
+                ) {
+                    showCourseProgressTooltip()
+                }
+
                 readMessageDatabaseUpdate()
             } catch (ex: Exception) {
             }
@@ -1541,9 +1552,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 val status = data.getStringExtra(LAST_LESSON_STATUS)
                 val lessonNo = data.getIntExtra(LESSON_NUMBER, 0)
 
-                if (lessonNo == 2 && status != LESSON_STATUS.NO.name && PrefManager.getBoolValue(
-                        COURSE_PROGRESS_OPENED
-                    )
+                if (lessonNo >= 2 && PrefManager.getBoolValue(COURSE_PROGRESS_OPENED)
                         .not() && inboxEntity.courseId == "151"
                 ) {
                     showCourseProgressTooltip()
@@ -1589,6 +1598,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     }
 
     private fun showCourseProgressTooltip() {
+        conversationBinding.courseProgressTooltip.setDismissListener(this)
         conversationBinding.courseProgressTooltip.visibility = VISIBLE
         conversationBinding.shader.visibility = VISIBLE
     }
@@ -2227,6 +2237,10 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     }
 
     override fun onDismiss() {
+    }
+
+    override fun onCourseProgressTooltipDismiss() {
+        hideCourseProgressTooltip()
     }
 
 
