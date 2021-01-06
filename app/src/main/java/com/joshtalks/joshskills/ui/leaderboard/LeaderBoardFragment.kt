@@ -141,7 +141,7 @@ class LeaderBoardFragment : Fragment() {
                 userPosition = userRank.minus(3)
             } else {
                 userPosition = 53
-                if (it.below_three_mentor_list?.get(0)?.ranking!! >51)
+                if (it.below_three_mentor_list.isNullOrEmpty().not()&&it.below_three_mentor_list?.get(0)?.ranking!! >51)
                 binding.recyclerView.addView(EmptyItemViewHolder())
 
                 it.below_three_mentor_list?.forEach {
