@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
@@ -20,14 +19,18 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.AutoLinkMode
 import com.joshtalks.joshskills.core.getSpannableString
 import com.joshtalks.joshskills.databinding.ReadingPracticeFragmentBinding
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
 import com.joshtalks.joshskills.repository.local.entity.practise.PractiseType
+import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
 import com.joshtalks.joshskills.ui.day_wise_course.CapsuleActivityCallback
 import com.joshtalks.joshskills.ui.day_wise_course.reading.feedback.FeedbackListAdapter
 import com.joshtalks.joshskills.ui.day_wise_course.reading.feedback.ReadingPractiseCallback
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.translation.LanguageTranslationDialog
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -52,6 +55,7 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
     private var chatModel: ChatModel? = null
     private var chatList: ArrayList<ChatModel>? = null
     var activityCallback: CapsuleActivityCallback? = null
+    private var compositeDisposable = CompositeDisposable()
 
 
     private val practiceViewModel: PracticeViewModel by lazy {
@@ -88,7 +92,6 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        addObserver()
         chatModel?.question?.run {
             coreJoshActivity?.feedbackEngagementStatus(this)
         }
@@ -159,17 +162,6 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
         }.attach()
     }
 
-    private fun addObserver() {
-        practiceViewModel.requestStatusLiveData.observe(viewLifecycleOwner, Observer {
-        })
-
-        practiceViewModel.practiceFeedback2LiveData.observe(viewLifecycleOwner, Observer {
-        })
-
-        practiceViewModel.practiceEngagementData.observe(viewLifecycleOwner, Observer {
-        })
-    }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is CapsuleActivityCallback)
@@ -178,6 +170,13 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
 
     override fun onImproveAnswer() {
         CoroutineScope(Dispatchers.Main).launch {
+            val anyUploadingPractice =
+                (binding.viewPager.adapter as FeedbackListAdapter).isAnyPractiseUploading()
+            if (anyUploadingPractice) {
+                binding.viewPager.currentItem = binding.viewPager.adapter?.itemCount?.minus(1) ?: -1
+                return@launch
+            }
+
             chatModel?.question?.run {
                 val tempList = arrayListOf<PracticeEngagementV2>()
                 if (practiseEngagementV2.isNullOrEmpty().not()) {
@@ -201,4 +200,36 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
     override fun onContinue() {
     }
 
+    override fun onResume() {
+        super.onResume()
+        subscribeRxBusObserver()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        compositeDisposable.clear()
+    }
+
+    private fun subscribeRxBusObserver() {
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(EmptyEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .subscribe({
+                    chatModel?.chatId?.let {
+                        practiceViewModel.getPracticeAfterUploaded(it, ::callback)
+                    }
+                }, {
+                    it.printStackTrace()
+                })
+        )
+    }
+
+    private fun callback(chatModel: ChatModel) {
+        CoroutineScope(Dispatchers.Main).launch {
+            this@ReadingFragment.chatModel = chatModel
+            this@ReadingFragment.chatModel?.question?.practiseEngagementV2?.run {
+                initAdapter(this)
+            }
+        }
+    }
 }

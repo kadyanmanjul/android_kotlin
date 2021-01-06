@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.day_wise_course.reading.feedback
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,10 +15,18 @@ import androidx.fragment.app.FragmentManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshSkillExecutors
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.blurdialog.BlurDialogFragment
 import com.joshtalks.joshskills.databinding.FragmentFeedbackPronBinding
 import com.joshtalks.joshskills.repository.local.entity.practise.WrongWord
 import com.joshtalks.joshskills.ui.groupchat.uikit.ExoAudioPlayer2
+import com.tonyodev.fetch2.*
+import com.tonyodev.fetch2core.Downloader
+import com.tonyodev.fetch2rx.RxFetch
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import java.io.File
+
 
 class FeedbackPronFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpdateListener {
     private var word: WrongWord? = null
@@ -71,8 +78,6 @@ class FeedbackPronFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpdat
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        exoAudioManager?.setProgressUpdateListener(this)
-
         word?.let {
             binding.wordTv.text = it.word
             it.phones?.forEach { phonetic -> addTableRow(phonetic.phone, phonetic.quality) }
@@ -132,28 +137,61 @@ class FeedbackPronFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpdat
 
     fun teacherSpeak() {
         teacherAudioUrl?.let {
-            startTime = word!!.teacherStartTime * 1000
-            endTime = word!!.teacherEndTime * 6000
-            exoAudioManager?.play(it, seekDuration = 1000)
+            playAudio(it, word!!.teacherStartTime * 10, word!!.teacherEndTime * 10)
         }
     }
 
     fun userSpeak() {
         userAudioUrl?.let {
-            startTime = word!!.studentStartTime * 1000
-            endTime = word!!.studentEndTime * 1000
-            exoAudioManager?.play(it, seekDuration = startTime)
+            playAudio(it, word!!.studentStartTime * 10, word!!.studentEndTime * 10)
+        }
+    }
+
+    private fun playAudio(url: String, startPos: Long, endPos: Long) {
+        JoshSkillExecutors.BOUNDED.submit {
+            startTime = startPos
+            endTime = endPos
+
+            val fileName = Utils.getFileNameFromURL(url)
+            val cacheFile = File(AppObjectController.createDefaultCacheDir(), fileName)
+            if (cacheFile.exists().not()) {
+                cacheFile.createNewFile()
+            }
+            val request = Request(url, cacheFile.absolutePath)
+            request.priority = Priority.HIGH
+            request.networkType = NetworkType.ALL
+            request.tag = tag
+            val fetchConfiguration = FetchConfiguration.Builder(AppObjectController.joshApplication)
+                .enableRetryOnNetworkGain(true)
+                .setDownloadConcurrentLimit(50)
+                .enableLogging(true)
+                .setAutoRetryMaxAttempts(1)
+                .setGlobalNetworkType(NetworkType.ALL)
+                .setHttpDownloader(HttpUrlConnectionDownloader(Downloader.FileDownloaderType.PARALLEL))
+                .setNamespace("JoshTalks")
+                .enableHashCheck(false)
+                .enableFileExistChecks(true)
+                .build()
+            RxFetch.setDefaultRxInstanceConfiguration(fetchConfiguration)
+            RxFetch.getRxInstance(fetchConfiguration).enqueue(request)
+                .observable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    exoAudioManager?.setProgressUpdateListener(this)
+                    exoAudioManager?.play(it.file, seekDuration = startPos, delayProgress = 5)
+                }, {
+                    it.printStackTrace()
+                })
         }
     }
 
     override fun onProgressUpdate(progress: Long) {
         super.onProgressUpdate(progress)
-        Log.e("aaa", "aaaa$progress  " + "      " + startTime + "  " + endTime)
-        JoshSkillExecutors.BOUNDED.execute {
-            startTime += progress
-            if (startTime >= endTime) {
-                //   exoAudioManager?.onPause()
-            }
+        if (progress >= endTime) {
+            exoAudioManager?.onPause()
+            exoAudioManager?.setProgressUpdateListener(null)
+            return
         }
     }
 

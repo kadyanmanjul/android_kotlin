@@ -8,6 +8,7 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.ConvectorForPhoneticClass
 import com.joshtalks.joshskills.repository.local.ConvectorForWrongWord
 import com.joshtalks.joshskills.repository.local.ListConverters
+import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.entity.Question
 import kotlinx.android.parcel.Parcelize
 import java.util.*
@@ -78,6 +79,10 @@ data class PracticeEngagementV2(
     @Ignore
     var practiseType: PractiseType = PractiseType.SUBMITTED,
 
+    @ColumnInfo
+    @Expose
+    var uploadStatus: DOWNLOAD_STATUS = DOWNLOAD_STATUS.UPLOADED,
+
 
     ) : Parcelable {
     constructor() : this(
@@ -92,7 +97,8 @@ data class PracticeEngagementV2(
         localPath = null,
         transcriptId = null,
         pointsList = emptyList(),
-        practiseType = PractiseType.SUBMITTED
+        practiseType = PractiseType.SUBMITTED,
+        uploadStatus = DOWNLOAD_STATUS.UPLOADED
     )
 }
 
@@ -245,5 +251,17 @@ interface PracticeEngagementDao {
 
     @Query(value = "SELECT * FROM practise_engagement_table where  questionForId= :questionId")
     suspend fun getPractice(questionId: String): List<PracticeEngagementV2>?
+
+    @Query(value = "DELETE FROM practise_engagement_table where   questionForId= :questionId AND uploadStatus=:type")
+    suspend fun deleteTempPractise(
+        questionId: String,
+        type: DOWNLOAD_STATUS = DOWNLOAD_STATUS.UPLOADING
+    )
+
+    @Transaction
+    suspend fun insertPractiseAfterUploaded(practiceEngagementV2: PracticeEngagementV2) {
+        deleteTempPractise(practiceEngagementV2.questionForId!!)
+        insertPractise(practiceEngagementV2)
+    }
 }
 

@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
@@ -278,7 +279,7 @@ class PracticeViewModel(application: Application) :
     }
 
     fun getAssessmentData(chatModelList: ArrayList<ChatModel>?) {
-        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val listOfAssessments: ArrayList<AssessmentWithRelations> = ArrayList()
             chatModelList?.forEach {
                 if (it.question?.type == BASE_MESSAGE_TYPE.QUIZ) {
@@ -353,6 +354,13 @@ class PracticeViewModel(application: Application) :
             requestEngage.questionId = questionId
             requestEngage.mentor = Mentor.getInstance().getId()
             requestEngage.answerUrl = path
+
+            val obj = PracticeEngagementV2(
+                practiseId = Random().nextInt(),
+                questionForId = questionId,
+                uploadStatus = DOWNLOAD_STATUS.UPLOADING
+            )
+            AppObjectController.appDatabase.practiceEngagementDao().insertPractise(obj)
             val insertedId =
                 AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
                     PendingTaskModel(
@@ -361,6 +369,12 @@ class PracticeViewModel(application: Application) :
                     )
                 )
             FileUploadService.uploadSinglePendingTasks(insertedTaskLocalId = insertedId)
+        }
+    }
+
+    fun getPracticeAfterUploaded(id: String, callback: (ChatModel) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            callback.invoke(AppObjectController.appDatabase.chatDao().getUpdatedChatObjectViaId(id))
         }
     }
 

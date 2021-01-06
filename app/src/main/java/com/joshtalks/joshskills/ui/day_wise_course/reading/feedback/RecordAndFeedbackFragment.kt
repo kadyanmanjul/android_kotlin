@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.FragmentRecordFeedbackBinding
+import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
 import com.joshtalks.joshskills.repository.local.entity.practise.PractiseType
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
@@ -88,77 +89,82 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
     private fun initView() {
         CoroutineScope(Dispatchers.Main).launch {
             practiceEngagement?.run {
-                if (PractiseType.SUBMITTED == practiseType) {
-                    binding.groupRecordView.visibility = View.GONE
-                    binding.cardViewFeedback.visibility = View.VISIBLE
+                if (uploadStatus == DOWNLOAD_STATUS.UPLOADED) {
+                    if (PractiseType.SUBMITTED == practiseType) {
+                        binding.groupRecordView.visibility = View.GONE
+                        binding.cardViewFeedback.visibility = View.VISIBLE
 
-                    if (isImproveEnable) {
-                        binding.txtImproveButton.visibility = View.VISIBLE
-                        binding.txtContinueButton.visibility = View.VISIBLE
-                    }
+                        if (isImproveEnable) {
+                            binding.txtImproveButton.visibility = View.VISIBLE
+                            binding.txtContinueButton.visibility = View.VISIBLE
+                        }
 
-                    practiseFeedback?.let { feedback ->
-                        binding.txtLabelFeedback.text = feedback.feedbackTitle
-                        binding.txtFeedback.text = feedback.feedbackText
-                        feedback.speed?.let { speed ->
-                            binding.txtReadingSpeed.text = speed.text
-                            binding.txtReadingSpeedFeedback.text = speed.description
-                            binding.readingSpeedFeedbackView.visibility = View.VISIBLE
-                        }
-                        feedback.recommendation?.let { recommendation ->
-                            val temp = "Recommendation:  "
-                            val sBuilder = SpannableStringBuilder(temp).append(recommendation.text)
-                            sBuilder.setSpan(
-                                ForegroundColorSpan(
-                                    ContextCompat.getColor(
-                                        requireContext(),
-                                        R.color.grey_68
-                                    )
-                                ), temp.length, sBuilder.length,
-                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                            )
-                            binding.txtRecommendation.setText(
-                                sBuilder,
-                                TextView.BufferType.SPANNABLE
-                            )
-                        }
-                        feedback.pronunciation?.let { pronunciation ->
-                            binding.txtWordsPronounced.text = pronunciation.text
-                            binding.txtPronunciationFeedback.text =
-                                pronunciation.description.getSpannableString(
-                                    separatorRegex,
-                                    "<a>",
-                                    "</a>",
-                                    selectedColor = ContextCompat.getColor(
-                                        requireContext(),
-                                        R.color.e1_red
-                                    ),
-                                    defaultSelectedColor = ContextCompat.getColor(
-                                        requireContext(),
-                                        R.color.e1_red
-                                    ),
-                                    clickListener = object : OnWordClick {
-                                        override fun clickedWord(word: String) {
-                                            feedback.pointsList?.find {
-                                                it.word.equals(
-                                                    word,
-                                                    ignoreCase = true
-                                                )
-                                            }?.let {
-                                                FeedbackPronFragment.showLanguageDialog(
-                                                    childFragmentManager,
-                                                    it,
-                                                    feedback.teacherAudioUrl,
-                                                    feedback.studentAudioUrl
-                                                )
+                        practiseFeedback?.let { feedback ->
+                            binding.txtLabelFeedback.text = feedback.feedbackTitle
+                            binding.txtFeedback.text = feedback.feedbackText
+                            feedback.speed?.let { speed ->
+                                binding.txtReadingSpeed.text = speed.text
+                                binding.txtReadingSpeedFeedback.text = speed.description
+                                binding.readingSpeedFeedbackView.visibility = View.VISIBLE
+                            }
+                            feedback.recommendation?.let { recommendation ->
+                                val temp = "Recommendation:  "
+                                val sBuilder =
+                                    SpannableStringBuilder(temp).append(recommendation.text)
+                                sBuilder.setSpan(
+                                    ForegroundColorSpan(
+                                        ContextCompat.getColor(
+                                            requireContext(),
+                                            R.color.grey_68
+                                        )
+                                    ), temp.length, sBuilder.length,
+                                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                                )
+                                binding.txtRecommendation.setText(
+                                    sBuilder,
+                                    TextView.BufferType.SPANNABLE
+                                )
+                            }
+                            feedback.pronunciation?.let { pronunciation ->
+                                binding.txtWordsPronounced.text = pronunciation.text
+                                binding.txtPronunciationFeedback.text =
+                                    pronunciation.description.getSpannableString(
+                                        separatorRegex,
+                                        "<a>",
+                                        "</a>",
+                                        selectedColor = ContextCompat.getColor(
+                                            requireContext(),
+                                            R.color.e1_red
+                                        ),
+                                        defaultSelectedColor = ContextCompat.getColor(
+                                            requireContext(),
+                                            R.color.e1_red
+                                        ),
+                                        clickListener = object : OnWordClick {
+                                            override fun clickedWord(word: String) {
+                                                feedback.pointsList?.find {
+                                                    it.word.equals(
+                                                        word,
+                                                        ignoreCase = true
+                                                    )
+                                                }?.let {
+                                                    FeedbackPronFragment.showLanguageDialog(
+                                                        childFragmentManager,
+                                                        it,
+                                                        feedback.teacherAudioUrl,
+                                                        feedback.studentAudioUrl
+                                                    )
+                                                }
                                             }
-                                        }
-                                    })
-                            binding.pronunciationFeedbackView.visibility = View.VISIBLE
+                                        })
+                                binding.pronunciationFeedbackView.visibility = View.VISIBLE
+                            }
                         }
+                    } else {
+                        setUpAudioRecordTouchListener()
                     }
                 } else {
-                    setUpAudioRecordTouchListener()
+                    startSubmitProgress()
                 }
             }
         }
@@ -304,9 +310,13 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
     private fun startSubmitProgress() {
         binding.btnSubmitButton.visibility = View.VISIBLE
         binding.btnSubmitButton.showProgress {
+            buttonTextRes = R.string.practise_uploading
             progressColors =
                 intArrayOf(ContextCompat.getColor(requireContext(), R.color.text_color_10))
             gravity = DrawableButton.GRAVITY_CENTER
+            progressRadiusRes = R.dimen.dp8
+            progressStrokeRes = R.dimen.dp2
+            textMarginRes = R.dimen.dp8
         }
         binding.btnSubmitButton.isEnabled = false
     }
@@ -318,7 +328,9 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
     }
 
     fun improveAnswer() {
-        callback?.onImproveAnswer()
+        if (isImproveEnable) {
+            callback?.onImproveAnswer()
+        }
     }
 
     /**   end **/

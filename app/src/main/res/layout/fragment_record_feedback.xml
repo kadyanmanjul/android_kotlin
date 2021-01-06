@@ -379,7 +379,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardViewFeedback"
             app:rippleColor="@color/white"
-            tools:visibility="gone" />
+            tools:visibility="visible" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/txtContinueButton"
@@ -396,12 +396,12 @@
             android:textSize="@dimen/_12sdp"
             android:visibility="gone"
             app:cornerRadius="@dimen/_16sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/txtImproveButton"
             app:layout_constraintStart_toEndOf="@+id/txtImproveButton"
             app:layout_constraintTop_toTopOf="@+id/txtImproveButton"
             app:rippleColor="@color/white"
             app:strokeColor="@color/text_color_10"
-            tools:visibility="gone" />
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
