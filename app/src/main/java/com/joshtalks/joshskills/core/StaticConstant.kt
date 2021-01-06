@@ -109,7 +109,6 @@ class FirebaseRemoteConfigKey {
         const val START_SUBSCRIPTION_FEATURE3 = "START_SUBSCRIPTION_FEATURE3"
 
         //subscription bb tip
-
         const val SUBSCRIPTION_BB_TIP = "SUBSCRIPTION_BB_TIP"
         const val SUBSCRIPTION_BB_TEXT = "SUBSCRIPTION_BB_TEXT"
 
@@ -203,6 +202,8 @@ class FirebaseRemoteConfigKey {
         //SMARTLOOK FEATURE
         const val SMART_LOOK_FEATURE_ENABLE = "SMART_LOOK_FEATURE_ENABLE"
 
+        // GroupChat
+        const val GROUP_CHAT_TAGLINE = "GROUP_CHAT_TAGLINE"
     }
 }
 

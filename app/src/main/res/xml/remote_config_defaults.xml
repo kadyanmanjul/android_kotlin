@@ -583,6 +583,10 @@
         <key>SMART_LOOK_FEATURE_ENABLE</key>
         <value>false</value>
     </entry>
+    <entry>
+        <key>GROUP_CHAT_TAGLINE</key>
+        <value>Practice with other users and Improve your skill here</value>
+    </entry>
 
     <entry>
         <key>COURSE_PROGRESS_TOOLTIP_TEXT</key>
