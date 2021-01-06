@@ -107,6 +107,7 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
                             binding.txtContinueButton.visibility = View.VISIBLE
                         }
                         practiceEngagement?.answerUrl?.let {
+                            binding.imgCancel.visibility = View.GONE
                             binding.cardViewAnswerVoiceNote.visibility = View.VISIBLE
                             binding.submitAudioNote.initAudioPlayer(
                                 it,
@@ -182,6 +183,7 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
                         setUpAudioRecordTouchListener()
                     }
                 } else {
+                    binding.btnSubmitButton.visibility = View.VISIBLE
                     startSubmitProgress()
                 }
             }
@@ -336,16 +338,14 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
         practiceEngagement?.questionForId?.let {
             practiceViewModel.submitReadingPractise(it, filePath!!)
         }
-
     }
 
     private fun startSubmitProgress() {
-        binding.btnSubmitButton.visibility = View.VISIBLE
         binding.btnSubmitButton.showProgress {
-            buttonTextRes = R.string.practise_uploading
+            buttonTextRes = R.string.plz_wait
             progressColors =
                 intArrayOf(ContextCompat.getColor(requireContext(), R.color.text_color_10))
-            gravity = DrawableButton.GRAVITY_CENTER
+            gravity = DrawableButton.GRAVITY_TEXT_END
             progressRadiusRes = R.dimen.dp8
             progressStrokeRes = R.dimen.dp2
             textMarginRes = R.dimen.dp8

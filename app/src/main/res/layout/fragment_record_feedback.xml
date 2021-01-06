@@ -39,10 +39,10 @@
             android:adjustViewBounds="true"
             android:background="@drawable/recv_bg_mic"
             android:scaleType="center"
-            app:srcCompat="@drawable/ic_mic_white_24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtLabelRecord" />
+            app:layout_constraintTop_toBottomOf="@+id/txtLabelRecord"
+            app:srcCompat="@drawable/ic_mic_white_24dp" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/imgRecordAnimationView"
@@ -112,7 +112,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtCaptionRecord"
-            tools:visibility="gone">
+            tools:visibility="visible">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -126,7 +126,8 @@
                     android:layout_marginVertical="@dimen/_12sdp"
                     android:gravity="start"
                     android:text="@string/your_answer"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
                     android:textColor="@color/black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
@@ -157,6 +158,7 @@
                     android:scaleType="fitXY"
                     android:src="@drawable/ic_cross"
                     android:tint="@color/black"
+
                     app:layout_constraintBottom_toBottomOf="@+id/submit_audio_note"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/submit_audio_note" />
@@ -177,16 +179,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardViewAnswerVoiceNote"
-            tools:visibility="gone">
+            tools:visibility="visible">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txtLabelFeedback"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/_8sdp"
                     android:layout_marginVertical="@dimen/_12sdp"
                     android:gravity="start"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
@@ -202,6 +205,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/_4sdp"
+                    android:paddingHorizontal="@dimen/_8sdp"
                     android:gravity="start"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                     android:textColor="@color/grey_68"
@@ -231,7 +235,7 @@
                         android:layout_marginVertical="@dimen/_8sdp"
                         android:drawablePadding="@dimen/_4sdp"
                         android:text="@string/pro_mis_word"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
                         android:textColor="@color/black"
                         app:drawableEndCompat="@drawable/ic_info_small"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -259,6 +263,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="@dimen/_12sdp"
+                        android:letterSpacing="0.06"
+                        android:lineSpacingMultiplier="1.2"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -292,7 +298,7 @@
                         android:drawableEnd="@drawable/ic_info_small"
                         android:drawablePadding="@dimen/_4sdp"
                         android:text="@string/speed"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
                         android:textColor="@color/black"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0"

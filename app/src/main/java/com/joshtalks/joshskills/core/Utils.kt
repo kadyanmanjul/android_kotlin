@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.core
 import android.Manifest
 import android.accounts.Account
 import android.accounts.AccountManager
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
 import android.app.PendingIntent
@@ -47,6 +48,7 @@ import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
@@ -67,6 +69,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
+import com.google.android.material.tabs.TabLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.custom_ui.CustomTabHelper
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
@@ -1136,4 +1139,14 @@ suspend fun String.getSpannableString(
         delay(150)
         return@async generatedSpanString
     }.await()
+}
+
+@SuppressLint("ClickableViewAccessibility")
+fun TabLayout.updateEnable(enable: Boolean) {
+    val tabStrip = this.getChildAt(0) as LinearLayout
+    for (i in 0..tabStrip.childCount) {
+        tabStrip.getChildAt(i).setOnTouchListener { _, _ ->
+            return@setOnTouchListener enable
+        }
+    }
 }

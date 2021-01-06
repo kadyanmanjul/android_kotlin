@@ -111,8 +111,8 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
                     separatorRegex,
                     "<a>",
                     "</a>",
-                    defaultSelectedColor = ContextCompat.getColor(requireContext(), R.color.e1_red),
-                    selectedColor = ContextCompat.getColor(requireContext(), R.color.e1_red),
+                    defaultSelectedColor = ContextCompat.getColor(requireContext(), R.color.black),
+                    selectedColor = ContextCompat.getColor(requireContext(), R.color.black),
                     clickListener = object : OnWordClick {
                         override fun clickedWord(word: String) {
                             LanguageTranslationDialog.showLanguageDialog(childFragmentManager, word)
@@ -121,6 +121,9 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
 
                 audioList?.getOrNull(0)?.let {
                     binding.readingAudioNote.initAudioPlayer(it.audio_url, it.duration)
+                }
+                imageList?.getOrNull(0)?.imageUrl?.let {
+                    binding.imgDemoVoiceNote.setImage(it)
                 }
 
                 delay(500)
