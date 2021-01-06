@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.PendingTask
 import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import kotlinx.coroutines.CoroutineScope
@@ -235,24 +236,16 @@ class FileUploadService : Service() {
                 if (resp.isSuccessful && resp.body() != null) {
                     resp.body()?.let {
                         it.questionForId = requestEngage.questionId
-                        AppObjectController.appDatabase.practiceEngagementDao().insertPractise(it)
+                        AppObjectController.appDatabase.practiceEngagementDao()
+                            .insertPractiseAfterUploaded(it)
+                        RxBus2.publish(EmptyEventBus())
                     }
-                    /*val question = AppObjectController.appDatabase.chatDao()
-                            .getQuestionOnId(pendingTaskModel.requestObject.questionId)
-                    question?.let {
-                        question.practiceEngagement = engangementList
-                        question.status = QUESTION_STATUS.AT
-                        question.practiceEngagement!!.get(0).duration = requestEngage.duration
-                        question.practiceEngagement!!.get(0).localPath = requestEngage.localPath
-                        AppObjectController.appDatabase.chatDao()
-                                .updateQuestionObject(question)
-                    }*/
                     AppObjectController.appDatabase.pendingTaskDao().deleteTask(pendingTaskModel.id)
                 } else {
                     handleRetry(pendingTaskModel)
                 }
-            } catch (ex: Exception) {
-
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
             }
         }
     }
