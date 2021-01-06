@@ -13,12 +13,16 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
+import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.eventbus.RemovePracticeAudioEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopicModel
 import com.joshtalks.joshskills.ui.day_wise_course.CapsuleActivityCallback
 import com.joshtalks.joshskills.ui.feedback.QUESTION_ID
@@ -30,11 +34,14 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.speaking_practise_fragment.btn_continue
 import kotlinx.android.synthetic.main.speaking_practise_fragment.btn_start
 import kotlinx.android.synthetic.main.speaking_practise_fragment.group_one
 import kotlinx.android.synthetic.main.speaking_practise_fragment.group_two
 import kotlinx.android.synthetic.main.speaking_practise_fragment.progress_bar
+import kotlinx.android.synthetic.main.speaking_practise_fragment.root_view
 import kotlinx.android.synthetic.main.speaking_practise_fragment.text_view
 import kotlinx.android.synthetic.main.speaking_practise_fragment.tv_practise_time
 import kotlinx.android.synthetic.main.speaking_practise_fragment.tv_today_topic
@@ -48,6 +55,7 @@ const val LESSON_ID = "lesson_id"
 class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
 
     var activityCallback: CapsuleActivityCallback? = null
+    private var compositeDisposable = CompositeDisposable()
     private var lessonId: String = EMPTY
     private var courseId: String = EMPTY
     private var topicId: String? = null
@@ -198,6 +206,30 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
             }
         }
     }
+
+
+    private fun subscribeRXBus() {
+        compositeDisposable.add(
+            RxBus2.listen(SnackBarEvent::class.java)
+                .subscribeOn(Schedulers.computation())
+                .subscribe({
+                    showSnackBar(root_view, Snackbar.LENGTH_LONG,it.pointsSnackBarText)
+                }, {
+                    it.printStackTrace()
+                })
+        )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        subscribeRXBus()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        compositeDisposable.clear()
+    }
+
 
     companion object {
         @JvmStatic

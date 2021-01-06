@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.setImage
+import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
@@ -45,6 +46,7 @@ class StudentCardViewHolder(
     @View(R.id.root_view_fl)
     lateinit var rootView: FrameLayout
 
+    private var userName: String="Josh Skills"
 
     override fun getRoot(): FrameLayout {
         return rootView
@@ -53,17 +55,12 @@ class StudentCardViewHolder(
     @Resolve
     override fun onViewInflated() {
         super.onViewInflated()
-        message.url?.let {
-            userPic.setImage(it, AppObjectController.joshApplication)
-        }
-        message.question?.imageList?.get(0)?.let {
-            awardImage.setImage(it.imageUrl, AppObjectController.joshApplication)
-        }
         val textList = message.text?.split("$")
         textList?.forEachIndexed { index, text ->
             when (index) {
                 0 -> {
                     studentName.text = text
+                    userName=text
                 }
                 1 -> {
                     totalPoints.text = text
@@ -90,7 +87,15 @@ class StudentCardViewHolder(
             CHAT_TYPE.SOTY -> {
                 studentOfDash.text ="STUDENT OF THE YEAR"
             }
-        }
+            else -> {
 
+            }
+        }
+        userPic.post {
+            userPic.setUserImageOrInitials(message.url, userName)
+        }
+        message.question?.imageList?.get(0)?.let {
+            awardImage.setImage(it.imageUrl, AppObjectController.joshApplication)
+        }
     }
 }

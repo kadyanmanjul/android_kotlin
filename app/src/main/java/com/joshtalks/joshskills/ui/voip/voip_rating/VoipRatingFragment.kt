@@ -17,6 +17,8 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.databinding.VoipRatingFragmentBinding
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -115,12 +117,8 @@ class VoipRatingFragment : DialogFragment() {
                             res.body()!!.awardMentorList!!
                         )
                     }
-                    if (res.body()?.pointsList.isNullOrEmpty().not()) {
-                        (requireActivity() as BaseActivity).showSnackBar(
-                            binding.rootView,
-                            Snackbar.LENGTH_LONG,
-                            res.body()?.pointsList?.get(0)
-                        )
+                    if(res.body()!!.pointsList.isNullOrEmpty().not()){
+                        RxBus2.publish(SnackBarEvent(res.body()!!.pointsList?.get(0)))
                     }
                 }
                 FullScreenProgressDialog.hideProgressBar(requireActivity())
