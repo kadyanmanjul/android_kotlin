@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.day_wise_course.reading.feedback
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.os.SystemClock
@@ -15,6 +16,8 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.airbnb.lottie.L
+import com.airbnb.lottie.LottieCompositionFactory
 import com.github.razir.progressbutton.*
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -22,9 +25,11 @@ import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.FragmentRecordFeedbackBinding
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
 import com.joshtalks.joshskills.repository.local.entity.practise.PractiseType
+import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventBus
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -79,11 +84,14 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
         return binding.root
     }
 
+    @SuppressLint("RestrictedApi")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bindProgressButton(binding.btnSubmitButton)
         binding.btnSubmitButton.attachTextChangeAnimator()
         initView()
+        L.DBG = true
+        L.setTraceEnabled(true)
     }
 
     private fun initView() {
@@ -98,10 +106,20 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
                             binding.txtImproveButton.visibility = View.VISIBLE
                             binding.txtContinueButton.visibility = View.VISIBLE
                         }
+                        practiceEngagement?.answerUrl?.let {
+                            binding.cardViewAnswerVoiceNote.visibility = View.VISIBLE
+                            binding.submitAudioNote.initAudioPlayer(
+                                it,
+                                practiceEngagement?.duration ?: 0
+                            )
+                        }
+
 
                         practiseFeedback?.let { feedback ->
                             binding.txtLabelFeedback.text = feedback.feedbackTitle
                             binding.txtFeedback.text = feedback.feedbackText
+
+
                             feedback.speed?.let { speed ->
                                 binding.txtReadingSpeed.text = speed.text
                                 binding.txtReadingSpeedFeedback.text = speed.description
@@ -109,8 +127,8 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
                             }
                             feedback.recommendation?.let { recommendation ->
                                 val temp = "Recommendation:  "
-                                val sBuilder =
-                                    SpannableStringBuilder(temp).append(recommendation.text)
+                                val sBuilder = SpannableStringBuilder(temp)
+                                sBuilder.append(recommendation.text)
                                 sBuilder.setSpan(
                                     ForegroundColorSpan(
                                         ContextCompat.getColor(
@@ -167,6 +185,12 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
                     startSubmitProgress()
                 }
             }
+            LottieCompositionFactory.fromAsset(requireContext(), "lottie/audio_record.json")
+                .addListener {
+                    binding.imgRecordAnimationView.setComposition(it)
+                    binding.imgRecordAnimationView.playAnimation()
+                }
+            binding.imgRecordAnimationView.setSafeMode(true)
         }
     }
 
@@ -214,6 +238,9 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
     }
 
     private fun startAudioRecording() {
+        binding.imgRecordButton.setImageResource(0)
+        binding.imgRecordAnimationView.visibility = View.VISIBLE
+        RxBus2.publish(ViewPagerDisableEventBus(false))
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         practiceViewModel.startRecordAudio(this)
     }
@@ -225,6 +252,7 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
 
     override fun onRecordingStarted() {
         AppObjectController.uiHandler.post {
+            binding.rootView.requestDisallowInterceptTouchEvent(true)
             binding.counterTv.visibility = View.VISIBLE
             binding.counterTv.base = SystemClock.elapsedRealtime()
             startTime = System.currentTimeMillis()
@@ -257,7 +285,9 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
     }
 
     private fun showUIUserRecordingFailed() {
+        RxBus2.publish(ViewPagerDisableEventBus(true))
         CoroutineScope(Dispatchers.Main).launch {
+            binding.rootView.requestDisallowInterceptTouchEvent(false)
             binding.txtCaptionRecord.text = getString(R.string.recording_start)
             binding.counterTv.stop()
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -266,6 +296,7 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
 
     private fun afterRecordCompleteUI() {
         CoroutineScope(Dispatchers.Main).launch {
+            binding.imgRecordAnimationView.visibility = View.INVISIBLE
             binding.counterTv.visibility = View.GONE
             binding.groupRecordView.visibility = View.GONE
             binding.btnSubmitButton.visibility = View.VISIBLE
@@ -289,6 +320,7 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
     /** Start  View onclicks function **/
     fun cancelAudio() {
         try {
+            binding.imgRecordButton.setImageResource(R.drawable.ic_mic_white_24dp)
             binding.btnSubmitButton.visibility = View.GONE
             binding.counterTv.visibility = View.GONE
             binding.groupRecordView.visibility = View.VISIBLE

@@ -11,6 +11,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rootView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/_8sdp">
@@ -38,10 +39,27 @@
             android:adjustViewBounds="true"
             android:background="@drawable/recv_bg_mic"
             android:scaleType="center"
-            android:src="@drawable/ic_mic_white_24dp"
+            app:srcCompat="@drawable/ic_mic_white_24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtLabelRecord" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/imgRecordAnimationView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            android:layout_marginVertical="@dimen/_16sdp"
+            android:background="@drawable/recv_bg_mic"
+            android:padding="@dimen/_8sdp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtLabelRecord"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_repeatMode="reverse"
+            app:lottie_scale="1.7" />
 
         <Chronometer
             android:id="@+id/counterTv"
