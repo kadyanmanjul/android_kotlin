@@ -78,16 +78,16 @@ class StudentCardViewHolder(
         }
 
         when (message.question?.chatType) {
-            CHAT_TYPE.STOD-> {
+            CHAT_TYPE.SOTD-> {
                 studentOfDash.text = "STUDENT OF THE DAY"
             }
-            CHAT_TYPE.STOW -> {
+            CHAT_TYPE.SOTW -> {
                 studentOfDash.text ="STUDENT OF THE WEEK"
             }
-            CHAT_TYPE.STOM -> {
+            CHAT_TYPE.SOTM -> {
                 studentOfDash.text ="STUDENT OF THE MONTH"
             }
-            CHAT_TYPE.STOY -> {
+            CHAT_TYPE.SOTY -> {
                 studentOfDash.text ="STUDENT OF THE YEAR"
             }
         }

@@ -7,7 +7,7 @@
     android:layout_height="@dimen/_221sdp"
     android:layout_marginTop="@dimen/_2sdp"
     android:layout_marginBottom="@dimen/_2sdp"
-    android:layout_marginStart="@dimen/_12sdp"
+    android:layout_marginStart="@dimen/_14sdp"
     android:background="@drawable/ic_student_card_bg"
     android:paddingEnd="@dimen/_7sdp">
 
@@ -72,11 +72,11 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_award"
-            android:layout_width="@dimen/_56sdp"
+            android:layout_width="@dimen/_64sdp"
             android:layout_height="@dimen/_72sdp"
             android:layout_marginStart="@dimen/_19sdp"
             android:gravity="center_vertical|start"
-            app:layout_constraintBottom_toBottomOf="@id/user_pic"
+            android:scaleType="fitXY"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/user_pic"
@@ -94,7 +94,7 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
             android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/user_pic"
+            app:layout_constraintTop_toBottomOf="@id/iv_award"
             tools:text="Vedant Maheshwari" />
 
         <View
