@@ -24,7 +24,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_16sdp"
-                android:layout_marginVertical="@dimen/_8sdp"
+                android:layout_marginVertical="@dimen/_12sdp"
                 android:gravity="start"
                 android:text="@string/reading_practice"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
@@ -113,11 +113,10 @@
                         android:layout_height="@dimen/_42sdp"
                         android:layout_marginHorizontal="@dimen/_16sdp"
                         android:layout_marginVertical="@dimen/_12sdp"
-                        android:src="@color/red"
+                        android:src="@drawable/ic_call_placeholder"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/txtLabelDemoVoiceNote"
-                        tools:src="@color/black" />
+                        app:layout_constraintTop_toBottomOf="@+id/txtLabelDemoVoiceNote" />
 
 
                     <com.joshtalks.joshskills.ui.day_wise_course.reading.ReadingPractiseAudioView
