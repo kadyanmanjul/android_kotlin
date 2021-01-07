@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.groupchat.messagelist;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -368,8 +367,6 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         composeBox.setComposeBoxListener(new ComposeActionListener() {
             @Override
             public void onEditTextMediaSelected(InputContentInfoCompat inputContentInfo) {
-                Log.e(TAG, "onEditTextMediaSelected: Path=" + inputContentInfo.getLinkUri().getPath()
-                        + "\nHost=" + inputContentInfo.getLinkUri().getFragment());
                 String messageType = inputContentInfo.getLinkUri().toString().substring(inputContentInfo.getLinkUri().toString().lastIndexOf('.'));
                 MediaMessage mediaMessage = new MediaMessage(Id, null, CometChatConstants.MESSAGE_TYPE_IMAGE, type);
                 Attachment attachment = new Attachment();
@@ -867,8 +864,6 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
      */
     private void sendMediaMessage(File file, String filetype, JSONObject metadata, BaseMessage baseMessage) {
         try {
-            ProgressDialog progressDialog;
-            progressDialog = ProgressDialog.show(CometChatMessageListActivity.this, "", getResources().getString(R.string.sending_media_message));
             MediaMessage mediaMessage;
 
             if (type.equalsIgnoreCase(CometChatConstants.RECEIVER_TYPE_USER))
@@ -931,21 +926,22 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
             }
 
             mediaMessage.setMetadata(metadata);
-
+            mediaMessage.setSender(loggedInUser);
+            mediaMessage.setSentAt(System.currentTimeMillis() / 1000);
+            mediaMessage.setUpdatedAt(System.currentTimeMillis() / 1000);
+            mediaMessage.setCategory(CometChatConstants.CATEGORY_MESSAGE);
+            messageAdapter.addMessage(mediaMessage);
+            scrollToBottom();
             CometChat.sendMediaMessage(mediaMessage, new CometChat.CallbackListener<MediaMessage>() {
                 @Override
-                public void onSuccess(MediaMessage mediaMessage) {
-                    progressDialog.dismiss();
-//                    Log.d(TAG, "sendMediaMessage onSuccess: " + mediaMessage.toString());
+                public void onSuccess(MediaMessage mediaMessage1) {
                     if (messageAdapter != null) {
-                        messageAdapter.addMessage(mediaMessage);
-                        scrollToBottom();
+                        messageAdapter.replaceMessage(mediaMessage, mediaMessage1);
                     }
                 }
 
                 @Override
                 public void onError(CometChatException e) {
-                    progressDialog.dismiss();
                     Toast.makeText(CometChatMessageListActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
 
                 }

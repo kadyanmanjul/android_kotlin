@@ -41,7 +41,22 @@
             app:srcCompat="@drawable/ic_pause_24dp"
             app:tint="@color/button_color"
             tools:visibility="visible" />
+
     </FrameLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/_4sdp"
+        android:background="#dcf8c6"
+        android:gravity="center_vertical"
+        android:padding="@dimen/_4sdp"
+        android:progressTint="@color/button_color"
+        app:layout_constraintBottom_toBottomOf="@id/fl_controller"
+        app:layout_constraintEnd_toEndOf="@id/fl_controller"
+        app:layout_constraintStart_toStartOf="@id/fl_controller"
+        app:layout_constraintTop_toTopOf="@+id/fl_controller" />
 
     <SeekBar
         android:id="@+id/seek_bar"

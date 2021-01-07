@@ -103,13 +103,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final String TAG = "MessageAdapter";
     public Context context;
     public List<BaseMessage> longselectedItemList = new ArrayList<>();
+    public int selectedMsgId = -1;
     private boolean isLongClickEnabled;
     //    private OnMessageLongClick messageLongClick;
     private OnRepliedMessageClick repliedMessageClickListener;
     private boolean isUserDetailVisible;
     private boolean isTextMessageClick;
     private boolean isImageMessageClick;
-    public int selectedMsgId = -1;
 
     /**
      * It is used to initialize the adapter wherever we needed. It has parameter like messageList
@@ -385,6 +385,16 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     viewHolder.imgDeliveryTick.setImageResource(R.drawable.ic_sent_message_d_tick);
                 }
             }
+
+            if (((MediaMessage) baseMessage).getAttachment() == null) {
+                viewHolder.imgDeliveryTick.setImageResource(R.drawable.ic_sent_message_s_tick);
+                viewHolder.audioV2PlayerView.bindView(baseMessage.getId(), baseMessage.getMetadata().optString("path"), baseMessage.getMetadata());
+                viewHolder.audioV2PlayerView.showProgressBarVisible(true);
+                showMessageTime(viewHolder, baseMessage);
+                return;
+            }
+            viewHolder.audioV2PlayerView.showProgressBarVisible(false);
+
             if (!baseMessage.getSender().getUid().equals(loggedInUser.getUid())) {
                 if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_USER)) {
                     viewHolder.tvUser.setVisibility(View.GONE);
@@ -1313,6 +1323,15 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             messageList.add(baseMessage);
             selectedItemList.clear();
             notifyDataSetChanged();
+        }
+    }
+
+    public void replaceMessage(BaseMessage oldObject, BaseMessage newObject) {
+        if (isMessageVisible(oldObject) && messageList.contains(oldObject)) {
+            int index = messageList.indexOf(oldObject);
+            messageList.remove(oldObject);
+            messageList.add(index, newObject);
+            notifyItemChanged(index);
         }
     }
 

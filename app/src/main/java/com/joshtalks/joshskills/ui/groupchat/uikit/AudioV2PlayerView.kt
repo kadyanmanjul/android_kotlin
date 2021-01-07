@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -39,6 +40,7 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
     private lateinit var pauseButton: ImageView
     private lateinit var seekPlayerProgress: SeekBar
     private lateinit var timestamp: TextView
+    private lateinit var progressBar: ProgressBar
     private val compositeDisposable = CompositeDisposable()
     private var lastPosition: Long = 0L
     private var mediaDuration: Long = 0
@@ -66,11 +68,12 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
         pauseButton = findViewById(R.id.btnPause)
         seekPlayerProgress = findViewById(R.id.seek_bar)
         timestamp = findViewById(R.id.message_time)
+        progressBar = findViewById(R.id.progress_bar)
         seekPlayerProgress.progress = 0
         playButton.setOnClickListener(this)
         pauseButton.setOnClickListener(this)
-        playButton.visibility = View.VISIBLE
-        pauseButton.visibility = View.VISIBLE
+//        playButton.visibility = View.VISIBLE
+//        pauseButton.visibility = View.VISIBLE
     }
 
     fun bindView(
@@ -94,6 +97,13 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
         Timber.tag("AudioV2PlayerView").e("" + mediaDuration)
     }
 
+    fun showProgressBarVisible(isVisible: Boolean) {
+        if (isVisible) {
+            progressBar.visibility = VISIBLE
+        } else {
+            progressBar.visibility = GONE
+        }
+    }
 
     private fun setDefaultValue() {
         pausingAudio()

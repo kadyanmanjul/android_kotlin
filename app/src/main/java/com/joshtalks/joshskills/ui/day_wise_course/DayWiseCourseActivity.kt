@@ -372,7 +372,6 @@ class DayWiseCourseActivity : CoreJoshActivity(),
     }
 
     override fun onSectionStatusUpdate(tabPosition: Int, status: Boolean) {
-        println("tabPosition = [${tabPosition}], status = [${status}]")
         if (status) {
             viewModel.updateSectionStatus(lessonId, LESSON_STATUS.CO, tabPosition)
         } else {
