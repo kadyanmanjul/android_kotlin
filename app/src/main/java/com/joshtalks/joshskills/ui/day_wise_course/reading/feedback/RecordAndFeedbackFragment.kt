@@ -185,11 +185,9 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
                                     sBuilder,
                                     TextView.BufferType.SPANNABLE
                                 )
+
                                 val params: ConstraintLayout.LayoutParams =
-                                    ConstraintLayout.LayoutParams(
-                                        ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                                        ConstraintLayout.LayoutParams.WRAP_CONTENT
-                                    )
+                                    binding.txtRecommendation.layoutParams as ConstraintLayout.LayoutParams
                                 params.setMargins(0, Utils.dpToPx(16), 0, Utils.dpToPx(16))
                                 binding.txtRecommendation.layoutParams = params
                                 binding.txtRecommendation.visibility = View.VISIBLE
