@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.core
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -8,6 +9,7 @@ import android.os.Looper
 import android.os.StrictMode
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
+import com.airbnb.lottie.L
 import com.bumptech.glide.load.MultiTransformation
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.facebook.FacebookSdk
@@ -82,7 +84,6 @@ private const val READ_TIMEOUT = 30L
 private const val WRITE_TIMEOUT = 30L
 private const val CONNECTION_TIMEOUT = 30L
 private const val CALL_TIMEOUT = 60L
-
 
 class AppObjectController {
 
@@ -180,6 +181,8 @@ class AppObjectController {
         @Volatile
         var mRtcEngine: RtcEngine? = null
 
+        private const val cacheSize = 10 * 1024 * 1024.toLong()
+
 
         fun initLibrary(context: Context): AppObjectController {
             joshApplication = context as JoshApplication
@@ -235,6 +238,8 @@ class AppObjectController {
                 .addNetworkInterceptor(SmartlookOkHttpInterceptor())
                 .addInterceptor(HeaderInterceptor())
                 .hostnameVerifier { _, _ -> true }
+                //  .addInterceptor(OfflineInterceptor())
+                .cache(cache())
 
             if (BuildConfig.DEBUG.not() && BuildConfig.FLAVOR == "prod2") {
                 builder.certificatePinner(
@@ -317,6 +322,7 @@ class AppObjectController {
             UXCam.setAutomaticScreenNameTagging(true)
         }
 
+        @SuppressLint("RestrictedApi")
         private fun initDebugService() {
             if (BuildConfig.DEBUG) {
                 StrictMode.setVmPolicy(
@@ -334,6 +340,8 @@ class AppObjectController {
                 Timber.plant(Timber.DebugTree())
                 Branch.enableLogging()
                 Branch.enableTestMode()
+                L.DBG = true
+                L.setTraceEnabled(true)
             }
         }
 
@@ -531,6 +539,13 @@ class AppObjectController {
             return getAppCachePath()
         }
 
+        private fun cache(): Cache? {
+            return Cache(
+                File(joshApplication.cacheDir, "api_cache"),
+                cacheSize
+            )
+        }
+
         fun getAppCachePath(): String {
             return "${joshApplication.cacheDir}/${JOSH_SKILLS_CACHE}"
         }
@@ -620,6 +635,11 @@ class HeaderInterceptor : Interceptor {
                 "APP_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE.toString()
             )
             .addHeader(KEY_APP_ACCEPT_LANGUAGE, PrefManager.getStringValue(USER_LOCALE))
+        if (Utils.isInternetAvailable()) {
+            newRequest.cacheControl(CacheControl.FORCE_NETWORK)
+        } else {
+            newRequest.cacheControl(CacheControl.FORCE_CACHE)
+        }
         return chain.proceed(newRequest.build())
     }
 }
@@ -698,4 +718,3 @@ fun getStethoInterceptor(): Interceptor {
     val ctor: Constructor<*> = clazz.getConstructor()
     return ctor.newInstance() as Interceptor
 }
-

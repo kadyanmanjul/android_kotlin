@@ -220,6 +220,11 @@ interface CommonNetworkService {
         @Body params: HashMap<String, List<Int>>): Response<PointsInfoResponse>
 
 
+    @Headers(
+        "Accept: application/json",
+        "Content-type:application/json",
+        "Cache-Control: public, only-if-cached,  max-stale=640000,  max-age=640000"
+    )
     @GET("$DIR/question/word-detail/")
     suspend fun getWordDetail(@Query("word") word: String): WordDetailsResponse
 
