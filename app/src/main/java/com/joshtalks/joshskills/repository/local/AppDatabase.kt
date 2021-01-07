@@ -21,6 +21,8 @@ import com.joshtalks.joshskills.repository.local.dao.LessonDao
 import com.joshtalks.joshskills.repository.local.dao.PendingTaskDao
 import com.joshtalks.joshskills.repository.local.dao.reminder.ReminderDao
 import com.joshtalks.joshskills.repository.local.entity.AudioType
+import com.joshtalks.joshskills.repository.local.entity.AwardMentorModel
+import com.joshtalks.joshskills.repository.local.entity.AwardMentorModelDao
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
@@ -77,9 +79,9 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         AudioType::class, OptionType::class, PdfType::class, ImageType::class, VideoEngage::class,
         FeedbackEngageModel::class, NPSEventModel::class, Assessment::class, AssessmentQuestion::class,
         Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class,
-        AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class
+        AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class, AwardMentorModel::class
     ],
-    version = 25,
+    version = 26,
     exportSchema = true
 )
 @TypeConverters(
@@ -145,7 +147,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_21_22,
                                 MIGRATION_22_23,
                                 MIGRATION_23_24,
-                                MIGRATION_24_25
+                                MIGRATION_24_25,
+                                MIGRATION_25_26
                             )
                             //  .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -382,11 +385,17 @@ abstract class AppDatabase : RoomDatabase() {
             }
 
         }
-        private val MIGRATION_24_25: Migration = object : Migration( 24,25) {
+        private val MIGRATION_24_25: Migration = object : Migration(24, 25) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN `vp_sort_order` INTEGER NOT NULL DEFAULT -1")
             }
 
+        }
+        private val MIGRATION_25_26: Migration = object : Migration(25, 26) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE `chat_table` ADD COLUMN award_mentor_id INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `awardmentormodel` (`id` INTEGER NOT NULL, `award_image_url` TEXT, `award_text` TEXT, `description` TEXT, `performer_name` TEXT, `performer_photo_url` TEXT, `total_points_text` TEXT, PRIMARY KEY(`id`))")
+            }
         }
 
         fun clearDatabase() {
@@ -420,6 +429,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun appUsageDao(): AppUsageDao
     abstract fun appActivityDao(): AppActivityDao
     abstract fun lessonDao(): LessonDao
+    abstract fun awardMentorModelDao(): AwardMentorModelDao
     abstract fun pendingTaskDao(): PendingTaskDao
 
 }

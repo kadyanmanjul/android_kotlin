@@ -122,6 +122,9 @@ object NetworkRequestHelper {
                             }
                         }
                     }
+                    chatModel.awardMentorModel?.let { awardMentorModel->
+                        AppObjectController.appDatabase.awardMentorModelDao().insertSingleItem(awardMentorModel)
+                    }
                 }
                 RxBus2.publish(DBInsertion("Chat"))
 
@@ -224,6 +227,10 @@ object NetworkRequestHelper {
                         }
                         AppObjectController.appDatabase.chatDao().insertVideoMessageList(it)
                     }
+                }
+
+                chatModel.awardMentorModel?.let { awardMentorModel->
+                    AppObjectController.appDatabase.awardMentorModelDao().insertSingleItem(awardMentorModel)
                 }
             }
 

@@ -8,20 +8,19 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.core.setUserImageOrInitials
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 import de.hdodenhof.circleimageview.CircleImageView
 import java.lang.ref.WeakReference
+import java.util.Locale
 
 @Layout(R.layout.layout_student_card)
 class StudentCardViewHolder(
     activityRef: WeakReference<FragmentActivity>,
     message: ChatModel,
-    previousMessage: ChatModel?,
+    previousMessage: ChatModel?
 ) :
     BaseChatViewHolder(activityRef, message, previousMessage) {
 
@@ -46,7 +45,7 @@ class StudentCardViewHolder(
     @View(R.id.root_view_fl)
     lateinit var rootView: FrameLayout
 
-    private var userName: String="Josh Skills"
+    private var userName: String = "Josh Skills"
 
     override fun getRoot(): FrameLayout {
         return rootView
@@ -55,47 +54,26 @@ class StudentCardViewHolder(
     @Resolve
     override fun onViewInflated() {
         super.onViewInflated()
-        val textList = message.text?.split("$")
-        textList?.forEachIndexed { index, text ->
-            when (index) {
-                0 -> {
-                    studentName.text = text
-                    userName=text
-                }
-                1 -> {
-                    totalPoints.text = text
-                }
-                2 -> {
-                    userText.text = text
-                }
-                else -> {
+        message.awardMentorModel?.let { awardMentorModel ->
 
-                }
+            val resp = StringBuilder()
+            awardMentorModel.performerName?.split(" ")?.forEach {
+                resp.append(it.toLowerCase(Locale.getDefault()).capitalize(Locale.getDefault()))
             }
-        }
-
-        when (message.question?.chatType) {
-            CHAT_TYPE.SOTD-> {
-                studentOfDash.text = "STUDENT OF THE DAY"
+            studentName.text = resp
+            totalPoints.text = awardMentorModel.totalPointsText
+            userText.text = awardMentorModel.description
+            studentOfDash.text = awardMentorModel.awardText
+            userPic.post {
+                userPic.setUserImageOrInitials(
+                    awardMentorModel.performerPhotoUrl,
+                    resp.toString(),
+                    dpToPx = 28
+                )
             }
-            CHAT_TYPE.SOTW -> {
-                studentOfDash.text ="STUDENT OF THE WEEK"
+            awardMentorModel.awardImageUrl?.let {
+                awardImage.setImage(it, AppObjectController.joshApplication)
             }
-            CHAT_TYPE.SOTM -> {
-                studentOfDash.text ="STUDENT OF THE MONTH"
-            }
-            CHAT_TYPE.SOTY -> {
-                studentOfDash.text ="STUDENT OF THE YEAR"
-            }
-            else -> {
-
-            }
-        }
-        userPic.post {
-            userPic.setUserImageOrInitials(message.url, userName)
-        }
-        message.question?.imageList?.get(0)?.let {
-            awardImage.setImage(it.imageUrl, AppObjectController.joshApplication)
         }
     }
 }

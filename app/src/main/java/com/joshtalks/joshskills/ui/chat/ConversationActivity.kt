@@ -1598,11 +1598,15 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
 
             BASE_MESSAGE_TYPE.P2P -> P2PViewHolder(activityRef, chatModel, lastMessage)
             BASE_MESSAGE_TYPE.CE -> CertificationExamViewHolder(activityRef, chatModel, lastMessage)
-            BASE_MESSAGE_TYPE.BEST_PERFORMER -> StudentCardViewHolder(
-                activityRef,
-                chatModel,
-                lastMessage
-            )
+            BASE_MESSAGE_TYPE.BEST_PERFORMER -> if (chatModel.awardMentorId != 0 && chatModel.awardMentorModel != null) {
+                StudentCardViewHolder(
+                    activityRef,
+                    chatModel,
+                    lastMessage
+                )
+            } else {
+                return null
+            }
 
             else -> return null
         }

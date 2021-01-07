@@ -25,9 +25,9 @@ import com.joshtalks.joshskills.repository.local.ConvectorForEngagement
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
 import com.joshtalks.joshskills.util.RandomString
+import java.util.Date
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
-import java.util.Date
 
 @Parcelize
 @Entity(tableName = "chat_table", indices = [Index(value = ["chat_id", "conversation_id"])])
@@ -107,6 +107,12 @@ data class ChatModel(
     @ColumnInfo(name = "lesson_id")
     @SerializedName("lesson_id")
     var lessonId: Int = 0,
+
+    @ColumnInfo(name = "award_mentor_id")
+    @SerializedName("award_mentor_id") var awardMentorId: Int = 0,
+
+    @Ignore
+    @SerializedName("award_mentor") var awardMentorModel: AwardMentorModel? = null,
 
     @Ignore
     var playProgress: Int = 0,
@@ -278,7 +284,7 @@ data class Question(
     @Ignore
     var vocabOrder: Int? = null
 
-    ) : Parcelable
+) : Parcelable
 
 
 data class User(

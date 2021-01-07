@@ -28,6 +28,7 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
+import com.joshtalks.joshskills.repository.local.entity.AwardMentorModel
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
@@ -48,6 +49,10 @@ import id.zelory.compressor.Compressor
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.io.File
+import java.util.ConcurrentModificationException
+import java.util.Date
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -213,6 +218,13 @@ class ConversationViewModel(application: Application) :
                         .countOfAssessment(assessmentId)
                 }
                 chat.question = question
+            }
+            if (chat.awardMentorId != 0) {
+                val awardMentorModel =
+                    appDatabase.awardMentorModelDao().getAwardMentorModel(chat.awardMentorId)
+                awardMentorModel?.run {
+                    chat.awardMentorModel = this
+                }
             }
 
             if (chat.type == BASE_MESSAGE_TYPE.Q && question == null) {
@@ -720,5 +732,9 @@ class ConversationViewModel(application: Application) :
 
     suspend fun getLessonModel(lessonId: Int): LessonModel? {
         return appDatabase.lessonDao().getLesson(lessonId)
+    }
+
+    suspend fun getAwardMentorModel(awardMentorId: Int): AwardMentorModel? {
+        return appDatabase.awardMentorModelDao().getAwardMentorModel(awardMentorId)
     }
 }
