@@ -14,7 +14,7 @@
         android:id="@+id/rootView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/_8sdp">
+        android:paddingBottom="@dimen/_12sdp">
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtLabelRecord"
@@ -189,9 +189,9 @@
                     android:id="@+id/txtLabelFeedback"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/_8sdp"
                     android:layout_marginVertical="@dimen/_12sdp"
                     android:gravity="start"
+                    android:paddingHorizontal="@dimen/_8sdp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
                     android:textColor="@color/black"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -205,8 +205,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/_4sdp"
-                    android:paddingHorizontal="@dimen/_8sdp"
                     android:gravity="start"
+                    android:paddingHorizontal="@dimen/_8sdp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                     android:textColor="@color/grey_68"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -218,6 +218,7 @@
                     android:id="@+id/pronunciationFeedbackView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_4sdp"
                     android:layout_marginVertical="@dimen/_16sdp"
                     android:background="@drawable/round_rect_default"
                     android:backgroundTint="@color/practice_complete_bg"
@@ -226,7 +227,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txtFeedback"
-                    tools:visibility="visible">
+                    tools:visibility="gone">
 
                     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/txtLabelPronunciation"
@@ -280,6 +281,7 @@
                     android:id="@+id/readingSpeedFeedbackView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_4sdp"
                     android:layout_marginVertical="@dimen/_16sdp"
                     android:background="@drawable/round_rect_default"
                     android:backgroundTint="@color/practice_complete_bg"
@@ -288,7 +290,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/pronunciationFeedbackView"
-                    tools:visibility="visible">
+                    tools:visibility="gone">
 
                     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/txtLabelReadingSpeed"
@@ -339,16 +341,16 @@
                     android:id="@+id/txtRecommendation"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/_16sdp"
+                    android:layout_marginVertical="@dimen/_8sdp"
                     android:paddingHorizontal="@dimen/_8sdp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
+                    android:visibility="visible"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/readingSpeedFeedbackView"
-                    tools:text="Recommendation: Harsh, I want you to reattempt this practice and try to correct your mistakes." />
+                    app:layout_constraintTop_toBottomOf="@+id/readingSpeedFeedbackView" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

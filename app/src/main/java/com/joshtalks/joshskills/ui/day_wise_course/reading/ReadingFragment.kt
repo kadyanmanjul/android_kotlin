@@ -58,9 +58,16 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
 
 
     private val practiceViewModel: PracticeViewModel by lazy {
-        ViewModelProvider(this).get(PracticeViewModel::class.java)
+        ViewModelProvider(requireActivity()).get(PracticeViewModel::class.java)
     }
 
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is CapsuleActivityCallback) {
+            activityCallback = context
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -115,6 +122,9 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
                     selectedColor = ContextCompat.getColor(requireContext(), R.color.black),
                     clickListener = object : OnWordClick {
                         override fun clickedWord(word: String) {
+                            if (practiceViewModel.isRecordingStarted()) {
+                                return
+                            }
                             LanguageTranslationDialog.showLanguageDialog(childFragmentManager, word)
                         }
                     })
@@ -164,11 +174,6 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
         }.attach()
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is CapsuleActivityCallback)
-            activityCallback = context
-    }
 
     override fun onImproveAnswer() {
         CoroutineScope(Dispatchers.Main).launch {
@@ -200,6 +205,7 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
     }
 
     override fun onContinue() {
+        activityCallback?.onContinueClick()
     }
 
     override fun onResume() {
@@ -229,7 +235,7 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    binding.rootView.requestDisallowInterceptTouchEvent(it.flag.not())
+                    //  binding.rootView.requestDisallowInterceptTouchEvent(it.flag.not())
                     binding.viewPager.isUserInputEnabled = it.flag
                 }, {
                     it.printStackTrace()

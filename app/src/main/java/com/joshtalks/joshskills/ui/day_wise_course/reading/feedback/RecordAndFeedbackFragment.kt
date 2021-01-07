@@ -2,21 +2,23 @@ package com.joshtalks.joshskills.ui.day_wise_course.reading.feedback
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Typeface
 import android.os.Bundle
 import android.os.SystemClock
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.airbnb.lottie.L
 import com.airbnb.lottie.LottieCompositionFactory
 import com.github.razir.progressbutton.*
 import com.joshtalks.joshskills.R
@@ -46,6 +48,7 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
     private var startTime: Long = 0
     private var isImproveEnable: Boolean = false
     var callback: ReadingPractiseCallback? = null
+    var submit: DOWNLOAD_STATUS = DOWNLOAD_STATUS.NOT_START
 
 
     private val practiceViewModel: PracticeViewModel by lazy {
@@ -90,8 +93,6 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
         bindProgressButton(binding.btnSubmitButton)
         binding.btnSubmitButton.attachTextChangeAnimator()
         initView()
-        L.DBG = true
-        L.setTraceEnabled(true)
     }
 
     private fun initView() {
@@ -115,34 +116,12 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
                             )
                         }
 
-
                         practiseFeedback?.let { feedback ->
                             binding.txtLabelFeedback.text = feedback.feedbackTitle
                             binding.txtFeedback.text = feedback.feedbackText
 
-
-                            feedback.speed?.let { speed ->
-                                binding.txtReadingSpeed.text = speed.text
-                                binding.txtReadingSpeedFeedback.text = speed.description
-                                binding.readingSpeedFeedbackView.visibility = View.VISIBLE
-                            }
-                            feedback.recommendation?.let { recommendation ->
-                                val temp = "Recommendation:  "
-                                val sBuilder = SpannableStringBuilder(temp)
-                                sBuilder.append(recommendation.text)
-                                sBuilder.setSpan(
-                                    ForegroundColorSpan(
-                                        ContextCompat.getColor(
-                                            requireContext(),
-                                            R.color.grey_68
-                                        )
-                                    ), temp.length, sBuilder.length,
-                                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                                )
-                                binding.txtRecommendation.setText(
-                                    sBuilder,
-                                    TextView.BufferType.SPANNABLE
-                                )
+                            if (isErrorFeedback) {
+                                return@launch
                             }
                             feedback.pronunciation?.let { pronunciation ->
                                 binding.txtWordsPronounced.text = pronunciation.text
@@ -167,7 +146,7 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
                                                         ignoreCase = true
                                                     )
                                                 }?.let {
-                                                    FeedbackPronFragment.showLanguageDialog(
+                                                    ReadingResultFragment.showLanguageDialog(
                                                         childFragmentManager,
                                                         it,
                                                         feedback.teacherAudioUrl,
@@ -178,11 +157,50 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
                                         })
                                 binding.pronunciationFeedbackView.visibility = View.VISIBLE
                             }
+                            feedback.speed?.let { speed ->
+                                binding.txtReadingSpeed.text = speed.text
+                                binding.txtReadingSpeedFeedback.text = speed.description
+                                binding.readingSpeedFeedbackView.visibility = View.VISIBLE
+                            }
+                            feedback.recommendation?.let { recommendation ->
+                                val temp = "Recommendation:  "
+                                val sBuilder = SpannableStringBuilder(temp)
+                                sBuilder.setSpan(
+                                    StyleSpan(Typeface.BOLD),
+                                    0,
+                                    temp.length,
+                                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                                )
+                                sBuilder.append(recommendation.text)
+                                sBuilder.setSpan(
+                                    ForegroundColorSpan(
+                                        ContextCompat.getColor(
+                                            requireContext(),
+                                            R.color.grey_68
+                                        )
+                                    ), temp.length, sBuilder.length,
+                                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                                )
+                                binding.txtRecommendation.setText(
+                                    sBuilder,
+                                    TextView.BufferType.SPANNABLE
+                                )
+                                val params: ConstraintLayout.LayoutParams =
+                                    ConstraintLayout.LayoutParams(
+                                        ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                                        ConstraintLayout.LayoutParams.WRAP_CONTENT
+                                    )
+                                params.setMargins(0, Utils.dpToPx(16), 0, Utils.dpToPx(16))
+                                binding.txtRecommendation.layoutParams = params
+                                binding.txtRecommendation.visibility = View.VISIBLE
+                            }
+
                         }
                     } else {
                         setUpAudioRecordTouchListener()
                     }
                 } else {
+                    submit = DOWNLOAD_STATUS.STARTED
                     binding.btnSubmitButton.visibility = View.VISIBLE
                     startSubmitProgress()
                 }
@@ -334,9 +352,12 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
     }
 
     fun submitAnswer() {
-        startSubmitProgress()
-        practiceEngagement?.questionForId?.let {
-            practiceViewModel.submitReadingPractise(it, filePath!!)
+        if (DOWNLOAD_STATUS.NOT_START == submit) {
+            submit = DOWNLOAD_STATUS.STARTED
+            startSubmitProgress()
+            practiceEngagement?.questionForId?.let {
+                practiceViewModel.submitReadingPractise(it, filePath!!)
+            }
         }
     }
 
@@ -344,13 +365,18 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
         binding.btnSubmitButton.showProgress {
             buttonTextRes = R.string.plz_wait
             progressColors =
-                intArrayOf(ContextCompat.getColor(requireContext(), R.color.text_color_10))
+                intArrayOf(
+                    ContextCompat.getColor(requireContext(), R.color.white),
+                    ContextCompat.getColor(requireContext(), R.color.practise_complete_tint),
+                    ContextCompat.getColor(requireContext(), R.color.green_3d)
+                )
+
             gravity = DrawableButton.GRAVITY_TEXT_END
             progressRadiusRes = R.dimen.dp8
             progressStrokeRes = R.dimen.dp2
             textMarginRes = R.dimen.dp8
         }
-        binding.btnSubmitButton.isEnabled = false
+        // binding.btnSubmitButton.isEnabled = false
     }
 
 

@@ -25,10 +25,11 @@ import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2rx.RxFetch
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 import java.io.File
 
 
-class FeedbackPronFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpdateListener {
+class ReadingResultFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpdateListener {
     private var word: WrongWord? = null
     private lateinit var binding: FragmentFeedbackPronBinding
     private var exoAudioManager: ExoAudioPlayer2? = ExoAudioPlayer2.getInstance()
@@ -136,12 +137,17 @@ class FeedbackPronFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpdat
 
 
     fun teacherSpeak() {
+        binding.audio1.playAnimation()
         teacherAudioUrl?.let {
             playAudio(it, word!!.teacherStartTime * 10, word!!.teacherEndTime * 10)
         }
     }
 
     fun userSpeak() {
+        if (word != null && word!!.studentStartTime <= word!!.studentEndTime) {
+            return
+        }
+        binding.audio2.playAnimation()
         userAudioUrl?.let {
             playAudio(it, word!!.studentStartTime * 10, word!!.studentEndTime * 10)
         }
@@ -151,6 +157,7 @@ class FeedbackPronFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpdat
         JoshSkillExecutors.BOUNDED.submit {
             startTime = startPos
             endTime = endPos
+
 
             val fileName = Utils.getFileNameFromURL(url)
             val cacheFile = File(AppObjectController.createDefaultCacheDir(), fileName)
@@ -188,9 +195,14 @@ class FeedbackPronFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpdat
 
     override fun onProgressUpdate(progress: Long) {
         super.onProgressUpdate(progress)
+        Timber.tag("Audio").e("Start " + startTime + "  end" + endTime)
         if (progress >= endTime) {
             exoAudioManager?.onPause()
             exoAudioManager?.setProgressUpdateListener(null)
+            binding.audio1.pauseAnimation()
+            binding.audio1.progress = 0.0F
+            binding.audio2.pauseAnimation()
+            binding.audio2.progress = 0.0F
             return
         }
     }
@@ -203,7 +215,7 @@ class FeedbackPronFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpdat
 
         @JvmStatic
         private fun newInstance(word: WrongWord, teacherAudioUrl: String?, userAudioUrl: String?) =
-            FeedbackPronFragment().apply {
+            ReadingResultFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_WORD_DETAILS, word)
                     putString(ARG_AUDIO_TEACHER, teacherAudioUrl)
@@ -219,13 +231,13 @@ class FeedbackPronFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpdat
             userAudioUrl: String?
         ) {
             val prev =
-                fragmentManager.findFragmentByTag(FeedbackPronFragment::class.java.name)
+                fragmentManager.findFragmentByTag(ReadingResultFragment::class.java.name)
             if (prev != null) {
                 return
             }
             newInstance(word, teacherAudioUrl, userAudioUrl).show(
                 fragmentManager,
-                FeedbackPronFragment::class.java.name
+                ReadingResultFragment::class.java.name
             )
         }
     }

@@ -49,6 +49,7 @@ class ReadingPractiseAudioView : FrameLayout, LifecycleObserver,
     private var id: String = EMPTY
     private var url: String = EMPTY
     private var lastPosition: Long = 0L
+    private var duration: Int = 0
 
     private fun init() {
         try {
@@ -71,7 +72,7 @@ class ReadingPractiseAudioView : FrameLayout, LifecycleObserver,
         }
     }
 
-    fun playPracticeAudio() {
+    private fun playPracticeAudio() {
         if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
             StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
                 .text(context.getString(R.string.volume_up_message)).cornerRadius(16)
@@ -84,6 +85,7 @@ class ReadingPractiseAudioView : FrameLayout, LifecycleObserver,
     fun initAudioPlayer(url: String, duration: Int) {
         id = System.currentTimeMillis().toString()
         this.url = url
+        this.duration = duration
         seekbar.max = duration
         timestamp.text = Utils.formatDuration(duration)
 
@@ -172,17 +174,8 @@ class ReadingPractiseAudioView : FrameLayout, LifecycleObserver,
         pausingAudioUI()
     }
 
-
-    private fun playingAudioUI() {
-
-    }
-
     private fun pausingAudioUI() {
-    }
-
-
-
-    override fun onPlayerResume() {
+        timestamp.text = Utils.formatDuration(duration)
     }
 
     override fun complete() {
@@ -207,6 +200,5 @@ class ReadingPractiseAudioView : FrameLayout, LifecycleObserver,
         exoAudioManager?.release()
         Timber.tag("onDetachedFromWindow").e("AudioPlayer")
     }
-
 
 }

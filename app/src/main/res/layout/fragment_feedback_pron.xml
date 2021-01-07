@@ -6,7 +6,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.day_wise_course.reading.feedback.FeedbackPronFragment" />
+            type="com.joshtalks.joshskills.ui.day_wise_course.reading.feedback.ReadingResultFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -17,36 +17,51 @@
         android:paddingHorizontal="@dimen/_8sdp"
         android:paddingVertical="@dimen/_12sdp">
 
-        <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
+        <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/audio1"
-            android:layout_width="@dimen/_28sdp"
-            android:layout_height="@dimen/_28sdp"
+            android:layout_width="@dimen/_34sdp"
+            android:layout_height="@dimen/_34sdp"
             android:layout_marginEnd="@dimen/_8sdp"
-            android:background="@drawable/verifiy_progress_bar_drawable"
-            android:contentDescription="@string/play_button_description"
-            android:padding="@dimen/_4sdp"
-            android:tint="@color/button_color"
+            android:background="@drawable/shape_primary_ring"
+            android:backgroundTint="@color/right_answer_color"
             android:onClick="@{()->handler.teacherSpeak()}"
-            app:layout_constraintEnd_toStartOf="@+id/audio2"
-            app:layout_constraintHorizontal_chainStyle="packed"
+            android:padding="@dimen/_8sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.4"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="false"
+            app:lottie_colorFilter="@color/right_answer_color"
+            app:lottie_fileName="lottie/speaker.json"
+            app:lottie_imageAssetsFolder="lottie"
+            app:lottie_loop="true"
+            app:lottie_repeatMode="restart"
+            app:lottie_scale="1"
+            app:lottie_speed="1.5" />
 
-        <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
+
+        <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/audio2"
             android:layout_width="@dimen/_28sdp"
             android:layout_height="@dimen/_28sdp"
-            android:layout_marginStart="@dimen/_8sdp"
-            android:onClick="@{()->handler.userSpeak()}"
-
-            android:background="@drawable/play_pause_button_background"
-            android:backgroundTint="@color/button_color"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:background="@drawable/circle2"
+            android:backgroundTint="@color/colorPrimary"
             android:contentDescription="@string/play_button_description"
-            android:padding="@dimen/_4sdp"
+            android:onClick="@{()->handler.userSpeak()}"
+            android:padding="@dimen/_6sdp"
             android:tint="@color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/audio1"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@id/audio1"
+            app:layout_constraintStart_toEndOf="@id/audio1"
+            app:layout_constraintTop_toTopOf="@id/audio1"
+            app:lottie_autoPlay="false"
+            app:lottie_colorFilter="@color/white"
+            app:lottie_fileName="lottie/speaker.json"
+            app:lottie_imageAssetsFolder="lottie"
+            app:lottie_loop="true"
+            app:lottie_repeatMode="restart"
+            app:lottie_scale="1"
+            app:lottie_speed="1.5" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -99,9 +114,9 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:textSize="@dimen/_10sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
             android:textColor="#000"
+            android:textSize="@dimen/_10sdp"
             app:layout_constraintBottom_toBottomOf="@+id/table_layout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/table_layout"

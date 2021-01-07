@@ -18,13 +18,12 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.custom_ui.blurdialog.BlurDialogFragment
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.LanguageTranslationPopupBinding
 import com.joshtalks.joshskills.repository.server.translation.TranslationData
 import com.joshtalks.joshskills.ui.groupchat.uikit.ExoAudioPlayer2
-import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 const val ARG_WORD = "word"
@@ -132,17 +131,15 @@ class LanguageTranslationDialog : BlurDialogFragment(), AudioPlayerEventListener
         }
     }
 
-
     private fun fetchWordMeaning(word: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = AppObjectController.commonNetworkService.getWordDetail(word)
-                delay(400)
                 response.translationData[0].let {
                     wordDetailLiveData.postValue(it)
                 }
             } catch (ex: Throwable) {
-                ex.showAppropriateMsg()
+                showToast(getString(R.string.internet_not_available_msz))
             }
         }
     }
