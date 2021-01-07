@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.repository.service
 
 import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import com.joshtalks.joshskills.repository.local.entity.CertificationExamDetailModel
 import com.joshtalks.joshskills.repository.local.entity.Course
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
@@ -151,5 +152,8 @@ interface ChatNetworkService {
 
     @POST("$DIR/group/updatelastmessage/")
     suspend fun updateLastReadMessage(@Body params: Map<String, Any>): Response<Any>
+
+    @GET("$DIR/group/<conversation_id>unread_message/ ")
+    suspend fun getUnreadMessageCount(): Response<JsonObject>
 
 }
