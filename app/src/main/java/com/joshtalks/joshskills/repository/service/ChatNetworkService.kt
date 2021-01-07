@@ -149,4 +149,7 @@ interface ChatNetworkService {
     @POST("$DIR/group/message_list/")
     suspend fun getGroupMessagesList(@Body params: Map<String, Any>): Response<JsonArray>
 
+    @POST("$DIR/group/updatelastmessage/")
+    suspend fun updateLastReadMessage(@Body params: Map<String, Any>): Response<Any>
+
 }

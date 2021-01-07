@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,7 +32,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.cometchat.pro.constants.CometChatConstants;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.core.GroupMembersRequest;
@@ -77,17 +75,14 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-
+import org.json.JSONException;
+import org.json.JSONObject;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
@@ -1260,10 +1255,12 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
      * @param baseMessage is object of BaseMessage.class. It is message which is been marked as read.
      */
     private void markMessageAsRead(BaseMessage baseMessage) {
-        if (type.equals(CometChatConstants.RECEIVER_TYPE_USER))
+        if (type.equals(CometChatConstants.RECEIVER_TYPE_USER)) {
             CometChat.markAsRead(baseMessage.getId(), baseMessage.getSender().getUid(), baseMessage.getReceiverType());
-        else
+        } else {
             CometChat.markAsRead(baseMessage.getId(), baseMessage.getReceiverUid(), baseMessage.getReceiverType());
+            viewModel.updateLastReadMessage(Id, baseMessage.getId());
+        }
     }
 
 

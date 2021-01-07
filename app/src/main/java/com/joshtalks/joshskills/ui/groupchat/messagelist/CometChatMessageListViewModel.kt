@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils.getMessagesFromDataJSONArray
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils.getMessagesFromJSONArray
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -16,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.json.JSONArray
+import timber.log.Timber
 
 class CometChatMessageListViewModel(application: Application) : AndroidViewModel(application) {
     private val jobs = arrayListOf<Job>()
@@ -72,6 +74,26 @@ class CometChatMessageListViewModel(application: Application) : AndroidViewModel
                 ex.showAppropriateMsg()
             }
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+        }
+    }
+
+    fun updateLastReadMessage(groupId: String, messageId: Int) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val params = mapOf(
+                    "group_id" to groupId,
+                    "message_id" to messageId,
+                    "mentor_id" to Mentor.getInstance().getId()
+                )
+                val response = AppObjectController.chatNetworkService.updateLastReadMessage(params)
+                if (response.isSuccessful && response.body() != null) {
+                    Timber.d("UpdateLastSeenMessage Successful")
+                    return@launch
+                }
+
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
         }
     }
 }
