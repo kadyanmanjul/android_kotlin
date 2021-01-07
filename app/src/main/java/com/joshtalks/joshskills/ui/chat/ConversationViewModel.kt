@@ -214,6 +214,8 @@ class ConversationViewModel(application: Application) :
                     question.practiseEngagementV2 =
                         AppObjectController.appDatabase.practiceEngagementDao()
                             .getPractice(questionId)
+                    question.imageList = appDatabase.chatDao()
+                        .getImagesOfQuestion(questionId = question.questionId)
                 }
 
                 if (assessmentId != null) {

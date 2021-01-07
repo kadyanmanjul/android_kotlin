@@ -684,6 +684,8 @@ interface ChatDao {
                     question.practiseEngagementV2 =
                         AppObjectController.appDatabase.practiceEngagementDao()
                             .getPractice(question.questionId)
+                    question.imageList = AppObjectController.appDatabase.chatDao()
+                        .getImagesOfQuestion(questionId = question.questionId)
                 }
                 if (question.lesson != null) {
                     chatModel.lessons = question.lesson
@@ -916,7 +918,7 @@ enum class MESSAGE_DELIVER_STATUS(val type: Int) {
 
 
 enum class DOWNLOAD_STATUS {
-    DOWNLOADED, DOWNLOADING, FAILED, NOT_START, UPLOADING, UPLOADED
+    DOWNLOADED, DOWNLOADING, FAILED, NOT_START, UPLOADING, UPLOADED, STARTED
 }
 
 enum class MESSAGE_STATUS(val type: String) {
