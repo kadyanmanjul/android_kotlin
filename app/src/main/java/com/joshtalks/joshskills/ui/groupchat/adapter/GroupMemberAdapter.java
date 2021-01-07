@@ -4,24 +4,20 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.cometchat.pro.constants.CometChatConstants;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.models.GroupMember;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.databinding.UserListRowBinding;
 import com.joshtalks.joshskills.ui.groupchat.utils.FontUtils;
-
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.json.JSONException;
 
 /**
  * Purpose - GroupMemberAdapter is a subclass of RecyclerView Adapter which is used to display
@@ -147,9 +143,9 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
         for (GroupMember groupMember : groupMembers) {
             if (!groupMemberList.contains(groupMember)) {
                 groupMemberList.add(groupMember);
-                sortMemberList();
             }
         }
+        sortMemberList();
         notifyDataSetChanged();
     }
 
@@ -171,8 +167,10 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
      * @see GroupMember
      */
     public void addGroupMember(GroupMember joinedUser) {
-        groupMemberList.add(joinedUser);
-        sortMemberList();
+        if (!groupMemberList.contains(joinedUser)) {
+            groupMemberList.add(joinedUser);
+            sortMemberList();
+        }
         notifyDataSetChanged();
     }
 
