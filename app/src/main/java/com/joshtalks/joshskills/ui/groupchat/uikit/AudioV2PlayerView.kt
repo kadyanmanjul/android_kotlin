@@ -113,6 +113,8 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
 
     fun setThemeColor(colorId: Int) {
         playButton.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(context, colorId))
+        progressBar.progressTintList =
+            ColorStateList.valueOf(ContextCompat.getColor(context, colorId))
         pauseButton.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(context, colorId))
         seekPlayerProgress.thumbTintList =
             ColorStateList.valueOf(ContextCompat.getColor(context, colorId))

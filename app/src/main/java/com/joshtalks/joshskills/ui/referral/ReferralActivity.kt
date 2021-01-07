@@ -59,6 +59,7 @@ const val FROM_CLASS = "parent_class"
 
 class ReferralActivity : BaseActivity() {
     companion object {
+        @JvmStatic
         fun startReferralActivity(context: Activity, className: String = "") {
             Intent(context, ReferralActivity::class.java).apply {
                 putExtra(FROM_CLASS, className)

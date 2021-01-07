@@ -90,6 +90,7 @@ object PrefManager {
         else prefManagerCommon.contains(key)
     }
 
+    @JvmStatic
     fun getBoolValue(key: String, isConsistent: Boolean = false): Boolean {
         return if (isConsistent) prefManagerConsistent.getBoolean(key, false)
         else prefManagerCommon.getBoolean(key, false)

@@ -16,8 +16,10 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +33,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.cometchat.pro.constants.CometChatConstants;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.core.GroupMembersRequest;
@@ -52,6 +55,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.core.PermissionUtils;
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener;
+import com.joshtalks.joshskills.ui.chat.ConversationActivity;
 import com.joshtalks.joshskills.ui.groupchat.adapter.MessageAdapter;
 import com.joshtalks.joshskills.ui.groupchat.constant.StringContract;
 import com.joshtalks.joshskills.ui.groupchat.listeners.ComposeActionListener;
@@ -66,19 +70,24 @@ import com.joshtalks.joshskills.ui.groupchat.utils.MediaUtils;
 import com.joshtalks.joshskills.ui.groupchat.utils.MessageSwipeController;
 import com.joshtalks.joshskills.ui.groupchat.utils.SwipeControllerActions;
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils;
+import com.joshtalks.joshskills.ui.help.HelpActivity;
+import com.joshtalks.joshskills.ui.referral.ReferralActivity;
 import com.joshtalks.joshskills.util.ExoAudioPlayer;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
@@ -159,6 +168,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     private AppCompatTextView txtPinnedMsg;
     private AppCompatTextView txtPinnedMsgUserName;
     private AppCompatImageView imgPinnedClose;
+    private AppCompatImageView settingsImg;
     private int tempMessageId = -1;
 
     @Override
@@ -217,6 +227,8 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         txtPinnedMsg = findViewById(R.id.txtPinnedMsg);
         txtPinnedMsgUserName = findViewById(R.id.txtPinnedMsgUserName);
         imgPinnedClose = findViewById(R.id.iv_pinned_close);
+        settingsImg = findViewById(R.id.iv_setting);
+        settingsImg.setOnClickListener(this);
         imgClose.setOnClickListener(this);
         toolbar.setOnClickListener(this);
         imgPinnedClose.setOnClickListener(this);
@@ -1520,8 +1532,39 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
                 int pinnedMsgId = Integer.parseInt(pinnedMessageView.getTag().toString());
                 scrollToMsg(pinnedMsgId);
             }
+        } else if (id == R.id.iv_setting) {
+            openPopupMenu(view);
         }
     }
+
+    private void openPopupMenu(View view) {
+        PopupMenu popupMenu = new PopupMenu(this, view, R.style.setting_menu_style);
+        popupMenu.inflate(R.menu.conversation_menu);
+
+        popupMenu.getMenu().findItem(R.id.menu_clear_media).setVisible(false);
+        popupMenu.getMenu().findItem(R.id.menu_clear_media).setEnabled(false);
+
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_referral:
+                        ReferralActivity.startReferralActivity(
+                                CometChatMessageListActivity.this,
+                                ConversationActivity.class.getName()
+                        );
+                        return true;
+                    case R.id.menu_help:
+                        startActivity(new Intent(CometChatMessageListActivity.this, HelpActivity.class));
+                        return true;
+                }
+                return true;
+            }
+        });
+        popupMenu.show();
+    }
+
 
 //    @Override
 //    public void setLongMessageClick(List<BaseMessage> baseMessagesList) {

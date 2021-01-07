@@ -79,17 +79,32 @@
             android:id="@+id/iv_copy_message_action"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/iv_setting"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:paddingStart="@dimen/_6sdp"
             android:paddingTop="@dimen/_14sdp"
-            android:paddingEnd="16dp"
+            android:paddingEnd="8dp"
             android:paddingBottom="@dimen/_14sdp"
             android:src="@drawable/ic_content_copy"
             android:visibility="gone"
             app:tint="@color/white"
             tools:visibility="visible" />
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:padding="@dimen/_4sdp"
+            android:tint="@color/white"
+            android:visibility="visible"
+            app:srcCompat="@drawable/ic_more_option"
+            tools:visibility="visible" />
+
 
     </RelativeLayout>
 
