@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.repository.service
 
+import com.google.gson.JsonArray
 import com.joshtalks.joshskills.repository.local.entity.CertificationExamDetailModel
 import com.joshtalks.joshskills.repository.local.entity.Course
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
@@ -144,5 +145,8 @@ interface ChatNetworkService {
 
     @GET("$DIR/certificateexam/chatcard-report")
     suspend fun getCertificateExamCardDetails(@QueryMap params: Map<String, String>): CertificationExamDetailModel
+
+    @POST("$DIR/group/message_list/")
+    suspend fun getGroupMessagesList(@Body params: Map<String, Any>): Response<JsonArray>
 
 }

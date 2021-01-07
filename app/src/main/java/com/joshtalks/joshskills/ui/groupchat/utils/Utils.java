@@ -25,11 +25,9 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-
 import com.cometchat.pro.constants.CometChatConstants;
 import com.cometchat.pro.core.Call;
 import com.cometchat.pro.core.CometChat;
@@ -44,12 +42,6 @@ import com.cometchat.pro.models.User;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.ui.groupchat.constant.StringContract;
-
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -67,8 +59,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import kotlin.ranges.RangesKt;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Utils {
 
@@ -708,8 +703,8 @@ public class Utils {
         context.startActivity(intent);
     }
 
-    public static List<BaseMessage> getMessagesFromJSONArray(JSONArray messagesArray) throws JSONException {
-        List<BaseMessage> messages = new ArrayList();
+    public static List<BaseMessage> getMessagesFromDataJSONArray(JSONArray messagesArray) throws JSONException {
+        List<BaseMessage> messages = new ArrayList<>();
 
         for (int i = 0; i < messagesArray.length(); ++i) {
             JSONObject messageObject = messagesArray.getJSONObject(i);
@@ -717,6 +712,18 @@ public class Utils {
                 BaseMessage baseMessage = processMessage(messageObject.getJSONObject("data"));
                 messages.add(baseMessage);
             }
+        }
+
+        return messages;
+    }
+
+    public static List<BaseMessage> getMessagesFromJSONArray(JSONArray messagesArray) throws JSONException {
+        List<BaseMessage> messages = new ArrayList<>();
+
+        for (int i = 0; i < messagesArray.length(); ++i) {
+            JSONObject messageObject = messagesArray.getJSONObject(i);
+            BaseMessage baseMessage = processMessage(messageObject);
+            messages.add(baseMessage);
         }
 
         return messages;
@@ -738,20 +745,13 @@ public class Utils {
 
                     return MediaMessage.fromJson(messageObject);
                 }
-            } else {
-                if (category.equalsIgnoreCase("action")) {
-                    return Action.fromJson(messageObject);
-                }
-
-                if (category.equalsIgnoreCase("call")) {
-                    return Call.fromJson(messageObject.toString());
-                }
-
-                if (category.equalsIgnoreCase("custom")) {
-                    return CustomMessage.fromJson(messageObject);
-                }
+            } else if (category.equalsIgnoreCase("action")) {
+                return Action.fromJson(messageObject);
+            } else if (category.equalsIgnoreCase("call")) {
+                return Call.fromJson(messageObject.toString());
+            } else if (category.equalsIgnoreCase("custom")) {
+                return CustomMessage.fromJson(messageObject);
             }
-
             return null;
         } else {
             throw new JSONException("Category missing in JSON");
