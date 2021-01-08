@@ -170,8 +170,8 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
         binding.practiceRv.adapter = adapter
     }
 
-    override fun submitQuiz(chatModel: ChatModel) {
-        onQuestionSubmitted(chatModel)
+    override fun submitQuiz(chatModel: ChatModel,isCorrect:Boolean,questionId:Int) {
+        onQuestionSubmitted(chatModel,isCorrect,questionId)
         openNextScreen()
     }
 
@@ -179,17 +179,31 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
         onQuestionChoiceSelected(chatModel)
     }
 
-    private fun onQuestionSubmitted(chatModel: ChatModel) {
+    private fun onQuestionSubmitted(
+        chatModel: ChatModel,
+        isCorrect: Boolean = false,
+        questionId: Int=-1
+    ) {
 
         CoroutineScope(Dispatchers.IO).launch {
             chatModel.question?.interval?.run {
                 WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
             }
         }
-        activityCallback?.onQuestionStatusUpdate(
-            QUESTION_STATUS.AT,
-            chatModel.question?.questionId?.toIntOrNull() ?: 0
-        )
+        if (isCorrect&&questionId!=-1) {
+            val quizQuestion=arrayListOf<Int>()
+            quizQuestion.add(questionId)
+            activityCallback?.onQuestionStatusUpdate(
+                QUESTION_STATUS.AT,
+                chatModel.question?.questionId?.toIntOrNull() ?: 0,
+                quizCorrectQuestionIds = quizQuestion
+            )
+        } else{
+            activityCallback?.onQuestionStatusUpdate(
+                QUESTION_STATUS.AT,
+                chatModel.question?.questionId?.toIntOrNull() ?: 0
+            )
+        }
 
         chatModel.question?.status = QUESTION_STATUS.AT
 

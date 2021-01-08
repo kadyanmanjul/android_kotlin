@@ -8,11 +8,19 @@ import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.SystemClock
 import android.util.Log
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.*
+import android.widget.ImageView
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import android.widget.SeekBar
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.children
@@ -26,14 +34,24 @@ import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.TAG
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.PracticeItemLayoutBinding
 import com.joshtalks.joshskills.databinding.VocabQuizPracticeItemLayoutBinding
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.AudioType
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
@@ -43,12 +61,12 @@ import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.muddzdev.styleabletoast.StyleableToast
+import java.util.concurrent.TimeUnit
+import kotlin.random.Random.Default.nextInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
-import java.util.concurrent.TimeUnit
-import kotlin.random.Random.Default.nextInt
 
 class PracticeAdapter(
     val context: Context,
@@ -132,6 +150,8 @@ class PracticeAdapter(
         private val accentColor =
             ContextCompat.getColor(context, R.color.colorAccent)
         private lateinit var chatModel: ChatModel
+        private var isCorrect: Boolean = false
+        private var quizQuestionId: Int = -1
         private val colorStateList = ColorStateList(
             arrayOf(
                 intArrayOf(android.R.attr.state_checked),
@@ -248,6 +268,15 @@ class PracticeAdapter(
                     assessmentQuestions.question.isAttempted = true
                     assessmentQuestions.question.status =
                         evaluateQuestionStatus((binding.quizRadioGroup.tag as Int) == binding.quizRadioGroup.checkedRadioButtonId)
+                    when (assessmentQuestions.question.status) {
+                        QuestionStatus.CORRECT -> {
+                            isCorrect = true
+                            quizQuestionId=assessmentQuestions.question.remoteId
+                        }
+                        else -> {
+                            isCorrect = false
+                        }
+                    }
 
                     val selectedChoice =
                         assessmentQuestions.choiceList[binding.quizRadioGroup.indexOfChild(
@@ -297,7 +326,7 @@ class PracticeAdapter(
 
         fun onContinueClicked() {
             isFirstTime = true
-            clickListener.submitQuiz(chatModel)
+            clickListener.submitQuiz(chatModel, isCorrect,quizQuestionId)
             onContinueClick()
         }
 
@@ -1203,7 +1232,7 @@ class PracticeAdapter(
         fun stopRecording(chatModel: ChatModel, position: Int, stopTime: Long)
         fun askRecordPermission()
         fun focusChild(position: Int)
-        fun submitQuiz(chatModel: ChatModel)
+        fun submitQuiz(chatModel: ChatModel,isCorrect:Boolean,questionId:Int)
         fun quizOptionSelected(chatModel: ChatModel)
         fun openNextScreen()
     }
