@@ -21,7 +21,7 @@ object AppDirectory {
 
     const val TODAY_DATE = "today_date"
     const val APP_SHORT_NAME = "JS"
-    const val AUDIO_EXTENSION = ".m4a"
+    const val AUDIO_EXTENSION = ".aac"
 
 
     enum class FileType {
@@ -69,7 +69,7 @@ object AppDirectory {
         Environment.getExternalStorageDirectory()
             .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppAudio/Sent"
 
-    fun getAudioSentFile(path: String?): File {
+    fun getAudioSentFile(path: String?, audioExtension: String = AUDIO_EXTENSION): File {
         val f = File(AUDIO_SENT_PATH)
         if (f.exists().not()) {
             f.mkdirs()
@@ -81,7 +81,7 @@ object AppDirectory {
         }
 
         if (fileName.isEmpty()) {
-            fileName = "Record_" + System.currentTimeMillis().toString() + AUDIO_EXTENSION
+            fileName = "Record_" + System.currentTimeMillis().toString() + audioExtension
         }
         val file = File(AUDIO_SENT_PATH + File.separator + fileName)
         file.createNewFile()
@@ -309,6 +309,12 @@ object AppDirectory {
         val outputDir =
             AppObjectController.joshApplication.cacheDir // context being the Activity pointer
         return File.createTempFile("record", AUDIO_EXTENSION, outputDir)
+    }
+
+    fun tempRecordingFileM4A(): File {
+        val outputDir =
+            AppObjectController.joshApplication.cacheDir // context being the Activity pointer
+        return File.createTempFile("record", ".m4a", outputDir)
     }
 
     fun deleteRecordingFile() {
