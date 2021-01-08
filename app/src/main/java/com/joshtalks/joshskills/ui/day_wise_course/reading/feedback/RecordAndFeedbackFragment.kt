@@ -374,7 +374,6 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
             progressStrokeRes = R.dimen.dp2
             textMarginRes = R.dimen.dp8
         }
-        // binding.btnSubmitButton.isEnabled = false
     }
 
 
