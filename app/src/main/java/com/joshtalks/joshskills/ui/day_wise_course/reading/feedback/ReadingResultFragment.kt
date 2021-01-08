@@ -102,7 +102,7 @@ class ReadingResultFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpda
         val charTv = (tableRow.getChildAt(0) as TextView)
         val qualityTv = (tableRow.getChildAt(1) as TextView)
 
-        var lp = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
+        val lp = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
         charTv.layoutParams = lp
 
         val lp1 = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
@@ -120,11 +120,6 @@ class ReadingResultFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpda
         }
 
         binding.tableLayout.addView(tableRow)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        exoAudioManager?.setProgressUpdateListener(this)
     }
 
     override fun onPause() {
@@ -152,9 +147,10 @@ class ReadingResultFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpda
     }
 
     private fun playAudio(url: String, startPos: Long, endPos: Long) {
-            startTime = startPos
-            endTime = endPos
-        exoAudioManager?.play(url, seekDuration = startPos, delayProgress = 5)
+        exoAudioManager?.setProgressUpdateListener(this)
+        startTime = startPos
+        endTime = endPos
+        exoAudioManager?.play(url, seekDuration = startPos, delayProgress = 4)
     }
 
     override fun onProgressUpdate(progress: Long) {
@@ -162,8 +158,8 @@ class ReadingResultFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpda
         Timber.tag("Audio")
             .e("Start " + startTime + "  end" + endTime + "    progress  " + progress)
         if (progress >= endTime) {
-            exoAudioManager?.onPause()
             exoAudioManager?.setProgressUpdateListener(null)
+            exoAudioManager?.onPause()
             binding.audio1.pauseAnimation()
             binding.audio1.progress = 0.0F
             binding.audio2.pauseAnimation()

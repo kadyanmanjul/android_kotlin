@@ -161,7 +161,7 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
             binding.viewPager.adapter =
                 FeedbackListAdapter(this, practiseEngagementV2)
         }
-        enableTab(binding.viewPager.adapter.itemCount ?: 0)
+        enableTab((binding.viewPager.adapter as FeedbackListAdapter).itemCount)
     }
 
     private fun enableTab(count: Int) {
@@ -181,7 +181,8 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
             val anyUploadingPractice =
                 (binding.viewPager.adapter as FeedbackListAdapter).isAnyPractiseUploading()
             if (anyUploadingPractice) {
-                binding.viewPager.currentItem = binding.viewPager.adapter.itemCount.minus(1) ?: -1
+                binding.viewPager.currentItem =
+                    (binding.viewPager.adapter as FeedbackListAdapter).itemCount.minus(1)
                 return@launch
             }
 

@@ -132,9 +132,10 @@ class ExoAudioPlayer2 {
         id: String = "",
         seekDuration: Long = 0,
         isPlaybackSpeed: Boolean = false,
-        delayProgress: Long = 50
+        delayProgress: Long = 50,
 
-    ) {
+
+        ) {
         var param = PlaybackParameters(1F)
         if (isPlaybackSpeed) {
             param = PlaybackParameters(0.50F, 1F)//pitch sexy hai
@@ -159,10 +160,10 @@ class ExoAudioPlayer2 {
         player.repeatMode = ExoPlayer.REPEAT_MODE_OFF
         player.seekTo(seekDuration)
         player.playWhenReady = true
-        progressTracker =
-            ProgressTracker(player, delayProgress)
+        progressTracker = ProgressTracker(player, delayProgress)
+        player.setWakeMode(C.WAKE_MODE_NETWORK)
+        player.setHandleAudioBecomingNoisy(true)
         player.prepare()
-
     }
 
     fun isPlaying(): Boolean {
