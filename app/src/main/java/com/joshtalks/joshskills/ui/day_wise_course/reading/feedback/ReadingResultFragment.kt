@@ -14,19 +14,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.JoshSkillExecutors
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.blurdialog.BlurDialogFragment
 import com.joshtalks.joshskills.databinding.FragmentFeedbackPronBinding
 import com.joshtalks.joshskills.repository.local.entity.practise.WrongWord
 import com.joshtalks.joshskills.ui.groupchat.uikit.ExoAudioPlayer2
-import com.tonyodev.fetch2.*
-import com.tonyodev.fetch2core.Downloader
-import com.tonyodev.fetch2rx.RxFetch
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
-import java.io.File
 
 
 class ReadingResultFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpdateListener {
@@ -130,6 +122,11 @@ class ReadingResultFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpda
         binding.tableLayout.addView(tableRow)
     }
 
+    override fun onResume() {
+        super.onResume()
+        exoAudioManager?.setProgressUpdateListener(this)
+    }
+
     override fun onPause() {
         super.onPause()
         exoAudioManager?.setProgressUpdateListener(null)
@@ -155,43 +152,9 @@ class ReadingResultFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpda
     }
 
     private fun playAudio(url: String, startPos: Long, endPos: Long) {
-        JoshSkillExecutors.BOUNDED.submit {
             startTime = startPos
             endTime = endPos
-
-
-            val fileName = Utils.getFileNameFromURL(url)
-            val cacheFile = File(AppObjectController.createDefaultCacheDir(), fileName)
-            if (cacheFile.exists().not()) {
-                cacheFile.createNewFile()
-            }
-            val request = Request(url, cacheFile.absolutePath)
-            request.priority = Priority.HIGH
-            request.networkType = NetworkType.ALL
-            request.tag = tag
-            val fetchConfiguration = FetchConfiguration.Builder(AppObjectController.joshApplication)
-                .enableRetryOnNetworkGain(true)
-                .setDownloadConcurrentLimit(50)
-                .enableLogging(true)
-                .setAutoRetryMaxAttempts(1)
-                .setGlobalNetworkType(NetworkType.ALL)
-                .setHttpDownloader(HttpUrlConnectionDownloader(Downloader.FileDownloaderType.PARALLEL))
-                .setNamespace("JoshTalks")
-                .enableHashCheck(false)
-                .enableFileExistChecks(true)
-                .build()
-            RxFetch.setDefaultRxInstanceConfiguration(fetchConfiguration)
-            RxFetch.getRxInstance(fetchConfiguration).enqueue(request)
-                .observable
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    exoAudioManager?.setProgressUpdateListener(this)
-                    exoAudioManager?.play(it.file, seekDuration = startPos, delayProgress = 5)
-                }, {
-                    it.printStackTrace()
-                })
-        }
+        exoAudioManager?.play(url, seekDuration = startPos, delayProgress = 5)
     }
 
     override fun onProgressUpdate(progress: Long) {

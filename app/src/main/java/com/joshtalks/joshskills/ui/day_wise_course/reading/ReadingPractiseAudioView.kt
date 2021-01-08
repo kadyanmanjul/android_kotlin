@@ -24,6 +24,7 @@ import timber.log.Timber
 
 class ReadingPractiseAudioView : FrameLayout, LifecycleObserver,
     ExoAudioPlayer2.ProgressUpdateListener, AudioPlayerEventListener {
+
     constructor(context: Context) : super(context) {
         init()
     }
@@ -59,6 +60,9 @@ class ReadingPractiseAudioView : FrameLayout, LifecycleObserver,
             playPauseButton = findViewById(R.id.btn_play_pause)
             seekbar.progress = 0
             playPauseButton.setOnClickListener {
+                if (AppObjectController.isRecordingOngoing) {
+                    return@setOnClickListener
+                }
                 if (playPauseButton.state == MaterialPlayPauseDrawable.State.Play) {
                     playPracticeAudio()
                     playAudio()

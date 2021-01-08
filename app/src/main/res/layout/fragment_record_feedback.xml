@@ -102,17 +102,13 @@
             app:constraint_referenced_ids="txtLabelRecord,imgRecordButton,txtCaptionRecord"
             tools:visibility="visible" />
 
-        <com.google.android.material.card.MaterialCardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/cardViewAnswerVoiceNote"
-            style="@style/Widget.MaterialComponents.CardView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_16sdp"
             android:layout_marginVertical="@dimen/_12sdp"
             android:visibility="gone"
-            app:cardCornerRadius="@dimen/_4sdp"
-            app:cardElevation="@dimen/_4sdp"
-            app:cardUseCompatPadding="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtCaptionRecord"
@@ -168,7 +164,7 @@
                     app:layout_constraintTop_toTopOf="@+id/submit_audio_note" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardViewFeedback"
@@ -414,6 +410,7 @@
             android:id="@+id/txtContinueButton"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
+            android:onClick="@{()->handler.continueAnswer()}"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
             android:insetTop="0dp"

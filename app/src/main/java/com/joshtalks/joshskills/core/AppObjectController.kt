@@ -178,6 +178,9 @@ class AppObjectController {
         var isSettingUpdate: Boolean = false
 
         @JvmStatic
+        var isRecordingOngoing: Boolean = false
+
+        @JvmStatic
         @Volatile
         var mRtcEngine: RtcEngine? = null
 

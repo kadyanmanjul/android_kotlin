@@ -205,7 +205,7 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
     }
 
     override fun onContinue() {
-        activityCallback?.onContinueClick()
+        activityCallback?.onNextTabCall(3)
     }
 
     override fun onResume() {

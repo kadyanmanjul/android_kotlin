@@ -388,6 +388,11 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
         }
     }
 
+    fun continueAnswer() {
+        callback?.onContinue()
+
+    }
+
     /**   end **/
 
 

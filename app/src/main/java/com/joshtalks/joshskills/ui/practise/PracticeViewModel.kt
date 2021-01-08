@@ -61,17 +61,19 @@ class PracticeViewModel(application: Application) :
             override fun onRecordFinished(recordingItem: RecordingItem) {
                 isRecordingStarted = false
                 recordListener?.onRecordFinished(recordingItem)
+                AppObjectController.isRecordingOngoing = false
             }
 
             override fun onError(e: Int) {
                 recordListener?.onError(e)
                 isRecordingStarted = false
-
+                AppObjectController.isRecordingOngoing = false
             }
 
             override fun onRecordingStarted() {
                 isRecordingStarted = true
                 recordListener?.onRecordingStarted()
+                AppObjectController.isRecordingOngoing = true
             }
         }
         AppDirectory.tempRecordingFileM4A().let {

@@ -14,6 +14,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 
 class ExoAudioPlayer2 {
@@ -149,6 +150,9 @@ class ExoAudioPlayer2 {
         val factory = ProgressiveMediaSource.Factory(dataSourceFactory)
         val mediaItem: MediaItem = MediaItem.Builder()
             .setUri(Uri.parse(audioUrl))
+            .setCustomCacheKey(
+                Utils.getFileNameFromURL(audioUrl)
+            )
             .build()
         val audioSource: MediaSource = factory.createMediaSource(mediaItem)
         player.setMediaSource(audioSource)
