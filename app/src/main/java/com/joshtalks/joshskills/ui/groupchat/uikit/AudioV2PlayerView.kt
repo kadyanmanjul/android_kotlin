@@ -72,8 +72,8 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
         seekPlayerProgress.progress = 0
         playButton.setOnClickListener(this)
         pauseButton.setOnClickListener(this)
-//        playButton.visibility = View.VISIBLE
-//        pauseButton.visibility = View.VISIBLE
+        playButton.visibility = View.VISIBLE
+        // pauseButton.visibility = View.VISIBLE
     }
 
     fun bindView(
@@ -91,6 +91,14 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
                 seekPlayerProgress.max = it.toInt()
                 timestamp.text = Utils.formatDuration(it.toInt())
             }
+
+            if (ExoAudioPlayer2.LAST_ID.isBlank().not() && ExoAudioPlayer2.LAST_ID == this.id) {
+                addListener()
+                setView()
+            } else {
+                removeSeekbarListener()
+            }
+
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -150,7 +158,7 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
         )
     }
 
-    private fun addListner() {
+    private fun addListener() {
         seekPlayerProgress.setOnSeekBarChangeListener(null)
         seekPlayerProgress.setOnSeekBarChangeListener(
             object : SeekBar.OnSeekBarChangeListener {
@@ -182,7 +190,7 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
         if (checkAudioIsDifferent()) {
             exoAudioManager?.let {
                 removeSeekbarListener()
-                addListner()
+                addListener()
                 if (ExoAudioPlayer2.LAST_ID.isEmpty()) {
                     initAndPlay(url)
                     return@let
@@ -304,15 +312,31 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
         super.onAttachedToWindow()
         setDefaultValue()
         subscribeRXBus()
+        if (ExoAudioPlayer2.LAST_ID.isBlank().not() && ExoAudioPlayer2.LAST_ID == this.id) {
+            addListener()
+            setView()
+        } else {
+            removeSeekbarListener()
+        }
         Timber.tag("onAttachedToWindow").e("AudioPlayer")
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        setDefaultValue()
-        exoAudioManager?.release()
-        compositeDisposable.clear()
+        removeSeekbarListener()
+        //setDefaultValue()
+        //exoAudioManager?.release()
+        //compositeDisposable.clear()
         Timber.tag("onDetachedFromWindow").e("AudioPlayer")
     }
 
+    fun setView() {
+        exoAudioManager?.let {
+            if (it.isPlaying()) {
+                playingAudio()
+            } else {
+                pausingAudio()
+            }
+        }
+    }
 }
