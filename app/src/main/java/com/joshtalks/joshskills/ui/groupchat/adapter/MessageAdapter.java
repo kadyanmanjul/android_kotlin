@@ -604,8 +604,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private void setActionData(ActionMessageViewHolder viewHolder, int i) {
         BaseMessage baseMessage = messageList.get(i);
         if (baseMessage instanceof Action) {
-            String msgText = ((Action) baseMessage).getMessage();
-            msgText.replace("System", "Vedant Maheshwari");
+            String msgText = ((Action) baseMessage).getMessage().replace("System", "Vedant Maheshwari");
             viewHolder.textView.setText(msgText);
         } else if (baseMessage instanceof Call) {
             Call call = ((Call) baseMessage);

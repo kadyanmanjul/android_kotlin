@@ -887,6 +887,23 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             }
         }
 
+        conversationViewModel.unreadMessageCount.observe(this) { count ->
+            when {
+                count in 1..99 -> {
+                    conversationBinding.txtUnreadCount.visibility = VISIBLE
+                    conversationBinding.txtUnreadCount.text = String.format("%d", count)
+                }
+                count > 99 -> {
+                    conversationBinding.txtUnreadCount.visibility = VISIBLE
+                    conversationBinding.txtUnreadCount.text = getString(R.string.max_unread_count)
+                }
+                else -> {
+                    conversationBinding.txtUnreadCount.visibility = GONE
+                    conversationBinding.txtUnreadCount.text = EMPTY
+                }
+            }
+        }
+
     }
 
     private fun showGroupChatScreen(groupDetails: GroupDetails) {
@@ -1889,6 +1906,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             subscribeRXBus()
             observeNetwork()
         }
+        conversationViewModel.getUnreadMessageCount(inboxEntity.conversation_id)
     }
 
     override fun onPause() {

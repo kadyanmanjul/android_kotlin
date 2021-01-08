@@ -37,15 +37,15 @@ import id.zelory.compressor.Compressor
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.io.File
+import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import timber.log.Timber
-import java.io.File
-import java.util.*
-import java.util.concurrent.TimeUnit
 
 
 class ConversationViewModel(application: Application) :
@@ -67,6 +67,7 @@ class ConversationViewModel(application: Application) :
     private val jobs = arrayListOf<Job>()
     val userLoginLiveData: MutableLiveData<GroupDetails> = MutableLiveData()
     val isLoading: MutableLiveData<Boolean> = MutableLiveData()
+    val unreadMessageCount: MutableLiveData<Int> = MutableLiveData()
 
     init {
         addObserver()
@@ -644,6 +645,24 @@ class ConversationViewModel(application: Application) :
                 // User already logged in
                 isLoading.postValue(false)
                 userLoginLiveData.postValue(groupDetails)
+            }
+        }
+    }
+
+    fun getUnreadMessageCount(conversationId: String) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response =
+                    AppObjectController.chatNetworkService.getUnreadMessageCount(conversationId)
+                if (response.isSuccessful && response.body() != null) {
+                    if (response.body()!!.has("count")) {
+                        val count = response.body()!!.get("count").asInt
+                        unreadMessageCount.postValue(count)
+                    }
+                    return@launch
+                }
+            } catch (ex: Throwable) {
+                Timber.d(ex)
             }
         }
     }

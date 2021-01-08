@@ -153,7 +153,9 @@ interface ChatNetworkService {
     @POST("$DIR/group/updatelastmessage/")
     suspend fun updateLastReadMessage(@Body params: Map<String, Any>): Response<Any>
 
-    @GET("$DIR/group/<conversation_id>unread_message/ ")
-    suspend fun getUnreadMessageCount(): Response<JsonObject>
+    @GET("$DIR/group/{conversation_id}/unread_message/ ")
+    suspend fun getUnreadMessageCount(
+        @Path("conversation_id") conversationId: String
+    ): Response<JsonObject>
 
 }
