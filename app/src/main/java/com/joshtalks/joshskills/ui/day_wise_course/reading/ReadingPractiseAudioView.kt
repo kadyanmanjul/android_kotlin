@@ -186,7 +186,6 @@ class ReadingPractiseAudioView : FrameLayout, LifecycleObserver,
                 pausingAudioUI()
             }
         }
-
     }
 
     private fun pausingAudioUI() {

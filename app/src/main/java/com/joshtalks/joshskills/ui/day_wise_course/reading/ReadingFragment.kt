@@ -30,11 +30,11 @@ import com.joshtalks.joshskills.ui.translation.LanguageTranslationDialog
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
 
 class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
 
@@ -161,7 +161,7 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
             binding.viewPager.adapter =
                 FeedbackListAdapter(this, practiseEngagementV2)
         }
-        enableTab(binding.viewPager.adapter?.itemCount ?: 0)
+        enableTab(binding.viewPager.adapter.itemCount ?: 0)
     }
 
     private fun enableTab(count: Int) {
@@ -181,7 +181,7 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
             val anyUploadingPractice =
                 (binding.viewPager.adapter as FeedbackListAdapter).isAnyPractiseUploading()
             if (anyUploadingPractice) {
-                binding.viewPager.currentItem = binding.viewPager.adapter?.itemCount?.minus(1) ?: -1
+                binding.viewPager.currentItem = binding.viewPager.adapter.itemCount.minus(1) ?: -1
                 return@launch
             }
 
@@ -201,6 +201,7 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
                 binding.viewPager.currentItem = tempList.size - 1
                 delay(100)
                 binding.rootView.scrollTo(0, binding.cardViewDemoVoiceNote.bottom)
+                binding.readingAudioNote.pausePlayer()
             }
         }
     }
@@ -238,6 +239,7 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
                 .subscribe({
                     //  binding.rootView.requestDisallowInterceptTouchEvent(it.flag.not())
                     binding.viewPager.isUserInputEnabled = it.flag
+                    binding.readingAudioNote.pausePlayer()
                 }, {
                     it.printStackTrace()
                 })
