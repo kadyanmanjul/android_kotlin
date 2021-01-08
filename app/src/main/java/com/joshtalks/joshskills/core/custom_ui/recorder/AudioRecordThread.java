@@ -6,7 +6,6 @@ import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
 import android.media.MediaRecorder;
-import android.os.Build;
 import android.util.Log;
 
 import java.io.IOException;
@@ -59,7 +58,6 @@ public class AudioRecordThread implements Runnable {
             throw new RuntimeException("Unable to initialize AudioRecord");
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             if (android.media.audiofx.NoiseSuppressor.isAvailable()) {
                 android.media.audiofx.NoiseSuppressor noiseSuppressor = android.media.audiofx.NoiseSuppressor
                         .create(audioRecord.getAudioSessionId());
@@ -67,10 +65,7 @@ public class AudioRecordThread implements Runnable {
                     noiseSuppressor.setEnabled(true);
                 }
             }
-        }
 
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             if (android.media.audiofx.AutomaticGainControl.isAvailable()) {
                 android.media.audiofx.AutomaticGainControl automaticGainControl = android.media.audiofx.AutomaticGainControl
                         .create(audioRecord.getAudioSessionId());
@@ -78,7 +73,6 @@ public class AudioRecordThread implements Runnable {
                     automaticGainControl.setEnabled(true);
                 }
             }
-        }
 
 
         return audioRecord;
@@ -119,7 +113,6 @@ public class AudioRecordThread implements Runnable {
 
         try {
             while (!Thread.interrupted()) {
-
                 boolean success = handleCodecInput(audioRecord, mediaCodec, codecInputBuffers, Thread.currentThread().isAlive());
                 if (success)
                     handleCodecOutput(mediaCodec, codecOutputBuffers, bufferInfo, outputStream);
