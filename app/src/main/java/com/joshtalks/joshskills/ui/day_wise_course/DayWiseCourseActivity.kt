@@ -35,7 +35,6 @@ import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.ui.chat.LESSON_REQUEST_CODE
 import com.joshtalks.joshskills.ui.day_wise_course.unlock_next_class.ActivityUnlockNextClass
-import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 
@@ -193,11 +192,11 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             if (it.pointsList.isNullOrEmpty().not()) {
                 PointSnackbar.make(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))?.show()
             }
-            if(it.awardMentorList.isNullOrEmpty().not()){
+            if (it.awardMentorList.isNullOrEmpty().not()) {
                 //TODO add when awards functionality is over
                 //ShowAwardFragment.showDialog(supportFragmentManager,it.awardMentorList!!)
             }
-            if(it.outranked!!){
+            if (it.outranked!!) {
                 it.outrankedData?.let {
                     showLeaderboardAchievement(it)
                 }
@@ -384,9 +383,20 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         }
     }
 
-
-    override fun onQuestionStatusUpdate(status: QUESTION_STATUS, questionId: Int,isVideoPercentComplete:Boolean,quizCorrectQuestionIds:ArrayList<Int>) {
-        viewModel.updateQuestionStatus(status, questionId, courseId!!, lessonId,isVideoPercentComplete,quizCorrectQuestionIds)
+    override fun onQuestionStatusUpdate(
+        status: QUESTION_STATUS,
+        questionId: Int,
+        isVideoPercentComplete: Boolean,
+        quizCorrectQuestionIds: ArrayList<Int>
+    ) {
+        viewModel.updateQuestionStatus(
+            status,
+            questionId,
+            courseId!!,
+            lessonId,
+            isVideoPercentComplete,
+            quizCorrectQuestionIds
+        )
     }
 
     override fun onContinueClick() {

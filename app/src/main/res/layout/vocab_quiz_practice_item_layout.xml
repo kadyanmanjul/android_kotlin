@@ -63,10 +63,10 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/quiz_layout"
                     android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:visibility="gone"
-                    tools:visibility="visible"
                     app:layout_constraintTop_toBottomOf="@+id/practice_title_tv"
-                    android:layout_height="match_parent">
+                    tools:visibility="visible">
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/quiz_question_tv"
@@ -177,7 +177,6 @@
                         android:layout_marginBottom="@dimen/_16sdp"
                         android:background="@drawable/rounded_state_button_bg"
                         android:gravity="center"
-                        android:onClick="@{()->handler.onContinueClicked()}"
                         android:padding="@dimen/_8sdp"
                         android:text="@string/continue_label"
                         android:textAllCaps="false"

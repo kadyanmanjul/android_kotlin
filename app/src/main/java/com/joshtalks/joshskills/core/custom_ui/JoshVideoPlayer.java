@@ -1,9 +1,10 @@
- package com.joshtalks.joshskills.core.custom_ui;
+package com.joshtalks.joshskills.core.custom_ui;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.pm.ActivityInfo;
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,9 +15,7 @@ import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -44,19 +43,15 @@ import com.joshtalks.joshskills.core.CountUpTimer;
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent;
 import com.joshtalks.joshskills.core.analytics.AppAnalytics;
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController;
+import static com.joshtalks.joshskills.messaging.RxBus2.publish;
 import com.joshtalks.joshskills.repository.local.entity.VideoEngage;
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus;
 import com.joshtalks.joshskills.repository.server.engage.Graph;
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.annotation.Nullable;
-
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-import static com.joshtalks.joshskills.messaging.RxBus2.publish;
 
 public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener, View.OnClickListener {
     private final Handler timeHandler = new Handler();
@@ -80,10 +75,9 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 return;
             }
 
-            long currentPosition = player.getCurrentPosition();
             publish(
                     new MediaProgressEventBus(
-                            Download.STATE_DOWNLOADING, "0", currentPosition
+                            Download.STATE_DOWNLOADING, "0", currentPosition, countUpTimer.getTime()
                     )
             );
             if (!(getContext() instanceof PlayerListener)) {
@@ -218,7 +212,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                     try {
                         publish(
                                 new MediaProgressEventBus(
-                                        Download.STATE_DOWNLOADING, "0", position
+                                        Download.STATE_DOWNLOADING, "0", position, countUpTimer.getTime()
                                 )
                         );
                         PlayerListener listener = (PlayerListener) getContext();
@@ -272,6 +266,14 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             }
         });*/
 
+    }
+
+    private long calculatePercentComplete(Set<Graph> videoViewGraphList) {
+        long percent = 0;
+        for (Graph graph : videoViewGraphList) {
+            percent += graph.getEndTime() - graph.getStartTime();
+        }
+        return percent;
     }
 
     private void setupAudioFocus() {

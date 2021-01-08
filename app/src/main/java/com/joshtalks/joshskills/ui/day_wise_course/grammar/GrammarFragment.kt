@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.day_wise_course.grammar
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -314,18 +313,22 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                                     if (eventBus.progress > 3000 && this.status != QUESTION_STATUS.AT) {
                                         updateVideoQuestionStatus(this)
                                         this.status = QUESTION_STATUS.AT
-                                        this.isVideoWatchTimeSend=true
+                                        this.isVideoWatchTimeSend = true
                                     }
-                                    val percentVideoWatched =
+                                    val videoPercent =
                                         binding.videoPlayer.player?.duration?.let {
                                             eventBus.progress.div(
                                                 it
                                             ).times(100).toInt()
                                         } ?: -1
+                                    val percentVideoWatched =
+                                        eventBus.watchTime.times(100).div(
+                                            binding.videoPlayer.player?.duration!!
+                                        ).toInt()
 
-                                    if (percentVideoWatched!=-1 && percentVideoWatched>=70 && this.isVideoWatchTimeSend){
+                                    if (percentVideoWatched != 0 && percentVideoWatched >= 70 && videoPercent != -1 && videoPercent >= 70 && this.isVideoWatchTimeSend) {
                                         updateVideoQuestionStatus(this, true)
-                                        this.isVideoWatchTimeSend=false
+                                        this.isVideoWatchTimeSend = false
                                     }
 
                                     if (eventBus.progress + 1000 >= this.videoList?.get(0)?.duration ?: 0) {
@@ -533,9 +536,9 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
             selectedChoice.userSelectedOrder = 1
 
             viewModel.saveAssessmentQuestion(question)
-            val correctQuestionList= ArrayList<Int>()
-            assessmentQuestions.forEach { questionWithRealtion->
-                if (questionWithRealtion.question.isAttempted&&questionWithRealtion.question.status==QuestionStatus.CORRECT){
+            val correctQuestionList = ArrayList<Int>()
+            assessmentQuestions.forEach { questionWithRealtion ->
+                if (questionWithRealtion.question.isAttempted && questionWithRealtion.question.status == QuestionStatus.CORRECT) {
                     correctQuestionList.add(questionWithRealtion.question.remoteId)
                 }
             }

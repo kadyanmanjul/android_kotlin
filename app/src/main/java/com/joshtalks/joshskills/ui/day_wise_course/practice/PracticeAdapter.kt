@@ -271,7 +271,7 @@ class PracticeAdapter(
                     when (assessmentQuestions.question.status) {
                         QuestionStatus.CORRECT -> {
                             isCorrect = true
-                            quizQuestionId=assessmentQuestions.question.remoteId
+                            quizQuestionId = assessmentQuestions.question.remoteId
                         }
                         else -> {
                             isCorrect = false
@@ -305,6 +305,15 @@ class PracticeAdapter(
             binding.showExplanationBtn.setOnClickListener {
                 showExplanation()
             }
+            binding.continueBtn.setOnClickListener {
+                isFirstTime = true
+                clickListener.submitQuiz(
+                    chatModel,
+                    isCorrect,
+                    assessmentQuestions.question.remoteId
+                )
+                onContinueClick()
+            }
 
             if (chatModel.question?.status == QUESTION_STATUS.IP) {
                 binding.quizLayout.visibility = VISIBLE
@@ -322,12 +331,6 @@ class PracticeAdapter(
                 if (position > 0)
                     clickListener.focusChild(position - 1)
             }
-        }
-
-        fun onContinueClicked() {
-            isFirstTime = true
-            clickListener.submitQuiz(chatModel, isCorrect,quizQuestionId)
-            onContinueClick()
         }
 
         fun hideExplanation() {
@@ -1232,7 +1235,7 @@ class PracticeAdapter(
         fun stopRecording(chatModel: ChatModel, position: Int, stopTime: Long)
         fun askRecordPermission()
         fun focusChild(position: Int)
-        fun submitQuiz(chatModel: ChatModel,isCorrect:Boolean,questionId:Int)
+        fun submitQuiz(chatModel: ChatModel, isCorrect: Boolean, questionId: Int)
         fun quizOptionSelected(chatModel: ChatModel)
         fun openNextScreen()
     }
