@@ -37,8 +37,8 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import kotlinx.coroutines.*
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.*
 
 class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
 
@@ -353,6 +353,7 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
         if (DOWNLOAD_STATUS.NOT_START == submit) {
             submit = DOWNLOAD_STATUS.STARTED
             startSubmitProgress()
+            callback?.onPracticeSubmitted()
             practiceEngagement?.questionForId?.let {
                 practiceViewModel.submitReadingPractise(it, filePath!!)
             }
@@ -417,4 +418,5 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
 interface ReadingPractiseCallback {
     fun onImproveAnswer()
     fun onContinue()
+    fun onPracticeSubmitted()
 }

@@ -221,8 +221,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
         val layoutParam: LinearLayout.LayoutParams =
             LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT
+                binding.lessonTabLayout.layoutParams
             )
 
         for (i in 0 until tabs.childCount) {

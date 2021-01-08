@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.core.custom_ui.custom_textview.AutoLinkMode
 import com.joshtalks.joshskills.databinding.ReadingPracticeFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
 import com.joshtalks.joshskills.repository.local.entity.practise.PractiseType
 import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
@@ -155,7 +156,6 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
                 )
             )
         } else {
-            activityCallback?.onSectionStatusUpdate(2, true)
             binding.viewPager.offscreenPageLimit = practiseEngagementV2.size
             binding.viewPager.setPageTransformer(MarginPageTransformer(Utils.dpToPx(40)))
             binding.viewPager.adapter =
@@ -209,6 +209,14 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
 
     override fun onContinue() {
         activityCallback?.onNextTabCall(3)
+    }
+
+    override fun onPracticeSubmitted() {
+        activityCallback?.onQuestionStatusUpdate(
+            QUESTION_STATUS.AT,
+            chatModel?.question?.questionId?.toIntOrNull() ?: 0
+        )
+        activityCallback?.onSectionStatusUpdate(2, true)
     }
 
     override fun onResume() {
