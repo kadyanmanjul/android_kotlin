@@ -132,6 +132,7 @@ class ReadingResultFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpda
 
     override fun onPause() {
         super.onPause()
+        exoAudioManager?.setProgressUpdateListener(null)
         exoAudioManager?.release()
     }
 
@@ -144,7 +145,7 @@ class ReadingResultFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpda
     }
 
     fun userSpeak() {
-        if (word != null && word!!.studentStartTime <= word!!.studentEndTime) {
+        if (word != null && word!!.studentStartTime >= word!!.studentEndTime) {
             return
         }
         binding.audio2.playAnimation()
@@ -195,7 +196,8 @@ class ReadingResultFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpda
 
     override fun onProgressUpdate(progress: Long) {
         super.onProgressUpdate(progress)
-        Timber.tag("Audio").e("Start " + startTime + "  end" + endTime)
+        Timber.tag("Audio")
+            .e("Start " + startTime + "  end" + endTime + "    progress  " + progress)
         if (progress >= endTime) {
             exoAudioManager?.onPause()
             exoAudioManager?.setProgressUpdateListener(null)
@@ -206,6 +208,7 @@ class ReadingResultFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpda
             return
         }
     }
+
 
     companion object {
         const val ARG_WORD_DETAILS = "word_detail"
