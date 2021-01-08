@@ -35,7 +35,7 @@ import android.os.Environment
 import android.provider.Browser
 import android.provider.Settings
 import android.text.Spannable
-import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.text.format.DateUtils
 import android.util.Log
 import android.util.TypedValue
@@ -57,6 +57,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawable
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
+import androidx.core.text.toSpannable
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
@@ -1108,35 +1109,40 @@ suspend fun String.getSpannableString(
     endSeparator: String,
     selectedColor: Int = Color.LTGRAY,
     defaultSelectedColor: Int = Color.BLUE,
+    isUnderLineEnable: Boolean = true,
     clickListener: OnWordClick? = null
-): SpannableString {
-    return CoroutineScope(Dispatchers.IO).async(
-        Dispatchers.IO,
-        start = CoroutineStart.UNDISPATCHED
-    ) {
+): Spannable {
+    return CoroutineScope(Dispatchers.IO).async(Dispatchers.IO) {
         var sourString = this@getSpannableString
         val pattern: Pattern = Pattern.compile(separatorRegex)
-        val splitted = ArrayList<String>()
+        val splitted = mutableListOf<String>()
         val matcher = pattern.matcher(sourString)
         while (matcher.find()) {
-            splitted.add(matcher.group())
+            splitted.add(matcher.group().removePrefix(startSeparator).removeSuffix(endSeparator))
         }
 
         sourString = sourString.replace(startSeparator, EMPTY).replace(endSeparator, EMPTY)
-        val generatedSpanString = SpannableString(sourString)
-
-        splitted.forEach { s ->
-            val word = s.removePrefix(startSeparator).removeSuffix(endSeparator)
-            val index = sourString.indexOf(word)
+        val generatedSpanString = SpannableStringBuilder(sourString)
+        var lastIndex = 0
+        splitted.forEach { word ->
+            val index = sourString.indexOf(word, startIndex = lastIndex, ignoreCase = false)
+            if (index <= 0) {
+                return@forEach
+            }
             generatedSpanString.setSpan(
                 getTouchableSpannable(
-                    s.removePrefix(startSeparator).removeSuffix(endSeparator), selectedColor,
-                    defaultSelectedColor, true, clickListener
+                    word,
+                    selectedColor,
+                    defaultSelectedColor,
+                    isUnderLineEnable,
+                    clickListener
                 ), index, index + word.length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
+            lastIndex = (index + word.length)
         }
-        return@async generatedSpanString
+        delay(150)
+        return@async generatedSpanString.toSpannable()
     }.await()
 }
 
