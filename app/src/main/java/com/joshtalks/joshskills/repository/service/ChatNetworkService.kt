@@ -90,7 +90,6 @@ interface ChatNetworkService {
     @POST("$DIR/practice/engagement/")
     suspend fun submitNewReadingPractice(@Body requestEngage: RequestEngage): Response<PracticeEngagementV2>
 
-    //http://staging.joshtalks.org/api/skill/v1/practice/audio_practice_feedback/'
     @POST("$DIR/practice/audio_practice_feedback/")
     suspend fun getAudioFeedback(@Body params: Map<String, String>): PracticeFeedback2
 
@@ -143,7 +142,6 @@ interface ChatNetworkService {
         @Query("mentor_id") mentorId: String,
         @Query("course_id") courseId: Int
     ): CourseOverviewBaseResponse
-
 
     @POST("$DIR/group/cometchat_add_member/")
     suspend fun getGroupDetails(@Body params: Map<String, String>): GroupDetails
