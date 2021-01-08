@@ -1115,7 +1115,8 @@ class PracticeAdapter(
                 )
             if (timeDifference > 1) {
                 practiceViewModel.recordFile?.let {
-                    filePath = AppDirectory.getAudioSentFile(null).absolutePath
+                    filePath =
+                        AppDirectory.getAudioSentFile(null, audioExtension = ".m4a").absolutePath
                     chatModel.filePath = filePath
                     AppDirectory.copy(it.absolutePath, filePath!!)
                 }

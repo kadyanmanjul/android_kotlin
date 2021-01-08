@@ -86,10 +86,7 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import okhttp3.RequestBody.Companion.toRequestBody
 import timber.log.Timber
 import java.io.*
@@ -1113,7 +1110,10 @@ suspend fun String.getSpannableString(
     defaultSelectedColor: Int = Color.BLUE,
     clickListener: OnWordClick? = null
 ): SpannableString {
-    return CoroutineScope(Dispatchers.IO).async(Dispatchers.IO) {
+    return CoroutineScope(Dispatchers.IO).async(
+        Dispatchers.IO,
+        start = CoroutineStart.UNDISPATCHED
+    ) {
         var sourString = this@getSpannableString
         val pattern: Pattern = Pattern.compile(separatorRegex)
         val splitted = ArrayList<String>()
@@ -1136,7 +1136,6 @@ suspend fun String.getSpannableString(
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
-        delay(150)
         return@async generatedSpanString
     }.await()
 }

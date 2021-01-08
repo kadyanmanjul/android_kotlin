@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.m4aRecorder.M4ABaseAudioRecording
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -51,8 +52,7 @@ class PracticeViewModel(application: Application) :
     private var isRecordingStarted = false
 
 
-    private val mAudioRecording: com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording =
-        com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording()
+    private val mAudioRecording: M4ABaseAudioRecording = M4ABaseAudioRecording()
 
     @Synchronized
     fun startRecordAudio(recordListener: OnAudioRecordListener?) {
@@ -74,7 +74,7 @@ class PracticeViewModel(application: Application) :
                 recordListener?.onRecordingStarted()
             }
         }
-        AppDirectory.tempRecordingFile().let {
+        AppDirectory.tempRecordingFileM4A().let {
             mAudioRecording.setOnAudioRecordListener(onRecordListener)
             mAudioRecording.setFile(it.absolutePath)
             recordFile = it

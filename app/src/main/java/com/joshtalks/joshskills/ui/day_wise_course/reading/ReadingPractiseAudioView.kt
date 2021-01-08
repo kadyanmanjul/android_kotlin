@@ -83,12 +83,13 @@ class ReadingPractiseAudioView : FrameLayout, LifecycleObserver,
 
 
     fun initAudioPlayer(url: String, duration: Int) {
+        lastPosition = 0
+        seekbar.progress = 0
         id = System.currentTimeMillis().toString()
         this.url = url
         this.duration = duration
         seekbar.max = duration
         timestamp.text = Utils.formatDuration(duration)
-
     }
 
     private fun removeSeekbarListener() {

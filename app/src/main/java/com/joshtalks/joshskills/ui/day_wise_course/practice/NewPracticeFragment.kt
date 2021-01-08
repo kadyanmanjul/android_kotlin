@@ -314,7 +314,7 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
         if (timeDifference > 1) {
             practiceViewModel.recordFile?.let {
 //                                isAudioRecordDone = true
-                filePath = AppDirectory.getAudioSentFile(null).absolutePath
+                filePath = AppDirectory.getAudioSentFile(null, audioExtension = ".m4a").absolutePath
                 chatModel.filePath = filePath
                 AppDirectory.copy(it.absolutePath, filePath!!)
             }

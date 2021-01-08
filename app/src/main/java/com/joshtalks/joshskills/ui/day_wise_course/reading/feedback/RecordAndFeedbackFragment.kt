@@ -108,7 +108,7 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
                             binding.txtContinueButton.visibility = View.VISIBLE
                         }
                         practiceEngagement?.answerUrl?.let {
-                            binding.imgCancel.visibility = View.GONE
+                            binding.imgCancel.visibility = View.INVISIBLE
                             binding.cardViewAnswerVoiceNote.visibility = View.VISIBLE
                             binding.submitAudioNote.initAudioPlayer(
                                 it,
@@ -120,7 +120,7 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
                             binding.txtLabelFeedback.text = feedback.feedbackTitle
                             binding.txtFeedback.text = feedback.feedbackText
 
-                            if (isErrorFeedback) {
+                            if (feedback.error) {
                                 return@launch
                             }
                             feedback.pronunciation?.let { pronunciation ->
@@ -287,7 +287,7 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
             )
         if (timeDifference > 1) {
             practiceViewModel.recordFile?.let {
-                filePath = AppDirectory.getAudioSentFile(null).absolutePath
+                filePath = AppDirectory.getAudioSentFile(null, audioExtension = ".m4a").absolutePath
                 AppDirectory.copy(it.absolutePath, filePath!!)
                 afterRecordCompleteUI()
             }
