@@ -5,6 +5,8 @@ import android.net.Uri
 import android.os.Handler
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
+import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
@@ -13,7 +15,6 @@ import com.google.android.exoplayer2.util.Util
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
-import com.joshtalks.joshskills.core.videoplayer.PlaybackSpeed
 
 class ExoAudioPlayer2 {
     private var progressTracker: ProgressTracker? = null
@@ -29,7 +30,12 @@ class ExoAudioPlayer2 {
             .setContentType(C.CONTENT_TYPE_MUSIC)
             .setUsage(C.USAGE_MEDIA)
             .build()
+        val extractorsFactory: DefaultExtractorsFactory = DefaultExtractorsFactory()
+            .setConstantBitrateSeekingEnabled(true)
         SimpleExoPlayer.Builder(AppObjectController.joshApplication).setUseLazyPreparation(true)
+            .setMediaSourceFactory(
+                DefaultMediaSourceFactory(context!!, extractorsFactory)
+            )
             .build().apply {
                 setAudioAttributes(audioAttributes, true)
             }
@@ -118,11 +124,6 @@ class ExoAudioPlayer2 {
 
     private fun initListener() {
         player.addListener(playerEventListener)
-    }
-
-
-    fun onChangePlaybackSpeed(playbackSpeed: PlaybackSpeed) {
-
     }
 
     fun play(
