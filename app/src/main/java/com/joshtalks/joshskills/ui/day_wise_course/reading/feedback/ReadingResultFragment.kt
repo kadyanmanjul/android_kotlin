@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TableRow
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
@@ -98,10 +97,16 @@ class ReadingResultFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpda
     }
 
     private fun addTableRow(char: String, quality: String) {
-        val tableRow: TableRow =
+        val tableRow =
             View.inflate(requireContext(), R.layout.table_row, null) as TableRow
         val charTv = (tableRow.getChildAt(0) as TextView)
         val qualityTv = (tableRow.getChildAt(1) as TextView)
+
+        var lp = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
+        charTv.layoutParams = lp
+
+        val lp1 = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
+        qualityTv.layoutParams = lp1
 
         charTv.text = char
         qualityTv.text = quality
@@ -114,11 +119,6 @@ class ReadingResultFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpda
             qualityTv.setTextColor(ContextCompat.getColor(requireContext(), R.color.red_f6))
         }
 
-        val layoutParams = ConstraintLayout.LayoutParams(
-            binding.root.layoutParams
-        )
-        layoutParams.startToEnd = R.id.word_tv
-        tableRow.layoutParams = layoutParams
         binding.tableLayout.addView(tableRow)
     }
 

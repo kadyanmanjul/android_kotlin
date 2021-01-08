@@ -10,6 +10,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/root_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/grey_rounded_bg"
@@ -92,7 +93,8 @@
             android:id="@+id/textview3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="center|start"
+            android:paddingStart="@dimen/_16sdp"
             android:text="Phone"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -126,6 +128,7 @@
             android:id="@+id/table_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:weightSum="2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/word_tv"
             app:layout_constraintTop_toBottomOf="@+id/line"

@@ -1,11 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
-
+<?xml version="1.0" encoding="utf-8"?><!--
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/table_layout"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:background="@color/red"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toEndOf="@+id/word_tv"
+    app:layout_constraintTop_toBottomOf="@+id/line"
+    app:layout_constraintWidth_percent="0.67">-->
 
 <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/row"
     android:layout_width="0dp"
     android:layout_height="wrap_content">
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:background="@drawable/left_top_border_bg"
@@ -14,10 +25,12 @@
         android:textSize="@dimen/_10sdp" />
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:background="@drawable/left_top_border_bg"
-        android:gravity="center"
+        android:gravity="start|center"
+        android:paddingStart="@dimen/_16sdp"
         android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
         android:textSize="@dimen/_10sdp" />
-</TableRow>
+</TableRow><!--</TableLayout>-->

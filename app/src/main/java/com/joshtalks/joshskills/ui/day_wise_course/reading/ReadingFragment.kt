@@ -30,11 +30,11 @@ import com.joshtalks.joshskills.ui.translation.LanguageTranslationDialog
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.*
 
 class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
 
@@ -155,6 +155,7 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
                 )
             )
         } else {
+            activityCallback?.onSectionStatusUpdate(2, true)
             binding.viewPager.offscreenPageLimit = practiseEngagementV2.size
             binding.viewPager.setPageTransformer(MarginPageTransformer(Utils.dpToPx(40)))
             binding.viewPager.adapter =
