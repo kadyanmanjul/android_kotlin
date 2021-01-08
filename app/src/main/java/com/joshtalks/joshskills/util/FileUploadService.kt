@@ -235,9 +235,10 @@ class FileUploadService : Service() {
                 Log.e(TAG, "callUploadFileApiForReadingPractice: $resp")
                 if (resp.isSuccessful && resp.body() != null) {
                     resp.body()?.let {
-                        it.questionForId = requestEngage.questionId
                         AppObjectController.appDatabase.practiceEngagementDao()
-                            .insertPractiseAfterUploaded(it)
+                            .insertPractiseAfterUploaded(it.apply {
+                                this.questionForId = requestEngage.questionId
+                            })
                         RxBus2.publish(EmptyEventBus())
                     }
                     AppObjectController.appDatabase.pendingTaskDao().deleteTask(pendingTaskModel.id)

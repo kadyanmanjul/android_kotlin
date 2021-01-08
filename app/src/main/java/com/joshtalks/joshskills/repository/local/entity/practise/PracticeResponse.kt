@@ -34,10 +34,6 @@ data class PracticeEngagementV2(
     var practiseId: Int = 0,
 
     @ColumnInfo()
-    @SerializedName("error")
-    var isErrorFeedback: Boolean = false,
-
-    @ColumnInfo()
     @SerializedName("question")
     var question: Int = 0,
 
@@ -102,8 +98,7 @@ data class PracticeEngagementV2(
         transcriptId = null,
         pointsList = emptyList(),
         practiseType = PractiseType.SUBMITTED,
-        uploadStatus = DOWNLOAD_STATUS.UPLOADED,
-        isErrorFeedback = false
+        uploadStatus = DOWNLOAD_STATUS.UPLOADED
     )
 }
 
