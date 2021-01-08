@@ -179,12 +179,25 @@ class ReadingPractiseAudioView : FrameLayout, LifecycleObserver,
         pausingAudioUI()
     }
 
+    fun pausePlayer() {
+        exoAudioManager?.run {
+            if (isPlaying()) {
+                this.onPause()
+                pausingAudioUI()
+            }
+        }
+
+    }
+
     private fun pausingAudioUI() {
         timestamp.text = Utils.formatDuration(duration)
+        playPauseButton.state = MaterialPlayPauseDrawable.State.Play
+        playPauseButton.jumpToState(MaterialPlayPauseDrawable.State.Play)
     }
 
     override fun complete() {
         playPauseButton.state = MaterialPlayPauseDrawable.State.Play
+        playPauseButton.jumpToState(MaterialPlayPauseDrawable.State.Play)
         seekbar.progress = 0
         exoAudioManager?.seekTo(0)
         exoAudioManager?.onPause()
@@ -197,6 +210,7 @@ class ReadingPractiseAudioView : FrameLayout, LifecycleObserver,
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        pausePlayer()
         Timber.tag("onAttachedToWindow").e("AudioPlayer")
     }
 
