@@ -49,6 +49,8 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.text.DecimalFormat
+import java.util.Locale
 import kotlinx.android.synthetic.main.base_toolbar.iv_back
 import kotlinx.android.synthetic.main.base_toolbar.iv_help
 import kotlinx.android.synthetic.main.base_toolbar.iv_setting
@@ -56,8 +58,6 @@ import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.text.DecimalFormat
-import java.util.Locale
 
 class UserProfileActivity : BaseActivity() {
 
@@ -139,7 +139,7 @@ class UserProfileActivity : BaseActivity() {
             }
         }
         if (mentorId.equals(Mentor.getInstance().getId())) {
-            binding.editPic.visibility = View.VISIBLE
+            binding.editPic.visibility = View.GONE
         }
     }
 
@@ -196,9 +196,10 @@ class UserProfileActivity : BaseActivity() {
         viewModel.userProfileUrl.observe(this) {
             if (mentorId.equals(Mentor.getInstance().getId())) {
                 if (it.isNullOrBlank()) {
+                    binding.editPic.visibility = View.VISIBLE
                     binding.editPic.text = "Add"
                 } else {
-                    binding.editPic.text = "Edit"
+                    binding.editPic.visibility = View.GONE
                 }
             }
             binding.userPic.post {
@@ -225,9 +226,11 @@ class UserProfileActivity : BaseActivity() {
 
     private fun initView(userData: UserProfileResponse) {
         val resp = StringBuilder()
-        userData.name?.split(" ")?.forEach {
-            resp.append(it.toLowerCase(Locale.getDefault()).capitalize(Locale.getDefault()))
-                .append(" ")
+        userData.name?.split(" ")?.forEachIndexed { index, string ->
+            if (index<2) {
+                resp.append(string.toLowerCase(Locale.getDefault()).capitalize(Locale.getDefault()))
+                    .append(" ")
+            }
         }
         binding.userName.text = resp
         binding.userAge.text = userData.age.toString()
@@ -242,7 +245,7 @@ class UserProfileActivity : BaseActivity() {
             this.awardCategory = userData.awardCategory
 
             if (mentorId.equals(Mentor.getInstance().getId())) {
-                        binding.moreInfo.visibility = View.VISIBLE
+                binding.moreInfo.visibility = View.VISIBLE
             }
             binding.awardsHeading.visibility = View.VISIBLE
             if (checkIsAwardAchieved(userData.awardCategory)) {

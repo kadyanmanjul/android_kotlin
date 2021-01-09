@@ -216,7 +216,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
 
     private fun subscribeRXBus() {
         compositeDisposable.add(
-            RxBus2.listen(SnackBarEvent::class.java)
+            RxBus2.listenWithoutDelay(SnackBarEvent::class.java)
                 .subscribeOn(Schedulers.computation())
                 .subscribe({
                     showSnackBar(root_view, Snackbar.LENGTH_LONG, it.pointsSnackBarText)
