@@ -53,6 +53,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="@dimen/_4sdp"
                 app:srcCompat="@drawable/ic_cross"
+                android:visibility="gone"
                 app:tint="@color/black" />
 
         </RelativeLayout>
