@@ -322,7 +322,9 @@ class AppObjectController {
         }
 
         private fun initUXCam() {
-            UXCam.setAutomaticScreenNameTagging(true)
+            if (BuildConfig.DEBUG.not()) {
+                UXCam.setAutomaticScreenNameTagging(true)
+            }
         }
 
         @SuppressLint("RestrictedApi")

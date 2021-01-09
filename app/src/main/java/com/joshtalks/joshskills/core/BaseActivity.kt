@@ -79,8 +79,8 @@ import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
-import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.ui.userprofile.ShowAnimatedLeaderBoardFragment
+import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.smartlook.sdk.smartlook.Smartlook
 import com.smartlook.sdk.smartlook.analytics.identify.UserProperties
@@ -96,7 +96,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.reflect.Type
-import java.util.Locale
+import java.util.*
 import kotlin.random.Random
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
@@ -156,6 +156,12 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
             initUserForCrashlytics()
             initIdentifierForTools()
             InstallReferralUtil.installReferrer(applicationContext)
+            addScreenRecording()
+        }
+    }
+
+    private fun addScreenRecording() {
+        if (BuildConfig.DEBUG.not()) {
             if (AppObjectController.getFirebaseRemoteConfig()
                     .getBoolean(FirebaseRemoteConfigKey.UX_CAM_FEATURE_ENABLE)
             ) {
@@ -190,6 +196,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
                 Smartlook.enableIntegration(FirebaseCrashlyticsIntegration())
             }
         }
+
     }
 
     private fun initIdentifierForTools() {

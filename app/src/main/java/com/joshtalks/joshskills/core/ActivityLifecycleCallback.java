@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutorService;
 import timber.log.Timber;
 
 public class ActivityLifecycleCallback {
-    private static ExecutorService executor =
+    private static final ExecutorService executor =
             JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-ActivityLifecycler-Service");
 
     private ActivityLifecycleCallback() {
@@ -58,7 +58,9 @@ public class ActivityLifecycleCallback {
                                         AppObjectController.getAppDatabase()
                                                 .appActivityDao()
                                                 .insertIntoAppActivity(
-                                                        new AppActivityModel(activity.getClass().getSimpleName())));
+                                                        new AppActivityModel(activity.getClass().getSimpleName())
+
+                                                ));
                     }
 
                     @Override
