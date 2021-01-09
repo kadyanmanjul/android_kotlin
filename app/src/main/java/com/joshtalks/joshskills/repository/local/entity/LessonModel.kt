@@ -65,5 +65,10 @@ data class LessonModel(
     @ColumnInfo(name = "speakingStatus")
     @SerializedName("speakingStatus")
     @Expose
-    var speakingStatus: LESSON_STATUS? = LESSON_STATUS.NO
+    var speakingStatus: LESSON_STATUS? = LESSON_STATUS.NO,
+
+    @ColumnInfo(name = "attempt_number")
+    @SerializedName("attempt_number")
+    @Expose
+    var attempt_number: Int=0
 ) : Parcelable

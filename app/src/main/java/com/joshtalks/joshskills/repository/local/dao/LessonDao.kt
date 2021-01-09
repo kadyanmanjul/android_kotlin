@@ -19,6 +19,12 @@ interface LessonDao {
     @Query("SELECT * FROM lessonmodel WHERE lesson_id=:lessonId ORDER BY lesson_no DESC")
     fun observeLesson(lessonId: Int): LiveData<LessonModel>
 
+    @Query("UPDATE lessonmodel SET attempt_number = attempt_number+1 WHERE lesson_id= :lessonId")
+    fun incrementAttemptNumber(lessonId: Int): Int
+
+    @Query("SELECT attempt_number FROM lessonmodel WHERE lesson_id=:lessonId")
+    fun getAttemptNumber(lessonId: Int): Int
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertSingleItem(lesson: LessonModel)
 

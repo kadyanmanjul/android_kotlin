@@ -81,7 +81,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class,
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class, AwardMentorModel::class
     ],
-    version = 26,
+    version = 27,
     exportSchema = true
 )
 @TypeConverters(
@@ -395,6 +395,7 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE `chat_table` ADD COLUMN award_mentor_id INTEGER NOT NULL DEFAULT 0")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `awardmentormodel` (`id` INTEGER NOT NULL, `award_image_url` TEXT, `award_text` TEXT, `description` TEXT, `performer_name` TEXT, `performer_photo_url` TEXT, `total_points_text` TEXT, PRIMARY KEY(`id`))")
+                database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `attempt_number` INTEGER NOT NULL DEFAULT 0")
             }
         }
 

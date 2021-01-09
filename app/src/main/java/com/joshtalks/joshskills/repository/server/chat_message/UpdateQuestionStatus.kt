@@ -22,6 +22,9 @@ data class UpdateQuestionStatus(
     @SerializedName("video")
     @Expose
     private var video: Boolean=false,
+    @SerializedName("show_leaderboard_animation")
+    @Expose
+    private var show_leaderboard_animation: Boolean=false,
     @SerializedName("correct_questions")
     @Expose
     private var correctQuestions: ArrayList<Int> = ArrayList()

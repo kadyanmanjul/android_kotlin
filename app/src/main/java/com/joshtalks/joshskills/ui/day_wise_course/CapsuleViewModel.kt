@@ -6,7 +6,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LessonModel
+import com.joshtalks.joshskills.repository.local.entity.PdfType
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.entity.Question
+import com.joshtalks.joshskills.repository.local.entity.VideoType
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
@@ -54,11 +61,22 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val listOfChat = appDatabase.chatDao().getChatsForLessonId(lessonId)
+                if (listOfChat.isNullOrEmpty().not()) {
+                    appDatabase.lessonDao().incrementAttemptNumber(lessonId)
+                }
                 listOfChat.forEach { chat ->
                     val question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
                     question?.run {
 
-                        question.lesson = appDatabase.lessonDao().getLesson(question.lesson_id)
+                        /* question.lesson = appDatabase.lessonDao().getLesson(question.lesson_id)
+                         if (question.lesson?.status == LESSON_STATUS.CO ||
+                             question.lesson?.grammarStatus == LESSON_STATUS.AT ||
+                             question.lesson?.vocabStatus == LESSON_STATUS.AT ||
+                             question.lesson?.readingStatus == LESSON_STATUS.AT ||
+                             question.lesson?.speakingStatus == LESSON_STATUS.AT
+                         ) {
+                             appDatabase.lessonDao().incrementAttemptNumber(lessonId)
+                         }*/
 
                         when (this.material_type) {
                             BASE_MESSAGE_TYPE.IM -> question.imageList =
@@ -180,20 +198,22 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
         questionId: Int,
         courseId: Int,
         lessonId: Int,
-        isVideoPercentComplete:Boolean=false,
-        quizCorrectQuestionIds:ArrayList<Int> = ArrayList()
+        isVideoPercentComplete: Boolean = false,
+        quizCorrectQuestionIds: ArrayList<Int> = ArrayList()
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                if (isVideoPercentComplete){
+                val isFirstAttempt = appDatabase.lessonDao().getAttemptNumber(lessonId) <= 1
+                if (isVideoPercentComplete) {
                     val resp = AppObjectController.chatNetworkService.updateQuestionStatus(
                         UpdateQuestionStatus(
-                            status.name,
-                            lessonId,
-                            Mentor.getInstance().getId(),
-                            questionId,
-                            courseId,
-                            isVideoPercentComplete
+                            status = status.name,
+                            lessonId = lessonId,
+                            mentorId = Mentor.getInstance().getId(),
+                            questionId = questionId,
+                            courseId = courseId,
+                            video = isVideoPercentComplete,
+                            show_leaderboard_animation = isFirstAttempt
                         )
                     )
                     if (resp.isSuccessful && resp.body() != null) {
@@ -201,17 +221,19 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
                         updatedLessonResponseLiveData.postValue(resp.body())
                         return@launch
                     }
-                }else {
-                    if (status==QUESTION_STATUS.IP){
+                } else {
+                    if (status == QUESTION_STATUS.IP) {
                         chatDao.updateQuestionStatus("$questionId", status)
-                    }else {
+                    } else {
                         val resp = AppObjectController.chatNetworkService.updateQuestionStatus(
                             UpdateQuestionStatus(
-                                status.name,
-                                lessonId,
-                                Mentor.getInstance().getId(),
-                                questionId,
-                                courseId,
+                                status = status.name,
+                                lessonId = lessonId,
+                                mentorId = Mentor.getInstance().getId(),
+                                questionId = questionId,
+                                courseId = courseId,
+                                video = isVideoPercentComplete,
+                                show_leaderboard_animation = isFirstAttempt,
                                 correctQuestions = quizCorrectQuestionIds
                             )
                         )
