@@ -117,9 +117,8 @@ class PracticeAdapter(
             else -> {
                 if (assessmentQuizList.isNotEmpty()) {
                     assessmentQuizList.filter { it.assessment.remoteId == itemList[position].question?.assessmentId }
-                        .let {
+                        ?.let {
                             (holder as QuizViewHolder).bind(itemList[position], it.get(0), position)
-
                         }
                 }
             }
