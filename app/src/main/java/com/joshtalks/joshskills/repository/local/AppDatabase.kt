@@ -81,7 +81,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class,
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class, AwardMentorModel::class
     ],
-    version = 27,
+    version = 26,
     exportSchema = true
 )
 @TypeConverters(
