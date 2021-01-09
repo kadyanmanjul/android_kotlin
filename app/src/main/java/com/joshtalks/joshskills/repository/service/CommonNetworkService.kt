@@ -53,6 +53,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.QueryMap
 import java.util.HashMap
+import retrofit2.http.Headers
 
 @JvmSuppressWildcards
 interface CommonNetworkService {

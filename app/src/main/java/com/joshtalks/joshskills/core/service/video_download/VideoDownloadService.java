@@ -128,7 +128,7 @@ public class VideoDownloadService extends DownloadService {
             clearNotification(Util.fromUtf8Bytes(download.request.data));
             //notification = notificationHelper.buildDownloadCompletedNotification(R.mipmap.ic_launcher, null, "Download completed");
         } else if (download.state == Download.STATE_FAILED) {
-            notification = notificationHelper.buildDownloadFailedNotification(R.mipmap.ic_launcher, null, "Download failed");
+            notification = notificationHelper.buildDownloadFailedNotification(this,R.mipmap.ic_launcher, null, "Download failed");
             RxBus2.publish(new MediaProgressEventBus(Download.STATE_FAILED, Util.fromUtf8Bytes(download.request.data), 0, 0L));
             NotificationUtil.setNotification(this, nextNotificationId++, notification);
         } else {

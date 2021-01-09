@@ -193,7 +193,6 @@ class FileUploadService : Service() {
                         question.practiceEngagement!!.get(0).localPath = requestEngage.localPath
                         AppObjectController.appDatabase.chatDao()
                             .updateQuestionObject(question)
-                            .updateQuestionObject(question)
 
                         if(resp.body()!!.pointsList.isNullOrEmpty().not()){
                             RxBus2.publish(SnackBarEvent(
@@ -235,10 +234,9 @@ class FileUploadService : Service() {
                 Log.e(TAG, "callUploadFileApiForReadingPractice: $resp")
                 if (resp.isSuccessful && resp.body() != null) {
                     resp.body()?.let {
+                        it.questionForId = requestEngage.questionId
                         AppObjectController.appDatabase.practiceEngagementDao()
-                            .insertPractiseAfterUploaded(it.apply {
-                                this.questionForId = requestEngage.questionId
-                            })
+                            .insertPractiseAfterUploaded(it)
                         RxBus2.publish(EmptyEventBus())
                     }
                     AppObjectController.appDatabase.pendingTaskDao().deleteTask(pendingTaskModel.id)
