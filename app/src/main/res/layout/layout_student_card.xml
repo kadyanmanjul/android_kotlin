@@ -114,7 +114,7 @@
             android:layout_marginStart="@dimen/_7sdp"
             android:layout_marginTop="@dimen/_2sdp"
             android:paddingHorizontal="@dimen/_1sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
             android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider"

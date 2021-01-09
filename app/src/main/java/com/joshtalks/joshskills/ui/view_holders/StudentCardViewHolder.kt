@@ -58,7 +58,7 @@ class StudentCardViewHolder(
 
             val resp = StringBuilder()
             awardMentorModel.performerName?.split(" ")?.forEach {
-                resp.append(it.toLowerCase(Locale.getDefault()).capitalize(Locale.getDefault()))
+                resp.append(it.toLowerCase(Locale.getDefault()).capitalize(Locale.getDefault())).append(" ")
             }
             studentName.text = resp
             totalPoints.text = awardMentorModel.totalPointsText
@@ -67,7 +67,7 @@ class StudentCardViewHolder(
             userPic.post {
                 userPic.setUserImageOrInitials(
                     awardMentorModel.performerPhotoUrl,
-                    resp.toString(),
+                    awardMentorModel.performerName?.capitalize(Locale.getDefault()).toString(),
                     dpToPx = 28
                 )
             }
