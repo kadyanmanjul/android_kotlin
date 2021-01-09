@@ -361,6 +361,8 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE `chat_table` ADD COLUMN award_mentor_id INTEGER NOT NULL DEFAULT 0")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `awardmentormodel` (`id` INTEGER NOT NULL, `award_image_url` TEXT, `award_text` TEXT, `description` TEXT, `performer_name` TEXT, `performer_photo_url` TEXT, `total_points_text` TEXT, PRIMARY KEY(`id`))")
                 database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `attempt_number` INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `practise_engagement_table` (`questionForId` TEXT, `practiseId` INTEGER NOT NULL, `question` INTEGER NOT NULL, `answerUrl` TEXT NOT NULL, `duration` INTEGER NOT NULL, `practiceDate` TEXT NOT NULL, `feedbackRequire` TEXT, `text` TEXT, `localPath` TEXT, `transcriptId` TEXT, `pointsList` TEXT NOT NULL, `uploadStatus` TEXT NOT NULL, `feedback_feedbackId` INTEGER, `feedback_feedbackTitle` TEXT, `feedback_feedbackText` TEXT, `feedback_studentAudioUrl` TEXT, `feedback_teacherAudioUrl` TEXT, `feedback_wrong_word_list` TEXT, `feedback_created` INTEGER, `feedback_error` INTEGER, `feedback_pro_text` TEXT, `feedback_pro_description` TEXT, `feedback_rec_text` TEXT, `feedback_spd_text` TEXT, `feedback_spd_description` TEXT, PRIMARY KEY(`practiseId`), FOREIGN KEY(`questionForId`) REFERENCES `question_table`(`questionId`) ON UPDATE NO ACTION ON DELETE CASCADE )")
+
             }
         }
 
