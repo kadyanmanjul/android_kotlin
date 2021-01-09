@@ -615,4 +615,10 @@
         <value>Check when are your certificate examinations and which lesson you are currently at
         </value>
     </entry>
+
+    <entry>
+        <key>COURSE_PROGRESS_TOOLTIP_VISIBILITY</key>
+        <value>false
+        </value>
+    </entry>
 </defaultsMap>

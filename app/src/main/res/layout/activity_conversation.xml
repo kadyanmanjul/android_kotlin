@@ -123,6 +123,7 @@
             </RelativeLayout>
 
         </com.google.android.material.appbar.MaterialToolbar>
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -381,22 +382,22 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <FrameLayout
-            android:elevation="@dimen/_6sdp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:elevation="@dimen/_6sdp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/user_point_container"
-                android:fillAfter="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rounded_new_button_bg"
-                android:layout_marginTop="@dimen/_50sdp"
                 android:layout_marginHorizontal="@dimen/_8sdp"
-                android:visibility="gone"
+                android:layout_marginTop="@dimen/_50sdp"
+                android:background="@drawable/rounded_new_button_bg"
+                android:backgroundTint="@color/white"
                 android:elevation="@dimen/_24sdp"
-                tools:visibility="visible"
-                android:backgroundTint="@color/white">
+                android:fillAfter="false"
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/points"
@@ -406,6 +407,7 @@
                     android:elevation="@dimen/_8sdp"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
+                    android:text="0 Points"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                     android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -414,17 +416,16 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.38"
-                    android:text="0 Points" />
+                    app:layout_constraintWidth_percent="0.38" />
 
                 <View
                     android:layout_width="@dimen/_2sdp"
                     android:layout_height="@dimen/_22sdp"
-                    app:layout_constraintTop_toTopOf="parent"
                     android:background="#EAE7E7"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/leaderboard_txt"
-                    app:layout_constraintStart_toEndOf="@id/points"/>
+                    app:layout_constraintStart_toEndOf="@id/points"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/leaderboard_txt"
@@ -468,6 +469,8 @@
             android:layout_below="@id/toolbar"
             android:alpha="0.85"
             android:background="@color/transparent_black_alfa_80"
+            android:clickable="true"
+            android:focusable="true"
             android:visibility="gone" />
 
         <com.joshtalks.joshskills.ui.course_progress_new.CourseProgressTooltip

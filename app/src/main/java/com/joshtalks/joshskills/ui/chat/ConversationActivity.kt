@@ -820,8 +820,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         val fromLocattion = IntArray(2)
         view.getLocationOnScreen(fromLocattion)
         val animSet = AnimationSet(false)
-        animSet.setFillAfter(false)
-        animSet.setDuration(700)
+        animSet.fillAfter = false
+        animSet.duration = 700
         //animSet.interpolator = LinearInterpolator()
         val translate = TranslateAnimation(
             Animation.ABSOLUTE,  //from xType
@@ -932,7 +932,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 val tempval = conversationList.filter { it.lessons?.lessonNo == 2 }
                 if (tempval.isNullOrEmpty()
                         .not() && PrefManager.getBoolValue(COURSE_PROGRESS_OPENED)
-                        .not() && inboxEntity.courseId == "151"
+                        .not()/* && inboxEntity.courseId == "151"*/
                 ) {
                     showCourseProgressTooltip()
                 }
@@ -1753,19 +1753,21 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     }
 
     private fun showCourseProgressTooltip() {
-        /*
-        conversationBinding.courseProgressTooltip.setDismissListener(this)
-        conversationBinding.courseProgressTooltip.visibility = VISIBLE
-        conversationBinding.shader.visibility = VISIBLE
-        */
+        if (AppObjectController.getFirebaseRemoteConfig()
+                .getBoolean(FirebaseRemoteConfigKey.COURSE_PROGRESS_TOOLTIP_VISIBILITY)
+        ) {
+            conversationBinding.courseProgressTooltip.setDismissListener(this)
+            conversationBinding.courseProgressTooltip.visibility = VISIBLE
+            conversationBinding.shader.visibility = VISIBLE
+        }
     }
 
     private fun hideCourseProgressTooltip() {
-        /*if (conversationBinding.courseProgressTooltip.visibility== VISIBLE){
+        if (conversationBinding.courseProgressTooltip.visibility == VISIBLE) {
             moveViewToScreenCenter(conversationBinding.courseProgressTooltip)
         }
         conversationBinding.courseProgressTooltip.visibility = GONE
-        conversationBinding.shader.visibility = GONE*/
+        conversationBinding.shader.visibility = GONE
     }
 
     fun onLessonItemClick(lessonId: Int, interval: Int, chatId: String) {
