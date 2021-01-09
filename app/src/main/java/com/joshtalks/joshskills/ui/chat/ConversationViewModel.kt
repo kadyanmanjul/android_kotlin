@@ -14,6 +14,7 @@ import com.cometchat.pro.core.CometChat
 import com.cometchat.pro.exceptions.CometChatException
 import com.cometchat.pro.models.User
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.BuildConfig.COMETCHAT_REGION
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
@@ -49,10 +50,6 @@ import id.zelory.compressor.Compressor
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.io.File
-import java.util.ConcurrentModificationException
-import java.util.Date
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -596,7 +593,7 @@ class ConversationViewModel(application: Application) :
             try {
                 val appSettings = AppSettings.AppSettingsBuilder()
                     .subscribePresenceForAllUsers()
-                    .setRegion(BuildConfig.COMETCHAT_REGION)
+                    .setRegion(COMETCHAT_REGION)
                     .build()
 
                 CometChat.init(

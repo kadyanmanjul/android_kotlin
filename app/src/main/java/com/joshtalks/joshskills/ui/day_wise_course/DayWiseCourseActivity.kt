@@ -24,8 +24,10 @@ import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.LESSON_INTERVAL
+import com.joshtalks.joshskills.core.LESSON_NUMBER
 import com.joshtalks.joshskills.core.LESSON__CHAT_ID
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel

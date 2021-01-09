@@ -137,7 +137,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
                 PrefManager.put(SPEAKING_POINTS, EMPTY)
             }
 
-            if (response.alreadyTalked >= response.duration) {
+            if (response.alreadyTalked >= 0) {
                 btn_continue.visibility = View.VISIBLE
                 activityCallback?.onQuestionStatusUpdate(
                     QUESTION_STATUS.AT,
