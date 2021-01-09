@@ -154,9 +154,14 @@ class FileUploadService : Service() {
             try {
                 val requestEngage = pendingTaskModel.requestObject
                 if (requestEngage.localPath.isNullOrEmpty().not()) {
-                    val obj = mapOf("media_path" to File(requestEngage.localPath!!).name)
+                    val obj = mapOf("media_path" to File(requestEngage.localPath!!).name,
+                        "question_id" to pendingTaskModel.requestObject.questionId)
                     val responseObj =
                         AppObjectController.chatNetworkService.requestUploadMediaAsync(obj).await()
+
+                    if(responseObj.pointsList.isNullOrEmpty().not()){
+                        RxBus2.publish(SnackBarEvent(responseObj.pointsList?.get(0),pendingTaskModel.requestObject.questionId))
+                    }
                     val statusCode: Int = uploadOnS3Server(responseObj, requestEngage.localPath!!)
                     if (statusCode in 200..210) {
                         val url =
@@ -183,7 +188,10 @@ class FileUploadService : Service() {
                             .updateQuestionObject(question)
 
                         if(resp.body()!!.pointsList.isNullOrEmpty().not()){
-                            RxBus2.publish(SnackBarEvent(resp.body()!!.pointsList?.get(0)))
+                            RxBus2.publish(SnackBarEvent(
+                                resp.body()!!.pointsList?.get(0),
+                                pendingTaskModel.requestObject.questionId
+                            ))
                         }
                     }
                     AppObjectController.appDatabase.pendingTaskDao().deleteTask(pendingTaskModel.id)

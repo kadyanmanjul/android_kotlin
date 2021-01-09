@@ -6,5 +6,6 @@ data class AmazonPolicyResponse(
     @SerializedName("fields")
     val fields: HashMap<String, String>,
     @SerializedName("url")
-    val url: String
-)
+    val url: String,
+    @SerializedName("points_list") val pointsList: List<String>?
+    )

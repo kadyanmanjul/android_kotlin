@@ -357,6 +357,7 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
             RxBus2.listen(SnackBarEvent::class.java)
                 .subscribeOn(Schedulers.computation())
                 .subscribe({
+                    //if (it.questionId in chatModelList.) check for question Id later
                     showSnackBar(
                         binding.rootView,
                         Snackbar.LENGTH_LONG,

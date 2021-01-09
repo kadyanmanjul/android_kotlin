@@ -1753,17 +1753,19 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     }
 
     private fun showCourseProgressTooltip() {
+        /*
         conversationBinding.courseProgressTooltip.setDismissListener(this)
         conversationBinding.courseProgressTooltip.visibility = VISIBLE
         conversationBinding.shader.visibility = VISIBLE
+        */
     }
 
     private fun hideCourseProgressTooltip() {
-        if (conversationBinding.courseProgressTooltip.visibility== VISIBLE){
+        /*if (conversationBinding.courseProgressTooltip.visibility== VISIBLE){
             moveViewToScreenCenter(conversationBinding.courseProgressTooltip)
         }
         conversationBinding.courseProgressTooltip.visibility = GONE
-        conversationBinding.shader.visibility = GONE
+        conversationBinding.shader.visibility = GONE*/
     }
 
     fun onLessonItemClick(lessonId: Int, interval: Int, chatId: String) {
