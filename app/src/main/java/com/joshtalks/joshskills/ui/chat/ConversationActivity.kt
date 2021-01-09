@@ -1759,6 +1759,9 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     }
 
     private fun hideCourseProgressTooltip() {
+        if (conversationBinding.courseProgressTooltip.visibility== VISIBLE){
+            moveViewToScreenCenter(conversationBinding.courseProgressTooltip)
+        }
         conversationBinding.courseProgressTooltip.visibility = GONE
         conversationBinding.shader.visibility = GONE
     }
