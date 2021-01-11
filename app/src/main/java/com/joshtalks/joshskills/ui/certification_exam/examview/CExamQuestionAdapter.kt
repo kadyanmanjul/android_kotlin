@@ -46,6 +46,16 @@ class CExamQuestionAdapter(
         )
     )
 
+    private val resultErrorColorStateList = ColorStateList(
+        arrayOf(
+            intArrayOf(android.R.attr.state_checked),
+            intArrayOf(-android.R.attr.state_checked)
+        ), intArrayOf(
+            Color.parseColor("#70ff0000"),
+            Color.parseColor("#ff0000")
+        )
+    )
+
     init {
         setHasStableIds(true)
     }
@@ -102,8 +112,6 @@ class CExamQuestionAdapter(
                     if (position == (questionList.size - 1)) {
                         btnNextQuestion.visibility = View.GONE
                     }
-
-
                 }
             }
         }
@@ -129,7 +137,9 @@ class CExamQuestionAdapter(
 
             if (userSelectedOption == answer.id) {
                 radioButton.isChecked = true
+                //      radioButton.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#F57777"))
             }
+
             if (CertificationExamView.RESULT_VIEW == examView) {
                 radioButton.isClickable = false
                 if (correctOptionId == answer.id) {
@@ -144,7 +154,13 @@ class CExamQuestionAdapter(
                     radioButton.buttonTintList = colorStateList
                 } else {
                     radioButton.setBackgroundResource(R.drawable.rb_selector_disable)
-                    radioButton.buttonTintList = resultColorStateList
+                    if ((answer.id == userSelectedOption)) {
+                        radioButton.buttonTintList = resultErrorColorStateList
+                        radioButton.backgroundTintList =
+                            ColorStateList.valueOf(Color.parseColor("#70F57777"))
+                    } else {
+                        radioButton.buttonTintList = resultColorStateList
+                    }
                 }
                 if (correctOptionId == answer.id && correctOptionId != userSelectedOption) {
                     radioButton.backgroundTintList =
