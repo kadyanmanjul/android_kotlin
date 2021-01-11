@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
@@ -15,6 +17,7 @@ import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
@@ -32,6 +35,8 @@ class LeaderBoardFragment : Fragment() {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private var userPosition: Int = 0
     private var userRank: Int = Int.MAX_VALUE
+    private val viewModel by lazy { ViewModelProvider(this).get(LeaderBoardViewModel::class.java) }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,9 +91,9 @@ class LeaderBoardFragment : Fragment() {
     }
 
     private fun scrollToUserPosition() {
-        if (userPosition>0)
-        linearLayoutManager.scrollToPositionWithOffset(userPosition, 0)
-        else         linearLayoutManager.scrollToPositionWithOffset(0, 0)
+        if (userPosition > 0)
+            linearLayoutManager.scrollToPositionWithOffset(userPosition, 0)
+        else linearLayoutManager.scrollToPositionWithOffset(0, 0)
 
     }
 
@@ -97,6 +102,13 @@ class LeaderBoardFragment : Fragment() {
         linearLayoutManager.isSmoothScrollbarEnabled = true
         binding.recyclerView.builder.setHasFixedSize(true)
             .setLayoutManager(linearLayoutManager)
+        binding.recyclerView.addOnScrollListener(object :
+            EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
+                if (page > 0 && page < leaderboardResponse?.totalpage ?: 0)
+                    viewModel.getMentorDataViaPage(Mentor.getInstance().getId(), type, page)
+            }
+        })
 
         binding.recyclerView.addOnScrollListener(object :
             RecyclerView.OnScrollListener() {
@@ -106,7 +118,12 @@ class LeaderBoardFragment : Fragment() {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() < userPosition.plus(4) && linearLayoutManager.findLastCompletelyVisibleItemPosition() > userPosition.plus(2)) {
+                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() < userPosition.plus(
+                        4
+                    ) && linearLayoutManager.findLastCompletelyVisibleItemPosition() > userPosition.plus(
+                        2
+                    )
+                ) {
                     binding.userLayout.visibility = View.GONE
                 } else {
                     binding.userLayout.visibility = View.VISIBLE
@@ -141,8 +158,10 @@ class LeaderBoardFragment : Fragment() {
                 userPosition = userRank.minus(3)
             } else {
                 userPosition = 53
-                if (it.below_three_mentor_list.isNullOrEmpty().not()&&it.below_three_mentor_list?.get(0)?.ranking!! >51)
-                binding.recyclerView.addView(EmptyItemViewHolder())
+                if (it.below_three_mentor_list.isNullOrEmpty()
+                        .not() && it.below_three_mentor_list?.get(0)?.ranking!! > 51
+                )
+                    binding.recyclerView.addView(EmptyItemViewHolder())
 
                 it.below_three_mentor_list?.forEach {
                     binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
@@ -161,13 +180,23 @@ class LeaderBoardFragment : Fragment() {
                 }
             }
         }
+
+        viewModel.leaderBoardDataOfPage.observe(this.viewLifecycleOwner, Observer { data->
+            data?.let {
+                it.above_three_mentor_list?.forEach {
+                    binding.recyclerView.addView(LeaderBoardItemViewHolder(it,requireContext()))
+                }
+            }
+
+        })
     }
 
     private fun setCurrentUserDetails(response: LeaderboardMentor) {
         binding.rank.text = response.ranking.toString()
         val resp = StringBuilder()
         response.name?.split(" ")?.forEach {
-            resp.append(it.toLowerCase(Locale.getDefault()).capitalize(Locale.getDefault())).append(" ")
+            resp.append(it.toLowerCase(Locale.getDefault()).capitalize(Locale.getDefault()))
+                .append(" ")
         }
         binding.name.text = resp
         binding.points.text = response.points.toString()

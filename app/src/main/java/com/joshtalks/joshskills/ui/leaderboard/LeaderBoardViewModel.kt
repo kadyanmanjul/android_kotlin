@@ -17,6 +17,7 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
     private val jobs = arrayListOf<Job>()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val leaderBoardData: MutableLiveData<HashMap<String, LeaderboardResponse>> = MutableLiveData()
+    val leaderBoardDataOfPage: MutableLiveData<LeaderboardResponse> = MutableLiveData()
 
     fun getFullLeaderBoardData(mentorId: String) {
         jobs == viewModelScope.launch(Dispatchers.IO) {
@@ -55,5 +56,25 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
             ex.showAppropriateMsg()
         }
         return null
+    }
+
+    fun getMentorDataViaPage(mentorId: String, type: String,pageNumber:Int=2) {
+        jobs == viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response =
+                    AppObjectController.commonNetworkService.getLeaderBoardDataViaPage(
+                        mentorId,
+                        type,
+                        pageNumber.plus(1)
+                    )
+                if (response.isSuccessful && response.body() != null) {
+                    leaderBoardDataOfPage.postValue(response.body())
+                }
+
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
+            //return null
+        }
     }
 }
