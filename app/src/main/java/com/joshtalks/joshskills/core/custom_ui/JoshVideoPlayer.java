@@ -74,6 +74,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 return;
             }
 
+            long currentPosition = player.getCurrentPosition();
             publish(
                     new MediaProgressEventBus(
                             Download.STATE_DOWNLOADING, "0", currentPosition, countUpTimer.getTime()
@@ -268,14 +269,6 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             }
         });*/
 
-    }
-
-    private long calculatePercentComplete(Set<Graph> videoViewGraphList) {
-        long percent = 0;
-        for (Graph graph : videoViewGraphList) {
-            percent += graph.getEndTime() - graph.getStartTime();
-        }
-        return percent;
     }
 
     private void setupAudioFocus() {
