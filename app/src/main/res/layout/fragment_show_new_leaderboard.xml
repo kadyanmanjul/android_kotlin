@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/_16sdp"
             android:text="@string/continue_label"
-            android:onClick="@{()->fragment.dismiss()}"
+            android:onClick="@{()->fragment.onContinueClicked()}"
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.JoshTypography.Button"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -200,7 +200,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             }
             if (it.outranked!!) {
                 it.outrankedData?.let {
-                    showLeaderboardAchievement(it)
+                    showLeaderboardAchievement(it,lessonInterval,chatId,lessonModel?.lessonNo?:0)
                 }
             }
         })

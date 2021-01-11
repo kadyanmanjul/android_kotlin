@@ -747,12 +747,17 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
             )
         }
     }
-    fun showLeaderboardAchievement(outrankData: OutrankedDataResponse) {
+    fun showLeaderboardAchievement(
+        outrankData: OutrankedDataResponse,
+        lessonInterval: Int,
+        chatId: String,
+        lessonNo: Int
+    ) {
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
         //if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             ShowAnimatedLeaderBoardFragment.showDialog(
                 supportFragmentManager,
-                outrankData
+                outrankData,lessonInterval,chatId,lessonNo
             )
         }
     }

@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.userprofile
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.Gravity
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.TranslateAnimation
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
@@ -20,14 +22,20 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.LESSON__CHAT_ID
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentShowNewLeaderboardBinding
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.OutrankedDataResponse
+import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardItemViewHolder
+import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
+import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -39,6 +47,9 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var linearSmoothScroller: LinearSmoothScroller
     private var outrankData: OutrankedDataResponse? = null
+    private var lessonInterval = 0
+    private var lessonNumber = 0
+    private var chatId: String = EMPTY
     private val viewModel by lazy { ViewModelProvider(requireActivity()).get(UserProfileViewModel::class.java) }
     private var previousRank: Int = 0
     private var position: Int = 0
@@ -61,6 +72,9 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
         changeDialogConfiguration()
         arguments?.let {
             outrankData = it.getParcelable(RANK_DETAILS)
+            lessonInterval = it.getInt(LESSON_INTERVAL)
+            lessonNumber = it.getInt(LESSON_NUMBER)
+            chatId = it.getString(CHAT_ID, EMPTY)
         }
         if (outrankData == null) {
             //dismiss()
@@ -164,9 +178,9 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
         binding.points.text = it.currentMentor?.points.toString()
         binding.recyclerView.isNestedScrollingEnabled = false
 
-        it.aboveMentorList?.forEachIndexed { index,current_mentor ->
-            if (index==0){
-                startingRank=current_mentor.ranking
+        it.aboveMentorList?.forEachIndexed { index, current_mentor ->
+            if (index == 0) {
+                startingRank = current_mentor.ranking
             }
             addingMentorIndex = it.aboveMentorList.size
             binding.recyclerView.addView(
@@ -239,9 +253,9 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
             val scrolledPosition2 =
                 (recyclerView.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition()
                     ?: return
-            binding.rank.text =startingRank.plus(scrolledPosition2.plus(2)).toString()
-               /* outrankData?.old?.rank?.minus(oldRankIndex.minus(scrolledPosition2.plus(2)))
-                    .toString()*/
+            binding.rank.text = startingRank.plus(scrolledPosition2.plus(2)).toString()
+            /* outrankData?.old?.rank?.minus(oldRankIndex.minus(scrolledPosition2.plus(2)))
+                 .toString()*/
         }
 
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -311,17 +325,17 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
                     }
 
                     override fun onAnimationEnd(p0: Animation?) {
-                            binding.recyclerView.addView(1,
-                                currentMentor?.let {
-                                    LeaderBoardItemViewHolder(
-                                        it,
-                                        requireContext(),
-                                        true,
-                                    )
-                                }
-                            )
-                            binding.recyclerView.scrollToPosition(0)
-                            binding.userItem.visibility = View.GONE
+                        binding.recyclerView.addView(1,
+                            currentMentor?.let {
+                                LeaderBoardItemViewHolder(
+                                    it,
+                                    requireContext(),
+                                    true,
+                                )
+                            }
+                        )
+                        binding.recyclerView.scrollToPosition(0)
+                        binding.userItem.visibility = View.GONE
                         binding.userItem.visibility = View.GONE
                         if (isNewCardAdded) {
                             binding.recyclerView.removeView(newCardIndex)
@@ -352,31 +366,61 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
         binding.recyclerView.removeOnItemTouchListener(listener)
     }
 
+    fun onContinueClicked() {
+        requireActivity()?.let { activity ->
+            val resultIntent = Intent()
+            resultIntent.putExtra(IS_BATCH_CHANGED, false)
+            resultIntent.putExtra(LAST_LESSON_INTERVAL, lessonInterval)
+            resultIntent.putExtra(DayWiseCourseActivity.LAST_LESSON_STATUS, LESSON_STATUS.CO)
+            resultIntent.putExtra(LESSON__CHAT_ID, chatId)
+            resultIntent.putExtra(LESSON_NUMBER, lessonNumber)
+            activity.setResult(AppCompatActivity.RESULT_OK, resultIntent)
+            activity.finish()
+        }.run {
+            dismiss()
+        }
+    }
+
 
     companion object {
         const val RANK_DETAILS = "rank_details"
+        const val LESSON_INTERVAL = "lesson_interval"
+        const val CHAT_ID = "chat_id"
+        const val LESSON_NUMBER = "lesson_number"
         const val TAG = "ShowNewLeaderBoardFragment"
 
         @JvmStatic
-        fun newInstance(outrankedDataResponse: OutrankedDataResponse) =
+        fun newInstance(
+            outrankedDataResponse: OutrankedDataResponse,
+            lessonInterval: Int,
+            chatId: String,
+            lessonNo: Int
+        ) =
             ShowAnimatedLeaderBoardFragment()
                 .apply {
                     arguments = Bundle().apply {
                         putParcelable(RANK_DETAILS, outrankedDataResponse)
+                        putInt(LESSON_INTERVAL, lessonInterval)
+                        putString(CHAT_ID, chatId)
+                        putInt(LESSON_NUMBER, lessonNo)
                     }
                 }
 
         fun showDialog(
             supportFragmentManager: FragmentManager,
-            outrankedDataResponse: OutrankedDataResponse
-        ) {
+            outrankedDataResponse: OutrankedDataResponse,
+            lessonInterval: Int,
+            chatId: String,
+            lessonNo: Int,
+
+            ) {
             val fragmentTransaction = supportFragmentManager.beginTransaction()
             val prev = supportFragmentManager.findFragmentByTag(TAG)
             if (prev != null) {
                 fragmentTransaction.remove(prev)
             }
             fragmentTransaction.addToBackStack(null)
-            newInstance(outrankedDataResponse)
+            newInstance(outrankedDataResponse, lessonInterval, chatId, lessonNo)
                 .show(supportFragmentManager, TAG)
         }
 
