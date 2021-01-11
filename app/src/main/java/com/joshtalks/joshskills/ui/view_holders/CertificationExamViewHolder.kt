@@ -145,6 +145,7 @@ class CertificationExamViewHolder(
                     setDefaultBg()
                 }
                 else -> {
+                    btnStartExam.text = getAppContext().getString(R.string.start_examination)
                     //        tvCEamCode.text = getAppContext().getString(R.string.cexam_code, code)
                     //      tvCEamCode.visibility = android.view.View.VISIBLE
                     eligibilityDateTV.visibility = android.view.View.VISIBLE
