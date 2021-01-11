@@ -23,17 +23,12 @@ import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTIO
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
 import com.joshtalks.joshskills.ui.certification_exam.questionlistbottom.Callback
 import com.joshtalks.joshskills.ui.certification_exam.questionlistbottom.QuestionListBottomSheet
-import kotlinx.android.synthetic.main.activity_cexam_main.bottom_bar
-import kotlinx.android.synthetic.main.activity_cexam_main.iv_all_question
-import kotlinx.android.synthetic.main.activity_cexam_main.iv_back
-import kotlinx.android.synthetic.main.activity_cexam_main.iv_bookmark
-import kotlinx.android.synthetic.main.activity_cexam_main.question_view_pager
-import kotlinx.android.synthetic.main.activity_cexam_main.tv_question
-import kotlinx.android.synthetic.main.activity_cexam_main.tv_timer
+import kotlinx.android.synthetic.main.activity_cexam_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 
@@ -68,7 +63,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
     private var examView: CertificationExamView = CertificationExamView.EXAM_VIEW
     private var openQuestionId: Int = 0
     private var attemptSequence: Int = -1
-
+    private val questionsList: ArrayList<CertificationQuestion> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,10 +78,15 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
         attemptSequence = intent.getIntExtra(ARG_ATTEMPT_SEQUENCE, -1)
 
         certificationQuestionModel?.run {
-            questions.sortedBy { it.sortOrder }
-            setupViewPager(questions)
+            if (CertificationExamView.EXAM_VIEW == examView && lastQuestionOfExit == -1) {
+                questionsList.addAll(questions)
+                questionsList.shuffled(Random())
+            } else {
+                questionsList.addAll(questions.sortedBy { it.sortOrder })
+            }
         }
         addObserver()
+        setupViewPager(questionsList)
     }
 
     private fun addObserver() {
@@ -105,22 +105,19 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
     }
 
     private fun setupUI() {
-        CoroutineScope(Dispatchers.Main).launch {
-            delay(100)
-            iv_bookmark.setOnClickListener {
-                certificationQuestionModel?.questions?.let { questions ->
-                    questions[question_view_pager.currentItem].let {
-                        it.isBookmarked = it.isBookmarked.not()
-                        updateBookmarkIV(questions, question_view_pager.currentItem)
-                    }
+        iv_bookmark.setOnClickListener {
+            questionsList.let { questions ->
+                questions[question_view_pager.currentItem].let {
+                    it.isBookmarked = it.isBookmarked.not()
+                    updateBookmarkIV(questions, question_view_pager.currentItem)
                 }
             }
-            iv_all_question.setOnClickListener {
-                openQuestionListBottomSheet()
-            }
-            iv_back.setOnClickListener {
-                onBackPressed()
-            }
+        }
+        iv_all_question.setOnClickListener {
+            openQuestionListBottomSheet()
+        }
+        iv_back.setOnClickListener {
+            onBackPressed()
         }
     }
 
@@ -135,18 +132,18 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
     }
 
     private fun setupViewPager(questions: List<CertificationQuestion>) {
-        CoroutineScope(Dispatchers.Main).launch {
-            delay(150)
-
-            //This logic for  reduce complexity result screen
-            if (CertificationExamView.RESULT_VIEW == examView) {
-                questions.forEach { cq ->
-                    cq.correctOptionId = cq.answers.find { it.isCorrect }?.id ?: -1
-                    cq.userSelectedOption =
-                        cq.userSubmittedAnswer?.find { it.attemptSeq == attemptSequence }?.answerId
-                            ?: -1
-                }
+        //This logic for  reduce complexity result screen
+        if (CertificationExamView.RESULT_VIEW == examView) {
+            questions.forEach { cq ->
+                cq.correctOptionId = cq.answers.find { it.isCorrect }?.id ?: -1
+                cq.userSelectedOption =
+                    cq.userSubmittedAnswer?.find { it.attemptSeq == attemptSequence }?.answerId
+                        ?: -1
             }
+        }
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(50)
+
             val adapter = CExamQuestionAdapter(questions, examView, object : Callback {
                 override fun onGoToQuestion(position: Int) {
                     CoroutineScope(Dispatchers.Main).launch {
@@ -192,12 +189,9 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
             question_view_pager.currentItem =
                 certificationQuestionModel?.lastQuestionOfExit ?: 0
         } else {
-            certificationQuestionModel?.questions
-                ?.indexOfLast { it.questionId == openQuestionId }
-                ?.let {
-                    question_view_pager.currentItem = it
-
-                }
+            questionsList.indexOfLast { it.questionId == openQuestionId }.let {
+                question_view_pager.currentItem = it
+            }
             tv_timer.visibility = View.GONE
         }
     }
@@ -261,7 +255,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
             if (prev != null) {
                 return@launch
             }
-            certificationQuestionModel?.questions?.run {
+            questionsList.run {
                 val bottomSheetFragment =
                     QuestionListBottomSheet.newInstance(this, question_view_pager.currentItem)
                 bottomSheetFragment.show(
