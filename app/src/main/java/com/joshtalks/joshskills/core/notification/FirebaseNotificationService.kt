@@ -30,8 +30,6 @@ import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
@@ -57,10 +55,10 @@ import com.joshtalks.joshskills.ui.voip.RTC_CHANNEL_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_TOKEN_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
 import com.joshtalks.joshskills.ui.voip.WebRtcService
-import org.json.JSONObject
-import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.concurrent.ExecutorService
+import org.json.JSONObject
+import timber.log.Timber
 
 const val FCM_TOKEN = "fcmToken"
 const val HAS_NOTIFICATION = "has_notification"
@@ -500,6 +498,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             WorkManagerAdmin.updatedCourseForConversation(this.conversation_id)
         }
 
+        if (obj == null)
+            return null
         val rIntnet = Intent(applicationContext, isNotificationCrash()).apply {
             putExtra(UPDATED_CHAT_ROOM_OBJECT, obj)
             putExtra(ACTION_TYPE, action)
