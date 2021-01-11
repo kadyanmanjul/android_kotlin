@@ -291,6 +291,11 @@ class PracticeAdapter(
                     updateQuiz(assessmentQuestions)
 
                     practiceViewModel.saveAssessmentQuestion(assessmentQuestions)
+                    clickListener.submitQuiz(
+                        chatModel,
+                        isCorrect,
+                        assessmentQuestions.question.remoteId
+                    )
                     clickListener.quizOptionSelected(chatModel)
 
                     assessmentQuestions.reviseConcept?.let {
