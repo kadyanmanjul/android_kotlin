@@ -14,7 +14,6 @@ import com.cometchat.pro.core.CometChat
 import com.cometchat.pro.exceptions.CometChatException
 import com.cometchat.pro.models.User
 import com.joshtalks.joshskills.BuildConfig
-import com.joshtalks.joshskills.BuildConfig.COMETCHAT_REGION
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
@@ -50,20 +49,20 @@ import id.zelory.compressor.Compressor
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.io.File
+import java.util.ConcurrentModificationException
+import java.util.Date
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.File
-import java.util.concurrent.TimeUnit
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import timber.log.Timber
-import java.util.ConcurrentModificationException
-import java.util.Date
 
 
 class ConversationViewModel(application: Application) :
@@ -595,35 +594,49 @@ class ConversationViewModel(application: Application) :
         }
     }
 
-    fun initCometChat() {
+    fun initCometChat(groupDetails: GroupDetails? = null) {
         isLoading.postValue(true)
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
-                val appSettings = AppSettings.AppSettingsBuilder()
-                    .subscribePresenceForAllUsers()
-                    .setRegion(COMETCHAT_REGION)
-                    .build()
+                if (CometChat.isInitialized().not()) {
+                    // CometChat not initialized
+                    val appSettings = AppSettings.AppSettingsBuilder()
+                        .subscribePresenceForAllUsers()
+                        .setRegion(BuildConfig.COMETCHAT_REGION)
+                        .build()
 
-                CometChat.init(
-                    AppObjectController.joshApplication,
-                    BuildConfig.COMETCHAT_APP_ID,
-                    appSettings,
-                    object : CometChat.CallbackListener<String>() {
-                        override fun onSuccess(p0: String?) {
-                            Timber.d("Initialization completed successfully")
-                            getGroupDetails(inboxEntity.conversation_id)
-                        }
+                    CometChat.init(
+                        AppObjectController.joshApplication,
+                        BuildConfig.COMETCHAT_APP_ID,
+                        appSettings,
+                        object : CometChat.CallbackListener<String>() {
+                            override fun onSuccess(p0: String?) {
+                                Timber.d("Initialization completed successfully")
+                                if (groupDetails == null) {
+                                    getGroupDetails(inboxEntity.conversation_id)
+                                } else {
+                                    loginUser(groupDetails)
+                                }
+                            }
 
-                        override fun onError(p0: CometChatException?) {
-                            Timber.d("Initialization failed with exception: %s", p0?.message)
-                            isLoading.postValue(false)
-                            showToast(
-                                context.getString(R.string.generic_message_for_error),
-                                Toast.LENGTH_SHORT
-                            )
-                        }
+                            override fun onError(p0: CometChatException?) {
+                                Timber.d("Initialization failed with exception: %s", p0?.message)
+                                isLoading.postValue(false)
+                                showToast(
+                                    context.getString(R.string.generic_message_for_error),
+                                    Toast.LENGTH_SHORT
+                                )
+                            }
 
-                    })
+                        })
+                } else {
+                    // CometChat already initialized
+                    if (groupDetails == null) {
+                        getGroupDetails(inboxEntity.conversation_id)
+                    } else {
+                        loginUser(groupDetails)
+                    }
+                }
             } catch (ex: Exception) {
                 catchException(ex)
             }
@@ -660,8 +673,8 @@ class ConversationViewModel(application: Application) :
                         object : CometChat.CallbackListener<User>() {
                             override fun onSuccess(p0: User?) {
                                 Timber.d("Login Successful : %s", p0?.toString())
-                                isLoading.postValue(false)
                                 userLoginLiveData.postValue(groupDetails)
+                                isLoading.postValue(false)
                             }
 
                             override fun onError(p0: CometChatException?) {
@@ -700,8 +713,8 @@ class ConversationViewModel(application: Application) :
                 }
             } else {
                 // User already logged in
-                isLoading.postValue(false)
                 userLoginLiveData.postValue(groupDetails)
+                isLoading.postValue(false)
             }
         }
     }
