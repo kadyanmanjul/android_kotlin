@@ -6,8 +6,6 @@ import android.os.Build;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import timber.log.Timber;
 
@@ -20,7 +18,7 @@ public class M4AAudioRecorder implements RecorderContract.Recorder {
     private boolean isPrepared = false;
     private boolean isRecording = false;
     private boolean isPaused = false;
-    private Timer timerProgress;
+    //   private Timer timerProgress;
     private long progress = 0;
     private RecorderContract.RecorderCallback recorderCallback;
 
@@ -134,30 +132,34 @@ public class M4AAudioRecorder implements RecorderContract.Recorder {
 
     @Override
     public void stopRecording() {
-        if (isRecording) {
-            stopRecordingTimer();
-            try {
-                recorder.stop();
-            } catch (RuntimeException e) {
-                Timber.e(e, "stopRecording() problems");
+        try {
+            if (isRecording) {
+                stopRecordingTimer();
+                try {
+                    recorder.stop();
+                } catch (RuntimeException e) {
+                    Timber.e(e, "stopRecording() problems");
+                }
+                recorder.release();
+                if (recorderCallback != null) {
+                    recorderCallback.onStopRecord(recordFile);
+                }
+                recordFile = null;
+                isPrepared = false;
+                isRecording = false;
+                isPaused = false;
+                recorder = null;
+            } else {
+                Timber.e("Recording has already stopped or hasn't started");
             }
-            recorder.release();
-            if (recorderCallback != null) {
-                recorderCallback.onStopRecord(recordFile);
-            }
-            recordFile = null;
-            isPrepared = false;
-            isRecording = false;
-            isPaused = false;
-            recorder = null;
-        } else {
-            Timber.e("Recording has already stopped or hasn't started");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     private void startRecordingTimer() {
-        timerProgress = new Timer();
-        timerProgress.schedule(new TimerTask() {
+        //   timerProgress = new Timer();
+     /*   timerProgress .schedule(new TimerTask() {
             @Override
             public void run() {
                 if (recorderCallback != null && recorder != null) {
@@ -169,18 +171,18 @@ public class M4AAudioRecorder implements RecorderContract.Recorder {
                     progress += VISUALIZATION_INTERVAL;
                 }
             }
-        }, 0, VISUALIZATION_INTERVAL);
+        }, 0, VISUALIZATION_INTERVAL);*/
     }
 
     private void stopRecordingTimer() {
-        timerProgress.cancel();
-        timerProgress.purge();
+        //    timerProgress.cancel();
+        //   timerProgress.purge();
         progress = 0;
     }
 
     private void pauseRecordingTimer() {
-        timerProgress.cancel();
-        timerProgress.purge();
+        //       timerProgress.cancel();
+        //    timerProgress.purge();
     }
 
     @Override
