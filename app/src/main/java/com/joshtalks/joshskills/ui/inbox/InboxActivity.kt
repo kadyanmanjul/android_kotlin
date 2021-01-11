@@ -63,6 +63,7 @@ import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
 import com.joshtalks.joshskills.ui.voip.WebRtcService
+import com.joshtalks.joshskills.util.FileUploadService
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -75,6 +76,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.android.synthetic.main.inbox_toolbar.*
@@ -82,7 +84,6 @@ import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -126,6 +127,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         handelIntentAction()
         initNewUserTip()
         viewModel.getTotalWatchTime()
+
+        FileUploadService.uploadAllPendingTasks(AppObjectController.joshApplication)
         //viewModel.getProfileData(Mentor.getInstance().getId())
     }
 

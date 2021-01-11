@@ -36,13 +36,12 @@ import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogInteractionListener
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_NEW
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
-import com.joshtalks.joshskills.util.FileUploadService
 import io.branch.referral.Branch
 import io.branch.referral.Defines
+import java.io.File
 import kotlinx.android.synthetic.main.activity_launcher.progress_bar
 import org.json.JSONObject
 import timber.log.Timber
-import java.io.File
 
 
 class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionListener {
@@ -62,7 +61,6 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         AppObjectController.initialiseFreshChat()
         clearGlideCache()
         logNotificationData()
-        FileUploadService.uploadAllPendingTasks(AppObjectController.joshApplication)
     }
 
 
