@@ -215,6 +215,8 @@ class PracticeAdapter(
                         updateQuiz(assessmentQuestions)
                     }
                 }
+                quizQuestionId = assessmentQuestions.question.remoteId
+                isCorrect = assessmentQuestions.question.status==QuestionStatus.CORRECT
 
                 binding.practiceTitleTv.text =
                     context.getString(
@@ -270,7 +272,6 @@ class PracticeAdapter(
                     when (assessmentQuestions.question.status) {
                         QuestionStatus.CORRECT -> {
                             isCorrect = true
-                            quizQuestionId = assessmentQuestions.question.remoteId
                         }
                         else -> {
                             isCorrect = false
