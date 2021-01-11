@@ -49,8 +49,8 @@ class CertificationExamViewHolder(
     @View(R.id.tv_title)
     lateinit var tvTitle: JoshTextView
 
-    @View(R.id.tv_code)
-    lateinit var tvCEamCode: AppCompatTextView
+    /*@View(R.id.tv_code)
+    lateinit var tvCEamCode: AppCompatTextView*/
 
     @View(R.id.tv_eligibility_date)
     lateinit var eligibilityDateTV: AppCompatTextView
@@ -78,7 +78,7 @@ class CertificationExamViewHolder(
         super.onViewInflated()
         viewHolder = this
         ivAward.visibility = android.view.View.INVISIBLE
-        tvCEamCode.visibility = android.view.View.GONE
+        //   tvCEamCode.visibility = android.view.View.GONE
         eligibilityDateTV.visibility = android.view.View.GONE
         tvMarks.visibility = android.view.View.GONE
         tvAttemptLeft.visibility = android.view.View.GONE
@@ -145,8 +145,8 @@ class CertificationExamViewHolder(
                     setDefaultBg()
                 }
                 else -> {
-                    tvCEamCode.text = getAppContext().getString(R.string.cexam_code, code)
-                    tvCEamCode.visibility = android.view.View.VISIBLE
+                    //        tvCEamCode.text = getAppContext().getString(R.string.cexam_code, code)
+                    //      tvCEamCode.visibility = android.view.View.VISIBLE
                     eligibilityDateTV.visibility = android.view.View.VISIBLE
                     ivAward.visibility = android.view.View.VISIBLE
                     setDefaultBg()

@@ -14,7 +14,7 @@
         android:id="@+id/sub_root_view"
         style="@style/Widget.MaterialComponents.CardView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_140sdp"
+        android:layout_height="@dimen/_132sdp"
         android:foreground="?android:attr/selectableItemBackground"
         app:cardBackgroundColor="#FFE82A"
         app:cardCornerRadius="@dimen/_8sdp"
@@ -27,7 +27,7 @@
             android:layout_height="match_parent"
             android:background="#FFE82A"
             android:paddingHorizontal="@dimen/_12sdp"
-            android:paddingVertical="@dimen/_4sdp">
+            android:paddingVertical="@dimen/_6sdp">
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/tv_title"
@@ -48,9 +48,9 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_award"
-                android:layout_width="@dimen/_36sdp"
-                android:layout_height="@dimen/_36sdp"
-                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_width="@dimen/_38sdp"
+                android:layout_height="@dimen/_38sdp"
+                android:layout_marginTop="@dimen/_4sdp"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toTopOf="@id/btn_start_exam"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -60,20 +60,22 @@
                 tools:visibility="visible" />
 
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_code"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:gravity="center_vertical|start"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_11ssp"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/iv_award"
-                tools:text="Code 235-dd"
-                tools:visibility="visible" />
+            <!--
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_code"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start"
+                            android:gravity="center_vertical|start"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_11ssp"
+                            android:visibility="gone"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/iv_award"
+                            tools:text="Code 235-dd"
+                            tools:visibility="visible" />
+            -->
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_eligibility_date"
@@ -82,12 +84,13 @@
                 android:layout_gravity="start"
                 android:layout_marginTop="@dimen/_2sdp"
                 android:gravity="center_vertical|start"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/black"
-                android:textSize="@dimen/_11ssp"
+                android:textSize="@dimen/_10ssp"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_code"
+                app:layout_constraintBottom_toBottomOf="@id/iv_award"
+                app:layout_constraintTop_toTopOf="@id/iv_award"
                 tools:text="23/11/20"
                 tools:visibility="visible" />
 
@@ -100,12 +103,12 @@
                 android:gravity="center_vertical"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                 android:textColor="@color/black"
-                android:textSize="@dimen/_18ssp"
+                android:textSize="@dimen/_20ssp"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/iv_award"
                 tools:text="26"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -114,12 +117,12 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:gravity="center_vertical|start"
-                android:paddingTop="@dimen/_2sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/black"
-                android:textSize="@dimen/_9ssp"
+                android:textSize="@dimen/_11ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_marks"
+                android:visibility="visible"
                 tools:text="26/11/2020" />
 
 
@@ -129,11 +132,12 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:gravity="center_vertical|start"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                android:paddingTop="@dimen/_6sdp"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_10ssp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 app:layout_constraintEnd_toEndOf="@id/iv_award"
-                app:layout_constraintTop_toTopOf="@+id/iv_award"
+                app:layout_constraintTop_toTopOf="@+id/tv_marks"
                 tools:text="26/11/2020" />
 
 
@@ -141,7 +145,7 @@
                 android:id="@+id/btn_start_exam"
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/_28sdp"
+                android:layout_height="@dimen/_22sdp"
                 android:backgroundTint="@color/white"
                 android:clickable="true"
                 android:focusable="true"
@@ -153,13 +157,14 @@
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_15"
+                android:gravity="center"
                 app:cornerRadius="@dimen/_28sdp"
+                android:textSize="@dimen/_13ssp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintWidth_percent="0.6"
-                app:rippleColor="@color/white" />
+                app:layout_constraintWidth_percent="0.7"
+                app:rippleColor="@color/colorPrimary" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
