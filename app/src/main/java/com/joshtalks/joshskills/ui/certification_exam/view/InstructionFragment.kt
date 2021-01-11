@@ -87,9 +87,7 @@ class InstructionFragment : Fragment() {
         if (obj.max_attempt == obj.attemptCount) {
             binding.btnPreviousResult.visibility = View.GONE
             binding.btnStartExam.visibility = View.GONE
-
         }
-
     }
 
     private fun isExamResume(flag: Boolean) {
