@@ -72,9 +72,9 @@
                         android:layout_marginEnd="@dimen/_8sdp"
                         android:layout_toEndOf="@id/iv_back"
                         android:gravity="start"
-                        android:text="@string/examination_result"
                         android:padding="@dimen/_4sdp"
                         android:singleLine="true"
+                        android:text="@string/examination_result"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                         android:textColor="@color/white" />
                 </RelativeLayout>
@@ -85,24 +85,24 @@
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:tabStripEnabled="false"
                 android:background="@color/white"
+                android:clickable="true"
+                android:focusable="true"
+                android:tabStripEnabled="false"
+                android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/toolbar"
-                android:textAlignment="center"
+                app:tabGravity="fill"
                 app:tabIndicatorColor="@color/colorAccent"
                 app:tabIndicatorFullWidth="true"
                 app:tabIndicatorHeight="@dimen/_2sdp"
                 app:tabMinWidth="@dimen/_78sdp"
-                app:tabGravity="fill"
-                android:clickable="true"
+                app:tabMode="scrollable"
                 app:tabPaddingEnd="@dimen/_8sdp"
                 app:tabPaddingStart="@dimen/_8sdp"
-                app:tabMode="scrollable"
                 app:tabSelectedTextColor="@color/black"
                 app:tabTextAppearance="@style/TabLayoutStyleReport"
-                android:focusable="true"
                 app:tabTextColor="@color/light_grey"></com.google.android.material.tabs.TabLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -132,6 +132,5 @@
             wheel:matProg_fillRadius="true"
             wheel:matProg_linearProgress="false"
             wheel:matProg_progressIndeterminate="true" />
-
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

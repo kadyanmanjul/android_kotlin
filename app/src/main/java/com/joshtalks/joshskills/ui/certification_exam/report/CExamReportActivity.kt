@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
@@ -21,9 +20,11 @@ import com.joshtalks.joshskills.databinding.ActivityCexamReportBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadFileEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.GotoCEQuestionEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.OpenReportQTypeEventBus
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationExamView
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
+import com.joshtalks.joshskills.repository.server.certification_exam.QuestionReportType
 import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_ID
 import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTION
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
@@ -120,19 +121,7 @@ class CExamReportActivity : BaseActivity() {
         TabLayoutMediator(binding.tabLayout, binding.examReportList) { tab, position ->
             tab.text = "Attempt " + (position + 1)
         }.attach()
-        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                //    binding.examReportList.currentItem = tab.position
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-            }
-        })
         binding.examReportList.currentItem = list.size - 1
-
     }
 
 
@@ -176,6 +165,15 @@ class CExamReportActivity : BaseActivity() {
                     it.printStackTrace()
                 })
         )
+    }
+
+    override fun onBackPressed() {
+        if (viewModel.isSAnswerUiShow) {
+            viewModel.isSAnswerUiShow = false
+            RxBus2.publish(OpenReportQTypeEventBus(QuestionReportType.UNKNOWN))
+            return
+        }
+        super.onBackPressed()
     }
 
     override fun onDestroy() {

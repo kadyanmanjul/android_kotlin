@@ -1,8 +1,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/pd_transparent_bg"
+    android:clickable="true"
+    android:focusable="true"
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/_8sdp">
 
@@ -10,8 +14,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_8sdp"
+
         android:background="@drawable/grey_rounded_bg"
-        android:backgroundTint="@color/white"
+        android:backgroundTint="@color/transparent"
         android:paddingHorizontal="@dimen/_4sdp"
         android:paddingVertical="@dimen/_8sdp">
 
@@ -19,6 +24,7 @@
             android:id="@+id/chart"
             android:layout_width="@dimen/_130sdp"
             android:layout_height="@dimen/_130sdp"
+            android:background="@color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -30,9 +36,11 @@
             android:layout_marginBottom="@dimen/_8sdp"
             android:background="@drawable/round_rectangle_for_course_expo"
             android:backgroundTint="#303DD2B5"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@id/ll_incorrect"
             app:layout_constraintEnd_toEndOf="@id/ll_incorrect"
-            app:layout_constraintStart_toStartOf="@id/ll_incorrect">
+            app:layout_constraintStart_toStartOf="@id/ll_incorrect"
+            tools:visibility="visible">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_correct"
@@ -68,11 +76,13 @@
             android:layout_height="wrap_content"
             android:background="@drawable/round_rectangle_for_course_expo"
             android:backgroundTint="#30F6595A"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@id/chart"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/chart"
             app:layout_constraintTop_toTopOf="@id/chart"
-            app:layout_constraintWidth_percent="0.4">
+            app:layout_constraintWidth_percent="0.4"
+            tools:visibility="visible">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_incorrect"
@@ -110,9 +120,11 @@
             android:layout_marginTop="@dimen/_8sdp"
             android:background="@drawable/round_rectangle_for_course_expo"
             android:backgroundTint="#30687C90"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="@id/ll_incorrect"
             app:layout_constraintStart_toStartOf="@id/ll_incorrect"
-            app:layout_constraintTop_toBottomOf="@id/ll_incorrect">
+            app:layout_constraintTop_toBottomOf="@id/ll_incorrect"
+            tools:visibility="visible">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_unanswered"
@@ -150,7 +162,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_16sdp"
         android:background="@drawable/grey_rounded_bg"
-        android:backgroundTint="@color/white"
+        android:backgroundTint="@color/transparent"
         android:paddingVertical="@dimen/_8sdp">
 
         <View
@@ -174,6 +186,7 @@
             android:text="@string/check_answer"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
             android:textColor="@color/black"
+            android:visibility="invisible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

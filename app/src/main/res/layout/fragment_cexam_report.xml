@@ -19,5 +19,20 @@
             android:layout_height="match_parent"
             android:clipToPadding="true"
             android:scrollbars="vertical" />
+
+
+        <FrameLayout
+            android:id="@+id/temp_fl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <com.mindorks.placeholderview.PlaceHolderView
+                android:id="@+id/temp_rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="true" />
+        </FrameLayout>
+
     </FrameLayout>
 </layout>

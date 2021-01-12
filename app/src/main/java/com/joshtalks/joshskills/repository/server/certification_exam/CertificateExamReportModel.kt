@@ -50,3 +50,8 @@ data class UserSelectedAnswer(
     val isAnswerCorrect: Boolean,
     val isNotAttempt: Boolean? = false
 ) : Parcelable
+
+
+enum class QuestionReportType {
+    RIGHT, WRONG, UNANSWERED, UNKNOWN
+}

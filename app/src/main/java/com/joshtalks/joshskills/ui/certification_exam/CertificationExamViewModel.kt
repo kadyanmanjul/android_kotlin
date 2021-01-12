@@ -31,6 +31,7 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
     val examReportLiveData: MutableLiveData<List<CertificateExamReportModel>> =
         MutableLiveData()
     val isUserSubmitExam: MutableLiveData<Boolean> = MutableLiveData()
+    var isSAnswerUiShow: Boolean = false
 
 
     fun startExam() {

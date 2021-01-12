@@ -7,15 +7,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.FragmentCexamReportBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.GotoCEQuestionEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.OpenReportQTypeEventBus
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestion
+import com.joshtalks.joshskills.repository.server.certification_exam.QuestionReportType
 import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTION
+import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
 import com.joshtalks.joshskills.ui.certification_exam.report.vh.ReportOverviewView1
 import com.joshtalks.joshskills.ui.certification_exam.report.vh.ReportOverviewView2
+import com.joshtalks.joshskills.ui.certification_exam.report.vh.ReportOverviewView3
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -46,6 +52,10 @@ class CExamReportFragment : Fragment() {
     private var certificateExamReport: CertificateExamReportModel? = null
     private var questionList: List<CertificationQuestion> = emptyList()
     private var compositeDisposable = CompositeDisposable()
+    private val viewModel: CertificationExamViewModel by lazy {
+        ViewModelProvider(requireActivity()).get(CertificationExamViewModel::class.java)
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +70,7 @@ class CExamReportFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_cexam_report, container, false)
         binding.lifecycleOwner = this
@@ -75,7 +85,6 @@ class CExamReportFragment : Fragment() {
             binding.chatRv.addView(ReportOverviewView2(this, questionList))
             updateRvScrolling(true)
         }
-
     }
 
     override fun onResume() {
@@ -100,6 +109,34 @@ class CExamReportFragment : Fragment() {
                     it.printStackTrace()
                 })
         )
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(OpenReportQTypeEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    if (QuestionReportType.UNKNOWN == it.type) {
+                        viewModel.isSAnswerUiShow = false
+                        binding.tempFl.visibility = View.GONE
+                        binding.tempRv.removeAllViews()
+                        return@subscribe
+                    }
+                    binding.tempFl.visibility = View.VISIBLE
+                    showViewOnHint(it.type)
+                }, {
+                    it.printStackTrace()
+                })
+        )
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(GotoCEQuestionEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .subscribe({
+                    viewModel.isSAnswerUiShow = false
+                    binding.tempFl.visibility = View.GONE
+                    binding.tempRv.removeAllViews()
+                }, {
+                    it.printStackTrace()
+                })
+        )
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -107,5 +144,15 @@ class CExamReportFragment : Fragment() {
         binding.chatRv.setOnTouchListener { _, _ -> flag }
     }
 
+    private fun showViewOnHint(type: QuestionReportType) {
+        certificateExamReport?.run {
+            binding.tempRv.addView(ReportOverviewView3(this, questionList, type))
+            viewModel.isSAnswerUiShow = true
+        }
+        binding.tempRv.setOnClickListener {
+            binding.tempFl.visibility = View.GONE
+            binding.tempRv.removeAllViews()
+        }
+    }
 
 }
