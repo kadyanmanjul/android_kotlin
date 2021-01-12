@@ -17,7 +17,6 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.databinding.ActivityCexamReportBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadFileEventBus
@@ -29,7 +28,6 @@ import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_ID
 import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTION
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
 import com.joshtalks.joshskills.ui.certification_exam.examview.CExamMainActivity
-import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
@@ -82,15 +80,19 @@ class CExamReportActivity : BaseActivity() {
         viewModel.apiStatus.observe(this, {
             binding.progressBar.visibility = View.GONE
         })
-        viewModel.examReportLiveData.observe(this, { certificateList->
+        viewModel.examReportLiveData.observe(this, { certificateList ->
             certificateList?.run {
                 setUpExamViewPager(this)
-                if (certificateList.get(0).award_mentor != null) {
-                    showAward(listOf(certificateList.get(0).award_mentor!!))
+                certificateList[0].awardMentor?.let {
+                    showAward(mutableListOf(it))
                 }
 
-                if(certificateList.get(0).pointsList.isNullOrEmpty().not()){
-                    showSnackBar(binding.rootView, Snackbar.LENGTH_LONG,certificateList.get(0).pointsList?.get(0))
+                if (certificateList.get(0).pointsList.isNullOrEmpty().not()) {
+                    showSnackBar(
+                        binding.rootView,
+                        Snackbar.LENGTH_LONG,
+                        certificateList.get(0).pointsList?.get(0)
+                    )
                 }
             }
         })

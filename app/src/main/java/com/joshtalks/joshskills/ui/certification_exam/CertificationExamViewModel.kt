@@ -10,11 +10,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
-import com.joshtalks.joshskills.repository.server.certification_exam.Answer
-import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
-import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
-import com.joshtalks.joshskills.repository.server.certification_exam.RequestSubmitAnswer
-import com.joshtalks.joshskills.repository.server.certification_exam.RequestSubmitCertificateExam
+import com.joshtalks.joshskills.repository.server.certification_exam.*
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -121,6 +117,7 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
         val userSelectedAnswerList: ArrayList<RequestSubmitAnswer> =
             ArrayList(obj.questions.size)
         var userSelectedAnswer: RequestSubmitAnswer
+
         obj.questions.forEach {
             if (it.userSelectedOption > -1) {
                 userSelectedAnswer = RequestSubmitAnswer(

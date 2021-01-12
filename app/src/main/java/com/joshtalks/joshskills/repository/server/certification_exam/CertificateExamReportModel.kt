@@ -33,12 +33,12 @@ data class CertificateExamReportModel(
     @SerializedName("total_question")
     val totalQuestion: Int = 0,
     @SerializedName("award_mentor")
-    val award_mentor: Award?,
+    val awardMentor: Award?,
     @SerializedName("points_list")
     val pointsList: List<String>?
 
 
-    ) : Parcelable
+) : Parcelable
 
 @Parcelize
 data class UserSelectedAnswer(
