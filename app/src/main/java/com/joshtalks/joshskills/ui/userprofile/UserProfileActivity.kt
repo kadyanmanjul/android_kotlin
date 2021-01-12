@@ -42,6 +42,7 @@ import com.joshtalks.joshskills.repository.server.AwardCategory
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
+import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -150,6 +151,9 @@ class UserProfileActivity : BaseActivity() {
             when (it.itemId) {
                 R.id.menu_points_history -> {
                     openPointHistory(mentorId)
+                }
+                R.id.how_to_get_points -> {
+                    startActivity(Intent(this, PointsInfoActivity::class.java))
                 }
                 R.id.change_dp -> {
                     openChooser()

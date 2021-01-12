@@ -17,4 +17,11 @@
         android:title="@string/points_history"
         app:showAsAction="collapseActionView" />
 
+    <item
+        android:id="@+id/how_to_get_points"
+        android:actionLayout="@layout/base_toolbar"
+        android:orderInCategory="100"
+        android:title="@string/how_points_work_title"
+        app:showAsAction="collapseActionView" />
+
 </menu>

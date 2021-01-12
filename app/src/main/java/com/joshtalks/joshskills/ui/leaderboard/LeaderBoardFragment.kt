@@ -17,7 +17,6 @@ import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
@@ -153,36 +152,6 @@ class LeaderBoardFragment : Fragment() {
                 binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
             }
 
-            if (it.below_three_mentor_list.isNullOrEmpty().not() &&
-                it.below_three_mentor_list?.get(0)?.ranking!! > 51 )
-                binding.recyclerView.addView(EmptyItemViewHolder())
-            it.below_three_mentor_list?.forEach {
-                binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
-            }
-            it.current_mentor?.let {
-                binding.recyclerView.addView(
-                    LeaderBoardItemViewHolder(
-                        it,
-                        requireContext(),
-                        true
-                    )
-                )
-            }
-
-            it.above_three_mentor_list?.forEach {
-                binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
-            }
-
-            if (it.above_three_mentor_list?.get(it.above_three_mentor_list.size.minus(1))?.ranking ?:1 !=
-                    it.last_mentor_list?.get(0)?.ranking?.minus(1) ?:0
-                    ){
-                binding.recyclerView.addView(EmptyItemViewHolder())
-            }
-
-            it.last_mentor_list?.forEach {
-                binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
-            }
-
             if (userRank in 1..47) {
                 userPosition = userRank.minus(3)
             } else if (userRank in 48..50) {
@@ -190,12 +159,45 @@ class LeaderBoardFragment : Fragment() {
             } else {
                 userPosition = 53
             }
+
+            if (it.below_three_mentor_list.isNullOrEmpty().not() &&
+                it.below_three_mentor_list?.get(0)?.ranking!! > 51
+            )
+                binding.recyclerView.addView(EmptyItemViewHolder())
+            it.below_three_mentor_list?.forEach {
+                binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
+            }
+            if (userPosition == 53)
+                it.current_mentor?.let {
+                    binding.recyclerView.addView(
+                        LeaderBoardItemViewHolder(
+                            it,
+                            requireContext(),
+                            true
+                        )
+                    )
+                }
+
+            it.above_three_mentor_list?.forEach {
+                binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
+            }
+            var lastPosition = it.current_mentor?.ranking ?: 0
+            if (it.above_three_mentor_list?.isNullOrEmpty()!!.not()) {
+                lastPosition =
+                    it.above_three_mentor_list.get(it.above_three_mentor_list.size.minus(1)).ranking
+            }
+
+            binding.recyclerView.addView(EmptyItemViewHolder())
+
+            it.last_mentor_list?.forEach {
+                binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
+            }
         }
 
-        viewModel.leaderBoardDataOfPage.observe(this.viewLifecycleOwner, Observer { data->
+        viewModel.leaderBoardDataOfPage.observe(this.viewLifecycleOwner, Observer { data ->
             data?.let {
                 it.above_three_mentor_list?.forEach {
-                    binding.recyclerView.addView(LeaderBoardItemViewHolder(it,requireContext()))
+                    binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
                 }
             }
 
