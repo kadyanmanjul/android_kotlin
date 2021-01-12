@@ -102,13 +102,13 @@ class LeaderBoardFragment : Fragment() {
         linearLayoutManager.isSmoothScrollbarEnabled = true
         binding.recyclerView.builder.setHasFixedSize(true)
             .setLayoutManager(linearLayoutManager)
-        binding.recyclerView.addOnScrollListener(object :
+        /*binding.recyclerView.addOnScrollListener(object :
             EndlessRecyclerViewScrollListener(linearLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
                 if (page > 0 && page < leaderboardResponse?.totalpage ?: 0)
                     viewModel.getMentorDataViaPage(Mentor.getInstance().getId(), type, page)
             }
-        })
+        })*/
 
         binding.recyclerView.addOnScrollListener(object :
             RecyclerView.OnScrollListener() {
@@ -152,32 +152,43 @@ class LeaderBoardFragment : Fragment() {
             it.top_50_mentor_list?.forEach {
                 binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
             }
+
+            if (it.below_three_mentor_list.isNullOrEmpty().not() &&
+                it.below_three_mentor_list?.get(0)?.ranking!! > 51 )
+                binding.recyclerView.addView(EmptyItemViewHolder())
+            it.below_three_mentor_list?.forEach {
+                binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
+            }
+            it.current_mentor?.let {
+                binding.recyclerView.addView(
+                    LeaderBoardItemViewHolder(
+                        it,
+                        requireContext(),
+                        true
+                    )
+                )
+            }
+
+            it.above_three_mentor_list?.forEach {
+                binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
+            }
+
+            if (it.above_three_mentor_list?.get(it.above_three_mentor_list.size.minus(1))?.ranking ?:1 !=
+                    it.last_mentor_list?.get(0)?.ranking?.minus(1) ?:0
+                    ){
+                binding.recyclerView.addView(EmptyItemViewHolder())
+            }
+
+            it.last_mentor_list?.forEach {
+                binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
+            }
+
             if (userRank in 1..47) {
                 userPosition = userRank.minus(3)
             } else if (userRank in 48..50) {
                 userPosition = userRank.minus(3)
             } else {
                 userPosition = 53
-                if (it.below_three_mentor_list.isNullOrEmpty()
-                        .not() && it.below_three_mentor_list?.get(0)?.ranking!! > 51
-                )
-                    binding.recyclerView.addView(EmptyItemViewHolder())
-
-                it.below_three_mentor_list?.forEach {
-                    binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
-                }
-                it.current_mentor?.let {
-                    binding.recyclerView.addView(
-                        LeaderBoardItemViewHolder(
-                            it,
-                            requireContext(),
-                            true
-                        )
-                    )
-                }
-                it.above_three_mentor_list?.forEach {
-                    binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
-                }
             }
         }
 

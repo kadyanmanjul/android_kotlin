@@ -29,6 +29,8 @@ data class LeaderboardResponse(
     val above_three_mentor_list: List<LeaderboardMentor>?,
     @SerializedName("below_three_mentor_list")
     val below_three_mentor_list: List<LeaderboardMentor>?,
+    @SerializedName("last_mentor_list")
+    val last_mentor_list: List<LeaderboardMentor>?,
     @SerializedName("above_list_total_pages")
     val totalpage: Int=1,
 ) : Parcelable
