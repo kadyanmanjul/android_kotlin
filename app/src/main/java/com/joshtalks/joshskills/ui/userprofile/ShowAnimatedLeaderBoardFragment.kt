@@ -367,17 +367,21 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
     }
 
     fun onContinueClicked() {
-        requireActivity()?.let { activity ->
-            val resultIntent = Intent()
-            resultIntent.putExtra(IS_BATCH_CHANGED, false)
-            resultIntent.putExtra(LAST_LESSON_INTERVAL, lessonInterval)
-            resultIntent.putExtra(DayWiseCourseActivity.LAST_LESSON_STATUS, LESSON_STATUS.CO)
-            resultIntent.putExtra(LESSON__CHAT_ID, chatId)
-            resultIntent.putExtra(LESSON_NUMBER, lessonNumber)
-            activity.setResult(AppCompatActivity.RESULT_OK, resultIntent)
-            activity.finish()
-        }.run {
+        if (lessonInterval==0){
             dismiss()
+        } else {
+            requireActivity()?.let { activity ->
+                val resultIntent = Intent()
+                resultIntent.putExtra(IS_BATCH_CHANGED, false)
+                resultIntent.putExtra(LAST_LESSON_INTERVAL, lessonInterval)
+                resultIntent.putExtra(DayWiseCourseActivity.LAST_LESSON_STATUS, LESSON_STATUS.CO)
+                resultIntent.putExtra(LESSON__CHAT_ID, chatId)
+                resultIntent.putExtra(LESSON_NUMBER, lessonNumber)
+                activity.setResult(AppCompatActivity.RESULT_OK, resultIntent)
+                activity.finish()
+            }.run {
+                dismiss()
+            }
         }
     }
 

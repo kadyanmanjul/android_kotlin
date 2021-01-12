@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.day_wise_course.practice
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,6 +41,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
@@ -350,9 +352,11 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
     private fun subscribeRXBus() {
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(SnackBarEvent::class.java)
-                .subscribeOn(Schedulers.computation())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     //if (it.questionId in chatModelList.) check for question Id later
+                    //Log.d("Manjul", "subscribeRXBus() called")
                     showSnackBar(
                         binding.rootView,
                         Snackbar.LENGTH_LONG,
