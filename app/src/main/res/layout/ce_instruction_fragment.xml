@@ -89,7 +89,7 @@
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.JoshTypography.Button"
             android:textColor="@color/white"
-            android:visibility="gone"
+            android:visibility="visible"
             app:cornerRadius="@dimen/_28sdp"
             app:elevation="0dp"
             app:layout_constraintBottom_toTopOf="@id/btn_previous_result"

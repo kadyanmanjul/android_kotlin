@@ -9,8 +9,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentActivity
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.DD_MM_YYYY
 import com.joshtalks.joshskills.core.EMPTY
@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.repository.local.entity.CertificationExamDetailModel
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.eventbus.StartCertificationExamEventBus
+import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
@@ -68,7 +69,7 @@ class CertificationExamViewHolder(
     lateinit var tvAttemptedDate: AppCompatTextView
 
     @View(R.id.btn_start_exam)
-    lateinit var btnStartExam: MaterialButton
+    lateinit var btnStartExam: MaterialTextView
 
 
     lateinit var viewHolder: CertificationExamViewHolder
@@ -100,6 +101,16 @@ class CertificationExamViewHolder(
             } else {
                 updateView(question.cexamDetail)
             }
+        }
+        checkIsExamResume()
+    }
+
+    private fun checkIsExamResume() {
+        val examStatus = message.question?.cexamDetail?.examStatus ?: CExamStatus.FRESH
+        val obj =
+            CertificationQuestionModel.getResumeExam(message.question?.certificateExamId ?: -1)
+        if (CExamStatus.PASSED != examStatus && obj != null) {
+            btnStartExam.text = getAppContext().getString(R.string.resume_examination)
         }
     }
 
@@ -167,7 +178,7 @@ class CertificationExamViewHolder(
 
     @Click(R.id.message_view)
     fun onClickMessageView() {
-        analyzeAction()
+        analyzeAction(cardClick = true)
     }
 
     @Click(R.id.btn_start_exam)
@@ -175,13 +186,17 @@ class CertificationExamViewHolder(
         analyzeAction()
     }
 
-    private fun analyzeAction() {
+    private fun analyzeAction(cardClick: Boolean = false) {
         message.question?.run {
             if (cexamDetail != null) {
                 cexamDetail?.examStatus?.let {
                     when {
                         CExamStatus.PASSED == it -> {
-                            publishEvent(CExamStatus.CHECK_RESULT)
+                            if (cardClick) {
+                                publishEvent(CExamStatus.FRESH)
+                            } else {
+                                publishEvent(CExamStatus.CHECK_RESULT)
+                            }
                         }
                         CExamStatus.ATTEMPTED == it -> {
                             publishEvent(CExamStatus.FRESH)//publishEvent(CExamStatus.REATTEMPTED)
@@ -213,9 +228,9 @@ class CertificationExamViewHolder(
     private fun getFreshGridentDrawable(): GradientDrawable {
         val colors = intArrayOf(
             Color.parseColor("#FFFFFF"),
-            Color.parseColor("#FFE82A"),
-            Color.parseColor("#FFE82A"),
-            Color.parseColor("#FFE82A")
+            Color.parseColor("#AAFFF284"),
+            Color.parseColor("#CCFEEC56"),
+            Color.parseColor("#FEEC56")
         )
         val gd = GradientDrawable(
             GradientDrawable.Orientation.TR_BL, colors
@@ -227,8 +242,8 @@ class CertificationExamViewHolder(
     private fun getAttemptedGradientDrawable(): GradientDrawable {
         val colors = intArrayOf(
             Color.parseColor("#FFFFFF"),
-            Color.parseColor("#17C95A"),
-            Color.parseColor("#17C95A"),
+            Color.parseColor("#AA17C95A"),
+            Color.parseColor("#CC17C95A"),
             Color.parseColor("#17C95A")
         )
         val gd = GradientDrawable(
