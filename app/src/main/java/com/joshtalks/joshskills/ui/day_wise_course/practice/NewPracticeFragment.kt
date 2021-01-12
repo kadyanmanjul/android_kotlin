@@ -185,11 +185,6 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
         questionId: Int=-1
     ) {
 
-        CoroutineScope(Dispatchers.IO).launch {
-            chatModel.question?.interval?.run {
-                WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
-            }
-        }
         if (isCorrect&&questionId!=-1) {
             val quizQuestion=arrayListOf<Int>()
             quizQuestion.add(questionId)
@@ -225,7 +220,7 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
     override fun openNextScreen() {
         var openNextScreen = true
         chatModelList?.forEach { item ->
-            if (item.question?.status == QUESTION_STATUS.NA) {
+            if (item.question?.status != QUESTION_STATUS.AT) {
                 openNextScreen = false
                 return@forEach
             }

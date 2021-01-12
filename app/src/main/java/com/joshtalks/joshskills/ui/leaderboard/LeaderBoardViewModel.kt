@@ -47,7 +47,7 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
     suspend fun getMentorData(mentorId: String, type: String): LeaderboardResponse? {
         try {
             val response =
-                AppObjectController.commonNetworkService.getLeaderBoardData(mentorId, type)
+                AppObjectController.commonNetworkService.getLeaderBoardData(mentorId, type,1)
             if (response.isSuccessful && response.body() != null) {
                 return response.body()!!
             }

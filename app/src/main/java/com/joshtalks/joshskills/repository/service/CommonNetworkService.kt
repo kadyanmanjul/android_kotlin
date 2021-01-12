@@ -156,14 +156,15 @@ interface CommonNetworkService {
     @GET("$DIR/leaderboard/get_leaderboard/")
     suspend fun getLeaderBoardData(
         @Query("mentor_id") mentorId: String,
-        @Query("interval_type") interval: String
-    ): Response<LeaderboardResponse>
+        @Query("interval_type") interval: String,
+        @Query("above_list_page") page: Int
+        ): Response<LeaderboardResponse>
 
     @GET("$DIR/leaderboard/get_leaderboard/")
     suspend fun getLeaderBoardDataViaPage(
         @Query("mentor_id") mentorId: String,
         @Query("interval_type") interval: String,
-        @Query("above_list_page") page: Int,
+        @Query("above_list_page") page: Int
     ): Response<LeaderboardResponse>
 
     @GET("$DIR/leaderboard/get_animated_leaderboard")
