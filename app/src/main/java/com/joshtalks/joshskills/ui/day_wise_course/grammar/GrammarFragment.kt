@@ -38,7 +38,7 @@ import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.ui.day_wise_course.CapsuleActivityCallback
 import com.joshtalks.joshskills.ui.day_wise_course.CapsuleViewModel
-import com.joshtalks.joshskills.ui.day_wise_course.practice.PRACTISE_OBJECT
+import com.joshtalks.joshskills.ui.day_wise_course.vocabulary.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.karumi.dexter.MultiplePermissionsReport

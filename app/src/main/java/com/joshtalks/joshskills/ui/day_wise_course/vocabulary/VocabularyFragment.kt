@@ -1,8 +1,7 @@
-package com.joshtalks.joshskills.ui.day_wise_course.practice
+package com.joshtalks.joshskills.ui.day_wise_course.vocabulary
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,14 +18,12 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.databinding.FragmentPraticeBinding
+import com.joshtalks.joshskills.databinding.FragmentVocabularyBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.PendingTask
 import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
@@ -41,7 +38,6 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
@@ -51,15 +47,13 @@ import kotlinx.coroutines.launch
 
 const val PRACTISE_OBJECT = "practise_object"
 
-class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickListeners {
-    private var currentPlayingPosition: Int = -1
-    private lateinit var adapter: PracticeAdapter
+class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.PracticeClickListeners {
+    private lateinit var adapter: VocabularyPracticeAdapter
 
     private var compositeDisposable = CompositeDisposable()
 
-    private lateinit var binding: FragmentPraticeBinding
+    private lateinit var binding: FragmentVocabularyBinding
     private var chatModelList: ArrayList<ChatModel>? = null
-    private var isAudioRecordDone = false
     private var isVideoRecordDone = false
     private var isDocumentAttachDone = false
     private var startTime: Long = 0
@@ -75,7 +69,7 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
 
     companion object {
         @JvmStatic
-        fun instance(chatModelList: ArrayList<ChatModel>) = NewPracticeFragment().apply {
+        fun instance(chatModelList: ArrayList<ChatModel>) = VocabularyFragment().apply {
             arguments = Bundle().apply {
                 putParcelableArrayList(PRACTISE_OBJECT, chatModelList)
             }
@@ -108,7 +102,7 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
         savedInstanceState: Bundle?
     ): View {
         binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_pratice, container, false)
+            DataBindingUtil.inflate(inflater, R.layout.fragment_vocabulary, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
         binding.progressLayout.setOnClickListener {
@@ -157,7 +151,7 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
                 }
             }
         }
-        adapter = PracticeAdapter(
+        adapter = VocabularyPracticeAdapter(
             requireContext(),
             practiceViewModel,
             chatModelList!!,
@@ -172,8 +166,8 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
         binding.practiceRv.adapter = adapter
     }
 
-    override fun submitQuiz(chatModel: ChatModel,isCorrect:Boolean,questionId:Int) {
-        onQuestionSubmitted(chatModel,isCorrect,questionId)
+    override fun submitQuiz(chatModel: ChatModel, isCorrect: Boolean, questionId: Int) {
+        onQuestionSubmitted(chatModel, isCorrect, questionId)
         openNextScreen()
     }
 
@@ -184,18 +178,18 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
     private fun onQuestionSubmitted(
         chatModel: ChatModel,
         isCorrect: Boolean = false,
-        questionId: Int=-1
+        questionId: Int = -1
     ) {
 
-        if (isCorrect&&questionId!=-1) {
-            val quizQuestion=arrayListOf<Int>()
+        if (isCorrect && questionId != -1) {
+            val quizQuestion = arrayListOf<Int>()
             quizQuestion.add(questionId)
             activityCallback?.onQuestionStatusUpdate(
                 QUESTION_STATUS.AT,
                 chatModel.question?.questionId?.toIntOrNull() ?: 0,
                 quizCorrectQuestionIds = quizQuestion
             )
-        } else{
+        } else {
             activityCallback?.onQuestionStatusUpdate(
                 QUESTION_STATUS.AT,
                 chatModel.question?.questionId?.toIntOrNull() ?: 0
@@ -258,6 +252,8 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
                     showToast(getString(R.string.submit_practise_msz))
                     return false
                 }
+                onQuestionSubmitted(chatModel)
+                openNextScreen()
 
                 currentChatModel = chatModel
                 val requestEngage = RequestEngage()
@@ -273,8 +269,7 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
                 }
 
                 chatModel.question!!.status = QUESTION_STATUS.IP
-                onQuestionSubmitted(chatModel)
-                openNextScreen()
+
                 CoroutineScope(Dispatchers.IO).launch {
                     val insertedId =
                         AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(

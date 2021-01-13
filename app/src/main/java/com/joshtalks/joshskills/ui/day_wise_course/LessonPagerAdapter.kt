@@ -6,9 +6,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.ui.day_wise_course.grammar.GrammarFragment
-import com.joshtalks.joshskills.ui.day_wise_course.practice.NewPracticeFragment
 import com.joshtalks.joshskills.ui.day_wise_course.reading.ReadingFragment
 import com.joshtalks.joshskills.ui.day_wise_course.spaking.SpeakingPractiseFragment
+import com.joshtalks.joshskills.ui.day_wise_course.vocabulary.VocabularyFragment
 
 class LessonPagerAdapter(
     fragmentManager: FragmentManager,
@@ -27,7 +27,7 @@ class LessonPagerAdapter(
         return when (position) {
             0 -> GrammarFragment.instance(chatList[0])
 
-            1 -> NewPracticeFragment.instance(chatList[1])
+            1 -> VocabularyFragment.instance(chatList[1])
 
             2 -> ReadingFragment.instance(chatList[2])
 

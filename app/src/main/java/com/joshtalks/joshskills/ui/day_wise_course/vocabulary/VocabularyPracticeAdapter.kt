@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.day_wise_course.practice
+package com.joshtalks.joshskills.ui.day_wise_course.vocabulary
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -68,7 +68,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 
-class PracticeAdapter(
+class VocabularyPracticeAdapter(
     val context: Context,
     val practiceViewModel: PracticeViewModel,
     val itemList: ArrayList<ChatModel>,
