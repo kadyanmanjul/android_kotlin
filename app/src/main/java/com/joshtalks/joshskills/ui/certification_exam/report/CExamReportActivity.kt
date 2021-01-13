@@ -160,7 +160,7 @@ class CExamReportActivity : BaseActivity() {
             RxBus2.listenWithoutDelay(DownloadFileEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .subscribe({
-                    downloadFile(it.url)
+                    downloadFile(it.url, message = "Certificate download complete")
                 }, {
                     it.printStackTrace()
                 })

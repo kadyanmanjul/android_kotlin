@@ -699,22 +699,30 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         FullScreenProgressDialog.hideProgressBar(this)
     }
 
-    protected fun downloadFile(url: String, message: String = "Downloading file") {
-        registerDownloadReceiver()
+    protected fun downloadFile(
+        url: String,
+        message: String = "Downloading file",
+        title: String = "Josh Skills"
+    ) {
+
         var fileName = Utils.getFileNameFromURL(url)
         if (fileName.isEmpty()) {
             url.let {
                 fileName = it + Random(5).nextInt().toString().plus(it.getExtension())
             }
         }
+        registerDownloadReceiver(fileName)
+
         val request: DownloadManager.Request =
             DownloadManager.Request(Uri.parse(url))
-                .setTitle("Josh Skills")
+                .setTitle(title)
                 .setDescription(message)
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
                 .setAllowedOverMetered(true)
                 .setAllowedOverRoaming(true)
+                .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
                 .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -725,8 +733,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         downloadID = downloadManager.enqueue(request)
     }
 
-
-    private fun registerDownloadReceiver() {
+    private fun registerDownloadReceiver(fileName: String) {
         registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
     }
 
@@ -737,9 +744,9 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
     }
 
     fun showAward(awarList: List<Award>, isFromUserProfile: Boolean = false) {
-        if (false){
+        if (false) {
             //TODO add when awards functionality is over
-        //if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+            //if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             ShowAwardFragment.showDialog(
                 supportFragmentManager,
                 awarList,
@@ -747,6 +754,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
             )
         }
     }
+
     fun showLeaderboardAchievement(
         outrankData: OutrankedDataResponse,
         lessonInterval: Int,
@@ -754,11 +762,19 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         lessonNo: Int
     ) {
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
-        //if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+            //if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             ShowAnimatedLeaderBoardFragment.showDialog(
                 supportFragmentManager,
                 outrankData,lessonInterval,chatId,lessonNo
             )
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            unregisterReceiver(onDownloadComplete)
+        } catch (ex: Exception) {
         }
     }
 }

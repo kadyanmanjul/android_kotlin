@@ -3,5 +3,5 @@
     <size
             android:width="@dimen/seek_bar_thumb_size"
             android:height="@dimen/seek_bar_thumb_size" />
-    <solid android:color="@color/white" />
+    <solid android:color="@color/button_color" />
 </shape>

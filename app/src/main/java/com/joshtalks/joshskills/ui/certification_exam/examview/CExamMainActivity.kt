@@ -79,8 +79,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
 
         certificationQuestionModel?.run {
             if (CertificationExamView.EXAM_VIEW == examView && lastQuestionOfExit == -1) {
-                questionsList.addAll(questions)
-                questionsList.shuffled(Random())
+                questionsList.addAll(questions.shuffled())
             } else {
                 questionsList.addAll(questions.sortedBy { it.sortOrder })
             }

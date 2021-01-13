@@ -55,6 +55,7 @@
         app:played_color="@color/button_color"
         app:scrubber_color="@color/colorPrimary"
         app:scrubber_drawable="@drawable/seek_thumb"
+
         app:unplayed_color="@color/text_90" />
 
     <androidx.constraintlayout.widget.Barrier
