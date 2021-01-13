@@ -277,6 +277,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                         AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
                             PendingTaskModel(requestEngage, PendingTask.VOCABULARY_PRACTICE)
                         )
+                    practiceViewModel.getPointsForVocabAndReading(chatModel.question?.questionId!!)
                     FileUploadService.uploadSinglePendingTasks(
                         AppObjectController.joshApplication,
                         insertedId
