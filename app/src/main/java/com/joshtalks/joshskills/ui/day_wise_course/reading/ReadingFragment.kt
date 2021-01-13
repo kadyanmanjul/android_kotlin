@@ -257,11 +257,10 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
     }
 
     private fun callback(chatModel: ChatModel) {
+        this@ReadingFragment.chatModel = chatModel
         CoroutineScope(Dispatchers.Main).launch {
-            this@ReadingFragment.chatModel = chatModel
             this@ReadingFragment.chatModel?.question?.practiseEngagementV2?.run {
                 initAdapter(this)
-                delay(100)
                 binding.viewPager.currentItem = this.size - 1
             }
         }

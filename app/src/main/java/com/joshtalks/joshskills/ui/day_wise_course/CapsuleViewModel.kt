@@ -62,15 +62,6 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
                     question?.run {
 
                          question.lesson = appDatabase.lessonDao().getLesson(question.lesson_id)
-                        /*if (question.lesson?.status == LESSON_STATUS.CO ||
-                            question.lesson?.grammarStatus == LESSON_STATUS.AT ||
-                            question.lesson?.vocabStatus == LESSON_STATUS.AT ||
-                            question.lesson?.readingStatus == LESSON_STATUS.AT ||
-                            question.lesson?.speakingStatus == LESSON_STATUS.AT
-                        ) {
-                            appDatabase.lessonDao().incrementAttemptNumber(lessonId)
-                        }*/
-
                         when (this.material_type) {
                             BASE_MESSAGE_TYPE.IM -> question.imageList =
                                 appDatabase.chatDao()

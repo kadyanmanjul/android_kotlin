@@ -37,8 +37,8 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.*
+import java.util.concurrent.TimeUnit
 
 class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
 
@@ -218,6 +218,7 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
                 stopAudioRecording()
             } else {
                 if (PermissionUtils.isAudioAndStoragePermissionEnable(requireContext()).not()) {
+                    RxBus2.publish(ViewPagerDisableEventBus(true))
                     requestAudioRecord()
                     return@setOnClickListener
                 }
@@ -335,6 +336,11 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
         super.onPause()
     }
 
+    override fun onStop() {
+        super.onStop()
+        AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+    }
+
     /** Start  View onclicks function **/
     fun cancelAudio() {
         try {
@@ -352,29 +358,31 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
     fun submitAnswer() {
         if (DOWNLOAD_STATUS.NOT_START == submit) {
             submit = DOWNLOAD_STATUS.STARTED
-            startSubmitProgress()
             callback?.onPracticeSubmitted()
             practiceEngagement?.questionForId?.let {
                 practiceViewModel.submitReadingPractise(it, filePath!!)
             }
+            startSubmitProgress()
         }
     }
 
     private fun startSubmitProgress() {
-        binding.btnSubmitButton.showProgress {
-            buttonTextRes = R.string.plz_wait
-            progressColors =
-                intArrayOf(
-                    ContextCompat.getColor(requireContext(), R.color.white),
-                    ContextCompat.getColor(requireContext(), R.color.practise_complete_tint),
-                    ContextCompat.getColor(requireContext(), R.color.green_3d)
-                )
+        AppObjectController.uiHandler.postDelayed(Runnable {
+            binding.btnSubmitButton.showProgress {
+                //buttonTextRes = R.string.plz_wait
+                progressColors =
+                    intArrayOf(
+                        ContextCompat.getColor(requireContext(), R.color.white),
+                        ContextCompat.getColor(requireContext(), R.color.practise_complete_tint),
+                        ContextCompat.getColor(requireContext(), R.color.green_3d)
+                    )
 
-            gravity = DrawableButton.GRAVITY_TEXT_END
-            progressRadiusRes = R.dimen.dp8
-            progressStrokeRes = R.dimen.dp2
-            textMarginRes = R.dimen.dp8
-        }
+                gravity = DrawableButton.GRAVITY_CENTER
+                progressRadiusRes = R.dimen.dp8
+                progressStrokeRes = R.dimen.dp2
+                textMarginRes = R.dimen.dp8
+            }
+        }, 250)
     }
 
 

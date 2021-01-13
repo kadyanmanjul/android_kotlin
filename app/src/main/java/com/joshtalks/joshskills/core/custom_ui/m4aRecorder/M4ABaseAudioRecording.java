@@ -81,10 +81,6 @@ public class M4ABaseAudioRecording {
         if (mRecordingThread != null) {
             mRecordingThread.interrupt();
             mRecordingThread = null;
-            if (file.length() == 0L) {
-                onAudioRecordListener.onError(IO_ERROR);
-                return;
-            }
         }
     }
 

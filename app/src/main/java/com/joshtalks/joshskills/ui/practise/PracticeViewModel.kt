@@ -348,7 +348,6 @@ class PracticeViewModel(application: Application) :
 
     fun submitReadingPractise(questionId: String, path: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            delay(250)
             val requestEngage = RequestEngage()
             requestEngage.localPath = path
             requestEngage.duration =
@@ -356,7 +355,6 @@ class PracticeViewModel(application: Application) :
             requestEngage.questionId = questionId
             requestEngage.mentor = Mentor.getInstance().getId()
             requestEngage.answerUrl = path
-
             val obj = PracticeEngagementV2(
                 practiseId = Random().nextInt(),
                 questionForId = questionId,
