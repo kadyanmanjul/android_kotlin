@@ -111,6 +111,10 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
         )
 
         chatModel?.question?.run {
+            if (audioList.isNullOrEmpty()) {
+                binding.cardViewDemoVoiceNote.visibility = View.GONE
+                binding.imgQuotes.visibility = View.GONE
+            }
             binding.txtReadingParagraph.addAutoLinkMode(AutoLinkMode.MODE_CUSTOM)
             binding.txtReadingParagraph.enableUnderLine()
             binding.txtReadingParagraph.setCustomRegex(separatorRegex)

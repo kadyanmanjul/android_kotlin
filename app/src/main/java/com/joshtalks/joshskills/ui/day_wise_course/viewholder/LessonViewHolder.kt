@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.day_wise_course.lesson
+package com.joshtalks.joshskills.ui.day_wise_course.viewholder
 
 import android.graphics.drawable.Drawable
 import android.view.View.GONE
