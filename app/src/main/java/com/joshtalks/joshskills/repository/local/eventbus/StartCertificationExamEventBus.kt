@@ -6,5 +6,6 @@ class StartCertificationExamEventBus(
     var conversationId: String,
     var messageId: String,
     var certificationExamId: Int,
-    var examStatus: CExamStatus
+    var examStatus: CExamStatus,
+    var lessonInterval: Int?
 )

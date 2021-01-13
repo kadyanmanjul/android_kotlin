@@ -133,6 +133,7 @@ import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
+import com.joshtalks.joshskills.ui.certification_exam.EXAM_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.chat.extra.CallingFeatureShowcaseView
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
@@ -1381,6 +1382,9 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                                 result.data?.getStringExtra(MESSAGE_ID)?.let { chatId ->
                                     refreshView(chatId)
                                 }
+                                result.data?.getIntExtra(EXAM_LESSON_INTERVAL, -1)?.let {
+                                    addUnlockNextClassCard(it, fromLesson = true)
+                                }
                             }
                         }
                     cExamActivityListener.launch(
@@ -1389,7 +1393,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                             conversationId = it.conversationId,
                             chatMessageId = it.messageId,
                             certificationId = it.certificationExamId,
-                            cExamStatus = it.examStatus
+                            cExamStatus = it.examStatus,
+                            lessonInterval = it.lessonInterval
                         )
                     )
                 }, {

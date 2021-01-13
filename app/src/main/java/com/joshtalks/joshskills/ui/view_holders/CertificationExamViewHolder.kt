@@ -219,7 +219,8 @@ class CertificationExamViewHolder(
                     message.conversationId,
                     message.chatId,
                     it,
-                    examStatus
+                    examStatus,
+                    message.question?.interval
                 )
             )
         }

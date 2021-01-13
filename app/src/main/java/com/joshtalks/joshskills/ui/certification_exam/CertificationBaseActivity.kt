@@ -8,16 +8,24 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.LESSON_INTERVAL
+import com.joshtalks.joshskills.core.LESSON__CHAT_ID
 import com.joshtalks.joshskills.core.service.CONVERSATION_ID
 import com.joshtalks.joshskills.repository.local.entity.CExamStatus
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.ui.certification_exam.examview.CExamMainActivity
 import com.joshtalks.joshskills.ui.certification_exam.report.CExamReportActivity
 import com.joshtalks.joshskills.ui.certification_exam.view.InstructionFragment
+import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
 import com.joshtalks.joshskills.ui.pdfviewer.MESSAGE_ID
+import com.joshtalks.joshskills.ui.userprofile.ShowAnimatedLeaderBoardFragment
+import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
+import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import kotlinx.android.synthetic.main.activity_certification_base.progress_bar
 import kotlinx.android.synthetic.main.inbox_toolbar.iv_back
 import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
@@ -26,6 +34,7 @@ const val CERTIFICATION_EXAM_ID = "certification_exam_ID"
 const val CERTIFICATION_EXAM_QUESTION = "certification_exam_question"
 const val CURRENT_QUESTION = "current_question"
 const val EXAM_STATUS = "current_question"
+const val EXAM_LESSON_INTERVAL = "exam_lesson_interval"
 
 class CertificationBaseActivity : BaseActivity() {
 
@@ -35,7 +44,8 @@ class CertificationBaseActivity : BaseActivity() {
             conversationId: String,
             chatMessageId: String,
             certificationId: Int,
-            cExamStatus: CExamStatus = CExamStatus.FRESH
+            cExamStatus: CExamStatus = CExamStatus.FRESH,
+            lessonInterval:Int?=-1
         ): Intent {
             return Intent(activity, CertificationBaseActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, conversationId)
@@ -43,6 +53,7 @@ class CertificationBaseActivity : BaseActivity() {
                 putExtra(CONVERSATION_ID, conversationId)
                 putExtra(CERTIFICATION_EXAM_ID, certificationId)
                 putExtra(EXAM_STATUS, cExamStatus)
+                putExtra(EXAM_LESSON_INTERVAL, lessonInterval)
             }
         }
     }
@@ -165,6 +176,7 @@ class CertificationBaseActivity : BaseActivity() {
         if (viewModel.isUserSubmitExam.value != null && viewModel.isUserSubmitExam.value!!) {
             val resultIntent = Intent().apply {
                 putExtra(MESSAGE_ID, intent.getStringExtra(MESSAGE_ID))
+                putExtra(EXAM_LESSON_INTERVAL, intent.getIntExtra(EXAM_LESSON_INTERVAL,-1))
             }
             setResult(RESULT_OK, resultIntent)
             this.finish()
