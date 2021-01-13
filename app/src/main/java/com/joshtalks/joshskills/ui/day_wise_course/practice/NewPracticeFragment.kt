@@ -352,8 +352,7 @@ class NewPracticeFragment : CoreJoshFragment(), PracticeAdapter.PracticeClickLis
     private fun subscribeRXBus() {
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(SnackBarEvent::class.java)
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.computation())
                 .subscribe({
                     //if (it.questionId in chatModelList.) check for question Id later
                     //Log.d("Manjul", "subscribeRXBus() called")
