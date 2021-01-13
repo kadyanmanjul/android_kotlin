@@ -158,8 +158,7 @@ class PracticeViewModel(application: Application) :
                 val resp = AppObjectController.chatNetworkService.submitPracticeAsync(requestEngage)
                 if (resp.isSuccessful && resp.body() != null) {
 
-                    val engangementList = List(1) { resp.body()!! }
-                    chatModel.question?.practiceEngagement = engangementList
+                    chatModel.question?.practiceEngagement = mutableListOf(resp.body()!!)
                     chatModel.question?.status = QUESTION_STATUS.AT
 
                     AppObjectController.appDatabase.chatDao()

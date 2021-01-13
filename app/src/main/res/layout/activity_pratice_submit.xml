@@ -240,7 +240,8 @@
                             android:textColor="@color/black"
                             android:textColorHint="@color/emoji_bg_color"
                             android:textCursorDrawable="@drawable/cursor_drawable"
-                            android:visibility="visible" />
+                            android:visibility="gone"
+                            tools:visibility="visible" />
 
 
                         <androidx.appcompat.widget.AppCompatImageView
@@ -254,8 +255,9 @@
                             android:backgroundTint="@color/button_color"
                             android:scaleType="centerInside"
                             android:tint="@color/white"
-                            android:visibility="visible"
-                            app:srcCompat="@drawable/ic_rec_mic_big" />
+                            android:visibility="gone"
+                            app:srcCompat="@drawable/ic_rec_mic_big"
+                            tools:visibility="visible" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/audio_practise_hint"
@@ -267,7 +269,8 @@
                             android:text="@string/hold_to_record_msz"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                             android:textColor="@color/black"
-                            android:visibility="gone" />
+                            android:visibility="gone"
+                            tools:visibility="visible" />
 
 
                         <androidx.appcompat.widget.AppCompatTextView
@@ -285,6 +288,7 @@
                             android:text="@string/upload_file_msz"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                             android:textColor="@color/gray_9E"
+                            tools:visibility="visible"
                             android:visibility="gone"
                             app:drawableStartCompat="@drawable/ic_file_upload"
                             app:drawableTint="@color/emoji_icon_color" />

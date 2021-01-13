@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.repository.service
 
 import androidx.lifecycle.MutableLiveData
+import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -19,7 +20,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 object NetworkRequestHelper {
-
+    val practiceEnagagement = object : TypeToken<List<PracticeEngagement>>() {}.type
     fun getUpdatedChat(
         conversationId: String,
         queryMap: Map<String, String> = emptyMap()
@@ -106,10 +107,16 @@ object NetworkRequestHelper {
                         question.lesson?.let {
                             AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
                         }
-                        question.practiseEngagementV2?.forEach { pe ->
-                            pe.questionForId = question.questionId
-                            AppObjectController.appDatabase.practiceEngagementDao()
-                                .insertPractise(pe)
+                        if (question.practiseEngagementV2.isNullOrEmpty().not()) {
+                            question.practiceEngagement = AppObjectController.gsonMapper.fromJson(
+                                question.practiseEngagementV2?.toString(),
+                                practiceEnagagement
+                            )
+                            question.practiseEngagementV2?.forEach { pe ->
+                                pe.questionForId = question.questionId
+                                AppObjectController.appDatabase.practiceEngagementDao()
+                                    .insertPractise(pe)
+                            }
                         }
 
                         if (question.type == BASE_MESSAGE_TYPE.CE) {
@@ -121,8 +128,9 @@ object NetworkRequestHelper {
                             }
                         }
                     }
-                    chatModel.awardMentorModel?.let { awardMentorModel->
-                        AppObjectController.appDatabase.awardMentorModelDao().insertSingleItem(awardMentorModel)
+                    chatModel.awardMentorModel?.let { awardMentorModel ->
+                        AppObjectController.appDatabase.awardMentorModelDao()
+                            .insertSingleItem(awardMentorModel)
                     }
                 }
                 RxBus2.publish(DBInsertion("Chat"))
@@ -228,8 +236,9 @@ object NetworkRequestHelper {
                     }
                 }
 
-                chatModel.awardMentorModel?.let { awardMentorModel->
-                    AppObjectController.appDatabase.awardMentorModelDao().insertSingleItem(awardMentorModel)
+                chatModel.awardMentorModel?.let { awardMentorModel ->
+                    AppObjectController.appDatabase.awardMentorModelDao()
+                        .insertSingleItem(awardMentorModel)
                 }
             }
 
