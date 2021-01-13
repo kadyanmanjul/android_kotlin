@@ -7,6 +7,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.ui.day_wise_course.grammar.GrammarFragment
 import com.joshtalks.joshskills.ui.day_wise_course.reading.ReadingFragment
+import com.joshtalks.joshskills.ui.day_wise_course.reading.ReadingFragmentWithoutFeedback
 import com.joshtalks.joshskills.ui.day_wise_course.spaking.SpeakingPractiseFragment
 import com.joshtalks.joshskills.ui.day_wise_course.vocabulary.VocabularyFragment
 
@@ -29,7 +30,7 @@ class LessonPagerAdapter(
 
             1 -> VocabularyFragment.instance(chatList[1])
 
-            2 -> ReadingFragment.instance(chatList[2])
+            2 -> ReadingFragmentWithoutFeedback.instance(chatList[2])
 
             else -> SpeakingPractiseFragment.newInstance(
                 courseId = courseId,

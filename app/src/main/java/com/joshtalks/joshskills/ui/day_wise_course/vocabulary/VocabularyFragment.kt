@@ -254,26 +254,26 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                 }
                 currentChatModel = chatModel
                 chatModel.question!!.status = QUESTION_STATUS.IP
-
-                onQuestionSubmitted(chatModel)
-                openNextScreen()
-
-                val requestEngage = RequestEngage()
-//                requestEngage.text = binding.etPractise.text.toString()
-                requestEngage.localPath = chatModel.filePath
-                requestEngage.duration =
-                    Utils.getDurationOfMedia(requireActivity(), chatModel.filePath)?.toInt()
-                requestEngage.feedbackRequire = chatModel.question?.feedback_require
-                requestEngage.questionId = chatModel.question?.questionId!!
-                requestEngage.mentor = Mentor.getInstance().getId()
-                if (it == EXPECTED_ENGAGE_TYPE.AU || it == EXPECTED_ENGAGE_TYPE.VI || it == EXPECTED_ENGAGE_TYPE.DX) {
-                    requestEngage.answerUrl = chatModel.filePath
-                }
                 CoroutineScope(Dispatchers.IO).launch {
                     practiceViewModel.getPointsForVocabAndReading(chatModel.question?.questionId!!)
                 }
 
+                onQuestionSubmitted(chatModel)
+                openNextScreen()
+
                 CoroutineScope(Dispatchers.IO).launch {
+
+                    val requestEngage = RequestEngage()
+//                requestEngage.text = binding.etPractise.text.toString()
+                    requestEngage.localPath = chatModel.filePath
+                    requestEngage.duration =
+                        Utils.getDurationOfMedia(requireActivity(), chatModel.filePath)?.toInt()
+                    requestEngage.feedbackRequire = chatModel.question?.feedback_require
+                    requestEngage.questionId = chatModel.question?.questionId!!
+                    requestEngage.mentor = Mentor.getInstance().getId()
+                    if (it == EXPECTED_ENGAGE_TYPE.AU || it == EXPECTED_ENGAGE_TYPE.VI || it == EXPECTED_ENGAGE_TYPE.DX) {
+                        requestEngage.answerUrl = chatModel.filePath
+                    }
                     val insertedId =
                         AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
                             PendingTaskModel(requestEngage, PendingTask.VOCABULARY_PRACTICE)
