@@ -252,10 +252,12 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                     showToast(getString(R.string.submit_practise_msz))
                     return false
                 }
+                currentChatModel = chatModel
+                chatModel.question!!.status = QUESTION_STATUS.IP
+
                 onQuestionSubmitted(chatModel)
                 openNextScreen()
 
-                currentChatModel = chatModel
                 val requestEngage = RequestEngage()
 //                requestEngage.text = binding.etPractise.text.toString()
                 requestEngage.localPath = chatModel.filePath
@@ -270,7 +272,6 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                 CoroutineScope(Dispatchers.IO).launch {
                     practiceViewModel.getPointsForVocabAndReading(chatModel.question?.questionId!!)
                 }
-                chatModel.question!!.status = QUESTION_STATUS.IP
 
                 CoroutineScope(Dispatchers.IO).launch {
                     val insertedId =
