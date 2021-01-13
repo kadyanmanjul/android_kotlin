@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
 import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
 import com.joshtalks.joshskills.repository.local.entity.Question
+import com.joshtalks.joshskills.repository.local.entity.practise.PointsListResponse
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.BaseResponse
@@ -160,5 +161,10 @@ interface ChatNetworkService {
     suspend fun getUnreadMessageCount(
         @Path("conversation_id") conversationId: String
     ): Response<JsonObject>
+
+    @GET("$DIR/reputation/vp_rp_snackbar/")
+    suspend fun getSnackBarText(
+        @Query("question_id") questionId: String,
+    ): PointsListResponse
 
 }

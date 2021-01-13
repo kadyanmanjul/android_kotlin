@@ -1647,7 +1647,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 val lessonNo = data.getIntExtra(LESSON_NUMBER, 0)
 
                 if (lessonNo >= 2 && PrefManager.getBoolValue(COURSE_PROGRESS_OPENED)
-                        .not() && inboxEntity.courseId == "151"
+                        .not() && inboxEntity.isPointsActive
                 ) {
                     showCourseProgressTooltip()
                 }
@@ -1995,7 +1995,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             observeNetwork()
         }
         conversationViewModel.getUnreadMessageCount(inboxEntity.conversation_id)
-        if (inboxEntity.courseId.equals("151"))
+        if (inboxEntity.isPointsActive)
             conversationViewModel.getProfileData(Mentor.getInstance().getId())
     }
 

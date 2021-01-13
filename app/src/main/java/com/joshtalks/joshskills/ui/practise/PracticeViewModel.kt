@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.practise.PointsListResponse
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
@@ -49,6 +50,7 @@ class PracticeViewModel(application: Application) :
     val practiceFeedback2LiveData: MutableLiveData<PracticeFeedback2> = MutableLiveData()
     val practiceEngagementData: MutableLiveData<PracticeEngagement> = MutableLiveData()
     val assessmentData: MutableLiveData<ArrayList<AssessmentWithRelations>> = MutableLiveData()
+    val pointsSnackBarText: MutableLiveData<PointsListResponse> = MutableLiveData()
     private var isRecordingStarted = false
 
 
@@ -348,6 +350,7 @@ class PracticeViewModel(application: Application) :
 
     fun submitReadingPractise(questionId: String, path: String) {
         viewModelScope.launch(Dispatchers.IO) {
+            getPointsForVocabAndReading(questionId)
             val requestEngage = RequestEngage()
             requestEngage.localPath = path
             requestEngage.duration =
@@ -370,6 +373,11 @@ class PracticeViewModel(application: Application) :
                 )
             FileUploadService.uploadSinglePendingTasks(insertedTaskLocalId = insertedId)
         }
+    }
+
+    suspend fun getPointsForVocabAndReading(questionId: String) {
+        val response=AppObjectController.chatNetworkService.getSnackBarText(questionId)
+        pointsSnackBarText.postValue(response)
     }
 
     fun getPracticeAfterUploaded(id: String, callback: (ChatModel) -> Unit) {

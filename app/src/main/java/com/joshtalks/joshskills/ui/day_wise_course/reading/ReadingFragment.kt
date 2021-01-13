@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -93,7 +94,16 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
         )
         binding.lifecycleOwner = this
         binding.handler = this
+        addObserver()
         return binding.root
+    }
+
+    private fun addObserver() {
+        practiceViewModel.pointsSnackBarText.observe(this.viewLifecycleOwner, androidx.lifecycle.Observer {
+            if (it.pointsList.isNullOrEmpty().not()) {
+                showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
+            }
+        })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

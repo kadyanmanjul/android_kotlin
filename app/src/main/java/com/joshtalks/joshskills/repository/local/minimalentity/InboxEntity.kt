@@ -41,5 +41,7 @@ data class InboxEntity constructor(
     val voiceCallStatus: Boolean = false,
     @ColumnInfo(name = "is_group_active")
     val isGroupActive: Boolean = false,
+    @ColumnInfo(name = "is_points_active")
+    val isPointsActive: Boolean = false
 
     ) : Parcelable

@@ -56,6 +56,9 @@ data class Course(
     @ColumnInfo(name = "is_group_active")
     @SerializedName("is_group_active") val isGroupActive: Boolean = false,
 
+    @ColumnInfo(name = "is_points_active")
+    @SerializedName("is_points_active") val isPointsActive: Boolean = false,
+
     ) : Serializable
 
 

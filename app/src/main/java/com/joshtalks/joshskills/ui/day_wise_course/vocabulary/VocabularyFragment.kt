@@ -128,9 +128,9 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
             initAdapter(it)
         })
 
-        practiceViewModel.practiceEngagementData.observe(viewLifecycleOwner, Observer {
+        practiceViewModel.pointsSnackBarText.observe(viewLifecycleOwner, Observer {
             if (it.pointsList.isNullOrEmpty().not()) {
-                showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
+                showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
             }
         })
     }
@@ -275,6 +275,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                         AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
                             PendingTaskModel(requestEngage, PendingTask.VOCABULARY_PRACTICE)
                         )
+                    practiceViewModel.getPointsForVocabAndReading(chatModel.question?.questionId!!)
                     FileUploadService.uploadSinglePendingTasks(
                         AppObjectController.joshApplication,
                         insertedId
