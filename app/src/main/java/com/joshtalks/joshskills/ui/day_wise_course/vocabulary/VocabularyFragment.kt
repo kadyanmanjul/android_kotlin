@@ -267,7 +267,9 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                 if (it == EXPECTED_ENGAGE_TYPE.AU || it == EXPECTED_ENGAGE_TYPE.VI || it == EXPECTED_ENGAGE_TYPE.DX) {
                     requestEngage.answerUrl = chatModel.filePath
                 }
-
+                CoroutineScope(Dispatchers.IO).launch {
+                    practiceViewModel.getPointsForVocabAndReading(chatModel.question?.questionId!!)
+                }
                 chatModel.question!!.status = QUESTION_STATUS.IP
 
                 CoroutineScope(Dispatchers.IO).launch {
@@ -275,7 +277,6 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                         AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
                             PendingTaskModel(requestEngage, PendingTask.VOCABULARY_PRACTICE)
                         )
-                    practiceViewModel.getPointsForVocabAndReading(chatModel.question?.questionId!!)
                     FileUploadService.uploadSinglePendingTasks(
                         AppObjectController.joshApplication,
                         insertedId
