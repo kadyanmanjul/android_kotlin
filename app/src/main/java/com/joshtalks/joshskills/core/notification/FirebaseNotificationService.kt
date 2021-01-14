@@ -7,6 +7,8 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
@@ -15,6 +17,9 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.cometchat.pro.constants.CometChatConstants
+import com.cometchat.pro.helpers.CometChatHelper
+import com.cometchat.pro.models.BaseMessage
 import com.facebook.share.internal.ShareConstants.ACTION_TYPE
 import com.freshchat.consumer.sdk.Freshchat
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -45,6 +50,8 @@ import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeAct
 import com.joshtalks.joshskills.ui.conversation_practice.PRACTISE_ID
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.groupchat.constant.StringContract
+import com.joshtalks.joshskills.ui.groupchat.messagelist.CometChatMessageListActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
@@ -55,10 +62,15 @@ import com.joshtalks.joshskills.ui.voip.RTC_CHANNEL_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_TOKEN_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
 import com.joshtalks.joshskills.ui.voip.WebRtcService
+import java.io.IOException
+import java.io.InputStream
 import java.lang.reflect.Type
+import java.net.HttpURLConnection
+import java.net.URL
 import java.util.concurrent.ExecutorService
 import org.json.JSONObject
 import timber.log.Timber
+
 
 const val FCM_TOKEN = "fcmToken"
 const val HAS_NOTIFICATION = "has_notification"
@@ -71,6 +83,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     private var notificationChannelId = "101111"
     private var notificationChannelName = "JoshTalksDefault"
+    private var msgCount = 0
 
     @RequiresApi(Build.VERSION_CODES.N)
     private var importance = NotificationManager.IMPORTANCE_DEFAULT
@@ -93,6 +106,32 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         try {
             if (Freshchat.isFreshchatNotification(remoteMessage)) {
                 Freshchat.handleFcmMessage(this, remoteMessage)
+            } else if (remoteMessage.data.containsKey("message") && remoteMessage.data["message"] != null) {
+                msgCount++
+                val baseMessage =
+                    CometChatHelper.processMessage(JSONObject(remoteMessage.data["message"]!!))
+                val json = JSONObject(remoteMessage.data as Map<String, String>)
+
+//                val nc: NotificationObject = NotificationObject()
+//                nc.action = NotificationAction.GROUP_CHAT_MESSAGE_NOTIFICATION
+//                nc.extraData = json.toString(0)
+//                nc.id =
+//                    if (baseMessage.receiverType == CometChatConstants.RECEIVER_TYPE_GROUP) baseMessage.receiverUid else baseMessage.sender.uid
+//                nc.contentTitle = json.getString("title")
+//                nc.contentText = json.getString("alert")
+//                nc.name = NotificationAction.GROUP_CHAT_MESSAGE_NOTIFICATION.name
+//                nc.type = "Message"
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                    importance = NotificationManager.IMPORTANCE_HIGH
+//                }
+//                notificationChannelId = NotificationAction.GROUP_CHAT_MESSAGE_NOTIFICATION.name
+//                sendNotification(nc)
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    importance = NotificationManager.IMPORTANCE_HIGH
+                }
+                notificationChannelId = NotificationAction.GROUP_CHAT_MESSAGE_NOTIFICATION.name
+                showNotification(baseMessage, json)
             } else {
                 if (BuildConfig.DEBUG) {
                     Timber.tag(FirebaseNotificationService::class.java.simpleName).e(
@@ -539,5 +578,119 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         return false
     }
 
+    private fun showNotification(baseMessage: BaseMessage, json: JSONObject) {
+        try {
+
+            Intent(applicationContext, CometChatMessageListActivity::class.java).apply {
+                putExtra(NOTIFICATION_ID, baseMessage.receiverUid)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                putExtra(HAS_NOTIFICATION, true)
+                putExtra(StringContract.IntentStrings.GUID, baseMessage.receiverUid)
+                putExtra(StringContract.IntentStrings.TYPE, CometChatConstants.RECEIVER_TYPE_GROUP)
+                    .run {
+
+                        val activityList = arrayOf(this)
+
+                        val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
+                        val defaultSound =
+                            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+                        val pendingIntent = PendingIntent.getActivities(
+                            applicationContext,
+                            uniqueInt, activityList,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                        )
+
+                        val style = NotificationCompat.BigTextStyle()
+                        style.setBigContentTitle(json.getString("title"))
+                        style.bigText(json.getString("alert"))
+                        style.setSummaryText(json.getString("title"))
+
+                        val notificationBuilder =
+                            NotificationCompat.Builder(
+                                this@FirebaseNotificationService,
+                                notificationChannelId
+                            )
+                                .setTicker(null)
+                                .setSmallIcon(R.drawable.ic_status_bar_notification)
+                                .setContentTitle(json.getString("title"))
+                                .setAutoCancel(true)
+                                .setSound(defaultSound)
+                                .setContentText(json.getString("alert"))
+                                .setContentIntent(pendingIntent)
+                                .setStyle(style)
+                                .setWhen(System.currentTimeMillis())
+                                .setDefaults(Notification.DEFAULT_ALL)
+                                .setColor(
+                                    ContextCompat.getColor(
+                                        this@FirebaseNotificationService,
+                                        R.color.colorAccent
+                                    )
+                                )
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            notificationBuilder.priority = NotificationManager.IMPORTANCE_DEFAULT
+                        }
+
+                        val iconUrl =
+                            "https://s3.ap-south-1.amazonaws.com/www.staging.static.joshtalks.com/cometgroup/url/SpokenEnglish_d2dd9f2098d04989a515c55280b2d6c3.webp"
+                        notificationBuilder.setLargeIcon(getBitmapFromURL(iconUrl))
+
+                        val dismissIntent =
+                            Intent(
+                                applicationContext,
+                                DismissNotifEventReceiver::class.java
+                            ).apply {
+                                putExtra(NOTIFICATION_ID, baseMessage.receiverUid)
+                                putExtra(HAS_NOTIFICATION, true)
+                            }
+                        val dismissPendingIntent: PendingIntent =
+                            PendingIntent.getBroadcast(
+                                applicationContext,
+                                uniqueInt,
+                                dismissIntent,
+                                0
+                            )
+
+                        notificationBuilder.setDeleteIntent(dismissPendingIntent)
+
+                        val notificationManager =
+                            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            val notificationChannel = NotificationChannel(
+                                notificationChannelId,
+                                notificationChannelName,
+                                importance
+                            )
+                            notificationChannel.enableLights(true)
+                            notificationChannel.enableVibration(true)
+                            notificationBuilder.setChannelId(notificationChannelId)
+                            notificationManager.createNotificationChannel(notificationChannel)
+                        }
+                        notificationManager.notify(uniqueInt, notificationBuilder.build())
+                    }
+            }
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun getBitmapFromURL(strURL: String?): Bitmap? {
+        return if (strURL != null) {
+            try {
+                val url = URL(strURL)
+                val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
+                connection.doInput = true
+                connection.connect()
+                val input: InputStream = connection.inputStream
+                BitmapFactory.decodeStream(input)
+            } catch (e: IOException) {
+                e.printStackTrace()
+                null
+            }
+        } else {
+            null
+        }
+    }
 
 }

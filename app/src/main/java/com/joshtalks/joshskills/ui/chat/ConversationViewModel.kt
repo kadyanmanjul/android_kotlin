@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
@@ -673,6 +674,7 @@ class ConversationViewModel(application: Application) :
                         object : CometChat.CallbackListener<User>() {
                             override fun onSuccess(p0: User?) {
                                 Timber.d("Login Successful : %s", p0?.toString())
+                                registerFCMTokenWithCometChat()
                                 userLoginLiveData.postValue(groupDetails)
                                 isLoading.postValue(false)
                             }
@@ -713,6 +715,7 @@ class ConversationViewModel(application: Application) :
                 }
             } else {
                 // User already logged in
+                registerFCMTokenWithCometChat()
                 userLoginLiveData.postValue(groupDetails)
                 isLoading.postValue(false)
             }
@@ -737,22 +740,44 @@ class ConversationViewModel(application: Application) :
         }
     }
 
-    suspend fun getLessonStatus(lessonId: Int): Boolean {
-        when (appDatabase.lessonDao().getLesson(lessonId)?.status) {
+    fun getLessonStatus(lessonId: Int): Boolean {
+        return when (appDatabase.lessonDao().getLesson(lessonId)?.status) {
             LESSON_STATUS.CO -> {
-                return true
+                true
             }
             else -> {
-                return false
+                false
             }
         }
     }
 
-    suspend fun getLessonModel(lessonId: Int): LessonModel? {
+    fun getLessonModel(lessonId: Int): LessonModel? {
         return appDatabase.lessonDao().getLesson(lessonId)
     }
 
-    suspend fun getAwardMentorModel(awardMentorId: Int): AwardMentorModel? {
+    fun getAwardMentorModel(awardMentorId: Int): AwardMentorModel? {
         return appDatabase.awardMentorModelDao().getAwardMentorModel(awardMentorId)
     }
+
+    fun registerFCMTokenWithCometChat() {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val token = PrefManager.getStringValue(FCM_TOKEN)
+                CometChat.registerTokenForPushNotification(
+                    token,
+                    object : CometChat.CallbackListener<String?>() {
+                        override fun onSuccess(s: String?) {
+                            Timber.d("FCM Token $token Registered with CometChat")
+                        }
+
+                        override fun onError(e: CometChatException) {
+                            Timber.d("Unable to register FCM Token with CometChat")
+                        }
+                    })
+            } catch (ex: Throwable) {
+                Timber.d(ex)
+            }
+        }
+    }
+
 }
