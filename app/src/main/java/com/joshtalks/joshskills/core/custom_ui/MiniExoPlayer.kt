@@ -158,8 +158,9 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
                     DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
                     DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
                 )
+                    .setPrioritizeTimeOverSizeThresholds(true)
                     .setAllocator(defaultAllocator)
-                    .createDefaultLoadControl()
+                    .build()
 
                 player = SimpleExoPlayer.Builder(context, renderersFactory)
                     .setLoadControl(defaultLoadControl)
