@@ -19,9 +19,10 @@
             android:id="@+id/decorator"
             android:layout_width="@dimen/_180sdp"
             android:layout_height="@dimen/_48sdp"
-            android:layout_marginTop="@dimen/_17sdp"
             android:background="@drawable/ic_student_card_rectangle_text_bg"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.125"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -30,9 +31,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_7sdp"
             android:gravity="start"
-            android:lineHeight="@dimen/_9ssp"
             android:textAllCaps="true"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+            android:textSize="16sp"
             android:textColor="@color/white"
             app:layout_constraintBottom_toTopOf="@id/tv_student_of"
             app:layout_constraintEnd_toEndOf="parent"
@@ -129,9 +130,11 @@
             android:textColor="@color/white"
             app:layout_constraintVertical_bias="0"
             android:layout_marginBottom="@dimen/_2sdp"
-            android:paddingBottom="@dimen/_2sdp"
+            android:paddingBottom="@dimen/_4sdp"
+            android:paddingHorizontal="@dimen/_3sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/total_points"
             tools:text="Vedant won this award by earning 470 points through his hardwork yesterday" />
 
