@@ -51,7 +51,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -1371,7 +1370,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                     practiceViewModel.getPointsForVocabAndReading(chatModel.question?.questionId!!)
                     val insertedId =
                         AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
-                            PendingTaskModel(requestEngage, PendingTask.READING_PRACTICE)
+                            PendingTaskModel(requestEngage, PendingTask.READING_PRACTICE_OLD)
                         )
                     FileUploadService.uploadSinglePendingTasks(
                         AppObjectController.joshApplication,

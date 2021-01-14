@@ -24,5 +24,7 @@ data class PendingTaskModel(
 
 enum class PendingTask {
     VOCABULARY_PRACTICE,
-    READING_PRACTICE
+    READING_PRACTICE,
+    READING_PRACTICE_OLD,
+
 }

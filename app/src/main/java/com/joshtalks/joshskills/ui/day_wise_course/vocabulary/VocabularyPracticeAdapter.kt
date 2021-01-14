@@ -8,19 +8,11 @@ import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.SystemClock
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.ImageView
-import android.widget.RadioButton
-import android.widget.RadioGroup
-import android.widget.SeekBar
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.children
@@ -34,24 +26,16 @@ import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.TAG
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
+import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
+import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.PracticeItemLayoutBinding
 import com.joshtalks.joshskills.databinding.VocabQuizPracticeItemLayoutBinding
-import com.joshtalks.joshskills.repository.local.entity.AudioType
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
@@ -61,12 +45,12 @@ import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.muddzdev.styleabletoast.StyleableToast
-import java.util.concurrent.TimeUnit
-import kotlin.random.Random.Default.nextInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
+import java.util.concurrent.TimeUnit
+import kotlin.random.Random.Default.nextInt
 
 class VocabularyPracticeAdapter(
     val context: Context,
@@ -216,7 +200,7 @@ class VocabularyPracticeAdapter(
                     }
                 }
                 quizQuestionId = assessmentQuestions.question.remoteId
-                isCorrect = assessmentQuestions.question.status==QuestionStatus.CORRECT
+                isCorrect = assessmentQuestions.question.status == QuestionStatus.CORRECT
 
                 binding.practiceTitleTv.text =
                     context.getString(
@@ -1074,7 +1058,7 @@ class VocabularyPracticeAdapter(
                         binding.counterTv.base = SystemClock.elapsedRealtime()
                         startTime = System.currentTimeMillis()
                         binding.counterTv.start()
-                        startRecording(startTime)
+                        startRecording(chatModel, startTime)
                         clickListener.startRecording(chatModel, layoutPosition, startTime)
                         binding.audioPractiseHint.visibility = GONE
 
@@ -1108,26 +1092,24 @@ class VocabularyPracticeAdapter(
             }
         }
 
-        private fun startRecording(startTime: Long) {
+        private fun startRecording(chatModel: ChatModel, startTime: Long) {
             this.startTime = startTime
-            practiceViewModel.startRecordAudio(null)
+            practiceViewModel.startRecordAudio(object : OnAudioRecordListener {
+                override fun onRecordFinished(recordingItem: RecordingItem?) {
+                    recordingItem?.filePath?.let {
+                        filePath = AppDirectory.getAudioSentFile(
+                            null,
+                            audioExtension = ".m4a"
+                        ).absolutePath
+                        AppDirectory.copy(it, filePath!!)
+                        chatModel.filePath = filePath
+                    }
+                }
+            })
         }
 
         fun stopRecording(chatModel: ChatModel, stopTime: Long) {
             practiceViewModel.stopRecordingAudio(false)
-            val timeDifference =
-                TimeUnit.MILLISECONDS.toSeconds(stopTime) - TimeUnit.MILLISECONDS.toSeconds(
-                    startTime
-                )
-            if (timeDifference > 1) {
-                practiceViewModel.recordFile?.let {
-                    filePath =
-                        AppDirectory.getAudioSentFile(null, audioExtension = ".m4a").absolutePath
-                    chatModel.filePath = filePath
-                    AppDirectory.copy(it.absolutePath, filePath!!)
-                }
-
-            }
         }
 
         private fun audioAttachmentInit(chatModel: ChatModel) {

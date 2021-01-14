@@ -12,21 +12,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshFragment
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentVocabularyBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.PendingTask
-import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
@@ -40,10 +29,10 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 const val PRACTISE_OBJECT = "practise_object"
 
@@ -295,11 +284,11 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         this.startTime = startTimeUnit
         if (isAdded && activity != null)
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        practiceViewModel.startRecordAudio(null)
+        //    practiceViewModel.startRecordAudio(null)
     }
 
     override fun stopRecording(chatModel: ChatModel, position: Int, stopTime: Long) {
-        practiceViewModel.stopRecordingAudio(false)
+        //    practiceViewModel.stopRecordingAudio(false)
         if (isAdded && activity != null)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val timeDifference =
@@ -309,9 +298,9 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         if (timeDifference > 1) {
             practiceViewModel.recordFile?.let {
 //                                isAudioRecordDone = true
-                filePath = AppDirectory.getAudioSentFile(null, audioExtension = ".m4a").absolutePath
-                chatModel.filePath = filePath
-                AppDirectory.copy(it.absolutePath, filePath!!)
+                // filePath = AppDirectory.getAudioSentFile(null, audioExtension = ".m4a").absolutePath
+                //   AppDirectory.copy(it.absolutePath, filePath!!)
+                //      chatModel.filePath = filePath
             }
 
         }

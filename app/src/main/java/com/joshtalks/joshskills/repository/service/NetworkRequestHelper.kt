@@ -107,16 +107,21 @@ object NetworkRequestHelper {
                         question.lesson?.let {
                             AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
                         }
-                        if (question.practiseEngagementV2.isNullOrEmpty().not()) {
-                            question.practiceEngagement = AppObjectController.gsonMapper.fromJson(
-                                question.practiseEngagementV2?.toString(),
-                                practiceEnagagement
-                            )
-                            question.practiseEngagementV2?.forEach { pe ->
-                                pe.questionForId = question.questionId
-                                AppObjectController.appDatabase.practiceEngagementDao()
-                                    .insertPractise(pe)
+                        try {
+                            if (question.practiseEngagementV2.isNullOrEmpty().not()) {
+                                question.practiceEngagement =
+                                    AppObjectController.gsonMapper.fromJson(
+                                        question.practiseEngagementV2?.toString(),
+                                        practiceEnagagement
+                                    )
+                                question.practiseEngagementV2?.forEach { pe ->
+                                    pe.questionForId = question.questionId
+                                    AppObjectController.appDatabase.practiceEngagementDao()
+                                        .insertPractise(pe)
+                                }
                             }
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
                         }
 
                         if (question.type == BASE_MESSAGE_TYPE.CE) {
