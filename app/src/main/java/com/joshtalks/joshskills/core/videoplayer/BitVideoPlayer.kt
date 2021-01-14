@@ -324,6 +324,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                     setAllowAudioMixedChannelCountAdaptiveness(true)
                     setAllowAudioMixedMimeTypeAdaptiveness(true)
                     setAllowAudioMixedSampleRateAdaptiveness(true)
+
                 }?.build()?.run {
                     trackSelector?.parameters = this
                 }
@@ -338,13 +339,20 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                     DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
                     DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
                 )
+                    .setPrioritizeTimeOverSizeThresholds(true)
                     .setAllocator(defaultAllocator)
-                    .createDefaultLoadControl()
-
+                    .build()
+                //.createDefaultLoadControl()
+                val audioAttributes = AudioAttributes.Builder()
+                    .setContentType(C.CONTENT_TYPE_MUSIC)
+                    .setUsage(C.USAGE_MEDIA)
+                    .build()
                 player = SimpleExoPlayer.Builder(context, renderersFactory)
                     .setLoadControl(defaultLoadControl)
                     .setUseLazyPreparation(true)
-                    .setTrackSelector(trackSelector!!).build()
+                    .setTrackSelector(trackSelector!!).build().apply {
+                        setAudioAttributes(audioAttributes, true)
+                    }
             } catch (e: Exception) {
                 throw e
             }
