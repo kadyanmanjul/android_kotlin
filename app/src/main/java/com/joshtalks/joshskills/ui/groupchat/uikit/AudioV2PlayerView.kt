@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEvent
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AudioPlayerEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.PauseAudioEventBus
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -74,6 +75,13 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
         pauseButton.setOnClickListener(this)
         playButton.visibility = View.VISIBLE
         // pauseButton.visibility = View.VISIBLE
+
+        RxBus2.listenWithoutDelay(PauseAudioEventBus::class.java)
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                onPausePlayer()
+            }
     }
 
     fun bindView(

@@ -53,6 +53,8 @@ import com.google.android.material.snackbar.Snackbar;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.core.PermissionUtils;
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener;
+import com.joshtalks.joshskills.messaging.RxBus2;
+import com.joshtalks.joshskills.repository.local.eventbus.PauseAudioEventBus;
 import com.joshtalks.joshskills.ui.chat.ConversationActivity;
 import com.joshtalks.joshskills.ui.groupchat.adapter.MessageAdapter;
 import com.joshtalks.joshskills.ui.groupchat.constant.StringContract;
@@ -964,7 +966,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     private void setAvatar() {
         if (avatarUrl != null && !avatarUrl.isEmpty())
             userAvatar.setAvatar(avatarUrl);
-        else {
+        else if (name != null) {
             userAvatar.setInitials(name, "#0D63B9");
         }
     }
@@ -1495,6 +1497,11 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        RxBus2.publish(new PauseAudioEventBus());
+    }
 
     @Override
     public void onClick(View view) {

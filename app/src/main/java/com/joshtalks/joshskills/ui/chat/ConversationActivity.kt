@@ -111,29 +111,15 @@ import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.MutableList
-import kotlin.collections.MutableSet
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.filter
-import kotlin.collections.find
-import kotlin.collections.forEach
-import kotlin.collections.forEachIndexed
-import kotlin.collections.getOrNull
-import kotlin.collections.groupBy
-import kotlin.collections.isNullOrEmpty
-import kotlin.collections.lastOrNull
-import kotlin.collections.linkedSetOf
-import kotlin.collections.mutableSetOf
-import kotlin.collections.toList
-import kotlin.collections.toSortedMap
 import kotlin.concurrent.scheduleAtFixedRate
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -914,22 +900,30 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             }
         })
         conversationViewModel.unreadMessageCount.observe(this) { count ->
-            when {
-                count in 1..99 -> {
-                    conversationBinding.txtUnreadCount.visibility = VISIBLE
-                    conversationBinding.txtUnreadCount.text = String.format("%d", count)
+            if (inboxEntity.isGroupActive) {
+                when {
+                    count in 1..99 -> {
+                        conversationBinding.imgGroupChat.visibility = VISIBLE
+                        conversationBinding.txtUnreadCount.visibility = VISIBLE
+                        conversationBinding.txtUnreadCount.text = String.format("%d", count)
+                    }
+                    count > 99 -> {
+                        conversationBinding.imgGroupChat.visibility = VISIBLE
+                        conversationBinding.txtUnreadCount.visibility = VISIBLE
+                        conversationBinding.txtUnreadCount.text =
+                            getString(R.string.max_unread_count)
+                    }
+                    else -> {
+                        conversationBinding.imgGroupChat.visibility = VISIBLE
+                        conversationBinding.txtUnreadCount.visibility = GONE
+                        conversationBinding.txtUnreadCount.text = EMPTY
+                    }
                 }
-                count > 99 -> {
-                    conversationBinding.txtUnreadCount.visibility = VISIBLE
-                    conversationBinding.txtUnreadCount.text = getString(R.string.max_unread_count)
-                }
-                else -> {
-                    conversationBinding.txtUnreadCount.visibility = GONE
-                    conversationBinding.txtUnreadCount.text = EMPTY
-                }
+            } else {
+                conversationBinding.imgGroupChat.visibility = GONE
+                conversationBinding.txtUnreadCount.visibility = GONE
             }
         }
-
     }
 
     private fun initToolbarView() {
@@ -1994,7 +1988,9 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             subscribeRXBus()
             observeNetwork()
         }
-        conversationViewModel.getUnreadMessageCount(inboxEntity.conversation_id)
+        if (inboxEntity.isGroupActive) {
+            conversationViewModel.getUnreadMessageCount(inboxEntity.conversation_id)
+        }
         if (inboxEntity.isPointsActive)
             conversationViewModel.getProfileData(Mentor.getInstance().getId())
     }

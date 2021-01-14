@@ -1130,7 +1130,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private void setAvatar(Avatar avatar, String avatarUrl, String name, String bgColorCode) {
         if (avatarUrl != null && !avatarUrl.isEmpty()) {
             Glide.with(context).load(avatarUrl).into(avatar);
-        } else {
+        } else if (name != null) {
             avatar.setInitials(name, bgColorCode);
         }
     }
