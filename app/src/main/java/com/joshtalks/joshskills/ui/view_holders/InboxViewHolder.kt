@@ -37,11 +37,11 @@ import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
+import java.util.Date
+import java.util.Locale
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import timber.log.Timber
-import java.util.Date
-import java.util.Locale
 
 @Layout(R.layout.inbox_row_layout)
 class InboxViewHolder(
@@ -301,4 +301,6 @@ class InboxViewHolder(
             })
             .into(this)
     }
+
+
 }

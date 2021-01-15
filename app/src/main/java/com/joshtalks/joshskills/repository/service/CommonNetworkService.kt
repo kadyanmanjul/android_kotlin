@@ -249,7 +249,7 @@ interface CommonNetworkService {
     ): WordDetailsResponse
 
     @FormUrlEncoded
-    @PUT("$DIR/voicenote/notification/")
+    @PUT("$DIR/group/voicenote/notification/")
     suspend fun audioPlayed(
         @Field("group_id") groupId: String,
         @Field("message_id") messageId: Int

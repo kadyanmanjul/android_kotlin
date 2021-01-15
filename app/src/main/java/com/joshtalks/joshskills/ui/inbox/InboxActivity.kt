@@ -128,6 +128,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         initNewUserTip()
         viewModel.getTotalWatchTime()
 
+        viewModel.initCometChat()
         FileUploadService.uploadAllPendingTasks(AppObjectController.joshApplication)
         //viewModel.getProfileData(Mentor.getInstance().getId())
     }
@@ -760,14 +761,15 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
         val capsuleCourse = items.filter { it.isCapsuleCourse }
         if (capsuleCourse.isNullOrEmpty().not()) {
-            capsuleCourse.sortedByDescending { it.courseCreatedDate }.forEachIndexed { index, inbox ->
-                recycler_view_inbox.addView(
-                    InboxViewHolder(
-                        inbox, total, index
+            capsuleCourse.sortedByDescending { it.courseCreatedDate }
+                .forEachIndexed { index, inbox ->
+                    recycler_view_inbox.addView(
+                        InboxViewHolder(
+                            inbox, total, index
+                        )
                     )
-                )
-                capsuleIndex = index.plus(1)
-            }
+                    capsuleIndex = index.plus(1)
+                }
         }
 
 
