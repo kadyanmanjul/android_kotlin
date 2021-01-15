@@ -3,7 +3,12 @@ package com.joshtalks.joshskills.ui.groupchat.uikit
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
-import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.PlaybackParameters
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
@@ -18,7 +23,7 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 
 class ExoAudioPlayer2 {
-    private var progressTracker: ProgressTracker? = null
+    private var progressTracker: ExoAudioPlayer2.ProgressTracker? = null
     private var progressUpdateListener: ProgressUpdateListener? = null
     var context: Context? = AppObjectController.joshApplication
     private val playerEventListener: Player.EventListener
@@ -90,7 +95,8 @@ class ExoAudioPlayer2 {
     }
 
     fun setProgressUpdateListener(progressUpdateListener: ProgressUpdateListener?) {
-        this.progressUpdateListener = progressUpdateListener
+        if (progressUpdateListener != null)
+            this.progressUpdateListener = progressUpdateListener
     }
 
     private fun initializePlayer() {
@@ -174,10 +180,11 @@ class ExoAudioPlayer2 {
 
     fun resumeOrPause() {
         player.playWhenReady = player.playWhenReady.not()
-        if (isPlaying())
+        if (isPlaying()) {
             progressTracker?.let { it.handler.post(it) }
-        else
+        } else {
             progressTracker?.let { it.handler.removeCallbacks(it) }
+        }
     }
 
     inner class ProgressTracker(
