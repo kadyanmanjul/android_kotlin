@@ -33,6 +33,7 @@ import timber.log.Timber
 class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
     ExoAudioPlayer2.ProgressUpdateListener, AudioPlayerEventListener {
 
+    private var playCallback: PlayPauseCallback? = null
     private var exoAudioManager: ExoAudioPlayer2? = ExoAudioPlayer2.getInstance()
     private val context = AppObjectController.joshApplication
     private var id: String = EMPTY
@@ -194,6 +195,10 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
 
     }
 
+    fun setAudioPlayLIstener(playCallback: PlayPauseCallback) {
+        this.playCallback = playCallback
+    }
+
     private fun playAudio() {
         if (checkAudioIsDifferent()) {
             exoAudioManager?.let {
@@ -201,15 +206,18 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
                 addListener()
                 if (ExoAudioPlayer2.LAST_ID.isEmpty()) {
                     initAndPlay(url)
+                    playCallback?.onPlayClick(id)
                     return@let
                 }
                 if (ExoAudioPlayer2.LAST_ID == id) {
                     exoAudioManager?.resumeOrPause()
                     if (exoAudioManager?.isPlaying() == true) {
                         playingAudio()
+//                        playCallback?.onPlayClick(id)
                     } else
                         pausingAudio()
                 } else {
+                    playCallback?.onPlayClick(id)
                     initAndPlay(url)
                 }
             }
@@ -269,7 +277,6 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
     }
 
     override fun onPlayerResume() {
-        Timber.tag("AudioV2PlayerView").e("onPlayerResume")
         RxBus2.publish(AudioPlayerEventBus(PlaybackInfoListener.State.PLAYING, id))
     }
 
@@ -346,5 +353,9 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
                 pausingAudio()
             }
         }
+    }
+
+    interface PlayPauseCallback {
+        fun onPlayClick(messageid: String)
     }
 }

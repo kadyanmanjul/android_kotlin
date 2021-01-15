@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +33,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.cometchat.pro.constants.CometChatConstants;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.core.GroupMembersRequest;
@@ -63,6 +65,7 @@ import com.joshtalks.joshskills.ui.groupchat.listeners.MessageActionCloseListene
 import com.joshtalks.joshskills.ui.groupchat.listeners.OnRepliedMessageClick;
 import com.joshtalks.joshskills.ui.groupchat.listeners.StickyHeaderDecoration;
 import com.joshtalks.joshskills.ui.groupchat.screens.CometChatGroupDetailScreenActivity;
+import com.joshtalks.joshskills.ui.groupchat.uikit.AudioV2PlayerView;
 import com.joshtalks.joshskills.ui.groupchat.uikit.Avatar;
 import com.joshtalks.joshskills.ui.groupchat.uikit.ComposeBox.ComposeBox;
 import com.joshtalks.joshskills.ui.groupchat.utils.KeyBoardUtils;
@@ -77,14 +80,18 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
@@ -744,7 +751,12 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
      */
     private void initMessageAdapter(List<BaseMessage> messageList) {
         if (messageAdapter == null) {
-            messageAdapter = new MessageAdapter(CometChatMessageListActivity.this, messageList);
+            messageAdapter = new MessageAdapter(CometChatMessageListActivity.this, messageList, new AudioV2PlayerView.PlayPauseCallback() {
+                @Override
+                public void onPlayClick(@NotNull String messageid) {
+                    viewModel.audioPlayed(Id, Integer.parseInt(messageid));
+                }
+            });
             rvChatListView.setAdapter(messageAdapter);
             stickyHeaderDecoration = new StickyHeaderDecoration(messageAdapter);
             rvChatListView.addItemDecoration(stickyHeaderDecoration, 0);
@@ -1419,9 +1431,9 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         if (messageAdapter != null) {
             if (show) {
                 if (typingIndicator.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_USER))
-                    tvStatus.setText("is Typing...");
+                    tvStatus.setText("is typing...");
                 else
-                    tvStatus.setText(typingIndicator.getSender().getName() + " is Typing...");
+                    tvStatus.setText(typingIndicator.getSender().getName() + " is typing...");
             } else {
                 if (typingIndicator.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_USER)) {
                     tvStatus.setText(status);

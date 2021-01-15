@@ -17,11 +17,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.cometchat.pro.constants.CometChatConstants;
 import com.cometchat.pro.core.Call;
@@ -42,12 +44,14 @@ import com.joshtalks.joshskills.ui.groupchat.uikit.AudioV2PlayerView;
 import com.joshtalks.joshskills.ui.groupchat.uikit.Avatar;
 import com.joshtalks.joshskills.ui.groupchat.utils.Extensions;
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Purpose - MessageAdapter is a subclass of RecyclerView Adapter which is used to display
@@ -100,6 +104,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public Context context;
     public List<BaseMessage> longselectedItemList = new ArrayList<>();
     public int selectedMsgId = -1;
+    AudioV2PlayerView.PlayPauseCallback audioPlayCallback;
     private boolean isLongClickEnabled;
     //    private OnMessageLongClick messageLongClick;
     private OnRepliedMessageClick repliedMessageClickListener;
@@ -116,8 +121,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      * @param context     is a object of Context.
      * @param messageList is a list of messages used in this adapter.
      */
-    public MessageAdapter(CometChatMessageListActivity context, List<BaseMessage> messageList) {
+    public MessageAdapter(CometChatMessageListActivity context, List<BaseMessage> messageList, AudioV2PlayerView.PlayPauseCallback audioPlayCallback) {
         setMessageList(messageList, false);
+        this.audioPlayCallback = audioPlayCallback;
         this.context = context;
 //        try {
 //            messageLongClick = context;
@@ -389,6 +395,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 showMessageTime(viewHolder, baseMessage);
                 return;
             }
+            viewHolder.audioV2PlayerView.setAudioPlayLIstener(audioPlayCallback);
             viewHolder.audioV2PlayerView.showProgressBarVisible(false);
 
             if (!baseMessage.getSender().getUid().equals(loggedInUser.getUid())) {
@@ -498,6 +505,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             showMessageTime(viewHolder, baseMessage);
 
             viewHolder.audioV2PlayerView.bindView(baseMessage.getId(), ((MediaMessage) baseMessage).getAttachment().getFileUrl(), baseMessage.getMetadata());
+            viewHolder.audioV2PlayerView.setAudioPlayLIstener(audioPlayCallback);
+
             viewHolder.audioV2PlayerView.setThemeColor(R.color.grey_68);
             viewHolder.txtTime.setVisibility(View.VISIBLE);
             viewHolder.rlMessageBubble.setOnLongClickListener(v -> {

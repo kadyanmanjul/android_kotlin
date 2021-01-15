@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.groupchat.messagelist
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -95,5 +96,27 @@ class CometChatMessageListViewModel(application: Application) : AndroidViewModel
                 ex.showAppropriateMsg()
             }
         }
+    }
+
+    fun audioPlayed(groupId: String, messageId: Int) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response =
+                    AppObjectController.commonNetworkService.audioPlayed(groupId, messageId)
+                Log.d("DEEPAK", "audioPlayed: $messageId $response")
+
+                if (response.isSuccessful && response.body() != null) {
+                    apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
+
+                    return@launch
+                }
+
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
+            apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+        }
+
+
     }
 }

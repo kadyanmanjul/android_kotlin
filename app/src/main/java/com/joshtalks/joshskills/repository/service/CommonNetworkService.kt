@@ -45,12 +45,14 @@ import java.util.HashMap
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.Field
 import retrofit2.http.FieldMap
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.QueryMap
@@ -245,5 +247,12 @@ interface CommonNetworkService {
         @Path("user_profile_impression_id") userProfileImpressionId: String,
         @Body params: Map<String, Long>
     ): WordDetailsResponse
+
+    @FormUrlEncoded
+    @PUT("$DIR/voicenote/notification/")
+    suspend fun audioPlayed(
+        @Field("group_id") groupId: String,
+        @Field("message_id") messageId: Int
+    ): Response<Any>
 
 }
