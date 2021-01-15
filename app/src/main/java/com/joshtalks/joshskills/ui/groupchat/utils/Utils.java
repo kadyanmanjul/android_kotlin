@@ -757,4 +757,20 @@ public class Utils {
             throw new JSONException("Category missing in JSON");
         }
     }
+
+    public static boolean isMessageVisible(BaseMessage message) {
+        boolean isVisibleToLoggedInUser = true;
+        if (message.getMetadata() != null && message.getMetadata().has("onlyVisibleTo")) {
+            String userId = null;
+            try {
+                userId = message.getMetadata().getString("onlyVisibleTo");
+            } catch (JSONException exception) {
+                exception.printStackTrace();
+            }
+            if (userId != null && !(CometChat.getLoggedInUser().getUid().equals(message.getSender().getUid()) || CometChat.getLoggedInUser().getUid().equals(userId))) {
+                isVisibleToLoggedInUser = false;
+            }
+        }
+        return isVisibleToLoggedInUser;
+    }
 }

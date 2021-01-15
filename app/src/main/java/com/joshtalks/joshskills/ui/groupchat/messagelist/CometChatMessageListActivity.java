@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,7 +32,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.cometchat.pro.constants.CometChatConstants;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.core.GroupMembersRequest;
@@ -55,6 +53,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.core.PermissionUtils;
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener;
+import com.joshtalks.joshskills.core.notification.FirebaseNotificationService;
 import com.joshtalks.joshskills.messaging.RxBus2;
 import com.joshtalks.joshskills.repository.local.eventbus.PauseAudioEventBus;
 import com.joshtalks.joshskills.ui.chat.ConversationActivity;
@@ -80,18 +79,15 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
@@ -1489,6 +1485,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         messageAdapter = null;
         previousMessagesRequest = null;
         nextMessagesRequest = null;
+        FirebaseNotificationService.Companion.getUnreadMessageList().clear();
         // checkOnGoingCall();
         fetchMessage();
         addMessageListener();
@@ -1561,22 +1558,19 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         popupMenu.getMenu().findItem(R.id.menu_clear_media).setEnabled(false);
 
 
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.menu_referral:
-                        ReferralActivity.startReferralActivity(
-                                CometChatMessageListActivity.this,
-                                ConversationActivity.class.getName()
-                        );
-                        return true;
-                    case R.id.menu_help:
-                        startActivity(new Intent(CometChatMessageListActivity.this, HelpActivity.class));
-                        return true;
-                }
-                return true;
+        popupMenu.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.menu_referral:
+                    ReferralActivity.startReferralActivity(
+                            CometChatMessageListActivity.this,
+                            ConversationActivity.class.getName()
+                    );
+                    return true;
+                case R.id.menu_help:
+                    startActivity(new Intent(CometChatMessageListActivity.this, HelpActivity.class));
+                    return true;
             }
+            return true;
         });
         popupMenu.show();
     }

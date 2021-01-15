@@ -30,6 +30,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.cometchat.pro.constants.CometChatConstants
 import com.cometchat.pro.helpers.CometChatHelper
 import com.cometchat.pro.models.BaseMessage
+import com.cometchat.pro.models.Group
+import com.cometchat.pro.models.TextMessage
 import com.facebook.share.internal.ShareConstants.ACTION_TYPE
 import com.freshchat.consumer.sdk.Freshchat
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -45,6 +47,7 @@ import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.Utils.formatDuration
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
@@ -62,6 +65,7 @@ import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.groupchat.constant.StringContract
 import com.joshtalks.joshskills.ui.groupchat.messagelist.CometChatMessageListActivity
+import com.joshtalks.joshskills.ui.groupchat.utils.Utils
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
@@ -77,6 +81,7 @@ import java.io.InputStream
 import java.lang.reflect.Type
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.LinkedList
 import java.util.concurrent.ExecutorService
 import org.json.JSONObject
 import timber.log.Timber
@@ -120,10 +125,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 Freshchat.handleFcmMessage(this, remoteMessage)
             } else if (remoteMessage.data.containsKey("message") && remoteMessage.data["message"] != null) {
                 msgCount++
-                val baseMessage =
-                    CometChatHelper.processMessage(JSONObject(remoteMessage.data["message"]!!))
-                val json = JSONObject(remoteMessage.data as Map<String, String>)
-                showGroupChatNotification(baseMessage, json)
+                showGroupChatNotification(remoteMessage.data["message"]!!)
             } else {
                 if (BuildConfig.DEBUG) {
                     Timber.tag(FirebaseNotificationService::class.java.simpleName).e(
@@ -623,170 +625,219 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         return false
     }
 
-    private fun showGroupChatNotification(baseMessage: BaseMessage, json: JSONObject) {
-        try {
-
-            val clickIntent =
-                Intent(applicationContext, CometChatMessageListActivity::class.java).apply {
+    private fun showGroupChatNotification(data: String) {
+        executor.execute {
+            try {
+                val baseMessage = CometChatHelper.processMessage(JSONObject(data))
+                val group = baseMessage.receiver as Group
+                val message = if (
+                    baseMessage.category == CometChatConstants.CATEGORY_MESSAGE &&
+                    baseMessage.type == CometChatConstants.MESSAGE_TYPE_TEXT
+                ) {
+                    (baseMessage as TextMessage).text.trim()
+                } else if (
+                    baseMessage.category == CometChatConstants.CATEGORY_MESSAGE &&
+                    baseMessage.type == CometChatConstants.MESSAGE_TYPE_AUDIO
+                ) {
+                    var voiceMessage: String? =
+                        String.format(this.resources.getString(R.string.shared_a_audio), "")
+                    if (baseMessage.metadata.has("audioDurationInMs")) {
+                        val audioDurationInMs: Long =
+                            baseMessage.metadata.getLong("audioDurationInMs")
+                        voiceMessage = String.format(
+                            this.resources.getString(R.string.shared_a_audio),
+                            "(" + formatDuration(audioDurationInMs.toInt()) + ")"
+                        )
+                    }
+                    voiceMessage
+                } else {
+                    null
+                }
+                if (Utils.isMessageVisible(baseMessage) && message != null) {
+                    unreadMessageList.add(baseMessage)
+                }
+                val clickIntent =
+                    Intent(applicationContext, CometChatMessageListActivity::class.java).apply {
+                        putExtra(NOTIFICATION_ID, baseMessage.receiverUid)
+                        putExtra(HAS_NOTIFICATION, true)
+                        putExtra(StringContract.IntentStrings.GUID, baseMessage.receiverUid)
+                        putExtra(
+                            StringContract.IntentStrings.TYPE,
+                            CometChatConstants.RECEIVER_TYPE_GROUP
+                        )
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    }
+                val uniqueRequestCode = (System.currentTimeMillis() and 0xfffffff).toInt()
+                val pendingClickIntent = PendingIntent.getActivities(
+                    applicationContext,
+                    uniqueRequestCode,
+                    arrayOf(clickIntent),
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                )
+                val dismissIntent = Intent(
+                    applicationContext,
+                    DismissNotifEventReceiver::class.java
+                ).apply {
                     putExtra(NOTIFICATION_ID, baseMessage.receiverUid)
                     putExtra(HAS_NOTIFICATION, true)
-                    putExtra(StringContract.IntentStrings.GUID, baseMessage.receiverUid)
-                    putExtra(
-                        StringContract.IntentStrings.TYPE,
-                        CometChatConstants.RECEIVER_TYPE_GROUP
-                    )
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 }
-            val uniqueRequestCode = (System.currentTimeMillis() and 0xfffffff).toInt()
-            val pendingClickIntent = PendingIntent.getActivities(
-                applicationContext,
-                uniqueRequestCode,
-                arrayOf(clickIntent),
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
-            val dismissIntent = Intent(
-                applicationContext,
-                DismissNotifEventReceiver::class.java
-            ).apply {
-                putExtra(NOTIFICATION_ID, baseMessage.receiverUid)
-                putExtra(HAS_NOTIFICATION, true)
-            }
-            val pendingDismissIntent: PendingIntent = PendingIntent.getBroadcast(
-                applicationContext,
-                uniqueRequestCode,
-                dismissIntent,
-                0
-            )
-            val defaultSound =
-                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            val iconUrl =
-                "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/skills+logo.png"
-            val notificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                val pendingDismissIntent: PendingIntent = PendingIntent.getBroadcast(
+                    applicationContext,
+                    uniqueRequestCode,
+                    dismissIntent,
+                    0
+                )
+                val defaultSound =
+                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+                val iconUrl =
+                    "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/skills+logo.png"
+                val notificationManager =
+                    getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-            val style = NotificationCompat.BigTextStyle()
-                .setBigContentTitle(json.getString("title"))
-                .bigText(json.getString("alert"))
-                .setSummaryText(json.getString("title"))
+                val style = NotificationCompat.BigTextStyle()
+                    .setBigContentTitle(baseMessage.sender.name)
+                    .setSummaryText(group.name)
+                    .bigText(message)
 
-            val personColor =
-                if (baseMessage.sender.metadata != null && baseMessage.sender.metadata.has("color_code"))
-                    baseMessage.sender.metadata.getString("color_code")
-                else
-                    "#" + Integer.toHexString(ContextCompat.getColor(this, R.color.colorPrimary))
-            val chatGroupBuilder = Person.Builder()
-                .setImportant(true)
-                .setName(
-                    HtmlCompat.fromHtml(
-                        String.format(
-                            "<b><font color=\"%s\">${baseMessage.sender.name}</font></b>",
-                            personColor
-                        ), HtmlCompat.FROM_HTML_MODE_COMPACT
+                val chatGroupIcon: Bitmap? = if (baseMessage.sender.avatar.isNullOrEmpty()) {
+                    getNameInitialBitmap(baseMessage.sender.name, null)
+                } else {
+                    getBitmapFromURL(baseMessage.sender.avatar)?.run { getCroppedBitmap(this) }
+                }
+
+                val chatGroup = Person.Builder()
+                    .setImportant(true)
+                    .setName(
+                        HtmlCompat.fromHtml(
+                            "<b>${(baseMessage.receiver as Group).name}</b>",
+                            HtmlCompat.FROM_HTML_MODE_COMPACT
+                        )
                     )
-                )
-                .setKey(baseMessage.sender.uid)
+                    .setKey(baseMessage.receiverUid)
+                    .setIcon(IconCompat.createWithBitmap(chatGroupIcon))
+                    .build()
 
-            val bitmap: Bitmap? = if (baseMessage.sender.avatar.isNullOrEmpty()) {
-                getNameInitialBitmap(baseMessage.sender.name, personColor)
-            } else {
-                getBitmapFromURL(baseMessage.sender.avatar)
-            }
+                val messagingStyle = NotificationCompat.MessagingStyle(chatGroup)
+                    .setConversationTitle(group.name)
 
-            bitmap?.let {
-                chatGroupBuilder.setIcon(
-                    IconCompat.createWithBitmap(getCroppedBitmap(it))
-                )
-            }
+                unreadMessageList.listIterator().forEach {
+                    val messageText = if (
+                        it.category == CometChatConstants.CATEGORY_MESSAGE &&
+                        it.type == CometChatConstants.MESSAGE_TYPE_TEXT
+                    ) {
+                        (it as TextMessage).text.trim()
+                    } else if (
+                        it.category == CometChatConstants.CATEGORY_MESSAGE &&
+                        it.type == CometChatConstants.MESSAGE_TYPE_AUDIO
+                    ) {
+                        var voiceMessage: String? =
+                            String.format(this.resources.getString(R.string.shared_a_audio), "")
+                        if (it.metadata.has("audioDurationInMs")) {
+                            val audioDurationInMs: Long =
+                                it.metadata.getLong("audioDurationInMs")
+                            voiceMessage = String.format(
+                                this.resources.getString(R.string.shared_a_audio),
+                                "(" + formatDuration(audioDurationInMs.toInt()) + ")"
+                            )
+                        }
+                        voiceMessage
+                    } else {
+                        null
+                    }
+                    val senderColor =
+                        if (it.sender.metadata != null && it.sender.metadata.has("color_code"))
+                            it.sender.metadata.getString("color_code")
+                        else
+                            "#" + Integer.toHexString(
+                                ContextCompat.getColor(
+                                    this,
+                                    R.color.colorPrimary
+                                )
+                            )
 
-            val chatGroup = chatGroupBuilder.build()
+                    val senderIcon: Bitmap? = if (it.sender.avatar.isNullOrEmpty()) {
+                        getNameInitialBitmap(it.sender.name, senderColor)
+                    } else {
+                        getBitmapFromURL(it.sender.avatar)?.run { getCroppedBitmap(this) }
+                    }
 
-            val person2 = Person.Builder()
-                .setImportant(true)
-                .setName(HtmlCompat.fromHtml("<b>You</b>", HtmlCompat.FROM_HTML_MODE_COMPACT))
-                .setIcon(IconCompat.createWithResource(this, R.drawable.round_rectangle))
-                .setKey("1234")
-                .build()
-            val message1 = NotificationCompat.MessagingStyle.Message(
-                "Hi",
-                System.currentTimeMillis() - 50000,
-                chatGroup
-            )
-            val message2 = NotificationCompat.MessagingStyle.Message(
-                "What's up?",
-                System.currentTimeMillis() - 40000,
-                person2
-            )
-            val message3 = NotificationCompat.MessagingStyle.Message(
-                "Not much",
-                System.currentTimeMillis() - 20000,
-                chatGroup
-            )
-            val message4 = NotificationCompat.MessagingStyle.Message(
-                json.getString("alert"),
-                System.currentTimeMillis(),
-                chatGroup
-            )
-            val messagingStyle = NotificationCompat.MessagingStyle(chatGroup)
-                .setConversationTitle("ConvoTitle - GroupName")
-                .addMessage(message1)
-                .addMessage(message2)
-                .addMessage(message3)
-                .addMessage(message4)
+                    val sender = Person.Builder()
+                        .setImportant(true)
+                        .setName(
+                            HtmlCompat.fromHtml(
+                                "<b><font color=$senderColor>${it.sender.name}</font></b>",
+                                HtmlCompat.FROM_HTML_MODE_COMPACT
+                            )
+                        )
+                        .setKey(it.sender.uid)
+                        .setIcon(IconCompat.createWithBitmap(senderIcon))
+                        .build()
 
-            val notificationBuilder = NotificationCompat.Builder(
-                this@FirebaseNotificationService,
-                groupChatChannelId
-            ).apply {
-                setTicker(baseMessage.sender.name + " : " + json.getString("alert"))
-                setSmallIcon(R.drawable.ic_status_bar_notification)
-                setLargeIcon(getBitmapFromURL(iconUrl))
-                setContentTitle(json.getString("title"))
-                setContentText(json.getString("alert"))
-                setContentIntent(pendingClickIntent) // intent that will fire when user taps the notification
-                setDeleteIntent(pendingDismissIntent)
-                setAutoCancel(true)    // automatically removes the notification when the user taps it
-                setSound(defaultSound)
-                setStyle(style)
-                setWhen(System.currentTimeMillis())
-                setDefaults(Notification.DEFAULT_ALL)
-                setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                setGroup(groupChatChannelName)
-                setOnlyAlertOnce(true) // Interupts the user (with sound, vibration, or visual clues) only the first time
-                color = ContextCompat.getColor(
+                    val notificationMessage = NotificationCompat.MessagingStyle.Message(
+                        messageText,
+                        System.currentTimeMillis(),
+                        sender
+                    )
+                    messagingStyle.addMessage(notificationMessage)
+                }
+
+                val notificationBuilder = NotificationCompat.Builder(
                     this@FirebaseNotificationService,
-                    R.color.colorAccent
-                )
-            }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
-                notificationBuilder.setStyle(messagingStyle)
-            }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                // Create the NotificationChannel, but only on API 26+ because
-                // the NotificationChannel class is new and not in the support library
-                val notificationChannel = NotificationChannel(
-                    groupChatChannelId,
-                    groupChatChannelName,
-                    NotificationManager.IMPORTANCE_HIGH
+                    groupChatChannelId
                 ).apply {
-                    description = "Notifications for group chat messages"
-                    enableLights(true)
-                    enableVibration(true)
+                    setTicker("You have a new message")
+                    setSmallIcon(R.drawable.ic_status_bar_notification)
+                    setLargeIcon(getBitmapFromURL(group.icon)?.run { getCroppedBitmap(this) })
+                    setContentTitle(group.name)
+                    setContentText(message)
+                    setContentIntent(pendingClickIntent) // intent that will fire when user taps the notification
+                    setDeleteIntent(pendingDismissIntent)
+                    setAutoCancel(true)    // automatically removes the notification when the user taps it
+                    setSound(defaultSound)
+                    setStyle(style)
+                    setWhen(System.currentTimeMillis())
+                    setDefaults(Notification.DEFAULT_ALL)
+                    setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                    setGroup(groupChatChannelName)
+                    setOnlyAlertOnce(true) // Interupts the user (with sound, vibration, or visual clues) only the first time
+                    color = ContextCompat.getColor(
+                        this@FirebaseNotificationService,
+                        R.color.colorAccent
+                    )
                 }
-                // Register the channel with the system
-                notificationManager.createNotificationChannel(notificationChannel)
-                // Set Channel Id of Notification
-                notificationBuilder.setChannelId(groupChatChannelId)
-            }
 
-            notificationManager.notify(
-                baseMessage.receiverUid.hashCode(),
-                notificationBuilder.build()
-            )
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
+                    notificationBuilder.setStyle(messagingStyle)
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    // Create the NotificationChannel, but only on API 26+ because
+                    // the NotificationChannel class is new and not in the support library
+                    val notificationChannel = NotificationChannel(
+                        groupChatChannelId,
+                        groupChatChannelName,
+                        NotificationManager.IMPORTANCE_HIGH
+                    ).apply {
+                        description = "Notifications for group chat messages"
+                        enableLights(true)
+                        enableVibration(true)
+                    }
+                    // Register the channel with the system
+                    notificationManager.createNotificationChannel(notificationChannel)
+                    // Set Channel Id of Notification
+                    notificationBuilder.setChannelId(groupChatChannelId)
+                }
+
+                if (Utils.isMessageVisible(baseMessage) && message != null) {
+                    notificationManager.notify(
+                        baseMessage.receiverUid.hashCode(),
+                        notificationBuilder.build()
+                    )
+                }
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -808,7 +859,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         }
     }
 
-    fun getCroppedBitmap(bitmap: Bitmap): Bitmap? {
+    private fun getCroppedBitmap(bitmap: Bitmap): Bitmap? {
         val output = Bitmap.createBitmap(
             bitmap.width,
             bitmap.height, Bitmap.Config.ARGB_8888
@@ -876,6 +927,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             textPaint
         )
         return b
+    }
+
+    companion object {
+        val unreadMessageList: LinkedList<BaseMessage> = LinkedList()
     }
 
 }

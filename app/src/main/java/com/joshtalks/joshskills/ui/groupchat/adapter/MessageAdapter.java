@@ -17,13 +17,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.cometchat.pro.constants.CometChatConstants;
 import com.cometchat.pro.core.Call;
@@ -44,14 +42,13 @@ import com.joshtalks.joshskills.ui.groupchat.uikit.AudioV2PlayerView;
 import com.joshtalks.joshskills.ui.groupchat.uikit.Avatar;
 import com.joshtalks.joshskills.ui.groupchat.utils.Extensions;
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import org.json.JSONException;
+import org.json.JSONObject;
+import static com.joshtalks.joshskills.ui.groupchat.utils.Utils.isMessageVisible;
 
 /**
  * Purpose - MessageAdapter is a subclass of RecyclerView Adapter which is used to display
@@ -172,22 +169,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             this.messageList.addAll(0, messageList);  // Adds messages to start of the list
             notifyItemRangeInserted(0, messageList.size());
         }
-    }
-
-    private boolean isMessageVisible(BaseMessage message) {
-        boolean isVisibleToLoggedInUser = true;
-        if (message.getMetadata() != null && message.getMetadata().has("onlyVisibleTo")) {
-            String userId = null;
-            try {
-                userId = message.getMetadata().getString("onlyVisibleTo");
-            } catch (JSONException exception) {
-                exception.printStackTrace();
-            }
-            if (userId != null && !(CometChat.getLoggedInUser().getUid().equals(message.getSender().getUid()) || CometChat.getLoggedInUser().getUid().equals(userId))) {
-                isVisibleToLoggedInUser = false;
-            }
-        }
-        return isVisibleToLoggedInUser;
     }
 
     /**
