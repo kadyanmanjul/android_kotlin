@@ -158,11 +158,6 @@ android {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"http://65.0.30.117:80\""
-            applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "josh-local${majorVersion}.${minorVersion}.${patchVersion}"
-                }
-            }
         }
         dev {
             // applicationId "com.joshtalks.joshskills.dev"
@@ -170,31 +165,16 @@ android {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
-            applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "josh-dev${majorVersion}.${minorVersion}.${patchVersion}"
-                }
-            }
         }
         skills {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"https://skills.joshtalks.org\""
-            applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "josh-skills${majorVersion}.${minorVersion}.${patchVersion}"
-                }
-            }
         }
         prod {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"https://app.joshtalks.org\""
-            applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "josh-skills-release${majorVersion}.${minorVersion}.${patchVersion}"
-                }
-            }
         }
     }
     compileOptions {
