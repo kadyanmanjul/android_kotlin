@@ -232,7 +232,21 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     notificationBuilder.setChannelId(notificationChannelId)
                     notificationManager.createNotificationChannel(notificationChannel)
                 }
-                notificationManager.notify(uniqueInt, notificationBuilder.build())
+                when (notificationObject.action) {
+                    NotificationAction.GROUP_CHAT_REPLY -> {
+                        notificationManager.notify(10112, notificationBuilder.build())
+                    }
+                    NotificationAction.GROUP_CHAT_VOICE_NOTE_HEARD -> {
+                        notificationManager.notify(10122, notificationBuilder.build())
+                    }
+                    NotificationAction.GROUP_CHAT_PIN_MESSAGE -> {
+                        notificationManager.notify(10132, notificationBuilder.build())
+                    }
+                    else -> {
+                        notificationManager.notify(uniqueInt, notificationBuilder.build())
+                    }
+                }
+
             }
             if (PrefManager.getStringValue(API_TOKEN).isNotEmpty()) {
                 EngagementNetworkHelper.receivedNotification(notificationObject)
@@ -389,6 +403,45 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     putExtra(HAS_NOTIFICATION, true)
                 }
                 return null
+            }
+            NotificationAction.GROUP_CHAT_REPLY -> {
+                notificationChannelId = groupChatChannelId
+                Intent(applicationContext, CometChatMessageListActivity::class.java).apply {
+                    putExtra(NOTIFICATION_ID, 10112)
+                    putExtra(HAS_NOTIFICATION, true)
+                    putExtra(StringContract.IntentStrings.GUID, actionData)
+                    putExtra(
+                        StringContract.IntentStrings.TYPE,
+                        CometChatConstants.RECEIVER_TYPE_GROUP
+                    )
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                }
+            }
+            NotificationAction.GROUP_CHAT_VOICE_NOTE_HEARD -> {
+                notificationChannelId = groupChatChannelId
+                Intent(applicationContext, CometChatMessageListActivity::class.java).apply {
+                    putExtra(NOTIFICATION_ID, 10122)
+                    putExtra(HAS_NOTIFICATION, true)
+                    putExtra(StringContract.IntentStrings.GUID, actionData)
+                    putExtra(
+                        StringContract.IntentStrings.TYPE,
+                        CometChatConstants.RECEIVER_TYPE_GROUP
+                    )
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                }
+            }
+            NotificationAction.GROUP_CHAT_PIN_MESSAGE -> {
+                notificationChannelId = groupChatChannelId
+                Intent(applicationContext, CometChatMessageListActivity::class.java).apply {
+                    putExtra(NOTIFICATION_ID, 10132)
+                    putExtra(HAS_NOTIFICATION, true)
+                    putExtra(StringContract.IntentStrings.GUID, actionData)
+                    putExtra(
+                        StringContract.IntentStrings.TYPE,
+                        CometChatConstants.RECEIVER_TYPE_GROUP
+                    )
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                }
             }
             else -> {
                 return null
