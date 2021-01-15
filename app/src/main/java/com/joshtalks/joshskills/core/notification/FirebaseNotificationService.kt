@@ -9,9 +9,16 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import android.graphics.Rect
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.text.TextPaint
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
@@ -667,7 +674,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     baseMessage.sender.metadata.getString("color_code")
                 else
                     "#" + Integer.toHexString(ContextCompat.getColor(this, R.color.colorPrimary))
-            val chatGroup = Person.Builder()
+            val chatGroupBuilder = Person.Builder()
                 .setImportant(true)
                 .setName(
                     HtmlCompat.fromHtml(
@@ -677,9 +684,21 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         ), HtmlCompat.FROM_HTML_MODE_COMPACT
                     )
                 )
-                .setIcon(IconCompat.createWithBitmap(getBitmapFromURL(baseMessage.sender.avatar)))
                 .setKey(baseMessage.sender.uid)
-                .build()
+
+            val bitmap: Bitmap? = if (baseMessage.sender.avatar.isNullOrEmpty()) {
+                getNameInitialBitmap(baseMessage.sender.name, personColor)
+            } else {
+                getBitmapFromURL(baseMessage.sender.avatar)
+            }
+
+            bitmap?.let {
+                chatGroupBuilder.setIcon(
+                    IconCompat.createWithBitmap(getCroppedBitmap(it))
+                )
+            }
+
+            val chatGroup = chatGroupBuilder.build()
 
             val person2 = Person.Builder()
                 .setImportant(true)
@@ -787,6 +806,76 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         } else {
             null
         }
+    }
+
+    fun getCroppedBitmap(bitmap: Bitmap): Bitmap? {
+        val output = Bitmap.createBitmap(
+            bitmap.width,
+            bitmap.height, Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(output)
+        val color = -0xbdbdbe
+        val paint = Paint()
+        val rect = Rect(0, 0, bitmap.width, bitmap.height)
+        paint.isAntiAlias = true
+        canvas.drawARGB(0, 0, 0, 0)
+        paint.color = color
+        // canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+        canvas.drawCircle(
+            bitmap.width / 2f, bitmap.height / 2f,
+            bitmap.height / 2f, paint
+        )
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        canvas.drawBitmap(bitmap, rect, rect, paint)
+        //Bitmap _bmp = Bitmap.createScaledBitmap(output, 60, 60, false);
+        //return _bmp;
+        return output
+    }
+
+    private fun getNameInitialBitmap(name: String, bgColorCode: String?): Bitmap {
+        val width = 100
+        val height = 100
+        val centerX = Math.round(width * 0.5f)
+        val centerY = Math.round(height * 0.5f)
+
+        val nameSplitArray = name.split(" ".toRegex()).toTypedArray()
+        val text = if (nameSplitArray.size > 1) {
+            nameSplitArray[0].substring(0, 1) + nameSplitArray[1].substring(0, 1)
+        } else {
+            name.substring(0, 1)
+        }
+
+        val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
+        textPaint.textSize = 16f * resources.displayMetrics.scaledDensity
+        textPaint.color = Color.WHITE
+
+        val textWidth: Float = textPaint.measureText(text) * 0.5f
+        val textBaseLineHeight: Float = textPaint.fontMetrics.ascent * -0.4f
+        val b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+
+        val canvas = Canvas(b)
+
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        if (bgColorCode == null) {
+            paint.color = ContextCompat.getColor(this, R.color.colorPrimary)
+        } else {
+            paint.color = Color.parseColor(bgColorCode)
+        }
+
+        canvas.drawCircle(
+            centerX.toFloat(),
+            centerY.toFloat(),
+            Math.max((height / 2).toFloat(), textWidth / 2),
+            paint
+        )
+
+        canvas.drawText(
+            text,
+            centerX - textWidth,
+            centerY + textBaseLineHeight,
+            textPaint
+        )
+        return b
     }
 
 }
