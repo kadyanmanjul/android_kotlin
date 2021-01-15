@@ -14,7 +14,10 @@ import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.core.app.Person
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.IconCompat
+import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.cometchat.pro.constants.CometChatConstants
@@ -83,6 +86,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     private var notificationChannelId = "101111"
     private var notificationChannelName = "JoshTalksDefault"
+    private var groupChatChannelId = NotificationAction.GROUP_CHAT_MESSAGE_NOTIFICATION.name
+    private var groupChatChannelName = "Group Chat"
     private var msgCount = 0
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -111,27 +116,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 val baseMessage =
                     CometChatHelper.processMessage(JSONObject(remoteMessage.data["message"]!!))
                 val json = JSONObject(remoteMessage.data as Map<String, String>)
-
-//                val nc: NotificationObject = NotificationObject()
-//                nc.action = NotificationAction.GROUP_CHAT_MESSAGE_NOTIFICATION
-//                nc.extraData = json.toString(0)
-//                nc.id =
-//                    if (baseMessage.receiverType == CometChatConstants.RECEIVER_TYPE_GROUP) baseMessage.receiverUid else baseMessage.sender.uid
-//                nc.contentTitle = json.getString("title")
-//                nc.contentText = json.getString("alert")
-//                nc.name = NotificationAction.GROUP_CHAT_MESSAGE_NOTIFICATION.name
-//                nc.type = "Message"
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//                    importance = NotificationManager.IMPORTANCE_HIGH
-//                }
-//                notificationChannelId = NotificationAction.GROUP_CHAT_MESSAGE_NOTIFICATION.name
-//                sendNotification(nc)
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    importance = NotificationManager.IMPORTANCE_HIGH
-                }
-                notificationChannelId = NotificationAction.GROUP_CHAT_MESSAGE_NOTIFICATION.name
-                showNotification(baseMessage, json)
+                showGroupChatNotification(baseMessage, json)
             } else {
                 if (BuildConfig.DEBUG) {
                     Timber.tag(FirebaseNotificationService::class.java.simpleName).e(
@@ -578,98 +563,156 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         return false
     }
 
-    private fun showNotification(baseMessage: BaseMessage, json: JSONObject) {
+    private fun showGroupChatNotification(baseMessage: BaseMessage, json: JSONObject) {
         try {
 
-            Intent(applicationContext, CometChatMessageListActivity::class.java).apply {
+            val clickIntent =
+                Intent(applicationContext, CometChatMessageListActivity::class.java).apply {
+                    putExtra(NOTIFICATION_ID, baseMessage.receiverUid)
+                    putExtra(HAS_NOTIFICATION, true)
+                    putExtra(StringContract.IntentStrings.GUID, baseMessage.receiverUid)
+                    putExtra(
+                        StringContract.IntentStrings.TYPE,
+                        CometChatConstants.RECEIVER_TYPE_GROUP
+                    )
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                }
+            val uniqueRequestCode = (System.currentTimeMillis() and 0xfffffff).toInt()
+            val pendingClickIntent = PendingIntent.getActivities(
+                applicationContext,
+                uniqueRequestCode,
+                arrayOf(clickIntent),
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            val dismissIntent = Intent(
+                applicationContext,
+                DismissNotifEventReceiver::class.java
+            ).apply {
                 putExtra(NOTIFICATION_ID, baseMessage.receiverUid)
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 putExtra(HAS_NOTIFICATION, true)
-                putExtra(StringContract.IntentStrings.GUID, baseMessage.receiverUid)
-                putExtra(StringContract.IntentStrings.TYPE, CometChatConstants.RECEIVER_TYPE_GROUP)
-                    .run {
-
-                        val activityList = arrayOf(this)
-
-                        val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
-                        val defaultSound =
-                            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-                        val pendingIntent = PendingIntent.getActivities(
-                            applicationContext,
-                            uniqueInt, activityList,
-                            PendingIntent.FLAG_UPDATE_CURRENT
-                        )
-
-                        val style = NotificationCompat.BigTextStyle()
-                        style.setBigContentTitle(json.getString("title"))
-                        style.bigText(json.getString("alert"))
-                        style.setSummaryText(json.getString("title"))
-
-                        val notificationBuilder =
-                            NotificationCompat.Builder(
-                                this@FirebaseNotificationService,
-                                notificationChannelId
-                            )
-                                .setTicker(null)
-                                .setSmallIcon(R.drawable.ic_status_bar_notification)
-                                .setContentTitle(json.getString("title"))
-                                .setAutoCancel(true)
-                                .setSound(defaultSound)
-                                .setContentText(json.getString("alert"))
-                                .setContentIntent(pendingIntent)
-                                .setStyle(style)
-                                .setWhen(System.currentTimeMillis())
-                                .setDefaults(Notification.DEFAULT_ALL)
-                                .setColor(
-                                    ContextCompat.getColor(
-                                        this@FirebaseNotificationService,
-                                        R.color.colorAccent
-                                    )
-                                )
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            notificationBuilder.priority = NotificationManager.IMPORTANCE_DEFAULT
-                        }
-
-                        val iconUrl =
-                            "https://s3.ap-south-1.amazonaws.com/www.staging.static.joshtalks.com/cometgroup/url/SpokenEnglish_d2dd9f2098d04989a515c55280b2d6c3.webp"
-                        notificationBuilder.setLargeIcon(getBitmapFromURL(iconUrl))
-
-                        val dismissIntent =
-                            Intent(
-                                applicationContext,
-                                DismissNotifEventReceiver::class.java
-                            ).apply {
-                                putExtra(NOTIFICATION_ID, baseMessage.receiverUid)
-                                putExtra(HAS_NOTIFICATION, true)
-                            }
-                        val dismissPendingIntent: PendingIntent =
-                            PendingIntent.getBroadcast(
-                                applicationContext,
-                                uniqueInt,
-                                dismissIntent,
-                                0
-                            )
-
-                        notificationBuilder.setDeleteIntent(dismissPendingIntent)
-
-                        val notificationManager =
-                            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            val notificationChannel = NotificationChannel(
-                                notificationChannelId,
-                                notificationChannelName,
-                                importance
-                            )
-                            notificationChannel.enableLights(true)
-                            notificationChannel.enableVibration(true)
-                            notificationBuilder.setChannelId(notificationChannelId)
-                            notificationManager.createNotificationChannel(notificationChannel)
-                        }
-                        notificationManager.notify(uniqueInt, notificationBuilder.build())
-                    }
             }
+            val pendingDismissIntent: PendingIntent = PendingIntent.getBroadcast(
+                applicationContext,
+                uniqueRequestCode,
+                dismissIntent,
+                0
+            )
+            val defaultSound =
+                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            val iconUrl =
+                "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/skills+logo.png"
+            val notificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            val style = NotificationCompat.BigTextStyle()
+                .setBigContentTitle(json.getString("title"))
+                .bigText(json.getString("alert"))
+                .setSummaryText(json.getString("title"))
+
+            val personColor =
+                if (baseMessage.sender.metadata != null && baseMessage.sender.metadata.has("color_code"))
+                    baseMessage.sender.metadata.getString("color_code")
+                else
+                    "#" + Integer.toHexString(ContextCompat.getColor(this, R.color.colorPrimary))
+            val chatGroup = Person.Builder()
+                .setImportant(true)
+                .setName(
+                    HtmlCompat.fromHtml(
+                        String.format(
+                            "<b><font color=\"%s\">${baseMessage.sender.name}</font></b>",
+                            personColor
+                        ), HtmlCompat.FROM_HTML_MODE_COMPACT
+                    )
+                )
+                .setIcon(IconCompat.createWithBitmap(getBitmapFromURL(baseMessage.sender.avatar)))
+                .setKey(baseMessage.sender.uid)
+                .build()
+
+            val person2 = Person.Builder()
+                .setImportant(true)
+                .setName(HtmlCompat.fromHtml("<b>You</b>", HtmlCompat.FROM_HTML_MODE_COMPACT))
+                .setIcon(IconCompat.createWithResource(this, R.drawable.round_rectangle))
+                .setKey("1234")
+                .build()
+            val message1 = NotificationCompat.MessagingStyle.Message(
+                "Hi",
+                System.currentTimeMillis() - 50000,
+                chatGroup
+            )
+            val message2 = NotificationCompat.MessagingStyle.Message(
+                "What's up?",
+                System.currentTimeMillis() - 40000,
+                person2
+            )
+            val message3 = NotificationCompat.MessagingStyle.Message(
+                "Not much",
+                System.currentTimeMillis() - 20000,
+                chatGroup
+            )
+            val message4 = NotificationCompat.MessagingStyle.Message(
+                json.getString("alert"),
+                System.currentTimeMillis(),
+                chatGroup
+            )
+            val messagingStyle = NotificationCompat.MessagingStyle(chatGroup)
+                .setConversationTitle("ConvoTitle - GroupName")
+                .addMessage(message1)
+                .addMessage(message2)
+                .addMessage(message3)
+                .addMessage(message4)
+
+            val notificationBuilder = NotificationCompat.Builder(
+                this@FirebaseNotificationService,
+                groupChatChannelId
+            ).apply {
+                setTicker(baseMessage.sender.name + " : " + json.getString("alert"))
+                setSmallIcon(R.drawable.ic_status_bar_notification)
+                setLargeIcon(getBitmapFromURL(iconUrl))
+                setContentTitle(json.getString("title"))
+                setContentText(json.getString("alert"))
+                setContentIntent(pendingClickIntent) // intent that will fire when user taps the notification
+                setDeleteIntent(pendingDismissIntent)
+                setAutoCancel(true)    // automatically removes the notification when the user taps it
+                setSound(defaultSound)
+                setStyle(style)
+                setWhen(System.currentTimeMillis())
+                setDefaults(Notification.DEFAULT_ALL)
+                setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                setGroup(groupChatChannelName)
+                setOnlyAlertOnce(true) // Interupts the user (with sound, vibration, or visual clues) only the first time
+                color = ContextCompat.getColor(
+                    this@FirebaseNotificationService,
+                    R.color.colorAccent
+                )
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
+                notificationBuilder.setStyle(messagingStyle)
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // Create the NotificationChannel, but only on API 26+ because
+                // the NotificationChannel class is new and not in the support library
+                val notificationChannel = NotificationChannel(
+                    groupChatChannelId,
+                    groupChatChannelName,
+                    NotificationManager.IMPORTANCE_HIGH
+                ).apply {
+                    description = "Notifications for group chat messages"
+                    enableLights(true)
+                    enableVibration(true)
+                }
+                // Register the channel with the system
+                notificationManager.createNotificationChannel(notificationChannel)
+                // Set Channel Id of Notification
+                notificationBuilder.setChannelId(groupChatChannelId)
+            }
+
+            notificationManager.notify(
+                baseMessage.receiverUid.hashCode(),
+                notificationBuilder.build()
+            )
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
