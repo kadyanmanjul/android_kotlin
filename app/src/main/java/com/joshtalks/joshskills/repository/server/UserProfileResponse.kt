@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.repository.server
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.EMPTY
 import kotlinx.android.parcel.Parcelize
 
 data class UserProfileResponse(
@@ -36,6 +37,8 @@ data class UserProfileResponse(
     val uid: String?,
     @SerializedName("is_points_active")
     val isPointsActive: Boolean? = false,
+    @SerializedName("user_profile_impression_id")
+    val userProfileImpressionId: String? = EMPTY,
     @SerializedName("award_category_list")
     var awardCategory: List<AwardCategory>?,
     @SerializedName("certificates")
