@@ -5,8 +5,8 @@ import androidx.room.ColumnInfo
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
 import com.joshtalks.joshskills.repository.local.entity.User
-import kotlinx.android.parcel.Parcelize
 import java.util.Date
+import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class InboxEntity constructor(
@@ -42,6 +42,6 @@ data class InboxEntity constructor(
     @ColumnInfo(name = "is_group_active")
     val isGroupActive: Boolean = false,
     @ColumnInfo(name = "is_points_active")
-    val isPointsActive: Boolean = false
+    val isCapsuleCourse: Boolean = false
 
-    ) : Parcelable
+) : Parcelable

@@ -756,9 +756,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         val total = items.size
         var capsuleIndex = 0
         val newCourses = items.filter {
-            (it.created == null || it.created == 0L) && it.isPointsActive.not()
+            (it.created == null || it.created == 0L) && it.isCapsuleCourse.not()
         }
-        val capsuleCourse = items.filter { it.isPointsActive }
+        val capsuleCourse = items.filter { it.isCapsuleCourse }
         if (capsuleCourse.isNullOrEmpty().not()) {
             capsuleCourse.sortedByDescending { it.courseCreatedDate }.forEachIndexed { index, inbox ->
                 recycler_view_inbox.addView(
@@ -772,14 +772,14 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
 
         newCourses.sortedByDescending { it.courseCreatedDate }.forEachIndexed { index, inbox ->
-            if (inbox.courseId != TRIAL_COURSE_ID && inbox.isPointsActive.not())
+            if (inbox.courseId != TRIAL_COURSE_ID && inbox.isCapsuleCourse.not())
                 recycler_view_inbox.addView(
                     InboxViewHolder(
                         inbox, total, index + capsuleIndex
                     )
                 )
         }
-        items.filter { it.created != null && it.created != 0L && it.isPointsActive.not() }
+        items.filter { it.created != null && it.created != 0L && it.isCapsuleCourse.not() }
             .sortedByDescending { it.created }
             .forEachIndexed { index, inbox ->
                 if (inbox.courseId != TRIAL_COURSE_ID)

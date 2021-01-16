@@ -154,6 +154,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         }
     }
 
+    private var userProfileResponse: UserProfileResponse? = null
     private var isLessonTypeChat: Boolean = false
     private var isCurrentLessonAlreadyCompleted: Boolean = false
     private var lastLessonId: Int = -1
@@ -219,6 +220,14 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 scrollToPosition(this)
             }
         }
+
+        if (PrefManager.getBoolValue(LESSON_TWO_OPENED) && PrefManager.getBoolValue(
+                COURSE_PROGRESS_OPENED
+            ).not() && inboxEntity.isCapsuleCourse
+        ) {
+            showCourseProgressTooltip()
+        }
+
         super.processIntent(intent)
         checkInboxModel()
         conversationBinding.viewmodel = initViewModel()
@@ -826,6 +835,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 }
                 chatModelLast = listChat.find { it.isSeen.not() }
                 conversationList.addAll(listChat)
+
                 val temp = listChat.groupBy { it.created }
                 val tempList = temp.toSortedMap(compareBy { it })
                 tempList.forEach { (key, value) ->
@@ -854,13 +864,6 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     scrollToEnd()
                 }
 
-                val tempval = conversationList.filter { it.lessons?.lessonNo == 2 }
-                if (tempval.isNullOrEmpty()
-                        .not() && PrefManager.getBoolValue(COURSE_PROGRESS_OPENED)
-                        .not()/* && inboxEntity.courseId == "151"*/
-                ) {
-                    showCourseProgressTooltip()
-                }
 
                 readMessageDatabaseUpdate()
             } catch (ex: Exception) {
@@ -893,10 +896,13 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         }
 
         conversationViewModel.userData.observe(this, {
+            userProfileResponse = it
             it?.let {
                 ///hideProgressBar()
-                initScoreCardView(it)
-                initToolbarView()
+                if (conversationBinding.courseProgressTooltip.visibility != VISIBLE) {
+                    initScoreCardView(it)
+                    initToolbarView()
+                }
             }
         })
         conversationViewModel.unreadMessageCount.observe(this) { count ->
@@ -1641,7 +1647,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 val lessonNo = data.getIntExtra(LESSON_NUMBER, 0)
 
                 if (lessonNo >= 2 && PrefManager.getBoolValue(COURSE_PROGRESS_OPENED)
-                        .not() && inboxEntity.isPointsActive
+                        .not() && inboxEntity.isCapsuleCourse
                 ) {
                     showCourseProgressTooltip()
                 }
@@ -1705,6 +1711,11 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         }
         conversationBinding.courseProgressTooltip.visibility = GONE
         conversationBinding.shader.visibility = GONE
+
+        userProfileResponse?.let {
+            initScoreCardView(it)
+            initToolbarView()
+        }
     }
 
     fun onLessonItemClick(lessonId: Int, interval: Int, chatId: String) {
@@ -1991,7 +2002,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         if (inboxEntity.isGroupActive) {
             conversationViewModel.getUnreadMessageCount(inboxEntity.conversation_id)
         }
-        if (inboxEntity.isPointsActive)
+        if (inboxEntity.isCapsuleCourse)
             conversationViewModel.getProfileData(Mentor.getInstance().getId())
     }
 

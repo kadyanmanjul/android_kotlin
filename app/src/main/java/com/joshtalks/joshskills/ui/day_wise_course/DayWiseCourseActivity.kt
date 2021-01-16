@@ -25,7 +25,9 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.LESSON_INTERVAL
 import com.joshtalks.joshskills.core.LESSON_NUMBER
+import com.joshtalks.joshskills.core.LESSON_TWO_OPENED
 import com.joshtalks.joshskills.core.LESSON__CHAT_ID
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
@@ -136,6 +138,9 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             conversastionId = it.getOrNull(0)?.conversationId
 
             lessonModel = it.getOrNull(0)?.question?.lesson
+            if (lessonModel?.lessonNo ?: 0 >= 2) {
+                PrefManager.put(LESSON_TWO_OPENED, true)
+            }
             lessonStatus = lessonModel?.status ?: LESSON_STATUS.NO
             titleView.text =
                 getString(R.string.lesson_no, it.getOrNull(0)?.question?.lesson?.lessonNo)
@@ -192,7 +197,8 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                 awardList = it.awardMentorList!!
             }
             if (it.pointsList.isNullOrEmpty().not()) {
-                PointSnackbar.make(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))?.show()
+                PointSnackbar.make(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
+                    ?.show()
             }
             if (it.awardMentorList.isNullOrEmpty().not()) {
                 //TODO add when awards functionality is over
@@ -200,11 +206,15 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             }
             if (it.outranked!!) {
                 it.outrankedData?.let {
-                    showLeaderboardAchievement(it,lessonInterval,chatId,lessonModel?.lessonNo?:0)
+                    showLeaderboardAchievement(
+                        it,
+                        lessonInterval,
+                        chatId,
+                        lessonModel?.lessonNo ?: 0
+                    )
                 }
             }
         })
-
 
 
     }
