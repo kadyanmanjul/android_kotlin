@@ -719,6 +719,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
                 val messagingStyle = NotificationCompat.MessagingStyle(chatGroup)
                     .setConversationTitle(group.name)
+                    .setGroupConversation(true)
 
                 unreadMessageList.listIterator().forEach {
                     val messageText = if (
@@ -831,7 +832,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
                 if (Utils.isMessageVisible(baseMessage) && message != null) {
                     notificationManager.notify(
-                        baseMessage.receiverUid.hashCode(),
+                        group.guid.hashCode(),
                         notificationBuilder.build()
                     )
                 }
