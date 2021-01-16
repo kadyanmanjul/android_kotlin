@@ -408,7 +408,7 @@
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
                     android:text="0 Points"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                     android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/leaderboard_btn_Close"
@@ -436,15 +436,15 @@
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
                     android:text="@string/leaderboard"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                     android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/leaderboard_btn_Close"
-                    app:layout_constraintHorizontal_bias="0.93"
+                    app:layout_constraintHorizontal_bias="0.98"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.38" />
+                    app:layout_constraintWidth_percent="0.45" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/leaderboard_btn_Close"
