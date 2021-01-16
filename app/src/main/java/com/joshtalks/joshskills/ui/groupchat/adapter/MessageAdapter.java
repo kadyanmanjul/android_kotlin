@@ -17,11 +17,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.cometchat.pro.constants.CometChatConstants;
 import com.cometchat.pro.core.Call;
@@ -42,12 +44,15 @@ import com.joshtalks.joshskills.ui.groupchat.uikit.AudioV2PlayerView;
 import com.joshtalks.joshskills.ui.groupchat.uikit.Avatar;
 import com.joshtalks.joshskills.ui.groupchat.utils.Extensions;
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 import static com.joshtalks.joshskills.ui.groupchat.utils.Utils.isMessageVisible;
 
 /**
@@ -376,7 +381,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 showMessageTime(viewHolder, baseMessage);
                 return;
             }
-            viewHolder.audioV2PlayerView.setAudioPlayLIstener(audioPlayCallback);
+
             viewHolder.audioV2PlayerView.showProgressBarVisible(false);
 
             if (!baseMessage.getSender().getUid().equals(loggedInUser.getUid())) {
@@ -486,7 +491,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             showMessageTime(viewHolder, baseMessage);
 
             viewHolder.audioV2PlayerView.bindView(baseMessage.getId(), ((MediaMessage) baseMessage).getAttachment().getFileUrl(), baseMessage.getMetadata());
-            viewHolder.audioV2PlayerView.setAudioPlayLIstener(audioPlayCallback);
+
+            if (!baseMessage.getSender().getUid().equals(loggedInUser.getUid())) {
+                viewHolder.audioV2PlayerView.setAudioPlayLIstener(audioPlayCallback);
+            }
 
             viewHolder.audioV2PlayerView.setThemeColor(R.color.grey_68);
             viewHolder.txtTime.setVisibility(View.VISIBLE);
