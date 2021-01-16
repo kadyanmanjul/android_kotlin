@@ -64,8 +64,11 @@ class UserProfileActivity : BaseActivity() {
 
     lateinit var binding: ActivityUserProfileBinding
     private var mentorId: String = EMPTY
+    private var impressionId: String = EMPTY
+    private var intervalType: String? = EMPTY
     private val compositeDisposable = CompositeDisposable()
     private var awardCategory: List<AwardCategory>? = emptyList()
+    private var startTime = 0L
 
     private val viewModel by lazy {
         ViewModelProvider(this).get(
@@ -76,13 +79,15 @@ class UserProfileActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mentorId = intent.getStringExtra(KEY_MENTOR_ID)
+        intervalType = intent.getStringExtra(INTERVAL_TYPE)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_user_profile)
         binding.lifecycleOwner = this
         binding.handler = this
         addObserver()
+        startTime = System.currentTimeMillis()
         //initRecyclerView()
         initToolbar()
-        getProfileData()
+        getProfileData(intervalType)
         setOnClickListeners()
     }
 
@@ -181,6 +186,9 @@ class UserProfileActivity : BaseActivity() {
     private fun addObserver() {
         viewModel.userData.observe(this, Observer {
             it?.let {
+                it.userProfileImpressionId?.let {
+                    impressionId = it
+                }
                 hideProgressBar()
                 initView(it)
             }
@@ -231,7 +239,7 @@ class UserProfileActivity : BaseActivity() {
     private fun initView(userData: UserProfileResponse) {
         val resp = StringBuilder()
         userData.name?.split(" ")?.forEachIndexed { index, string ->
-            if (index<2) {
+            if (index < 2) {
                 resp.append(string.toLowerCase(Locale.getDefault()).capitalize(Locale.getDefault()))
                     .append(" ")
             }
@@ -394,8 +402,8 @@ class UserProfileActivity : BaseActivity() {
         }
     }
 
-    private fun getProfileData() {
-        viewModel.getProfileData(mentorId)
+    private fun getProfileData(intervalType: String?) {
+        viewModel.getProfileData(mentorId, intervalType)
     }
 
     fun showAllAwards() {
@@ -510,15 +518,20 @@ class UserProfileActivity : BaseActivity() {
     }
 
     companion object {
-        const val KEY_MENTOR_ID = "leaderboard-mentor-id"
+        const val KEY_MENTOR_ID = "leaderboard_mentor_id"
+        const val INTERVAL_TYPE = "interval_type"
 
         fun startUserProfileActivity(
             activity: Activity,
             mentorId: String,
             flags: Array<Int> = arrayOf(),
+            intervalType: String? = null
         ) {
             Intent(activity, UserProfileActivity::class.java).apply {
                 putExtra(KEY_MENTOR_ID, mentorId)
+                intervalType?.let {
+                    putExtra(INTERVAL_TYPE, it)
+                }
                 flags.forEach { flag ->
                     this.addFlags(flag)
                 }

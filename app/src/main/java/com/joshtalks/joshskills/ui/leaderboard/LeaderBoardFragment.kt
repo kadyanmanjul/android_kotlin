@@ -230,7 +230,7 @@ class LeaderBoardFragment : Fragment() {
                 .subscribeOn(Schedulers.computation())
                 .subscribe({
                     it.id?.let { id ->
-                        openUserProfileActivity(id)
+                        openUserProfileActivity(id,type)
                     }
                 }, {
                     it.printStackTrace()
@@ -238,12 +238,13 @@ class LeaderBoardFragment : Fragment() {
         )
     }
 
-    private fun openUserProfileActivity(id: String) {
+    private fun openUserProfileActivity(id: String, intervalType: String) {
         context?.let {
             UserProfileActivity.startUserProfileActivity(
                 requireActivity(),
                 id,
-                arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                intervalType
             )
         }
     }
