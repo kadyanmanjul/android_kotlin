@@ -10,18 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
-import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SPEAKING_POINTS
-import com.joshtalks.joshskills.core.USER_SCORE
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.databinding.VoipRatingFragmentBinding
-import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -143,11 +135,11 @@ class VoipRatingFragment : DialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(channelName: String?, time: Int) = VoipRatingFragment()
+        fun newInstance(channelName: String?, time: Long) = VoipRatingFragment()
             .apply {
                 arguments = Bundle().apply {
                     putString(LAST_VOIP_CALL_CHANNEL_NAME, channelName)
-                    putLong(LAST_VOIP_CALL_TIME, time.toLong())
+                    putLong(LAST_VOIP_CALL_TIME, time)
                 }
             }
     }

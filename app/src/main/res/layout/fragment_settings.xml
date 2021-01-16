@@ -24,8 +24,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                app:drawableEndCompat="@drawable/ic_arrow_right"
-                app:drawableStartCompat="@drawable/ic_person"
                 android:drawablePadding="@dimen/_8sdp"
                 android:gravity="center_vertical"
                 android:onClick="@{()->handler.openPersonalInfoFragment()}"
@@ -34,6 +32,8 @@
                 android:paddingEnd="@dimen/_8sdp"
                 android:text="@string/personal_information"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                app:drawableEndCompat="@drawable/ic_arrow_right"
+                app:drawableStartCompat="@drawable/ic_person"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -53,7 +53,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
-                    app:drawableStartCompat="@drawable/ic_language"
                     android:drawablePadding="@dimen/_8sdp"
                     android:gravity="center_vertical"
                     android:paddingVertical="@dimen/_12sdp"
@@ -61,6 +60,7 @@
                     android:paddingEnd="@dimen/_8sdp"
                     android:text="@string/language"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    app:drawableStartCompat="@drawable/ic_language"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -84,17 +84,17 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/selection_arrow"
                     android:paddingHorizontal="@dimen/_8sdp"
-                    app:srcCompat="@drawable/ic_arrow_right"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_arrow_right" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/notification_root"
                 android:layout_width="match_parent"
-                android:layout_marginTop="@dimen/_4sdp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
                 android:background="@color/white"
                 android:onClick="@{()->handler.showNotificationSettingPopup()}"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -106,7 +106,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
-                    app:drawableStartCompat="@drawable/ic_notifications"
                     android:drawablePadding="@dimen/_8sdp"
                     android:gravity="center_vertical"
                     android:paddingVertical="@dimen/_12sdp"
@@ -114,6 +113,7 @@
                     android:paddingEnd="@dimen/_8sdp"
                     android:text="@string/notifications"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    app:drawableStartCompat="@drawable/ic_notifications"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -138,10 +138,10 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/selection_arrow"
                     android:paddingHorizontal="@dimen/_8sdp"
-                    app:srcCompat="@drawable/ic_arrow_right"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_arrow_right" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.textview.MaterialTextView
@@ -151,11 +151,11 @@
                 android:background="@color/white"
                 android:paddingHorizontal="@dimen/_10sdp"
                 android:paddingBottom="@dimen/_12sdp"
-                tools:text="Note: Apki notification off hai"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/notification_root" />
+                app:layout_constraintTop_toBottomOf="@+id/notification_root"
+                tools:text="Note: Apki notification off hai" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/download_quality_rl"
@@ -173,7 +173,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
-                    app:drawableStartCompat="@drawable/ic_download_quality"
                     android:drawablePadding="@dimen/_8sdp"
                     android:gravity="center_vertical"
                     android:paddingVertical="@dimen/_12sdp"
@@ -181,6 +180,7 @@
                     android:paddingEnd="@dimen/_8sdp"
                     android:text="@string/download_quality"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    app:drawableStartCompat="@drawable/ic_download_quality"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -204,10 +204,10 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/selection_arrow"
                     android:paddingEnd="@dimen/_8sdp"
-                    app:srcCompat="@drawable/ic_arrow_right"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_arrow_right"
                     tools:ignore="RtlSymmetry" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -216,7 +216,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                app:drawableStartCompat="@drawable/ic_delete"
                 android:drawablePadding="@dimen/_8sdp"
                 android:gravity="center_vertical"
                 android:onClick="@{()->handler.showClearDownloadsView()}"
@@ -225,9 +224,31 @@
                 android:paddingEnd="@dimen/_8sdp"
                 android:text="@string/clear_all_downloads"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                app:drawableStartCompat="@drawable/ic_delete"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/download_quality_rl" />
+
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/p2p_setting"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:background="@color/white"
+                android:checked="true"
+                android:drawablePadding="@dimen/_8sdp"
+                android:gravity="center_vertical"
+                android:paddingVertical="@dimen/_12sdp"
+                android:paddingStart="@dimen/_8sdp"
+                android:paddingEnd="@dimen/_8sdp"
+                android:text="@string/p2p_notification_setting"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                app:drawableStartCompat="@drawable/ic_call_setting"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/clear_downloads_tv" />
+
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/rate_us_tv"
@@ -246,7 +267,7 @@
                 app:drawableStartCompat="@drawable/ic_rate_us"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/clear_downloads_tv" />
+                app:layout_constraintTop_toBottomOf="@+id/p2p_setting" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/sign_out_tv"
@@ -254,7 +275,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_4sdp"
                 android:background="@color/white"
-                app:drawableStartCompat="@drawable/ic_signout"
                 android:drawablePadding="@dimen/_8sdp"
                 android:gravity="center_vertical"
                 android:onClick="@{()->handler.showSignoutBottomView()}"
@@ -263,6 +283,7 @@
                 android:paddingEnd="@dimen/_8sdp"
                 android:text="@string/sign_out"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                app:drawableStartCompat="@drawable/ic_signout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/rate_us_tv" />
@@ -291,10 +312,10 @@
                 android:contentDescription="@string/back_button_desc"
                 android:onClick="@{()->handler.hideBottomView()}"
                 android:padding="@dimen/_8sdp"
-                app:srcCompat="@drawable/ic_cross"
                 android:tint="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_cross" />
 
             <TextView
                 android:id="@+id/clear_downloads_bottom_tv"

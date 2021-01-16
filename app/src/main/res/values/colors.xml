@@ -113,5 +113,8 @@
     <color name="purple">#8867C5</color>
     <color name="practice_complete_bg">#FFF9EB</color>
     <color name="pd_transparent_bg">#DD000000</color>
+    <color name="call_action_color">#5ee067</color>
+    <color name="call_decline_color">#ef5050</color>
+
 
 </resources>

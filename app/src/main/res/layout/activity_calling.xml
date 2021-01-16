@@ -18,16 +18,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#0D5CB8"
-        android:keepScreenOn="true"
         android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_8sdp"
-            android:visibility="gone"
-            android:padding="@dimen/_4sdp"
             android:onClick="@{()->handler.onDisconnectCall()}"
+            android:padding="@dimen/_4sdp"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_arrow_back_2" />
@@ -70,22 +69,39 @@
             android:layout_marginBottom="@dimen/_24sdp"
             android:gravity="center"
             android:text=""
-            android:visibility="invisible"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/white"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/c_image"
             app:layout_constraintEnd_toEndOf="@+id/c_image"
             app:layout_constraintStart_toStartOf="@+id/c_image"
             tools:ignore="MissingPrefix"
             tools:visibility="visible" />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/connection_lost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_24sdp"
+            android:gravity="center"
+            android:text="@string/reconnecting"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+            android:textColor="@color/white"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/c_image"
+            app:layout_constraintEnd_toEndOf="@+id/c_image"
+            app:layout_constraintStart_toStartOf="@+id/c_image"
+            tools:ignore="MissingPrefix"
+            tools:visibility="visible" />
+
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/c_image"
             android:layout_width="@dimen/_96sdp"
             android:layout_height="@dimen/_96sdp"
-            android:src="@drawable/ic_call_placeholder"
             android:background="@drawable/circle"
             android:backgroundTint="@color/colorPrimaryDark"
+            android:src="@drawable/ic_call_placeholder"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -165,7 +181,6 @@
             app:srcCompat="@drawable/ic_baseline_mic_off" />
 
 
-
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btn_incoming_disconnect"
             android:layout_width="wrap_content"
@@ -212,8 +227,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="invisible"
-            tools:visibility="visible"
-            app:constraint_referenced_ids="btn_mute,btn_speaker,btn_action" />
+            app:constraint_referenced_ids="btn_mute,btn_speaker,btn_action"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

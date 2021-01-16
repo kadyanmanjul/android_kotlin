@@ -2,21 +2,26 @@
 
 package com.joshtalks.joshskills.ui.voip
 
+import android.annotation.SuppressLint
 import android.app.*
+import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.content.ContentResolver
 import android.content.Intent
 import android.content.pm.ServiceInfo
-import android.media.AudioAttributes
-import android.media.AudioManager
+import android.graphics.Bitmap
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
+import android.media.*
 import android.net.Uri
-import android.os.Binder
-import android.os.Build
-import android.os.IBinder
+import android.os.*
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.widget.RemoteViews
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
@@ -33,11 +38,8 @@ import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CALL_NOTIFICATI
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CONNECTED_CALL_NOTIFICATION_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_NOTIFICATION_ID
 import com.joshtalks.joshskills.ui.voip.extra.FullScreenActivity
-import com.joshtalks.joshskills.ui.voip.util.SoundPoolManager
 import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
 import io.agora.rtc.Constants
-import io.agora.rtc.Constants.CONNECTION_STATE_DISCONNECTED
-import io.agora.rtc.Constants.USER_OFFLINE_QUIT
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.reactivex.Completable
@@ -50,6 +52,7 @@ import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
+import kotlin.math.min
 
 
 const val RTC_TOKEN_KEY = "token"
@@ -57,7 +60,7 @@ const val RTC_CHANNEL_KEY = "channel_name"
 const val RTC_UID_KEY = "uid"
 const val RTC_CALLER_UID_KEY = "caller_uid"
 
-class WebRtcService : Service() {
+open class WebRtcService : Service(), SensorEventListener {
 
     private var mNotificationManager: NotificationManager? = null
     private val mBinder: IBinder = MyBinder()
@@ -65,8 +68,14 @@ class WebRtcService : Service() {
         JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-Calling Service")
     private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
         HangUpRtcOnPstnCallAnsweredListener()
-    private var countUpTimer = CountUpTimer(false)
+
     private var compositeDisposable = CompositeDisposable()
+    private var ringtonePlayer: MediaPlayer? = null
+    private var vibrator: Vibrator? = null
+    private var callStartTime: Long = 0
+    private var proximityWakelock: PowerManager.WakeLock? = null
+    private var cpuWakelock: PowerManager.WakeLock? = null
+    private var isProximityNear = false
 
     companion object {
         private val TAG = WebRtcService::class.java.simpleName
@@ -267,8 +276,6 @@ class WebRtcService : Service() {
                 )
             }
         }
-
-
     }
 
     fun addListener(callback: WebRtcCallback?) {
@@ -279,14 +286,13 @@ class WebRtcService : Service() {
     @Volatile
     private var eventListener: IRtcEngineEventHandler? = object : IRtcEngineEventHandler() {
         override fun onWarning(warn: Int) {
-            super.onWarning(warn)
             Timber.tag(TAG).e("onWarning=  $warn")
+            super.onWarning(warn)
         }
 
         override fun onError(errorCode: Int) {
-            super.onError(errorCode)
             Timber.tag(TAG).e("onError=  $errorCode")
-            //  isCallWasOnGoing = false
+            super.onError(errorCode)
             if (switchChannel) {
                 switchChannel = false
                 return
@@ -303,18 +309,18 @@ class WebRtcService : Service() {
         }
 
         override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
-            super.onJoinChannelSuccess(channel, uid, elapsed)
             Timber.tag(TAG).e("onJoinChannelSuccess=  $channel = $uid   ")
+            super.onJoinChannelSuccess(channel, uid, elapsed)
             compositeDisposable.clear()
             isCallWasOnGoing = true
             callData?.let {
                 try {
                     val id = getUID(it)
                     if (callType == CallType.INCOMING && id == uid) {
-                        //       callCallback?.get()?.onConnect(uid.toString())
                         startCallTimer()
                         callStatusNetworkApi(it, CallAction.ACCEPT)
                         addNotification(CallConnect().action, callData)
+                        addSensor()
                     }
                 } catch (ex: Exception) {
                     ex.printStackTrace()
@@ -328,8 +334,8 @@ class WebRtcService : Service() {
         }
 
         override fun onLeaveChannel(stats: RtcStats) {
-            super.onLeaveChannel(stats)
             Timber.tag(TAG).e("onLeaveChannel=  %s", stats.totalDuration)
+            super.onLeaveChannel(stats)
             isCallWasOnGoing = false
             isCallerJoin = false
             if (switchChannel.not()) {
@@ -340,8 +346,8 @@ class WebRtcService : Service() {
         }
 
         override fun onUserJoined(uid: Int, elapsed: Int) {
-            super.onUserJoined(uid, elapsed)
             Timber.tag(TAG).e("onUserJoined=  $uid  $elapsed")
+            super.onUserJoined(uid, elapsed)
             isCallWasOnGoing = true
             isCallerJoin = true
             startCallTimer()
@@ -350,20 +356,73 @@ class WebRtcService : Service() {
             AppObjectController.uiHandler.postDelayed({
                 callCallback?.get()?.onServerConnect()
             }, 500)
+            addSensor()
         }
 
         override fun onUserOffline(uid: Int, reason: Int) {
-            super.onUserOffline(uid, reason)
             Timber.tag(TAG).e("onUserOffline=  $uid  $reason")
+            super.onUserOffline(uid, reason)
             isCallerJoin = false
             callData?.let {
                 val id = getUID(it)
                 Timber.tag(TAG).e("onUserOffline =  $id")
-                if (id != uid && reason == USER_OFFLINE_QUIT) {
+                if (id != uid && reason == Constants.USER_OFFLINE_QUIT) {
                     endCall()
                     isCallWasOnGoing = false
+                } else if (id != uid && reason == Constants.USER_OFFLINE_DROPPED) {
+                    endCall(apiCall = true)
                 }
             }
+        }
+
+
+        override fun onRejoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
+            Timber.tag(TAG).e("onRejoinChannelSuccess")
+            super.onRejoinChannelSuccess(channel, uid, elapsed)
+            callCallback?.get()?.onNetworkReconnect()
+        }
+
+        override fun onConnectionStateChanged(state: Int, reason: Int) {
+            super.onConnectionStateChanged(state, reason)
+            if (state == Constants.CONNECTION_STATE_RECONNECTING) {
+                callCallback?.get()?.onNetworkLost()
+            }
+            Timber.tag(TAG).e("onConnectionStateChanged " + state + "  " + reason)
+        }
+
+        override fun onConnectionLost() {
+            super.onConnectionLost()
+            Timber.tag(TAG).e("onConnectionLost")
+
+        }
+
+        override fun onChannelMediaRelayEvent(code: Int) {
+            super.onChannelMediaRelayEvent(code)
+            Timber.tag(TAG).e("onChannelMediaRelayEvent")
+        }
+
+        override fun onRtmpStreamingStateChanged(url: String?, state: Int, errCode: Int) {
+            super.onRtmpStreamingStateChanged(url, state, errCode)
+            Timber.tag(TAG).e("onRtmpStreamingStateChanged")
+        }
+
+
+        override fun onStreamMessageError(
+            uid: Int,
+            streamId: Int,
+            error: Int,
+            missed: Int,
+            cached: Int
+        ) {
+            super.onStreamMessageError(uid, streamId, error, missed, cached)
+            Timber.tag(TAG).e("onStreamMessageError")
+
+        }
+
+        override fun onNetworkTypeChanged(type: Int) {
+            super.onNetworkTypeChanged(type)
+            Timber.tag(TAG).e("onNetworkTypeChanged")
+
         }
     }
 
@@ -387,10 +446,16 @@ class WebRtcService : Service() {
         }
     }
 
+    @SuppressLint("InvalidWakeLockTag")
     override fun onCreate() {
         super.onCreate()
         try {
             Timber.tag(TAG).e("onCreate")
+            cpuWakelock = (getSystemService(POWER_SERVICE) as PowerManager?)?.newWakeLock(
+                PowerManager.PARTIAL_WAKE_LOCK,
+                "joshtalsk"
+            )
+            cpuWakelock?.acquire(10 * 60 * 1000L /*10 minutes*/)
             phoneCallState = CallState.CALL_STATE_IDLE
             mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
             TelephonyUtil.getManager(this)
@@ -449,7 +514,7 @@ class WebRtcService : Service() {
                                     phoneBusySoDisconnect(intent)
                                     return@initEngine
                                 }
-                                resetTimer()
+
                                 val data =
                                     intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
                                 data.let {
@@ -457,9 +522,11 @@ class WebRtcService : Service() {
                                 }
                                 callType = CallType.INCOMING
                                 isTimeOutToPickCall = false
+                                callStartTime = 0L
                                 handleIncomingCall(data)
                             }
                             this == OutgoingCall().action -> {
+                                callStartTime = 0L
                                 isTimeOutToPickCall = false
                                 val data: HashMap<String, String?> =
                                     intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
@@ -491,7 +558,6 @@ class WebRtcService : Service() {
                                 isCallRecordOngoing = false
                             }
                             this == NoUserFound().action -> {
-                                resetTimer()
                                 mRtcEngine?.leaveChannel()
                                 callCallback?.get()?.onNoUserFound()
                                 disconnectService()
@@ -504,11 +570,11 @@ class WebRtcService : Service() {
                                 if (JoshApplication.isAppVisible.not()) {
                                     addNotification(CallDisconnect().action, null)
                                 }
-                                resetTimer()
                                 endCall(apiCall = false)
                                 RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
                             }
                             this == CallForceConnect().action -> {
+                                callStartTime = 0L
                                 compositeDisposable.clear()
                                 switchChannel = true
                                 if (isCallWasOnGoing) {
@@ -579,12 +645,10 @@ class WebRtcService : Service() {
 
 
     private fun handleIncomingCall(data: HashMap<String, String?>) {
-        stopTimer()
-        startRing()
+        startRingtoneAndVibration()
         executeEvent(AnalyticsEvent.INIT_CALL.NAME)
-        //   callCallback?.get()?.onIncomingCall()
-        showIncomingCallScreen(data)
         addNotification(NotificationIncomingCall().action, callData)
+        //showIncomingCallScreen(data)
         addTimeObservable()
     }
 
@@ -602,7 +666,7 @@ class WebRtcService : Service() {
     }
 
     fun isCallNotConnected(): Boolean {
-        return (mRtcEngine?.connectionState == CONNECTION_STATE_DISCONNECTED || isCallWasOnGoing.not())
+        return (mRtcEngine?.connectionState == Constants.CONNECTION_STATE_DISCONNECTED || isCallWasOnGoing.not())
     }
 
     fun timeoutCaller() {
@@ -644,8 +708,7 @@ class WebRtcService : Service() {
     ) {
         val callActivityIntent =
             Intent(
-                AppObjectController.joshApplication,
-                WebRtcActivity::class.java
+                this, WebRtcActivity::class.java
             ).apply {
                 putExtra(CALL_TYPE, CallType.INCOMING)
                 putExtra(AUTO_PICKUP_CALL, autoPickupCall)
@@ -656,38 +719,17 @@ class WebRtcService : Service() {
     }
 
 
-    private fun startRing() {
-        try {
-            SoundPoolManager.getInstance(AppObjectController.joshApplication).playRinging()
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-    }
-
     fun startCallTimer() {
-        try {
-            countUpTimer.reset()
-            //countUpTimer.lap()
-            countUpTimer.resume()
-        } catch (ex: Exception) {
-            //   ex.printStackTrace()
-        }
+        callStartTime = SystemClock.elapsedRealtime()
     }
 
-    private fun stopTimer() {
-        countUpTimer.pause()
+
+    fun getTimeOfTalk(): Long {
+        return if (callStartTime == 0L) {
+            0
+        } else SystemClock.elapsedRealtime() - callStartTime
     }
 
-    private fun resetTimer() {
-        try {
-            countUpTimer.reset()
-        } catch (ex: Exception) {
-        }
-    }
-
-    fun getTimeOfTalk(): Int {
-        return countUpTimer.time
-    }
 
     private fun isAppVisible(): Boolean {
         return if (JoshApplication.isAppVisible || Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
@@ -719,7 +761,6 @@ class WebRtcService : Service() {
             RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
             return
         }
-        resetTimer()
         if (callData == null) {
             callData = data
         }
@@ -749,6 +790,27 @@ class WebRtcService : Service() {
         isCallWasOnGoing = true
     }
 
+    @SuppressLint("InvalidWakeLockTag")
+    private fun addSensor() {
+        val sm: SensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+        val proximity: Sensor? = sm.getDefaultSensor(Sensor.TYPE_PROXIMITY)
+        try {
+            proximity?.run {
+                proximityWakelock = (getSystemService(POWER_SERVICE) as PowerManager?)?.newWakeLock(
+                    PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
+                    "joshtalsk-prx"
+                )
+                sm.registerListener(
+                    this@WebRtcService,
+                    proximity,
+                    SensorManager.SENSOR_DELAY_NORMAL
+                )
+            }
+        } catch (x: Exception) {
+            x.printStackTrace()
+        }
+    }
+
     private fun getToken(data: HashMap<String, String?>): String? {
         return data[RTC_TOKEN_KEY]
     }
@@ -764,8 +826,17 @@ class WebRtcService : Service() {
 
     private fun stopRing() {
         try {
-            SoundPoolManager.getInstance(AppObjectController.joshApplication).stopRinging()
+            if (ringtonePlayer != null) {
+                ringtonePlayer?.stop()
+                ringtonePlayer?.release()
+                ringtonePlayer = null
+            }
+            if (vibrator != null) {
+                vibrator?.cancel()
+                vibrator = null
+            }
         } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 
@@ -800,11 +871,9 @@ class WebRtcService : Service() {
     }
 
     private fun resetConfig() {
-        //  AppObjectController.uiHandler.removeCallbacksAndMessages(null)
         isCallerJoin = false
         eventListener = null
         stopRing()
-        stopTimer()
         isCallRecordOngoing = false
         isSpeakerEnable = false
         isMicEnable = true
@@ -843,11 +912,12 @@ class WebRtcService : Service() {
 
     override fun onDestroy() {
         RtcEngine.destroy()
+        stopRing()
         AppObjectController.mRtcEngine = null
-        executor.shutdown()
+        cpuWakelock?.release()
         isTimeOutToPickCall = false
         isCallerJoin = false
-        countUpTimer.reset()
+        callStartTime = 0L
         isCallRecordOngoing = false
         retryInitLibrary = 0
         isCallWasOnGoing = false
@@ -855,7 +925,21 @@ class WebRtcService : Service() {
         TelephonyUtil.getManager(this)
             .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_NONE)
         phoneCallState = CallState.CALL_STATE_IDLE
+        executor.shutdown()
         Timber.tag(TAG).e("onDestroy")
+
+        val sm = getSystemService(SENSOR_SERVICE) as SensorManager
+        val proximity = sm.getDefaultSensor(Sensor.TYPE_PROXIMITY)
+        if (proximity != null) {
+            sm.unregisterListener(this)
+        }
+        proximityWakelock?.run {
+            if (isHeld) {
+                release()
+            }
+        }
+
+        super.onDestroy()
     }
 
 
@@ -900,28 +984,6 @@ class WebRtcService : Service() {
 
     private fun incomingCallNotification(incomingData: HashMap<String, String?>?): Notification {
         Timber.tag(TAG).e("incomingCallNotification   ")
-        val incomingSoundUri: Uri =
-            Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + AppObjectController.joshApplication.packageName + "/" + R.raw.incoming)
-
-        val att: AudioAttributes = AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
-            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-            .build()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name: CharSequence = "Voip Incoming Call"
-            val mChannel = NotificationChannel(
-                CALL_NOTIFICATION_CHANNEL,
-                name,
-                NotificationManager.IMPORTANCE_HIGH
-            )
-            mChannel.enableLights(true)
-            mChannel.enableVibration(true)
-            mChannel.vibrationPattern = (longArrayOf(0, 1000, 500, 1000))
-            mChannel.setSound(incomingSoundUri, att)
-            mNotificationManager?.createNotificationChannel(mChannel)
-        }
-        val fullScreenPendingIntent = FullScreenActivity.getPendingIntent(this, 22)
 
         val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
         val pendingIntent = PendingIntent.getActivity(
@@ -930,16 +992,83 @@ class WebRtcService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT
         )
 
+        val builder = NotificationCompat.Builder(this, CALL_NOTIFICATION_CHANNEL)
+            .setContentTitle(getString(R.string.p2p_title))
+            .setContentText("Incoming voice call")
+            .setSmallIcon(R.drawable.ic_status_bar_notification)
+            //  .setSubText("Subtext")
+            .setContentIntent(pendingIntent)
+            .setChannelId(CALL_NOTIFICATION_CHANNEL)
+            .setColor(
+                ContextCompat.getColor(
+                    AppObjectController.joshApplication,
+                    R.color.colorPrimary
+                )
+            )
+
+        val incomingSoundUri: Uri =
+            Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + AppObjectController.joshApplication.packageName + "/" + R.raw.incoming)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name: CharSequence = "Voip Incoming Call"
+            var chanIndex: Int = PrefManager.getIntValue("calls_notification_channel")
+            val oldChannel =
+                mNotificationManager?.getNotificationChannel("incoming_calls$chanIndex")
+            if (oldChannel != null) {
+                mNotificationManager?.deleteNotificationChannel(oldChannel.id)
+            }
+            val existingChannel =
+                mNotificationManager?.getNotificationChannel("incoming_calls2$chanIndex")
+            var needCreate = true
+            if (existingChannel != null) {
+                if (existingChannel.importance < IMPORTANCE_HIGH || incomingSoundUri != existingChannel.sound || existingChannel.vibrationPattern != null || existingChannel.shouldVibrate()) {
+                    mNotificationManager?.deleteNotificationChannel("incoming_calls2$chanIndex")
+                    chanIndex++
+                    PrefManager.put("calls_notification_channel", chanIndex)
+                } else {
+                    needCreate = false
+                }
+            }
+            if (needCreate) {
+                val attrs: AudioAttributes = AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                    .build()
+                val chan = NotificationChannel(
+                    "incoming_calls2$chanIndex", name,
+                    IMPORTANCE_HIGH
+                )
+                chan.setSound(incomingSoundUri, attrs)
+                chan.enableVibration(false)
+                chan.enableLights(false)
+                chan.setBypassDnd(true)
+                try {
+                    mNotificationManager?.createNotificationChannel(chan)
+                } catch (e: java.lang.Exception) {
+                    this.stopSelf()
+                }
+            }
+            builder.setChannelId("incoming_calls2$chanIndex")
+        } else {
+            builder.setSound(incomingSoundUri, AudioManager.STREAM_RING)
+        }
+
         val declineActionIntent =
             Intent(AppObjectController.joshApplication, WebRtcService::class.java)
         declineActionIntent.action = CallReject().action
-        val declineActionPendingIntent: PendingIntent =
+        val declinePendingIntent: PendingIntent =
             PendingIntent.getService(
                 this,
                 0,
                 declineActionIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
+        builder.addAction(
+            NotificationCompat.Action(
+                R.drawable.ic_call_end,
+                getActionText(R.string.hang_up, R.color.error_color),
+                declinePendingIntent
+            )
+        )
 
         val answerActionIntent =
             Intent(AppObjectController.joshApplication, WebRtcService::class.java)
@@ -948,47 +1077,56 @@ class WebRtcService : Service() {
                     putExtra(CALL_USER_OBJ, incomingData)
                 }
 
-        val answerActionPendingIntent: PendingIntent =
+        val answerPendingIntent: PendingIntent =
             PendingIntent.getService(this, 0, answerActionIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val lNotificationBuilder = NotificationCompat.Builder(this, CALL_NOTIFICATION_CHANNEL)
-            .setChannelId(CALL_NOTIFICATION_CHANNEL)
-            //.setContentTitle(incomingData?.get("X-PH-CALLERNAME"))
-            .setContentText("Incoming voice call")
-            .setSmallIcon(R.drawable.ic_status_bar_notification)
-            .setColor(
-                ContextCompat.getColor(
-                    AppObjectController.joshApplication,
-                    R.color.colorPrimary
-                )
+        builder.addAction(
+            NotificationCompat.Action(
+                R.drawable.ic_pick_call,
+                getActionText(R.string.answer, R.color.action_color),
+                answerPendingIntent
             )
-            .setOngoing(true)
-            .setContentIntent(pendingIntent)
-            .addAction(
-                NotificationCompat.Action(
-                    R.drawable.ic_call_end,
-                    getActionText(R.string.hang_up, R.color.error_color),
-                    declineActionPendingIntent
-                )
-            )
-            .addAction(
-                NotificationCompat.Action(
-                    R.drawable.ic_pick_call,
-                    getActionText(R.string.answer, R.color.action_color),
-                    answerActionPendingIntent
-                )
-            )
-            .setVibrate(longArrayOf(0, 1000, 500, 1000))
-            .setPriority(NotificationCompat.PRIORITY_MAX)
+        )
 
+        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+        builder.setFullScreenIntent(
+            FullScreenActivity.getPendingIntent(this, 22),
+            true
+        )
+        val avatar: Bitmap? = getRandomName().textDrawableBitmap()
+        val customView = RemoteViews(packageName, R.layout.call_notification)
+        customView.setTextViewText(R.id.name, getString(R.string.p2p_title))
+        customView.setTextViewText(R.id.title, getString(R.string.p2p_subtitle))
+
+        customView.setTextViewText(
+            R.id.answer_text, getActionText(
+                R.string.answer,
+                R.color.action_color
+            )
+        )
+        customView.setTextViewText(
+            R.id.decline_text, getActionText(
+                R.string.hang_up,
+                R.color.error_color
+            )
+        )
+        customView.setImageViewBitmap(R.id.photo, avatar)
+        customView.setOnClickPendingIntent(R.id.answer_btn, answerPendingIntent)
+        customView.setOnClickPendingIntent(R.id.decline_btn, declinePendingIntent)
+        builder.setLargeIcon(avatar)
+        builder.setCustomHeadsUpContentView(customView)
+        builder.setCustomBigContentView(customView)
+        builder.setCustomContentView(customView)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            builder.priority = IMPORTANCE_HIGH
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            lNotificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            builder.setVibrate(LongArray(0))
+            builder.setCategory(Notification.CATEGORY_CALL)
         }
 
-        lNotificationBuilder.setFullScreenIntent(fullScreenPendingIntent, true)
-        lNotificationBuilder.priority = NotificationCompat.PRIORITY_HIGH
-        lNotificationBuilder.setCategory(NotificationCompat.CATEGORY_CALL)
-        return lNotificationBuilder.build()
+        builder.setShowWhen(false)
+        return builder.build()
     }
 
     private fun callConnectedNotification(data: HashMap<String, String?>?): Notification {
@@ -1064,9 +1202,9 @@ class WebRtcService : Service() {
                 )
             )
             .setOngoing(true)
-            .setPriority(NotificationCompat.PRIORITY_MIN)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
             .setProgress(0, 0, true)
-        lNotificationBuilder.priority = NotificationCompat.PRIORITY_MIN
+        lNotificationBuilder.priority = NotificationCompat.PRIORITY_MAX
         return lNotificationBuilder.build()
     }
 
@@ -1123,6 +1261,85 @@ class WebRtcService : Service() {
         }
     }
 
+    @SuppressLint("MissingPermission")
+    private fun startRingtoneAndVibration() {
+        if (PrefManager.getBoolValue(CALL_RINGTONE_NOT_MUTE).not()) {
+            return
+        }
+
+        val am = getSystemService(AUDIO_SERVICE) as AudioManager
+        val needRing = am.ringerMode != AudioManager.RINGER_MODE_SILENT
+        if (needRing) {
+            val att: AudioAttributes = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                .build()
+            ringtonePlayer = MediaPlayer()
+            ringtonePlayer?.setOnPreparedListener { mediaPlayer -> ringtonePlayer?.start() }
+            ringtonePlayer?.isLooping = true
+            ringtonePlayer?.setAudioAttributes(att)
+            ringtonePlayer?.setAudioStreamType(AudioManager.STREAM_RING)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                am.requestAudioFocus(
+                    AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).build()
+                )
+            } else {
+                am.requestAudioFocus({ }, AudioManager.STREAM_RING, AudioManager.AUDIOFOCUS_GAIN)
+            }
+
+            try {
+                val notificationUri: String =
+                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE).toString()
+                ringtonePlayer?.setDataSource(this, Uri.parse(notificationUri))
+                ringtonePlayer?.prepareAsync()
+            } catch (e: java.lang.Exception) {
+                if (ringtonePlayer != null) {
+                    ringtonePlayer?.release()
+                    ringtonePlayer = null
+                }
+            }
+
+            if ((am.ringerMode == AudioManager.RINGER_MODE_VIBRATE || am.ringerMode == AudioManager.RINGER_MODE_NORMAL) || am.ringerMode == AudioManager.RINGER_MODE_VIBRATE) {
+                vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
+                val pattern = longArrayOf(100, 250, 500, 750, 1000)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator?.vibrate(VibrationEffect.createWaveform(pattern, 0))
+                } else {
+                    vibrator?.vibrate(pattern, 0)
+                }
+            }
+        }
+    }
+
+    override fun onSensorChanged(event: SensorEvent) {
+        if (event.sensor.type == Sensor.TYPE_PROXIMITY) {
+            val am = getSystemService(AUDIO_SERVICE) as AudioManager
+            if (am.isSpeakerphoneOn && am.isBluetoothScoOn) {
+                return
+            }
+            val newIsNear: Boolean = event.values[0] < min(event.sensor.maximumRange, 3F)
+            checkIsNear(newIsNear)
+        }
+    }
+
+    private fun checkIsNear(newIsNear: Boolean) {
+        if (newIsNear != isProximityNear) {
+            isProximityNear = newIsNear
+            try {
+                if (isProximityNear) {
+                    proximityWakelock?.acquire(30 * 60L * 60)
+                } else {
+                    proximityWakelock?.release(1)
+                }
+            } catch (x: Exception) {
+                x.printStackTrace()
+            }
+        }
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+    }
+
 }
 
 
@@ -1175,5 +1392,7 @@ interface WebRtcCallback {
     fun onNoUserFound() {}
     fun onServerConnect() {}
     fun onIncomingCall() {}
+    fun onNetworkLost() {}
+    fun onNetworkReconnect() {}
 
 }

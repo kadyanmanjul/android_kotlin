@@ -14,15 +14,7 @@ import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
-import android.graphics.Rect
-import android.graphics.Typeface
+import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.PictureDrawable
 import android.graphics.drawable.VectorDrawable
@@ -48,11 +40,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -1157,3 +1145,35 @@ fun TabLayout.updateEnable(enable: Boolean) {
         }
     }
 }
+
+fun String.textDrawableBitmap(): Bitmap? {
+    val rnd = Random()
+    val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+    val font = Typeface.createFromAsset(
+        AppObjectController.joshApplication.assets,
+        "fonts/OpenSans-SemiBold.ttf"
+    )
+    val drawable = TextDrawable.builder()
+        .beginConfig()
+        .textColor(Color.WHITE)
+        .fontSize(17)
+        .useFont(font)
+        .toUpperCase()
+        .endConfig()
+        .buildRound(this, color)
+
+    val width = 48
+    val height = 48
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    drawable.setBounds(0, 0, canvas.width, canvas.height)
+    drawable.draw(canvas)
+    return bitmap
+}
+
+fun getRandomName(): String {
+    val name = "ABCDFGHIJKLMNOPRSTUVZ"
+    val ename = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    return name.random().toString().plus(ename.random().toString())
+}
+

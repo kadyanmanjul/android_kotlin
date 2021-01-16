@@ -110,6 +110,22 @@ class WebRtcActivity : BaseActivity() {
             val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
             setUserInfo(map?.get(RTC_CALLER_UID_KEY))
         }
+
+        override fun onNetworkLost() {
+            super.onNetworkLost()
+            runOnUiThread {
+                binding.callTime.visibility = View.INVISIBLE
+                binding.connectionLost.visibility = View.VISIBLE
+            }
+        }
+
+        override fun onNetworkReconnect() {
+            super.onNetworkReconnect()
+            runOnUiThread {
+                binding.callTime.visibility = View.VISIBLE
+                binding.connectionLost.visibility = View.INVISIBLE
+            }
+        }
     }
 
     private fun checkAndShowRating(id: String?, channelName: String? = null) {
@@ -125,7 +141,6 @@ class WebRtcActivity : BaseActivity() {
         }
         val callTime = mBoundService?.getTimeOfTalk() ?: 0
         if (callTime > 0 && channelName.isNullOrEmpty().not()) {
-
             VoipRatingFragment.newInstance(channelName, mBoundService!!.getTimeOfTalk())
                 .show(supportFragmentManager, VoipRatingFragment::class.java.name)
             return
@@ -142,11 +157,6 @@ class WebRtcActivity : BaseActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        window.addFlags(
-            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                    or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-                    or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-        )
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         this.window.setFlags(
@@ -158,6 +168,7 @@ class WebRtcActivity : BaseActivity() {
         } else {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
+        window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         volumeControlStream = AudioManager.STREAM_VOICE_CALL
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_calling)
@@ -299,7 +310,7 @@ class WebRtcActivity : BaseActivity() {
 
     private fun getName(): String {
         return try {
-            binding.userDetail.text?.toString()?.substring(0, 2) ?: "US"
+            binding.userDetail.text.toString().substring(0, 2) ?: "US"
         } catch (ex: Exception) {
             "US"
         }

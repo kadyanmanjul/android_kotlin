@@ -441,6 +441,7 @@
     <string name="connecting">Connecting</string>
     <string name="ringing">Ringing</string>
     <string name="voice_call">Voice call</string>
+    <string name="p2p_notification_setting">Speaking partner notifications</string>
     <string name="practise_tip_1">English mei baat karne ki practice karo students ke saath</string>
     <string name="practise_tip_2">Kariye Unlimited Practice, but only in English</string>
     <string name="practise_tip_3">Apne Partner ki respect karein aur abusive language na use karein</string>
@@ -829,5 +830,10 @@
     <string name="speed">Speed</string>
     <string name="practise_uploading">Practice Uploading &#8230; </string>
     <string name="how_to_pronounce">How to pronounce:</string>
+
+    <string name="p2p_title">Practice Partner calling</string>
+    <string name="p2p_subtitle">Speaking Practice</string>
+    <string name="reconnecting">Reconnecting</string>
+
 
 </resources>

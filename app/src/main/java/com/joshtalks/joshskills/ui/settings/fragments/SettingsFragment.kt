@@ -103,6 +103,14 @@ class SettingsFragment : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.p2pSetting.isChecked = PrefManager.getBoolValue(CALL_RINGTONE_NOT_MUTE)
+        binding.p2pSetting.setOnCheckedChangeListener { buttonView, isChecked ->
+            PrefManager.put(CALL_RINGTONE_NOT_MUTE, isChecked)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         (requireActivity() as SettingsActivity).setTitle(getString(R.string.app_settings))

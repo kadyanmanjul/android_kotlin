@@ -82,6 +82,10 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
         }.addOnFailureListener { exception ->
             exception.printStackTrace()
         }
+        if (PrefManager.hasKey(CALL_RINGTONE_NOT_MUTE).not()) {
+            PrefManager.put(CALL_RINGTONE_NOT_MUTE, true)
+        }
+
         return Result.success()
     }
 }

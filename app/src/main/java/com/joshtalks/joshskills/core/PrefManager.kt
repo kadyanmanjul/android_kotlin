@@ -55,6 +55,8 @@ const val USER_SCORE = "user_score"
 const val SPEAKING_POINTS = "speaking_points"
 const val LESSON_TWO_OPENED = "lesson_two_opened"
 const val GROUP_CHAT_LAST_READ_MESSAGE_ID = "GROUP_CHAT_LAST_READ_MESSAGE_ID"
+const val CALL_RINGTONE_NOT_MUTE = "call_ringtone_not_mute"
+
 
 object PrefManager {
 
@@ -96,8 +98,12 @@ object PrefManager {
     }
 
     @JvmStatic
-    fun getBoolValue(key: String, isConsistent: Boolean = false): Boolean {
-        return if (isConsistent) prefManagerConsistent.getBoolean(key, false)
+    fun getBoolValue(
+        key: String,
+        isConsistent: Boolean = false,
+        defValue: Boolean = false
+    ): Boolean {
+        return if (isConsistent) prefManagerConsistent.getBoolean(key, defValue)
         else prefManagerCommon.getBoolean(key, false)
     }
 
