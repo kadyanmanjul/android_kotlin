@@ -771,6 +771,10 @@ class VocabularyPracticeAdapter(
         fun playSubmitPracticeAudio(chatModel: ChatModel, position: Int) {
             try {
                 val audioType = AudioType()
+                if (filePath==null){
+                    playPracticeAudio(chatModel, position)
+                    return
+                }
                 audioType.audio_url = filePath!!
                 audioType.downloadedLocalPath = filePath!!
                 audioType.duration =
