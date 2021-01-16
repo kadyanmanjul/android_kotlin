@@ -69,6 +69,7 @@ import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.LESSON_NUMBER
+import com.joshtalks.joshskills.core.LESSON_TWO_OPENED
 import com.joshtalks.joshskills.core.LESSON__CHAT_ID
 import com.joshtalks.joshskills.core.MESSAGE_CHAT_SIZE_LIMIT
 import com.joshtalks.joshskills.core.PermissionUtils
@@ -1818,7 +1819,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         conversationBinding.courseProgressTooltip.visibility = GONE
         conversationBinding.shader.visibility = GONE
 
-        userProfileResponse?.let {
+        userProfileData?.let {
             initScoreCardView(it)
             initToolbarView()
         }
