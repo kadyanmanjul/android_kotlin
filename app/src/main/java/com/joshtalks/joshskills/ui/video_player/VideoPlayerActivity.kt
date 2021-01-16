@@ -302,6 +302,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             )
         )
         if (searchingNextUrl.not()
+            && videoDuration?.compareTo(0L)!! > 0
             && (videoDuration?.minus(time))!! < 2500
             && chatObject?.conversationId.isNullOrBlank().not()
             && chatObject?.sender?.user?.id.isNullOrBlank().not()
