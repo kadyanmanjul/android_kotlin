@@ -15,9 +15,17 @@ import android.text.TextWatcher
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.*
+import android.view.View.GONE
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
+import android.view.ViewGroup
 import android.view.WindowManager
-import android.view.animation.*
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
+import android.view.animation.AnimationSet
+import android.view.animation.LinearInterpolator
+import android.view.animation.ScaleAnimation
+import android.view.animation.TranslateAnimation
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -48,8 +56,27 @@ import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshcamerax.utils.ImageQuality
 import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ACHIEVED_AWARD_LIST
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CERTIFICATE_GENERATE
+import com.joshtalks.joshskills.core.COURSE_PROGRESS_OPENED
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IS_GROUP_CHAT_HINT_SEEN
+import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
+import com.joshtalks.joshskills.core.LESSON_NUMBER
+import com.joshtalks.joshskills.core.LESSON__CHAT_ID
+import com.joshtalks.joshskills.core.MESSAGE_CHAT_SIZE_LIMIT
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
+import com.joshtalks.joshskills.core.alphaAnimation
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.JoshSnackBar
@@ -62,19 +89,48 @@ import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
 import com.joshtalks.joshskills.core.notification.QUESTION_ID
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PAUSED
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
 import com.joshtalks.joshskills.messaging.MessageBuilderFactory
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
-import com.joshtalks.joshskills.repository.local.entity.*
-import com.joshtalks.joshskills.repository.local.eventbus.*
+import com.joshtalks.joshskills.repository.local.entity.AudioType
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
+import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
+import com.joshtalks.joshskills.repository.local.entity.Question
+import com.joshtalks.joshskills.repository.local.eventbus.AssessmentStartEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.AudioPlayEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.ConversationPractiseEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.DeleteMessageEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.DownloadCompletedEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.GotoChatEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
+import com.joshtalks.joshskills.repository.local.eventbus.InternalSeekBarProgressEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.P2PStartEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.PdfOpenEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEvent
+import com.joshtalks.joshskills.repository.local.eventbus.PractiseSubmitEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.StartCertificationExamEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.UnlockNextClassEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
-import com.joshtalks.joshskills.repository.server.chat_message.*
+import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TUnlockClassMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
@@ -96,8 +152,27 @@ import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment
-import com.joshtalks.joshskills.ui.video_player.*
-import com.joshtalks.joshskills.ui.view_holders.*
+import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
+import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
+import com.joshtalks.joshskills.ui.video_player.LAST_VIDEO_INTERVAL
+import com.joshtalks.joshskills.ui.video_player.NEXT_VIDEO_AVAILABLE
+import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.joshtalks.joshskills.ui.view_holders.AssessmentViewHolder
+import com.joshtalks.joshskills.ui.view_holders.AudioPlayerViewHolder
+import com.joshtalks.joshskills.ui.view_holders.BaseCell
+import com.joshtalks.joshskills.ui.view_holders.BaseChatViewHolder
+import com.joshtalks.joshskills.ui.view_holders.CertificationExamViewHolder
+import com.joshtalks.joshskills.ui.view_holders.ConversationPractiseViewHolder
+import com.joshtalks.joshskills.ui.view_holders.ImageViewHolder
+import com.joshtalks.joshskills.ui.view_holders.NewMessageViewHolder
+import com.joshtalks.joshskills.ui.view_holders.P2PViewHolder
+import com.joshtalks.joshskills.ui.view_holders.PdfViewHolder
+import com.joshtalks.joshskills.ui.view_holders.PracticeViewHolder
+import com.joshtalks.joshskills.ui.view_holders.StudentCardViewHolder
+import com.joshtalks.joshskills.ui.view_holders.TextViewHolder
+import com.joshtalks.joshskills.ui.view_holders.TimeViewHolder
+import com.joshtalks.joshskills.ui.view_holders.UnlockNextClassViewHolder
+import com.joshtalks.joshskills.ui.view_holders.VideoViewHolder
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
@@ -112,8 +187,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Date
+import java.util.Locale
+import java.util.Timer
+import java.util.TimerTask
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.concurrent.scheduleAtFixedRate
@@ -154,7 +231,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         }
     }
 
-    private var userProfileResponse: UserProfileResponse? = null
+    private var userProfileData: UserProfileResponse? = null
     private var isLessonTypeChat: Boolean = false
     private var isCurrentLessonAlreadyCompleted: Boolean = false
     private var lastLessonId: Int = -1
@@ -782,6 +859,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         animSet.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationEnd(p0: Animation?) {
                 view.visibility = GONE
+                shiftGroupChatIconUp()
             }
 
             override fun onAnimationStart(p0: Animation?) {
@@ -896,7 +974,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         }
 
         conversationViewModel.userData.observe(this, {
-            userProfileResponse = it
+            userProfileData = it
             it?.let {
                 ///hideProgressBar()
                 if (conversationBinding.courseProgressTooltip.visibility != VISIBLE) {
@@ -951,8 +1029,10 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             if (isLeaderBoardActive) {
                 conversationBinding.userPointContainer.visibility = VISIBLE
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
+                shiftGroupChatIconDown()
             } else {
                 conversationBinding.userPointContainer.visibility = GONE
+                shiftGroupChatIconUp()
             }
         }
         var unseenAwards: ArrayList<Award>? = ArrayList()
@@ -1702,7 +1782,33 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             conversationBinding.courseProgressTooltip.setDismissListener(this)
             conversationBinding.courseProgressTooltip.visibility = VISIBLE
             conversationBinding.shader.visibility = VISIBLE
+
+            if(conversationBinding.userPointContainer.visibility== VISIBLE){
+                conversationBinding.userPointContainer.visibility= GONE
+                shiftGroupChatIconUp()
+            }
         }
+    }
+
+    private fun shiftGroupChatIconUp() {
+        val paramsChat: ViewGroup.MarginLayoutParams =
+            conversationBinding.imgGroupChat.layoutParams as ViewGroup.MarginLayoutParams
+        paramsChat.topMargin = Utils.dpToPx(20)
+        conversationBinding.imgGroupChat.layoutParams = paramsChat
+        val paramsBadge: ViewGroup.MarginLayoutParams =
+            conversationBinding.txtUnreadCount.layoutParams as ViewGroup.MarginLayoutParams
+        paramsBadge.topMargin = Utils.dpToPx(16)
+        conversationBinding.txtUnreadCount.layoutParams = paramsBadge
+    }
+    private fun shiftGroupChatIconDown() {
+        val paramsChat: ViewGroup.MarginLayoutParams =
+            conversationBinding.imgGroupChat.layoutParams as ViewGroup.MarginLayoutParams
+        paramsChat.topMargin = Utils.dpToPx(72)
+        conversationBinding.imgGroupChat.layoutParams = paramsChat
+        val paramsBadge: ViewGroup.MarginLayoutParams =
+            conversationBinding.txtUnreadCount.layoutParams as ViewGroup.MarginLayoutParams
+        paramsBadge.topMargin = Utils.dpToPx(64)
+        conversationBinding.txtUnreadCount.layoutParams = paramsBadge
     }
 
     private fun hideCourseProgressTooltip() {
@@ -2002,8 +2108,9 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         if (inboxEntity.isGroupActive) {
             conversationViewModel.getUnreadMessageCount(inboxEntity.conversation_id)
         }
-        if (inboxEntity.isCapsuleCourse)
+        if (inboxEntity.isCapsuleCourse){
             conversationViewModel.getProfileData(Mentor.getInstance().getId())
+        }
     }
 
     override fun onPause() {
