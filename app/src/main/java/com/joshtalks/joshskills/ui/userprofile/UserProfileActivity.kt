@@ -503,6 +503,10 @@ class UserProfileActivity : BaseActivity() {
     override fun onBackPressed() {
         val count = supportFragmentManager.backStackEntryCount
         if (count == 0) {
+            startTime = System.currentTimeMillis().minus(startTime).div(1000)
+            if (startTime > 0 && impressionId.isBlank().not()) {
+                viewModel.engageUserProfileTime(impressionId, startTime)
+            }
             super.onBackPressed()
             //additional code
         } else {

@@ -41,19 +41,19 @@ import com.joshtalks.joshskills.repository.server.translation.WordDetailsRespons
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopicModel
 import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
+import java.util.HashMap
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.FieldMap
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.QueryMap
-import java.util.HashMap
-import retrofit2.http.Headers
 
 @JvmSuppressWildcards
 interface CommonNetworkService {
@@ -156,7 +156,8 @@ interface CommonNetworkService {
     @GET("$DIR/leaderboard/get_leaderboard/")
     suspend fun getLeaderBoardData(
         @Query("mentor_id") mentorId: String,
-        @Query("interval_type") interval: String): Response<LeaderboardResponse>
+        @Query("interval_type") interval: String
+    ): Response<LeaderboardResponse>
 
     @GET("$DIR/leaderboard/get_leaderboard/")
     suspend fun getLeaderBoardDataViaPage(
@@ -167,7 +168,8 @@ interface CommonNetworkService {
 
     @GET("$DIR/leaderboard/get_animated_leaderboard/")
     suspend fun getAnimatedLeaderBoardData(
-        @Query("mentor_id") mentorId: String): Response<AnimatedLeaderBoardResponse>
+        @Query("mentor_id") mentorId: String
+    ): Response<AnimatedLeaderBoardResponse>
 
     @POST("$DIR/version/onboarding/")
     suspend fun getOnBoardingVersionDetails(@Body params: Map<String, String>): VersionResponse
@@ -199,7 +201,8 @@ interface CommonNetworkService {
 
     @GET("$DIR/group/user_profile/{mentor_id}/")
     suspend fun getUserProfileData(
-        @Path("mentor_id") id: String
+        @Path("mentor_id") id: String,
+        @Query("interval_type") intervalType: String? = null
     ): Response<UserProfileResponse>
 
     @GET("$DIR/reputation/get_points_history/")
@@ -222,9 +225,11 @@ interface CommonNetworkService {
     suspend fun getPinnedMessages(
         @Path("group_id") groupId: String
     ): Response<JsonArray>
+
     @PATCH("$DIR/reputation/award_mentor/")
     suspend fun patchAwardDetails(
-        @Body params: HashMap<String, List<Int>>): Response<PointsInfoResponse>
+        @Body params: HashMap<String, List<Int>>
+    ): Response<PointsInfoResponse>
 
 
     @Headers(
@@ -234,5 +239,11 @@ interface CommonNetworkService {
     )
     @GET("$DIR/question/word-detail/")
     suspend fun getWordDetail(@Query("word") word: String): WordDetailsResponse
+
+    @PATCH("$DIR/impression/user_profile_impression/{user_profile_impression_id}/")
+    suspend fun engageUserProfileTime(
+        @Path("user_profile_impression_id") userProfileImpressionId: String,
+        @Body params: Map<String, Long>
+    ): WordDetailsResponse
 
 }

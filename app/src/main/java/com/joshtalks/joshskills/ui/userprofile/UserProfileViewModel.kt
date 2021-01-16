@@ -221,4 +221,21 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
         }
     }
+
+    fun engageUserProfileTime(impressionId: String, startTime: Long) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (impressionId.isNullOrBlank())
+                    return@launch
+
+                AppObjectController.commonNetworkService.engageUserProfileTime(
+                    impressionId,
+                    mapOf("time_spent" to startTime)
+                )
+
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
+        }
+    }
 }
