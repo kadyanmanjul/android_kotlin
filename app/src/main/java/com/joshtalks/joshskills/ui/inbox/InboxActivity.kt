@@ -9,18 +9,16 @@ import android.os.CountDownTimer
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
 import android.view.View
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
-import android.widget.ImageView
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
+import com.cometchat.pro.constants.CometChatConstants
 import com.facebook.share.internal.ShareConstants.ACTION_TYPE
 import com.google.android.gms.location.LocationRequest
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.review.ReviewManagerFactory
-import com.joshtalks.joshcamerax.utils.SharedPrefsManager
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -30,6 +28,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.inapp_update.Constants
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
+import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
@@ -54,12 +53,12 @@ import com.joshtalks.joshskills.repository.server.onboarding.SubscriptionData
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.groupchat.constant.StringContract
+import com.joshtalks.joshskills.ui.groupchat.messagelist.CometChatMessageListActivity
 import com.joshtalks.joshskills.ui.inbox.extra.TopTrialTooltipView
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
-import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
-import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
 import com.joshtalks.joshskills.ui.voip.WebRtcService
@@ -103,7 +102,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
     private var compositeDisposable = CompositeDisposable()
     private var inAppUpdateManager: InAppUpdateManager? = null
-    private lateinit var reminderIv: ImageView
     private lateinit var findMoreLayout: View
     lateinit var countdown_timer: CountDownTimer
     var isRunning: Boolean = false
@@ -116,6 +114,23 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         WorkManagerAdmin.requiredTaskInLandingPage()
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         super.onCreate(savedInstanceState)
+        var groupId: String? = null
+        if (intent != null && intent.hasExtra(StringContract.IntentStrings.GUID)) {
+            groupId = intent.getStringExtra(StringContract.IntentStrings.GUID)
+            viewModel.groupIdLiveData.observe(this, Observer {
+                startActivity(
+                    Intent(applicationContext, CometChatMessageListActivity::class.java).apply {
+                        putExtra(HAS_NOTIFICATION, true)
+                        putExtra(StringContract.IntentStrings.GUID, it)
+                        putExtra(
+                            StringContract.IntentStrings.TYPE,
+                            CometChatConstants.RECEIVER_TYPE_GROUP
+                        )
+                    }
+                )
+            })
+        }
+        viewModel.initCometChat(groupId)
         AppObjectController.isSettingUpdate = false
         lifecycle.addObserver(this)
         setContentView(R.layout.activity_inbox)
@@ -127,8 +142,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         handelIntentAction()
         initNewUserTip()
         viewModel.getTotalWatchTime()
-
-        viewModel.initCometChat()
         FileUploadService.uploadAllPendingTasks(AppObjectController.joshApplication)
         //viewModel.getProfileData(Mentor.getInstance().getId())
     }
@@ -439,49 +452,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         findViewById<View>(R.id.iv_setting).setOnClickListener {
             openPopupMenu(it)
         }
-        reminderIv = findViewById<ImageView>(R.id.iv_reminder)
-        reminderIv.visibility = View.GONE
-        reminderIv.setOnClickListener {
-            AppAnalytics.create(AnalyticsEvent.REMINDER_BELL_CLICKED.NAME)
-                .addBasicParam()
-                .addUserDetails()
-                .push()
-
-            viewModel.getTotalRemindersFromLocal()
-        }
-        if (!SharedPrefsManager.newInstance(this)
-                .getBoolean(SharedPrefsManager.Companion.IS_REMINDER_SYNCED, false)
-        ) {
-            viewModel.getRemindersFromServer()
-        } else
-            animateBell()
-    }
-
-    fun animateBell() {
-        if (SharedPrefsManager.newInstance(this)
-                .getBoolean(SharedPrefsManager.Companion.IS_FIRST_REMINDER, false)
-        ) {
-            val shake: Animation = AnimationUtils.loadAnimation(this, R.anim.shake_animation)
-            reminderIv.animation = shake
-        } else {
-            reminderIv.clearAnimation()
-        }
-    }
-
-    private fun openReminderCallback(reminderListSize: Int?) {
-        if (reminderListSize != null && reminderListSize > 0) {
-            startActivity(
-                Intent(
-                    applicationContext,
-                    ReminderListActivity::class.java
-                )
-            )
-        } else startActivity(
-            Intent(
-                applicationContext,
-                ReminderActivity::class.java
-            )
-        )
     }
 
     private fun openPopupMenu(view: View) {
@@ -682,16 +652,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
         overlay_layout.setOnClickListener {
             overlay_layout.visibility = View.GONE
-        }
-
-        viewModel.reminderApiCallStatusLiveData.observe(this, {
-            if (ApiCallStatus.SUCCESS == it) {
-                animateBell()
-            }
-        })
-
-        viewModel.totalRemindersLiveData.observe(this) {
-            openReminderCallback(it)
         }
 
         viewModel.overAllWatchTime.observe(this, {
@@ -971,7 +931,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         addObserver()
         viewModel.getRegisterCourses()
         viewModel.getProfileData(Mentor.getInstance().getId())
-        animateBell()
     }
 
     override fun onPause() {

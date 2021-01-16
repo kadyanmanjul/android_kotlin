@@ -54,6 +54,7 @@ const val IS_PROFILE_FEATURE_ACTIVE = "is_leaderboard_active"
 const val USER_SCORE = "user_score"
 const val SPEAKING_POINTS = "speaking_points"
 const val LESSON_TWO_OPENED = "lesson_two_opened"
+const val GROUP_CHAT_LAST_READ_MESSAGE_ID = "GROUP_CHAT_LAST_READ_MESSAGE_ID"
 
 object PrefManager {
 

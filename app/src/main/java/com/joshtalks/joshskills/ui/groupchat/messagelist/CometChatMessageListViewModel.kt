@@ -8,6 +8,8 @@ import com.cometchat.pro.models.BaseMessage
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.GROUP_CHAT_LAST_READ_MESSAGE_ID
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils.getMessagesFromDataJSONArray
@@ -87,6 +89,12 @@ class CometChatMessageListViewModel(application: Application) : AndroidViewModel
                 )
                 val response = AppObjectController.chatNetworkService.updateLastReadMessage(params)
                 if (response.isSuccessful && response.body() != null) {
+                    if (response.body()!!.has("message_id")) {
+                        PrefManager.put(
+                            GROUP_CHAT_LAST_READ_MESSAGE_ID,
+                            response.body()!!.get("message_id").asInt
+                        )
+                    }
                     Timber.d("UpdateLastSeenMessage Successful")
                     return@launch
                 }

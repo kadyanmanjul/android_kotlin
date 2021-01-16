@@ -52,6 +52,7 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.snackbar.Snackbar;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.core.PermissionUtils;
+import com.joshtalks.joshskills.core.PrefManager;
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener;
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService;
 import com.joshtalks.joshskills.messaging.RxBus2;
@@ -64,7 +65,6 @@ import com.joshtalks.joshskills.ui.groupchat.listeners.MessageActionCloseListene
 import com.joshtalks.joshskills.ui.groupchat.listeners.OnRepliedMessageClick;
 import com.joshtalks.joshskills.ui.groupchat.listeners.StickyHeaderDecoration;
 import com.joshtalks.joshskills.ui.groupchat.screens.CometChatGroupDetailScreenActivity;
-import com.joshtalks.joshskills.ui.groupchat.uikit.AudioV2PlayerView;
 import com.joshtalks.joshskills.ui.groupchat.uikit.Avatar;
 import com.joshtalks.joshskills.ui.groupchat.uikit.ComposeBox.ComposeBox;
 import com.joshtalks.joshskills.ui.groupchat.utils.KeyBoardUtils;
@@ -85,11 +85,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static com.joshtalks.joshskills.core.PrefManagerKt.GROUP_CHAT_LAST_READ_MESSAGE_ID;
 
 
 /**
@@ -371,6 +371,14 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
 
         viewModel.getTempMessageList().observe(this, baseMessages -> {
             if (!baseMessages.isEmpty()) {
+                if (messageAdapter == null) {
+                    messageAdapter = new MessageAdapter(CometChatMessageListActivity.this, messageList, messageid -> viewModel.audioPlayed(Id, Integer.parseInt(messageid)));
+                    rvChatListView.setAdapter(messageAdapter);
+                    stickyHeaderDecoration = new StickyHeaderDecoration(messageAdapter);
+                    rvChatListView.addItemDecoration(stickyHeaderDecoration, 0);
+                    messageAdapter.notifyDataSetChanged();
+                    stopHideShimmer();
+                }
                 messageAdapter.resetList();
                 messageAdapter.updateList(baseMessages, true);
                 isInProgress = false;
@@ -747,12 +755,7 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
      */
     private void initMessageAdapter(List<BaseMessage> messageList) {
         if (messageAdapter == null) {
-            messageAdapter = new MessageAdapter(CometChatMessageListActivity.this, messageList, new AudioV2PlayerView.PlayPauseCallback() {
-                @Override
-                public void onPlayClick(@NotNull String messageid) {
-                    viewModel.audioPlayed(Id, Integer.parseInt(messageid));
-                }
-            });
+            messageAdapter = new MessageAdapter(CometChatMessageListActivity.this, messageList, messageid -> viewModel.audioPlayed(Id, Integer.parseInt(messageid)));
             rvChatListView.setAdapter(messageAdapter);
             stickyHeaderDecoration = new StickyHeaderDecoration(messageAdapter);
             rvChatListView.addItemDecoration(stickyHeaderDecoration, 0);
@@ -1487,7 +1490,12 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
         nextMessagesRequest = null;
         FirebaseNotificationService.Companion.getUnreadMessageList().clear();
         // checkOnGoingCall();
-        fetchMessage();
+        int lastReadMessageId = PrefManager.INSTANCE.getIntValue(GROUP_CHAT_LAST_READ_MESSAGE_ID, false);
+        if (lastReadMessageId != 0) {
+            scrollToMsg(lastReadMessageId);
+        } else {
+            fetchMessage();
+        }
         addMessageListener();
 
 //        if (messageActionFragment != null)
@@ -1854,16 +1862,21 @@ public class CometChatMessageListActivity extends AppCompatActivity implements V
     }
 
     private void scrollToMsg(int messageId) {
-        int position = -1;
-        for (int i = 0; i < messageAdapter.getMessageList().size(); i++) {
-            if (messageAdapter.getMessageList().get(i).getId() == messageId) {
-                position = i;
-                break;
+        if (messageAdapter != null) {
+            int position = -1;
+            for (int i = 0; i < messageAdapter.getMessageList().size(); i++) {
+                if (messageAdapter.getMessageList().get(i).getId() == messageId) {
+                    position = i;
+                    break;
+                }
             }
-        }
-        if (position >= 0) {
-            messageAdapter.selectedMsgId = messageId;
-            linearLayoutManager.scrollToPositionWithOffset(position, 40);
+            if (position >= 0) {
+                messageAdapter.selectedMsgId = messageId;
+                linearLayoutManager.scrollToPositionWithOffset(position, 40);
+            } else {
+                tempMessageId = messageId;
+                fetchParticularMessageList(messageId);
+            }
         } else {
             tempMessageId = messageId;
             fetchParticularMessageList(messageId);

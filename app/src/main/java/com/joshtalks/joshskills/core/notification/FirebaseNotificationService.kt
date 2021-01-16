@@ -64,7 +64,6 @@ import com.joshtalks.joshskills.ui.conversation_practice.PRACTISE_ID
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.groupchat.constant.StringContract
-import com.joshtalks.joshskills.ui.groupchat.messagelist.CometChatMessageListActivity
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
@@ -189,7 +188,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 val style = NotificationCompat.BigTextStyle()
                 style.setBigContentTitle(notificationObject.contentTitle)
                 style.bigText(notificationObject.contentText)
-                style.setSummaryText(notificationObject.contentText)
+                style.setSummaryText("")
 
                 val notificationBuilder =
                     NotificationCompat.Builder(
@@ -415,40 +414,28 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             }
             NotificationAction.GROUP_CHAT_REPLY -> {
                 notificationChannelId = groupChatChannelId
-                Intent(applicationContext, CometChatMessageListActivity::class.java).apply {
+                Intent(applicationContext, InboxActivity::class.java).apply {
                     putExtra(NOTIFICATION_ID, 10112)
                     putExtra(HAS_NOTIFICATION, true)
                     putExtra(StringContract.IntentStrings.GUID, actionData)
-                    putExtra(
-                        StringContract.IntentStrings.TYPE,
-                        CometChatConstants.RECEIVER_TYPE_GROUP
-                    )
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 }
             }
             NotificationAction.GROUP_CHAT_VOICE_NOTE_HEARD -> {
                 notificationChannelId = groupChatChannelId
-                Intent(applicationContext, CometChatMessageListActivity::class.java).apply {
+                Intent(applicationContext, InboxActivity::class.java).apply {
                     putExtra(NOTIFICATION_ID, 10122)
                     putExtra(HAS_NOTIFICATION, true)
                     putExtra(StringContract.IntentStrings.GUID, actionData)
-                    putExtra(
-                        StringContract.IntentStrings.TYPE,
-                        CometChatConstants.RECEIVER_TYPE_GROUP
-                    )
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 }
             }
             NotificationAction.GROUP_CHAT_PIN_MESSAGE -> {
                 notificationChannelId = groupChatChannelId
-                Intent(applicationContext, CometChatMessageListActivity::class.java).apply {
+                Intent(applicationContext, InboxActivity::class.java).apply {
                     putExtra(NOTIFICATION_ID, 10132)
                     putExtra(HAS_NOTIFICATION, true)
                     putExtra(StringContract.IntentStrings.GUID, actionData)
-                    putExtra(
-                        StringContract.IntentStrings.TYPE,
-                        CometChatConstants.RECEIVER_TYPE_GROUP
-                    )
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 }
             }
@@ -657,14 +644,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     unreadMessageList.add(baseMessage)
                 }
                 val clickIntent =
-                    Intent(applicationContext, CometChatMessageListActivity::class.java).apply {
+                    Intent(applicationContext, InboxActivity::class.java).apply {
                         putExtra(NOTIFICATION_ID, baseMessage.receiverUid)
                         putExtra(HAS_NOTIFICATION, true)
                         putExtra(StringContract.IntentStrings.GUID, baseMessage.receiverUid)
-                        putExtra(
-                            StringContract.IntentStrings.TYPE,
-                            CometChatConstants.RECEIVER_TYPE_GROUP
-                        )
                         addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     }
                 val uniqueRequestCode = (System.currentTimeMillis() and 0xfffffff).toInt()
@@ -717,8 +700,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     .setIcon(IconCompat.createWithBitmap(chatGroupIcon))
                     .build()
 
+                val conversationTitle =
+                    if (unreadMessageList.size > 1) group.name + " (${unreadMessageList.size} Messages)" else group.name
                 val messagingStyle = NotificationCompat.MessagingStyle(chatGroup)
-                    .setConversationTitle(group.name)
+                    .setConversationTitle(conversationTitle)
                     .setGroupConversation(true)
 
                 unreadMessageList.listIterator().forEach {

@@ -53,6 +53,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     private val jobs = arrayListOf<Job>()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
+    val groupIdLiveData: MutableLiveData<String> = MutableLiveData()
 
     fun getProfileData(mentorId: String) {
         apiCallStatusLiveData.postValue(ApiCallStatus.START)
@@ -70,7 +71,10 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                         }
                     }
                     userData.postValue(response.body()!!)
-                    PrefManager.put(IS_PROFILE_FEATURE_ACTIVE, response.body()?.isPointsActive?:false)
+                    PrefManager.put(
+                        IS_PROFILE_FEATURE_ACTIVE,
+                        response.body()?.isPointsActive ?: false
+                    )
                     return@launch
                 } else if (response.errorBody() != null
                     && response.errorBody()!!.string().contains("mentor_id is not valid")
@@ -255,7 +259,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun initCometChat() {
+    fun initCometChat(groupId: String?) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 if (CometChat.isInitialized().not()) {
@@ -272,7 +276,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                         object : CometChat.CallbackListener<String>() {
                             override fun onSuccess(p0: String?) {
                                 Timber.d("Initialization completed successfully")
-                                loginUser()
+                                loginUser(groupId)
                             }
 
                             override fun onError(p0: CometChatException?) {
@@ -282,7 +286,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                         })
                 } else {
                     // CometChat already initialized
-                    loginUser()
+                    loginUser(groupId)
                 }
             } catch (ex: Exception) {
                 LogException.catchException(ex)
@@ -291,7 +295,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun loginUser() {
+    private fun loginUser(groupId: String?) {
 
         jobs += viewModelScope.launch(Dispatchers.IO) {
             if (CometChat.getLoggedInUser() == null) {
@@ -303,6 +307,9 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                         object : CometChat.CallbackListener<User>() {
                             override fun onSuccess(p0: User?) {
                                 Timber.d("Login Successful : %s", p0?.toString())
+                                groupId?.let {
+                                    groupIdLiveData.postValue(it)
+                                }
                                 registerFCMTokenWithCometChat()
                             }
 
@@ -319,7 +326,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                 try {
                     CometChat.logout(object : CometChat.CallbackListener<String>() {
                         override fun onSuccess(p0: String?) {
-                            loginUser()
+                            loginUser(groupId)
                         }
 
                         override fun onError(p0: CometChatException?) {
@@ -332,6 +339,9 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                 }
             } else {
                 // User already logged in
+                groupId?.let {
+                    groupIdLiveData.postValue(it)
+                }
                 registerFCMTokenWithCometChat()
             }
         }
