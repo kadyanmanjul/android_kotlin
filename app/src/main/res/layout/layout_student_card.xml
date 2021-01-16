@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_view_fl"
     android:layout_width="@dimen/_220sdp"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/_240sdp"
     android:layout_marginTop="@dimen/_2sdp"
     android:layout_marginBottom="@dimen/_2sdp"
     android:layout_marginStart="@dimen/_14sdp"
-    android:background="@drawable/ic_student_card_bg"
+    android:background="@drawable/ic_card_student_of_the_year"
     android:paddingEnd="@dimen/_7sdp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -135,7 +135,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/total_points"
-            tools:text="Vedant won this award by earning 470 points through his hardwork yesterday" />
+            tools:text="Vedant won this award by earning 47ww gew  weguh iuhew gig er giuigyuer  iyegr u ge 0 points through his hardwork yesterday" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
