@@ -50,7 +50,12 @@ data class AwardMentorModel(
     @ColumnInfo(name = "total_points_text")
     @SerializedName("total_points_text")
     @Expose
-    var totalPointsText: String?
+    var totalPointsText: String?,
+
+    @ColumnInfo(name = "mentor_id")
+    @SerializedName("mentor_id")
+    @Expose
+    var mentorId: String?
 ) : Parcelable
 
 @Dao

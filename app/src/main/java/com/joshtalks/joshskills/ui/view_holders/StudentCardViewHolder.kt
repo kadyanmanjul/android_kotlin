@@ -8,7 +8,10 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.core.setUserImageOrInitials
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
+import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
@@ -74,6 +77,13 @@ class StudentCardViewHolder(
             awardMentorModel.awardImageUrl?.let {
                 awardImage.setImage(it, AppObjectController.joshApplication)
             }
+        }
+    }
+
+    @Click(R.id.root_view_fl)
+    fun checkExamDetails() {
+        message.awardMentorModel?.mentorId?.let {
+            RxBus2.publish(OpenUserProfile(it))
         }
     }
 }

@@ -371,6 +371,8 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("DROP TABLE app_usage")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `app_usage` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `created` INTEGER NOT NULL, `usage_time` INTEGER NOT NULL)")
+                database.execSQL("ALTER TABLE `awardmentormodel` ADD COLUMN mentor_id TEXT")
+
             }
         }
 

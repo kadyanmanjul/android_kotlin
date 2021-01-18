@@ -100,6 +100,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.PractiseSubmitEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.StartCertificationExamEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.UnlockNextClassEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
+import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -1407,6 +1408,18 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                             lessonInterval = it.lessonInterval
                         )
                     )
+                }, {
+                    it.printStackTrace()
+                })
+        )
+
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(OpenUserProfile::class.java)
+                .subscribeOn(Schedulers.computation())
+                .subscribe({
+                    it.id?.let { id ->
+                        openUserProfileActivity(id,USER_PROFILE_FLOW_FROM.BEST_PERFORMER.value)
+                    }
                 }, {
                     it.printStackTrace()
                 })
