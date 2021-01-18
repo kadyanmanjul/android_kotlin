@@ -143,8 +143,8 @@ object Utils {
         if (PrefManager.hasKey("deviceId"))
             return PrefManager.getStringValue("deviceId")
         val deviceId = Settings.Secure.getString(
-                AppObjectController.joshApplication.contentResolver,
-                Settings.Secure.ANDROID_ID
+            AppObjectController.joshApplication.contentResolver,
+            Settings.Secure.ANDROID_ID
         )
         PrefManager.put("deviceId", deviceId)
 
@@ -158,7 +158,7 @@ object Utils {
 
     fun messageTimeConversion(old: Date): String {
         return CHAT_TIME_FORMATTER.format(old.time).toLowerCase(Locale.getDefault())
-                .replace("AM", "am").replace("PM", "pm")
+            .replace("AM", "am").replace("PM", "pm")
 
     }
 
@@ -231,7 +231,7 @@ object Utils {
 
     fun getPathFromUri(path: String): String {
         return Environment.getExternalStorageDirectory().toString().plus("/")
-                .plus(path.split(Regex("/"), 3)[2])
+            .plus(path.split(Regex("/"), 3)[2])
 
     }
 
@@ -250,24 +250,24 @@ object Utils {
 
     fun createCircleBitmap(bitmapimg: Bitmap): Bitmap {
         val output = Bitmap.createBitmap(
-                bitmapimg.width,
-                bitmapimg.height, Bitmap.Config.ARGB_8888
+            bitmapimg.width,
+            bitmapimg.height, Bitmap.Config.ARGB_8888
         )
         val canvas = Canvas(output)
 
         val color = -0xbdbdbe
         val paint = Paint()
         val rect = Rect(
-                0, 0, bitmapimg.width,
-                bitmapimg.height
+            0, 0, bitmapimg.width,
+            bitmapimg.height
         )
 
         paint.isAntiAlias = true
         canvas.drawARGB(0, 0, 0, 0)
         paint.color = color
         canvas.drawCircle(
-                (bitmapimg.width / 2).toFloat(),
-                (bitmapimg.height / 2).toFloat(), (bitmapimg.width / 2).toFloat(), paint
+            (bitmapimg.width / 2).toFloat(),
+            (bitmapimg.height / 2).toFloat(), (bitmapimg.width / 2).toFloat(), paint
         )
         paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
         canvas.drawBitmap(bitmapimg, rect, rect, paint)
@@ -281,9 +281,9 @@ object Utils {
         fOut = FileOutputStream(file)
 
         bitmap.compress(
-                Bitmap.CompressFormat.JPEG,
-                85,
-                fOut
+            Bitmap.CompressFormat.JPEG,
+            85,
+            fOut
         )
         fOut.flush()
         fOut.close()
@@ -301,8 +301,8 @@ object Utils {
 
     fun dpToPx(context: Context, dp: Float): Int {
         return (TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, dp,
-                context.resources.displayMetrics
+            TypedValue.COMPLEX_UNIT_DIP, dp,
+            context.resources.displayMetrics
         ) + 0.5f).roundToInt()
     }
 
@@ -335,7 +335,7 @@ object Utils {
 
     fun openUri(context: Context, uri: Uri) {
         val intent =
-                Intent(ACTION_VIEW, uri)
+            Intent(ACTION_VIEW, uri)
         intent.putExtra(Browser.EXTRA_APPLICATION_ID, context.packageName)
         try {
             context.startActivity(intent)
@@ -352,10 +352,10 @@ object Utils {
         }
         val builder = CustomTabsIntent.Builder()
         builder.setToolbarColor(
-                ContextCompat.getColor(
-                        AppObjectController.joshApplication,
-                        R.color.colorPrimary
-                )
+            ContextCompat.getColor(
+                AppObjectController.joshApplication,
+                R.color.colorPrimary
+            )
         )
         builder.setShowTitle(true)
         builder.setExitAnimations(activity, android.R.anim.fade_in, android.R.anim.fade_out)
@@ -377,7 +377,7 @@ object Utils {
 
     fun isInternetAvailable(): Boolean {
         val connectivityManager =
-                AppObjectController.joshApplication.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            AppObjectController.joshApplication.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val nw = connectivityManager.activeNetwork ?: return false
             val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
@@ -411,8 +411,8 @@ object Utils {
                 false
             }
         }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
 
@@ -423,9 +423,9 @@ object Utils {
             return (drawable).bitmap
         } else if (drawable is VectorDrawableCompat || drawable is VectorDrawable) {
             val bitmap = Bitmap.createBitmap(
-                    drawable.intrinsicWidth,
-                    drawable.intrinsicHeight,
-                    Bitmap.Config.ARGB_8888
+                drawable.intrinsicWidth,
+                drawable.intrinsicHeight,
+                Bitmap.Config.ARGB_8888
             )
             val canvas = Canvas(bitmap)
             drawable.setBounds(0, 0, canvas.width, canvas.height)
@@ -446,24 +446,24 @@ object Utils {
             }
             val builder = CustomTabsIntent.Builder()
             builder.setToolbarColor(
-                    ContextCompat.getColor(
-                            AppObjectController.joshApplication,
-                            R.color.colorPrimary
-                    )
+                ContextCompat.getColor(
+                    AppObjectController.joshApplication,
+                    R.color.colorPrimary
+                )
             )
             builder.setShowTitle(true)
             val actionIntent = Intent(Intent.ACTION_DIAL).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             val phoneNumber =
-                    AppObjectController.getFirebaseRemoteConfig().getString("helpline_number")
+                AppObjectController.getFirebaseRemoteConfig().getString("helpline_number")
             actionIntent.data = Uri.parse("tel:$phoneNumber")
 
             val pi =
-                    PendingIntent.getActivity(activityContext, 0, actionIntent, 0)
+                PendingIntent.getActivity(activityContext, 0, actionIntent, 0)
             val icon = getBitmapFromDrawable(
-                    AppObjectController.joshApplication,
-                    R.drawable.ic_local_phone
+                AppObjectController.joshApplication,
+                R.drawable.ic_local_phone
             )
             builder.setActionButton(icon, "Call helpline", pi, true)
 
@@ -480,8 +480,8 @@ object Utils {
 
             val customTabsIntent = builder.build()
             com.joshtalks.joshskills.core.chrome.CustomTabsHelper.addKeepAliveExtra(
-                    activityContext,
-                    customTabsIntent.intent
+                activityContext,
+                customTabsIntent.intent
             )
             customTabsIntent.launchUrl(activityContext, Uri.parse(updateUrl))
         } catch (ex: Exception) {
@@ -928,9 +928,12 @@ fun ImageView.setImage(url: String, context: Context = AppObjectController.joshA
         .into(this)
 }
 
-fun ImageView.setUserImageOrInitials(url: String?,userName:String,dpToPx:Int=16) {
+fun ImageView.setUserImageOrInitials(url: String?, userName: String, dpToPx: Int = 16) {
     if (url.isNullOrEmpty()) {
-        val font = Typeface.createFromAsset(AppObjectController.joshApplication.assets, "fonts/OpenSans-SemiBold.ttf")
+        val font = Typeface.createFromAsset(
+            AppObjectController.joshApplication.assets,
+            "fonts/OpenSans-SemiBold.ttf"
+        )
         val drawable: TextDrawable = TextDrawable.builder()
             .beginConfig()
             .textColor(ContextCompat.getColor(AppObjectController.joshApplication, R.color.white))
@@ -1146,7 +1149,7 @@ fun TabLayout.updateEnable(enable: Boolean) {
     }
 }
 
-fun String.textDrawableBitmap(): Bitmap? {
+fun String.textDrawableBitmap(width: Int = 48, height: Int = 48): Bitmap? {
     val rnd = Random()
     val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
     val font = Typeface.createFromAsset(
@@ -1162,8 +1165,6 @@ fun String.textDrawableBitmap(): Bitmap? {
         .endConfig()
         .buildRound(this, color)
 
-    val width = 48
-    val height = 48
     val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmap)
     drawable.setBounds(0, 0, canvas.width, canvas.height)
