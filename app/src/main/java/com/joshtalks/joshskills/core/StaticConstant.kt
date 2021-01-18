@@ -44,6 +44,13 @@ enum class GENDER(val gValue: String) {
     MALE("M"), FEMALE("F"), OTHER("O")
 }
 
+enum class USER_PROFILE_FLOW_FROM(val value: String) {
+    CONVERSATION("CONVERSATION"), FLOATING_BAR("FLOATING_BAR"),
+    LEADERBOARD("LEADERBOARD"), INBOX_SCREEN("INBOX_SCREEN"),
+    GROUP_CHAT("GROUP_CHAT"),
+    NONE("NONE"), MENU("MENU"), AWARD("AWARD")
+}
+
 enum class VerificationService {
     TRUECALLER, SINCH, SMS_COUNTRY
 }

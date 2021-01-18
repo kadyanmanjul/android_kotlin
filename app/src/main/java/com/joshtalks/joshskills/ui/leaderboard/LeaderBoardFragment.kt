@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -244,7 +245,8 @@ class LeaderBoardFragment : Fragment() {
                 requireActivity(),
                 id,
                 arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-                intervalType
+                intervalType,
+                USER_PROFILE_FLOW_FROM.LEADERBOARD.value
             )
         }
     }

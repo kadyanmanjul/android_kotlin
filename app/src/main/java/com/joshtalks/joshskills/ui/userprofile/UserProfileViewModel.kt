@@ -179,13 +179,14 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         }.await()
     }
 
-    fun getProfileData(mentorId: String, intervalType: String?) {
+    fun getProfileData(mentorId: String, intervalType: String?, previousPage: String?) {
         apiCallStatusLiveData.postValue(ApiCallStatus.START)
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = AppObjectController.commonNetworkService.getUserProfileData(
                     mentorId,
-                    intervalType
+                    intervalType,
+                    previousPage
                 )
                 if (response.isSuccessful && response.body() != null) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)

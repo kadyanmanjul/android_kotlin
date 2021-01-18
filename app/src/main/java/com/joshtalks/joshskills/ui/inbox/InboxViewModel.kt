@@ -10,21 +10,7 @@ import com.cometchat.pro.exceptions.CometChatException
 import com.cometchat.pro.models.User
 import com.joshtalks.joshcamerax.utils.SharedPrefsManager
 import com.joshtalks.joshskills.BuildConfig
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EXPLORE_TYPE
-import com.joshtalks.joshskills.core.INSTANCE_ID
-import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
-import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
-import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
-import com.joshtalks.joshskills.core.JoshApplication
-import com.joshtalks.joshskills.core.MY_COLOR_CODE
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
-import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
-import com.joshtalks.joshskills.core.SHOW_COURSE_DETAIL_TOOLTIP
-import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -59,7 +45,10 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         apiCallStatusLiveData.postValue(ApiCallStatus.START)
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = AppObjectController.commonNetworkService.getUserProfileData(mentorId)
+                val response = AppObjectController.commonNetworkService.getUserProfileData(
+                    mentorId, null,
+                    USER_PROFILE_FLOW_FROM.INBOX_SCREEN.value
+                )
                 if (response.isSuccessful && response.body() != null) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                     response.body()?.awardCategory?.sortedBy { it.sortOrder }?.map {

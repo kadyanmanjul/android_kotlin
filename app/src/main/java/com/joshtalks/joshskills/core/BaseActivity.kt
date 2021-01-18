@@ -247,14 +247,6 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         PointsHistoryActivity.startPointHistory(this, mentorId)
     }
 
-    fun openUserProfileActivity(id: String) {
-        UserProfileActivity.startUserProfileActivity(
-            this,
-            id,
-            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-        )
-    }
-
     fun getActivityType(act: Activity): BaseActivity.ActivityEnum {
         return when (act) {
             is ConversationActivity -> ActivityEnum.Conversation

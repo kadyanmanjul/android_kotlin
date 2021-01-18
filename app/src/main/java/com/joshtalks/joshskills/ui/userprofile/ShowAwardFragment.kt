@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.FragmentAwardShowBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -110,7 +111,8 @@ class ShowAwardFragment : DialogFragment() {
     fun goToProfile() {
         UserProfileActivity.startUserProfileActivity(
             requireActivity(), Mentor.getInstance().getId(),
-            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+            null, USER_PROFILE_FLOW_FROM.AWARD.value
         )
         dismiss()
     }

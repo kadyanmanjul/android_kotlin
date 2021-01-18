@@ -56,28 +56,8 @@ import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshcamerax.utils.ImageQuality
 import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ACHIEVED_AWARD_LIST
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CERTIFICATE_GENERATE
-import com.joshtalks.joshskills.core.COURSE_PROGRESS_OPENED
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.EXPLORE_TYPE
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.IS_GROUP_CHAT_HINT_SEEN
-import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
-import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
-import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
-import com.joshtalks.joshskills.core.LESSON_NUMBER
-import com.joshtalks.joshskills.core.LESSON_TWO_OPENED
-import com.joshtalks.joshskills.core.LESSON__CHAT_ID
-import com.joshtalks.joshskills.core.MESSAGE_CHAT_SIZE_LIMIT
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
-import com.joshtalks.joshskills.core.alphaAnimation
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.JoshSnackBar
@@ -90,7 +70,6 @@ import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
 import com.joshtalks.joshskills.core.notification.QUESTION_ID
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PAUSED
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
 import com.joshtalks.joshskills.messaging.MessageBuilderFactory
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -153,6 +132,7 @@ import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment
+import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.LAST_VIDEO_INTERVAL
@@ -465,7 +445,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                         openHelpActivity()
                     }
                     R.id.profile_setting -> {
-                        openUserProfileActivity(Mentor.getInstance().getId())
+                        openUserProfileActivity(Mentor.getInstance().getId(),
+                            USER_PROFILE_FLOW_FROM.MENU.value)
                     }
                     R.id.leaderboard_setting -> {
                         openLeaderBoard()
@@ -477,6 +458,16 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         } catch (ex: Exception) {
             FirebaseCrashlytics.getInstance().recordException(ex)
         }
+    }
+
+    private fun openUserProfileActivity(id: String, previousPage: String?) {
+        UserProfileActivity.startUserProfileActivity(
+            this,
+            id,
+            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+            null,
+            previousPage
+        )
     }
 
     fun practiseOnCall() {
@@ -703,7 +694,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             openLeaderBoard()
         }
         conversationBinding.points.setOnClickListener {
-            openUserProfileActivity(Mentor.getInstance().getId())
+            openUserProfileActivity(Mentor.getInstance().getId(),USER_PROFILE_FLOW_FROM.FLOATING_BAR.value)
         }
 
         findViewById<View>(R.id.ll_audio).setOnClickListener {

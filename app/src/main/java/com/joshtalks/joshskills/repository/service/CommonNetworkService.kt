@@ -204,7 +204,8 @@ interface CommonNetworkService {
     @GET("$DIR/group/user_profile/{mentor_id}/")
     suspend fun getUserProfileData(
         @Path("mentor_id") id: String,
-        @Query("interval_type") intervalType: String? = null
+        @Query("interval_type") intervalType: String? = null,
+        @Query("previous_page") previousPage: String? = null
     ): Response<UserProfileResponse>
 
     @GET("$DIR/reputation/get_points_history/")

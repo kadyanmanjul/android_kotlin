@@ -36,7 +36,6 @@ import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.OpenLeaderBoardEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfileEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -785,12 +784,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 openLeaderBoard()
-            })
-        compositeDisposable.add(RxBus2.listen(OpenUserProfileEventBus::class.java)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                openUserProfileActivity(Mentor.getInstance().getId())
             })
 
     }

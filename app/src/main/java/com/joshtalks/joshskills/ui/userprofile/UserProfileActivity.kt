@@ -54,6 +54,7 @@ class UserProfileActivity : BaseActivity() {
     private var mentorId: String = EMPTY
     private var impressionId: String = EMPTY
     private var intervalType: String? = EMPTY
+    private var previousPage: String? = EMPTY
     private val compositeDisposable = CompositeDisposable()
     private var awardCategory: List<AwardCategory>? = emptyList()
     private var startTime = 0L
@@ -71,10 +72,11 @@ class UserProfileActivity : BaseActivity() {
         binding.handler = this
         mentorId = intent.getStringExtra(KEY_MENTOR_ID) ?: EMPTY
         intervalType = intent.getStringExtra(INTERVAL_TYPE)
+        previousPage = intent.getStringExtra(PREVIOUS_PAGE)
         addObserver()
         startTime = System.currentTimeMillis()
         initToolbar()
-        getProfileData(intervalType)
+        getProfileData(intervalType, previousPage)
         setOnClickListeners()
     }
 
@@ -383,8 +385,8 @@ class UserProfileActivity : BaseActivity() {
         }
     }
 
-    private fun getProfileData(intervalType: String?) {
-        viewModel.getProfileData(mentorId, intervalType)
+    private fun getProfileData(intervalType: String?, previousPage: String?) {
+        viewModel.getProfileData(mentorId, intervalType, previousPage)
     }
 
     fun showAllAwards() {
@@ -498,24 +500,28 @@ class UserProfileActivity : BaseActivity() {
     private fun addUserImageInView(imagePath: String) {
         val imageUpdatedPath = AppDirectory.getImageSentFilePath()
         AppDirectory.copy(imagePath, imageUpdatedPath)
-        val tImageMessage = TImageMessage(imageUpdatedPath, imageUpdatedPath)
         viewModel.uploadMedia(imageUpdatedPath)
     }
 
     companion object {
         const val KEY_MENTOR_ID = "leaderboard_mentor_id"
         const val INTERVAL_TYPE = "interval_type"
+        const val PREVIOUS_PAGE = "previous_page"
 
         fun startUserProfileActivity(
             activity: Activity,
             mentorId: String,
             flags: Array<Int> = arrayOf(),
-            intervalType: String? = null
+            intervalType: String? = null,
+            previousPage: String? = null
         ) {
             Intent(activity, UserProfileActivity::class.java).apply {
                 putExtra(KEY_MENTOR_ID, mentorId)
                 intervalType?.let {
                     putExtra(INTERVAL_TYPE, it)
+                }
+                previousPage?.let {
+                    putExtra(PREVIOUS_PAGE, it)
                 }
                 flags.forEach { flag ->
                     this.addFlags(flag)
