@@ -18,20 +18,11 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.setImage
-import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.ActivityUserProfileBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
@@ -50,15 +41,12 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.text.DecimalFormat
-import java.util.Locale
-import kotlinx.android.synthetic.main.base_toolbar.iv_back
-import kotlinx.android.synthetic.main.base_toolbar.iv_help
-import kotlinx.android.synthetic.main.base_toolbar.iv_setting
-import kotlinx.android.synthetic.main.base_toolbar.text_message_title
+import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.DecimalFormat
+import java.util.*
 
 class UserProfileActivity : BaseActivity() {
 
@@ -78,27 +66,25 @@ class UserProfileActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mentorId = intent.getStringExtra(KEY_MENTOR_ID)
-        intervalType = intent.getStringExtra(INTERVAL_TYPE)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_user_profile)
         binding.lifecycleOwner = this
         binding.handler = this
+        mentorId = intent.getStringExtra(KEY_MENTOR_ID) ?: EMPTY
+        intervalType = intent.getStringExtra(INTERVAL_TYPE)
         addObserver()
         startTime = System.currentTimeMillis()
-        //initRecyclerView()
         initToolbar()
         getProfileData(intervalType)
         setOnClickListeners()
     }
 
     private fun setOnClickListeners() {
-
         binding.pointLayout.setOnClickListener {
             openPointHistory(mentorId)
         }
 
         binding.userPic.setOnClickListener {
-            if (mentorId.equals(Mentor.getInstance().getId())) {
+            if (mentorId == Mentor.getInstance().getId()) {
                 if (viewModel.getUserProfileUrl().isNullOrBlank().not()) {
                     ImageShowFragment.newInstance(viewModel.getUserProfileUrl(), null, null)
                         .show(supportFragmentManager, "ImageShow")
@@ -113,7 +99,7 @@ class UserProfileActivity : BaseActivity() {
             }
         }
         binding.editPic.setOnClickListener {
-            if (mentorId.equals(Mentor.getInstance().getId())) {
+            if (mentorId == Mentor.getInstance().getId()) {
                 openChooser()
             }
         }
@@ -133,9 +119,8 @@ class UserProfileActivity : BaseActivity() {
             }
         }
         text_message_title.text = getString(R.string.profile)
-        if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE) && mentorId.equals(
-                Mentor.getInstance().getId()
-            )
+        if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE) && mentorId == Mentor.getInstance()
+                .getId()
         ) {
             with(iv_setting) {
                 visibility = View.VISIBLE
@@ -144,7 +129,7 @@ class UserProfileActivity : BaseActivity() {
                 }
             }
         }
-        if (mentorId.equals(Mentor.getInstance().getId())) {
+        if (mentorId == Mentor.getInstance().getId()) {
             binding.editPic.visibility = View.GONE
         }
     }
@@ -184,11 +169,9 @@ class UserProfileActivity : BaseActivity() {
      }*/
 
     private fun addObserver() {
-        viewModel.userData.observe(this, Observer {
+        viewModel.userData.observe(this, {
             it?.let {
-                it.userProfileImpressionId?.let {
-                    impressionId = it
-                }
+                impressionId = it.userProfileImpressionId ?: EMPTY
                 hideProgressBar()
                 initView(it)
             }
@@ -256,7 +239,7 @@ class UserProfileActivity : BaseActivity() {
         } else {
             this.awardCategory = userData.awardCategory
 
-            if (mentorId.equals(Mentor.getInstance().getId())) {
+            if (mentorId == Mentor.getInstance().getId()) {
                 binding.moreInfo.visibility = View.VISIBLE
             }
             binding.awardsHeading.visibility = View.VISIBLE
@@ -265,8 +248,6 @@ class UserProfileActivity : BaseActivity() {
                     val view = addLinerLayout(awardCategory)
                     if (view != null) {
                         binding.multiLineLl.addView(view)
-                    } else {
-
                     }
                 }
             } else {
@@ -278,7 +259,7 @@ class UserProfileActivity : BaseActivity() {
     }
 
     private fun checkIsAwardAchieved(awardCategory: List<AwardCategory>?): Boolean {
-        if (mentorId.equals(Mentor.getInstance().getId())) {
+        if (mentorId == Mentor.getInstance().getId()) {
             return true
         }
         if (awardCategory.isNullOrEmpty()) {
@@ -339,7 +320,7 @@ class UserProfileActivity : BaseActivity() {
         var index = 0
 
         awardCategory.awards?.forEach {
-            if (mentorId.equals(Mentor.getInstance().getId())) {
+            if (mentorId == Mentor.getInstance().getId()) {
                 setAwardView(it, index, view!!)
                 index = index.plus(1)
             } else if (it.is_achieved) {
@@ -348,7 +329,7 @@ class UserProfileActivity : BaseActivity() {
                 index = index.plus(1)
             }
         }
-        if (haveAchievedAwards.not() && mentorId.equals(Mentor.getInstance().getId()).not()) {
+        if (haveAchievedAwards.not() && (mentorId == Mentor.getInstance().getId()).not()) {
             return null
         }
         return view
@@ -423,7 +404,7 @@ class UserProfileActivity : BaseActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    if (mentorId.equals(Mentor.getInstance().getId()))
+                    if (mentorId == Mentor.getInstance().getId())
                         openAwardPopUp(it.award)
                 }, {
                     it.printStackTrace()
@@ -453,7 +434,7 @@ class UserProfileActivity : BaseActivity() {
         CoroutineScope(Dispatchers.IO).launch {
 
             // There are no request code
-            result.getData()?.data?.let {
+            result.data?.data?.let {
                 val selectedImage: Uri = it
                 val filePathColumn = arrayOf<String>(MediaStore.Images.Media.DATA)
                 var bitmap: Bitmap? = null
@@ -473,7 +454,7 @@ class UserProfileActivity : BaseActivity() {
             }
         }
     }
-    public var activityResultLauncher2: ActivityResultLauncher<Intent> = registerForActivityResult(
+    var activityResultLauncher2: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         CoroutineScope(Dispatchers.IO).launch {

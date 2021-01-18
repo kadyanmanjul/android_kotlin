@@ -13,9 +13,7 @@ import com.joshtalks.joshskills.databinding.ActivityPointsHistoryBinding
 import com.joshtalks.joshskills.ui.points_history.viewholder.PointsSummaryDescViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewholder.PointsSummaryTitleViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewmodel.PointsViewModel
-import kotlinx.android.synthetic.main.base_toolbar.iv_back
-import kotlinx.android.synthetic.main.base_toolbar.iv_help
-import kotlinx.android.synthetic.main.base_toolbar.text_message_title
+import kotlinx.android.synthetic.main.base_toolbar.*
 import java.text.DecimalFormat
 
 const val MENTOR_ID = "mentor_id"
@@ -67,7 +65,7 @@ class PointsHistoryActivity : BaseActivity() {
                     binding.recyclerView.addView(
                         PointsSummaryTitleViewHolder(
                             list.date!!,
-                            list.pointsSum!!,
+                            list.pointsSum,
                             index
                         )
                     )
