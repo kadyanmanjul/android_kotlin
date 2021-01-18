@@ -770,10 +770,22 @@ class VocabularyPracticeAdapter(
 
         fun playSubmitPracticeAudio(chatModel: ChatModel, position: Int) {
             try {
-                val audioType = AudioType()
-                if (filePath==null){
-                    playPracticeAudio(chatModel, position)
-                    return
+                var audioType = AudioType()
+                if (filePath == null) {
+                    if (chatModel.question?.practiceEngagement.isNullOrEmpty() && chatModel.question?.status != QUESTION_STATUS.NA) {
+                        filePath = chatModel.filePath
+                    } else {
+                        val practiseEngagement =
+                            chatModel.question?.practiceEngagement?.getOrNull(0)
+                        if (PermissionUtils.isStoragePermissionEnabled(context) && AppDirectory.isFileExist(
+                                practiseEngagement?.localPath
+                            )
+                        ) {
+                            filePath = practiseEngagement?.localPath
+                        } else {
+                            filePath = practiseEngagement?.answerUrl
+                        }
+                    }
                 }
                 audioType.audio_url = filePath!!
                 audioType.downloadedLocalPath = filePath!!
