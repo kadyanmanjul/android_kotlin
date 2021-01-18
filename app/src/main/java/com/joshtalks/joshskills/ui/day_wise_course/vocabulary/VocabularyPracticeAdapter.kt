@@ -101,8 +101,16 @@ class VocabularyPracticeAdapter(
             else -> {
                 if (assessmentQuizList.isNotEmpty()) {
                     assessmentQuizList.filter { it.assessment.remoteId == itemList[position].question?.assessmentId }
-                        .getOrNull(0)?.let {
-                            (holder as QuizViewHolder).bind(itemList[position], it, position)
+                        .let {
+                            if (it.isNotEmpty()) {
+                                it.getOrNull(0)?.let { asWr ->
+                                    (holder as QuizViewHolder).bind(
+                                        itemList[position],
+                                        asWr,
+                                        position
+                                    )
+                                }
+                            }
                         }
                 }
             }
