@@ -257,10 +257,12 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
 
     fun getMaxIntervalForVideo(videoId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            videoInterval.postValue(
                 AppObjectController.appDatabase.videoEngageDao()
-                    .getWatchTimeForVideo(videoId)?.graph?.last()
-            )
+                    .getWatchTimeForVideo(videoId)?.let {
+                        if (it.graph.isNullOrEmpty().not()) {
+                            videoInterval.postValue(it.graph.last())
+                        }
+                    }
         }
     }
 
