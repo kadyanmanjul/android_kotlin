@@ -301,7 +301,6 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
     init {
         initPlayer()
         am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
     }
 
     private fun initPlayer() {
@@ -353,11 +352,12 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                     .setTrackSelector(trackSelector!!).build().apply {
                         setAudioAttributes(audioAttributes, true)
                     }
+
             } catch (e: Exception) {
                 throw e
             }
-            setPlayer(player)
             setupAudioFocus()
+            setPlayer(player)
             controllerAutoShow = true
             controllerHideOnTouch = true
             controllerShowTimeoutMs = 2500
@@ -460,7 +460,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                 .setUsage(C.USAGE_MEDIA)
                 .setContentType(C.CONTENT_TYPE_MOVIE)
                 .build()
-        player!!.setAudioAttributes(audioAttributes, true)
+        player?.setAudioAttributes(audioAttributes, true)
     }
 
     private tailrec fun Context?.activity(): Activity? = when (this) {
@@ -567,34 +567,42 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
     }
 
     fun playVideo() {
+        preparePlayer()
+    }
+
+    private fun playVideoInternal() {
+        preparePlayer()
         player?.playWhenReady = true
         player?.playbackState
+    }
+
+    private fun preparePlayer() {
         uri?.let {
             if (player == null) {
                 initPlayer()
             }
-            player!!.prepare(VideoDownloadController.getInstance().getMediaSource(uri), true, false)
+            player?.run {
+                val audioSource = VideoDownloadController.getInstance().getMediaSource(uri)
+                setHandleAudioBecomingNoisy(true)
+                playWhenReady = true
+                setWakeMode(C.WAKE_MODE_NETWORK)
+                if (lastPosition > 0) {
+                    setMediaSource(audioSource, lastPosition)
+                } else {
+                    setMediaSource(audioSource, true)
+                }
+                prepare()
+            }
         }
-        seekTo(lastPosition)
         timeHandler.post(timeRunnable)
     }
 
-    private fun playVideoInternal() {
-        player?.playWhenReady = true
-        player?.playbackState
-        uri?.let {
-            player!!.prepare(VideoDownloadController.getInstance().getMediaSource(uri), true, false)
-        }
-        seekTo(lastPosition)
-        timeHandler.post(timeRunnable)
-    }
 
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onStartPlayer() {
         if (player == null) {
             initPlayer()
-            playVideoInternal()
+            preparePlayer()
         }
     }
 

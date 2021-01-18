@@ -4,10 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.pm.ActivityInfo;
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
 import android.net.Uri;
 import android.os.Handler;
-import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -15,7 +13,9 @@ import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -25,6 +25,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.offline.Download;
+import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -42,15 +43,19 @@ import com.joshtalks.joshskills.core.CountUpTimer;
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent;
 import com.joshtalks.joshskills.core.analytics.AppAnalytics;
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController;
-import static com.joshtalks.joshskills.messaging.RxBus2.publish;
 import com.joshtalks.joshskills.repository.local.entity.VideoEngage;
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus;
 import com.joshtalks.joshskills.repository.server.engage.Graph;
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.annotation.Nullable;
+
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+import static com.joshtalks.joshskills.messaging.RxBus2.publish;
 
 public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener, View.OnClickListener {
     private final Handler timeHandler = new Handler();
@@ -381,7 +386,11 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 if (haveStartPosition) {
                     player.seekTo(startWindow, currentPosition);
                 }
-                player.prepare(VideoDownloadController.getInstance().getMediaSource(uri), !haveStartPosition, false);
+                MediaSource audioSource = VideoDownloadController.getInstance().getMediaSource(uri);
+                player.setMediaSource(audioSource, !haveStartPosition);
+                player.setHandleAudioBecomingNoisy(true);
+                player.setPlayWhenReady(true);
+                player.prepare();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -394,9 +403,12 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             if (haveStartPosition) {
                 player.seekTo(startWindow, currentPosition);
             }
-            player.prepare(VideoDownloadController.getInstance().getMediaSource(uri), !haveStartPosition, false);
-            new Handler(Looper.getMainLooper()).postDelayed(this::onPause, 500);
 
+            MediaSource audioSource = VideoDownloadController.getInstance().getMediaSource(uri);
+            player.setMediaSource(audioSource, !haveStartPosition);
+            player.setHandleAudioBecomingNoisy(true);
+            player.setPlayWhenReady(false);
+            player.prepare();
         }
     }
 
