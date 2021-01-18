@@ -58,7 +58,9 @@
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
 
     <!-- For devices running Android 10.0 or later, you also need to add the following permission: -->
-    <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
+    <uses-permission
+        android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:name=".core.JoshApplication"
@@ -634,13 +636,6 @@
             android:stopWithTask="true"
             android:foregroundServiceType="phoneCall"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service
-            android:name=".engage_notification.UsageStatsService"
-            android:directBootAware="true"
-            android:enabled="true"
-            android:exported="true"
-            android:isolatedProcess="true"
-            tools:ignore="ExportedService" />
 
         <service
             android:name=".util.FileUploadService"
