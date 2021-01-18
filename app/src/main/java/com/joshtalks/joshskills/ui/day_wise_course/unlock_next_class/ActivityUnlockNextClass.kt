@@ -7,15 +7,15 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 
-class ActivityUnlockNextClass : AppCompatActivity() {
+class ActivityUnlockNextClass : BaseActivity() {
 
     private var conversationId = EMPTY
 

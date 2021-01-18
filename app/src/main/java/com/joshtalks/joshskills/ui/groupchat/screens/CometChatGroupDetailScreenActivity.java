@@ -15,11 +15,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.cometchat.pro.constants.CometChatConstants;
 import com.cometchat.pro.core.BannedGroupMembersRequest;
 import com.cometchat.pro.core.CometChat;
@@ -33,20 +34,23 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.core.BaseActivity;
 import com.joshtalks.joshskills.ui.groupchat.adapter.GroupMemberAdapter;
 import com.joshtalks.joshskills.ui.groupchat.constant.StringContract;
 import com.joshtalks.joshskills.ui.groupchat.listeners.ClickListener;
 import com.joshtalks.joshskills.ui.groupchat.listeners.RecyclerTouchListener;
 import com.joshtalks.joshskills.ui.groupchat.utils.FontUtils;
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import static com.joshtalks.joshskills.ui.groupchat.utils.Utils.UserToGroupMember;
 
 
-public class CometChatGroupDetailScreenActivity extends AppCompatActivity {
+public class CometChatGroupDetailScreenActivity extends BaseActivity {
 
 
     private static final int LIMIT = 30;

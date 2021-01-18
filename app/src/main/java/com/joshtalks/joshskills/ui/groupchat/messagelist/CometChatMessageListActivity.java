@@ -19,9 +19,9 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
@@ -32,6 +32,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.cometchat.pro.constants.CometChatConstants;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.core.GroupMembersRequest;
@@ -51,6 +52,7 @@ import com.cometchat.pro.models.User;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.snackbar.Snackbar;
 import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.core.BaseActivity;
 import com.joshtalks.joshskills.core.PermissionUtils;
 import com.joshtalks.joshskills.core.PrefManager;
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener;
@@ -79,14 +81,17 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.joshtalks.joshskills.core.PrefManagerKt.GROUP_CHAT_LAST_READ_MESSAGE_ID;
@@ -109,7 +114,7 @@ import static com.joshtalks.joshskills.core.PrefManagerKt.GROUP_CHAT_LAST_READ_M
  */
 
 
-public class CometChatMessageListActivity extends AppCompatActivity implements View.OnClickListener,
+public class CometChatMessageListActivity extends BaseActivity implements View.OnClickListener,
         MessageActionCloseListener,
         /*OnMessageLongClick,*/
         ExoAudioPlayer.ProgressUpdateListener,
