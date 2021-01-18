@@ -297,7 +297,7 @@ class RegisterUserGAId(context: Context, private val workerParams: WorkerParamet
             val requestRegisterGAId = RequestRegisterGAId()
             requestRegisterGAId.gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
             requestRegisterGAId.installOn =
-                InstallReferrerModel.getPrefObject()?.installOn ?: Date().time
+                InstallReferrerModel.getPrefObject()?.installOn ?:(Date().time / 1000)
             requestRegisterGAId.test =
                 workerParams.inputData.getString("test_id")?.split("_")?.get(1)?.toInt()
             requestRegisterGAId.utmMedium = InstallReferrerModel.getPrefObject()?.utmMedium ?: EMPTY

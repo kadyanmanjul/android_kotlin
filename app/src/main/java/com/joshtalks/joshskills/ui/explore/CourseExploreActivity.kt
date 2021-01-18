@@ -236,7 +236,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                 val requestRegisterGAId = RequestRegisterGAId()
                 requestRegisterGAId.gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
                 requestRegisterGAId.installOn =
-                    InstallReferrerModel.getPrefObject()?.installOn ?: Date().time
+                    InstallReferrerModel.getPrefObject()?.installOn ?: (Date().time / 1000)
                 requestRegisterGAId.utmMedium =
                     InstallReferrerModel.getPrefObject()?.utmMedium ?: EMPTY
                 requestRegisterGAId.utmSource =
