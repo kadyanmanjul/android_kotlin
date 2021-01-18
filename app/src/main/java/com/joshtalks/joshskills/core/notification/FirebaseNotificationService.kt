@@ -1,20 +1,9 @@
 package com.joshtalks.joshskills.core.notification
 
-import android.app.ActivityManager
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
-import android.graphics.Rect
+import android.graphics.*
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
@@ -49,7 +38,6 @@ import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils.formatDuration
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
-import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -75,15 +63,17 @@ import com.joshtalks.joshskills.ui.voip.RTC_CHANNEL_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_TOKEN_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
 import com.joshtalks.joshskills.ui.voip.WebRtcService
+import org.json.JSONObject
+import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
 import java.lang.reflect.Type
 import java.net.HttpURLConnection
 import java.net.URL
-import java.util.LinkedList
+import java.util.*
 import java.util.concurrent.ExecutorService
-import org.json.JSONObject
-import timber.log.Timber
+import kotlin.collections.HashMap
+import kotlin.collections.set
 
 
 const val FCM_TOKEN = "fcmToken"
@@ -565,14 +555,14 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         notificationObject: NotificationObject?,
         action: NotificationAction?, actionData: String?
     ): Intent? {
-        val obj: InboxEntity? = AppObjectController.appDatabase.courseDao()
-            .chooseRegisterCourseMinimal(actionData!!)
+        val obj: InboxEntity = AppObjectController.appDatabase.courseDao()
+            .chooseRegisterCourseMinimal(actionData!!) ?: return null
+        /*
+        JobScheduler 100 job limit exceeded issue
         obj?.run {
             WorkManagerAdmin.updatedCourseForConversation(this.conversation_id)
-        }
+        }*/
 
-        if (obj == null)
-            return null
         val rIntnet = Intent(applicationContext, isNotificationCrash()).apply {
             putExtra(UPDATED_CHAT_ROOM_OBJECT, obj)
             putExtra(ACTION_TYPE, action)
