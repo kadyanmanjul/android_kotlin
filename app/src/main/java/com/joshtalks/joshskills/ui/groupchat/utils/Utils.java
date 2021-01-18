@@ -25,9 +25,11 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+
 import com.cometchat.pro.constants.CometChatConstants;
 import com.cometchat.pro.core.Call;
 import com.cometchat.pro.core.CometChat;
@@ -42,6 +44,12 @@ import com.cometchat.pro.models.User;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.ui.groupchat.constant.StringContract;
+
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -59,11 +67,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import kotlin.ranges.RangesKt;
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class Utils {
 
@@ -699,7 +704,7 @@ public class Utils {
     public static void moveToUserProfile(String uuid, Context context) {
         Intent intent = new Intent();
         intent.setComponent(new ComponentName("com.joshtalks.joshskills", "com.joshtalks.joshskills.ui.userprofile.UserProfileActivity"));
-        intent.putExtra("leaderboard-mentor-id", uuid);
+        intent.putExtra("leaderboard_mentor_id", uuid);
         context.startActivity(intent);
     }
 
