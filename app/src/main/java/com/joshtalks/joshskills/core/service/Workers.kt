@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.core.service
 
 import android.content.Context
-import android.os.SystemClock
 import android.text.format.DateUtils
 import androidx.concurrent.futures.CallbackToFutureAdapter
 import androidx.work.*
@@ -87,7 +86,7 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
         if (PrefManager.hasKey(CALL_RINGTONE_NOT_MUTE).not()) {
             PrefManager.put(CALL_RINGTONE_NOT_MUTE, true)
         }
-        AppObjectController.appUsageStartTime = 0L
+//        AppObjectController.appUsageStartTime = 0L
 
         return Result.success()
     }
@@ -300,7 +299,7 @@ class RegisterUserGAId(context: Context, private val workerParams: WorkerParamet
             val requestRegisterGAId = RequestRegisterGAId()
             requestRegisterGAId.gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
             requestRegisterGAId.installOn =
-                InstallReferrerModel.getPrefObject()?.installOn ?:(Date().time / 1000)
+                InstallReferrerModel.getPrefObject()?.installOn ?: (Date().time / 1000)
             requestRegisterGAId.test =
                 workerParams.inputData.getString("test_id")?.split("_")?.get(1)?.toInt()
             requestRegisterGAId.utmMedium = InstallReferrerModel.getPrefObject()?.utmMedium ?: EMPTY
@@ -806,15 +805,23 @@ class AppUsageWorker(context: Context, private var workerParams: WorkerParameter
         try {
             val active = workerParams.inputData.getBoolean(IS_ACTIVE, false)
             if (active) {
-                AppObjectController.appUsageStartTime = SystemClock.elapsedRealtime()
+                AppObjectController.appUsageStartTime = System.currentTimeMillis()
+                return Result.success()
             } else {
-                val time = SystemClock.elapsedRealtime() - AppObjectController.appUsageStartTime
+                val cTime = System.currentTimeMillis()
+                val uTime = AppObjectController.appUsageStartTime
+                if (uTime > cTime || uTime <= 0) {
+                    AppObjectController.appUsageStartTime = 0L
+                    return Result.success()
+                }
+                val time = cTime - uTime
                 AppObjectController.appDatabase.appUsageDao()
                     .insertIntoAppUsage(AppUsageModel(time))
             }
         } catch (ex: Throwable) {
             ex.printStackTrace()
         }
+        AppObjectController.appUsageStartTime = 0L
         return Result.success()
     }
 }

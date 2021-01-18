@@ -253,15 +253,22 @@ object WorkManagerAdmin {
 
     fun userAppUsage(status: Boolean) {
         val data = workDataOf(IS_ACTIVE to status)
-        val constraints = Constraints.Builder()
-            .build()
+        val constraints =
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                Constraints.Builder()
+                    .setRequiresDeviceIdle(false)
+                    .build()
+            } else {
+                Constraints.Builder()
+                    .build()
+            }
         val workRequest = OneTimeWorkRequestBuilder<AppUsageWorker>()
             .setInputData(data)
             .setConstraints(constraints)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniqueWork(
             "AppUsage_Api",
-            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            ExistingWorkPolicy.REPLACE,
             workRequest
         )
     }
