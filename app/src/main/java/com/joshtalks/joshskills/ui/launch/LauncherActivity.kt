@@ -18,13 +18,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CLEAR_CACHE
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
-import com.joshtalks.joshskills.core.JoshSkillExecutors
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_LOCALE_UPDATED
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
@@ -38,19 +32,19 @@ import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_NEW
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import io.branch.referral.Branch
 import io.branch.referral.Defines
-import java.io.File
-import kotlinx.android.synthetic.main.activity_launcher.progress_bar
+import kotlinx.android.synthetic.main.activity_launcher.*
 import org.json.JSONObject
 import timber.log.Timber
+import java.io.File
 
 
 class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        initApp()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
         animatedProgressBar()
-        initApp()
     }
 
     private fun initApp() {
