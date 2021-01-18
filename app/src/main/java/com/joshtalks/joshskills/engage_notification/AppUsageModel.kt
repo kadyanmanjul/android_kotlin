@@ -2,8 +2,7 @@ package com.joshtalks.joshskills.engage_notification
 
 import androidx.room.*
 import com.google.gson.annotations.Expose
-import java.util.*
-
+import java.time.Instant
 @Entity(tableName = "app_usage")
 data class AppUsageModel(
     @ColumnInfo(name = "usage_time")
@@ -15,7 +14,8 @@ data class AppUsageModel(
     var id: Long = 0
 
     @ColumnInfo(name = "created")
-    var usageDate: Date = Date()
+    var usageDate: Long = Instant.now().epochSecond
+
 }
 
 @Dao

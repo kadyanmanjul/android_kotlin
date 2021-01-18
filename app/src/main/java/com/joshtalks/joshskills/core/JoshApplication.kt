@@ -147,8 +147,8 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
         Timber.tag(TAG).e("************* foregrounded")
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
         isAppVisible = true
-        WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
         WorkManagerAdmin.userAppUsage(isAppVisible)
+        WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
         //  UsageStatsService.activeUserService(this)
     }
 
@@ -157,8 +157,8 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
         Timber.tag(TAG).e("************* backgrounded")
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
         isAppVisible = false
-        WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
         WorkManagerAdmin.userAppUsage(isAppVisible)
+        WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
         //  UsageStatsService.inactiveUserService(this)
     }
 
