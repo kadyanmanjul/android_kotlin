@@ -1,10 +1,6 @@
 package com.joshtalks.joshskills.core
 
-import android.content.BroadcastReceiver
-import android.content.ComponentCallbacks2
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.StrictMode
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -152,6 +148,7 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
         isAppVisible = true
         WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
+        WorkManagerAdmin.userAppUsage(isAppVisible)
         //  UsageStatsService.activeUserService(this)
     }
 
@@ -161,6 +158,7 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
         isAppVisible = false
         WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
+        WorkManagerAdmin.userAppUsage(isAppVisible)
         //  UsageStatsService.inactiveUserService(this)
     }
 

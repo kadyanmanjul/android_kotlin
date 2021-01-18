@@ -1,23 +1,13 @@
 package com.joshtalks.joshskills.core.service
 
-import androidx.work.BackoffPolicy
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.ExistingWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequest
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.PeriodicWorkRequest
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
+import androidx.work.*
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
 import com.joshtalks.joshskills.core.notification.EngageToUseAppNotificationWorker
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 object WorkManagerAdmin {
@@ -74,7 +64,6 @@ object WorkManagerAdmin {
                     OneTimeWorkRequestBuilder<SyncEngageVideo>().build(),
                     OneTimeWorkRequestBuilder<FeedbackRatingWorker>().build(),
                     OneTimeWorkRequestBuilder<LogAchievementLevelEventWorker>().build(),
-                    getPalioWorkRequest(),
                 )
             ).enqueue()
     }
@@ -262,8 +251,18 @@ object WorkManagerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
 
-    private fun getPalioWorkRequest(): OneTimeWorkRequest {
-        return OneTimeWorkRequestBuilder<GetPlivoUserWorker>()
+    fun userAppUsage(status: Boolean) {
+        val data = workDataOf(IS_ACTIVE to status)
+        val constraints = Constraints.Builder()
             .build()
+        val workRequest = OneTimeWorkRequestBuilder<AppUsageWorker>()
+            .setInputData(data)
+            .setConstraints(constraints)
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniqueWork(
+            "AppUsage_Api",
+            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            workRequest
+        )
     }
 }

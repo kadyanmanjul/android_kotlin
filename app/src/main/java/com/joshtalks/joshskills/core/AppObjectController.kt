@@ -184,8 +184,11 @@ class AppObjectController {
         @Volatile
         var mRtcEngine: RtcEngine? = null
 
-        private const val cacheSize = 10 * 1024 * 1024.toLong()
+        @JvmStatic
+        @Volatile
+        var appUsageStartTime: Long = 0L
 
+        private const val cacheSize = 10 * 1024 * 1024.toLong()
 
         fun initLibrary(context: Context): AppObjectController {
             joshApplication = context as JoshApplication
@@ -316,8 +319,8 @@ class AppObjectController {
             return mRtcEngine
         }
 
-        fun getRtcEngine(): RtcEngine? {
-            initRtcEngine(joshApplication)
+        fun getRtcEngine(context: Context): RtcEngine? {
+            initRtcEngine(context)
             return mRtcEngine
         }
 

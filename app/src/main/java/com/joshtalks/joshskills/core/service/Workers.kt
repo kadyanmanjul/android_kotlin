@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.core.service
 
 import android.content.Context
+import android.os.SystemClock
 import android.text.format.DateUtils
 import androidx.concurrent.futures.CallbackToFutureAdapter
 import androidx.work.*
@@ -15,6 +16,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
+import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
@@ -85,6 +87,7 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
         if (PrefManager.hasKey(CALL_RINGTONE_NOT_MUTE).not()) {
             PrefManager.put(CALL_RINGTONE_NOT_MUTE, true)
         }
+        AppObjectController.appUsageStartTime = 0L
 
         return Result.success()
     }
@@ -797,16 +800,19 @@ class LanguageChangeWorker(var context: Context, private var workerParams: Worke
     }
 }
 
-class GetPlivoUserWorker(context: Context, workerParams: WorkerParameters) :
+class AppUsageWorker(context: Context, private var workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
-            if (UserPlivoDetailsModel.getPlivoUser() == null) {
-                AppObjectController.commonNetworkService.getPlivoUserDetails().run {
-                    this.savePlivoUser()
-                }
+            val active = workerParams.inputData.getBoolean(IS_ACTIVE, false)
+            if (active) {
+                AppObjectController.appUsageStartTime = SystemClock.elapsedRealtime()
+            } else {
+                val time = SystemClock.elapsedRealtime() - AppObjectController.appUsageStartTime
+                AppObjectController.appDatabase.appUsageDao()
+                    .insertIntoAppUsage(AppUsageModel(time))
             }
-        } catch (ex: Exception) {
+        } catch (ex: Throwable) {
             ex.printStackTrace()
         }
         return Result.success()
