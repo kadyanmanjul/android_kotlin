@@ -467,17 +467,17 @@ open class WebRtcService : Service(), SensorEventListener {
 
     private fun initEngine(callback: () -> Unit) {
         try {
-            mRtcEngine = AppObjectController.getRtcEngine()
+            mRtcEngine = AppObjectController.getRtcEngine(AppObjectController.joshApplication)
+            try {
+                Thread.sleep(350)
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+            }
             if (eventListener != null) {
                 mRtcEngine?.removeHandler(eventListener)
             }
             if (eventListener != null) {
                 mRtcEngine?.addHandler(eventListener)
-            }
-            try {
-                Thread.sleep(250)
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
             }
             mRtcEngine?.apply {
                 disableVideo()
@@ -606,9 +606,9 @@ open class WebRtcService : Service(), SensorEventListener {
     }
 
     private fun phoneBusySoDisconnect(intent: Intent) {
-        (intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?)?.let {
-            //   callStatusNetworkApi(it, CallAction.DECLINE)
-        }
+        /*    (intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?)?.let {
+                //   callStatusNetworkApi(it, CallAction.DECLINE)
+            }*/
     }
 
     private fun callStopWithoutIssue() {
@@ -779,7 +779,7 @@ open class WebRtcService : Service(), SensorEventListener {
             }
             retryInitLibrary++
             try {
-                Thread.sleep(250)
+                Thread.sleep(350)
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
