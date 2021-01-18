@@ -1,18 +1,13 @@
 package com.joshtalks.joshskills.engage_notification
 
-import androidx.room.ColumnInfo
-import androidx.room.Dao
-import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.google.gson.annotations.Expose
-import java.util.Date
+import java.util.*
 
 @Entity(tableName = "app_usage")
 data class AppUsageModel(
     @ColumnInfo(name = "usage_time")
-    var usageTime: Int
+    var usageTime: Long
 ) {
 
     @PrimaryKey(autoGenerate = true)
