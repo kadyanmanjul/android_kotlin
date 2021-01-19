@@ -7,7 +7,6 @@ import android.graphics.*
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
-import android.text.TextPaint
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
@@ -38,6 +37,7 @@ import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils.formatDuration
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
+import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -63,8 +63,6 @@ import com.joshtalks.joshskills.ui.voip.RTC_CHANNEL_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_TOKEN_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
 import com.joshtalks.joshskills.ui.voip.WebRtcService
-import org.json.JSONObject
-import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
 import java.lang.reflect.Type
@@ -74,6 +72,8 @@ import java.util.*
 import java.util.concurrent.ExecutorService
 import kotlin.collections.HashMap
 import kotlin.collections.set
+import org.json.JSONObject
+import timber.log.Timber
 
 
 const val FCM_TOKEN = "fcmToken"
@@ -751,7 +751,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
                     val notificationMessage = NotificationCompat.MessagingStyle.Message(
                         messageText,
-                        System.currentTimeMillis(),
+                        it.sentAt * 1000L,
                         sender
                     )
                     messagingStyle.addMessage(notificationMessage)
@@ -771,11 +771,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     setAutoCancel(true)    // automatically removes the notification when the user taps it
                     setSound(defaultSound)
                     setStyle(style)
-                    setWhen(System.currentTimeMillis())
+                    setWhen(baseMessage.sentAt * 1000L)
                     setDefaults(Notification.DEFAULT_ALL)
                     setCategory(NotificationCompat.CATEGORY_MESSAGE)
                     setGroup(groupChatChannelName)
-                    setOnlyAlertOnce(true) // Interupts the user (with sound, vibration, or visual clues) only the first time
+                    setOnlyAlertOnce(false) // Interrupts the user (with sound, vibration, or visual clues) only the first time
                     color = ContextCompat.getColor(
                         this@FirebaseNotificationService,
                         R.color.colorAccent
@@ -788,21 +788,42 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    // Create the NotificationChannel, but only on API 26+ because
-                    // the NotificationChannel class is new and not in the support library
-                    val notificationChannel = NotificationChannel(
-                        groupChatChannelId,
+
+                    var channelIndex: Int =
+                        PrefManager.getIntValue("group_chat_notification_channel_index")
+                    val existingNotificationChannel =
+                        notificationManager.getNotificationChannel(groupChatChannelId + channelIndex)
+                    if (existingNotificationChannel != null) {
+                        notificationManager.deleteNotificationChannel(groupChatChannelId + channelIndex)
+                        channelIndex++
+                        PrefManager.put("group_chat_notification_channel_index", channelIndex)
+                    }
+
+                    // Create the NotificationChannel
+                    val newNotificationChannel = NotificationChannel(
+                        groupChatChannelId + channelIndex,
                         groupChatChannelName,
                         NotificationManager.IMPORTANCE_HIGH
                     ).apply {
                         description = "Notifications for group chat messages"
                         enableLights(true)
                         enableVibration(true)
+                        setBypassDnd(true)
                     }
-                    // Register the channel with the system
-                    notificationManager.createNotificationChannel(notificationChannel)
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        newNotificationChannel.setAllowBubbles(true)
+                    }
+
+                    try {
+                        // Register the channel with the system
+                        notificationManager.createNotificationChannel(newNotificationChannel)
+                    } catch (e: java.lang.Exception) {
+                        this.stopSelf()
+                    }
+
                     // Set Channel Id of Notification
-                    notificationBuilder.setChannelId(groupChatChannelId)
+                    notificationBuilder.setChannelId(groupChatChannelId + channelIndex)
                 }
 
                 if (Utils.isMessageVisible(baseMessage) && message != null) {
@@ -860,10 +881,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     }
 
     private fun getNameInitialBitmap(name: String, bgColorCode: String?): Bitmap {
-        val width = 100
-        val height = 100
-        val centerX = Math.round(width * 0.5f)
-        val centerY = Math.round(height * 0.5f)
 
         val nameSplitArray = name.split(" ".toRegex()).toTypedArray()
         val text = if (nameSplitArray.size > 1) {
@@ -872,37 +889,12 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             name.substring(0, 1)
         }
 
-        val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
-        textPaint.textSize = 16f * resources.displayMetrics.scaledDensity
-        textPaint.color = Color.WHITE
-
-        val textWidth: Float = textPaint.measureText(text) * 0.5f
-        val textBaseLineHeight: Float = textPaint.fontMetrics.ascent * -0.4f
-        val b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-
-        val canvas = Canvas(b)
-
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        if (bgColorCode == null) {
-            paint.color = ContextCompat.getColor(this, R.color.colorPrimary)
+        val color = if (bgColorCode == null) {
+            ContextCompat.getColor(this, R.color.colorPrimary)
         } else {
-            paint.color = Color.parseColor(bgColorCode)
+            Color.parseColor(bgColorCode)
         }
-
-        canvas.drawCircle(
-            centerX.toFloat(),
-            centerY.toFloat(),
-            Math.max((height / 2).toFloat(), textWidth / 2),
-            paint
-        )
-
-        canvas.drawText(
-            text,
-            centerX - textWidth,
-            centerY + textBaseLineHeight,
-            textPaint
-        )
-        return b
+        return text.textDrawableBitmap(bgColor = color)!!
     }
 
     companion object {

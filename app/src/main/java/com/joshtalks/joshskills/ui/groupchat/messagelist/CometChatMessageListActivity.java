@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -32,7 +31,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.cometchat.pro.constants.CometChatConstants;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.core.GroupMembersRequest;
@@ -81,17 +79,14 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-
+import org.json.JSONException;
+import org.json.JSONObject;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.joshtalks.joshskills.core.PrefManagerKt.GROUP_CHAT_LAST_READ_MESSAGE_ID;
@@ -403,6 +398,9 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
                 } else {
                     scrollToBottom();
                 }
+
+                BaseMessage baseMessage = baseMessages.get(baseMessages.size() - 1);
+                markMessageAsRead(baseMessage);
             }
         });
     }

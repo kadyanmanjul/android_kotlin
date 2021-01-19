@@ -76,10 +76,6 @@ import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation
-import kotlinx.coroutines.*
-import okhttp3.RequestBody.Companion.toRequestBody
-import timber.log.Timber
 import java.io.*
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -91,9 +87,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlinx.coroutines.*
+import okhttp3.RequestBody.Companion.toRequestBody
+import timber.log.Timber
 
 
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
@@ -120,8 +120,8 @@ object Utils {
             formattedNumber = formatter.format(value)
             formattedNumber += suffix[power / 3]
             val output = if (formattedNumber.length > 4) formattedNumber.replace(
-                    "\\.[0-9]+".toRegex(),
-                    ""
+                "\\.[0-9]+".toRegex(),
+                ""
             ) else formattedNumber
 
             return output.trim { it <= ' ' }
@@ -1149,9 +1149,17 @@ fun TabLayout.updateEnable(enable: Boolean) {
     }
 }
 
-fun String.textDrawableBitmap(width: Int = 48, height: Int = 48): Bitmap? {
+fun String.textDrawableBitmap(
+    width: Int = 48,
+    height: Int = 48,
+    bgColor: Int = -1
+): Bitmap? {
     val rnd = Random()
-    val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+    val color = if (bgColor == -1)
+        Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+    else
+        bgColor
+
     val font = Typeface.createFromAsset(
         AppObjectController.joshApplication.assets,
         "fonts/OpenSans-SemiBold.ttf"
@@ -1159,7 +1167,7 @@ fun String.textDrawableBitmap(width: Int = 48, height: Int = 48): Bitmap? {
     val drawable = TextDrawable.builder()
         .beginConfig()
         .textColor(Color.WHITE)
-        .fontSize(17)
+        .fontSize(20)
         .useFont(font)
         .toUpperCase()
         .endConfig()
@@ -1177,4 +1185,3 @@ fun getRandomName(): String {
     val ename = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     return name.random().toString().plus(ename.random().toString())
 }
-
