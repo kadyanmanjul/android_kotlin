@@ -3,11 +3,12 @@ package com.joshtalks.joshskills.util
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
-import android.util.Log
-import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
@@ -15,8 +16,6 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.TAG
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 
 class ExoAudioPlayer {
@@ -43,11 +42,6 @@ class ExoAudioPlayer {
                     playerListener?.complete()
                 if (playbackState == ExoPlayer.STATE_READY)
                     progressUpdateListener?.onDurationUpdate(player?.duration)
-
-                Log.d(
-                    TAG,
-                    "onPlayerStateChanged() called with: playWhenReady = $playWhenReady, playbackState = $playbackState, duration = ${player?.duration}"
-                )
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -90,11 +84,9 @@ class ExoAudioPlayer {
             .build()
         val extractorsFactory: DefaultExtractorsFactory = DefaultExtractorsFactory()
             .setConstantBitrateSeekingEnabled(true)
+
         player =
             SimpleExoPlayer.Builder(AppObjectController.joshApplication).setUseLazyPreparation(true)
-                .setMediaSourceFactory(
-                    DefaultMediaSourceFactory(context!!, extractorsFactory)
-                )
                 .build().apply {
                     setAudioAttributes(audioAttributes, true)
                 }
@@ -102,16 +94,7 @@ class ExoAudioPlayer {
     }
 
     fun seekTo(pos: Long) {
-        Log.d(TAG, "seekTo() called with: pos = $pos")
-        Log.d(
-            TAG,
-            "seekTo() called with: player = ${player?.currentPosition} duration = ${player?.duration}"
-        )
         player?.seekTo(pos)
-        Log.d(
-            TAG,
-            "seekTo() called with: player = ${player?.currentPosition} duration = ${player?.duration}"
-        )
     }
 
     fun onPlay() {
@@ -134,41 +117,18 @@ class ExoAudioPlayer {
     fun play(audioUrl: String, id: String = "", seekDuration: Long = 0) {
         currentPlayingUrl = audioUrl
         val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(
-            context!!,
+            context,
             Util.getUserAgent(context!!, "joshskills")
         )
-
         LAST_ID = id
-
         val factory = ProgressiveMediaSource.Factory(dataSourceFactory)
-        val mediaItem: MediaItem = MediaItem.Builder()
-            .setUri(Uri.parse(audioUrl))
-            .setCustomCacheKey(
-                Utils.getFileNameFromURL(audioUrl)
-            )
-            .build()
-
-        with(player) {
-
-        }
-        player?.let {
-            with(it) {
-                val audioSource: MediaSource = factory.createMediaSource(mediaItem)
-                setMediaSource(audioSource)
-                repeatMode = ExoPlayer.REPEAT_MODE_OFF
-                seekTo(seekDuration)
-                playWhenReady = true
-                progressTracker = ProgressTracker()
-                setWakeMode(C.WAKE_MODE_NETWORK)
-                setHandleAudioBecomingNoisy(true)
-                prepare()
-
-                Log.d(
-                    TAG,
-                    "play() called with: audioUrl = $audioUrl, id = $id, seekDuration = $seekDuration"
-                )
-            }
-        }
+        val audioSource: MediaSource =
+            factory.createMediaSource(Uri.parse(audioUrl))
+        player?.repeatMode = ExoPlayer.REPEAT_MODE_OFF
+        player?.playWhenReady = true
+        progressTracker = ProgressTracker()
+        player?.prepare(audioSource)
+        player?.seekTo(seekDuration)
     }
 
     fun isPlaying(): Boolean {

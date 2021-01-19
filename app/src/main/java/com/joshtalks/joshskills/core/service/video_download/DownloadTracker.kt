@@ -139,11 +139,7 @@ class DownloadTracker internal constructor(
     }
 
     private inner class DownloadManagerListener : DownloadManager.Listener {
-        override fun onDownloadChanged(
-            downloadManager: DownloadManager,
-            download: Download,
-            finalException: java.lang.Exception?
-        ) {
+        override fun onDownloadChanged(downloadManager: DownloadManager, download: Download) {
             Log.e("download_state", "" + download.state)
             downloads[download.request.uri] = download
             for (listener in listeners) {

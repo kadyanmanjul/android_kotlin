@@ -150,7 +150,8 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
                 )
                     .setPrioritizeTimeOverSizeThresholds(true)
                     .setAllocator(defaultAllocator)
-                    .build()
+                    .createDefaultLoadControl()
+
                 val audioAttributes = AudioAttributes.Builder()
                     .setContentType(C.CONTENT_TYPE_MUSIC)
                     .setUsage(C.USAGE_MEDIA)
@@ -158,7 +159,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
                 player = SimpleExoPlayer.Builder(context, renderersFactory)
                     .setLoadControl(defaultLoadControl)
                     .setUseLazyPreparation(true)
-                    .setPauseAtEndOfMediaItems(true)
+                    // .setPauseAtEndOfMediaItems(true)
                     .setTrackSelector(trackSelector!!).build().apply {
                         setAudioAttributes(audioAttributes, true)
                     }

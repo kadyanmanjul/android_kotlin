@@ -3,15 +3,8 @@ package com.joshtalks.joshskills.ui.groupchat.uikit
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.PlaybackParameters
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
@@ -19,29 +12,22 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 
 class ExoAudioPlayer2 {
-    private var progressTracker: ExoAudioPlayer2.ProgressTracker? = null
+    private var progressTracker: ProgressTracker? = null
     private var progressUpdateListener: ProgressUpdateListener? = null
     var context: Context? = AppObjectController.joshApplication
     private val playerEventListener: Player.EventListener
     private var durationSet = false
     var currentPlayingUrl = EMPTY
     private var audioDuration: Long = 0
-
     private val player: SimpleExoPlayer by lazy {
         val audioAttributes = AudioAttributes.Builder()
             .setContentType(C.CONTENT_TYPE_MUSIC)
             .setUsage(C.USAGE_MEDIA)
             .build()
-        val extractorsFactory: DefaultExtractorsFactory = DefaultExtractorsFactory()
-            .setConstantBitrateSeekingEnabled(true)
         SimpleExoPlayer.Builder(AppObjectController.joshApplication).setUseLazyPreparation(true)
-            .setMediaSourceFactory(
-                DefaultMediaSourceFactory(context!!, extractorsFactory)
-            )
             .build().apply {
                 setAudioAttributes(audioAttributes, true)
             }
@@ -72,9 +58,7 @@ class ExoAudioPlayer2 {
                 else
                     playerListener?.onPlayerPause()
             }
-
         }
-
         initializePlayer()
     }
 
@@ -95,8 +79,7 @@ class ExoAudioPlayer2 {
     }
 
     fun setProgressUpdateListener(progressUpdateListener: ProgressUpdateListener?) {
-        if (progressUpdateListener != null)
-            this.progressUpdateListener = progressUpdateListener
+        this.progressUpdateListener = progressUpdateListener
     }
 
     private fun initializePlayer() {
@@ -139,8 +122,6 @@ class ExoAudioPlayer2 {
         seekDuration: Long = 0,
         isPlaybackSpeed: Boolean = false,
         delayProgress: Long = 50,
-
-
         ) {
         var param = PlaybackParameters(1F)
         if (isPlaybackSpeed) {
@@ -155,21 +136,15 @@ class ExoAudioPlayer2 {
 
         LAST_ID = id
         val factory = ProgressiveMediaSource.Factory(dataSourceFactory)
-        val mediaItem: MediaItem = MediaItem.Builder()
-            .setUri(Uri.parse(audioUrl))
-            .setCustomCacheKey(
-                Utils.getFileNameFromURL(audioUrl)
-            )
-            .build()
-        val audioSource: MediaSource = factory.createMediaSource(mediaItem)
-        player.setMediaSource(audioSource)
         player.repeatMode = ExoPlayer.REPEAT_MODE_OFF
         player.seekTo(seekDuration)
         player.playWhenReady = true
         progressTracker = ProgressTracker(player, delayProgress)
         player.setWakeMode(C.WAKE_MODE_NETWORK)
         player.setHandleAudioBecomingNoisy(true)
-        player.prepare()
+        val audioSource: MediaSource =
+            factory.createMediaSource(Uri.parse(audioUrl))
+        player.prepare(audioSource)
     }
 
     fun isPlaying(): Boolean {

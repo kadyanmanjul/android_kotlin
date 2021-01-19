@@ -17,7 +17,6 @@ import com.joshtalks.joshskills.core.custom_ui.blurdialog.BlurDialogFragment
 import com.joshtalks.joshskills.databinding.FragmentFeedbackPronBinding
 import com.joshtalks.joshskills.repository.local.entity.practise.WrongWord
 import com.joshtalks.joshskills.ui.groupchat.uikit.ExoAudioPlayer2
-import timber.log.Timber
 
 
 class ReadingResultFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpdateListener {
@@ -155,8 +154,6 @@ class ReadingResultFragment : BlurDialogFragment(), ExoAudioPlayer2.ProgressUpda
 
     override fun onProgressUpdate(progress: Long) {
         super.onProgressUpdate(progress)
-        Timber.tag("Audio")
-            .e("Start " + startTime + "  end" + endTime + "    progress  " + progress)
         if (progress >= endTime) {
             exoAudioManager?.setProgressUpdateListener(null)
             exoAudioManager?.onPause()

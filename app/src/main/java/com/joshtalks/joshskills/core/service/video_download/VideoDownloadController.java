@@ -13,8 +13,10 @@ import com.google.android.exoplayer2.database.DatabaseProvider;
 import com.google.android.exoplayer2.database.ExoDatabaseProvider;
 import com.google.android.exoplayer2.offline.ActionFileUpgradeUtil;
 import com.google.android.exoplayer2.offline.DefaultDownloadIndex;
+import com.google.android.exoplayer2.offline.DefaultDownloaderFactory;
 import com.google.android.exoplayer2.offline.DownloadManager;
 import com.google.android.exoplayer2.offline.DownloadRequest;
+import com.google.android.exoplayer2.offline.DownloaderConstructorHelper;
 import com.google.android.exoplayer2.offline.StreamKey;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -43,7 +45,6 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 public class VideoDownloadController {
     private static final String TAG = "DemoApplication";
@@ -85,24 +86,23 @@ public class VideoDownloadController {
      * @return A MediaSource which only contains the tracks defined in {@code downloadRequest}.
      */
     public static MediaSource createMediaSource(
-            int type,
             DownloadRequest downloadRequest, DataSource.Factory dataSourceFactory) {
         MediaSourceFactory factory;
-        switch (type) {
-            case C.TYPE_DASH:
+        switch (downloadRequest.type) {
+            case DownloadRequest.TYPE_DASH:
                 factory = DASH_FACTORY;
                 break;
-            case C.TYPE_SS:
+            case DownloadRequest.TYPE_SS:
                 factory = SS_FACTORY;
                 break;
-            case C.TYPE_HLS:
+            case DownloadRequest.TYPE_HLS:
                 factory = HLS_FACTORY;
                 break;
-            case C.TYPE_OTHER:
+            case DownloadRequest.TYPE_PROGRESSIVE:
                 return new ProgressiveMediaSource.Factory(dataSourceFactory)
                         .createMediaSource(downloadRequest.uri);
             default:
-                throw new IllegalStateException("Unsupported type: " + type);
+                throw new IllegalStateException("Unsupported type: " + downloadRequest.type);
         }
         return factory.createMediaSource(
                 downloadRequest.uri, dataSourceFactory, downloadRequest.streamKeys);
@@ -161,12 +161,11 @@ public class VideoDownloadController {
                         DOWNLOAD_ACTION_FILE, downloadIndex, false);
                 upgradeActionFile(
                         DOWNLOAD_TRACKER_ACTION_FILE, downloadIndex, true);
-                downloadManager = new DownloadManager(
-                        AppObjectController.getJoshApplication(),
-                        getDatabaseProvider(),
-                        getDownloadCache(),
-                        buildHttpDataSourceFactory(),
-                        Executors.newFixedThreadPool(6));
+                DownloaderConstructorHelper downloaderConstructorHelper =
+                        new DownloaderConstructorHelper(getDownloadCache(), buildHttpDataSourceFactory());
+                downloadManager =
+                        new DownloadManager(
+                                AppObjectController.getJoshApplication(), downloadIndex, new DefaultDownloaderFactory(downloaderConstructorHelper));
                 downloadManager.setMinRetryCount(5);
                 downloadManager.setMaxParallelDownloads(10);
                 downloadTracker =
@@ -254,7 +253,7 @@ public class VideoDownloadController {
         int type = Util.inferContentType(uri, null);
         DownloadRequest downloadRequest = getDownloadTracker().getDownloadRequest(uri);
         if (downloadRequest != null) {
-            return createMediaSource(type, downloadRequest, buildDataSourceFactory());
+            return createMediaSource(downloadRequest, buildDataSourceFactory());
         }
 
         switch (type) {

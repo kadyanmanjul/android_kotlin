@@ -9,5 +9,5 @@ interface AudioPlayerEventListener {
     fun onPlayerReleased() {}
     fun onPlayerEmptyTrack() {}
     fun onPositionDiscontinuity(reason: Int) {}
-    fun complete()
+    fun complete() {}
 }

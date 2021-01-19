@@ -339,8 +339,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                 )
                     .setPrioritizeTimeOverSizeThresholds(true)
                     .setAllocator(defaultAllocator)
-                    .build()
-                //.createDefaultLoadControl()
+                    .createDefaultLoadControl()
                 val audioAttributes = AudioAttributes.Builder()
                     .setContentType(C.CONTENT_TYPE_MUSIC)
                     .setUsage(C.USAGE_MEDIA)
@@ -348,7 +347,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                 player = SimpleExoPlayer.Builder(context, renderersFactory)
                     .setLoadControl(defaultLoadControl)
                     .setUseLazyPreparation(true)
-                    .setPauseAtEndOfMediaItems(true)
+                    //   .setPauseAtEndOfMediaItems(true)
                     .setTrackSelector(trackSelector!!).build().apply {
                         setAudioAttributes(audioAttributes, true)
                     }
@@ -586,14 +585,10 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                 setHandleAudioBecomingNoisy(true)
                 playWhenReady = true
                 //  setWakeMode(C.WAKE_MODE_NETWORK)
-                if (lastPosition > 0) {
-                    setMediaSource(audioSource, lastPosition)
-                } else {
-                    setMediaSource(audioSource, true)
-                }
-                prepare()
+                prepare(audioSource, true, false)
             }
         }
+        seekTo(lastPosition)
         timeHandler.post(timeRunnable)
     }
 

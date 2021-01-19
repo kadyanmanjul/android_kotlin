@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ext.workmanager.WorkManagerScheduler;
 import com.google.android.exoplayer2.offline.Download;
@@ -17,7 +18,6 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.gson.reflect.TypeToken;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.core.AppObjectController;
-import static com.joshtalks.joshskills.core.StaticConstantKt.MINIMUM_VIDEO_DOWNLOAD_PROGRESS;
 import com.joshtalks.joshskills.messaging.RxBus2;
 import com.joshtalks.joshskills.repository.local.DatabaseUtils;
 import com.joshtalks.joshskills.repository.local.entity.ChatModel;
@@ -25,17 +25,22 @@ import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS;
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus;
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity;
 import com.joshtalks.joshskills.ui.chat.ConversationActivity;
-import static com.joshtalks.joshskills.ui.chat.ConversationActivityKt.CHAT_ROOM_OBJECT;
-import static com.joshtalks.joshskills.ui.chat.ConversationActivityKt.FOCUS_ON_CHAT_ID;
-import io.reactivex.schedulers.Schedulers;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import org.jetbrains.annotations.NotNull;
+
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
+
+import static com.joshtalks.joshskills.core.StaticConstantKt.MINIMUM_VIDEO_DOWNLOAD_PROGRESS;
+import static com.joshtalks.joshskills.ui.chat.ConversationActivityKt.CHAT_ROOM_OBJECT;
+import static com.joshtalks.joshskills.ui.chat.ConversationActivityKt.FOCUS_ON_CHAT_ID;
 
 
 public class VideoDownloadService extends DownloadService {
@@ -75,7 +80,7 @@ public class VideoDownloadService extends DownloadService {
 
     @Override
     protected Scheduler getScheduler() {
-        return new WorkManagerScheduler(AppObjectController.getJoshApplication(), "Download Video");
+        return new WorkManagerScheduler("Download Video");
     }
 
     @NotNull
@@ -99,7 +104,7 @@ public class VideoDownloadService extends DownloadService {
                 101,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-        return notificationHelper.buildProgressNotification(this, R.drawable.ic_download, pendingIntent, "", downloads);
+        return notificationHelper.buildProgressNotification(R.drawable.ic_download, pendingIntent, "", downloads);
     }
 
 
@@ -128,7 +133,7 @@ public class VideoDownloadService extends DownloadService {
             clearNotification(Util.fromUtf8Bytes(download.request.data));
             //notification = notificationHelper.buildDownloadCompletedNotification(R.mipmap.ic_launcher, null, "Download completed");
         } else if (download.state == Download.STATE_FAILED) {
-            notification = notificationHelper.buildDownloadFailedNotification(this,R.mipmap.ic_launcher, null, "Download failed");
+            notification = notificationHelper.buildDownloadFailedNotification(R.mipmap.ic_launcher, null, "Download failed");
             RxBus2.publish(new MediaProgressEventBus(Download.STATE_FAILED, Util.fromUtf8Bytes(download.request.data), 0, 0L));
             NotificationUtil.setNotification(this, nextNotificationId++, notification);
         } else {

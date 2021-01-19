@@ -387,10 +387,10 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                     player.seekTo(startWindow, currentPosition);
                 }
                 MediaSource audioSource = VideoDownloadController.getInstance().getMediaSource(uri);
-                player.setMediaSource(audioSource, !haveStartPosition);
+
                 player.setHandleAudioBecomingNoisy(true);
+                player.prepare(audioSource, true, false);
                 player.setPlayWhenReady(true);
-                player.prepare();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -405,10 +405,9 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             }
 
             MediaSource audioSource = VideoDownloadController.getInstance().getMediaSource(uri);
-            player.setMediaSource(audioSource, !haveStartPosition);
             player.setHandleAudioBecomingNoisy(true);
+            player.prepare(audioSource, true, false);
             player.setPlayWhenReady(false);
-            player.prepare();
         }
     }
 
