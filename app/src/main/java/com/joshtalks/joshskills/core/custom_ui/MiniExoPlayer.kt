@@ -26,27 +26,16 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.DefaultLoadControl
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.DefaultLoadControl.DEFAULT_VIDEO_BUFFER_SIZE
-import com.google.android.exoplayer2.DefaultRenderersFactory
-import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.ExoPlaybackException.TYPE_SOURCE
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.STATE_IDLE
-import com.google.android.exoplayer2.RenderersFactory
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.ParametersBuilder
 import com.google.android.exoplayer2.trackselection.TrackSelection
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-import com.google.android.exoplayer2.ui.DefaultTimeBar
-import com.google.android.exoplayer2.ui.PlayerControlView
-import com.google.android.exoplayer2.ui.PlayerView
-import com.google.android.exoplayer2.ui.TimeBar
+import com.google.android.exoplayer2.ui.*
 import com.google.android.exoplayer2.ui.TimeBar.OnScrubListener
 import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.util.ErrorMessageProvider
@@ -56,8 +45,9 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener
-import java.util.Formatter
-import java.util.Locale
+import java.util.*
+import kotlin.collections.HashMap
+import kotlin.collections.set
 
 class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.VisibilityListener {
 
@@ -161,16 +151,22 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
                     .setPrioritizeTimeOverSizeThresholds(true)
                     .setAllocator(defaultAllocator)
                     .build()
-
+                val audioAttributes = AudioAttributes.Builder()
+                    .setContentType(C.CONTENT_TYPE_MUSIC)
+                    .setUsage(C.USAGE_MEDIA)
+                    .build()
                 player = SimpleExoPlayer.Builder(context, renderersFactory)
                     .setLoadControl(defaultLoadControl)
                     .setUseLazyPreparation(true)
-                    .setTrackSelector(trackSelector!!).build()
+                    .setPauseAtEndOfMediaItems(true)
+                    .setTrackSelector(trackSelector!!).build().apply {
+                        setAudioAttributes(audioAttributes, true)
+                    }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
             setPlayer(player)
-            setupAudioFocus()
+            //  setupAudioFocus()
             controllerAutoShow = true
             controllerHideOnTouch = true
             setControllerVisibilityListener(this)
@@ -302,7 +298,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
     }
 
     fun setUrl(url: String?, placeHolderUrl: String? = null, remoteId: Int) {
-        videoId=remoteId
+        videoId = remoteId
         uri = Uri.parse(url)
         if (placeHolderUrl.isNullOrEmpty().not()) {
             setPlaceHolder(placeHolderUrl!!)
@@ -341,8 +337,8 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         AppAnalytics.create(AnalyticsEvent.ASSESSMENT_VIDEO_PLAYED.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam(AnalyticsEvent.VIDEO_ID.NAME,videoId.toString())
-            .addParam("video_resumed",videoResumed)
+            .addParam(AnalyticsEvent.VIDEO_ID.NAME, videoId.toString())
+            .addParam("video_resumed", videoResumed)
             .push()
     }
 
@@ -433,7 +429,6 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
             mFormatter.format("%02d:%02d", minutes, seconds).toString()
         }
     }
-
 
 
     private inner class PlayerErrorMessageProvider :
