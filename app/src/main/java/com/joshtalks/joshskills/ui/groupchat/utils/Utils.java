@@ -43,6 +43,7 @@ import com.cometchat.pro.models.TextMessage;
 import com.cometchat.pro.models.User;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM;
 import com.joshtalks.joshskills.ui.groupchat.constant.StringContract;
 
 import org.jetbrains.annotations.NotNull;
@@ -705,6 +706,7 @@ public class Utils {
         Intent intent = new Intent();
         intent.setComponent(new ComponentName("com.joshtalks.joshskills", "com.joshtalks.joshskills.ui.userprofile.UserProfileActivity"));
         intent.putExtra("leaderboard_mentor_id", uuid);
+        intent.putExtra("previous_page", USER_PROFILE_FLOW_FROM.GROUP_CHAT.getValue());
         context.startActivity(intent);
     }
 

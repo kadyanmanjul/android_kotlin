@@ -711,7 +711,9 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
                 @Override
                 public void onSuccess(List<BaseMessage> baseMessages) {
                     isInProgress = false;
-                    messageAdapter.updateList(baseMessages, true);
+                    if (messageAdapter != null) {
+                        messageAdapter.updateList(baseMessages, true);
+                    }
                     stopHideShimmer();
                     if (baseMessages.isEmpty()) {
                         isNoMoreNextMessages = true;
