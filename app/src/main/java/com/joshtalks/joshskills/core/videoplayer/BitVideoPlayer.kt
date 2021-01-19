@@ -323,7 +323,6 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                     setAllowAudioMixedChannelCountAdaptiveness(true)
                     setAllowAudioMixedMimeTypeAdaptiveness(true)
                     setAllowAudioMixedSampleRateAdaptiveness(true)
-
                 }?.build()?.run {
                     trackSelector?.parameters = this
                 }
@@ -349,6 +348,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                 player = SimpleExoPlayer.Builder(context, renderersFactory)
                     .setLoadControl(defaultLoadControl)
                     .setUseLazyPreparation(true)
+                    .setPauseAtEndOfMediaItems(true)
                     .setTrackSelector(trackSelector!!).build().apply {
                         setAudioAttributes(audioAttributes, true)
                     }
@@ -356,7 +356,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
             } catch (e: Exception) {
                 throw e
             }
-            setupAudioFocus()
+            // setupAudioFocus()
             setPlayer(player)
             controllerAutoShow = true
             controllerHideOnTouch = true
@@ -585,7 +585,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                 val audioSource = VideoDownloadController.getInstance().getMediaSource(uri)
                 setHandleAudioBecomingNoisy(true)
                 playWhenReady = true
-                setWakeMode(C.WAKE_MODE_NETWORK)
+                //  setWakeMode(C.WAKE_MODE_NETWORK)
                 if (lastPosition > 0) {
                     setMediaSource(audioSource, lastPosition)
                 } else {
@@ -625,10 +625,10 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
 
     private fun releasePlayer() {
         playerListener?.onPlayerReleased()
-        if (player != null) {
-            player!!.release()
+        player?.run {
+            release()
             player = null
-            trackSelector = null
+            this@BitVideoPlayer.trackSelector = null
         }
     }
 
