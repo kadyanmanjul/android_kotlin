@@ -875,6 +875,7 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
             }
 
             if (isReply) {
+                isReply = false;
                 JSONObject replyObject = new JSONObject();
                 if (baseMessage != null) {
                     if (baseMessage.getCategory().equals(CometChatConstants.CATEGORY_MESSAGE)) {
