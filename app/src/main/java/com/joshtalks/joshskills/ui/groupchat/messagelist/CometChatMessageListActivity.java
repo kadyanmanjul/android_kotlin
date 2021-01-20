@@ -67,7 +67,6 @@ import com.joshtalks.joshskills.ui.groupchat.listeners.StickyHeaderDecoration;
 import com.joshtalks.joshskills.ui.groupchat.screens.CometChatGroupDetailScreenActivity;
 import com.joshtalks.joshskills.ui.groupchat.uikit.Avatar;
 import com.joshtalks.joshskills.ui.groupchat.uikit.ComposeBox.ComposeBox;
-import com.joshtalks.joshskills.ui.groupchat.utils.KeyBoardUtils;
 import com.joshtalks.joshskills.ui.groupchat.utils.MediaUtils;
 import com.joshtalks.joshskills.ui.groupchat.utils.MessageSwipeController;
 import com.joshtalks.joshskills.ui.groupchat.utils.SwipeControllerActions;
@@ -122,7 +121,6 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
     private final List<BaseMessage> messageList = new ArrayList<>();
     private final User loggedInUser = CometChat.getLoggedInUser();
     private final int currentAudioPosition = -1;
-    // public int count = 0;
     private String name = "";
     private String status = "";
     private MessagesRequest previousMessagesRequest;    //Used to fetch previous messages.
@@ -149,11 +147,8 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
     private String groupType;
     private String loggedInUserScope;
     private BaseMessage baseMessage;
-    // private final List<BaseMessage> baseMessages = new ArrayList<>();
-    private boolean isEdit;
     private boolean isReply;
     private String groupOwnerId;
-    // private int memberCount;
     private String memberNames;
     private int totalMembers;
     private int onlineMembers;
@@ -163,7 +158,6 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
     private boolean isNoMorePreviousMessages;
     private boolean isNoMoreNextMessages;
     private boolean isInProgress;
-    // private MessageActionFragment messageActionFragment;
     private ExoAudioPlayer audioPlayerManager;
     private AppCompatTextView txtPinnedMsg;
     private AppCompatTextView txtPinnedMsgUserName;
@@ -180,6 +174,31 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
         initViewComponent();
         addObservers();
         getPinnedMessages();
+
+        rvChatListView.removeItemDecoration(stickyHeaderDecoration);
+        messageAdapter = null;
+        previousMessagesRequest = null;
+        nextMessagesRequest = null;
+        FirebaseNotificationService.Companion.getUnreadMessageList().clear();
+        int lastReadMessageId = PrefManager.INSTANCE.getIntValue(GROUP_CHAT_LAST_READ_MESSAGE_ID, false);
+        if (lastReadMessageId != 0) {
+            scrollToMsg(lastReadMessageId);
+        } else {
+            fetchMessage();
+        }
+        addMessageListener();
+
+        if (type != null) {
+            if (type.equals(CometChatConstants.RECEIVER_TYPE_USER)) {
+                addUserListener();
+                tvStatus.setText(status);
+                new Thread(this::getUser).start();
+            } else {
+                addGroupListener();
+                new Thread(this::getGroup).start();
+                new Thread(this::getMember).start();
+            }
+        }
     }
 
 
@@ -252,22 +271,6 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
         itemTouchHelper.attachToRecyclerView(rvChatListView);
 
         setSupportActionBar(toolbar);
-
-        KeyBoardUtils.setKeyboardVisibilityListener(this, (View) rvChatListView.getParent(), keyboardVisible -> {
-            if (keyboardVisible) {
-                scrollToBottom();
-//                composeBox.ivMic.setVisibility(GONE);
-//                composeBox.ivSend.setVisibility(VISIBLE);
-            } else {
-                if (isEdit) {
-//                    composeBox.ivMic.setVisibility(GONE);
-//                    composeBox.ivSend.setVisibility(VISIBLE);
-                } else {
-//                    composeBox.ivMic.setVisibility(VISIBLE);
-//                    composeBox.ivSend.setVisibility(GONE);
-                }
-            }
-        });
 
 
         // Uses to fetch next list of messages if rvChatListView (RecyclerView) is scrolled in downward direction.
@@ -1409,7 +1412,7 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
      * This method is used to mark message as read before adding them to list. This method helps to
      * add real time message in list.
      *
-     * @param message is an object of BaseMessage, It is recieved from message listener.
+     * @param message is an object of BaseMessage, It is received from message listener.
      * @see BaseMessage
      */
     private void setMessage(BaseMessage message) {
@@ -1489,35 +1492,6 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
     @Override
     public void onResume() {
         super.onResume();
-        // Log.d(TAG, "onResume: ");
-        rvChatListView.removeItemDecoration(stickyHeaderDecoration);
-        messageAdapter = null;
-        previousMessagesRequest = null;
-        nextMessagesRequest = null;
-        FirebaseNotificationService.Companion.getUnreadMessageList().clear();
-        // checkOnGoingCall();
-        int lastReadMessageId = PrefManager.INSTANCE.getIntValue(GROUP_CHAT_LAST_READ_MESSAGE_ID, false);
-        if (lastReadMessageId != 0) {
-            scrollToMsg(lastReadMessageId);
-        } else {
-            fetchMessage();
-        }
-        addMessageListener();
-
-//        if (messageActionFragment != null)
-//            messageActionFragment.dismiss();
-
-        if (type != null) {
-            if (type.equals(CometChatConstants.RECEIVER_TYPE_USER)) {
-                addUserListener();
-                tvStatus.setText(status);
-                new Thread(this::getUser).start();
-            } else {
-                addGroupListener();
-                new Thread(this::getGroup).start();
-                new Thread(this::getMember).start();
-            }
-        }
     }
 
     @Override
