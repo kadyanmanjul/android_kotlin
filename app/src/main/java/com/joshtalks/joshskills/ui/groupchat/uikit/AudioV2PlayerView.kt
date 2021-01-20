@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.PauseAudioEventBus
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.Random
 import org.json.JSONObject
 import timber.log.Timber
 
@@ -46,7 +47,6 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
     private val compositeDisposable = CompositeDisposable()
     private var lastPosition: Long = 0L
     private var mediaDuration: Long = 0
-
 
     constructor(context: Context) : super(context) {
         init()
@@ -74,15 +74,23 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
         seekPlayerProgress.progress = 0
         playButton.setOnClickListener(this)
         pauseButton.setOnClickListener(this)
+
         playButton.visibility = View.VISIBLE
         // pauseButton.visibility = View.VISIBLE
-
         RxBus2.listenWithoutDelay(PauseAudioEventBus::class.java)
             .subscribeOn(AndroidSchedulers.mainThread())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 onPausePlayer()
             }
+    }
+
+    private fun getDummyWaveSample(): IntArray {
+        val data = IntArray(50)
+        for (i in 0 until data.size)
+            data[i] = Random().nextInt(data.size)
+
+        return data
     }
 
     fun bindView(
@@ -92,6 +100,10 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
     ) {
         this.id = id.toString()
         this.url = audioUrl
+
+
+
+
         try {
             if (metadata != null && metadata.has("audioDurationInMs")) {
                 this.mediaDuration = metadata.getLong("audioDurationInMs")
@@ -129,10 +141,10 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
     }
 
     fun setThemeColor(colorId: Int) {
-        playButton.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(context, colorId))
+//        playButton.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(context, colorId))
         progressBar.progressTintList =
             ColorStateList.valueOf(ContextCompat.getColor(context, colorId))
-        pauseButton.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(context, colorId))
+//        pauseButton.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(context, colorId))
         seekPlayerProgress.thumbTintList =
             ColorStateList.valueOf(ContextCompat.getColor(context, colorId))
         seekPlayerProgress.progressTintList =
@@ -192,10 +204,9 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
             })
         exoAudioManager?.playerListener = this
         exoAudioManager?.setProgressUpdateListener(this)
-
     }
 
-    fun setAudioPlayLIstener(playCallback: PlayPauseCallback) {
+    fun setAudioPlayListener(playCallback: PlayPauseCallback) {
         this.playCallback = playCallback
     }
 
@@ -227,6 +238,7 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
 
     private fun initAndPlay(file: String?) {
         file?.let {
+            exoAudioManager?.release()
             exoAudioManager?.play(it, id, lastPosition)
             seekPlayerProgress.progress = lastPosition.toInt()
             playingAudio()
@@ -261,6 +273,9 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
             return
         }
         seekPlayerProgress.progress = progress.toInt()
+        var perProgress = ((progress * 100) / mediaDuration).toInt()
+        if (perProgress + 4 >= 100)
+            perProgress = 100
         lastPosition = progress
     }
 
@@ -273,10 +288,12 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
 
 
     override fun onPlayerPause() {
+        pausingAudio()
         Timber.tag("AudioV2PlayerView").e("onPlayerPause")
     }
 
     override fun onPlayerResume() {
+        playingAudio()
         RxBus2.publish(AudioPlayerEventBus(PlaybackInfoListener.State.PLAYING, id))
     }
 
@@ -293,6 +310,7 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
     }
 
     override fun onPlayerReleased() {
+
         Timber.tag("AudioV2PlayerView").e("onPlayerReleased")
     }
 
@@ -302,6 +320,7 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
     override fun complete() {
         Timber.tag("AudioV2PlayerView").e("complete")
         exoAudioManager?.onPauseComplete()
+        pausingAudio()
         exoAudioManager?.seekTo(0)
         seekPlayerProgress.progress = 0
         setDefaultValue()

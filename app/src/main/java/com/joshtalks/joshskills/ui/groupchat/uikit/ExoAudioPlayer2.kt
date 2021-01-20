@@ -3,7 +3,11 @@ package com.joshtalks.joshskills.ui.groupchat.uikit
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
-import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.PlaybackParameters
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -30,7 +34,9 @@ class ExoAudioPlayer2 {
         SimpleExoPlayer.Builder(AppObjectController.joshApplication).setUseLazyPreparation(true)
             .build().apply {
                 setAudioAttributes(audioAttributes, true)
+
             }
+
     }
 
     init {
@@ -49,6 +55,9 @@ class ExoAudioPlayer2 {
                 }
                 if (playbackState == ExoPlayer.STATE_READY && playWhenReady.not()) {
                     progressUpdateListener?.onDurationUpdate(player.duration)
+                }
+                if (!playWhenReady) {
+                    playerListener?.onPlayerPause()
                 }
             }
 
@@ -182,8 +191,6 @@ class ExoAudioPlayer2 {
         player.playWhenReady = false
         progressTracker?.let { it.handler.removeCallbacks(it) }
         currentPlayingUrl = EMPTY
-        if (playerListener != null)
-            playerListener = null
     }
 
     interface ProgressUpdateListener {

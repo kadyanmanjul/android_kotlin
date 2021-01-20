@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="@dimen/_1sdp">
 
     <com.joshtalks.joshskills.ui.groupchat.uikit.Avatar
         android:id="@+id/iv_user"
@@ -10,7 +12,8 @@
         android:layout_height="@dimen/_32sdp"
         android:layout_alignBottom="@+id/cv_message_container"
         android:layout_marginStart="@dimen/_4sdp"
-        android:layout_marginBottom="@dimen/_4sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         tools:src="@tools:sample/avatars" />
 
     <RelativeLayout
@@ -21,7 +24,9 @@
         android:background="@drawable/incoming_message_normal_bg_groupchat"
         android:gravity="center"
         android:paddingStart="@dimen/_6sdp"
-        android:paddingEnd="@dimen/_6sdp">
+        android:paddingEnd="@dimen/_6sdp"
+        app:layout_constraintStart_toEndOf="@+id/iv_user"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/tv_user"
@@ -34,7 +39,7 @@
             android:paddingEnd="@dimen/_6sdp"
             android:paddingBottom="0dp"
             android:textColor="@color/colorPrimary"
-            android:textSize="@dimen/_10ssp"
+            android:textSize="@dimen/_11ssp"
             android:textStyle="bold"
             android:visibility="gone"
             tools:text="Iron Man"
@@ -65,25 +70,20 @@
             android:layout_below="@id/tv_user"
             android:layout_marginStart="@dimen/_6sdp"
             android:layout_marginTop="@dimen/_4sdp"
-            android:layout_marginEnd="@dimen/_6sdp" />
-
-        <View
-            android:id="@+id/dummy_view"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_10sdp"
-            android:layout_below="@id/replyLayout"
-            android:visibility="visible" />
+            android:layout_marginEnd="@dimen/_6sdp"
+            android:visibility="gone" />
 
         <com.joshtalks.joshskills.ui.groupchat.uikit.AudioV2PlayerView
             android:id="@+id/audio_player"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/dummy_view"
+            android:layout_below="@+id/replyLayout"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:gravity="center_vertical"
-            android:paddingTop="@dimen/_4sdp"
-            android:paddingEnd="@dimen/_8sdp"
+            android:paddingHorizontal="@dimen/_8sdp"
+            android:paddingVertical="@dimen/_2sdp"
             tools:layout_height="@dimen/_40sdp" />
 
         <TextView
@@ -93,14 +93,15 @@
             android:layout_below="@id/audio_player"
             android:layout_alignEnd="@id/audio_player"
             android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/_4sdp"
             android:gravity="end"
+            android:lineSpacingMultiplier="0.5"
             android:maxLines="1"
             android:minWidth="@dimen/_32sdp"
             android:paddingStart="@dimen/_6sdp"
-            android:paddingEnd="@dimen/_4sdp"
+            android:paddingEnd="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_2sdp"
             android:textColor="@color/gray_9E"
-            android:textSize="@dimen/_8ssp"
+            android:textSize="@dimen/_9ssp"
             android:visibility="gone"
             tools:text="11:00 PM"
             tools:visibility="visible" />
@@ -113,7 +114,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/cv_message_container"
         android:layout_alignStart="@+id/cv_message_container"
-        android:layout_marginBottom="@dimen/_4sdp">
+        android:layout_marginBottom="@dimen/_4sdp"
+        app:layout_constraintEnd_toEndOf="@+id/cv_message_container"
+        app:layout_constraintTop_toBottomOf="parent">
 
         <LinearLayout
             android:id="@+id/reply_avatar_layout"
@@ -137,4 +140,4 @@
             tools:text="2 replies" />
     </LinearLayout>
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

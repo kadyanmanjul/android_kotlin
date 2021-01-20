@@ -4,74 +4,66 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_gravity="center">
 
     <FrameLayout
         android:id="@+id/fl_controller"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minWidth="@dimen/_36sdp"
+        android:background="@drawable/circle_for_q_item"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/btnPlay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
             android:layout_gravity="center"
-            android:background="@null"
             android:contentDescription="@string/play_button_description"
-            android:padding="@dimen/_4sdp"
+            android:padding="@dimen/_2sdp"
             android:visibility="visible"
-            app:srcCompat="@drawable/ic_play_24dp"
-            app:tint="@color/button_color"
+            app:srcCompat="@drawable/ic_play_arrow_black_24dp"
             tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/btnPause"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
             android:layout_gravity="center"
-            android:background="@null"
             android:contentDescription="@string/play_button_description"
-            android:padding="@dimen/_4sdp"
+            android:padding="@dimen/_2sdp"
             android:visibility="invisible"
-            app:srcCompat="@drawable/ic_pause_24dp"
-            app:tint="@color/button_color"
+            app:srcCompat="@drawable/exo_icon_pause"
             tools:visibility="visible" />
-
     </FrameLayout>
 
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginHorizontal="@dimen/_4sdp"
         android:background="#dcf8c6"
         android:gravity="center_vertical"
-        android:padding="@dimen/_4sdp"
+        android:padding="@dimen/_2sdp"
         android:progressTint="@color/button_color"
         app:layout_constraintBottom_toBottomOf="@id/fl_controller"
         app:layout_constraintEnd_toEndOf="@id/fl_controller"
         app:layout_constraintStart_toStartOf="@id/fl_controller"
-        app:layout_constraintTop_toTopOf="@+id/fl_controller" />
+        app:layout_constraintTop_toTopOf="@+id/fl_controller"
+        tools:visibility="visible" />
 
     <SeekBar
         android:id="@+id/seek_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/fl_controller"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_toEndOf="@id/fl_controller"
-        android:paddingStart="@dimen/_8sdp"
-        android:paddingEnd="@dimen/_8sdp"
+        android:paddingStart="@dimen/_10sdp"
+        android:paddingEnd="@dimen/_6sdp"
         android:progressBackgroundTint="@color/gray_9E"
         android:progressDrawable="@drawable/seek_bar_draw"
         android:thumb="@drawable/seek_thumb"
         android:thumbTint="@color/colorPrimary"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/message_time"
         app:layout_constraintStart_toEndOf="@+id/fl_controller"
@@ -88,6 +80,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
         tools:ignore="MissingPrefix"
         tools:text="00:00" />
 

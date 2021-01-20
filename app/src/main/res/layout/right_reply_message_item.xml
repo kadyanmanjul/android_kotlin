@@ -9,7 +9,7 @@
     android:alpha="0.8"
     android:minWidth="@dimen/_80sdp"
     android:visibility="gone"
-    app:cardBackgroundColor="@color/reply_msg_background"
+    app:cardBackgroundColor="@color/transparent"
     app:cardCornerRadius="@dimen/_4sdp"
     app:cardElevation="0dp"
     tools:visibility="visible">
@@ -75,7 +75,7 @@
             android:paddingStart="@dimen/_8sdp"
             android:paddingBottom="@dimen/_4sdp"
             android:textColor="@color/black"
-            android:textSize="@dimen/_9ssp"
+            android:textSize="@dimen/_10ssp"
             app:drawableTint="@color/dark_grey"
             tools:text="@string/replyTxt" />
 
