@@ -166,19 +166,19 @@ class ReportOverviewView3(
                 QuestionReportType.WRONG == reportType -> {
                     colorInCorrect = Color.parseColor("#F6595A")
                     textColor = colorInCorrect
-                    percentText = EMPTY + getPercent(certificateExamReport.wrong) + "% Incorrect"
+                    percentText = EMPTY + getPercent(certificateExamReport.wrong).plus(" Incorrect")
                 }
                 QuestionReportType.UNANSWERED == reportType -> {
                     colorInUnAnswered = ContextCompat.getColor(context, R.color.grey_68)
                     textColor = colorInUnAnswered
                     percentText =
-                        EMPTY + getPercent(certificateExamReport.unanswered) + "% Unanswered"
+                        EMPTY + getPercent(certificateExamReport.unanswered).plus(" Unanswered")
 
                 }
                 else -> {
                     colorCorrect = Color.parseColor("#3DD2B5")
                     textColor = colorCorrect
-                    percentText = EMPTY + getPercent(certificateExamReport.correct) + "% Correct"
+                    percentText = EMPTY + getPercent(certificateExamReport.correct).plus(" Correct")
                 }
             }
             chart.setCenterTextColor(textColor)
@@ -206,8 +206,10 @@ class ReportOverviewView3(
         return span
     }
 
-    private fun getPercent(per: Int): Float {
-        return (per.toFloat() * 100) / (certificateExamReport.correct + certificateExamReport.wrong + certificateExamReport.unanswered)
+    private fun getPercent(per: Int): String {
+        val percent =
+            (per.toFloat() * 100) / (certificateExamReport.correct + certificateExamReport.wrong + certificateExamReport.unanswered)
+        return String.format("%.02f", percent).plus("%")
     }
 
     @Click(R.id.root_view)

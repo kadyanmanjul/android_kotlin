@@ -163,7 +163,7 @@ class ReportOverviewView2(
     }
 
     private fun generateCenterSpannableText(percent: Float): SpannableString {
-        val s0 = "$percent%"
+        val s0 = String.format("%.02f", percent).plus("%")
         val span = SpannableString("$s0 Correct")
         span.setSpan(RelativeSizeSpan(1.75f), 0, s0.length, 0)
         return span
