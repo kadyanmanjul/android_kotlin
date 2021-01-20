@@ -78,8 +78,12 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
         attemptSequence = intent.getIntExtra(ARG_ATTEMPT_SEQUENCE, -1)
 
         certificationQuestionModel?.run {
-            if (CertificationExamView.EXAM_VIEW == examView && lastQuestionOfExit == -1) {
-                questionsList.addAll(questions.shuffled())
+            if (CertificationExamView.EXAM_VIEW == examView) {
+                if (lastQuestionOfExit == -1) {
+                    questionsList.addAll(questions.shuffled())
+                } else {
+                    questionsList.addAll(questions)
+                }
             } else {
                 questionsList.addAll(questions.sortedBy { it.sortOrder })
             }
