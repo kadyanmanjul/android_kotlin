@@ -826,6 +826,33 @@ class AppUsageWorker(context: Context, private var workerParams: WorkerParameter
     }
 }
 
+class AppUsageSyncWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+
+            val list = AppObjectController.appDatabase.appUsageDao().getAllSession()
+            if (list.isNotEmpty()) {
+                val mentorId = Mentor.getInstance().getId()
+                val gaid = GaIDMentorModel.getMapObject()?.gaID
+                list.listIterator().forEach {
+                    it.mentorId = mentorId
+                    it.gaidId = gaid
+                }
+                val body: HashMap<String, List<AppUsageModel>> = HashMap()
+                body["data"] = list
+                val resp = AppObjectController.commonNetworkService.engageUserSession(body)
+                if (resp.isSuccessful) {
+                    AppObjectController.appDatabase.appUsageDao().deleteAllSyncSession()
+                }
+            }
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
+        }
+        return Result.success()
+    }
+}
+
 
 fun getGoogleAdId(context: Context): String {
     MobileAds.initialize(context)

@@ -32,6 +32,7 @@ object WorkManagerAdmin {
                     OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build()
                 )
             )
+            .then(OneTimeWorkRequestBuilder<AppUsageSyncWorker>().build())
             .then(OneTimeWorkRequestBuilder<GenerateRestoreIdWorker>().build())
             .enqueue()
 
@@ -49,8 +50,9 @@ object WorkManagerAdmin {
                     OneTimeWorkRequestBuilder<PatchDeviceDetailsWorker>().build(),
                     OneTimeWorkRequestBuilder<JoshTalksInstallWorker>().build(),
                 )
+            )
+            .enqueue()
 
-            ).enqueue()
     }
 
 

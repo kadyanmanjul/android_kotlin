@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.repository.service
 
 import com.google.gson.JsonArray
+import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
@@ -227,5 +228,11 @@ interface CommonNetworkService {
         @Field("group_id") groupId: String,
         @Field("message_id") messageId: Int
     ): Response<Any>
+
+    @POST("$DIR/engage/user-activity/")
+    suspend fun engageUserSession(
+        @Body params: HashMap<String, List<AppUsageModel>>
+    ): Response<Void>
+
 
 }
