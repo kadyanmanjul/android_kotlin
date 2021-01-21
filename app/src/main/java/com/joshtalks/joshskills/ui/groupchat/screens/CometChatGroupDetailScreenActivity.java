@@ -33,8 +33,10 @@ import com.cometchat.pro.models.User;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.core.BaseActivity;
+import com.joshtalks.joshskills.core.PrefManager;
 import com.joshtalks.joshskills.ui.groupchat.adapter.GroupMemberAdapter;
 import com.joshtalks.joshskills.ui.groupchat.constant.StringContract;
 import com.joshtalks.joshskills.ui.groupchat.listeners.ClickListener;
@@ -47,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.joshtalks.joshskills.core.PrefManagerKt.IS_GROUP_NOTIFICATION_MUTED;
 import static com.joshtalks.joshskills.ui.groupchat.utils.Utils.UserToGroupMember;
 
 
@@ -143,7 +146,8 @@ public class CometChatGroupDetailScreenActivity extends BaseActivity {
         tvDelete = findViewById(R.id.tv_delete);
         TextView tvExit = findViewById(R.id.tv_exit);
         toolbar = findViewById(R.id.groupDetailToolbar);
-
+        SwitchMaterial notificationSwitch = findViewById(R.id.notif_switch);
+        TextView notificationStatusTv = findViewById(R.id.notification_status_tv);
         tvDelete.setTypeface(fontUtils.getTypeFace(FontUtils.robotoMedium));
         tvExit.setTypeface(fontUtils.getTypeFace(FontUtils.robotoMedium));
         tvAddMember.setTypeface(fontUtils.getTypeFace(FontUtils.robotoRegular));
@@ -156,6 +160,16 @@ public class CometChatGroupDetailScreenActivity extends BaseActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rvMemberList.setLayoutManager(linearLayoutManager);
 //        rvMemberList.setNestedScrollingEnabled(false);
+
+        boolean isNotificationMuted = PrefManager.getBoolValue(IS_GROUP_NOTIFICATION_MUTED, false, false);
+        notificationSwitch.setChecked(!isNotificationMuted);
+        System.out.println("CometChatGroupDetailScreenActivity.initComponent isNotificationMuted " + isNotificationMuted);
+        if (isNotificationMuted) {
+            notificationStatusTv.setText(getString(R.string.off));
+        } else {
+            notificationStatusTv.setText(getString(R.string.on));
+
+        }
 
         handleIntent();
         checkDarkMode();
@@ -209,6 +223,15 @@ public class CometChatGroupDetailScreenActivity extends BaseActivity {
 
         tvDelete.setOnClickListener(view -> createDialog(getResources().getString(R.string.delete_group_title), getResources().getString(R.string.delete_group_message),
                 getResources().getString(R.string.delete), getResources().getString(R.string.cancel), R.drawable.ic_delete));
+
+        notificationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            PrefManager.INSTANCE.put(IS_GROUP_NOTIFICATION_MUTED, !isChecked, false);
+            if (isChecked) {
+                notificationStatusTv.setText(getString(R.string.on));
+            } else {
+                notificationStatusTv.setText(getString(R.string.off));
+            }
+        });
 
     }
 
