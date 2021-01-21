@@ -40,6 +40,7 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
     private static final String TAG = GroupMemberAdapter.class.getSimpleName();
     private final Context context;
     private final FontUtils fontUtils;
+    ArrayList<GroupMember> onlineMembers = new ArrayList<>();
     private String groupOwnerId;
     private List<GroupMember> groupMemberList = new ArrayList<>();
 
@@ -61,6 +62,7 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
      */
     public GroupMemberAdapter(Context context, List<GroupMember> groupMemberList, String groupOwnerId) {
         this.groupMemberList = groupMemberList;
+        onlineMembers.clear();
         this.groupOwnerId = groupOwnerId;
         this.context = context;
         fontUtils = FontUtils.getInstance(context);
@@ -99,7 +101,6 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
             groupMemberViewHolder.userListRowBinding.txtUserName.setText(R.string.you);
         } else
             groupMemberViewHolder.userListRowBinding.txtUserName.setText(groupMember.getName());
-        System.out.println("GroupMemberAdapter.onBindViewHolder status " + groupMember.getStatus() + " active at " + groupMember.getLastActiveAt());
         if ("online".equalsIgnoreCase(groupMember.getStatus())) {
             groupMemberViewHolder.userListRowBinding.onlineStatusTv.setText(context.getString(R.string.online));
             groupMemberViewHolder.userListRowBinding.onlineStatusTv.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
@@ -119,8 +120,10 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
         if (groupOwnerId != null && groupMember.getUid().equals(groupOwnerId) &&
                 groupMember.getScope().equals(CometChatConstants.SCOPE_ADMIN)) {
             groupMemberViewHolder.userListRowBinding.txtUserScope.setText(R.string.owner);
+            groupMemberViewHolder.userListRowBinding.onlineStatusTv.setText("");
         } else if (groupMember.getScope().equals(CometChatConstants.SCOPE_ADMIN)) {
             groupMemberViewHolder.userListRowBinding.txtUserScope.setText(R.string.admin);
+            groupMemberViewHolder.userListRowBinding.onlineStatusTv.setText("");
         } else if (groupMember.getScope().equals(CometChatConstants.SCOPE_MODERATOR)) {
             groupMemberViewHolder.userListRowBinding.txtUserScope.setText(R.string.moderator);
         } else {
@@ -176,6 +179,7 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
      */
     public void searchGroupMembers(List<GroupMember> filterlist) {
         this.groupMemberList = filterlist;
+        onlineMembers.clear();
         sortMemberList();
         notifyDataSetChanged();
     }
@@ -249,17 +253,20 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
     }
 
     private void sortMemberList() {
-        ArrayList<GroupMember> onlineMembers = new ArrayList<>();
-        for (int i = 0; i < this.groupMemberList.size(); i++) {
+        onlineMembers.clear();
+        for (int i = 0; i < this.groupMemberList.size(); ) {
             GroupMember member = groupMemberList.get(i);
-            if (member.getUid().equals(CometChat.getLoggedInUser().getUid())) {
+            if ("online".equalsIgnoreCase(member.getStatus())) {
+                if (member.getUid().equals(CometChat.getLoggedInUser().getUid()))
+                    onlineMembers.add(0, member);
+                else
+                    onlineMembers.add(member);
                 groupMemberList.remove(member);
-                onlineMembers.add(0, member);
-            } else if ("online".equalsIgnoreCase(member.getStatus())) {
-                groupMemberList.remove(member);
-                onlineMembers.add(member);
+            } else {
+                i++;
             }
         }
+
         Collections.sort(this.groupMemberList, (member1, member2) -> Long.compare(member2.getLastActiveAt(), member1.getLastActiveAt()));
         groupMemberList.addAll(0, onlineMembers);
     }

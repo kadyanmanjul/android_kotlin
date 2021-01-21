@@ -111,6 +111,7 @@ public class CometChatGroupDetailScreenActivity extends BaseActivity {
         setContentView(R.layout.activity_comet_chat_group_detail_screen);
         fontUtils = FontUtils.getInstance(this);
         initComponent();
+        getGroup();
         getGroupMembers();
     }
 
@@ -794,7 +795,7 @@ public class CometChatGroupDetailScreenActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        getGroup();
+       /* getGroup();
         groupMembersRequest = null;
         isNoMoreMembers = false;
         isInProgress = false;
@@ -802,7 +803,7 @@ public class CometChatGroupDetailScreenActivity extends BaseActivity {
             groupMemberAdapter.resetAdapter();
             groupMemberAdapter = null;
 
-        }
+        }*/
 //        getBannedMemberCount();
 //        getGroupMembers();
         addGroupListener();
