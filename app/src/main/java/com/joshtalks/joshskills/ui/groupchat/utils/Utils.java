@@ -59,6 +59,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -66,6 +67,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -780,4 +782,57 @@ public class Utils {
         }
         return isVisibleToLoggedInUser;
     }
+
+    public static String getLastSeenStatus(Context context, long currentDate) throws ParseException {
+        java.text.DateFormat formatterInput = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+//        formatterInput.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        Date pasTime = new Date(currentDate * 1000);
+
+
+        Calendar nowTime = Calendar.getInstance();
+        Calendar neededTime = Calendar.getInstance();
+        neededTime.setTimeInMillis(currentDate * 1000);
+
+        java.text.DateFormat todayYesterdayFormat = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
+        java.text.DateFormat pastFormat = new SimpleDateFormat("MMMM d, h:mm a", Locale.ENGLISH);
+        todayYesterdayFormat.setTimeZone(TimeZone.getDefault());
+        pastFormat.setTimeZone(TimeZone.getDefault());
+        String todayYesterdayDate = todayYesterdayFormat.format(pasTime);
+        String pastDate = pastFormat.format(pasTime);
+
+
+        if ((neededTime.get(Calendar.YEAR) == nowTime.get(Calendar.YEAR))) {
+
+            if ((neededTime.get(Calendar.MONTH) == nowTime.get(Calendar.MONTH))) {
+
+                if (neededTime.get(Calendar.DATE) - nowTime.get(Calendar.DATE) == 1) {
+                    //here return like "Tomorrow at 12:00"
+                    return "";
+
+                } else if (nowTime.get(Calendar.DATE) == neededTime.get(Calendar.DATE)) {
+                    //here return like "Today at 12:00"
+                    return "at " + todayYesterdayDate;
+
+                } else if (nowTime.get(Calendar.DATE) - neededTime.get(Calendar.DATE) == 1) {
+                    //here return like "Yesterday at 12:00"
+                    return "Yesterday at " + todayYesterdayDate;
+
+                } else {
+                    //here return like "May 31, 12:00"
+                    return pastDate;
+                }
+
+            } else {
+                //here return like "May 31, 12:00"
+                return pastDate;
+            }
+
+        } else {
+            //here return like "May 31 2010, 12:00" - it's a different year we need to show it
+            return DateFormat.format("MMMM dd yyyy, HH:mm", neededTime).toString();
+//            return "";
+        }
+    }
+
 }

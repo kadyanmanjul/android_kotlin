@@ -834,6 +834,7 @@
     <string name="p2p_title">Practice Partner calling</string>
     <string name="p2p_subtitle">Speaking Practice</string>
     <string name="reconnecting">Reconnecting</string>
+    <string name="last_seen">Last Seen %1$s</string>
 
 
 </resources>

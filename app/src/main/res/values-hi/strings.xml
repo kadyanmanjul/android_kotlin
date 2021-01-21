@@ -447,5 +447,6 @@
     <string name="exam_info">%1$d प्रश्न - %2$d मिनट - %3$d मार्क्स</string>
     <string name="you_can_only_attempt_the_certification_exam">आप केवल %1$d पाठों के बाद प्रमाणन परीक्षा का प्रयास कर सकते हैं</string>
     <string name="did_not_answer_message">हमें कोई उपयोगकर्ता नहीं मिला, कृपया पुनः प्रयास करें.</string>
+    <string name="last_seen">अंतिम सक्रिय %1$s</string>
 
 </resources>

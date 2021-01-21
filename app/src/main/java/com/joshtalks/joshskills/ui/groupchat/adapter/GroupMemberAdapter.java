@@ -4,20 +4,25 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.cometchat.pro.constants.CometChatConstants;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.models.GroupMember;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.databinding.UserListRowBinding;
 import com.joshtalks.joshskills.ui.groupchat.utils.FontUtils;
+import com.joshtalks.joshskills.ui.groupchat.utils.Utils;
+
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.json.JSONException;
 
 /**
  * Purpose - GroupMemberAdapter is a subclass of RecyclerView Adapter which is used to display
@@ -94,7 +99,23 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
             groupMemberViewHolder.userListRowBinding.txtUserName.setText(R.string.you);
         } else
             groupMemberViewHolder.userListRowBinding.txtUserName.setText(groupMember.getName());
-
+        System.out.println("GroupMemberAdapter.onBindViewHolder status " + groupMember.getStatus() + " active at " + groupMember.getLastActiveAt());
+        if ("online".equalsIgnoreCase(groupMember.getStatus())) {
+            groupMemberViewHolder.userListRowBinding.onlineStatusTv.setText(context.getString(R.string.online));
+            groupMemberViewHolder.userListRowBinding.onlineStatusTv.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
+        } else {
+            try {
+                String lastActive = Utils.getLastSeenStatus(context, groupMember.getLastActiveAt());
+                if (lastActive.isEmpty()) {
+                    groupMemberViewHolder.userListRowBinding.onlineStatusTv.setText("");
+                } else {
+                    groupMemberViewHolder.userListRowBinding.onlineStatusTv.setText(context.getString(R.string.last_seen, lastActive));
+                    groupMemberViewHolder.userListRowBinding.onlineStatusTv.setTextColor(ContextCompat.getColor(context, R.color.dark_grey));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         if (groupOwnerId != null && groupMember.getUid().equals(groupOwnerId) &&
                 groupMember.getScope().equals(CometChatConstants.SCOPE_ADMIN)) {
             groupMemberViewHolder.userListRowBinding.txtUserScope.setText(R.string.owner);
@@ -106,7 +127,6 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
             groupMemberViewHolder.userListRowBinding.txtUserScope.setText("");
         }
 
-        groupMemberViewHolder.userListRowBinding.txtUserName.setTypeface(fontUtils.getTypeFace(FontUtils.robotoRegular));
         String colorCode = null;
         try {
             if (groupMember.getMetadata() != null && groupMember.getMetadata().has("color_code")) {
@@ -229,16 +249,19 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
     }
 
     private void sortMemberList() {
-        Collections.sort(this.groupMemberList, (member1, member2) -> member1.getName().toUpperCase().compareTo(member2.getName().toUpperCase()));
-        GroupMember member = null;
+        ArrayList<GroupMember> onlineMembers = new ArrayList<>();
         for (int i = 0; i < this.groupMemberList.size(); i++) {
-            member = groupMemberList.get(i);
+            GroupMember member = groupMemberList.get(i);
             if (member.getUid().equals(CometChat.getLoggedInUser().getUid())) {
                 groupMemberList.remove(member);
-                groupMemberList.add(0, member);
-                break;
+                onlineMembers.add(0, member);
+            } else if ("online".equalsIgnoreCase(member.getStatus())) {
+                groupMemberList.remove(member);
+                onlineMembers.add(member);
             }
         }
+        Collections.sort(this.groupMemberList, (member1, member2) -> Long.compare(member2.getLastActiveAt(), member1.getLastActiveAt()));
+        groupMemberList.addAll(0, onlineMembers);
     }
 
     class GroupMemberViewHolder extends RecyclerView.ViewHolder {

@@ -56,7 +56,7 @@ import static com.joshtalks.joshskills.ui.groupchat.utils.Utils.UserToGroupMembe
 public class CometChatGroupDetailScreenActivity extends BaseActivity {
 
 
-    private static final int LIMIT = 30;
+    private static final int LIMIT = 100;
     private final String TAG = "CometChatGroupDetail";
     private final ArrayList<String> groupMemberUids = new ArrayList<>();
     //private final List<GroupMember> groupMembers = new ArrayList<>();
@@ -111,7 +111,7 @@ public class CometChatGroupDetailScreenActivity extends BaseActivity {
         setContentView(R.layout.activity_comet_chat_group_detail_screen);
         fontUtils = FontUtils.getInstance(this);
         initComponent();
-
+        getGroupMembers();
     }
 
     private void initComponent() {
@@ -804,7 +804,7 @@ public class CometChatGroupDetailScreenActivity extends BaseActivity {
 
         }
 //        getBannedMemberCount();
-        getGroupMembers();
+//        getGroupMembers();
         addGroupListener();
         callBtn.setClickable(true);
         videoCallBtn.setClickable(true);
