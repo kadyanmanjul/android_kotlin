@@ -11,7 +11,6 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.ui.view_holders.BaseChatViewHolder
@@ -135,11 +134,12 @@ class LessonViewHolder(
 
             message.lessons?.let { lessonModel ->
                 lessonNameTv.text = getAppContext().getString(
-                        R.string.lesson_name,
-                        lessonModel.lessonNo,
-                        lessonModel.lessonName
+                    R.string.lesson_name,
+                    lessonModel.lessonNo,
+                    lessonModel.lessonName
                 )
-                Utils.setImage(imageView, lessonModel.varthumbnail)
+                //  Utils.setImage(imageView, lessonModel.varthumbnail)
+                setImageInImageViewV2(imageView, lessonModel.varthumbnail)
 
             }
             rootViewUncompleted.setOnClickListener {

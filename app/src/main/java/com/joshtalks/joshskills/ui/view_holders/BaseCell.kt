@@ -283,5 +283,24 @@ abstract class BaseCell {
 
     }
 
+    fun setImageInImageViewV2(iv: ImageView?, url: String) {
+        if (iv != null) {
+            Glide.with(getAppContext())
+                .load(url)
+                .override(IMAGE_SIZE, IMAGE_SIZE)
+                .optionalTransform(
+                    WebpDrawable::class.java,
+                    WebpDrawableTransformation(CircleCrop())
+                )
+                .apply(
+                    RequestOptions().placeholder(R.drawable.video_placeholder)
+                        .error(R.drawable.video_placeholder)
+                )
+                .into(iv)
+        }
+
+    }
+
+
 }
 
