@@ -33,8 +33,10 @@ import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.IS_GROUP_NOTIFICATION_MUTED
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.PrefManager.getBoolValue
 import com.joshtalks.joshskills.core.Utils.formatDuration
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.textDrawableBitmap
@@ -52,6 +54,7 @@ import com.joshtalks.joshskills.ui.conversation_practice.PRACTISE_ID
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.groupchat.constant.StringContract
+import com.joshtalks.joshskills.ui.groupchat.messagelist.CometChatMessageListActivity
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
@@ -826,7 +829,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     notificationBuilder.setChannelId(groupChatChannelId + channelIndex)
                 }
 
-                if (Utils.isMessageVisible(baseMessage) && message != null) {
+                val isChatScreenOpen =
+                    AppObjectController.currentActivityClass == CometChatMessageListActivity::class.simpleName
+                val isNotificationMuted = getBoolValue(IS_GROUP_NOTIFICATION_MUTED, false, false)
+                if (Utils.isMessageVisible(baseMessage) && message != null && isChatScreenOpen.not() && isNotificationMuted.not()) {
                     notificationManager.notify(
                         group.guid.hashCode(),
                         notificationBuilder.build()
