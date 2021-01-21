@@ -8,9 +8,10 @@ if (!project.hasProperty("devBuild")) {
     apply plugin: 'com.google.firebase.firebase-perf'
 }
 //-PdevBuild command
+//-PdevBuild --warning-mode=all --stacktrace
 def majorVersion = 3
 def minorVersion = 2
-def patchVersion =5
+def patchVersion =6
 
 android {
     compileSdkVersion 29

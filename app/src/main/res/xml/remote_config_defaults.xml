@@ -423,7 +423,7 @@
     </entry>
     <entry>
         <key>UX_CAM_FEATURE_ENABLE</key>
-        <value>true</value>
+        <value>false</value>
     </entry>
     <entry>
         <key>SMART_LOOK_FEATURE_ENABLE</key>
