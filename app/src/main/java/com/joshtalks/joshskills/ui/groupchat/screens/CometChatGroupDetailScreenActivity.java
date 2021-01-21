@@ -163,7 +163,6 @@ public class CometChatGroupDetailScreenActivity extends BaseActivity {
 
         boolean isNotificationMuted = PrefManager.getBoolValue(IS_GROUP_NOTIFICATION_MUTED, false, false);
         notificationSwitch.setChecked(!isNotificationMuted);
-        System.out.println("CometChatGroupDetailScreenActivity.initComponent isNotificationMuted " + isNotificationMuted);
         if (isNotificationMuted) {
             notificationStatusTv.setText(getString(R.string.off));
         } else {
