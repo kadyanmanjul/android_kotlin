@@ -88,7 +88,8 @@ class ExoAudioPlayer2 {
     }
 
     fun setProgressUpdateListener(progressUpdateListener: ProgressUpdateListener?) {
-        this.progressUpdateListener = progressUpdateListener
+        if (progressUpdateListener != null)
+            this.progressUpdateListener = progressUpdateListener
     }
 
     private fun initializePlayer() {
@@ -131,7 +132,7 @@ class ExoAudioPlayer2 {
         seekDuration: Long = 0,
         isPlaybackSpeed: Boolean = false,
         delayProgress: Long = 50,
-        ) {
+    ) {
         var param = PlaybackParameters(1F)
         if (isPlaybackSpeed) {
             param = PlaybackParameters(0.50F, 1F)//pitch sexy hai

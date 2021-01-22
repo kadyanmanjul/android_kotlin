@@ -117,7 +117,7 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
                 addListener()
                 setView()
             } else {
-                removeSeekbarListener()
+//                removeSeekbarListener()
             }
 
         } catch (ex: Exception) {
@@ -167,7 +167,7 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
         if (ExoAudioPlayer2.LAST_ID == id) {
             return true
         }
-        removeSeekbarListener()
+//        removeSeekbarListener()
         return true
     }
 
@@ -238,7 +238,6 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
 
     private fun initAndPlay(file: String?) {
         file?.let {
-            exoAudioManager?.release()
             exoAudioManager?.play(it, id, lastPosition)
             seekPlayerProgress.progress = lastPosition.toInt()
             playingAudio()
@@ -273,17 +272,14 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
             return
         }
         seekPlayerProgress.progress = progress.toInt()
-        var perProgress = ((progress * 100) / mediaDuration).toInt()
-        if (perProgress + 4 >= 100)
-            perProgress = 100
         lastPosition = progress
     }
 
 
     override fun onDurationUpdate(duration: Long?) {
-        /*  duration?.toInt()?.let {
-              seekPlayerProgress.max = it
-          }*/
+        duration?.toInt()?.let {
+            seekPlayerProgress.max = it
+        }
     }
 
 
@@ -350,14 +346,14 @@ class AudioV2PlayerView : FrameLayout, View.OnClickListener, LifecycleObserver,
             addListener()
             setView()
         } else {
-            removeSeekbarListener()
+//            removeSeekbarListener()
         }
         Timber.tag("onAttachedToWindow").e("AudioPlayer")
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        removeSeekbarListener()
+//        removeSeekbarListener()
         //setDefaultValue()
         //exoAudioManager?.release()
         //compositeDisposable.clear()
