@@ -26,6 +26,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.gson.*
+import com.itkacher.okhttpprofiler.OkHttpProfilerInterceptor
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
@@ -269,6 +270,7 @@ class AppObjectController {
             }
 
             if (BuildConfig.DEBUG) {
+                builder.addInterceptor(OkHttpProfilerInterceptor())
                 val logging =
                     HttpLoggingInterceptor { message -> Timber.tag("OkHttp").d(message) }.apply {
                         level = HttpLoggingInterceptor.Level.BODY
