@@ -10,7 +10,6 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
-import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -316,14 +315,14 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                                         this.isVideoWatchTimeSend = true
                                     }
                                     val videoPercent =
-                                        binding.videoPlayer.player?.duration?.let {
+                                        binding.videoPlayer.player.duration.let {
                                             eventBus.progress.div(
                                                 it
                                             ).times(100).toInt()
                                         } ?: -1
                                     val percentVideoWatched =
                                         eventBus.watchTime.times(100).div(
-                                            binding.videoPlayer.player?.duration!!
+                                            binding.videoPlayer.player.duration!!
                                         ).toInt()
 
                                     if (percentVideoWatched != 0 && percentVideoWatched >= 70 && videoPercent != -1 && videoPercent >= 70 && this.isVideoWatchTimeSend) {
@@ -601,21 +600,6 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
         currentQuizQuestion = 0
         updateQuiz(assessmentQuestions[0])
         binding.grammarCompleteLayout.visibility = View.GONE
-        activityCallback?.onSectionStatusUpdate(0, false)
-        quizQuestion?.let {
-
-            it.status = QUESTION_STATUS.NA
-            viewModel.updateQuestionInLocal(it)
-
-            viewModel.updateQuestionStatus(
-                QUESTION_STATUS.NA,
-                it.questionId.toInt(),
-                it.course_id,
-                it.lesson_id
-            )
-        }
-
-
     }
 
     private fun showQuizCompleteLayout() {
