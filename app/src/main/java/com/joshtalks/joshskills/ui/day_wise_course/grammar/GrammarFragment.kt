@@ -10,6 +10,7 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -315,14 +316,14 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                                         this.isVideoWatchTimeSend = true
                                     }
                                     val videoPercent =
-                                        binding.videoPlayer.player.duration.let {
+                                        binding.videoPlayer.player?.duration?.let {
                                             eventBus.progress.div(
                                                 it
                                             ).times(100).toInt()
                                         } ?: -1
                                     val percentVideoWatched =
                                         eventBus.watchTime.times(100).div(
-                                            binding.videoPlayer.player.duration!!
+                                            binding.videoPlayer.player?.duration!!
                                         ).toInt()
 
                                     if (percentVideoWatched != 0 && percentVideoWatched >= 70 && videoPercent != -1 && videoPercent >= 70 && this.isVideoWatchTimeSend) {
