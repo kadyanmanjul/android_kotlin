@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.repository.local.AppDatabase
+import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.util.ReminderUtil
 import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
@@ -137,7 +138,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
     private fun NotificationManager.buildChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Josh Alarm Notification Channel"
+            val name = NotificationChannelNames.OTHERS.type
             val descriptionText = "This is for josh alarm notification"
             val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {

@@ -148,3 +148,12 @@ enum class NotificationAction(val type: String) {
     GROUP_CHAT_PIN_MESSAGE("GROUP_CHAT_PIN_MESSAGE"),
 
 }
+
+enum class NotificationChannelNames(val type: String) {
+    CLASSES("Classes"),
+    P2P("Voice Calling"),
+    UPDATES("Updates"),
+    GROUP_CHATS("Group Chats"),
+    OTHERS("Others"),
+    DEFAULT("JoshTalksDefault"),
+}

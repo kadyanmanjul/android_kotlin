@@ -45,6 +45,7 @@ import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
+import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
@@ -90,9 +91,9 @@ const val QUESTION_ID = "question_id"
 class FirebaseNotificationService : FirebaseMessagingService() {
 
     private var notificationChannelId = "101111"
-    private var notificationChannelName = "JoshTalksDefault"
+    private var notificationChannelName = NotificationChannelNames.DEFAULT.type
     private var groupChatChannelId = NotificationAction.GROUP_CHAT_MESSAGE_NOTIFICATION.name
-    private var groupChatChannelName = "Group Chat"
+    private var groupChatChannelName = NotificationChannelNames.GROUP_CHATS.type
     private var msgCount = 0
 
     @RequiresApi(Build.VERSION_CODES.N)

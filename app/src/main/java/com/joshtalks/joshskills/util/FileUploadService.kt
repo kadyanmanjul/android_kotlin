@@ -27,6 +27,7 @@ import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
+import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -348,7 +349,7 @@ class FileUploadService : Service() {
             messageText = """$messageText${fileQueue.size} is remaining."""
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name: CharSequence = "Voip Login User"
+            val name: CharSequence = NotificationChannelNames.OTHERS.type
             val importance: Int = NotificationManager.IMPORTANCE_LOW
             val mChannel =
                 NotificationChannel(CHANNEL_ID, name, importance)
