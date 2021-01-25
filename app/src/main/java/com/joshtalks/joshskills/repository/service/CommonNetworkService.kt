@@ -235,4 +235,7 @@ interface CommonNetworkService {
     ): Response<Void>
 
 
+    @POST("$DIR/mentor/gaidl/")
+    fun registerGAIdDetailsV2Async(@Body body: RequestRegisterGAId): Response<GaIDMentorModel>
+
 }
