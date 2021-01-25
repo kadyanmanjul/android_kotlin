@@ -86,7 +86,7 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
         if (PrefManager.hasKey(CALL_RINGTONE_NOT_MUTE).not()) {
             PrefManager.put(CALL_RINGTONE_NOT_MUTE, true)
         }
-//        AppObjectController.appUsageStartTime = 0L
+        InstallReferralUtil.installReferrer(context)
 
         return Result.success()
     }
@@ -850,6 +850,49 @@ class AppUsageSyncWorker(context: Context, workerParams: WorkerParameters) :
             LogException.catchException(ex)
         }
         return Result.success()
+    }
+}
+
+
+class RegisterGaidV2(var context: Context, var workerParams: WorkerParameters) :
+    ListenableWorker(context, workerParams) {
+    override fun startWork(): ListenableFuture<Result> {
+        return CallbackToFutureAdapter.getFuture { completer ->
+            if (runAttemptCount > 2) {
+                completer.set(Result.failure())
+            }
+
+            val obj = RequestRegisterGAId()
+            obj.test = workerParams.inputData.getString("test_id")?.split("_")?.get(1)?.toInt()
+
+            InstallReferrerModel.getPrefObject()?.let {
+                obj.installOn = it.installOn
+                obj.utmMedium = it.utmMedium
+                obj.utmSource = it.utmSource
+            }
+
+            val exploreType = workerParams.inputData.getString("explore_type")
+            if (exploreType.isNullOrEmpty().not()) {
+                obj.exploreCardType = ExploreCardType.valueOf(exploreType!!)
+            }
+
+            val resp = AppObjectController.commonNetworkService.registerGAIdDetailsV2Async(obj)
+            if (resp.isSuccessful) {
+                resp.body()?.run {
+                    GaIDMentorModel.update(this)
+                    PrefManager.put(SERVER_GID_ID, gaidDbId)
+                    PrefManager.put(
+                        EXPLORE_TYPE,
+                        exploreCardType?.name ?: ExploreCardType.NORMAL.name,
+                        false
+                    )
+                    PrefManager.put(INSTANCE_ID, instanceId, false)
+                }
+                completer.set(Result.success())
+            } else {
+                completer.set(Result.failure())
+            }
+        }
     }
 }
 
