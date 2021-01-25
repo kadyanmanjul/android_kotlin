@@ -15,10 +15,19 @@ class GaIDMentorModel {
     @SerializedName("mentors")
     var mapMentorList: List<String>? = emptyList()
 
+    @SerializedName("instance_id")
+    var instanceId: String = EMPTY
+
+    @SerializedName("id")
+    var gaidDbId: String = EMPTY
+
+    @SerializedName("explore_type")
+    var exploreCardType: ExploreCardType? = ExploreCardType.NORMAL
+
+
     override fun toString(): String {
         return AppObjectController.gsonMapper.toJson(this)
     }
-
 
     companion object {
         @JvmStatic
