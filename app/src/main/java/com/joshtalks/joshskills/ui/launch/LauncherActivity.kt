@@ -10,6 +10,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.telephony.TelephonyManager
 import androidx.core.app.NotificationManagerCompat
+import androidx.lifecycle.Observer
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -45,6 +47,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
         animatedProgressBar()
+        initAppInFirstTime()
     }
 
     private fun initApp() {
@@ -60,6 +63,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
 
     private fun logNotificationData() {
         try {
+
             val isNotificationEnabled =
                 NotificationManagerCompat.from(AppObjectController.joshApplication)
                     .areNotificationsEnabled()
@@ -126,13 +130,8 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                 if (error == null && jsonParams?.has(Defines.Jsonkey.AndroidDeepLinkPath.key) == true) {
                     AppObjectController.uiHandler.removeCallbacksAndMessages(null)
                     val testId = jsonParams.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
-                    WorkManagerAdmin.registerUserGAID(testId)
-                    val referralCode = parseReferralCode(jsonParams)
-                    referralCode?.let {
-                        logInstallByReferralEvent(testId, null, it)
-                    }
-                    navigateToCourseDetailsScreen(testId)
-                    this@LauncherActivity.finish()
+                    initAfterBranch(testId)
+                    initReferral(testId, jsonParams)
                 }
                 if (error == null && jsonParams?.has(Defines.Jsonkey.ContentType.key) == true) {
                     val exploreType = if (jsonParams.has(Defines.Jsonkey.ContentType.key)) {
@@ -149,6 +148,12 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
             }
         }.withData(this.intent.data).init()
 
+    }
+
+    private fun initReferral(testId: String?, jsonParams: JSONObject) {
+        parseReferralCode(jsonParams)?.let {
+            logInstallByReferralEvent(testId, null, it)
+        }
     }
 
     override fun onStart() {
@@ -297,4 +302,40 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         if (jsonParams.has(Defines.Jsonkey.ReferralCode.key)) jsonParams.getString(
             Defines.Jsonkey.ReferralCode.key
         ) else null
+
+    private fun initAppInFirstTime() {
+        if (Utils.isInternetAvailable().not() && PrefManager.hasKey(SERVER_GID_ID).not()) {
+            startNextActivity()
+        }
+    }
+
+    private fun initAfterBranch(testId: String? = null) {
+        if (PrefManager.hasKey(SERVER_GID_ID)) {
+            navigateToNextScreen()
+        } else {
+            initGaid(testId)
+        }
+    }
+
+    private fun initGaid(testId: String? = null) {
+        val uuid = WorkManagerAdmin.initGaid(testId)
+        val observer = Observer<WorkInfo> { workInfo ->
+            workInfo?.run {
+                if (WorkInfo.State.SUCCEEDED == state) {
+                    if (testId.isNullOrEmpty()) {
+                        navigateToNextScreen()
+                    } else {
+                        navigateToCourseDetailsScreen(testId)
+                    }
+                } else if (WorkInfo.State.FAILED == state) {
+
+                }
+            }
+        }
+        WorkManager.getInstance(applicationContext)
+            .getWorkInfoByIdLiveData(uuid)
+            .observe(this, observer)
+
+    }
+
 }
