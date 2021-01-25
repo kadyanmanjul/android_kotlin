@@ -5,7 +5,6 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
-import com.joshtalks.joshskills.core.notification.EngageToUseAppNotificationWorker
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -16,16 +15,17 @@ object WorkManagerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .beginWith(
                 mutableListOf(
-                    OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build()
+                    OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build(),
+                    OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build()
                 )
             )
-            .then(OneTimeWorkRequestBuilder<EngageToUseAppNotificationWorker>().build())
-            .then(OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build())
-            .then(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
-            .then(OneTimeWorkRequestBuilder<InstanceIdGenerationWorker>().build())
-            .then(OneTimeWorkRequestBuilder<RegisterUserGAId>().build())
+            //  .then(OneTimeWorkRequestBuilder<EngageToUseAppNotificationWorker>().build())
+            //    .then(OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build())
+//            .then(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
+            //      .then(OneTimeWorkRequestBuilder<InstanceIdGenerationWorker>().build())
+            //     .then(OneTimeWorkRequestBuilder<RegisterUserGAId>().build())
             .then(OneTimeWorkRequestBuilder<GetVersionAndFlowDataWorker>().build())
-            .then(OneTimeWorkRequestBuilder<GenerateGuestUserMentorWorker>().build())
+            //   .then(OneTimeWorkRequestBuilder<GenerateGuestUserMentorWorker>().build())
             .then(
                 mutableListOf(
                     OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build(),
@@ -37,6 +37,21 @@ object WorkManagerAdmin {
             .enqueue()
 
     }
+
+    fun initGaid(testId: String?, exploreType: String? = null): UUID {
+        val data =
+            when {
+                testId?.isNotBlank() == true -> workDataOf("test_id" to testId)
+                exploreType?.isNotBlank() == true -> workDataOf("explore_type" to exploreType)
+                else -> workDataOf()
+            }
+        val workRequest = OneTimeWorkRequestBuilder<RegisterGaidV2>()
+            .setInputData(data)
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+        return workRequest.id
+    }
+
 
     fun requiredTaskAfterLoginComplete() {
         WorkManager.getInstance(AppObjectController.joshApplication)
