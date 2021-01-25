@@ -20,10 +20,10 @@ data class RequestRegisterGAId(
     var test: Int? = null,
 
     @SerializedName("utm_medium")
-    var utmMedium: String = EMPTY,
+    var utmMedium: String? = EMPTY,
 
     @SerializedName("utm_source")
-    var utmSource: String = EMPTY,
+    var utmSource: String? = EMPTY,
 
     @Expose(serialize = false, deserialize = true)
     var id: Int = 0,
