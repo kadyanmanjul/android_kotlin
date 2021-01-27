@@ -13,6 +13,7 @@ import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 
 import com.cometchat.pro.core.CometChat;
@@ -31,7 +33,7 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent;
 import com.joshtalks.joshskills.core.analytics.AppAnalytics;
 import com.joshtalks.joshskills.ui.groupchat.listeners.ComposeActionListener;
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils;
-import com.joshtalks.recordview.CustomImageButton;
+import com.joshtalks.recordview.CustomRippleButton;
 import com.joshtalks.recordview.OnRecordListener;
 import com.joshtalks.recordview.RecordView;
 
@@ -42,6 +44,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import info.kimjihyok.ripplelibrary.Rate;
 
 import static com.joshtalks.joshskills.core.StaticConstantKt.EMPTY;
 import static com.joshtalks.recordview.CustomImageButton.FIRST_STATE;
@@ -57,6 +61,15 @@ public class ComposeBox extends ConstraintLayout implements View.OnClickListener
     public CometChatEditText etComposeBox;
     public boolean isGalleryVisible = true, isAudioVisible = true, isCameraVisible = true,
             isFileVisible = true, isLocationVisible = true, isPollVisible = true;
+    public CustomRippleButton recordButton;
+    public RecordView recordView;
+    public CardView replyMessageLayout;
+    public TextView replyTitle;
+    public TextView replyMessage;
+    public ImageView replyMedia;
+    public ImageView replyClose;
+    public View indicatorView;
+    //    public VoiceRippleView voiceRipple;
     private MediaRecorder mediaRecorder;
     private MediaPlayer mediaPlayer;
     private Runnable timerRunnable;
@@ -69,14 +82,6 @@ public class ComposeBox extends ConstraintLayout implements View.OnClickListener
     private ComposeActionListener composeActionListener;
     private Context context;
     private int color;
-    public CustomImageButton recordButton;
-    public RecordView recordView;
-    public CardView replyMessageLayout;
-    public TextView replyTitle;
-    public TextView replyMessage;
-    public ImageView replyMedia;
-    public ImageView replyClose;
-    public View indicatorView;
 
     public ComposeBox(Context context) {
         super(context);
@@ -147,15 +152,22 @@ public class ComposeBox extends ConstraintLayout implements View.OnClickListener
         ivArrow = this.findViewById(R.id.ivArrow);
         etComposeBox = this.findViewById(R.id.etComposeBox);
         rlActionContainer = this.findViewById(R.id.rlActionContainers);
-        recordButton = this.findViewById(R.id.record_button);
+        recordButton = this.findViewById(R.id.voice_ripple_view);
         recordView = this.findViewById(R.id.record_view);
-
         replyMessageLayout = findViewById(R.id.replyMessageLayout);
         replyTitle = findViewById(R.id.tv_reply_layout_title);
         replyMessage = findViewById(R.id.tv_reply_layout_subtitle);
         replyMedia = findViewById(R.id.iv_reply_media);
         replyClose = findViewById(R.id.iv_reply_close);
         indicatorView = findViewById(R.id.indicatorView);
+//        voiceRipple = findViewById(R.id.voice_ripple_view);
+
+        recordButton.setRippleColor(ContextCompat.getColor(context, R.color.colorPrimary));
+        recordButton.setRippleSampleRate(Rate.LOW);
+        recordButton.setRippleDecayRate(Rate.LOW);
+        recordButton.setBackgroundRippleRatio(1.4);
+// set inner icon for record and recording
+        recordButton.setRecordDrawable(ContextCompat.getDrawable(context, R.drawable.recv_ic_mic_white), ContextCompat.getDrawable(context, R.drawable.recv_ic_mic_white));
 
         ivAudio.setOnClickListener(this);
         ivArrow.setOnClickListener(this);
@@ -233,6 +245,7 @@ public class ComposeBox extends ConstraintLayout implements View.OnClickListener
                 R.raw.record_finished,
                 0
         );
+
         recordButton.setListenForRecord(PermissionUtils.checkPermissionForAudioRecord(getContext()));
         recordView.setOnRecordListener(new OnRecordListener() {
             @Override
@@ -299,6 +312,7 @@ public class ComposeBox extends ConstraintLayout implements View.OnClickListener
             }
         });
 
+//        voiceRippleVie.setOnClickListener(v -> composeActionListener.onSendActionClicked(etComposeBox));
         recordButton.setOnRecordClickListener(v -> composeActionListener.onSendActionClicked(etComposeBox));
 
     }
@@ -319,6 +333,15 @@ public class ComposeBox extends ConstraintLayout implements View.OnClickListener
         this.composeActionListener.getCameraActionView(ivCamera);
         this.composeActionListener.getGalleryActionView(ivGallery);
         this.composeActionListener.getFileActionView(ivFile);
+    }
+
+    public void setMediaRecorder(MediaRecorder mediaRecorder) {
+
+//        voiceRipple.setMediaRecorder(mediaRecorder);
+//        voiceRipple.setOutputFile(mediaRecorder.setOutgetAudioSourceMax());
+//        voiceRipple.setAudioSource(MediaRecorder.AudioSource.MIC);
+//        voiceRipple.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+//        voiceRipple.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
     }
 
     @Override
@@ -498,11 +521,29 @@ public class ComposeBox extends ConstraintLayout implements View.OnClickListener
     private void startRecording() {
         try {
             mediaRecorder = new MediaRecorder();
-            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
             audioFileNameWithPath = Utils.getOutputMediaFile(getContext());
-            mediaRecorder.setOutputFile(audioFileNameWithPath);
+//            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+//            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+//            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+//            mediaRecorder.setOutputFile(audioFileNameWithPath);
+            if (recordButton.isRecording()) {
+                recordButton.stopRecording();
+            } else {
+                try {
+//                        startRecord();
+
+                    recordButton.setMediaRecorder(new MediaRecorder());
+                    recordButton.setOutputFile(audioFileNameWithPath);
+                    recordButton.setAudioSource(MediaRecorder.AudioSource.MIC);
+                    recordButton.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+                    recordButton.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+                    recordButton.startRecording();
+                } catch (Exception e) {
+                    Log.e(TAG, "startRecording() error: ", e);
+                }
+            }
+
             try {
                 mediaRecorder.prepare();
             } catch (IOException e) {
@@ -532,6 +573,8 @@ public class ComposeBox extends ConstraintLayout implements View.OnClickListener
 
     public void stopRecording(boolean isCancel) {
         try {
+            recordButton.stopRecording();
+            recordButton.reset();
             if (mediaRecorder != null) {
                 mediaRecorder.stop();
                 mediaRecorder.release();

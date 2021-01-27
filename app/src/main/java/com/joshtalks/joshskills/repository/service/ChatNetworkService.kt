@@ -28,6 +28,7 @@ import retrofit2.http.Body
 import retrofit2.http.FieldMap
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -138,6 +139,11 @@ interface ChatNetworkService {
     ): Response<UpdateLessonResponse>
 
 
+    @Headers(
+        "Accept: application/json",
+        "Content-type:application/json",
+        "Cache-Control: public, only-if-cached,  max-stale=640000,  max-age=640000"
+    )
     @GET("$DIR/course/course_overview/")
     suspend fun getCourseOverview(
         @Query("mentor_id") mentorId: String,

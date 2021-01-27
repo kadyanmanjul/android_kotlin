@@ -12,6 +12,7 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 import androidx.vectordrawable.graphics.drawable.AnimatorInflaterCompat;
 
@@ -19,9 +20,10 @@ import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 public class AnimationHelper {
-    private Context context;
-    private AnimatedVectorDrawableCompat animatedVectorDrawable;
-    private ImageView basketImg, smallBlinkingMic;
+    private final Context context;
+    private final AnimatedVectorDrawableCompat animatedVectorDrawable;
+    private final ImageView basketImg;
+    private final ImageView smallBlinkingMic;
     private AlphaAnimation alphaAnimation;
     private OnBasketAnimationEnd onBasketAnimationEndListener;
     private boolean isBasketAnimating, isStartRecorded = false;
@@ -48,7 +50,6 @@ public class AnimationHelper {
             micX = smallBlinkingMic.getX();
             micY = smallBlinkingMic.getY();
         }
-
 
 
         micAnimation = (AnimatorSet) AnimatorInflaterCompat.loadAnimator(context, R.animator.delete_mic_animation);
@@ -182,7 +183,7 @@ public class AnimationHelper {
         smallBlinkingMic.startAnimation(alphaAnimation);
     }
 
-    public void moveRecordButtonAndSlideToCancelBack(final CustomImageButton recordBtn, FrameLayout slideToCancelLayout, float initialX, float difX) {
+    public void moveRecordButtonAndSlideToCancelBack(final View recordBtn, FrameLayout slideToCancelLayout, float initialX, float difX) {
 
         final ValueAnimator positionAnimator =
                 ValueAnimator.ofFloat(recordBtn.getX(), initialX);
@@ -196,7 +197,10 @@ public class AnimationHelper {
             }
         });
 
-        recordBtn.stopScale();
+        if (recordBtn instanceof CustomRippleButton)
+            ((CustomRippleButton) recordBtn).stopScale();
+        else if (recordBtn instanceof CustomImageButton)
+            ((CustomImageButton) recordBtn).stopScale();
         positionAnimator.setDuration(0);
         positionAnimator.start();
 

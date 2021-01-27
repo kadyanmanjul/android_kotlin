@@ -1,7 +1,10 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 29
+    buildToolsVersion "29.0.3"
 
 
     defaultConfig {
@@ -11,7 +14,6 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables.useSupportLibrary = true
 
     }
 
@@ -26,14 +28,5 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-}
 
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'io.supercharge:shimmerlayout:2.1.0'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation project(path: ':ripplelibrary')
-    testImplementation 'junit:junit:4.13.1'
-    androidTestImplementation 'androidx.test:runner:1.3.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }

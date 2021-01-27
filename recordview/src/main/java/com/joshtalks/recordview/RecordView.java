@@ -25,9 +25,9 @@ import io.supercharge.shimmerlayout.ShimmerLayout;
 public class RecordView extends RelativeLayout {
 
     public static final int DEFAULT_CANCEL_BOUNDS = 8; //8dp
+    private final Context context;
     private ImageView smallBlinkingMic, basketImg;
     private Chronometer counterTime;
-    private final Context context;
     private TextView slideToCancel;
     private ShimmerLayout slideToCancelLayout;
     private ImageView arrow;
@@ -179,7 +179,7 @@ public class RecordView extends RelativeLayout {
     }
 
 
-    protected void onActionDown(CustomImageButton recordBtn, MotionEvent motionEvent) {
+    protected void onActionDown(View recordBtn, MotionEvent motionEvent) {
 
         if (recordListener != null) {
             recordListener.onStart();
@@ -191,7 +191,10 @@ public class RecordView extends RelativeLayout {
         animationHelper.resetSmallMic();
 
 
-        recordBtn.startScale();
+        if (recordBtn instanceof CustomRippleButton)
+            ((CustomRippleButton) recordBtn).startScale();
+        else if (recordBtn instanceof CustomImageButton)
+            ((CustomImageButton) recordBtn).startScale();
         slideToCancelLayout.startShimmerAnimation();
 
         initialX = recordBtn.getX();
@@ -210,7 +213,7 @@ public class RecordView extends RelativeLayout {
 
     }
 
-    protected void onActionMove(CustomImageButton recordBtn, MotionEvent motionEvent) {
+    protected void onActionMove(View recordBtn, MotionEvent motionEvent) {
 
 
         long time = System.currentTimeMillis() - startTime;
@@ -233,7 +236,8 @@ public class RecordView extends RelativeLayout {
                     animationHelper.animateBasket(basketInitialY);
                 }
 
-                animationHelper.moveRecordButtonAndSlideToCancelBack(recordBtn, slideToCancelLayout, initialX, difX);
+                if (recordBtn != null)
+                    animationHelper.moveRecordButtonAndSlideToCancelBack(recordBtn, slideToCancelLayout, initialX, difX);
 
                 counterTime.stop();
                 counterTimeInMs = SystemClock.elapsedRealtime() - counterTime.getBase();
@@ -252,10 +256,12 @@ public class RecordView extends RelativeLayout {
 
                 //if statement is to Prevent Swiping out of bounds
                 if (motionEvent.getRawX() < initialX) {
-                    recordBtn.animate()
-                            .x(motionEvent.getRawX())
-                            .setDuration(0)
-                            .start();
+
+                    if (recordBtn != null)
+                        recordBtn.animate()
+                                .x(motionEvent.getRawX())
+                                .setDuration(0)
+                                .start();
 
 
                     if (difX == 0)
@@ -276,7 +282,7 @@ public class RecordView extends RelativeLayout {
         }
     }
 
-    protected void onActionUp(CustomImageButton recordBtn) {
+    protected void onActionUp(View recordBtn) {
 
         elapsedTime = System.currentTimeMillis() - startTime;
 
@@ -309,7 +315,8 @@ public class RecordView extends RelativeLayout {
         if (!isSwiped)
             animationHelper.clearAlphaAnimation(true);
 
-        animationHelper.moveRecordButtonAndSlideToCancelBack(recordBtn, slideToCancelLayout, initialX, difX);
+        if (recordBtn != null)
+            animationHelper.moveRecordButtonAndSlideToCancelBack(recordBtn, slideToCancelLayout, initialX, difX);
         counterTime.stop();
         counterTimeInMs = SystemClock.elapsedRealtime() - counterTime.getBase();
         slideToCancelLayout.stopShimmerAnimation();
