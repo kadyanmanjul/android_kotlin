@@ -33,7 +33,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.cometchat.pro.constants.CometChatConstants;
 import com.cometchat.pro.core.CometChat;
-import com.cometchat.pro.core.GroupMembersRequest;
 import com.cometchat.pro.core.MessagesRequest;
 import com.cometchat.pro.exceptions.CometChatException;
 import com.cometchat.pro.models.Action;
@@ -41,7 +40,6 @@ import com.cometchat.pro.models.Attachment;
 import com.cometchat.pro.models.BaseMessage;
 import com.cometchat.pro.models.CustomMessage;
 import com.cometchat.pro.models.Group;
-import com.cometchat.pro.models.GroupMember;
 import com.cometchat.pro.models.MediaMessage;
 import com.cometchat.pro.models.MessageReceipt;
 import com.cometchat.pro.models.TextMessage;
@@ -149,7 +147,6 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
     private BaseMessage baseMessage;
     private boolean isReply;
     private String groupOwnerId;
-    private String memberNames;
     private int totalMembers;
     private int onlineMembers;
     private String groupDesc;
@@ -196,7 +193,6 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
             } else {
                 addGroupListener();
                 new Thread(this::getGroup).start();
-                new Thread(this::getMember).start();
             }
         }
     }
@@ -551,54 +547,13 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
     }
 
     /**
-     * This method is used to get Group Members and display names of group member.
-     *
-     * @see GroupMember
-     * @see GroupMembersRequest
-     */
-    private void getMember() {
-        GroupMembersRequest groupMembersRequest = new GroupMembersRequest.GroupMembersRequestBuilder(Id).setLimit(100).build();
-
-        groupMembersRequest.fetchNext(new CometChat.CallbackListener<List<GroupMember>>() {
-            @Override
-            public void onSuccess(List<GroupMember> list) {
-                String[] s = new String[0];
-                if (list != null && list.size() != 0) {
-                    s = new String[list.size()];
-                    for (int j = 0; j < list.size(); j++) {
-
-                        s[j] = list.get(j).getName();
-                    }
-
-                }
-                setSubTitle(s);
-
-            }
-
-            @Override
-            public void onError(CometChatException e) {
-//                Log.d(TAG, "Group Member list fetching failed with exception: " + e.getMessage());
-                Toast.makeText(CometChatMessageListActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-
-        });
-    }
-
-    /**
      * This method is used to set GroupMember names as subtitle in toolbar.
      *
-     * @param users
+     * @param memberCount
      */
-    private void setSubTitle(String... users) {
-        if (users != null && users.length != 0) {
-            StringBuilder stringBuilder = new StringBuilder();
-
-            for (String user : users) {
-                stringBuilder.append(user).append(",");
-            }
-
-            memberNames = stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
-            totalMembers = users.length;
+    private void setSubTitle(int memberCount) {
+        if (memberCount > 0) {
+            totalMembers = memberCount;
             // Random Number between 10%-30% of totalMembers
             onlineMembers = (int) (((new Random().nextInt((30 - 10) + 1) + 10) / 100.0) * totalMembers);
             if (onlineMembers == 0) {
@@ -1005,10 +960,11 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
                 avatarUrl = group.getIcon();
                 loggedInUserScope = group.getScope();
                 groupOwnerId = group.getOwner();
-
+                totalMembers = group.getMembersCount();
                 tvName.setText(name);
                 userAvatar.setAvatar(getApplicationContext().getResources().getDrawable(R.drawable.ic_account), avatarUrl);
                 setAvatar();
+                setSubTitle(group.getMembersCount());
             }
 
             @Override
@@ -1157,7 +1113,6 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
                 if (joinedGroup.getGuid().equals(Id)) {
                     totalMembers++;
                     onlineMembers++;
-                    memberNames += "," + joinedUser.getName();
                     tvStatus.setText(String.format("%d Members, %d Online", totalMembers, onlineMembers));
                 }
                 onMessageReceived(action);
@@ -1173,9 +1128,6 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
                     }
                     if (onlineMembers > 1) {
                         onlineMembers--;
-                    }
-                    if (memberNames != null) {
-                        memberNames = memberNames.replace("," + leftUser.getName(), "");
                     }
                     tvStatus.setText(String.format("%d Members, %d Online", totalMembers, onlineMembers));
                 }
@@ -1195,9 +1147,6 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
                     }
                     if (onlineMembers > 1) {
                         onlineMembers--;
-                    }
-                    if (memberNames != null) {
-                        memberNames = memberNames.replace("," + kickedUser.getName(), "");
                     }
                     tvStatus.setText(String.format("%d Members, %d Online", totalMembers, onlineMembers));
                 }
