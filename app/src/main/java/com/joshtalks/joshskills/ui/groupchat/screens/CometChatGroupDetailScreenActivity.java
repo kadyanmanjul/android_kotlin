@@ -15,12 +15,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.cometchat.pro.constants.CometChatConstants;
 import com.cometchat.pro.core.BannedGroupMembersRequest;
 import com.cometchat.pro.core.CometChat;
@@ -43,12 +41,10 @@ import com.joshtalks.joshskills.ui.groupchat.listeners.ClickListener;
 import com.joshtalks.joshskills.ui.groupchat.listeners.RecyclerTouchListener;
 import com.joshtalks.joshskills.ui.groupchat.utils.FontUtils;
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import static com.joshtalks.joshskills.core.PrefManagerKt.IS_GROUP_NOTIFICATION_MUTED;
 import static com.joshtalks.joshskills.ui.groupchat.utils.Utils.UserToGroupMember;
 
@@ -776,7 +772,7 @@ public class CometChatGroupDetailScreenActivity extends BaseActivity {
                     // groupIcon.setInitials(group.getName());
                 }
                 loggedInUserScope = group.getScope();
-                // groupMemberCount = group.getMembersCount();
+                groupMemberCount = group.getMembersCount();
                 groupType = group.getGroupType();
                 gDesc = group.getDescription();
                 if (gDesc != null && !gDesc.isEmpty()) {
