@@ -1365,19 +1365,9 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                 binding.feedbackDescription.visibility = GONE
                 disableSubmitButton()
                 //practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
+                practiceViewModel.getPointsForVocabAndReading(chatModel.question?.questionId!!)
+                practiceViewModel.addTaskToService(requestEngage)
 
-                CoroutineScope(Dispatchers.IO).launch {
-                    practiceViewModel.getPointsForVocabAndReading(chatModel.question?.questionId!!)
-                    val insertedId =
-                        AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
-                            PendingTaskModel(requestEngage, PendingTask.READING_PRACTICE_OLD)
-                        )
-                    FileUploadService.uploadSinglePendingTasks(
-                        AppObjectController.joshApplication,
-                        insertedId
-                    )
-
-                }
                 chatModel.question!!.status = QUESTION_STATUS.IP
                 showCompletedPractise()
             }

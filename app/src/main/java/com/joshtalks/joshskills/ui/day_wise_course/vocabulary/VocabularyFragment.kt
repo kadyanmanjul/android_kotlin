@@ -22,17 +22,17 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWith
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.ui.day_wise_course.CapsuleActivityCallback
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
-import com.joshtalks.joshskills.util.FileUploadService
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 const val PRACTISE_OBJECT = "practise_object"
 
@@ -188,7 +188,6 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         chatModel.question?.status = QUESTION_STATUS.AT
 
         currentChatModel = null
-
         adapter.notifyDataSetChanged()
     }
 
@@ -243,15 +242,8 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                 }
                 currentChatModel = chatModel
                 chatModel.question!!.status = QUESTION_STATUS.IP
-                CoroutineScope(Dispatchers.IO).launch {
-                    practiceViewModel.getPointsForVocabAndReading(chatModel.question?.questionId!!)
-                }
-
-                onQuestionSubmitted(chatModel)
-                openNextScreen()
-
-                CoroutineScope(Dispatchers.IO).launch {
-
+                practiceViewModel.getPointsForVocabAndReading(chatModel.question?.questionId!!)
+                CoroutineScope(Dispatchers.Main).launch {
                     val requestEngage = RequestEngage()
 //                requestEngage.text = binding.etPractise.text.toString()
                     requestEngage.localPath = chatModel.filePath
@@ -263,15 +255,10 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                     if (it == EXPECTED_ENGAGE_TYPE.AU || it == EXPECTED_ENGAGE_TYPE.VI || it == EXPECTED_ENGAGE_TYPE.DX) {
                         requestEngage.answerUrl = chatModel.filePath
                     }
-                    val insertedId =
-                        AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
-                            PendingTaskModel(requestEngage, PendingTask.VOCABULARY_PRACTICE)
-                        )
-                    FileUploadService.uploadSinglePendingTasks(
-                        AppObjectController.joshApplication,
-                        insertedId
-                    )
-
+                    delay(1000)
+                    practiceViewModel.addTaskToService(requestEngage)
+                    onQuestionSubmitted(chatModel)
+                    openNextScreen()
                 }
                 return true
             }

@@ -375,9 +375,25 @@ class PracticeViewModel(application: Application) :
         }
     }
 
-    suspend fun getPointsForVocabAndReading(questionId: String) {
-        val response=AppObjectController.chatNetworkService.getSnackBarText(questionId)
-        pointsSnackBarText.postValue(response)
+    fun getPointsForVocabAndReading(questionId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = AppObjectController.chatNetworkService.getSnackBarText(questionId)
+            pointsSnackBarText.postValue(response)
+        }
+    }
+
+    fun addTaskToService(requestEngage: RequestEngage) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val insertedId =
+                AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
+                    PendingTaskModel(requestEngage, PendingTask.READING_PRACTICE_OLD)
+                )
+            FileUploadService.uploadSinglePendingTasks(
+                AppObjectController.joshApplication,
+                insertedId
+            )
+
+        }
     }
 
     fun getPracticeAfterUploaded(id: String, callback: (ChatModel) -> Unit) {
