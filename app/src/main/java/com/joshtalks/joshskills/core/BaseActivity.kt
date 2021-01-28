@@ -100,6 +100,7 @@ import java.util.*
 import kotlin.random.Random
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
+const val COURSE_EXPLORER_NEW = 2008
 const val REQUEST_SHOW_SETTINGS = 123
 
 abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
@@ -531,10 +532,10 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
     }
 
     fun isGuestUser(): Boolean {
-        if (User.getInstance().isVerified) {
-            return !PrefManager.getBoolValue(IS_GUEST_ENROLLED)
+        return if (User.getInstance().isVerified) {
+            !PrefManager.getBoolValue(IS_GUEST_ENROLLED)
         } else {
-            return true
+            true
         }
     }
 
@@ -759,7 +760,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
             //if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             ShowAnimatedLeaderBoardFragment.showDialog(
                 supportFragmentManager,
-                outrankData, lessonInterval, chatId, lessonNo
+                outrankData,lessonInterval,chatId,lessonNo
             )
         }
     }
