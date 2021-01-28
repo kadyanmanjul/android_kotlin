@@ -11,6 +11,11 @@ enum class ApiCallStatus {
     START, SUCCESS, FAILED, RETRY, FAILED_PERMANENT, INVALIDED
 }
 
+enum class ApiRespStatus {
+    POST, PATCH, EMPTY
+}
+
+
 const val TIMEOUT_TIME = 60_000L
 const val MESSAGE_CHAT_SIZE_LIMIT = 2048
 const val EMPTY = ""

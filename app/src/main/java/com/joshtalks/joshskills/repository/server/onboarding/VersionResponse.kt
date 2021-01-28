@@ -10,7 +10,7 @@ open class VersionResponse {
 
     @SerializedName("version")
     @Expose
-    var version: Version? = null
+    var version: Version = Version()
 
     @SerializedName("image")
     @Expose
@@ -82,7 +82,7 @@ open class VersionResponse {
     }
 
     fun hasVersion(): Boolean {
-        return version != null && version?.name != null
+        return version != null && version.name != null
     }
 }
 
