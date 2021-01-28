@@ -10,6 +10,9 @@ const val GAID_MENTOR_MAP_OBJECT = "gaid_mentor_map_object"
 class GaIDMentorModel {
 
     @SerializedName("id")
+    var gaidServerDbId: Int = 0
+
+    @SerializedName("gaid")
     var gaID: String = EMPTY
 
     @SerializedName("mentors")
@@ -18,12 +21,11 @@ class GaIDMentorModel {
     @SerializedName("instance_id")
     var instanceId: String = EMPTY
 
-    @SerializedName("id")
-    var gaidDbId: String = EMPTY
-
     @SerializedName("explore_type")
     var exploreCardType: ExploreCardType? = ExploreCardType.NORMAL
 
+    @SerializedName("test")
+    var test: String = EMPTY
 
     override fun toString(): String {
         return AppObjectController.gsonMapper.toJson(this)

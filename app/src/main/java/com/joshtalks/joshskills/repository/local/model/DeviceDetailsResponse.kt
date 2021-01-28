@@ -1,7 +1,9 @@
 package com.joshtalks.joshskills.repository.local.model
 
 
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.ApiRespStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
@@ -32,7 +34,10 @@ data class DeviceDetailsResponse(
     @SerializedName("os_version_code")
     val osVersionCode: Int,
     @SerializedName("os_version_name")
-    val osVersionName: String
+    val osVersionName: String,
+    @Expose
+    var apiStatus: ApiRespStatus = ApiRespStatus.EMPTY
+
 ) {
     companion object {
 

@@ -59,10 +59,14 @@ interface CommonNetworkService {
     fun registerGAIdDetailsAsync(@Body params: Map<String, String>): Deferred<GaIDMentorModel>
 
     @PATCH("$DIR/mentor/gaid_detail/{id}/")
-    fun patchMentorWithGAIdAsync(
-        @Path("id") id: String,
+    suspend fun patchMentorWithGAIdAsync(
+        @Path("id") id: Int,
         @Body params: HashMap<String, @JvmSuppressWildcards List<String>>
-    ): Deferred<SuccessResponse>
+    ): Response<Any>
+
+    @FormUrlEncoded
+    @PATCH("$DIR/mentor/gaid/{id}/")
+    suspend fun mergeMentorWithGAId(@Path("id") id: String, @FieldMap params: Map<String, String>)
 
 
     @POST("$DIR/payment/verify_v2/")
@@ -235,7 +239,7 @@ interface CommonNetworkService {
     ): Response<Void>
 
 
-    @POST("$DIR/mentor/gaidl/")
-    fun registerGAIdDetailsV2Async(@Body body: RequestRegisterGAId): Response<GaIDMentorModel>
+    @POST("$DIR/mentor/gaid/")
+    suspend fun registerGAIdDetailsV2Async(@Body body: RequestRegisterGAId): Response<GaIDMentorModel>
 
 }
