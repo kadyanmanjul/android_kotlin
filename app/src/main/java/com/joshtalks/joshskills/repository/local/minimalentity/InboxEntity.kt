@@ -5,8 +5,8 @@ import androidx.room.ColumnInfo
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
 import com.joshtalks.joshskills.repository.local.entity.User
-import java.util.Date
 import kotlinx.android.parcel.Parcelize
+import java.util.*
 
 @Parcelize
 data class InboxEntity constructor(
@@ -44,4 +44,18 @@ data class InboxEntity constructor(
     @ColumnInfo(name = "is_points_active")
     val isCapsuleCourse: Boolean = false
 
-) : Parcelable
+) : Parcelable {
+    override fun hashCode(): Int {
+        return conversation_id.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+
+        if (other?.javaClass != javaClass) return false
+        if (conversation_id == (other as InboxEntity).conversation_id) {
+            return true
+        }
+        return false
+    }
+}
