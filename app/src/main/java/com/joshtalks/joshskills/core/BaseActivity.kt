@@ -532,11 +532,14 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
     }
 
     fun isGuestUser(): Boolean {
-        return if (User.getInstance().isVerified) {
-            !PrefManager.getBoolValue(IS_GUEST_ENROLLED)
-        } else {
-            true
+        if (User.getInstance().isVerified && PrefManager.getBoolValue(IS_GUEST_ENROLLED)) {
+            return true
+        } else if (User.getInstance().isVerified && PrefManager.getBoolValue(IS_GUEST_ENROLLED)
+                .not()
+        ) {
+            return false
         }
+        return true
     }
 
     fun logout() {
@@ -760,7 +763,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
             //if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             ShowAnimatedLeaderBoardFragment.showDialog(
                 supportFragmentManager,
-                outrankData,lessonInterval,chatId,lessonNo
+                outrankData, lessonInterval, chatId, lessonNo
             )
         }
     }
