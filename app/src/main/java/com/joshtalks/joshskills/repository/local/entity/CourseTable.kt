@@ -1,18 +1,11 @@
 package com.joshtalks.joshskills.repository.local.entity
 
-import androidx.room.ColumnInfo
-import androidx.room.Dao
-import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.PrimaryKey
-import androidx.room.Query
-import androidx.room.RoomWarnings
+import androidx.room.*
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import io.reactivex.Maybe
 import java.io.Serializable
-import java.util.Date
+import java.util.*
 
 @Entity(tableName = "course")
 data class Course(
@@ -42,7 +35,7 @@ data class Course(
     @SerializedName("created") val courseCreatedDate: Date?,
 
     @ColumnInfo(name = "chat_type")
-    @SerializedName("chat_type") val chat_type: String?,
+    @SerializedName("chat_type") val chatType: String?,
 
     @ColumnInfo(name = "report_status")
     @SerializedName("report_status") val reportStatus: Boolean = false,
@@ -66,16 +59,16 @@ data class Course(
 interface CourseDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRegisterCourses(courseList: List<Course>)
+    suspend fun insertRegisterCourses(courseList: List<Course>): List<Long>
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
-    @Query(value = "select * from course where conversation_id= :conversation_id AND is_deleted=0 ")
-    fun chooseRegisterCourseMinimal(conversation_id: String): InboxEntity?
+    @Query(value = "select * from course where conversation_id= :conversationId AND is_deleted=0 ")
+    fun chooseRegisterCourseMinimal(conversationId: String): InboxEntity?
 
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
-    @Query(value = "select * from course where conversation_id= :conversation_id AND is_deleted=0 ")
-    fun chooseRegisterCourseMinimalRX(conversation_id: String): Maybe<InboxEntity>
+    @Query(value = "select * from course where conversation_id= :conversationId AND is_deleted=0 ")
+    fun chooseRegisterCourseMinimalRX(conversationId: String): Maybe<InboxEntity>
 
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
