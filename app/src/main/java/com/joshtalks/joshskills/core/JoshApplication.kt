@@ -12,14 +12,13 @@ import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.service.NetworkChangeReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.yariksoffice.lingver.Lingver
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-var TAG = "JoshSkill"
+const val TAG = "JoshSkill"
 
 class JoshApplication : MultiDexApplication(), LifecycleObserver,
     ComponentCallbacks2/*, Configuration.Provider*/ {
@@ -34,48 +33,36 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
         base.let { ViewPumpContextWrapper.wrap(it) }
     }
 
-    fun turnOnStrictMode() {
+    override fun onCreate() {
+        super.onCreate()
+        turnOnStrictMode()
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+        AppObjectController.init(this)
+        registerBroadcastReceiver()
+    }
+
+    override fun onTerminate() {
+        super.onTerminate()
+        getLocalBroadcastManager().unregisterReceiver(restoreIdReceiver)
+        getLocalBroadcastManager().unregisterReceiver(unreadCountChangeReceiver)
+    }
+
+    private fun turnOnStrictMode() {
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(
                 StrictMode.ThreadPolicy.Builder()
                     .detectAll()
                     .penaltyLog()
-                    .penaltyDeath().build()
+                    .build()
             )
             StrictMode.setVmPolicy(
                 StrictMode.VmPolicy.Builder()
-                    .detectAll()
+                    .detectLeakedSqlLiteObjects()
+                    .detectLeakedClosableObjects()
                     .penaltyLog()
-                    .penaltyDeath().build()
+                    .build()
             )
         }
-    }
-
-    fun permitDiskReads(func: () -> Any): Any {
-        if (BuildConfig.DEBUG) {
-            val oldThreadPolicy = StrictMode.getThreadPolicy()
-            StrictMode.setThreadPolicy(
-                StrictMode.ThreadPolicy.Builder(oldThreadPolicy)
-                    .permitDiskReads().build()
-            )
-            val anyValue = func()
-            StrictMode.setThreadPolicy(oldThreadPolicy)
-
-            return anyValue
-        } else {
-            return func()
-        }
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
-        AppObjectController.init(this)
-        if (PrefManager.getStringValue(USER_LOCALE).isEmpty()) {
-            PrefManager.put(USER_LOCALE, "en")
-        }
-        Lingver.init(this, PrefManager.getStringValue(USER_LOCALE))
-        registerBroadcastReceiver()
     }
 
     private fun registerBroadcastReceiver() {
@@ -83,10 +70,15 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
             NetworkChangeReceiver(),
             IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
         )
-
-        if (PrefManager.getStringValue(RESTORE_ID).isBlank()) {
-            val intentFilterRestoreID = IntentFilter(Freshchat.FRESHCHAT_USER_RESTORE_ID_GENERATED)
-            getLocalBroadcastManager().registerReceiver(restoreIdReceiver, intentFilterRestoreID)
+        JoshSkillExecutors.BOUNDED.submit {
+            if (PrefManager.getStringValue(RESTORE_ID).isBlank()) {
+                val intentFilterRestoreID =
+                    IntentFilter(Freshchat.FRESHCHAT_USER_RESTORE_ID_GENERATED)
+                getLocalBroadcastManager().registerReceiver(
+                    restoreIdReceiver,
+                    intentFilterRestoreID
+                )
+            }
         }
         val intentFilterUnreadMessages =
             IntentFilter(Freshchat.FRESHCHAT_UNREAD_MESSAGE_COUNT_CHANGED)
@@ -117,7 +109,6 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
                     } catch (ex: Exception) {
                         ex.printStackTrace()
                     }
-
                 }
             }
         }
@@ -134,12 +125,6 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
 
     private fun getLocalBroadcastManager(): LocalBroadcastManager {
         return LocalBroadcastManager.getInstance(this@JoshApplication)
-    }
-
-    override fun onTerminate() {
-        super.onTerminate()
-        getLocalBroadcastManager().unregisterReceiver(restoreIdReceiver)
-        getLocalBroadcastManager().unregisterReceiver(unreadCountChangeReceiver)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -167,7 +152,6 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
         Timber.tag(TAG).e("************* onAppDestroy")
         AppObjectController.releaseInstance()
     }
-
 
     private fun isActivityVisible(): String {
         return ProcessLifecycleOwner.get().lifecycle.currentState.name
