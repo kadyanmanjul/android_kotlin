@@ -84,11 +84,11 @@ interface SignUpNetworkService {
     ): DeviceDetailsResponse
 
     @PATCH("$DIR/mentor/fcm/{id}/")
-    fun updateFCMToken(@Path("id") id: Int, @Body fcmResponse: FCMResponse): Deferred<Any>
+    suspend fun patchFCMToken(@Path("id") id: Int, @Body params: Map<String, String>): Void
 
     @FormUrlEncoded
     @POST("$DIR/mentor/fcm/")
-    fun uploadFCMToken(@FieldMap params: Map<String, String>): Deferred<FCMResponse>
+    suspend fun postFCMToken(@FieldMap params: Map<String, String>): FCMResponse
 
     @POST("$DIR/mentor/install_source")
     suspend fun getInstallReferrerAsync(@Body installReferrerModel: InstallReferrerModel)
@@ -132,7 +132,7 @@ interface SignUpNetworkService {
     suspend fun logGetStartedEvent(@Body params: LogGetStartedEventRequest): Response<Any>
 
     @POST("$DIR/engage/inbox/")
-    suspend fun logInboxEngageEvent(@Body params:  Map<String, String>): Response<Any>
+    suspend fun logInboxEngageEvent(@Body params: Map<String, String>)
 
     @POST("$DIR/mentor/last-active")
     suspend fun activeUser(@Body params: ActiveUserRequest): Response<Any>
