@@ -12,11 +12,24 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:adjustViewBounds="true"
-        app:srcCompat="@drawable/josh_skill"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/josh_skill" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/retry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_36sdp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_baseline_refresh"
+        app:tint="@color/colorPrimary" />
+
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:layout_width="match_parent"
@@ -33,6 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_4sdp"
             android:background="#FF7200" />
+
 
     </com.facebook.shimmer.ShimmerFrameLayout>
 
