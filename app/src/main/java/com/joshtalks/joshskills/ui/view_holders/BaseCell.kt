@@ -201,6 +201,18 @@ abstract class BaseCell {
     }
 
     fun setImageViewImageNotFound(iv: AppCompatImageView) {
+        val multiTransformation = MultiTransformation(
+            CropTransformation(
+                Utils.dpToPx(IMAGE_SIZE),
+                Utils.dpToPx(IMAGE_SIZE),
+                CropTransformation.CropType.CENTER
+            ),
+            RoundedCornersTransformation(
+                Utils.dpToPx(ROUND_CORNER),
+                0,
+                RoundedCornersTransformation.CornerType.ALL
+            )
+        )
         Glide.with(getAppContext())
             .load(R.drawable.ic_file_error)
             .override(Target.SIZE_ORIGINAL)
@@ -208,7 +220,7 @@ abstract class BaseCell {
                 WebpDrawable::class.java,
                 WebpDrawableTransformation(CircleCrop())
             )
-            .apply(RequestOptions.bitmapTransform(AppObjectController.multiTransformation))
+            .apply(RequestOptions.bitmapTransform(multiTransformation))
             .into(iv)
 
     }

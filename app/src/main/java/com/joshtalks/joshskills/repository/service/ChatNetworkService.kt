@@ -2,21 +2,10 @@ package com.joshtalks.joshskills.repository.service
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import com.joshtalks.joshskills.repository.local.entity.CertificationExamDetailModel
-import com.joshtalks.joshskills.repository.local.entity.Course
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
-import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
-import com.joshtalks.joshskills.repository.local.entity.Question
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.entity.practise.PointsListResponse
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
-import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
-import com.joshtalks.joshskills.repository.server.BaseResponse
-import com.joshtalks.joshskills.repository.server.ChatMessageReceiver
-import com.joshtalks.joshskills.repository.server.CoursePerformanceResponse
-import com.joshtalks.joshskills.repository.server.RequestEngage
-import com.joshtalks.joshskills.repository.server.ResponseChatMessage
-import com.joshtalks.joshskills.repository.server.UpdateLessonResponse
+import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
@@ -24,21 +13,13 @@ import com.joshtalks.joshskills.repository.server.course_overview.CourseOverview
 import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.FieldMap
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.PATCH
-import retrofit2.http.POST
-import retrofit2.http.Path
-import retrofit2.http.Query
-import retrofit2.http.QueryMap
+import retrofit2.http.*
 
 @JvmSuppressWildcards
 interface ChatNetworkService {
 
     @GET("$DIR/course/")
-    suspend fun getRegisteredCourses(): Response<List<Course>>
+    suspend fun getRegisteredCourses(): List<Course>
 
     @POST("$DIR/chat/message/")
     fun sendMessageAsync(@Body messageObject: Any): Deferred<ChatMessageReceiver>
@@ -94,9 +75,6 @@ interface ChatNetworkService {
     @POST("$DIR/practice/audio_practice_feedback/")
     suspend fun getAudioFeedback(@Body params: Map<String, String>): PracticeFeedback2
 
-    @FormUrlEncoded
-    @PATCH("$DIR/mentor/gaid/{id}/")
-    suspend fun mergeMentorWithGAId(@Path("id") id: String, @FieldMap params: Map<String, String>)
 
     @GET("$DIR/chat/conversation/{id}/")
     suspend fun getCourseProgressDetailsAsync(@Path("id") cId: String): Response<CoursePerformanceResponse>
