@@ -3,14 +3,12 @@ package com.joshtalks.joshskills.core
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
 import android.os.StrictMode
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import com.airbnb.lottie.L
-import com.bumptech.glide.load.MultiTransformation
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
@@ -39,8 +37,6 @@ import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.service.*
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
-import com.joshtalks.joshskills.ui.view_holders.IMAGE_SIZE
-import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.smartlook.sdk.smartlook.Smartlook
 import com.smartlook.sdk.smartlook.interceptors.SmartlookOkHttpInterceptor
 import com.tonyodev.fetch2.Fetch
@@ -50,6 +46,7 @@ import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
 import com.uxcam.UXCam
+import com.yariksoffice.lingver.Lingver
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.RtcEngineConfig
@@ -57,8 +54,6 @@ import io.branch.referral.Branch
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
-import jp.wasabeef.glide.transformations.CropTransformation
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -155,9 +150,6 @@ class AppObjectController {
             private set
 
         @JvmStatic
-        lateinit var multiTransformation: MultiTransformation<Bitmap>
-
-        @JvmStatic
         lateinit var facebookEventLogger: AppEventsLogger
             private set
 
@@ -196,7 +188,7 @@ class AppObjectController {
             appDatabase = AppDatabase.getDatabase(context)!!
             firebaseAnalytics = FirebaseAnalytics.getInstance(context)
             firebaseAnalytics.setAnalyticsCollectionEnabled(true)
-            initDebugService()
+            //   initDebugService()
             Branch.getAutoInstance(context)
             initFirebaseRemoteConfig()
             configureCrashlytics()
@@ -224,6 +216,7 @@ class AppObjectController {
                 )
                 .setDateFormat(DateFormat.LONG)
                 .setPrettyPrinting()
+                .serializeNulls()
                 .create()
 
             gsonMapperForLocal = GsonBuilder()
@@ -309,13 +302,20 @@ class AppObjectController {
 
         fun init(context: JoshApplication) {
             joshApplication = context
-            com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
-            ActivityLifecycleCallback.register(joshApplication)
-            AppEventsLogger.activateApp(joshApplication)
-            initUXCam()
-            initSmartLookCam()
-            initFacebookService(joshApplication)
-            initRtcEngine(joshApplication)
+            Thread {
+                com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
+                ActivityLifecycleCallback.register(joshApplication)
+                AppEventsLogger.activateApp(joshApplication)
+                initUXCam()
+                initSmartLookCam()
+                initFacebookService(joshApplication)
+                initRtcEngine(joshApplication)
+                if (PrefManager.getStringValue(USER_LOCALE).isEmpty()) {
+                    PrefManager.put(USER_LOCALE, "en")
+                }
+                Lingver.init(context, PrefManager.getStringValue(USER_LOCALE))
+            }.start()
+
         }
 
         private fun initRtcEngine(context: Context): RtcEngine? {
@@ -610,18 +610,6 @@ class AppObjectController {
 
                 DateTimeUtils.setTimeZone("UTC")
                 videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
-                multiTransformation = MultiTransformation(
-                    CropTransformation(
-                        Utils.dpToPx(IMAGE_SIZE),
-                        Utils.dpToPx(IMAGE_SIZE),
-                        CropTransformation.CropType.CENTER
-                    ),
-                    RoundedCornersTransformation(
-                        Utils.dpToPx(ROUND_CORNER),
-                        0,
-                        RoundedCornersTransformation.CornerType.ALL
-                    )
-                )
                 InstallReferralUtil.installReferrer(context)
             }.start()
         }
