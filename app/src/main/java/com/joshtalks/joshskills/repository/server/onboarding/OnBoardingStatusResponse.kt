@@ -22,12 +22,12 @@ data class OnBoardingStatusResponse(
     @SerializedName("free_trial_data")
     var freeTrialData: FreeTrialData,
     @SerializedName("upgrade_test_id")
-    var SubscriptionTestId: Int=122
+    var subscriptionTestId: Int = 122
 )
 
 data class FreeTrialData(
     @SerializedName("is_7DFT_bought")
-    var is7DFTBought: Boolean? = null,
+    var is7DFTBought: Boolean = false,
 
     @SerializedName("start_date")
     var startDate: Long? = null,
@@ -68,7 +68,7 @@ data class FreeTrialData(
 
 data class SubscriptionData(
     @SerializedName("is_subscription_bought")
-    var isSubscriptionBought: Boolean? = null,
+    var isSubscriptionBought: Boolean = false,
     @SerializedName("start_date")
     var startDate: Long? = null,
     @SerializedName("end_date")

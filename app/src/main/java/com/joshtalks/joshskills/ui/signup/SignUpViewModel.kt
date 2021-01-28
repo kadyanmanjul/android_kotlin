@@ -8,24 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.tasks.Task
-import com.joshtalks.joshskills.core.API_TOKEN
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.EXPLORE_TYPE
-import com.joshtalks.joshskills.core.INSTANCE_ID
-import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
-import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
-import com.joshtalks.joshskills.core.JoshApplication
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
-import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
-import com.joshtalks.joshskills.core.RegistrationMethods
-import com.joshtalks.joshskills.core.SHOW_COURSE_DETAIL_TOOLTIP
-import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
-import com.joshtalks.joshskills.core.SignUpStepStatus
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
-import com.joshtalks.joshskills.core.VerificationStatus
-import com.joshtalks.joshskills.core.VerificationVia
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -44,7 +27,7 @@ import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.truecaller.android.sdk.TrueProfile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.HashMap
+import java.util.*
 
 class SignUpViewModel(application: Application) : AndroidViewModel(application) {
     private val _signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()
@@ -384,7 +367,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 if (response.isSuccessful) {
                     response.body()?.run {
                         // Update Version Data in local
-                        PrefManager.put(SUBSCRIPTION_TEST_ID, this.SubscriptionTestId)
+                        PrefManager.put(SUBSCRIPTION_TEST_ID, this.subscriptionTestId)
                         val versionData = VersionResponse.getInstance()
                         versionData.version?.let {
                             it.name = this.version.name
@@ -398,14 +381,14 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                         PrefManager.put(EXPLORE_TYPE, this.exploreType)
                         PrefManager.put(
                             IS_SUBSCRIPTION_STARTED,
-                            this.subscriptionData.isSubscriptionBought ?: false
+                            this.subscriptionData.isSubscriptionBought
                         )
                         PrefManager.put(
                             REMAINING_SUBSCRIPTION_DAYS,
                             this.subscriptionData.remainingDays
                         )
 
-                        PrefManager.put(IS_TRIAL_STARTED, this.freeTrialData.is7DFTBought ?: false)
+                        PrefManager.put(IS_TRIAL_STARTED, this.freeTrialData.is7DFTBought)
                         PrefManager.put(REMAINING_TRIAL_DAYS, this.freeTrialData.remainingDays)
                         PrefManager.put(SHOW_COURSE_DETAIL_TOOLTIP, this.showTooltip5)
 
