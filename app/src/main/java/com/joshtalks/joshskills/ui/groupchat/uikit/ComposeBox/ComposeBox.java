@@ -62,6 +62,7 @@ public class ComposeBox extends ConstraintLayout implements View.OnClickListener
     public boolean isGalleryVisible = true, isAudioVisible = true, isCameraVisible = true,
             isFileVisible = true, isLocationVisible = true, isPollVisible = true;
     public CustomRippleButton recordButton;
+    ImageView sendButton;
     public RecordView recordView;
     public CardView replyMessageLayout;
     public TextView replyTitle;
@@ -82,6 +83,43 @@ public class ComposeBox extends ConstraintLayout implements View.OnClickListener
     private ComposeActionListener composeActionListener;
     private Context context;
     private int color;
+    private boolean listenTextChange = true;
+    private final TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (!listenTextChange)
+                return;
+            if (s != null && !s.toString().trim().equals(EMPTY)) {
+//                recordButton.goToState(SECOND_STATE);
+                goToState(SECOND_STATE);
+                recordButton.setListenForRecord(false);
+            } else {
+//                recordButton.goToState(FIRST_STATE);
+                goToState(FIRST_STATE);
+                recordButton.setListenForRecord(PermissionUtils.checkPermissionForAudioRecord(getContext()));
+            }
+        }
+    };
+
+    private void goToState(int state) {
+        if (state == SECOND_STATE) {
+            sendButton.setVisibility(VISIBLE);
+            recordButton.setVisibility(GONE);
+        } else {
+            sendButton.setVisibility(GONE);
+            recordButton.setVisibility(VISIBLE);
+        }
+    }
 
     public ComposeBox(Context context) {
         super(context);
@@ -131,7 +169,6 @@ public class ComposeBox extends ConstraintLayout implements View.OnClickListener
         ViewGroup viewGroup = (ViewGroup) view.getParent();
         viewGroup.setClipChildren(false);
 
-//        mediaPlayer = new MediaPlayer();
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         if (audioManager.isMusicActive()) {
             audioManager.requestAudioFocus(focusChange -> {
@@ -152,6 +189,7 @@ public class ComposeBox extends ConstraintLayout implements View.OnClickListener
         ivArrow = this.findViewById(R.id.ivArrow);
         etComposeBox = this.findViewById(R.id.etComposeBox);
         rlActionContainer = this.findViewById(R.id.rlActionContainers);
+        sendButton = this.findViewById(R.id.send_button);
         recordButton = this.findViewById(R.id.voice_ripple_view);
         recordView = this.findViewById(R.id.record_view);
         replyMessageLayout = findViewById(R.id.replyMessageLayout);
@@ -165,7 +203,7 @@ public class ComposeBox extends ConstraintLayout implements View.OnClickListener
         recordButton.setRippleColor(ContextCompat.getColor(context, R.color.colorPrimary));
         recordButton.setRippleSampleRate(Rate.LOW);
         recordButton.setRippleDecayRate(Rate.LOW);
-        recordButton.setBackgroundRippleRatio(1.4);
+        recordButton.setBackgroundRippleRatio(2.0);
 // set inner icon for record and recording
         recordButton.setRecordDrawable(ContextCompat.getDrawable(context, R.drawable.recv_ic_mic_white), ContextCompat.getDrawable(context, R.drawable.recv_ic_mic_white));
 
@@ -250,7 +288,6 @@ public class ComposeBox extends ConstraintLayout implements View.OnClickListener
         recordView.setOnRecordListener(new OnRecordListener() {
             @Override
             public void onStart() {
-//                window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 AppAnalytics.create(AnalyticsEvent.AUDIO_BUTTON_CLICKED.getNAME()).push();
                 startRecord();
                 AppAnalytics.create(AnalyticsEvent.AUDIO_RECORD.getNAME()).push();
@@ -268,7 +305,6 @@ public class ComposeBox extends ConstraintLayout implements View.OnClickListener
                     hideRecordView();
                     stopRecord(false);
                     sendVoiceNote();
-//                    window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -286,39 +322,21 @@ public class ComposeBox extends ConstraintLayout implements View.OnClickListener
             hideRecordView();
             stopRecord(true);
             AppAnalytics.create(AnalyticsEvent.AUDIO_CANCELLED.getNAME()).push();
-//            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         });
 
-        etComposeBox.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        etComposeBox.addTextChangedListener(textWatcher);
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s != null && !s.toString().trim().equals(EMPTY)) {
-                    recordButton.goToState(SECOND_STATE);
-                    recordButton.setListenForRecord(false);
-                } else {
-                    recordButton.goToState(FIRST_STATE);
-                    recordButton.setListenForRecord(PermissionUtils.checkPermissionForAudioRecord(getContext()));
-                }
-            }
+        sendButton.setOnClickListener(v -> {
+            composeActionListener.onSendActionClicked(etComposeBox);
+            etComposeBox.setText("");
+        });
+        recordButton.setOnRecordClickListener(v -> {
+            composeActionListener.onSendActionClicked(etComposeBox);
+            listenTextChange = false;
+            etComposeBox.setText("");
+            listenTextChange = true;
         });
 
-//        voiceRippleVie.setOnClickListener(v -> composeActionListener.onSendActionClicked(etComposeBox));
-        recordButton.setOnRecordClickListener(v -> composeActionListener.onSendActionClicked(etComposeBox));
-
-    }
-
-    public void setText(String text) {
-        etComposeBox.setText(text);
     }
 
     public void setColor(int color) {

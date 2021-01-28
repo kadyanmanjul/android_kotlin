@@ -75,7 +75,7 @@
         android:paddingVertical="@dimen/_8sdp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/record_button"
+        app:layout_constraintEnd_toStartOf="@+id/send_button"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -153,14 +153,14 @@
         android:layout_height="@dimen/_32sdp"
         android:layout_marginEnd="@dimen/_4sdp"
         android:layout_marginBottom="@dimen/_4sdp"
-        app:VoiceRippleView_iconSize="28"
-        app:VoiceRippleView_rippleRadius="50"
+        app:VoiceRippleView_iconSize="32"
+        app:VoiceRippleView_rippleRadius="54"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:rippleColor="@color/colorPrimary" />
 
-    <com.joshtalks.recordview.CustomImageButton
-        android:id="@+id/record_button"
+    <ImageView
+        android:id="@+id/send_button"
         android:layout_width="@dimen/_32sdp"
         android:layout_height="@dimen/_32sdp"
         android:layout_marginEnd="@dimen/_4sdp"
@@ -173,8 +173,7 @@
         android:scaleType="centerInside"
         android:textColor="#fff"
         android:visibility="gone"
-        app:image_first="@drawable/recv_ic_mic_white"
-        app:image_second="@drawable/ic_send"
+        android:src="@drawable/ic_send"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1"

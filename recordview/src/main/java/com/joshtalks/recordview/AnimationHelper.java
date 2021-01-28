@@ -197,9 +197,7 @@ public class AnimationHelper {
             }
         });
 
-        if (recordBtn instanceof CustomRippleButton)
-            ((CustomRippleButton) recordBtn).stopScale();
-        else if (recordBtn instanceof CustomImageButton)
+        if (recordBtn instanceof CustomImageButton)
             ((CustomImageButton) recordBtn).stopScale();
         positionAnimator.setDuration(0);
         positionAnimator.start();

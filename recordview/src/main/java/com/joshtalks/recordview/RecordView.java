@@ -190,10 +190,7 @@ public class RecordView extends RelativeLayout {
         animationHelper.resetBasketAnimation();
         animationHelper.resetSmallMic();
 
-
-        if (recordBtn instanceof CustomRippleButton)
-            ((CustomRippleButton) recordBtn).startScale();
-        else if (recordBtn instanceof CustomImageButton)
+        if (recordBtn instanceof CustomImageButton)
             ((CustomImageButton) recordBtn).startScale();
         slideToCancelLayout.startShimmerAnimation();
 

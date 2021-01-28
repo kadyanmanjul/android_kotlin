@@ -15,7 +15,6 @@
         <attr name="image_first" format="reference" />
         <attr name="image_second" format="reference" />
         <attr name="duration" format="integer" />
-
-
     </declare-styleable>
+
 </resources>

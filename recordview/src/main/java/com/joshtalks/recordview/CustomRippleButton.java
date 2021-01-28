@@ -1,16 +1,11 @@
 package com.joshtalks.recordview;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ScaleDrawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.Interpolator;
 
 import androidx.core.content.ContextCompat;
 
@@ -19,20 +14,10 @@ import info.kimjihyok.ripplelibrary.renderer.TimerCircleRippleRenderer;
 
 public class CustomRippleButton extends VoiceRippleView implements View.OnTouchListener, View.OnClickListener {
 
-    public static final int FIRST_STATE = 1;
-    public static final int SECOND_STATE = 2;
-    private static final Interpolator interpolator = new DecelerateInterpolator();
-    private static final float SCALE_TOTAL = 1f;
-    private static final float ALPHA_TOTAL = 255;
-    private final boolean init = false;
-    private ScaleAnim scaleAnim;
     private RecordView recordView;
     private boolean listenForRecord = true;
     private OnRecordClickListener onRecordClickListener;
     private OnRecordTouchListener onRecordTouchListener;
-    private int state = FIRST_STATE;
-    private int duration = 200;
-
 
     public CustomRippleButton(Context context) {
         super(context);
@@ -56,17 +41,13 @@ public class CustomRippleButton extends VoiceRippleView implements View.OnTouchL
 
     private void init(Context context, AttributeSet attrs) {
         if (attrs != null) {
-            TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.CustomImageButton, 0, 0);
-            duration = array.getInteger(R.styleable.CustomImageButton_duration, duration);
-            array.recycle();
-
             TimerCircleRippleRenderer currentRenderer = new TimerCircleRippleRenderer(getDefaultRipplePaint(), getDefaultRippleBackgroundPaint(), getButtonPaint(), getArcPaint(), 10000000.0, 0.0);
-            currentRenderer.setStrokeWidth(10);
+            currentRenderer.setStrokeWidth(16);
             setRenderer(currentRenderer);
 
         }
 
-        scaleAnim = new ScaleAnim(this);
+        setBackgroundRippleRatio(2.0);
         this.setOnTouchListener(this);
         this.setOnClickListener(this);
     }
@@ -127,15 +108,6 @@ public class CustomRippleButton extends VoiceRippleView implements View.OnTouchL
         return isListenForRecord();
     }
 
-
-    protected void startScale() {
-        scaleAnim.start();
-    }
-
-    protected void stopScale() {
-        scaleAnim.stop();
-    }
-
     public boolean isListenForRecord() {
         return listenForRecord;
     }
@@ -159,37 +131,10 @@ public class CustomRippleButton extends VoiceRippleView implements View.OnTouchL
             onRecordClickListener.onClick(v);
     }
 
-    public void goToState(int state) {
-        if (!init || this.state == state) return;
-
-        switch (state) {
-            case FIRST_STATE:
-//                animate(firstDrawable, secondDrawable);
-                break;
-            case SECOND_STATE:
-//                animate(secondDrawable, firstDrawable);
-                break;
-        }
-
-        this.state = state;
-    }
-
-    public int getState() {
-        return state;
-    }
-
-    private Drawable makeDrawable(Drawable drawable, float scale, int alpha) {
-        ScaleDrawable scaleDrawable = new ScaleDrawable(drawable, 0, scale, scale);
-        scaleDrawable.setLevel(1);
-        scaleDrawable.setAlpha(alpha);
-        return scaleDrawable;
-    }
-
-
     private Paint getArcPaint() {
         Paint paint = new Paint();
         paint.setColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
-        paint.setStrokeWidth(10);
+        paint.setStrokeWidth(16);
         paint.setAntiAlias(true);
         paint.setStrokeCap(Paint.Cap.SQUARE);
         paint.setStyle(Paint.Style.STROKE);

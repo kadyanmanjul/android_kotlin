@@ -120,16 +120,15 @@ public class CustomImageButton extends AppCompatImageView implements View.OnTouc
             if (isListenForRecord()) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        recordView.onActionDown((CustomImageButton) v, event);
+                        recordView.onActionDown(v, event);
                         break;
 
-
                     case MotionEvent.ACTION_MOVE:
-                        recordView.onActionMove((CustomImageButton) v, event);
+                        recordView.onActionMove(v, event);
                         break;
 
                     case MotionEvent.ACTION_UP:
-                        recordView.onActionUp((CustomImageButton) v);
+                        recordView.onActionUp(v);
                         break;
                 }
 
@@ -202,16 +201,14 @@ public class CustomImageButton extends AppCompatImageView implements View.OnTouc
         animator.setDuration(duration);
         animator.setInterpolator(interpolator);
 
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float value = (float) animation.getAnimatedValue();
-                float left = SCALE_TOTAL - value;
+        animator.addUpdateListener(animation -> {
+            float value = (float) animation.getAnimatedValue();
+            float left = SCALE_TOTAL - value;
 
-                Drawable firstInset = makeDrawable(from, left, (int) (value * ALPHA_TOTAL));
-                Drawable secondInset = makeDrawable(to, value, (int) (left * ALPHA_TOTAL));
+            Drawable firstInset = makeDrawable(from, left, (int) (value * ALPHA_TOTAL));
+            Drawable secondInset = makeDrawable(to, value, (int) (left * ALPHA_TOTAL));
 
-                setImageDrawable(new LayerDrawable(new Drawable[]{firstInset, secondInset}));
-            }
+            setImageDrawable(new LayerDrawable(new Drawable[]{firstInset, secondInset}));
         });
 
         animator.start();

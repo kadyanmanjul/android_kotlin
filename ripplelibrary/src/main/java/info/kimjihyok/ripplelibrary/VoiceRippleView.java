@@ -112,7 +112,7 @@ public class VoiceRippleView extends View implements TimerCircleRippleRenderer.T
     this.setFocusable(true);
     this.setFocusableInTouchMode(true);
 
-    setBackgroundRippleRatio(1.1);
+    setBackgroundRippleRatio(1.14);
     setRippleDecayRate(Rate.MEDIUM);
     setRippleSampleRate(Rate.LOW);
   }
