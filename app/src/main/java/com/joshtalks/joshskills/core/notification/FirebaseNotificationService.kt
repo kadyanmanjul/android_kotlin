@@ -43,6 +43,7 @@ import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
@@ -115,7 +116,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         try {
             if (Freshchat.isFreshchatNotification(remoteMessage)) {
                 Freshchat.handleFcmMessage(this, remoteMessage)
-            } else if (remoteMessage.data.containsKey("message") && remoteMessage.data["message"] != null) {
+            } else if (remoteMessage.data.containsKey("message") && remoteMessage.data["message"] != null && Mentor.getInstance()
+                    .hasId()
+            ) {
                 msgCount++
                 showGroupChatNotification(remoteMessage.data["message"]!!)
             } else {
@@ -406,31 +409,37 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return null
             }
             NotificationAction.GROUP_CHAT_REPLY -> {
-                notificationChannelId = groupChatChannelId
-                Intent(applicationContext, InboxActivity::class.java).apply {
-                    putExtra(NOTIFICATION_ID, 10112)
-                    putExtra(HAS_NOTIFICATION, true)
-                    putExtra(StringContract.IntentStrings.GUID, actionData)
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                }
+                if (Mentor.getInstance().hasId()) {
+                    notificationChannelId = groupChatChannelId
+                    Intent(applicationContext, InboxActivity::class.java).apply {
+                        putExtra(NOTIFICATION_ID, 10112)
+                        putExtra(HAS_NOTIFICATION, true)
+                        putExtra(StringContract.IntentStrings.GUID, actionData)
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    }
+                } else return null
             }
             NotificationAction.GROUP_CHAT_VOICE_NOTE_HEARD -> {
-                notificationChannelId = groupChatChannelId
-                Intent(applicationContext, InboxActivity::class.java).apply {
-                    putExtra(NOTIFICATION_ID, 10122)
-                    putExtra(HAS_NOTIFICATION, true)
-                    putExtra(StringContract.IntentStrings.GUID, actionData)
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                }
+                if (Mentor.getInstance().hasId()) {
+                    notificationChannelId = groupChatChannelId
+                    Intent(applicationContext, InboxActivity::class.java).apply {
+                        putExtra(NOTIFICATION_ID, 10122)
+                        putExtra(HAS_NOTIFICATION, true)
+                        putExtra(StringContract.IntentStrings.GUID, actionData)
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    }
+                } else return null
             }
             NotificationAction.GROUP_CHAT_PIN_MESSAGE -> {
-                notificationChannelId = groupChatChannelId
-                Intent(applicationContext, InboxActivity::class.java).apply {
-                    putExtra(NOTIFICATION_ID, 10132)
-                    putExtra(HAS_NOTIFICATION, true)
-                    putExtra(StringContract.IntentStrings.GUID, actionData)
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                }
+                if (Mentor.getInstance().hasId()) {
+                    notificationChannelId = groupChatChannelId
+                    Intent(applicationContext, InboxActivity::class.java).apply {
+                        putExtra(NOTIFICATION_ID, 10132)
+                        putExtra(HAS_NOTIFICATION, true)
+                        putExtra(StringContract.IntentStrings.GUID, actionData)
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    }
+                } else return null
             }
             else -> {
                 return null
