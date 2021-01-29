@@ -381,60 +381,61 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 viewHolder.audioV2PlayerView.bindView(baseMessage.getId(), baseMessage.getMetadata().optString("path"), baseMessage.getMetadata());
                 viewHolder.audioV2PlayerView.showProgressBarVisible(true);
                 showMessageTime(viewHolder, baseMessage);
-                return;
-            }
-
-            viewHolder.audioV2PlayerView.showProgressBarVisible(false);
-
-            if (!baseMessage.getSender().getUid().equals(loggedInUser.getUid())) {
-                if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_USER)) {
-                    viewHolder.tvUser.setVisibility(View.GONE);
-                    viewHolder.ivUser.setVisibility(View.GONE);
-                } else if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_GROUP)) {
-                    if (isUserDetailVisible) {
-                        viewHolder.tvUser.setVisibility(View.GONE);
-                        viewHolder.ivUser.setVisibility(View.VISIBLE);
-                        viewHolder.threadReplyLayout.setVisibility(View.VISIBLE);
-//                        viewHolder.rlMessageBubble.setPadding(0,0,0, pixelToDp(1,context));
-                        viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_normal_bg_groupchat));
-                    } else {
-                        viewHolder.tvUser.setVisibility(View.GONE);
-                        viewHolder.ivUser.setVisibility(View.INVISIBLE);
-//                        viewHolder.rlMessageBubble.setPadding(0,0,0, pixelToDp(1,context));
-                        viewHolder.threadReplyLayout.setVisibility(View.GONE);
-                        viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_same_bg_groupchat));
-                    }
-                    String colorCode = null;
-                    try {
-                        if (baseMessage.getSender().getMetadata() != null && baseMessage.getSender().getMetadata().has("color_code")) {
-                            colorCode = baseMessage.getSender().getMetadata().getString("color_code");
-                        }
-                    } catch (JSONException exception) {
-                        exception.printStackTrace();
-                    }
-                    if (colorCode != null) {
-                        viewHolder.tvUser.setTextColor(Color.parseColor(colorCode));
-                    } else {
-                        viewHolder.tvUser.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
-                    }
-                    setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName(), colorCode);
-                    viewHolder.tvUser.setText(baseMessage.getSender().getName());
-                }
             } else {
-                if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_GROUP)) {
-                    if (isUserDetailVisible) {
-                        viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_normal_bg_groupchat));
-                        viewHolder.threadReplyLayout.setVisibility(View.VISIBLE);
-                    } else {
-                        viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_same_bg_groupchat));
-                        viewHolder.threadReplyLayout.setVisibility(View.GONE);
+                viewHolder.audioV2PlayerView.showProgressBarVisible(false);
+
+                if (!baseMessage.getSender().getUid().equals(loggedInUser.getUid())) {
+                    if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_USER)) {
+                        viewHolder.tvUser.setVisibility(View.GONE);
+                        viewHolder.ivUser.setVisibility(View.GONE);
+                    } else if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_GROUP)) {
+                        if (isUserDetailVisible) {
+                            viewHolder.tvUser.setVisibility(View.GONE);
+                            viewHolder.ivUser.setVisibility(View.VISIBLE);
+                            viewHolder.threadReplyLayout.setVisibility(View.VISIBLE);
+//                        viewHolder.rlMessageBubble.setPadding(0,0,0, pixelToDp(1,context));
+                            viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_normal_bg_groupchat));
+                        } else {
+                            viewHolder.tvUser.setVisibility(View.GONE);
+                            viewHolder.ivUser.setVisibility(View.INVISIBLE);
+//                        viewHolder.rlMessageBubble.setPadding(0,0,0, pixelToDp(1,context));
+                            viewHolder.threadReplyLayout.setVisibility(View.GONE);
+                            viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.incoming_message_same_bg_groupchat));
+                        }
+                        String colorCode = null;
+                        try {
+                            if (baseMessage.getSender().getMetadata() != null && baseMessage.getSender().getMetadata().has("color_code")) {
+                                colorCode = baseMessage.getSender().getMetadata().getString("color_code");
+                            }
+                        } catch (JSONException exception) {
+                            exception.printStackTrace();
+                        }
+                        if (colorCode != null) {
+                            viewHolder.tvUser.setTextColor(Color.parseColor(colorCode));
+                        } else {
+                            viewHolder.tvUser.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
+                        }
+                        setAvatar(viewHolder.ivUser, baseMessage.getSender().getAvatar(), baseMessage.getSender().getName(), colorCode);
+                        viewHolder.tvUser.setText(baseMessage.getSender().getName());
+                    }
+                } else {
+                    if (baseMessage.getReceiverType().equals(CometChatConstants.RECEIVER_TYPE_GROUP)) {
+                        if (isUserDetailVisible) {
+                            viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_normal_bg_groupchat));
+                            viewHolder.threadReplyLayout.setVisibility(View.VISIBLE);
+                        } else {
+                            viewHolder.rlMessageBubble.setBackground(ContextCompat.getDrawable(context, R.drawable.outgoing_message_same_bg_groupchat));
+                            viewHolder.threadReplyLayout.setVisibility(View.GONE);
+                        }
                     }
                 }
             }
-
             if (baseMessage.getMetadata() != null && baseMessage.getMetadata().has("reply")) {
+                System.out.println("MessageAdapter.setAudioData in reply");
                 try {
                     JSONObject metaData = baseMessage.getMetadata().getJSONObject("reply");
+
+                    System.out.println("MessageAdapter.setAudioData in reply " + metaData);
                     String messageType = metaData.getString("type");
                     String message = metaData.getString("message");
                     viewHolder.replyLayout.setVisibility(View.VISIBLE);
@@ -479,6 +480,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     Log.e(TAG, "setTextData: " + e.getMessage());
                 }
             } else {
+
+                System.out.println("MessageAdapter.setAudioData not in reply");
                 viewHolder.replyLayout.setVisibility(View.GONE);
             }
 
@@ -492,7 +495,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             showMessageTime(viewHolder, baseMessage);
 
-            viewHolder.audioV2PlayerView.bindView(baseMessage.getId(), ((MediaMessage) baseMessage).getAttachment().getFileUrl(), baseMessage.getMetadata());
+            if (((MediaMessage) baseMessage).getAttachment() != null)
+                viewHolder.audioV2PlayerView.bindView(baseMessage.getId(), ((MediaMessage) baseMessage).getAttachment().getFileUrl(), baseMessage.getMetadata());
 
             if (!baseMessage.getSender().getUid().equals(loggedInUser.getUid())) {
                 viewHolder.audioV2PlayerView.setAudioPlayListener(audioPlayCallback);
@@ -1562,7 +1566,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private final View view;
         private final TextView tvUser;
         private final Avatar ivUser;
-        private final RelativeLayout rlMessageBubble;
+        private final View rlMessageBubble;
         private final TextView txtTime;
         private final TextView tvThreadReplyCount;
         private final LinearLayout lvReplyAvatar;

@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:src="@tools:sample/avatars" />
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cv_message_container"
         android:layout_width="@dimen/_190sdp"
         android:layout_height="wrap_content"
@@ -42,6 +42,8 @@
             android:textSize="@dimen/_11ssp"
             android:textStyle="bold"
             android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="Iron Man"
             tools:visibility="visible" />
 
@@ -59,6 +61,8 @@
             android:textColor="@color/grey_68"
             android:textSize="@dimen/_10ssp"
             android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="Admin"
             tools:visibility="visible" />
 
@@ -71,7 +75,8 @@
             android:layout_marginStart="@dimen/_6sdp"
             android:layout_marginTop="@dimen/_4sdp"
             android:layout_marginEnd="@dimen/_6sdp"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/tv_user" />
 
         <com.joshtalks.joshskills.ui.groupchat.uikit.AudioV2PlayerView
             android:id="@+id/audio_player"
@@ -81,9 +86,12 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:paddingVertical="@dimen/_8sdp"
             android:gravity="center_vertical"
             android:paddingHorizontal="@dimen/_8sdp"
-            android:paddingVertical="@dimen/_2sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/replyLayout"
             tools:layout_height="@dimen/_40sdp" />
 
         <TextView
@@ -103,10 +111,12 @@
             android:textColor="@color/gray_9E"
             android:textSize="@dimen/_9ssp"
             android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             tools:text="11:00 PM"
             tools:visibility="visible" />
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/threadReplyLayout"

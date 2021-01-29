@@ -7,15 +7,15 @@
     android:paddingHorizontal="@dimen/_1sdp"
     app:layout_constraintEnd_toEndOf="parent">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cv_message_container"
         android:layout_width="@dimen/_190sdp"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="@dimen/_6sdp"
         android:background="@drawable/outgoing_message_same_bg_groupchat"
-        android:paddingStart="@dimen/_6sdp"
         android:gravity="center_vertical"
+        android:paddingStart="@dimen/_6sdp"
         android:paddingEnd="@dimen/_6sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -29,19 +29,25 @@
             android:layout_marginStart="@dimen/_6sdp"
             android:layout_marginTop="@dimen/_4sdp"
             android:layout_marginEnd="@dimen/_6sdp"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.joshtalks.joshskills.ui.groupchat.uikit.AudioV2PlayerView
             android:id="@+id/audio_player"
             android:layout_width="match_parent"
-            android:layout_below="@+id/replyLayout"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/replyLayout"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:paddingVertical="@dimen/_8sdp"
             android:gravity="center_vertical"
             android:paddingHorizontal="@dimen/_8sdp"
-            android:paddingVertical="@dimen/_2sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/replyLayout"
             tools:layout_height="@dimen/_40sdp" />
 
         <TextView
@@ -61,6 +67,8 @@
             android:textColor="@color/gray_9E"
             android:textSize="@dimen/_9ssp"
             android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/delivery_tick"
             tools:text="11:00 PM"
             tools:visibility="visible" />
 
@@ -72,11 +80,13 @@
             android:layout_alignParentEnd="true"
             android:layout_gravity="center"
             android:layout_marginEnd="@dimen/_8sdp"
-            android:paddingBottom="@dimen/_2sdp"
             android:gravity="end"
+            android:paddingBottom="@dimen/_2sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_sent_message_d_tick" />
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/threadReplyLayout"

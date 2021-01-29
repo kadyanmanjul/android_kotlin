@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -167,6 +168,15 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
     private AppCompatImageView settingsImg;
     private int tempMessageId = -1;
 
+    public static String getMimeType(String url) {
+        String type = null;
+        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+        if (extension != null) {
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        }
+        return type;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -201,7 +211,6 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
             }
         }
     }
-
 
     /**
      * This method is used to handle arguments passed to this fragment.
@@ -415,6 +424,10 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
             @Override
             public void onEditTextMediaSelected(InputContentInfoCompat inputContentInfo) {
                 String messageType = inputContentInfo.getLinkUri().toString().substring(inputContentInfo.getLinkUri().toString().lastIndexOf('.'));
+
+                if (".gif".equals(messageType) || ".png".equals(messageType) || ".webp".equals(messageType))
+                    showSnackBar(rvChatListView, getString(R.string.file_type_not_supported));
+
                 MediaMessage mediaMessage = new MediaMessage(Id, null, CometChatConstants.MESSAGE_TYPE_IMAGE, type);
                 Attachment attachment = new Attachment();
                 attachment.setFileUrl(inputContentInfo.getLinkUri().toString());
@@ -422,7 +435,6 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
                 attachment.setFileExtension(messageType);
                 attachment.setFileName(inputContentInfo.getDescription().getLabel().toString());
                 mediaMessage.setAttachment(attachment);
-                Log.e(TAG, "onClick: " + attachment.toString());
                 CometChat.sendMediaMessage(mediaMessage, new CometChat.CallbackListener<MediaMessage>() {
                     @Override
                     public void onSuccess(MediaMessage mediaMessage) {
@@ -542,7 +554,6 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
         Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
     }
 
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -565,10 +576,34 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
                 onlineMembers++;
             }
             tvStatus.setText(String.format("%d Members, %d Online", totalMembers, onlineMembers));
+
+            /*
+            new GroupMembersRequest.GroupMembersRequestBuilder(Id)
+                    .setScopes(Arrays.asList(CometChatConstants.SCOPE_ADMIN, CometChatConstants.SCOPE_PARTICIPANT, CometChatConstants.SCOPE_MODERATOR))
+                    .build().fetchNext(new CometChat.CallbackListener<List<GroupMember>>() {
+                @Override
+                public void onSuccess(List<GroupMember> groupMembers) {
+                    isInProgress = false;
+                    if (groupMembers != null) {
+                        onlineMembers = groupMembers.size();
+                        tvStatus.setText(String.format("%d Members, %d Online", totalMembers, onlineMembers));
+                    }
+                }
+
+
+                @Override
+                public void onError(CometChatException e) {
+                    onlineMembers = (int) (((new Random().nextInt((30 - 10) + 1) + 10) / 100.0) * totalMembers);
+                    if (onlineMembers == 0) {
+                        onlineMembers++;
+                    }
+                    tvStatus.setText(String.format("%d Members, %d Online", totalMembers, onlineMembers));
+                    Log.e(TAG, "onError: " + e.getMessage());
+                }
+            });*/
         }
 
     }
-
 
     /**
      * This method is used to fetch message of users & groups. For user it fetches previous 100 messages at
@@ -784,29 +819,32 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
         super.onActivityResult(requestCode, resultCode, data);
 //        Log.d(TAG, "onActivityResult: ");
 
-        switch (requestCode) {
-            case StringContract.RequestCode.AUDIO:
-                if (data != null) {
-                    File file = MediaUtils.getRealPath(this, data.getData());
+        if (data != null) {
+            File file = MediaUtils.getRealPath(this, data.getData());
+            String mimeType = getMimeType(file.getAbsolutePath());
+            switch (requestCode) {
+                case StringContract.RequestCode.AUDIO:
+
                     ContentResolver cr = this.getContentResolver();
                     if (isReply) {
                         sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_AUDIO, null, baseMessage);
                     } else {
                         sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_AUDIO, null, null);
                     }
-                }
-                break;
+                    break;
 
-            case StringContract.RequestCode.FILE:
-                if (data != null)
-                    if (isReply) {
-                        sendMediaMessage(MediaUtils.getRealPath(this, data.getData()), CometChatConstants.MESSAGE_TYPE_FILE, null, baseMessage);
-                    } else {
-                        sendMediaMessage(MediaUtils.getRealPath(this, data.getData()), CometChatConstants.MESSAGE_TYPE_FILE, null, null);
-                    }
-                break;
+                case StringContract.RequestCode.FILE:
+                    if (data != null)
+                        if (isReply) {
+                            sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_FILE, null, baseMessage)
+                            ;
+                        } else {
+                            sendMediaMessage(file, CometChatConstants.MESSAGE_TYPE_FILE, null, null)
+                            ;
+                        }
+                    break;
+            }
         }
-
     }
 
 
