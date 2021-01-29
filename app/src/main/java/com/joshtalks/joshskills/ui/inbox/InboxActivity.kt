@@ -41,11 +41,7 @@ import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.server.Award
-import com.joshtalks.joshskills.repository.server.ProfileResponse
-import com.joshtalks.joshskills.repository.server.SearchLocality
-import com.joshtalks.joshskills.repository.server.UpdateUserLocality
-import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.SubscriptionData
@@ -74,7 +70,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.android.synthetic.main.inbox_toolbar.*
@@ -82,6 +77,7 @@ import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -143,6 +139,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         viewModel.getTotalWatchTime()
         FileUploadService.uploadAllPendingTasks(AppObjectController.joshApplication)
         //viewModel.getProfileData(Mentor.getInstance().getId())
+
     }
 
     private fun initNewUserTip() {
