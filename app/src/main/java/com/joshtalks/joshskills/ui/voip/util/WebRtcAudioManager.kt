@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.JoshSkillExecutors
 
 class WebRtcAudioManager(context: Context) {
     private var playing = false
@@ -16,11 +17,13 @@ class WebRtcAudioManager(context: Context) {
 
     private var connectedSoundId = 0
     private var disconnectedSoundId = 0
+
     private var playingCalled = false
     private val pattern = longArrayOf(100, 200, 400)
 
     private var soundPool: SoundPool
     private var vibrator: Vibrator
+    private var engageCallRinger: EngageCallRinger
 
     private val maxVolume = (context.getSystemService(Context.AUDIO_SERVICE) as AudioManager)
         .getStreamMaxVolume(AudioManager.STREAM_MUSIC).toFloat()
@@ -35,13 +38,16 @@ class WebRtcAudioManager(context: Context) {
             .build()
         connectedSoundId = soundPool.load(context, R.raw.join_call, 1)
         disconnectedSoundId = soundPool.load(context, R.raw.end_call, 1)
+        engageCallRinger = EngageCallRinger(context)
         vibrator = context.getSystemService(Service.VIBRATOR_SERVICE) as Vibrator
         soundPool.setOnLoadCompleteListener { s: SoundPool, _: Int, _: Int ->
-            loaded = true
-            if (playingCalled) {
-                playVibrate()
-                startCommunication()
-                playingCalled = false
+            JoshSkillExecutors.BOUNDED.execute {
+                loaded = true
+                if (playingCalled) {
+                    playVibrate()
+                    startCommunication()
+                    playingCalled = false
+                }
             }
         }
     }
@@ -77,7 +83,16 @@ class WebRtcAudioManager(context: Context) {
         }
     }
 
-    fun stopRinging() {
+    fun reconnectCommunication() {
+        engageCallRinger.start()
+    }
+
+    fun reconnectCommunicationStop() {
+        engageCallRinger.stop()
+    }
+
+
+    private fun stopRinging() {
         if (playing) {
             soundPool.stop(disconnectedSoundId)
             playing = false

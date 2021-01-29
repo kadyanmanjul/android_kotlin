@@ -12,8 +12,8 @@ import android.os.Bundle
 import android.os.IBinder
 import android.os.SystemClock
 import android.view.View
-import android.view.Window
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
@@ -46,7 +46,7 @@ const val AUTO_PICKUP_CALL = "auto_pickup_call"
 const val CALL_USER_OBJ = "call_user_obj"
 const val CALL_TYPE = "call_type"
 
-class WebRtcActivity : BaseActivity() {
+class WebRtcActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCallingBinding
     private var mBoundService: WebRtcService? = null
@@ -157,18 +157,15 @@ class WebRtcActivity : BaseActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        this.window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
-        window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+        )
         volumeControlStream = AudioManager.STREAM_VOICE_CALL
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_calling)
@@ -310,7 +307,7 @@ class WebRtcActivity : BaseActivity() {
 
     private fun getName(): String {
         return try {
-            binding.userDetail.text.toString().substring(0, 2) ?: "US"
+            binding.userDetail.text.toString().substring(0, 2)
         } catch (ex: Exception) {
             "US"
         }
