@@ -119,6 +119,23 @@
         android:layout_above="@+id/bottom_layout"
         android:layout_below="@+id/pinnedMessageView" />
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/scroll_to_end_button"
+        android:layout_width="@dimen/_32sdp"
+        android:layout_height="@dimen/_32sdp"
+        android:layout_alignEnd="@id/rv_message_list"
+        android:layout_alignBottom="@id/rv_message_list"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="@dimen/_6sdp"
+        android:layout_marginBottom="@dimen/_8sdp"
+        android:adjustViewBounds="true"
+        android:padding="@dimen/_4sdp"
+        android:scaleType="centerInside"
+        android:visibility="gone"
+        app:elevation="@dimen/_4sdp"
+        app:srcCompat="@drawable/ic_arrow_down"
+        tools:visibility="visible" />
+
     <LinearLayout
         android:id="@+id/bottom_layout"
         android:layout_width="match_parent"
