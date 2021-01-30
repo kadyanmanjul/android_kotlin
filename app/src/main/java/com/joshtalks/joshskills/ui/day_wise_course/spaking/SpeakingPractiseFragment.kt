@@ -131,7 +131,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
             group_one.visibility = View.GONE
             val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
             if (points.isNullOrEmpty().not()) {
-                showSnackBar(root_view, Snackbar.LENGTH_LONG, points)
+                //showSnackBar(root_view, Snackbar.LENGTH_LONG, points)
                 PrefManager.put(SPEAKING_POINTS, EMPTY)
             }
 
@@ -219,7 +219,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
             RxBus2.listenWithoutDelay(SnackBarEvent::class.java)
                 .subscribeOn(Schedulers.computation())
                 .subscribe({
-                    showSnackBar(root_view, Snackbar.LENGTH_LONG, it.pointsSnackBarText)
+                   // showSnackBar(root_view, Snackbar.LENGTH_LONG, it.pointsSnackBarText)
                 }, {
                     it.printStackTrace()
                 })
