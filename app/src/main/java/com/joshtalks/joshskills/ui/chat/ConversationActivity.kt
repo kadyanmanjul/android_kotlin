@@ -461,7 +461,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         }
     }
 
-    private fun openUserProfileActivity(id: String, previousPage: String?) {
+    private fun openUserProfileActivity(id: String, previousPage: String) {
         UserProfileActivity.startUserProfileActivity(
             this,
             id,

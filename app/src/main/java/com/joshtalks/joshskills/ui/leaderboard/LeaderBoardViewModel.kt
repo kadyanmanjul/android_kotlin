@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
@@ -58,7 +60,7 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
         return null
     }
 
-    fun getMentorDataViaPage(mentorId: String, type: String,pageNumber:Int=2) {
+    fun getMentorDataViaPage(mentorId: String, type: String, pageNumber: Int = 2) {
         jobs == viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response =
@@ -75,6 +77,39 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
                 ex.showAppropriateMsg()
             }
             //return null
+        }
+    }
+
+    fun engageLeaderBoardimpression(
+        mapOfVisitedPage: java.util.HashMap<Int, Int>,
+        position: Int
+    ) {
+        if (mapOfVisitedPage.get(position)!! > 1) {
+            return
+        }
+        jobs == viewModelScope.launch(Dispatchers.IO) {
+            try {
+                var intervalType = EMPTY
+                when (position) {
+                    0 -> {
+                        intervalType = "TODAY"
+                    }
+                    1 -> {
+                        intervalType = "WEEK"
+                    }
+                    2 -> {
+                        intervalType = "MONTH"
+                    }
+                }
+
+                AppObjectController.commonNetworkService.engageLeaderBoardImpressions(
+                    mapOf(
+                        "mentor_id" to Mentor.getInstance().getId(), "interval_type" to intervalType
+                    )
+                )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
         }
     }
 }
