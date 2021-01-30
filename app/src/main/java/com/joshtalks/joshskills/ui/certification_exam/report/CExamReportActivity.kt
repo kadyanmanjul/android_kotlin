@@ -84,15 +84,15 @@ class CExamReportActivity : BaseActivity() {
         viewModel.examReportLiveData.observe(this, { certificateList ->
             certificateList?.run {
                 setUpExamViewPager(this)
-                certificateList[0].awardMentor?.let {
-                    showAward(mutableListOf(it))
+                certificateList.last().awardMentor?.let {
+                    //showAward(mutableListOf(it))
                 }
 
-                if (certificateList.get(0).pointsList.isNullOrEmpty().not()) {
+                if (certificateList.last().points.isNullOrBlank().not()) {
                     showSnackBar(
                         binding.rootView,
                         Snackbar.LENGTH_LONG,
-                        certificateList.get(0).pointsList?.get(0)
+                        certificateList.last().points
                     )
                 }
             }
