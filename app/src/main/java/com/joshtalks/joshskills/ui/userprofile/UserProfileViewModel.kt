@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.userprofile
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -233,6 +234,20 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                     impressionId,
                     mapOf("time_spent" to startTime)
                 )
+
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    fun getUrlFor3DWebView(awardMentorId: String) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (awardMentorId.isBlank())
+                    return@launch
+
+                val response = AppObjectController.commonNetworkService.get3DWebView(awardMentorId)
 
             } catch (ex: Throwable) {
                 ex.printStackTrace()
