@@ -116,5 +116,10 @@
     <color name="call_action_color">#5ee067</color>
     <color name="call_decline_color">#ef5050</color>
 
+    <!-- Here you can add color of your choice  -->
+    <color name="ucrop_color_toolbar">@color/colorPrimary</color>
+    <color name="ucrop_color_statusbar">@color/colorPrimaryDark</color>
+    <color name="ucrop_color_widget_active">@color/colorPrimary</color>
+
 
 </resources>

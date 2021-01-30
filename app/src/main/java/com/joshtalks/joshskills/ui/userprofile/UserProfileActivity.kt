@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -19,6 +18,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
@@ -48,6 +48,7 @@ import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class UserProfileActivity : BaseActivity() {
 
@@ -286,31 +287,6 @@ class UserProfileActivity : BaseActivity() {
         )
     }
 
-    private fun getPermissionAndImage() {
-        PermissionUtils.storageReadAndWritePermission(this,
-            object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let { flag ->
-                        if (flag) {
-                            RxBus2.publish(DeleteProfilePicEventBus("No d"))
-                            return
-                        }
-                        if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.permissionPermanentlyDeniedDialog(this@UserProfileActivity)
-                            return
-                        }
-                    }
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
-                ) {
-                    token?.continuePermissionRequest()
-                }
-            })
-    }
-
 
     @SuppressLint("WrongViewCast")
     private fun addLinerLayout(awardCategory: AwardCategory): View? {
@@ -415,15 +391,13 @@ class UserProfileActivity : BaseActivity() {
         )
 
         compositeDisposable.add(
-            RxBus2.listen(DeleteProfilePicEventBus::class.java)
+            RxBus2.listenWithoutDelay(DeleteProfilePicEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     viewModel.userData.value?.photoUrl = it.url
                     if (it.url.isBlank()) {
                         viewModel.completingProfile("")
-                    } else {
-                        openSomeActivityForResult()
                     }
                 }, {
                     it.printStackTrace()
@@ -431,47 +405,23 @@ class UserProfileActivity : BaseActivity() {
         )
     }
 
-    var activityResultLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        CoroutineScope(Dispatchers.IO).launch {
-
-            // There are no request code
-            result.data.data.let { it ->
-                val selectedImage: Uri = it
-                val filePathColumn = arrayOf<String>(MediaStore.Images.Media.DATA)
-                var bitmap: Bitmap? = null
-                // Get the cursor
-                val cursor = contentResolver.query(
-                    selectedImage, filePathColumn, null, null, null
-                )
-
-                cursor?.let {
-                    it.moveToFirst()
-                    val columnIndex: Int = cursor.getColumnIndex(filePathColumn[0])
-                    val imgDecodableString: String = cursor.getString(columnIndex)
-                    cursor.close()
-                    addUserImageInView(imgDecodableString)
-
-                }
-            }
-        }
-    }
-
-    fun selectImageActivity(options: Options) {
-        val cameraIntent = Intent(this, JoshCameraActivity::class.java).apply {
-            putExtra("options", options)
-        }
-        startActivityForResult(cameraIntent, IMAGE_SELECT_REQUEST_CODE)
-    }
-
-    fun openSomeActivityForResult() {
-        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        activityResultLauncher.launch(galleryIntent)
-    }
-
     private fun openAwardPopUp(award: Award) {
         showAward(listOf(award), true)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            ImagePicker.getFilePath(data)?.let {
+                addUserImageInView(it)
+            }
+        } else if (resultCode == ImagePicker.RESULT_ERROR) {
+            Timber.e(ImagePicker.getError(data))
+            //Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+        } else {
+            Timber.e("Task Cancelled")
+            //Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onStop() {
@@ -516,7 +466,7 @@ class UserProfileActivity : BaseActivity() {
                 intervalType?.let {
                     putExtra(INTERVAL_TYPE, it)
                 }
-                    putExtra(PREVIOUS_PAGE, previousPage)
+                putExtra(PREVIOUS_PAGE, previousPage)
                 flags.forEach { flag ->
                     this.addFlags(flag)
                 }

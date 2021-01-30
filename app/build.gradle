@@ -399,5 +399,6 @@ dependencies {
 
     debugImplementation 'com.itkacher.okhttpprofiler:okhttpprofiler:1.0.7'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
+    implementation 'com.github.dhaval2404:imagepicker:1.8'
 
 }
