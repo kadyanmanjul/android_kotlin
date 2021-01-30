@@ -1,16 +1,21 @@
 package com.joshtalks.joshskills.ui.userprofile
 
+import android.annotation.TargetApi
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
@@ -19,12 +24,15 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.AppObjectController.Companion.getHostOfUrl
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
 import com.joshtalks.joshskills.core.setImage
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentAwardShowBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.Award
+import com.joshtalks.joshskills.repository.service.DIR
 
 class ShowAwardFragment : DialogFragment() {
 
@@ -46,6 +54,7 @@ class ShowAwardFragment : DialogFragment() {
         if (award == null) {
             dismiss()
         }
+        //viewModel.getUrlFor3DWebView(award?.get(0)?.id.toString())
     }
 
     override fun onStart() {
@@ -131,15 +140,15 @@ class ShowAwardFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.close.visibility = View.VISIBLE
-        if(award?.get(0)?.is_achieved!!.not()){
-            binding.appCompatTextView2.visibility=View.GONE
-        } else{
-            binding.appCompatTextView2.visibility=View.VISIBLE
+        if (award?.get(0)?.is_achieved!!.not()) {
+            binding.appCompatTextView2.visibility = View.GONE
+        } else {
+            binding.appCompatTextView2.visibility = View.VISIBLE
         }
-        if(isFromUserProfile) {
+        if (isFromUserProfile) {
             binding.btnProfile.visibility = View.GONE
-            if(award?.get(0)?.is_achieved!!.not()){
-                binding.circleBgContainer.backgroundTintList= ColorStateList.valueOf(
+            if (award?.get(0)?.is_achieved!!.not()) {
+                binding.circleBgContainer.backgroundTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         AppObjectController.joshApplication,
                         R.color.colorPrimary
@@ -147,7 +156,7 @@ class ShowAwardFragment : DialogFragment() {
                 )
             }
 
-        } else{
+        } else {
             if (award?.size!! < 2) {
                 binding.next.visibility = View.GONE
                 binding.previous.visibility = View.GONE
@@ -197,21 +206,48 @@ class ShowAwardFragment : DialogFragment() {
                 "\n" +
                 "  </body>"
 
-
-        val code=AppObjectController.getFirebaseRemoteConfig()
-            .getString(FirebaseRemoteConfigKey.AWARD_SPINNING_CODE)
-
         binding.webView.settings.javaScriptEnabled = true
         binding.webView.setBackgroundColor(Color.TRANSPARENT)
-        binding.webView.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null);
+        binding.webView.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null)
 
-        binding.webView.loadDataWithBaseURL(
-            null,
-            code,
-            "text/html",
-            "utf-8",
-            null
-        );
+        /* binding.webView.loadDataWithBaseURL(
+             null,
+             code,
+             "text/html",
+             "utf-8",
+             null
+         )*/
+
+        binding.webView.getSettings().setJavaScriptEnabled(true) // enable javascript
+
+        binding.webView.setWebViewClient(object : WebViewClient() {
+            override fun onReceivedError(
+                view: WebView?,
+                errorCode: Int,
+                description: String?,
+                failingUrl: String?
+            ) {
+                showToast(description ?: "Error")
+            }
+
+            @TargetApi(Build.VERSION_CODES.M)
+            override fun onReceivedError(
+                view: WebView?,
+                req: WebResourceRequest,
+                rerr: WebResourceError
+            ) {
+                // Redirect to deprecated method, so you can use it in all SDK versions
+                onReceivedError(
+                    view,
+                    rerr.getErrorCode(),
+                    rerr.getDescription().toString(),
+                    req.getUrl().toString()
+                )
+            }
+        })
+        val url =
+            "http://${getHostOfUrl()}/$DIR/reputation/award_render/?award_mentor_id=${award!!.get(0).id}"
+        binding.webView.loadUrl(url)
 
     }
 
