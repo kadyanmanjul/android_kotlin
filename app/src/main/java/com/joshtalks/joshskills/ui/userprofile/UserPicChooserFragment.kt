@@ -1,40 +1,19 @@
 package com.joshtalks.joshskills.ui.userprofile
 
-import android.content.Intent
-import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.joshtalks.joshcamerax.JoshCameraActivity
-import com.joshtalks.joshcamerax.utils.ImageQuality
-import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.UserPicChooserDialogBinding
-import com.joshtalks.joshskills.messaging.MessageBuilderFactory
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventBus
-import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
-import com.joshtalks.joshskills.ui.chat.IMAGE_SELECT_REQUEST_CODE
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class UserPicChooserFragment : BottomSheetDialogFragment() {
 
@@ -79,9 +58,9 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.close.visibility = View.VISIBLE
-        if (isUserProfilePicEmpty.not()){
-            binding.deleteIcon.visibility=View.VISIBLE
-            binding.removeText.visibility=View.VISIBLE
+        if (isUserProfilePicEmpty.not()) {
+            binding.deleteIcon.visibility = View.VISIBLE
+            binding.removeText.visibility = View.VISIBLE
         }
 
     }
@@ -101,83 +80,18 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
     }
 
     fun change() {
-        getPermissionAndImage()
+        ImagePicker.with(this)
+            .crop()                    //Crop image(Optional), Check Customization for more option
+            .galleryOnly()
+            .start()
+        dismiss()
     }
+
     fun captureImage() {
-        getPermissionAndCaptureImage()
-    }
-
-    private fun getPermissionAndImage() {
-        PermissionUtils.storageReadAndWritePermission(requireActivity(),
-            object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let { flag ->
-                        if (flag) {
-                            getIntentAndStartActivity()
-                            return
-                        }
-                        if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.permissionPermanentlyDeniedDialog(requireActivity())
-                            return
-                        }
-                    }
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
-                ) {
-                    token?.continuePermissionRequest()
-                }
-            })
-    }
-    private fun getPermissionAndCaptureImage() {
-        PermissionUtils.cameraRecordStorageReadAndWritePermission(requireActivity(),
-            object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let { flag ->
-                        if (flag) {
-                            val options = Options.init()
-                                .setRequestCode(IMAGE_SELECT_REQUEST_CODE)
-                                .setCount(1)
-                                .setFrontfacing(false)
-                                .setPath(AppDirectory.getTempPath())
-                                .setImageQuality(ImageQuality.HIGH)
-                                .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)
-                            openSomeActivityForResult(options)
-
-                            JoshCameraActivity.startJoshCameraxActivity(
-                                requireActivity(),
-                                options
-                            )
-                            dismiss()
-                            return
-                        }
-                        if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.cameraStoragePermissionPermanentlyDeniedDialog(requireActivity())
-                            return
-                        }
-                    }
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
-                ) {
-                    token?.continuePermissionRequest()
-                }
-            })
-    }
-
-    fun openSomeActivityForResult(options: Options) {
-        val cameraIntent =Intent(context, JoshCameraActivity::class.java).apply {
-            putExtra("options", options)
-        }
-        (requireActivity() as UserProfileActivity).activityResultLauncher2.launch(cameraIntent)
-    }
-
-    private fun getIntentAndStartActivity() {
-        RxBus2.publish(DeleteProfilePicEventBus("No d"))
+        ImagePicker.with(this)
+            .crop()                    //Crop image(Optional), Check Customization for more option
+            .cameraOnly()
+            .start()
         dismiss()
     }
 
