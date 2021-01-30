@@ -46,6 +46,7 @@ import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
@@ -116,8 +117,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         try {
             if (Freshchat.isFreshchatNotification(remoteMessage)) {
                 Freshchat.handleFcmMessage(this, remoteMessage)
-            } else if (remoteMessage.data.containsKey("message") && remoteMessage.data["message"] != null && Mentor.getInstance()
-                    .hasId()
+            } else if (remoteMessage.data.containsKey("message") && remoteMessage.data["message"] != null && User.getInstance().isVerified
             ) {
                 msgCount++
                 showGroupChatNotification(remoteMessage.data["message"]!!)
@@ -409,7 +409,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return null
             }
             NotificationAction.GROUP_CHAT_REPLY -> {
-                if (Mentor.getInstance().hasId()) {
+                if (User.getInstance().isVerified) {
                     notificationChannelId = groupChatChannelId
                     Intent(applicationContext, InboxActivity::class.java).apply {
                         putExtra(NOTIFICATION_ID, 10112)
@@ -420,7 +420,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 } else return null
             }
             NotificationAction.GROUP_CHAT_VOICE_NOTE_HEARD -> {
-                if (Mentor.getInstance().hasId()) {
+                if (User.getInstance().isVerified) {
                     notificationChannelId = groupChatChannelId
                     Intent(applicationContext, InboxActivity::class.java).apply {
                         putExtra(NOTIFICATION_ID, 10122)
@@ -431,7 +431,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 } else return null
             }
             NotificationAction.GROUP_CHAT_PIN_MESSAGE -> {
-                if (Mentor.getInstance().hasId()) {
+                if (User.getInstance().isVerified) {
                     notificationChannelId = groupChatChannelId
                     Intent(applicationContext, InboxActivity::class.java).apply {
                         putExtra(NOTIFICATION_ID, 10132)
