@@ -34,8 +34,8 @@ data class CertificateExamReportModel(
     val totalQuestion: Int = 0,
     @SerializedName("award_mentor")
     val awardMentor: Award?,
-    @SerializedName("points_list")
-    val pointsList: List<String>?
+    @SerializedName("points")
+    val points: String?
 
 
 ) : Parcelable

@@ -82,6 +82,7 @@ import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.delay
 
 class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
     AudioPlayerEventListener,
@@ -1366,10 +1367,12 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                 disableSubmitButton()
                 //practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
                 practiceViewModel.getPointsForVocabAndReading(chatModel.question?.questionId!!)
-                practiceViewModel.addTaskToService(requestEngage)
-
-                chatModel.question!!.status = QUESTION_STATUS.IP
-                showCompletedPractise()
+                CoroutineScope(Dispatchers.Main).launch {
+                    chatModel.question!!.status = QUESTION_STATUS.IP
+                    practiceViewModel.addTaskToService(requestEngage)
+                    delay(1000)
+                    showCompletedPractise()
+                }
             }
         }
     }
