@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.media.MediaPlayer
 import android.location.Location
 import android.net.Uri
 import android.os.Build
@@ -91,8 +92,10 @@ import com.uxcam.OnVerificationListener
 import com.uxcam.UXCam
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.*
@@ -729,7 +732,20 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
 
     fun showSnackBar(view: View, duration: Int, action_lable: String?) {
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+            //SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
             PointSnackbar.make(view, duration, action_lable)?.show()
+            val mediaplayer: MediaPlayer = MediaPlayer.create(
+                this,
+                R.raw.ting
+            ) //You Can Put Your File Name Instead Of abc
+
+            mediaplayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
+                override fun onCompletion(mediaPlayer: MediaPlayer) {
+                    mediaPlayer.reset()
+                    mediaPlayer.release()
+                }
+            })
+            mediaplayer.start()
         }
     }
 

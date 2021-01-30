@@ -38,6 +38,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.speaking_practise_fragment.btn_continue
 import kotlinx.android.synthetic.main.speaking_practise_fragment.btn_start
+import kotlinx.android.synthetic.main.speaking_practise_fragment.group_one
 import kotlinx.android.synthetic.main.speaking_practise_fragment.group_two
 import kotlinx.android.synthetic.main.speaking_practise_fragment.progress_bar
 import kotlinx.android.synthetic.main.speaking_practise_fragment.progress_view
@@ -126,9 +127,11 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
                     ex.printStackTrace()
                 }
                 group_two.visibility = View.VISIBLE
+                group_one.visibility = View.GONE
+
                 val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
-                if (points.isEmpty().not()) {
-                    showSnackBar(root_view, Snackbar.LENGTH_LONG, points)
+                if (points.isNullOrEmpty().not()) {
+                    //showSnackBar(root_view, Snackbar.LENGTH_LONG, points)
                     PrefManager.put(SPEAKING_POINTS, EMPTY)
                 }
 
@@ -207,7 +210,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
             RxBus2.listenWithoutDelay(SnackBarEvent::class.java)
                 .subscribeOn(Schedulers.computation())
                 .subscribe({
-                    showSnackBar(root_view, Snackbar.LENGTH_LONG, it.pointsSnackBarText)
+                   // showSnackBar(root_view, Snackbar.LENGTH_LONG, it.pointsSnackBarText)
                 }, {
                     it.printStackTrace()
                 })

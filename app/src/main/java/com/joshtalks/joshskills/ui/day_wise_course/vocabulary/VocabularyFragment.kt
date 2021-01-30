@@ -326,7 +326,6 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                 .subscribeOn(Schedulers.computation())
                 .subscribe({
                     //if (it.questionId in chatModelList.) check for question Id later
-                    //Log.d("Manjul", "subscribeRXBus() called")
                     showSnackBar(
                         binding.rootView,
                         Snackbar.LENGTH_LONG,
