@@ -509,16 +509,14 @@ class UserProfileActivity : BaseActivity() {
             mentorId: String,
             flags: Array<Int> = arrayOf(),
             intervalType: String? = null,
-            previousPage: String? = null
+            previousPage: String
         ) {
             Intent(activity, UserProfileActivity::class.java).apply {
                 putExtra(KEY_MENTOR_ID, mentorId)
                 intervalType?.let {
                     putExtra(INTERVAL_TYPE, it)
                 }
-                previousPage?.let {
-                    putExtra(PREVIOUS_PAGE, it)
-                }
+                    putExtra(PREVIOUS_PAGE, previousPage)
                 flags.forEach { flag ->
                     this.addFlags(flag)
                 }

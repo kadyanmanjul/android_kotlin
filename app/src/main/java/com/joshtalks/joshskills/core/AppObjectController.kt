@@ -401,7 +401,7 @@ class AppObjectController {
             )
         }
 
-        private fun getHostOfUrl(): String {
+        fun getHostOfUrl(): String {
             val aURL = URL(BuildConfig.BASE_URL)
             return aURL.host
         }

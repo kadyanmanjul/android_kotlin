@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/transparent_black_alfa_90">
+        android:background="@color/quantum_black_100">
         <FrameLayout
             android:id="@+id/circle_bg_container"
             android:layout_width="wrap_content"
