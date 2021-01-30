@@ -4,18 +4,27 @@ package com.joshtalks.joshskills.ui.voip.voip_rating
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
+import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.databinding.VoipRatingFragmentBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
+import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +39,9 @@ class VoipRatingFragment : DialogFragment() {
     private var pointsString: String = EMPTY
     private var lastCallTime: Long = 0
 
+    private val practiceViewModel: PracticeViewModel by lazy {
+        ViewModelProvider(this).get(PracticeViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +50,16 @@ class VoipRatingFragment : DialogFragment() {
             channelName = this
         }
         lastCallTime = arguments?.getLong(LAST_VOIP_CALL_TIME) ?: 0
+    }
+
+    private fun addObserver() {
+        practiceViewModel.pointsSnackBarText.observe(
+            this.viewLifecycleOwner,
+            androidx.lifecycle.Observer {
+                if (it.pointsList.isNullOrEmpty().not()) {
+                    showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
+                }
+            })
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -72,6 +94,8 @@ class VoipRatingFragment : DialogFragment() {
             )
         binding.lifecycleOwner = this
         binding.handler = this
+        addObserver()
+        practiceViewModel.getPointsForVocabAndReading(null, channelName = channelName)
         return binding.root
     }
 
@@ -113,8 +137,8 @@ class VoipRatingFragment : DialogFragment() {
                             res.body()!!.awardMentorList!!
                         )
                     }
-                    if(res.body()!!.pointsList.isNullOrEmpty().not()){
-                        PrefManager.put(SPEAKING_POINTS, res.body()!!.pointsList?.get(0).toString())
+                    if (res.body()!!.pointsList.isNullOrEmpty().not()) {
+                        //PrefManager.put(SPEAKING_POINTS, res.body()!!.pointsList?.get(0).toString())
                     }
                 }
                 FullScreenProgressDialog.hideProgressBar(requireActivity())
@@ -126,9 +150,28 @@ class VoipRatingFragment : DialogFragment() {
         }
     }
 
+    fun showSnackBar(view: View, duration: Int, action_lable: String?) {
+        if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+            //SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
+            PointSnackbar.make(view, duration, action_lable)?.show()
+            val mediaplayer: MediaPlayer = MediaPlayer.create(
+                requireActivity(),
+                R.raw.ting
+            ) //You Can Put Your File Name Instead Of abc
+
+            mediaplayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
+                override fun onCompletion(mediaPlayer: MediaPlayer) {
+                    mediaPlayer.reset()
+                    mediaPlayer.release()
+                }
+            })
+            mediaplayer.start()
+        }
+    }
+
     fun exitDialog() {
         val intent = Intent()
-        intent.putExtra("points_list",pointsString)
+        //intent.putExtra("points_list",pointsString)
         requireActivity().setResult(Activity.RESULT_OK, intent)
         requireActivity().finishAndRemoveTask()
     }

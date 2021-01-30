@@ -222,6 +222,16 @@ interface CommonNetworkService {
         @Body params: Map<String, Long>
     ): WordDetailsResponse
 
+    @POST("$DIR/leaderboard/leaderboard_impression/")
+    suspend fun engageLeaderBoardImpressions(
+        @Body params: Map<String, String>
+    ): Void
+
+    @GET("$DIR/reputation/award_render/")
+    suspend fun get3DWebView(
+        @Query("award_mentor_id") awardMentorId: String
+    ): String
+
     @FormUrlEncoded
     @PUT("$DIR/group/voicenote/notification/")
     suspend fun audioPlayed(
@@ -233,6 +243,5 @@ interface CommonNetworkService {
     suspend fun engageUserSession(
         @Body params: HashMap<String, List<AppUsageModel>>
     ): Response<Void>
-
 
 }

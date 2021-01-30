@@ -375,9 +375,9 @@ class PracticeViewModel(application: Application) :
         }
     }
 
-    fun getPointsForVocabAndReading(questionId: String) {
+    fun getPointsForVocabAndReading(questionId: String?,channelName:String?=null) {
         viewModelScope.launch(Dispatchers.IO) {
-            val response = AppObjectController.chatNetworkService.getSnackBarText(questionId)
+            val response = AppObjectController.chatNetworkService.getSnackBarText(questionId,channelName)
             pointsSnackBarText.postValue(response)
         }
     }
