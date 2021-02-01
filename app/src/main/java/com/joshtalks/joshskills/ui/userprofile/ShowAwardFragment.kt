@@ -4,16 +4,28 @@ import android.annotation.TargetApi
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.net.http.SslError
 import android.os.Build
 import android.os.Bundle
+import android.os.Message
+import android.util.Log
 import android.view.Gravity
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.webkit.ClientCertRequest
+import android.webkit.HttpAuthHandler
+import android.webkit.RenderProcessGoneDetail
+import android.webkit.SafeBrowsingResponse
+import android.webkit.SslErrorHandler
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.content.ContextCompat
@@ -174,38 +186,6 @@ class ShowAwardFragment : DialogFragment() {
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
 
-        val descriptionUsingWebView = "<head>\n" +
-                "\n" +
-                "    <title>js-cloudimage-360-view</title>\n" +
-                "\n" +
-                "    <meta charset=\"UTF-8\" />\n" +
-                "\n" +
-                "  </head>\n" +
-                "\n" +
-                "  <body>\n" +
-                "\n" +
-                "    <div\n" +
-                "\n" +
-                "      class=\"cloudimage-360\"\n" +
-                "\n" +
-                "      data-folder=\"https://s3.ap-south-1.amazonaws.com/www.staging.static.joshtalks.com/awards_360/awards_new/\"\n" +
-                "\n" +
-                "      data-filename=\"{index}.png\"\n" +
-                "\n" +
-                "      data-amount=\"91\"\n" +
-                "\n" +
-                "      data-magnifier=\"1\"\n" +
-                "\n" +
-                "      data-full-screen\n" +
-                "\n" +
-                "    ></div>\n" +
-                "\n" +
-                "   \n" +
-                "\n" +
-                "    <script src=\"https://cdn.scaleflex.it/plugins/js-cloudimage-360-view/2/js-cloudimage-360-view.min.js\"></script>\n" +
-                "\n" +
-                "  </body>"
-
         binding.webView.settings.javaScriptEnabled = true
         binding.webView.setBackgroundColor(Color.TRANSPARENT)
         binding.webView.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null)
@@ -221,6 +201,7 @@ class ShowAwardFragment : DialogFragment() {
         binding.webView.getSettings().setJavaScriptEnabled(true) // enable javascript
 
         binding.webView.setWebViewClient(object : WebViewClient() {
+
             override fun onReceivedError(
                 view: WebView?,
                 errorCode: Int,
@@ -248,6 +229,8 @@ class ShowAwardFragment : DialogFragment() {
         val url =
             "http://${getHostOfUrl()}/$DIR/reputation/award_render/?award_mentor_id=${award!!.get(0).id}"
         binding.webView.loadUrl(url)
+        binding.webView.getSettings().setDefaultZoom(WebSettings.ZoomDensity.FAR);
+
 
     }
 
