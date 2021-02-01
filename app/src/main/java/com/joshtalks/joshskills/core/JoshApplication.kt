@@ -51,8 +51,9 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(
                 StrictMode.ThreadPolicy.Builder()
-                    .detectAll()
                     .penaltyLog()
+                    .penaltyDialog()
+                    .detectAll()
                     .build()
             )
             StrictMode.setVmPolicy(
@@ -60,6 +61,7 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
                     .detectLeakedSqlLiteObjects()
                     .detectLeakedClosableObjects()
                     .penaltyLog()
+                    .detectAll()
                     .build()
             )
         }
