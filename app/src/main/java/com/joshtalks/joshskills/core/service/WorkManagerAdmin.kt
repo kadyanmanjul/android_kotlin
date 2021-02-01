@@ -15,27 +15,24 @@ object WorkManagerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .beginWith(
                 mutableListOf(
-                    OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build(),
-                    OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build()
+                    OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build(),
+                    OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build()
                 )
             )
-            //  .then(OneTimeWorkRequestBuilder<EngageToUseAppNotificationWorker>().build())
-            //    .then(OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build())
-//            .then(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
-            //      .then(OneTimeWorkRequestBuilder<InstanceIdGenerationWorker>().build())
-            //     .then(OneTimeWorkRequestBuilder<RegisterUserGAId>().build())
-            .then(OneTimeWorkRequestBuilder<GetVersionAndFlowDataWorker>().build())
-            //   .then(OneTimeWorkRequestBuilder<GenerateGuestUserMentorWorker>().build())
             .then(
                 mutableListOf(
                     OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build(),
                     OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build()
                 )
             )
-            .then(OneTimeWorkRequestBuilder<AppUsageSyncWorker>().build())
+            .then(
+                mutableListOf(
+                    OneTimeWorkRequestBuilder<AppUsageSyncWorker>().build(),
+                    OneTimeWorkRequestBuilder<DeleteUnlockTypeQuestion>().build()
+                )
+            )
             .then(OneTimeWorkRequestBuilder<GenerateRestoreIdWorker>().build())
             .enqueue()
-
     }
 
     fun initGaid(testId: String?, exploreType: String? = null): UUID {
@@ -47,6 +44,7 @@ object WorkManagerAdmin {
             }
         val workRequest = OneTimeWorkRequestBuilder<RegisterGaidV2>()
             .setInputData(data)
+            .setBackoffCriteria(BackoffPolicy.LINEAR, 10, TimeUnit.SECONDS)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
         return workRequest.id
@@ -56,8 +54,7 @@ object WorkManagerAdmin {
     fun requiredTaskAfterLoginComplete() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .beginWith(OneTimeWorkRequestBuilder<WorkerAfterLoginInApp>().build())
-            .then(OneTimeWorkRequestBuilder<RegisterUserGAId>().build())
-            .then(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
+            .then(OneTimeWorkRequestBuilder<PatchUserIdToGAIdV2>().build())
             .then(OneTimeWorkRequestBuilder<MergeMentorWithGAIDWorker>().build())
             .then(
                 mutableListOf(
@@ -67,7 +64,6 @@ object WorkManagerAdmin {
                 )
             )
             .enqueue()
-
     }
 
 
@@ -77,7 +73,7 @@ object WorkManagerAdmin {
             .then(OneTimeWorkRequestBuilder<UserActiveWorker>().build())
             .then(
                 mutableListOf(
-                    OneTimeWorkRequestBuilder<ReferralCodeRefreshWorker>().build(),
+                    //  OneTimeWorkRequestBuilder<ReferralCodeRefreshWorker>().build(),
                     OneTimeWorkRequestBuilder<SyncEngageVideo>().build(),
                     OneTimeWorkRequestBuilder<FeedbackRatingWorker>().build(),
                     OneTimeWorkRequestBuilder<LogAchievementLevelEventWorker>().build(),
@@ -116,6 +112,9 @@ object WorkManagerAdmin {
     }
 
     fun readMessageUpdating() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
         val workRequest = PeriodicWorkRequest.Builder(
             MessageReadPeriodicWorker::class.java,
             30,
@@ -123,6 +122,7 @@ object WorkManagerAdmin {
             PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
             TimeUnit.MILLISECONDS
         )
+            .setConstraints(constraints)
             .setInitialDelay(1, TimeUnit.MINUTES)
             .addTag(MessageReadPeriodicWorker::class.java.simpleName)
             .build()
@@ -137,7 +137,7 @@ object WorkManagerAdmin {
 
     fun refreshFcmToken() {
         val workRequest = PeriodicWorkRequestBuilder<RefreshFCMTokenWorker>(2, TimeUnit.DAYS)
-            .setInitialDelay(5, TimeUnit.MINUTES)
+            .setInitialDelay(20, TimeUnit.MINUTES)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniquePeriodicWork(
             "fcm_refresh",
@@ -155,7 +155,7 @@ object WorkManagerAdmin {
                 else -> workDataOf()
             }
 
-        val workRequest = OneTimeWorkRequestBuilder<RegisterUserGAId>()
+        val workRequest = OneTimeWorkRequestBuilder<PatchUserIdToGAIdV2>()
             .setInputData(data)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)

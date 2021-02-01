@@ -27,11 +27,9 @@ import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
-import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.sinch.verification.PhoneNumberUtils
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
-import retrofit2.HttpException
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -42,6 +40,22 @@ const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
 const val CONVERSATION_ID = "conversation_id"
 const val IS_ACTIVE = "is_active"
 const val LANGUAGE_CODE = "language_code"
+
+class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParameters) :
+    Worker(context, workerParams) {
+    override fun doWork(): Result {
+        try {
+            if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
+                val id = getGoogleAdId(context)
+                PrefManager.put(USER_UNIQUE_ID, id)
+                Branch.getInstance().setIdentity(id)
+            }
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
+        }
+        return Result.success()
+    }
+}
 
 class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
@@ -60,7 +74,6 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
         if (PrefManager.getIntValue(SUBSCRIPTION_TEST_ID) == 0) {
             PrefManager.put(SUBSCRIPTION_TEST_ID, 122)
         }
-        WorkManagerAdmin.deleteUnlockTypeQuestions()
         AppObjectController.getFirebaseRemoteConfig().fetchAndActivate().addOnCompleteListener {
             val disabledVersions =
                 AppObjectController.getFirebaseRemoteConfig()
@@ -72,8 +85,7 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
                     exitProcess(0)
                 }
             }
-            val npsEvent =
-                AppObjectController.getFirebaseRemoteConfig().getString("NPS_EVENT_LIST")
+            val npsEvent = AppObjectController.getFirebaseRemoteConfig().getString("NPS_EVENT_LIST")
             NPSEventModel.setNPSList(npsEvent)
             AppObjectController.firebaseAnalytics.setUserProperty(
                 "App Version",
@@ -87,7 +99,6 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
             PrefManager.put(CALL_RINGTONE_NOT_MUTE, true)
         }
         InstallReferralUtil.installReferrer(context)
-
         return Result.success()
     }
 }
@@ -208,22 +219,6 @@ private fun updateFromLoginResponse(loginResponse: LoginResponse) {
     WorkManagerAdmin.requiredTaskAfterLoginComplete()
 }
 
-class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParameters) :
-    Worker(context, workerParams) {
-
-    override fun doWork(): Result {
-        try {
-            if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
-                val id = getGoogleAdId(context)
-                PrefManager.put(USER_UNIQUE_ID, id)
-                Branch.getInstance().setIdentity(id)
-            }
-        } catch (ex: Throwable) {
-            LogException.catchException(ex)
-        }
-        return Result.success()
-    }
-}
 
 class GetUserConversationWorker(var context: Context, private var workerParams: WorkerParameters) :
     Worker(context, workerParams) {
@@ -292,32 +287,6 @@ class ReferralCodeRefreshWorker(context: Context, workerParams: WorkerParameters
 
 }
 
-class RegisterUserGAId(context: Context, private val workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        try {
-            val requestRegisterGAId = RequestRegisterGAId()
-            requestRegisterGAId.gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
-            requestRegisterGAId.installOn =
-                InstallReferrerModel.getPrefObject()?.installOn ?: (Date().time / 1000)
-            requestRegisterGAId.test =
-                workerParams.inputData.getString("test_id")?.split("_")?.get(1)?.toInt()
-            requestRegisterGAId.utmMedium = InstallReferrerModel.getPrefObject()?.utmMedium ?: EMPTY
-            requestRegisterGAId.utmSource = InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY
-            val exploreType = workerParams.inputData.getString("explore_type")
-            requestRegisterGAId.exploreCardType =
-                if (exploreType?.isNotBlank() == true) ExploreCardType.valueOf(exploreType) else null
-            val resp =
-                AppObjectController.commonNetworkService.registerGAIdAsync(requestRegisterGAId)
-                    .await()
-            PrefManager.put(SERVER_GID_ID, resp.id)
-            PrefManager.put(EXPLORE_TYPE, resp.exploreCardType!!.name, false)
-        } catch (ex: Throwable) {
-            //LogException.catchException(ex)
-        }
-        return Result.success()
-    }
-}
 
 class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
@@ -332,55 +301,11 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
             }
             task.result?.run {
                 PrefManager.put(FCM_TOKEN, this)
+                val fcmResponse = FCMResponse.getInstance()
+                fcmResponse?.apiStatus = ApiRespStatus.POST
+                fcmResponse?.update()
             }
         })
-        return Result.success()
-    }
-}
-
-class MappingGaIDWithMentor(var context: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        if (GaIDMentorModel.getMapObject() == null) {
-            val extras: HashMap<String, String> = HashMap()
-            val obj = GaIDMentorModel()
-            obj.gaID = getGoogleAdId(context)
-            try {
-                extras["id"] = obj.gaID
-                val resp = AppObjectController.commonNetworkService.registerGAIdDetailsAsync(extras)
-                    .await()
-                GaIDMentorModel.update(resp)
-            } catch (ex: HttpException) {
-                if (ex.code() == 400) {
-                    GaIDMentorModel.update(obj)
-                }
-                ex.printStackTrace()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        } else {
-            val obj = GaIDMentorModel.getMapObject()
-            if (obj != null && obj.mapMentorList.isNullOrEmpty() && Mentor.getInstance()
-                    .hasId() && User.getInstance().isVerified
-            ) {
-                try {
-                    val extras: HashMap<String, List<String>> = HashMap()
-                    extras["mentors"] = listOf(Mentor.getInstance().getId())
-                    AppObjectController.commonNetworkService.patchMentorWithGAIdAsync(
-                        obj.gaID,
-                        extras
-                    ).await()
-                    obj.mapMentorList = extras["mentors"]
-                    GaIDMentorModel.update(obj)
-                } catch (ex: HttpException) {
-                    GaIDMentorModel.update(obj)
-                    ex.printStackTrace()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-
-        }
         return Result.success()
     }
 }
@@ -390,35 +315,46 @@ class UploadFCMTokenOnServer(context: Context, workerParams: WorkerParameters) :
     override suspend fun doWork(): Result {
         try {
             val token = PrefManager.getStringValue(FCM_TOKEN)
-            if (token.isEmpty())
+            if (token.isEmpty()) {
                 return Result.success()
-            val data = mutableMapOf(
-                "registration_id" to token,
-                "name" to Utils.getDeviceName(),
-                "device_id" to Utils.getDeviceId(),
-                "active" to "true",
-                "type" to "android"
-            )
-            if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
-                data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
             }
             val fcmResponse = FCMResponse.getInstance()
-            if (Mentor.getInstance()
-                    .hasId() && fcmResponse != null && User.getInstance().isVerified
-            ) {
-                fcmResponse.userId = Mentor.getInstance().getId()
-                AppObjectController.signUpNetworkService.updateFCMToken(
-                    fcmResponse.id, fcmResponse
-                ).await()
-            } else {
-                if (fcmResponse == null) {
-                    val response =
-                        AppObjectController.signUpNetworkService.uploadFCMToken(data).await()
-                    response.update()
+            val status = fcmResponse?.apiStatus ?: ApiRespStatus.EMPTY
+
+            if (ApiRespStatus.PATCH == status) {
+                return Result.success()
+            } else if (ApiRespStatus.POST == status) {
+                val userId = Mentor.getInstance().getId()
+                if (fcmResponse != null && userId.isNotBlank()) {
+                    val data = mutableMapOf("user_id" to userId, "registration_id" to token)
+                    AppObjectController.signUpNetworkService.patchFCMToken(fcmResponse.id, data)
+                    fcmResponse.userId = Mentor.getInstance().getId()
+                    fcmResponse.apiStatus = ApiRespStatus.PATCH
+                    fcmResponse.update()
                 }
+            } else {
+                val data = mutableMapOf(
+                    "registration_id" to token,
+                    "name" to Utils.getDeviceName(),
+                    "device_id" to Utils.getDeviceId(),
+                    "active" to "true",
+                    "type" to "android",
+                    "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID)
+                )
+                val userId = Mentor.getInstance().getId()
+                if (userId.isNotEmpty()) {
+                    data["user_id"] = userId
+                }
+                val response = AppObjectController.signUpNetworkService.postFCMToken(data)
+                response.apiStatus = if (userId.isEmpty()) {
+                    ApiRespStatus.POST
+                } else {
+                    ApiRespStatus.PATCH
+                }
+                response.update()
             }
         } catch (ex: Throwable) {
-            //  LogException.catchException(ex)
+            ex.printStackTrace()
         }
         return Result.success()
     }
@@ -435,10 +371,9 @@ class WorkerAfterLoginInApp(context: Context, workerParams: WorkerParameters) :
 class WorkerInLandingScreen(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
-        InstallReferralUtil.installReferrer(applicationContext)
         AppObjectController.clearDownloadMangerCallback()
         AppAnalytics.updateUser()
-        SyncChatService.syncChatWithServer()
+        //SyncChatService.syncChatWithServer()
         WorkManagerAdmin.readMessageUpdating()
         WorkManagerAdmin.refreshFcmToken()
         return Result.success()
@@ -448,7 +383,6 @@ class WorkerInLandingScreen(context: Context, workerParams: WorkerParameters) :
 class SyncEngageVideo(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
-
         val syncEngageVideoList = mutableListOf<Long>()
         val chatIdList = AppObjectController.appDatabase.videoEngageDao().getAllUnSyncVideo()
         if (chatIdList.isNullOrEmpty().not()) {
@@ -456,7 +390,8 @@ class SyncEngageVideo(context: Context, workerParams: WorkerParameters) :
                 try {
                     AppObjectController.chatNetworkService.engageVideoApiV2(it)
                     syncEngageVideoList.add(it.id)
-                } catch (ex: Exception) {
+                } catch (ex: Throwable) {
+                    ex.printStackTrace()
                 }
             }
             AppObjectController.appDatabase.videoEngageDao()
@@ -584,17 +519,20 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
-            if (User.getInstance().isVerified) {
-                val details =
-                    AppObjectController.signUpNetworkService.postDeviceDetails(
-                        UpdateDeviceRequest()
-                    )
+            val device = DeviceDetailsResponse.getInstance()
+            val status = device?.apiStatus ?: ApiRespStatus.EMPTY
+            if (ApiRespStatus.PATCH == status) {
+                return Result.success()
+            } else if (ApiRespStatus.POST == status) {
+                val details = AppObjectController.signUpNetworkService.postDeviceDetails(
+                    UpdateDeviceRequest(user_id = EMPTY)
+                )
+                //  details.apiStatus=ApiRespStatus.PATCH
                 details.update()
             } else {
                 val details =
-                    AppObjectController.signUpNetworkService.postDeviceDetails(
-                        UpdateDeviceRequest(user_id = EMPTY)
-                    )
+                    AppObjectController.signUpNetworkService.postDeviceDetails(UpdateDeviceRequest())
+                details.apiStatus = ApiRespStatus.POST
                 details.update()
             }
         } catch (ex: Exception) {
@@ -665,7 +603,7 @@ class MergeMentorWithGAIDWorker(context: Context, workerParams: WorkerParameters
                 return Result.success()
             }
             val data = mapOf("mentor" to Mentor.getInstance().getId())
-            AppObjectController.chatNetworkService.mergeMentorWithGAId(id.toString(), data)
+            AppObjectController.commonNetworkService.mergeMentorWithGAId(id.toString(), data)
             PrefManager.removeKey(SERVER_GID_ID)
         } catch (ex: Throwable) {
             LogException.catchException(ex)
@@ -681,21 +619,18 @@ class DeleteUnlockTypeQuestion(context: Context, workerParams: WorkerParameters)
             val listConversationId =
                 AppObjectController.appDatabase.courseDao().getAllConversationId()
             listConversationId.forEach { conversationId ->
-                if (conversationId.isNotBlank()) {
+                val listChatModel = AppObjectController.appDatabase.chatDao()
+                    .getUnlockChatModel(conversationId)
 
-                    val listChatModel = AppObjectController.appDatabase.chatDao()
-                        .getUnlockChatModel(conversationId)
+                if (listChatModel.isNullOrEmpty()) {
+                    return@forEach
+                }
 
-                    if (listChatModel.isNullOrEmpty()) {
-                        return@forEach
-                    }
-
-                    listChatModel.forEach { chatModel ->
-                        chatModel?.let {
-                            if (DateUtils.isToday(it.created.time).not()) {
-                                AppObjectController.appDatabase.chatDao()
-                                    .deleteChatMessage(chatModel)
-                            }
+                listChatModel.forEach { chatModel ->
+                    chatModel?.let {
+                        if (DateUtils.isToday(it.created.time).not()) {
+                            AppObjectController.appDatabase.chatDao()
+                                .deleteChatMessage(chatModel)
                         }
                     }
                 }
@@ -830,13 +765,14 @@ class AppUsageSyncWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
-
             val list = AppObjectController.appDatabase.appUsageDao().getAllSession()
             if (list.isNotEmpty()) {
                 val mentorId = Mentor.getInstance().getId()
-                val gaid = GaIDMentorModel.getMapObject()?.gaID
+                val gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
                 list.listIterator().forEach {
-                    it.mentorId = mentorId
+                    if (mentorId.isNotBlank()) {
+                        it.mentorId = mentorId
+                    }
                     it.gaidId = gaid
                 }
                 val body: HashMap<String, List<AppUsageModel>> = HashMap()
@@ -855,44 +791,75 @@ class AppUsageSyncWorker(context: Context, workerParams: WorkerParameters) :
 
 
 class RegisterGaidV2(var context: Context, var workerParams: WorkerParameters) :
-    ListenableWorker(context, workerParams) {
-    override fun startWork(): ListenableFuture<Result> {
-        return CallbackToFutureAdapter.getFuture { completer ->
-            if (runAttemptCount > 2) {
-                completer.set(Result.failure())
-            }
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        if (runAttemptCount > 2) {
+            return Result.failure()
+        }
+        val obj = RequestRegisterGAId()
+        obj.test = workerParams.inputData.getString("test_id")?.split("_")?.get(1)?.toInt()
 
-            val obj = RequestRegisterGAId()
-            obj.test = workerParams.inputData.getString("test_id")?.split("_")?.get(1)?.toInt()
+        if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
+            val id = getGoogleAdId(context)
+            PrefManager.put(USER_UNIQUE_ID, id)
+        }
+        obj.gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
 
-            InstallReferrerModel.getPrefObject()?.let {
-                obj.installOn = it.installOn
-                obj.utmMedium = it.utmMedium
-                obj.utmSource = it.utmSource
-            }
+        InstallReferrerModel.getPrefObject()?.let {
+            obj.installOn = it.installOn
+            obj.utmMedium = it.utmMedium
+            obj.utmSource = it.utmSource
+        }
 
-            val exploreType = workerParams.inputData.getString("explore_type")
-            if (exploreType.isNullOrEmpty().not()) {
-                obj.exploreCardType = ExploreCardType.valueOf(exploreType!!)
-            }
-
+        val exploreType = workerParams.inputData.getString("explore_type")
+        if (exploreType.isNullOrEmpty().not()) {
+            obj.exploreCardType = ExploreCardType.valueOf(exploreType!!)
+        }
+        try {
             val resp = AppObjectController.commonNetworkService.registerGAIdDetailsV2Async(obj)
-            if (resp.isSuccessful) {
+            return if (resp.isSuccessful) {
                 resp.body()?.run {
                     GaIDMentorModel.update(this)
-                    PrefManager.put(SERVER_GID_ID, gaidDbId)
+                    PrefManager.put(SERVER_GID_ID, gaidServerDbId)
                     PrefManager.put(
                         EXPLORE_TYPE,
                         exploreCardType?.name ?: ExploreCardType.NORMAL.name,
                         false
                     )
-                    PrefManager.put(INSTANCE_ID, instanceId, false)
+                    PrefManager.put(INSTANCE_ID, instanceId)
+                    PrefManager.put(INSTANCE_ID, instanceId, isConsistent = true)
                 }
-                completer.set(Result.success())
+                Result.success()
             } else {
-                completer.set(Result.failure())
+                Result.failure()
             }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            return Result.failure()
         }
+    }
+}
+
+class PatchUserIdToGAIdV2(context: Context, private val workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val obj = GaIDMentorModel.getMapObject()
+            if (obj != null) {
+                val extras: HashMap<String, List<String>> = HashMap()
+                extras["mentors"] = listOf(Mentor.getInstance().getId())
+                val resp = AppObjectController.commonNetworkService.patchMentorWithGAIdAsync(
+                    obj.gaidServerDbId,
+                    extras
+                )
+                if (resp.isSuccessful || resp.code() == 400) {
+                    GaIDMentorModel.update(obj)
+                }
+            }
+        } catch (ex: Throwable) {
+            //LogException.catchException(ex)
+        }
+        return Result.success()
     }
 }
 
