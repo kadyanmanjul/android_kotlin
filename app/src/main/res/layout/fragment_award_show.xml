@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/quantum_black_100">
+        android:background="@color/white">
         <FrameLayout
             android:id="@+id/circle_bg_container"
             android:layout_width="wrap_content"
@@ -39,11 +39,15 @@
 
         <WebView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/web_view"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_300sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
