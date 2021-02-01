@@ -820,6 +820,41 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         conversationBinding.chatEdit.setText(EMPTY)
     }
 
+    private fun slideInAnimation(view: View) {
+        val fromLocattion = IntArray(2)
+        view.getLocationOnScreen(fromLocattion)
+        val animSet = AnimationSet(false)
+        animSet.fillAfter = true
+        animSet.duration = 500
+        //animSet.interpolator = LinearInterpolator()
+        val translate = TranslateAnimation(
+            Animation.ABSOLUTE,  //from xType
+            0f,
+            Animation.ABSOLUTE,  //to xType
+            0f,
+            Animation.ABSOLUTE,  //from yType
+            -view.height.toFloat(),
+            Animation.ABSOLUTE,  //to yType
+            0f
+        )
+
+        animSet.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationEnd(p0: Animation?) {
+                view.visibility = VISIBLE
+            }
+
+            override fun onAnimationStart(p0: Animation?) {
+
+            }
+
+            override fun onAnimationRepeat(p0: Animation?) {
+            }
+        })
+        translate.interpolator = LinearInterpolator()
+        animSet.addAnimation(translate)
+        view.startAnimation(animSet)
+    }
+
     private fun moveViewToScreenCenter(view: View) {
         val fromLocattion = IntArray(2)
         view.getLocationOnScreen(fromLocattion)
@@ -1020,9 +1055,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     private fun initScoreCardView(userData: UserProfileResponse) {
         userData.isPointsActive?.let { isLeaderBoardActive ->
             if (isLeaderBoardActive) {
-                conversationBinding.userPointContainer.visibility = VISIBLE
+                addSlideInAnimationForContainer()
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
-                shiftGroupChatIconDown()
             } else {
                 conversationBinding.userPointContainer.visibility = GONE
                 shiftGroupChatIconUp()
@@ -1038,6 +1072,12 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             showAward(unseenAwards?.toList()!!)
         }
 
+    }
+
+    private fun addSlideInAnimationForContainer() {
+        conversationBinding.userPointContainer.visibility = VISIBLE
+        shiftGroupChatIconDown()
+        slideInAnimation(conversationBinding.userPointContainer)
     }
 
     private fun showGroupChatScreen(groupDetails: GroupDetails) {
