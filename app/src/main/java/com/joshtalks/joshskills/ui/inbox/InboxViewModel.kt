@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.util.ReminderUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -30,16 +31,60 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
 
     var context: JoshApplication = getApplication()
     var appDatabase = AppObjectController.appDatabase
-    val registerCourseMinimalLiveData: MutableLiveData<List<InboxEntity>> = MutableLiveData()
-    val registerCourseNetworkLiveData: MutableLiveData<List<InboxEntity>> = MutableLiveData()
     val reminderApiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val totalRemindersLiveData: MutableLiveData<Int> = MutableLiveData()
     val onBoardingLiveData: MutableLiveData<OnBoardingStatusResponse> = MutableLiveData()
-    val overAllWatchTime: MutableLiveData<Long> = MutableLiveData()
     private val jobs = arrayListOf<Job>()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
     val groupIdLiveData: MutableLiveData<String> = MutableLiveData()
+
+    private val _overAllWatchTime = MutableSharedFlow<Long>(replay = 0)
+    val overAllWatchTime: SharedFlow<Long>
+        get() = _overAllWatchTime
+
+    private val _registerCourseNetworkData = MutableSharedFlow<List<InboxEntity>>(replay = 0)
+    val registerCourseNetworkData: SharedFlow<List<InboxEntity>>
+        get() = _registerCourseNetworkData
+
+    private val _registerCourseLocalData = MutableSharedFlow<List<InboxEntity>>(replay = 0)
+    val registerCourseLocalData: SharedFlow<List<InboxEntity>>
+        get() = _registerCourseLocalData
+
+
+    fun getRegisterCourses() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                getAllRegisterCourseMinimalFromDB()
+                delay(500)
+                getCourseFromServer()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    private fun getAllRegisterCourseMinimalFromDB() = viewModelScope.launch {
+        _registerCourseLocalData.emit(appDatabase.courseDao().getRegisterCourseMinimal())
+    }
+
+    private fun getCourseFromServer() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val courseListResponse =
+                    AppObjectController.chatNetworkService.getRegisteredCourses()
+                if (courseListResponse.isNotEmpty()) {
+                    appDatabase.courseDao().insertRegisterCourses(courseListResponse).let {
+                        _registerCourseNetworkData.emit(
+                            appDatabase.courseDao().getRegisterCourseMinimal()
+                        )
+                    }
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
 
     fun getProfileData(mentorId: String) {
         apiCallStatusLiveData.postValue(ApiCallStatus.START)
@@ -80,40 +125,6 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun getRegisterCourses() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                getAllRegisterCourseMinimalFromDB()
-                delay(800)
-                getCourseFromServer()
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
-    }
-
-    private fun getCourseFromServer() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val courseListResponse =
-                    AppObjectController.chatNetworkService.getRegisteredCourses()
-                if (courseListResponse.isSuccessful) {
-                    if (courseListResponse.body().isNullOrEmpty()) {
-                        registerCourseNetworkLiveData.postValue(null)
-                    } else {
-                        appDatabase.courseDao().insertRegisterCourses(courseListResponse.body()!!)
-                            .let {
-                                registerCourseNetworkLiveData.postValue(
-                                    appDatabase.courseDao().getRegisterCourseMinimal()
-                                )
-                            }
-                    }
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
-    }
 
     fun logInboxEngageEvent() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -129,15 +140,6 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun getAllRegisterCourseMinimalFromDB() = viewModelScope.launch {
-        try {
-            registerCourseMinimalLiveData.postValue(
-                appDatabase.courseDao().getRegisterCourseMinimal()
-            )
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-    }
 
     fun getRemindersFromServer() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -208,10 +210,10 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                     response.body()?.run {
                         onBoardingLiveData.postValue(this)
                         // Update Version Data in local
-                        PrefManager.put(SUBSCRIPTION_TEST_ID, this.SubscriptionTestId)
+                        PrefManager.put(SUBSCRIPTION_TEST_ID, this.subscriptionTestId)
 
                         val versionData = VersionResponse.getInstance()
-                        versionData.version?.let {
+                        versionData.version.let {
                             it.name = this.version.name
                             it.id = this.version.id
                             VersionResponse.update(versionData)
@@ -223,9 +225,9 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                         PrefManager.put(EXPLORE_TYPE, this.exploreType)
                         PrefManager.put(
                             IS_SUBSCRIPTION_STARTED,
-                            this.subscriptionData.isSubscriptionBought ?: false
+                            this.subscriptionData.isSubscriptionBought
                         )
-                        PrefManager.put(IS_TRIAL_STARTED, this.freeTrialData.is7DFTBought ?: false)
+                        PrefManager.put(IS_TRIAL_STARTED, this.freeTrialData.is7DFTBought)
                         PrefManager.put(REMAINING_TRIAL_DAYS, this.freeTrialData.remainingDays)
                         PrefManager.put(
                             REMAINING_SUBSCRIPTION_DAYS,
@@ -242,9 +244,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getTotalWatchTime() {
         viewModelScope.launch {
-            overAllWatchTime.postValue(
-                AppObjectController.appDatabase.videoEngageDao().getOverallWatchTime() ?: 0
-            )
+            _overAllWatchTime.emit(appDatabase.videoEngageDao().getOverallWatchTime() ?: 0L)
         }
     }
 
@@ -259,7 +259,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                         .build()
 
                     CometChat.init(
-                        AppObjectController.joshApplication,
+                        context,
                         BuildConfig.COMETCHAT_APP_ID,
                         appSettings,
                         object : CometChat.CallbackListener<String>() {
@@ -287,19 +287,37 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     private fun loginUser(groupId: String?) {
 
         jobs += viewModelScope.launch(Dispatchers.IO) {
-            if (CometChat.getLoggedInUser() == null) {
-                // User not logged in
-                try {
-                    CometChat.login(
-                        Mentor.getInstance().getId(),
-                        BuildConfig.COMETCHAT_API_KEY,
-                        object : CometChat.CallbackListener<User>() {
-                            override fun onSuccess(p0: User?) {
-                                Timber.d("Login Successful : %s", p0?.toString())
-                                groupId?.let {
-                                    groupIdLiveData.postValue(it)
+            when {
+                CometChat.getLoggedInUser() == null -> {
+                    // User not logged in
+                    try {
+                        CometChat.login(
+                            Mentor.getInstance().getId(),
+                            BuildConfig.COMETCHAT_API_KEY,
+                            object : CometChat.CallbackListener<User>() {
+                                override fun onSuccess(p0: User?) {
+                                    Timber.d("Login Successful : %s", p0?.toString())
+                                    groupId?.let {
+                                        groupIdLiveData.postValue(it)
+                                    }
+                                    registerFCMTokenWithCometChat()
                                 }
-                                registerFCMTokenWithCometChat()
+
+                                override fun onError(p0: CometChatException?) {
+                                    Timber.d("loginUser failed with exception: %s", p0?.message)
+                                }
+
+                            })
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                }
+                CometChat.getLoggedInUser().uid != Mentor.getInstance().getId() -> {
+                    // Any other user is logged in. So we have to logout first
+                    try {
+                        CometChat.logout(object : CometChat.CallbackListener<String>() {
+                            override fun onSuccess(p0: String?) {
+                                loginUser(groupId)
                             }
 
                             override fun onError(p0: CometChatException?) {
@@ -307,31 +325,17 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                             }
 
                         })
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
                 }
-            } else if (CometChat.getLoggedInUser().uid != Mentor.getInstance().getId()) {
-                // Any other user is logged in. So we have to logout first
-                try {
-                    CometChat.logout(object : CometChat.CallbackListener<String>() {
-                        override fun onSuccess(p0: String?) {
-                            loginUser(groupId)
-                        }
-
-                        override fun onError(p0: CometChatException?) {
-                            Timber.d("loginUser failed with exception: %s", p0?.message)
-                        }
-
-                    })
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
+                else -> {
+                    // User already logged in
+                    groupId?.let {
+                        groupIdLiveData.postValue(it)
+                    }
+                    registerFCMTokenWithCometChat()
                 }
-            } else {
-                // User already logged in
-                groupId?.let {
-                    groupIdLiveData.postValue(it)
-                }
-                registerFCMTokenWithCometChat()
             }
         }
     }
