@@ -39,15 +39,15 @@ import id.zelory.compressor.Compressor
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.io.File
+import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import timber.log.Timber
-import java.io.File
-import java.util.*
-import java.util.concurrent.TimeUnit
 
 
 class ConversationViewModel(application: Application) :
@@ -242,18 +242,14 @@ class ConversationViewModel(application: Application) :
             if (chatList.isEmpty()) {
                 addNewLesson(lessonModel, chatList, chat)
             } else {
-                val lastChatModelInList = chatList.last()
-                if (lastChatModelInList.type != BASE_MESSAGE_TYPE.LESSON) {
-                    //Check if last chat in the current list is a lesson
+                //Check if list already constains chat with this lesson id
+                val lessonPosition =
+                    chatList.indexOfLast { chatModel -> chatModel.lessonId == lessonModel.id }
+                if (lessonPosition == -1) {
                     //if its not then we create a new chat object with same data as current chat obejct but chane type to Lesson and add it to list
                     addNewLesson(lessonModel, chatList, chat)
                 } else {
-                    if (lastChatModelInList.lessonId != lessonModel.id) {
-                        //checking wheather last chat and current chat belong to same lesson. No
-                        addNewLesson(lessonModel, chatList, chat)
-                    } else {
-                        // it means last chat and current chat belong to same lesson. add current chat to last lesson
-                    }
+                    chatList.add(lessonPosition, chat)
                 }
             }
         } else {
@@ -263,13 +259,14 @@ class ConversationViewModel(application: Application) :
 
     }
 
-    fun addNewLesson(
+    private fun addNewLesson(
         lessonModel: LessonModel,
         chatList: MutableList<ChatModel>,
         chat: ChatModel
     ) {
         chat.type = BASE_MESSAGE_TYPE.LESSON
         chat.lessons = lessonModel
+        chat.lessonId = lessonModel.id
         chatList.add(chat)
     }
 

@@ -115,7 +115,6 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         lessonInterval = intent.getIntExtra(LESSON_INTERVAL, -1)
         chatId = intent.getStringExtra(LESSON__CHAT_ID)
 
-
         titleView = findViewById(R.id.text_message_title)
         val helpIv: ImageView = findViewById(R.id.iv_help)
 
@@ -133,24 +132,24 @@ class DayWiseCourseActivity : CoreJoshActivity(),
     }
 
     private fun setObservers() {
-        viewModel.chatObservableLiveData.observe(this, {
-            courseId = it.getOrNull(0)?.question?.course_id
-            conversastionId = it.getOrNull(0)?.conversationId
+        viewModel.chatObservableLiveData.observe(this, { chatModel ->
+            courseId = chatModel.getOrNull(0)?.question?.course_id
+            conversastionId = chatModel.getOrNull(0)?.conversationId
 
-            lessonModel = it.getOrNull(0)?.question?.lesson
+            lessonModel = chatModel.getOrNull(0)?.question?.lesson
             if (lessonModel?.lessonNo ?: 0 >= 2) {
                 PrefManager.put(LESSON_TWO_OPENED, true)
             }
             lessonStatus = lessonModel?.status ?: LESSON_STATUS.NO
             titleView.text =
-                getString(R.string.lesson_no, it.getOrNull(0)?.question?.lesson?.lessonNo)
+                getString(R.string.lesson_no, chatModel.getOrNull(0)?.question?.lesson?.lessonNo)
 
             val grammarQuestions: ArrayList<ChatModel> = ArrayList()
             val vocabularyQuestions: ArrayList<ChatModel> = ArrayList()
             val readingQuestions: ArrayList<ChatModel> = ArrayList()
             val speakingQuestions: ArrayList<ChatModel> = ArrayList()
 
-            it.forEach {
+            chatModel.forEach {
                 when (it.question?.chatType) {
                     CHAT_TYPE.GR -> {
                         grammarQuestions.add(it)
@@ -174,7 +173,13 @@ class DayWiseCourseActivity : CoreJoshActivity(),
             setUpTablayout()
 
             viewModel.getLessonModelLiveData(lessonId).observe(this, {
+                lessonModel = it
                 if (it != null) {
+                    lessonCompleted = it.grammarStatus == LESSON_STATUS.CO &&
+                            it.vocabStatus == LESSON_STATUS.CO &&
+                            it.readingStatus == LESSON_STATUS.CO &&
+                            it.speakingStatus == LESSON_STATUS.CO
+
                     setTabCompletionStatus(tabs.getChildAt(0), it.grammarStatus == LESSON_STATUS.CO)
                     setTabCompletionStatus(tabs.getChildAt(1), it.vocabStatus == LESSON_STATUS.CO)
                     setTabCompletionStatus(tabs.getChildAt(2), it.readingStatus == LESSON_STATUS.CO)
@@ -302,7 +307,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         })
 
         Handler().postDelayed({
-            openInCompleteTab(sectionWiseChatList)
+            openInCompleteTab(3)
         }, 50)
     }
 
@@ -316,20 +321,48 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         }
     }
 
-    private fun openInCompleteTab(sectionWiseChatList: ArrayList<ArrayList<ChatModel>>) {
-        var isTabOpened = false
-        sectionWiseChatList.forEachIndexed { index, sectionChats ->
-            sectionChats.forEach {
-                if (it.question?.status == QUESTION_STATUS.NA) {
-                    onNextTabCall(index)
-                    isTabOpened = true
-                    return
+    private fun openInCompleteTab(currentTabNumber: Int) {
+        var i = currentTabNumber + 1
+        while (i != currentTabNumber) {
+            if (i == 4) {
+                i = 0
+            } else {
+                when (i) {
+                    0 ->
+                        if (lessonModel?.grammarStatus != LESSON_STATUS.CO) {
+                            binding.lessonViewpager.currentItem = 0
+                            return
+                        } else {
+                            i++
+                            continue
+                        }
+                    1 ->
+                        if (lessonModel?.vocabStatus != LESSON_STATUS.CO) {
+                            binding.lessonViewpager.currentItem = 1
+                            return
+                        } else {
+                            i++
+                            continue
+                        }
+                    2 ->
+                        if (lessonModel?.readingStatus != LESSON_STATUS.CO) {
+                            binding.lessonViewpager.currentItem = 2
+                            return
+                        } else {
+                            i++
+                            continue
+                        }
+                    3 ->
+                        if (lessonModel?.speakingStatus != LESSON_STATUS.CO) {
+                            binding.lessonViewpager.currentItem = 3
+                            return
+                        } else {
+                            i++
+                            continue
+                        }
                 }
             }
         }
-
-        if (isTabOpened.not())
-            onNextTabCall(sectionWiseChatList.size - 1)
     }
 
     private fun setUnselectedColor(tab: TabLayout.Tab?) {
@@ -386,9 +419,12 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun onNextTabCall(tabNumber: Int) {
+    override fun onNextTabCall(currentTabNumber: Int) {
         try {
-            binding.lessonViewpager.currentItem = tabNumber
+            if (lessonCompleted) {
+                onContinueClick()
+            } else
+                openInCompleteTab(currentTabNumber)
         } catch (e: Exception) {
             e.printStackTrace()
         }
