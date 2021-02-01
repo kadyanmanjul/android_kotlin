@@ -18,7 +18,9 @@ data class PointsHistoryDate(
     @SerializedName("points_history_list")
     val pointsHistoryList: List<PointsHistory>?,
     @SerializedName("points_sum")
-    val pointsSum: Int?
+    val pointsSum: Int?,
+    @SerializedName("award_url_list")
+    val awardIconList: List<String> = arrayListOf()
 )
 
 data class PointsHistory(
