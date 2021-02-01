@@ -66,6 +66,7 @@ class PointsHistoryActivity : BaseActivity() {
                         PointsSummaryTitleViewHolder(
                             list.date!!,
                             list.pointsSum,
+                            list.awardIconList,
                             index
                         )
                     )

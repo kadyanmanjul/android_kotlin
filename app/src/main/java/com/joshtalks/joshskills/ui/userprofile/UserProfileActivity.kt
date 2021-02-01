@@ -241,7 +241,9 @@ class UserProfileActivity : BaseActivity() {
                         delay(10)
                     }
                 }
-                binding.points.text = DecimalFormat("#,##,##,###").format(userData.points)
+                AppObjectController.uiHandler.post {
+                    binding.points.text = DecimalFormat("#,##,##,###").format(userData.points)
+                }
             }
         }
         //binding.points.text = DecimalFormat("#,##,##,###").format(userData.points)
