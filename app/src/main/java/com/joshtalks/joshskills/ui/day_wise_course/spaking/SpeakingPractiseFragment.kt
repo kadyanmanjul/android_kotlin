@@ -108,7 +108,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
             startPractise()
         }
         btn_continue.setOnClickListener {
-            activityCallback?.onContinueClick()
+            activityCallback?.onNextTabCall(3)
         }
         speakingTopicModelLiveData.observe(viewLifecycleOwner, { response ->
             try {

@@ -3,7 +3,20 @@ package com.joshtalks.joshskills.repository.local.entity
 //import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
 import android.os.Parcelable
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.Index
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.PrimaryKey
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.TypeConverters
+import androidx.room.Update
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
@@ -14,9 +27,9 @@ import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagem
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
 import com.joshtalks.joshskills.util.RandomString
+import java.util.Date
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
-import java.util.*
 
 @Parcelize
 @Entity(tableName = "chat_table", indices = [Index(value = ["chat_id", "conversation_id"])])
@@ -269,11 +282,11 @@ data class Question(
         ConvectorForEngagement::class
     )
     @ColumnInfo(name = "practice_engagements")
-    // @SerializedName("practice_engagements")
+    @SerializedName("practice_engagements")
     var practiceEngagement: List<PracticeEngagement>? = emptyList(),
 
     @Ignore
-    @SerializedName("practice_engagements")
+//    @SerializedName("practice_engagements")
     var practiseEngagementV2: List<PracticeEngagementV2>? = emptyList(),
 
     ) : Parcelable

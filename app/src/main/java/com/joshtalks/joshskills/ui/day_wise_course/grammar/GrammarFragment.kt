@@ -584,7 +584,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
     }
 
     fun onGrammarContinueClick() {
-        activityCallback?.onNextTabCall(1)
+        activityCallback?.onNextTabCall(0)
     }
 
     fun onRedoQuizClick() {

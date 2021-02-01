@@ -32,11 +32,11 @@ import com.joshtalks.joshskills.ui.translation.LanguageTranslationDialog
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.*
 
 class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
 
@@ -222,7 +222,7 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
     }
 
     override fun onContinue() {
-        activityCallback?.onNextTabCall(3)
+        activityCallback?.onNextTabCall(2)
     }
 
     override fun onPracticeSubmitted() {

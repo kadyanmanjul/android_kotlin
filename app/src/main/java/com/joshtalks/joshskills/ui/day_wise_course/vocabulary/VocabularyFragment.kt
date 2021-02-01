@@ -217,7 +217,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     }
 
     fun onContinueClick() {
-        activityCallback?.onNextTabCall(2)
+        activityCallback?.onNextTabCall(1)
     }
 
     fun onCloseDialog() {
@@ -243,6 +243,9 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                 currentChatModel = chatModel
                 chatModel.question!!.status = QUESTION_STATUS.IP
                 practiceViewModel.getPointsForVocabAndReading(chatModel.question?.questionId!!)
+                onQuestionSubmitted(chatModel)
+                openNextScreen()
+
                 CoroutineScope(Dispatchers.Main).launch {
                     val requestEngage = RequestEngage()
 //                requestEngage.text = binding.etPractise.text.toString()
@@ -257,8 +260,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                     }
                     delay(1000)
                     practiceViewModel.addTaskToService(requestEngage)
-                    onQuestionSubmitted(chatModel)
-                    openNextScreen()
+
                 }
                 return true
             }
