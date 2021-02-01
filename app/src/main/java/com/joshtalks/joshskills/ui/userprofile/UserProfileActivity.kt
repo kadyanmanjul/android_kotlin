@@ -4,22 +4,17 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.ScrollView
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.github.dhaval2404.imagepicker.ImagePicker
-import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -33,10 +28,6 @@ import com.joshtalks.joshskills.repository.server.AwardCategory
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -45,6 +36,7 @@ import java.util.*
 import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -232,8 +224,24 @@ class UserProfileActivity : BaseActivity() {
         binding.userName.text = resp
         binding.userAge.text = userData.age.toString()
         binding.joinedOn.text = userData.joinedOn
-
-        binding.points.text = DecimalFormat("#,##,##,###").format(userData.points)
+        userData.points?.let {
+            var incrementalPoints = 0
+            val incrementalValue = it.div(50)
+            CoroutineScope(Dispatchers.IO).launch {
+                if (incrementalValue > 0) {
+                    while (incrementalPoints <= it) {
+                        AppObjectController.uiHandler.post {
+                            binding.points.text =
+                                DecimalFormat("#,##,##,###").format(incrementalPoints)
+                        }
+                        incrementalPoints = incrementalPoints.plus(incrementalValue)
+                        delay(10)
+                    }
+                }
+                binding.points.text = DecimalFormat("#,##,##,###").format(userData.points)
+            }
+        }
+        //binding.points.text = DecimalFormat("#,##,##,###").format(userData.points)
         binding.streaksText.text = getString(R.string.user_streak_text, userData.streak)
 
         if (userData.awardCategory.isNullOrEmpty()) {

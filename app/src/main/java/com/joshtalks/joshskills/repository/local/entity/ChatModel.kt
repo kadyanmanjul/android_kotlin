@@ -269,11 +269,11 @@ data class Question(
         ConvectorForEngagement::class
     )
     @ColumnInfo(name = "practice_engagements")
-    // @SerializedName("practice_engagements")
+     @SerializedName("practice_engagements")
     var practiceEngagement: List<PracticeEngagement>? = emptyList(),
 
     @Ignore
-    @SerializedName("practice_engagements")
+    //@SerializedName("practice_engagements")
     var practiseEngagementV2: List<PracticeEngagementV2>? = emptyList(),
 
     ) : Parcelable
