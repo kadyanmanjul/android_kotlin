@@ -6,14 +6,12 @@ import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.text.SpannableString
-import android.text.style.UnderlineSpan
 import android.view.View
+import android.view.animation.OvershootInterpolator
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
+import com.google.android.gms.location.LocationRequest
 import com.cometchat.pro.constants.CometChatConstants
 import com.facebook.share.internal.ShareConstants.ACTION_TYPE
 import com.google.android.material.snackbar.Snackbar
@@ -21,13 +19,10 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.MINIMUM_TIME_TO_SHOW_REVIEW
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.inapp_update.Constants
-import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
-import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
-import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
+import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
+import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
@@ -38,23 +33,18 @@ import com.joshtalks.joshskills.repository.local.eventbus.OpenLeaderBoardEventBu
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
-import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.SubscriptionData
-import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
-import com.joshtalks.joshskills.ui.groupchat.constant.StringContract
-import com.joshtalks.joshskills.ui.groupchat.messagelist.CometChatMessageListActivity
+import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.ui.inbox.extra.TopTrialTooltipView
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
-import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.util.FileUploadService
 import com.karumi.dexter.Dexter
@@ -66,18 +56,20 @@ import io.agora.rtc.RtcEngine
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.find_more_layout.*
+import kotlinx.android.synthetic.main.fragment_listen_practise.*
 import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
-const val COURSE_EXPLORER_NEW = 2008
 const val COURSE_EXPLORER_WITHOUT_CODE = 2003
 const val PAYMENT_FOR_COURSE_CODE = 2004
 const val REQ_CODE_VERSION_UPDATE = 530
@@ -86,48 +78,44 @@ const val TRIAL_COURSE_ID = "76"
 const val SUBSCRIPTION_COURSE_ID = "60"
 const val IS_FROM_NEW_ONBOARDING = "is_from_new_on_boarding_flow"
 
-class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.InAppUpdateHandler {
+class InboxActivity : InboxBaseActivity(), LifecycleObserver {
 
-    private val viewModel: InboxViewModel by lazy {
-        ViewModelProvider(this).get(InboxViewModel::class.java)
-    }
+    private var popupMenu: PopupMenu? = null
     private var compositeDisposable = CompositeDisposable()
-    private var inAppUpdateManager: InAppUpdateManager? = null
     private lateinit var findMoreLayout: View
     lateinit var countdown_timer: CountDownTimer
     var isRunning: Boolean = false
-    var isFromOnBoarding: Boolean = false
     var time_in_milli_seconds = 0L
     var expiryToolText: String = EMPTY
-    private lateinit var popupMenu: PopupMenu
+    private val courseListSet: MutableSet<InboxEntity> = hashSetOf()
+    private val inboxAdapter: InboxAdapter by lazy { InboxAdapter(this) }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         super.onCreate(savedInstanceState)
-        var groupId: String? = null
-        if (intent != null && intent.hasExtra(StringContract.IntentStrings.GUID)) {
-            groupId = intent.getStringExtra(StringContract.IntentStrings.GUID)
-            viewModel.groupIdLiveData.observe(this, Observer {
-                startActivity(
-                    Intent(applicationContext, CometChatMessageListActivity::class.java).apply {
-                        putExtra(HAS_NOTIFICATION, true)
-                        putExtra(StringContract.IntentStrings.GUID, it)
-                        putExtra(
-                            StringContract.IntentStrings.TYPE,
-                            CometChatConstants.RECEIVER_TYPE_GROUP
-                        )
-                    }
-                )
-            })
-        }
-        viewModel.initCometChat(groupId)
+        /*  if (intent != null && intent.hasExtra(StringContract.IntentStrings.GUID)) {
+              val groupId = intent.getStringExtra(StringContract.IntentStrings.GUID)
+              viewModel.groupIdLiveData.observe(this, Observer {
+                  startActivity(
+                      Intent(applicationContext, CometChatMessageListActivity::class.java).apply {
+                          putExtra(HAS_NOTIFICATION, true)
+                          putExtra(StringContract.IntentStrings.GUID, it)
+                          putExtra(
+                              StringContract.IntentStrings.TYPE,
+                              CometChatConstants.RECEIVER_TYPE_GROUP
+                          )
+                      }
+                  )
+              })
+              viewModel.initCometChat(groupId)
+          }*/
         AppObjectController.isSettingUpdate = false
         lifecycle.addObserver(this)
         setContentView(R.layout.activity_inbox)
-        setToolbar()
+        initView()
         addLiveDataObservable()
-        checkAppUpdate()
         viewModel.updateSubscriptionStatus()
         workInBackground()
         handelIntentAction()
@@ -138,35 +126,87 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     }
 
-    private fun initNewUserTip() {
-        if (isFromOnBoarding) {
-            val boolean = AppObjectController.getFirebaseRemoteConfig()
-                .getBoolean(FirebaseRemoteConfigKey.SHOW_BB_TOOL_TIP_FIRST_TIME)
-            if (boolean) {
-                new_user_layout.visibility = View.VISIBLE
-                hint_text.text = AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_FIRST_TIME_TEXT)
-                val content = SpannableString(
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_FIRST_TIME_BTN_TEXT)
-                )
-                content.setSpan(UnderlineSpan(), 0, content.length, 0)
-                text_btn.text = content
-                new_user_layout.setOnClickListener {
-                    logEvent(AnalyticsEvent.BLANK_INBOX_SCREEN_CLICKED.NAME)
-                    new_user_layout.visibility = View.GONE
-                    viewModel.logInboxEngageEvent()
-                }
-                text_btn.setOnClickListener {
-                    logEvent(AnalyticsEvent.OK_GOT_IT_CLICKED.NAME)
-                    new_user_layout.visibility = View.GONE
-                    viewModel.logInboxEngageEvent()
-                }
-            }
+    private fun initView() {
+        text_message_title.text = getString(R.string.inbox_header)
+        iv_reminder.visibility = View.GONE
+        iv_setting.visibility = View.VISIBLE
+        findMoreLayout = findViewById(R.id.parent_layout)
+        recycler_view_inbox.adapter = inboxAdapter
+        recycler_view_inbox.itemAnimator?.apply {
+            addDuration = 2000
+            changeDuration = 2000
         }
+        recycler_view_inbox.itemAnimator = SlideInUpAnimator(OvershootInterpolator(2f))
+        recycler_view_inbox.layoutManager = SmoothLinearLayoutManager(applicationContext)
+        recycler_view_inbox.addItemDecoration(
+            LayoutMarginDecoration(
+                Utils.dpToPx(
+                    applicationContext,
+                    6f
+                )
+            )
+        )
+
+
+        iv_setting.setOnClickListener {
+            openPopupMenu(it)
+        }
+        find_more.setOnClickListener {
+            courseExploreClick()
+        }
+        txtConvert.setOnClickListener {
+            logEvent(AnalyticsEvent.CONVERT_CLICKED.name)
+            PaymentSummaryActivity.startPaymentSummaryActivity(
+                this, PrefManager.getIntValue(SUBSCRIPTION_TEST_ID).toString()
+            )
+        }
+        txtConvert2.setOnClickListener {
+            overlay_layout.visibility = View.GONE
+            logEvent(AnalyticsEvent.CONVERT_CLICKED.name)
+            PaymentSummaryActivity.startPaymentSummaryActivity(
+                this, PrefManager.getIntValue(SUBSCRIPTION_TEST_ID).toString()
+            )
+        }
+        overlay_layout.setOnClickListener {
+            overlay_layout.visibility = View.GONE
+        }
+
+
     }
 
-    private fun showExpiryTimeToolTip() {
+    private fun openPopupMenu(view: View) {
+        if (popupMenu == null) {
+            popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
+            popupMenu?.inflate(R.menu.more_options_menu)
+            popupMenu?.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.menu_referral -> {
+                        AppAnalytics
+                            .create(AnalyticsEvent.REFER_BUTTON_CLICKED.NAME)
+                            .addBasicParam()
+                            .addUserDetails()
+                            .addParam(
+                                AnalyticsEvent.REFERRAL_CODE.NAME,
+                                Mentor.getInstance().referralCode
+                            )
+                            .push()
+                        ReferralActivity.startReferralActivity(this@InboxActivity)
+                        return@setOnMenuItemClickListener true
+                    }
+                    R.id.menu_help -> {
+                        openHelpActivity()
+                    }
+                    R.id.menu_settings ->
+                        openSettingActivity()
+                }
+                return@setOnMenuItemClickListener false
+            }
+        }
+        popupMenu?.show()
+    }
+
+
+    override fun showExpiryTimeToolTip() {
         expiry_tool_tip.visibility = View.VISIBLE
         startThreadForTextUpdate()
     }
@@ -228,126 +268,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         expiry_tool_tip_text.text = "${expiryToolText.plus(SINGLE_SPACE)}$time"
     }
 
-    private fun updateSubscriptionTipView(
-        exploreType: ExploreCardType,
-        showTooltip1: Boolean,
-        showTooltip2: Boolean
-    ) {
-        if (PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED).not()) {
-            when (exploreType) {
-                ExploreCardType.FREETRIAL -> {
-                    subscriptionTipContainer.visibility = View.VISIBLE
 
-                    val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS)
-                    if (remainingTrialDays in 0..7 && showTooltip1) {
-                        showToolTipBelowFindMoreCourse(remainingTrialDays)
-                    }
-                    if (remainingTrialDays in 0..4 && showTooltip2) {
-                        showExpiryTimeToolTip()
-                    }
-                    txtSubscriptionTip.isSelected = true
-                    when {
-                        remainingTrialDays <= 0 -> {
-                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY7)
-                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY7)
-                        }
-
-                        remainingTrialDays == 1 -> {
-                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY6)
-                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY6)
-
-                        }
-
-                        remainingTrialDays == 2 -> {
-                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY5)
-                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY5)
-
-                        }
-
-                        remainingTrialDays == 3 -> {
-                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY4)
-                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY4)
-
-                        }
-
-                        remainingTrialDays == 4 -> {
-                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY3)
-                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY3)
-                        }
-
-                        remainingTrialDays == 5 -> {
-                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY2)
-                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY2)
-                        }
-
-                        remainingTrialDays == 6 -> {
-                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY1)
-                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY1)
-                        }
-
-                        remainingTrialDays > 6 -> {
-                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY0)
-                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY0)
-                        }
-                    }
-                }
-
-                ExploreCardType.FFCOURSE -> {
-                    subscriptionTipContainer.visibility = View.VISIBLE
-                    viewModel.registerCourseNetworkLiveData.value?.let {
-                        txtSubscriptionTip.text = if (it.size > 1) {
-                            AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_NORMAL_TIP)
-                        } else {
-                            AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_FFCOURSE_TIP)
-                        }
-                        txtSubscriptionTip2.text = if (it.size > 1) {
-                            AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_NORMAL_TIP)
-                        } else {
-                            AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_FFCOURSE_TIP)
-                        }
-                    }
-                }
-
-                ExploreCardType.NORMAL -> {
-                    subscriptionTipContainer.visibility = View.VISIBLE
-                    viewModel.registerCourseNetworkLiveData.value?.let {
-                        txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_NORMAL_TIP)
-                        txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_NORMAL_TIP)
-                    }.run {
-                        subscriptionTipContainer.visibility = View.GONE
-                    }
-                }
-
-            }
-        } else {
-            subscriptionTipContainer.visibility = View.GONE
-        }
-
-    }
-
-    private fun showToolTipBelowFindMoreCourse(remainingTrialDays: Int) {
+    override fun showToolTipBelowFindMoreCourse(remainingTrialDays: Int) {
         bb_tip_below_find_btn.visibility = View.VISIBLE
         (bb_tip_below_find_btn as TopTrialTooltipView).setFindMoreCourseTipText(remainingTrialDays)
     }
@@ -375,158 +297,27 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
     }
 
-    private fun showInAppReview() {
-        val manager = ReviewManagerFactory.create(this)
-        val request = manager.requestReviewFlow()
-        request.addOnCompleteListener { request ->
-            if (request.isSuccessful) {
-                // We got the ReviewInfo object
-                val reviewInfo = request.result
-                val flow = manager.launchReviewFlow(this@InboxActivity, reviewInfo)
-                flow.addOnCompleteListener { result ->
-
-                    println("result = [${result.isSuccessful}]")
-                    result.exception?.printStackTrace()
-                }
-            }
-        }
-    }
-
-    private fun setToolbar() {
-        iv_reminder.visibility = View.GONE
-        iv_setting.visibility = View.VISIBLE
-        text_message_title.text = getString(R.string.inbox_header)
-        findMoreLayout = findViewById(R.id.parent_layout)
-        if (isGuestUser()) {
-            if (VersionResponse.getInstance().hasVersion()) {
-                when (VersionResponse.getInstance().version!!.name) {
-                    ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V7, ONBOARD_VERSIONS.ONBOARDING_V8 -> {
-                        find_more.setOnClickListener {
-                            AppAnalytics.create(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
-                                .addBasicParam()
-                                .addUserDetails()
-                                .push()
-                            RxBus2.publish(ExploreCourseEventBus())
-                        }
-                    }
-                    ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V5, ONBOARD_VERSIONS.ONBOARDING_V6 -> {
-                        find_more.text = getString(R.string.add_more_courses)
-                        find_more.setOnClickListener {
-                            AppAnalytics.create(AnalyticsEvent.ADD_MORE_COURSE_CLICKED.NAME)
-                                .addBasicParam()
-                                .addUserDetails()
-                                .addParam(
-                                    "version",
-                                    VersionResponse.getInstance().version?.name.toString()
-                                )
-                                .push()
-                            if (PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED) && PrefManager.getBoolValue(
-                                    IS_SUBSCRIPTION_ENDED
-                                ).not()
-                            ) {
-                                openCourseExplorer()
-                            } else {
-                                openCourseSelectionExplorer(true)
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            find_more.setOnClickListener {
-                AppAnalytics.create(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
-                    .addBasicParam()
-                    .addUserDetails()
-                    .push()
-                RxBus2.publish(ExploreCourseEventBus())
-            }
-        }
-        findViewById<View>(R.id.iv_setting).setOnClickListener {
-            openPopupMenu(it)
-        }
-    }
-
-    private fun openPopupMenu(view: View) {
-        popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
-        popupMenu.inflate(R.menu.more_options_menu)
-        popupMenu.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.menu_referral -> {
-                    AppAnalytics
-                        .create(AnalyticsEvent.REFER_BUTTON_CLICKED.NAME)
-                        .addBasicParam()
-                        .addUserDetails()
-                        .addParam(
-                            AnalyticsEvent.REFERRAL_CODE.NAME,
-                            Mentor.getInstance().referralCode
-                        )
-                        .push()
-                    ReferralActivity.startReferralActivity(
-                        this@InboxActivity,
-                        InboxActivity::class.java.name
-                    )
-                    return@setOnMenuItemClickListener true
-                }
-                R.id.menu_help -> {
-                    openHelpActivity()
-                }
-                R.id.menu_settings ->
-                    openSettingActivity()
-            }
-            return@setOnMenuItemClickListener false
-        }
-        popupMenu.show()
-    }
 
     private fun openSettingActivity() {
         openSettingActivity.launch(SettingsActivity.getIntent(this))
     }
 
     private fun workInBackground() {
-        CoroutineScope(Dispatchers.Default).launch {
+        lifecycleScope.launchWhenCreated {
             processIntent(intent)
             WorkManagerAdmin.determineNPAEvent()
-        }
-        when {
-            /*  PrefManager.getBoolValue(BETTERY_OPTIMIZATION_ALREADY_ASKED).not() -> {
-                  PowerManagers.checkIgnoreBatteryOptimization(this)
-                  PrefManager.put(BETTERY_OPTIMIZATION_ALREADY_ASKED, true)
-              }*/
-            NPSEventModel.getCurrentNPA() != null -> {
-                showNetPromoterScoreDialog()
-            }
-
-            else -> {
-                viewModel.registerCourseMinimalLiveData.value?.run {
-                    if (this.isNotEmpty()) {
+            checkInAppUpdate()
+            when {
+                NPSEventModel.getCurrentNPA() != null -> {
+                    showNetPromoterScoreDialog()
+                }
+                else -> {
+                    if (courseListSet.isNotEmpty()) {
                         locationFetch()
                     }
                 }
             }
         }
-    }
-
-
-    private fun checkAppUpdate() {
-        val forceUpdateMinVersion =
-            AppObjectController.getFirebaseRemoteConfig().getLong("force_upgrade_after_version")
-        val forceUpdateFlag =
-            AppObjectController.getFirebaseRemoteConfig().getBoolean("update_force")
-        val currentAppVersion = com.joshtalks.joshskills.BuildConfig.VERSION_CODE
-        var updateMode = Constants.UpdateMode.FLEXIBLE
-
-        if (currentAppVersion <= forceUpdateMinVersion && forceUpdateFlag) {
-            updateMode = Constants.UpdateMode.IMMEDIATE
-        }
-        inAppUpdateManager = InAppUpdateManager.Builder(this, REQ_CODE_VERSION_UPDATE)
-            .resumeUpdates(true)
-            .mode(updateMode)
-            .useCustomNotification(false)
-            .snackBarMessage(getString(R.string.update_message))
-            .snackBarAction(getString(R.string.restart))
-            .handler(this)
-
-        inAppUpdateManager?.checkForAppUpdate()
     }
 
 
@@ -537,22 +328,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         handelIntentAction()
     }
 
-    private fun handelIntentAction() {
-        if (intent != null && intent.hasExtra(ACTION_TYPE)) {
-            val obj = intent.getSerializableExtra(ACTION_TYPE) as NotificationAction?
-            obj?.let {
-                if (NotificationAction.ACTION_UP_SELLING_POPUP == it) {
-                    showPromotionScreen(
-                        intent.getStringExtra(COURSE_ID)!!,
-                        intent.getStringExtra(ARG_PLACEHOLDER_URL)!!
-                    )
-                }
-            }
-        }
-        if (intent != null && intent.hasExtra(IS_FROM_NEW_ONBOARDING)) {
-            isFromOnBoarding = intent.getBooleanExtra(IS_FROM_NEW_ONBOARDING, false)
-        }
-    }
 
     private fun locationFetch() {
         if (Mentor.getInstance().getLocality() == null) {
@@ -583,14 +358,21 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
 
     private fun addLiveDataObservable() {
-        viewModel.registerCourseNetworkLiveData.observe(this) {
-            if (it == null || it.isEmpty()) {
-                if (isGuestUser()) {
-                    openNewOnBoardFlow()
-                } else {
-                    openCourseExplorer()
+        lifecycleScope.launchWhenStarted {
+            viewModel.registerCourseNetworkData.collect {
+                if (it.isNotEmpty())
+                    addCourseInRecyclerView(it)
+                else {
+                    if (isGuestUser()) {
+                        openOnBoardFlow()
+                    } else {
+                        openCourseExplorer()
+                    }
                 }
-            } else {
+            }
+        }
+        lifecycleScope.launchWhenStarted {
+            viewModel.registerCourseLocalData.collect {
                 addCourseInRecyclerView(it)
             }
         }
@@ -603,14 +385,15 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             updateSubscriptionTipView(
                 exploreType,
                 it.showTooltip1,
-                it.showTooltip2
+                it.showTooltip2,
+                courseListSet.size
             )
             setCTAButtonText(exploreType)
 
             val showOverlay = intent.getBooleanExtra(
                 SHOW_OVERLAY,
                 false
-            ) && it.subscriptionData.isSubscriptionBought?.not() ?: false
+            ) && it.subscriptionData.isSubscriptionBought.not()
             if (showOverlay && it.showTooltip3 && it.freeTrialData.remainingDays in 4..7) {
                 showOverlayToolTip(it.freeTrialData.remainingDays)
             } else {
@@ -620,130 +403,36 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             if (User.getInstance().isVerified.not() && it?.subscriptionData?.isSubscriptionBought == true) {
                 showSignUpDialog()
             }
-
         }
 
-        viewModel.registerCourseMinimalLiveData.observe(this) {
-            addCourseInRecyclerView(it)
-        }
-
-        txtConvert.setOnClickListener {
-            logEvent(AnalyticsEvent.CONVERT_CLICKED.name)
-            PaymentSummaryActivity.startPaymentSummaryActivity(
-                this, PrefManager.getIntValue(SUBSCRIPTION_TEST_ID).toString()
-            )
-        }
-        txtConvert2.setOnClickListener {
-            overlay_layout.visibility = View.GONE
-            logEvent(AnalyticsEvent.CONVERT_CLICKED.name)
-            PaymentSummaryActivity.startPaymentSummaryActivity(
-                this, PrefManager.getIntValue(SUBSCRIPTION_TEST_ID).toString()
-            )
-        }
-
-        overlay_layout.setOnClickListener {
-            overlay_layout.visibility = View.GONE
-        }
-
-        viewModel.overAllWatchTime.observe(this, {
-            var reviewCount = PrefManager.getIntValue(IN_APP_REVIEW_COUNT)
-            val reviewFrequency =
-                AppObjectController.getFirebaseRemoteConfig().getLong(MINIMUM_TIME_TO_SHOW_REVIEW)
-            when (reviewCount) {
-                0 -> if (it > reviewFrequency) {
-                    showInAppReview()
-                    PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
-                }
-                1 -> if (it > reviewFrequency * 2) {
-                    PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
-                    showInAppReview()
-                }
-                2 -> if (it > reviewFrequency * 3) {
-                    PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
-                    showInAppReview()
-                }
-            }
-        })
-        viewModel.userData.observe(this, {
-            it?.let {
-                ///hideProgressBar()
-                initScoreCardView(it)
-            }
-        })
     }
 
-    private fun initScoreCardView(userData: UserProfileResponse) {
-        userData.isPointsActive?.let { isLeaderBoardActive ->
-            PrefManager.put(IS_LEADERBOARD_ACTIVE, userData.isPointsActive)
-            if (AppObjectController.getFirebaseRemoteConfig()
-                    .getBoolean(FirebaseRemoteConfigKey.SHOW_AWARDS_FULL_SCREEN)
-            ) {
-                var unseenAwards: ArrayList<Award>? = ArrayList()
-                userData.awardCategory?.forEach {
-                    it.awards?.filter { it.isSeen == false && it.is_achieved == true }
-                        ?.forEach {
-                            unseenAwards?.add(it)
-                        }
-                }
-                if (unseenAwards.isNullOrEmpty().not()) {
-                    showAward(unseenAwards?.toList()!!)
-                }
-            }
-        }
-    }
-
-    private fun logEvent(eventName: String) {
-        AppAnalytics.create(eventName)
-            .addBasicParam()
-            .addUserDetails()
-            .addParam("version", VersionResponse.getInstance().version?.name.toString())
-            .push()
-    }
-
-    private fun addCourseInRecyclerView(items: List<InboxEntity>?) {
-        if (items.isNullOrEmpty()) {
+    private fun addCourseInRecyclerView(items: List<InboxEntity>) {
+        if (items.isEmpty()) {
             return
         }
-        recycler_view_inbox.removeAllViews()
-        val total = items.size
-        var capsuleIndex = 0
-        val newCourses = items.filter {
-            (it.created == null || it.created == 0L) && it.isCapsuleCourse.not()
-        }
-        val capsuleCourse = items.filter { it.isCapsuleCourse }
-        if (capsuleCourse.isNullOrEmpty().not()) {
-            capsuleCourse.sortedByDescending { it.courseCreatedDate }
-                .forEachIndexed { index, inbox ->
-                    recycler_view_inbox.addView(
-                        InboxViewHolder(
-                            inbox, total, index
-                        )
-                    )
-                    capsuleIndex = index.plus(1)
-                }
+        val temp: ArrayList<InboxEntity> = arrayListOf()
+        items.filter { it.isCapsuleCourse }.sortedByDescending { it.courseCreatedDate }.let {
+            temp.addAll(it)
         }
 
-
-        newCourses.sortedByDescending { it.courseCreatedDate }.forEachIndexed { index, inbox ->
-            if (inbox.courseId != TRIAL_COURSE_ID && inbox.isCapsuleCourse.not())
-                recycler_view_inbox.addView(
-                    InboxViewHolder(
-                        inbox, total, index + capsuleIndex
-                    )
-                )
-        }
-        items.filter { it.created != null && it.created != 0L && it.isCapsuleCourse.not() }
-            .sortedByDescending { it.created }
-            .forEachIndexed { index, inbox ->
-                if (inbox.courseId != TRIAL_COURSE_ID)
-                    recycler_view_inbox.addView(
-                        InboxViewHolder(
-                            inbox, total, newCourses.size + index + capsuleIndex
-                        )
-                    )
+        items.filter { (it.created == null || it.created == 0L) && it.courseId != TRIAL_COURSE_ID && it.isCapsuleCourse.not() }
+            .sortedByDescending { it.courseCreatedDate }.let {
+                temp.addAll(it)
             }
-        progress_bar.visibility = View.GONE
-        findMoreLayout.visibility = View.VISIBLE
+
+        items.filter { it.created != null && it.created != 0L && it.isCapsuleCourse.not() }
+            .sortedByDescending { it.created }.let {
+                temp.addAll(it)
+            }
+        courseListSet.addAll(temp)
+        inboxAdapter.addItems(temp)
+        if (progress_bar.visibility == View.VISIBLE) {
+            progress_bar.visibility = View.GONE
+        }
+        if (findMoreLayout.visibility == View.INVISIBLE) {
+            findMoreLayout.visibility = View.VISIBLE
+        }
     }
 
 
@@ -780,38 +469,111 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     }
 
-    private fun openNewOnBoardFlow() {
-        if (VersionResponse.getInstance().hasVersion()) {
-            when (VersionResponse.getInstance().version?.name) {
-                ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V7, ONBOARD_VERSIONS.ONBOARDING_V8 -> {
-                    openCourseExplorer()
+
+
+    override fun onResume() {
+        super.onResume()
+        Runtime.getRuntime().gc()
+        addObserver()
+        viewModel.getRegisterCourses()
+        viewModel.getProfileData(Mentor.getInstance().getId())
+    }
+
+    override fun onPause() {
+        super.onPause()
+        compositeDisposable.clear()
+    }
+
+
+    private fun setTrialEndParam() {
+        val freeTrialData = FreeTrialData.getMapObject()
+        freeTrialData?.let {
+            if (it.is7DFTBought == false) {
+                PrefManager.put(IS_TRIAL_ENDED, false, false)
+                PrefManager.put(IS_TRIAL_STARTED, false, false)
+                PrefManager.put(REMAINING_TRIAL_DAYS, -1)
+            } else {
+                (it.remainingDays < 0).let { trialExpired ->
+                    PrefManager.put(
+                        IS_TRIAL_ENDED,
+                        trialExpired,
+                        false
+                    )
+
+                    if (trialExpired)
+                        logTrialEventExpired()
                 }
-                ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V5, ONBOARD_VERSIONS.ONBOARDING_V6 -> {
-                    openCourseSelectionExplorer()
-                }
-                else -> {
-                    openCourseExplorer()
-                }
+
+                PrefManager.put(
+                    IS_TRIAL_STARTED,
+                    it.is7DFTBought, false
+                )
+
+                PrefManager.put(REMAINING_TRIAL_DAYS, it.remainingDays)
             }
         }
     }
 
-    private fun openCourseExplorer() {
-        val registerCourses: MutableSet<InboxEntity> = mutableSetOf()
-        viewModel.registerCourseMinimalLiveData.value?.let {
-            registerCourses.addAll(it)
+    private fun setSubscriptionEndParam() {
+        val subscriptionData = SubscriptionData.getMapObject()
+        subscriptionData?.let {
+            if (it.isSubscriptionBought == false) {
+                PrefManager.put(IS_SUBSCRIPTION_ENDED, false, false)
+                PrefManager.put(IS_SUBSCRIPTION_STARTED, false, false)
+                PrefManager.put(REMAINING_SUBSCRIPTION_DAYS, -1, false)
+            } else {
+                (it.remainingDays < 0).let { subsEnded ->
+                    PrefManager.put(
+                        IS_SUBSCRIPTION_ENDED,
+                        subsEnded,
+                        false
+                    )
+                    if (subsEnded)
+                        logSubscriptionExpired()
+                }
+                PrefManager.put(
+                    IS_SUBSCRIPTION_STARTED, it.isSubscriptionBought, false
+                )
+                PrefManager.put(
+                    REMAINING_SUBSCRIPTION_DAYS, it.remainingDays,
+                    false
+                )
+            }
         }
-        viewModel.registerCourseNetworkLiveData.value?.let {
-            registerCourses.addAll(it)
+    }
+
+    private fun logTrialEventExpired() {
+        if (PrefManager.getBoolValue(IS_TRIAL_ENDED, false).not()) {
+            AppAnalytics.create(AnalyticsEvent.SEVEN_DAY_TRIAL_OVER.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .push()
         }
+    }
+
+    private fun logSubscriptionExpired() {
+        if (PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED, false).not()) {
+            AppAnalytics.create(AnalyticsEvent.SUBSCRIPTION_EXPIRED.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .push()
+        }
+    }
+
+    private fun showOverlayToolTip(remainingTrialDays: Int) {
+        overlay_layout.visibility = View.VISIBLE
+        (overlay_tip as TopTrialTooltipView).setInboxOverayTipText(7.minus(remainingTrialDays))
+    }
+
+    override fun openCourseExplorer() {
         CourseExploreActivity.startCourseExploreActivity(
             this,
             COURSE_EXPLORER_CODE,
-            registerCourses, state = ActivityEnum.Inbox
+            courseListSet, state = ActivityEnum.Inbox
         )
     }
 
-    private fun openCourseSelectionExplorer(alreadyHaveCourses: Boolean = false) {
+    override fun openCourseSelectionExplorer(alreadyHaveCourses: Boolean) {
         OnBoardingActivityNew.startOnBoardingActivity(
             this,
             COURSE_EXPLORER_NEW,
@@ -852,128 +614,14 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 finish()
                 overridePendingTransition(0, 0)
                 startActivity(intent)
-            } else if (resultCode == Activity.RESULT_CANCELED && viewModel.registerCourseNetworkLiveData.value.isNullOrEmpty()) {
-                if ((viewModel.registerCourseMinimalLiveData.value.isNullOrEmpty())) {
-                    this@InboxActivity.finish()
-                }
+            } else if (resultCode == Activity.RESULT_CANCELED && courseListSet.isNullOrEmpty()) {
+                this@InboxActivity.finish()
             }
         } else if (requestCode == USER_DETAILS_CODE && resultCode == Activity.RESULT_CANCELED) {
             finish()
         }
     }
 
-
-    override fun onResume() {
-        super.onResume()
-        Runtime.getRuntime().gc()
-        addObserver()
-        viewModel.getRegisterCourses()
-        viewModel.getProfileData(Mentor.getInstance().getId())
-    }
-
-    override fun onPause() {
-        super.onPause()
-        compositeDisposable.clear()
-    }
-
-    override fun onInAppUpdateError(code: Int, error: Throwable?) {
-        error?.printStackTrace()
-    }
-
-    override fun onInAppUpdateStatus(status: InAppUpdateStatus?) {
-        if (status != null && status.isDownloaded) {
-            val rootView = window.decorView.findViewById<View>(android.R.id.content)
-            val snackBar = Snackbar.make(
-                rootView,
-                getString(R.string.update_download_success_message),
-                Snackbar.LENGTH_INDEFINITE
-            )
-            snackBar.setAction(getString(R.string.restart)) {
-                inAppUpdateManager?.completeUpdate()
-            }
-            snackBar.show()
-        }
-    }
-
-    private fun setTrialEndParam() {
-        val freeTrialData = FreeTrialData.getMapObject()
-        freeTrialData?.let {
-            if (it.is7DFTBought == false) {
-                PrefManager.put(IS_TRIAL_ENDED, false, false)
-                PrefManager.put(IS_TRIAL_STARTED, false, false)
-                PrefManager.put(REMAINING_TRIAL_DAYS, -1)
-            } else {
-                (it.remainingDays < 0).let { trialExpired ->
-                    PrefManager.put(
-                        IS_TRIAL_ENDED,
-                        trialExpired,
-                        false
-                    )
-
-                    if (trialExpired)
-                        logTrialEventExpired()
-                }
-
-                PrefManager.put(
-                    IS_TRIAL_STARTED,
-                    it.is7DFTBought ?: false, false
-                )
-
-                PrefManager.put(REMAINING_TRIAL_DAYS, it.remainingDays)
-            }
-        }
-    }
-
-    private fun setSubscriptionEndParam() {
-        val subscriptionData = SubscriptionData.getMapObject()
-        subscriptionData?.let {
-            if (it.isSubscriptionBought == false) {
-                PrefManager.put(IS_SUBSCRIPTION_ENDED, false, false)
-                PrefManager.put(IS_SUBSCRIPTION_STARTED, false, false)
-                PrefManager.put(REMAINING_SUBSCRIPTION_DAYS, -1, false)
-            } else {
-                (it.remainingDays < 0).let { subsEnded ->
-                    PrefManager.put(
-                        IS_SUBSCRIPTION_ENDED,
-                        subsEnded,
-                        false
-                    )
-                    if (subsEnded)
-                        logSubscriptionExpired()
-                }
-                PrefManager.put(
-                    IS_SUBSCRIPTION_STARTED, it.isSubscriptionBought ?: false, false
-                )
-                PrefManager.put(
-                    REMAINING_SUBSCRIPTION_DAYS, it.remainingDays,
-                    false
-                )
-            }
-        }
-    }
-
-    private fun logTrialEventExpired() {
-        if (PrefManager.getBoolValue(IS_TRIAL_ENDED, false).not()) {
-            AppAnalytics.create(AnalyticsEvent.SEVEN_DAY_TRIAL_OVER.NAME)
-                .addBasicParam()
-                .addUserDetails()
-                .push()
-        }
-    }
-
-    private fun logSubscriptionExpired() {
-        if (PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED, false).not()) {
-            AppAnalytics.create(AnalyticsEvent.SUBSCRIPTION_EXPIRED.NAME)
-                .addBasicParam()
-                .addUserDetails()
-                .push()
-        }
-    }
-
-    private fun showOverlayToolTip(remainingTrialDays: Int) {
-        overlay_layout.visibility = View.VISIBLE
-        (overlay_tip as TopTrialTooltipView).setInboxOverayTipText(7.minus(remainingTrialDays))
-    }
 
     override fun onUpdateLocation(location: Location) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -986,5 +634,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         if (WebRtcService.isCallWasOnGoing.not()) {
             RtcEngine.destroy()
         }
+        inAppUpdateManager = null
+        inAppUpdateManager?.onDestroy()
     }
 }
