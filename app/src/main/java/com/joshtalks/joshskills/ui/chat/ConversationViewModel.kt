@@ -244,12 +244,10 @@ class ConversationViewModel(application: Application) :
             } else {
                 //Check if list already constains chat with this lesson id
                 val lessonPosition =
-                    chatList.indexOfLast { chatModel -> chatModel.lessonId == lessonModel.id }
+                    chatList.indexOfFirst { chatModel -> chatModel.lessonId == lessonModel.id }
                 if (lessonPosition == -1) {
                     //if its not then we create a new chat object with same data as current chat obejct but chane type to Lesson and add it to list
                     addNewLesson(lessonModel, chatList, chat)
-                } else {
-                    chatList.add(lessonPosition, chat)
                 }
             }
         } else {
