@@ -165,7 +165,7 @@
                     android:layout_gravity="center"
                     android:clickable="true"
                     android:focusable="true"
-                    android:padding="@dimen/_6sdp"
+                    android:padding="@dimen/_4sdp"
                     android:tint="#7A7A7A"
                     android:visibility="gone"
                     app:srcCompat="@drawable/ic_tick_default" />
@@ -177,15 +177,15 @@
                     android:layout_gravity="center"
                     android:visibility="gone"
                     app:matProg_barWidth="@dimen/_2sdp"
-                    tools:visibility="gone"
+                    tools:visibility="visible"
                     wheel:matProg_barColor="#878A91"
                     wheel:matProg_fillRadius="true"
                     wheel:matProg_progressIndeterminate="true" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_cancel_download"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
                     android:layout_gravity="center"
                     android:clickable="true"
                     android:focusable="true"

@@ -57,7 +57,6 @@ import java.util.ArrayList
 
 class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
 
-    private var quizQuestion: Question? = null
     private var currentQuizQuestion: Int = 0
     private var desExpanded: Boolean = false
     private var appAnalytics: AppAnalytics? = null
@@ -68,13 +67,17 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
     private var activityCallback: CapsuleActivityCallback? = null
     private var assessmentQuestions: ArrayList<AssessmentQuestionWithRelations> = ArrayList()
 
+    private var quizQuestion: Question? = null
+    private var pdfQuestion: ChatModel? = null
+
     private val viewModel: CapsuleViewModel by lazy {
         ViewModelProvider(this).get(CapsuleViewModel::class.java)
     }
 
-    private var pdfQuestion: ChatModel? = null
-
     companion object {
+        private const val DOWNLOAD_PDF_REQUEST_CODE = 0
+        private const val OPEN_PDF_REQUEST_CODE = 1
+
         @JvmStatic
         fun instance(chatModelList: ArrayList<ChatModel>) = GrammarFragment().apply {
             arguments = Bundle().apply {
@@ -129,7 +132,6 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
             etaInMilliSeconds: Long,
             downloadedBytesPerSecond: Long
         ) {
-
         }
 
         override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
@@ -209,7 +211,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
             desExpanded = desExpanded.not()
         }
 
-        addObserValbles()
+        addObservables()
         chatModelList?.forEach { setupUi(it) }
 
         return binding.root
@@ -221,7 +223,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
         super.onPause()
     }
 
-    private fun addObserValbles() {
+    private fun addObservables() {
         assessmentQuestions.clear()
         viewModel.assessmentLiveData.observe(owner = viewLifecycleOwner) { assessmentRelations ->
             assessmentRelations.questionList.sortedBy { it.question.sortOrder }
@@ -305,43 +307,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                             binding.quizShader.visibility = View.GONE
                         }
 
-                        compositeDisposable.add(
-                            RxBus2.listenWithoutDelay(MediaProgressEventBus::class.java)
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe({ eventBus ->
-                                    if (eventBus.progress > 3000 && this.status != QUESTION_STATUS.AT) {
-                                        updateVideoQuestionStatus(this)
-                                        this.status = QUESTION_STATUS.AT
-                                        this.isVideoWatchTimeSend = true
-                                    }
-                                    val videoPercent =
-                                        binding.videoPlayer.player?.duration?.let {
-                                            eventBus.progress.div(
-                                                it
-                                            ).times(100).toInt()
-                                        } ?: -1
-                                    val percentVideoWatched =
-                                        eventBus.watchTime.times(100).div(
-                                            binding.videoPlayer.player?.duration!!
-                                        ).toInt()
-
-                                    if (percentVideoWatched != 0 && percentVideoWatched >= 70 && videoPercent != -1 && videoPercent >= 70 && this.isVideoWatchTimeSend) {
-                                        updateVideoQuestionStatus(this, true)
-                                        this.isVideoWatchTimeSend = false
-                                    }
-
-                                    if (eventBus.progress + 1000 >= this.videoList?.get(0)?.duration ?: 0) {
-                                        binding.quizShader.visibility = View.GONE
-                                        compositeDisposable.clear()
-                                        showScrollToBottomView()
-                                    }
-
-
-                                }, {
-                                    it.printStackTrace()
-                                })
-                        )
+                        setUpVideoProgressListener(this)
 
                         this.qText?.let {
                             binding.grammarDescTv.visibility = View.VISIBLE
@@ -366,6 +332,47 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                     }
                 }
         }
+    }
+
+    private fun setUpVideoProgressListener(question: Question) {
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(MediaProgressEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ eventBus ->
+                    if (eventBus.progress > 3000 && question.status != QUESTION_STATUS.AT) {
+                        updateVideoQuestionStatus(question)
+                        question.status = QUESTION_STATUS.AT
+                        question.isVideoWatchTimeSend = true
+                    }
+                    val videoPercent =
+                        binding.videoPlayer.player?.duration?.let {
+                            eventBus.progress.div(
+                                it
+                            ).times(100).toInt()
+                        } ?: -1
+                    val percentVideoWatched =
+                        eventBus.watchTime.times(100).div(
+                            binding.videoPlayer.player?.duration!!
+                        ).toInt()
+
+                    if (percentVideoWatched != 0 && percentVideoWatched >= 70 && videoPercent != -1 && videoPercent >= 70 && question.isVideoWatchTimeSend) {
+                        updateVideoQuestionStatus(question, true)
+                        question.isVideoWatchTimeSend = false
+                    }
+
+                    if (eventBus.progress + 1000 >= question.videoList?.get(0)?.duration ?: 0) {
+                        binding.quizShader.visibility = View.GONE
+                        compositeDisposable.clear()
+                        showScrollToBottomView()
+                    }
+
+
+                }, {
+                    it.printStackTrace()
+                })
+        )
+
     }
 
     private fun showScrollToBottomView() {
@@ -637,7 +644,6 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
             it.pdfList?.getOrNull(0)?.let { pdfObj ->
                 try {
                     if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
-                        fileDownloadingInProgressView()
                         download()
                     } else if (PermissionUtils.isStoragePermissionEnabled(requireContext()) && AppDirectory.getFileSize(
                             File(
@@ -735,7 +741,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
 
     private fun openPdf() {
         if (PermissionUtils.isStoragePermissionEnabled(requireContext()).not()) {
-            askStoragePermission()
+            askStoragePermission(OPEN_PDF_REQUEST_CODE)
             return
         }
         if (pdfQuestion?.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
@@ -765,17 +771,23 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
         download()
     }
 
-    private fun askStoragePermission() {
+    private fun askStoragePermission(requestCode: Int) {
 
         PermissionUtils.storageReadAndWritePermission(
             requireActivity(),
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let {
-                        if (report.isAnyPermissionPermanentlyDenied) {
+                        if (report.areAllPermissionsGranted()) {
+                            if (requestCode == DOWNLOAD_PDF_REQUEST_CODE) {
+                                download()
+                            } else if (requestCode == OPEN_PDF_REQUEST_CODE) {
+                                openPdf()
+                            }
+                        } else if (report.isAnyPermissionPermanentlyDenied) {
                             PermissionUtils.permissionPermanentlyDeniedDialog(
                                 requireActivity(),
-                                R.string.record_permission_message
+                                R.string.grant_storage_permission
                             )
                             return
                         }
@@ -792,9 +804,8 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
     }
 
     private fun download() {
-
         if (PermissionUtils.isStoragePermissionEnabled(requireContext()).not()) {
-            askStoragePermission()
+            askStoragePermission(DOWNLOAD_PDF_REQUEST_CODE)
             return
         }
         pdfQuestion?.question?.pdfList?.let {

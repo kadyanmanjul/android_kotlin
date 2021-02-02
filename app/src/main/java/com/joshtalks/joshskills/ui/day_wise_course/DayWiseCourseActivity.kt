@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -37,8 +38,6 @@ import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.server.Award
-import com.joshtalks.joshskills.ui.chat.LESSON_REQUEST_CODE
-import com.joshtalks.joshskills.ui.day_wise_course.unlock_next_class.ActivityUnlockNextClass
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 
@@ -334,7 +333,6 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                             return
                         } else {
                             i++
-                            continue
                         }
                     1 ->
                         if (lessonModel?.vocabStatus != LESSON_STATUS.CO) {
@@ -342,7 +340,6 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                             return
                         } else {
                             i++
-                            continue
                         }
                     2 ->
                         if (lessonModel?.readingStatus != LESSON_STATUS.CO) {
@@ -350,7 +347,6 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                             return
                         } else {
                             i++
-                            continue
                         }
                     3 ->
                         if (lessonModel?.speakingStatus != LESSON_STATUS.CO) {
@@ -358,7 +354,6 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                             return
                         } else {
                             i++
-                            continue
                         }
                 }
             }
@@ -402,27 +397,10 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == LESSON_REQUEST_CODE && resultCode == RESULT_OK && data?.hasExtra(
-                IS_BATCH_CHANGED
-            ) == true
-        ) {
-            setResult(RESULT_OK, Intent().apply {
-                putExtra(IS_BATCH_CHANGED, false)
-                putExtra(LAST_LESSON_INTERVAL, lessonInterval)
-                putExtra(LAST_LESSON_STATUS, lessonCompleted)
-                putExtra(LESSON__CHAT_ID, chatId)
-            })
-            finish()
-        }
-
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
     override fun onNextTabCall(currentTabNumber: Int) {
         try {
             if (lessonCompleted) {
-                onContinueClick()
+                openLessonCompleteScreen()
             } else
                 openInCompleteTab(currentTabNumber)
         } catch (e: Exception) {
@@ -446,15 +424,20 @@ class DayWiseCourseActivity : CoreJoshActivity(),
         )
     }
 
-    override fun onContinueClick() {
+    private fun openLessonCompleteScreen() {
         if (lessonModel != null) {
-            conversastionId?.let { id ->
-                startActivityForResult(
-                    ActivityUnlockNextClass.getActivityUnlockNextClassIntent(
-                        this,
-                        id, lessonModel!!
-                    ), LESSON_REQUEST_CODE
-                )
+            conversastionId?.let {
+                registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                    if (result.resultCode == RESULT_OK && result.data?.hasExtra(IS_BATCH_CHANGED) == true) {
+                        setResult(RESULT_OK, Intent().apply {
+                            putExtra(IS_BATCH_CHANGED, false)
+                            putExtra(LAST_LESSON_INTERVAL, lessonInterval)
+                            putExtra(LAST_LESSON_STATUS, lessonCompleted)
+                            putExtra(LESSON__CHAT_ID, chatId)
+                        })
+                        finish()
+                    }
+                }
             }
         }
     }

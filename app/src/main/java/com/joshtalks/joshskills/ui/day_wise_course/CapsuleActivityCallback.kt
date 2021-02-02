@@ -11,6 +11,5 @@ interface CapsuleActivityCallback {
         quizCorrectQuestionIds: ArrayList<Int> = ArrayList()
     )
 
-    fun onContinueClick()
     fun onSectionStatusUpdate(tabPosition: Int, status: Boolean)
 }
