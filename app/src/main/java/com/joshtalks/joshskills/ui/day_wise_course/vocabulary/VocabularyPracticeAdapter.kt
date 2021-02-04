@@ -45,12 +45,12 @@ import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.muddzdev.styleabletoast.StyleableToast
+import java.util.concurrent.TimeUnit
+import kotlin.random.Random.Default.nextInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
-import java.util.concurrent.TimeUnit
-import kotlin.random.Random.Default.nextInt
 
 class VocabularyPracticeAdapter(
     val context: Context,
@@ -65,10 +65,13 @@ class VocabularyPracticeAdapter(
     var audioManager = ExoAudioPlayer.getInstance()
     var currentChatModel: ChatModel? = null
     var currentPlayingPosition: Int = 0
-    private var isFirstTime: Boolean = true
+    private var expandCard: Boolean = true
     private var QUIZ_TYPE: Int = 1
     private var VOCAB_TYPE: Int = 0
     val wordsItemSize = itemList.size.minus(quizsItemSize)
+    val appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTICE_SCREEN.NAME)
+        .addBasicParam()
+        .addUserDetails()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
@@ -171,8 +174,8 @@ class VocabularyPracticeAdapter(
                 return
             }
             this.chatModel = chatModel
-            if (isFirstTime && chatModel.question?.status == QUESTION_STATUS.NA) {
-                isFirstTime = false
+            if (expandCard && chatModel.question?.status == QUESTION_STATUS.NA) {
+                expandCard = false
                 binding.quizLayout.visibility = VISIBLE
                 binding.expandIv.setImageDrawable(
                     ContextCompat.getDrawable(
@@ -303,7 +306,7 @@ class VocabularyPracticeAdapter(
                 showExplanation()
             }
             binding.continueBtn.setOnClickListener {
-                isFirstTime = true
+                expandCard = true
                 clickListener.submitQuiz(
                     chatModel,
                     isCorrect,
@@ -530,60 +533,33 @@ class VocabularyPracticeAdapter(
         ExoAudioPlayer.ProgressUpdateListener {
         private var startTime: Long = 0L
         var filePath: String? = null
-        var appAnalytics: AppAnalytics? = null
         var chatModel: ChatModel? = null
         private var mUserIsSeeking = false
 
         fun bind(chatModel: ChatModel, position: Int) {
             this.chatModel = chatModel
-            if (isFirstTime && chatModel.question?.status == QUESTION_STATUS.NA) {
-                isFirstTime = false
-                binding.practiceContentLl.visibility = VISIBLE
-                binding.expandIv.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        context,
-                        R.drawable.ic_remove
-                    )
-                )
+            if (expandCard && chatModel.question?.status == QUESTION_STATUS.NA) {
+                expandCard = false
+                expandCard()
                 if (position > 0)
                     clickListener.focusChild(position - 1)
             } else {
-                binding.practiceContentLl.visibility = GONE
-                binding.expandIv.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        context,
-                        R.drawable.ic_add
-                    )
-                )
+                collapsCard()
             }
-            appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTICE_SCREEN.NAME)
-                .addBasicParam()
-                .addUserDetails()
-                .addParam("chatId", chatModel.chatId)
 
             setPracticeInfoView(chatModel)
 
             binding.titleView.setOnClickListener {
                 if (binding.practiceContentLl.visibility == GONE) {
-                    binding.practiceContentLl.visibility = VISIBLE
-                    binding.expandIv.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            context,
-                            R.drawable.ic_remove
-                        )
-                    )
+                    expandCard()
                 } else {
-                    binding.practiceContentLl.visibility = GONE
-                    binding.expandIv.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            context,
-                            R.drawable.ic_add
-                        )
-                    )
+                    collapsCard()
                 }
             }
+
             binding.btnPlayInfo.setOnClickListener {
                 appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio Played")
+                    ?.addParam("chatId", chatModel.chatId)?.push()
                 playPracticeAudio(chatModel, layoutPosition)
             }
 
@@ -591,7 +567,8 @@ class VocabularyPracticeAdapter(
                 appAnalytics?.addParam(
                     AnalyticsEvent.PRACTICE_EXTRA.NAME,
                     "Already Submitted audio Played"
-                )
+                )?.addParam("chatId", chatModel.chatId)
+
                 playSubmitPracticeAudio(chatModel, layoutPosition)
 //                filePath = chatModel.downloadedLocalPath
                 val state =
@@ -639,7 +616,7 @@ class VocabularyPracticeAdapter(
             }
 
             binding.submitAnswerBtn.setOnClickListener {
-                isFirstTime = true
+                expandCard = true
                 if (chatModel.filePath == null) {
                     showToast(context.getString(R.string.submit_practise_msz))
                     return@setOnClickListener
@@ -653,15 +630,16 @@ class VocabularyPracticeAdapter(
                         audioManager?.resumeOrPause()
                     }
                     appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
-                    appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Submitted")
-                    appAnalytics?.addParam(
-                        AnalyticsEvent.PRACTICE_TYPE_SUBMITTED.NAME,
-                        "$it Practice Submitted"
-                    )
-                    appAnalytics?.addParam(
-                        AnalyticsEvent.PRACTICE_SUBMITTED.NAME,
-                        "Submit Practice $"
-                    )
+                        ?.addParam("chatId", chatModel.chatId)
+                        ?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Submitted")
+                        ?.addParam(
+                            AnalyticsEvent.PRACTICE_TYPE_SUBMITTED.NAME,
+                            "$it Practice Submitted"
+                        )
+                        ?.addParam(
+                            AnalyticsEvent.PRACTICE_SUBMITTED.NAME,
+                            "Submit Practice $"
+                        )?.push()
                 }
 
             }
@@ -1087,6 +1065,8 @@ class VocabularyPracticeAdapter(
                         binding.audioPractiseHint.visibility = GONE
 
                         appAnalytics?.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
+                            ?.addParam("chatId", chatModel.chatId)
+                            ?.push()
                     }
                     MotionEvent.ACTION_MOVE -> {
                     }
@@ -1180,6 +1160,8 @@ class VocabularyPracticeAdapter(
             binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
             disableSubmitButton()
             appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio practise removed")
+                ?.addParam("chatId", chatModel?.chatId)
+                ?.push()
         }
 
         private fun disableSubmitButton() {
@@ -1238,6 +1220,26 @@ class VocabularyPracticeAdapter(
         private fun hidePracticeSubmitLayout() {
             binding.yourSubAnswerTv.visibility = GONE
             binding.subPractiseSubmitLayout.visibility = GONE
+        }
+
+        private fun expandCard() {
+            binding.practiceContentLl.visibility = VISIBLE
+            binding.expandIv.setImageDrawable(
+                ContextCompat.getDrawable(
+                    context,
+                    R.drawable.ic_remove
+                )
+            )
+        }
+
+        private fun collapsCard() {
+            binding.practiceContentLl.visibility = GONE
+            binding.expandIv.setImageDrawable(
+                ContextCompat.getDrawable(
+                    context,
+                    R.drawable.ic_add
+                )
+            )
         }
     }
 
