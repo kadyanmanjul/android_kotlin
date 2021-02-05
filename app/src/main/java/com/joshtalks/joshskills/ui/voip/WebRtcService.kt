@@ -45,15 +45,15 @@ import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.reactivex.Completable
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
 import kotlin.math.min
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 const val RTC_TOKEN_KEY = "token"
 const val RTC_CHANNEL_KEY = "channel_name"
@@ -426,7 +426,7 @@ open class WebRtcService : Service(), SensorEventListener {
 
         }
 
-        override fun onRemoteAudioStateChanged(uid: Int, state: Int, reason: Int, elapsed: Int) {
+        /*override fun onRemoteAudioStateChanged(uid: Int, state: Int, reason: Int, elapsed: Int) {
             super.onRemoteAudioStateChanged(uid, state, reason, elapsed)
             Timber.tag(TAG)
                 .e("onRemoteAudioStateChanged->" + uid + ", state->" + state + ", reason->" + reason + " time-> " + elapsed + " Connextion state->" + mRtcEngine?.connectionState)
@@ -449,7 +449,7 @@ open class WebRtcService : Service(), SensorEventListener {
                 ex.printStackTrace()
             }
 
-        }
+        }*/
 
         override fun onRemoteAudioStats(stats: RemoteAudioStats) {
             super.onRemoteAudioStats(stats)
