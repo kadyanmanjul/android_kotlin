@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.day_wise_course.vocabulary
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.SystemClock
@@ -30,8 +29,6 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
-import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
-import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.PracticeItemLayoutBinding
 import com.joshtalks.joshskills.databinding.VocabQuizPracticeItemLayoutBinding
@@ -41,20 +38,15 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWith
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
-import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.muddzdev.styleabletoast.StyleableToast
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random.Default.nextInt
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 
 class VocabularyPracticeAdapter(
     val context: Context,
-    val practiceViewModel: PracticeViewModel,
     val itemList: ArrayList<ChatModel>,
     val clickListener: PracticeClickListeners,
     val quizsItemSize: Int,
@@ -140,30 +132,9 @@ class VocabularyPracticeAdapter(
         val context: Context
     ) :
         RecyclerView.ViewHolder(binding.root) {
-
-        private val accentColor =
-            ContextCompat.getColor(context, R.color.colorAccent)
         private lateinit var chatModel: ChatModel
         private var isCorrect: Boolean = false
         private var quizQuestionId: Int = -1
-        private val colorStateList = ColorStateList(
-            arrayOf(
-                intArrayOf(android.R.attr.state_checked),
-                intArrayOf(-android.R.attr.state_checked)
-            ), intArrayOf(
-                accentColor,
-                Color.parseColor("#70107BE5")
-            )
-        )
-        private val resultColorStateList = ColorStateList(
-            arrayOf(
-                intArrayOf(android.R.attr.state_checked),
-                intArrayOf(-android.R.attr.state_checked)
-            ), intArrayOf(
-                Color.parseColor("#70107BE5"),
-                Color.parseColor("#70107BE5")
-            )
-        )
 
         fun bind(
             chatModel: ChatModel,
@@ -176,130 +147,50 @@ class VocabularyPracticeAdapter(
             this.chatModel = chatModel
             if (expandCard && chatModel.question?.status == QUESTION_STATUS.NA) {
                 expandCard = false
-                binding.quizLayout.visibility = VISIBLE
-                binding.expandIv.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        context,
-                        R.drawable.ic_remove
-                    )
-                )
+                expandCard()
                 if (position > 0)
                     clickListener.focusChild(position - 1)
             } else {
-                binding.quizLayout.visibility = GONE
-                binding.expandIv.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        context,
-                        R.drawable.ic_add
-                    )
-                )
+                collapsCard()
             }
 
             val assessmentQuestions: AssessmentQuestionWithRelations =
                 assessmentRelations.questionList[0]
+            quizQuestionId = assessmentQuestions.question.remoteId
+            isCorrect = assessmentQuestions.question.status == QuestionStatus.CORRECT
 
-            with(binding) {
-                binding.handler = this@QuizViewHolder
+            binding.handler = this@QuizViewHolder
 
+            if (assessmentQuestions.choiceList.isNullOrEmpty().not()) {
+                binding.quizRadioGroup.setOnCheckedChangeListener(
+                    quizCheckedChangeListener
+                )
+                updateQuiz(assessmentQuestions)
+            }
 
-                if (assessmentQuestions.choiceList.isNullOrEmpty().not()) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        binding.quizRadioGroup.setOnCheckedChangeListener(
-                            quizCheckedChangeListener
-                        )
-                        updateQuiz(assessmentQuestions)
-                    }
+            binding.practiceTitleTv.text =
+                context.getString(
+                    R.string.quiz_tag,
+                    chatModel.question?.vocabOrder ?: 0,
+                    quizsItemSize
+                )
+
+            binding.practiceTitleTv.setOnClickListener {
+                if (binding.quizLayout.visibility == GONE) {
+                    expandCard()
+                } else {
+                    collapsCard()
                 }
-                quizQuestionId = assessmentQuestions.question.remoteId
-                isCorrect = assessmentQuestions.question.status == QuestionStatus.CORRECT
-
-                binding.practiceTitleTv.text =
-                    context.getString(
-                        R.string.quiz_tag,
-                        chatModel.question?.vocabOrder ?: 0,
-                        quizsItemSize
-                    )
-
-                binding.practiceTitleTv.setOnClickListener {
-                    if (binding.quizLayout.visibility == GONE) {
-                        binding.quizLayout.visibility = VISIBLE
-                        binding.expandIv.setImageDrawable(
-                            ContextCompat.getDrawable(
-                                context,
-                                R.drawable.ic_remove
-                            )
-                        )
-                    } else {
-                        binding.quizLayout.visibility = GONE
-                        binding.expandIv.setImageDrawable(
-                            ContextCompat.getDrawable(
-                                context,
-                                R.drawable.ic_add
-                            )
-                        )
-                    }
-                }
-                binding.expandIv.setOnClickListener {
-                    if (binding.quizLayout.visibility == GONE) {
-                        binding.quizLayout.visibility = VISIBLE
-                        binding.expandIv.setImageDrawable(
-                            ContextCompat.getDrawable(
-                                context,
-                                R.drawable.ic_remove
-                            )
-                        )
-                    } else {
-                        binding.quizLayout.visibility = GONE
-                        binding.expandIv.setImageDrawable(
-                            ContextCompat.getDrawable(
-                                context,
-                                R.drawable.ic_add
-                            )
-                        )
-                    }
+            }
+            binding.expandIv.setOnClickListener {
+                if (binding.quizLayout.visibility == GONE) {
+                    expandCard()
+                } else {
+                    collapsCard()
                 }
             }
             binding.submitAnswerBtn.setOnClickListener {
-                if (binding.quizRadioGroup.tag is Int) {
-                    assessmentQuestions.question.isAttempted = true
-                    assessmentQuestions.question.status =
-                        evaluateQuestionStatus((binding.quizRadioGroup.tag as Int) == binding.quizRadioGroup.checkedRadioButtonId)
-                    when (assessmentQuestions.question.status) {
-                        QuestionStatus.CORRECT -> {
-                            isCorrect = true
-                        }
-                        else -> {
-                            isCorrect = false
-                        }
-                    }
-
-                    val selectedChoice =
-                        assessmentQuestions.choiceList[binding.quizRadioGroup.indexOfChild(
-                            binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
-                        )]
-                    selectedChoice.isSelectedByUser = true
-                    selectedChoice.userSelectedOrder = 1
-
-                    binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.tag as Int)
-                        .setBackgroundResource(R.drawable.rb_correct_rect_bg)
-
-                    updateQuiz(assessmentQuestions)
-
-                    practiceViewModel.saveAssessmentQuestion(assessmentQuestions)
-                    clickListener.submitQuiz(
-                        chatModel,
-                        isCorrect,
-                        assessmentQuestions.question.remoteId
-                    )
-                    clickListener.quizOptionSelected(chatModel)
-
-                    assessmentQuestions.reviseConcept?.let {
-                        binding.showExplanationBtn.visibility = VISIBLE
-                    }
-
-                    binding.continueBtn.visibility = VISIBLE
-                    requestFocus(binding.showExplanationBtn)
-                }
+                onSubmitQuizClick(assessmentQuestions)
             }
 
             binding.showExplanationBtn.setOnClickListener {
@@ -331,6 +222,62 @@ class VocabularyPracticeAdapter(
                 if (position > 0)
                     clickListener.focusChild(position - 1)
             }
+        }
+
+        private fun onSubmitQuizClick(assessmentQuestions: AssessmentQuestionWithRelations) {
+            if (binding.quizRadioGroup.tag is Int) {
+                assessmentQuestions.question.isAttempted = true
+                assessmentQuestions.question.status =
+                    evaluateQuestionStatus((binding.quizRadioGroup.tag as Int) == binding.quizRadioGroup.checkedRadioButtonId)
+                isCorrect = assessmentQuestions.question.status == QuestionStatus.CORRECT
+
+                val selectedChoice =
+                    assessmentQuestions.choiceList[binding.quizRadioGroup.indexOfChild(
+                        binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
+                    )]
+                selectedChoice.isSelectedByUser = true
+                selectedChoice.userSelectedOrder = 1
+
+                binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.tag as Int)
+                    .setBackgroundResource(R.drawable.rb_correct_rect_bg)
+
+                updateQuiz(assessmentQuestions)
+
+                clickListener.submitQuiz(
+                    chatModel,
+                    isCorrect,
+                    assessmentQuestions.question.remoteId
+                )
+
+                clickListener.quizOptionSelected(chatModel, assessmentQuestions)
+
+                assessmentQuestions.reviseConcept?.let {
+                    binding.showExplanationBtn.visibility = VISIBLE
+                }
+
+                binding.continueBtn.visibility = VISIBLE
+                requestFocus(binding.showExplanationBtn)
+            }
+        }
+
+        private fun expandCard() {
+            binding.quizLayout.visibility = VISIBLE
+            binding.expandIv.setImageDrawable(
+                ContextCompat.getDrawable(
+                    context,
+                    R.drawable.ic_remove
+                )
+            )
+        }
+
+        private fun collapsCard() {
+            binding.quizLayout.visibility = GONE
+            binding.expandIv.setImageDrawable(
+                ContextCompat.getDrawable(
+                    context,
+                    R.drawable.ic_add
+                )
+            )
         }
 
         fun hideExplanation() {
@@ -1058,9 +1005,9 @@ class VocabularyPracticeAdapter(
                         val scaleAnimation = AnimationUtils.loadAnimation(context, R.anim.scale)
                         binding.uploadPractiseView.startAnimation(scaleAnimation)
                         binding.counterTv.base = SystemClock.elapsedRealtime()
-                        startTime = System.currentTimeMillis()
+
                         binding.counterTv.start()
-                        startRecording(chatModel, startTime)
+                        this.startTime = System.currentTimeMillis()
                         clickListener.startRecording(chatModel, layoutPosition, startTime)
                         binding.audioPractiseHint.visibility = GONE
 
@@ -1074,7 +1021,7 @@ class VocabularyPracticeAdapter(
                         binding.rootView.requestDisallowInterceptTouchEvent(false)
                         binding.counterTv.stop()
                         val stopTime = System.currentTimeMillis()
-                        stopRecording(chatModel, stopTime)
+//                        stopRecording(chatModel, stopTime)
                         clickListener.stopRecording(chatModel, layoutPosition, stopTime)
                         binding.uploadPractiseView.clearAnimation()
                         binding.counterContainer.visibility = GONE
@@ -1097,23 +1044,11 @@ class VocabularyPracticeAdapter(
         }
 
         private fun startRecording(chatModel: ChatModel, startTime: Long) {
-            this.startTime = startTime
-            practiceViewModel.startRecordAudio(object : OnAudioRecordListener {
-                override fun onRecordFinished(recordingItem: RecordingItem?) {
-                    recordingItem?.filePath?.let {
-                        filePath = AppDirectory.getAudioSentFile(
-                            null,
-                            audioExtension = ".m4a"
-                        ).absolutePath
-                        AppDirectory.copy(it, filePath!!)
-                        chatModel.filePath = filePath
-                    }
-                }
-            })
+
         }
 
         fun stopRecording(chatModel: ChatModel, stopTime: Long) {
-            practiceViewModel.stopRecordingAudio(false)
+
         }
 
         private fun audioAttachmentInit(chatModel: ChatModel) {
@@ -1250,7 +1185,11 @@ class VocabularyPracticeAdapter(
         fun askRecordPermission()
         fun focusChild(position: Int)
         fun submitQuiz(chatModel: ChatModel, isCorrect: Boolean, questionId: Int)
-        fun quizOptionSelected(chatModel: ChatModel)
+        fun quizOptionSelected(
+            chatModel: ChatModel,
+            assessmentQuestions: AssessmentQuestionWithRelations
+        )
+
         fun openNextScreen()
     }
 }

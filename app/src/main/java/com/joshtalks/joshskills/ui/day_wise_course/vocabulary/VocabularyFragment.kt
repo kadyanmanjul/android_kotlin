@@ -13,11 +13,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
+import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
+import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.FragmentVocabularyBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.ui.day_wise_course.CapsuleActivityCallback
@@ -142,7 +146,6 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         }
         adapter = VocabularyPracticeAdapter(
             requireContext(),
-            practiceViewModel,
             chatModelList!!,
             this,
             quizsItemSize = itemSize,
@@ -160,8 +163,18 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         openNextScreen()
     }
 
-    override fun quizOptionSelected(chatModel: ChatModel) {
-        onQuestionChoiceSelected(chatModel)
+    override fun quizOptionSelected(
+        chatModel: ChatModel,
+        assessmentQuestions: AssessmentQuestionWithRelations
+    ) {
+        practiceViewModel.saveAssessmentQuestion(assessmentQuestions)
+        activityCallback?.onQuestionStatusUpdate(
+            QUESTION_STATUS.IP,
+            chatModel.question?.questionId?.toIntOrNull() ?: 0
+        )
+        chatModel.question?.status = QUESTION_STATUS.IP
+        currentChatModel = null
+        adapter.notifyDataSetChanged()
     }
 
     private fun onQuestionSubmitted(
@@ -187,16 +200,6 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 
         chatModel.question?.status = QUESTION_STATUS.AT
 
-        currentChatModel = null
-        adapter.notifyDataSetChanged()
-    }
-
-    private fun onQuestionChoiceSelected(chatModel: ChatModel) {
-        activityCallback?.onQuestionStatusUpdate(
-            QUESTION_STATUS.IP,
-            chatModel.question?.questionId?.toIntOrNull() ?: 0
-        )
-        chatModel.question?.status = QUESTION_STATUS.IP
         currentChatModel = null
         adapter.notifyDataSetChanged()
     }
@@ -273,11 +276,22 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         this.startTime = startTimeUnit
         if (isAdded && activity != null)
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        //    practiceViewModel.startRecordAudio(null)
+        practiceViewModel.startRecordAudio(object : OnAudioRecordListener {
+            override fun onRecordFinished(recordingItem: RecordingItem?) {
+                recordingItem?.filePath?.let {
+                    filePath = AppDirectory.getAudioSentFile(
+                        null,
+                        audioExtension = ".m4a"
+                    ).absolutePath
+                    AppDirectory.copy(it, filePath!!)
+                    chatModel.filePath = filePath
+                }
+            }
+        })
     }
 
     override fun stopRecording(chatModel: ChatModel, position: Int, stopTime: Long) {
-        //    practiceViewModel.stopRecordingAudio(false)
+        practiceViewModel.stopRecordingAudio(false)
         if (isAdded && activity != null)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val timeDifference =
