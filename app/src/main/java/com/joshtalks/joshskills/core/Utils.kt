@@ -1222,8 +1222,8 @@ fun playSnackbarSound(context: Context){
         context,
         //R.raw.ting
         //R.raw.accept_confirm
-        R.raw.tinder_one
-        //R.raw.tinder_two
+        //R.raw.tinder_one
+        R.raw.tinder_two
         //R.raw.moneybag
         //R.raw.si_montok_sound_effect
     )
