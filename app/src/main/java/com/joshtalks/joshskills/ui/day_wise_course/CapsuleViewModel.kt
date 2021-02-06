@@ -24,8 +24,6 @@ import kotlinx.coroutines.launch
 class CapsuleViewModel(application: Application) : AndroidViewModel(application) {
 
     var questions: MutableLiveData<List<Question>> = MutableLiveData()
-    var pdfForQuestion: LiveData<List<PdfType>> = MutableLiveData()
-    var videoForQuestion: LiveData<List<VideoType>> = MutableLiveData()
     val appDatabase = AppObjectController.appDatabase
     val chatDao = appDatabase.chatDao()
     val lessonDao = appDatabase.lessonDao()
@@ -38,8 +36,6 @@ class CapsuleViewModel(application: Application) : AndroidViewModel(application)
     val assessmentStatus: MutableLiveData<AssessmentStatus> =
         MutableLiveData(AssessmentStatus.NOT_STARTED)
     val updatedLessonResponseLiveData: MutableLiveData<UpdateLessonResponse> = MutableLiveData()
-    val lessonStatusLiveData: MutableLiveData<LESSON_STATUS> = MutableLiveData()
-
 
     private lateinit var lessonLiveData: LiveData<LessonModel>
 

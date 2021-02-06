@@ -165,8 +165,8 @@ class VocabularyPracticeAdapter(
                 binding.quizRadioGroup.setOnCheckedChangeListener(
                     quizCheckedChangeListener
                 )
-                updateQuiz(assessmentQuestions)
             }
+            updateRadioGroupUi(assessmentQuestions)
 
             binding.practiceTitleTv.text =
                 context.getString(
@@ -213,18 +213,14 @@ class VocabularyPracticeAdapter(
                     binding.showExplanationBtn.visibility = VISIBLE
                 }
                 binding.submitAnswerBtn.visibility = GONE
-                binding.expandIv.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        context,
-                        R.drawable.ic_remove
-                    )
-                )
+                expandCard()
                 if (position > 0)
                     clickListener.focusChild(position - 1)
             }
         }
 
         private fun onSubmitQuizClick(assessmentQuestions: AssessmentQuestionWithRelations) {
+            //binding.quizRadioGroup.tag is id of Radio button with correct answer.
             if (binding.quizRadioGroup.tag is Int) {
                 assessmentQuestions.question.isAttempted = true
                 assessmentQuestions.question.status =
@@ -238,10 +234,11 @@ class VocabularyPracticeAdapter(
                 selectedChoice.isSelectedByUser = true
                 selectedChoice.userSelectedOrder = 1
 
+                //This will get Radio button of correct answer and set its background.
                 binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.tag as Int)
                     .setBackgroundResource(R.drawable.rb_correct_rect_bg)
 
-                updateQuiz(assessmentQuestions)
+                updateRadioGroupUi(assessmentQuestions)
 
                 clickListener.submitQuiz(
                     chatModel,
@@ -318,7 +315,7 @@ class VocabularyPracticeAdapter(
 
         }
 
-        fun updateQuiz(question: AssessmentQuestionWithRelations) {
+        fun updateRadioGroupUi(question: AssessmentQuestionWithRelations) {
             binding.quizQuestionTv.text = question.question.text
             hideExplanation()
             binding.explanationTv.text = question.reviseConcept?.description
@@ -328,25 +325,27 @@ class VocabularyPracticeAdapter(
             question.choiceList.forEachIndexed { index, choice ->
                 when (index) {
                     0 -> {
-                        setUpAnswerKey = setupOption(binding.option1, choice, question)
+                        //setupOption returns true if this option is correct answer of the question else false
+                        setUpAnswerKey = setupRadioButtonOption(binding.option1, choice, question)
+                        //correctAns.not() means correct answer is not found yet.
                         if (correctAns.not()) {
                             correctAns = setUpAnswerKey
                         }
                     }
                     1 -> {
-                        setUpAnswerKey = setupOption(binding.option2, choice, question)
+                        setUpAnswerKey = setupRadioButtonOption(binding.option2, choice, question)
                         if (correctAns.not()) {
                             correctAns = setUpAnswerKey
                         }
                     }
                     2 -> {
-                        setUpAnswerKey = setupOption(binding.option3, choice, question)
+                        setUpAnswerKey = setupRadioButtonOption(binding.option3, choice, question)
                         if (correctAns.not()) {
                             correctAns = setUpAnswerKey
                         }
                     }
                     3 -> {
-                        setUpAnswerKey = setupOption(binding.option4, choice, question)
+                        setUpAnswerKey = setupRadioButtonOption(binding.option4, choice, question)
                         if (correctAns.not()) {
                             correctAns = setUpAnswerKey
                         }
@@ -389,7 +388,7 @@ class VocabularyPracticeAdapter(
 
         }
 
-        fun resetRadioBackground(radioButton: RadioButton) {
+        private fun resetRadioBackground(radioButton: RadioButton) {
             radioButton.setBackgroundColor(
                 ContextCompat.getColor(context, R.color.white)
             )
@@ -402,7 +401,7 @@ class VocabularyPracticeAdapter(
             radioButton.elevation = 0F
         }
 
-        fun resetRadioButtonsBg() {
+        private fun resetAllRadioButtonsBg() {
             binding.quizRadioGroup.children.iterator().forEach {
                 if (it is RadioButton)
                     resetRadioBackground(it)
@@ -411,45 +410,25 @@ class VocabularyPracticeAdapter(
 
         val quizCheckedChangeListener =
             RadioGroup.OnCheckedChangeListener { radioGroup: RadioGroup, checkedId: Int ->
-
-                resetRadioButtonsBg()
+                resetAllRadioButtonsBg()
                 binding.submitAnswerBtn.isEnabled = true
                 radioGroup.findViewById<RadioButton>(checkedId)?.setBackgroundColor(
                     ContextCompat.getColor(context, R.color.received_bg_BC)
                 )
             }
 
-        fun setupOption(
+        //Sets up the view of radiobutton.
+        private fun setupRadioButtonOption(
             radioButton: RadioButton,
             choice: Choice,
             question: AssessmentQuestionWithRelations
         ): Boolean {
-            var correctAns = false
+            var isCorrectAns = false
             radioButton.text = choice.text
             if (question.question.isAttempted) {
                 radioButton.isClickable = false
-                if (choice.userSelectedOrder == 1) {
-                    binding.quizRadioGroup.setOnCheckedChangeListener(null)
-                    radioButton.isChecked = true
 
-                    binding.quizRadioGroup.setOnCheckedChangeListener(quizCheckedChangeListener)
-
-                    if (choice.isCorrect) {
-                        radioButton.setBackgroundResource(R.drawable.rb_correct_rect_bg)
-                        radioButton.setCompoundDrawablesWithIntrinsicBounds(
-                            0,
-                            0,
-                            R.drawable.ic_green_tick,
-                            0
-                        )
-                        radioButton.elevation = 8F
-                        radioButton.alpha = 1f
-                        correctAns = true
-                    } else {
-                        resetRadioBackground(radioButton)
-                        radioButton.alpha = 0.5f
-                    }
-                } else if (choice.isCorrect) {
+                if (choice.isCorrect) {
                     radioButton.setBackgroundResource(R.drawable.rb_correct_rect_bg)
                     radioButton.setCompoundDrawablesWithIntrinsicBounds(
                         0,
@@ -463,15 +442,23 @@ class VocabularyPracticeAdapter(
                     resetRadioBackground(radioButton)
                     radioButton.alpha = 0.5f
                 }
+
+                if (choice.userSelectedOrder == 1) {
+                    binding.quizRadioGroup.setOnCheckedChangeListener(null)
+                    radioButton.isChecked = true
+                    binding.quizRadioGroup.setOnCheckedChangeListener(quizCheckedChangeListener)
+                }
             } else {
                 resetRadioBackground(radioButton)
                 radioButton.isClickable = true
                 radioButton.alpha = 1f
             }
-            if (choice.isCorrect)
+            if (choice.isCorrect) {
+                // Setting radiogroup tag = view id of correct radio button.
+                // so that we can use it further to check if user has selected correct answer or not
                 binding.quizRadioGroup.tag = radioButton.id
-
-            return correctAns
+            }
+            return isCorrectAns
         }
     }
 
