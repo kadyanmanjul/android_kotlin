@@ -235,7 +235,7 @@ class UserProfileActivity : BaseActivity() {
                                 DecimalFormat("#,##,##,###").format(incrementalPoints)
                         }
                         incrementalPoints = incrementalPoints.plus(incrementalValue)
-                        delay(10)
+                        delay(25)
                     }
                 }
                 AppObjectController.uiHandler.post {
