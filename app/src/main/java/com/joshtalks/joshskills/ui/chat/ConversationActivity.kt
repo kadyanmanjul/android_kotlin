@@ -25,6 +25,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationSet
 import android.view.animation.LinearInterpolator
 import android.view.animation.ScaleAnimation
+import android.view.animation.Transformation
 import android.view.animation.TranslateAnimation
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -93,6 +94,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
 import com.joshtalks.joshskills.repository.local.eventbus.InternalSeekBarProgressEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.repository.local.eventbus.P2PStartEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.PdfOpenEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEvent
@@ -100,7 +102,6 @@ import com.joshtalks.joshskills.repository.local.eventbus.PractiseSubmitEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.StartCertificationExamEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.UnlockNextClassEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
-import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -446,8 +447,10 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                         openHelpActivity()
                     }
                     R.id.profile_setting -> {
-                        openUserProfileActivity(Mentor.getInstance().getId(),
-                            USER_PROFILE_FLOW_FROM.MENU.value)
+                        openUserProfileActivity(
+                            Mentor.getInstance().getId(),
+                            USER_PROFILE_FLOW_FROM.MENU.value
+                        )
                     }
                     R.id.leaderboard_setting -> {
                         openLeaderBoard()
@@ -688,14 +691,17 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         }
 
         conversationBinding.leaderboardBtnClose.setOnClickListener {
-            moveViewToScreenCenter(conversationBinding.userPointContainer)
+            slideOutAnimationLeaderboard(conversationBinding.userPointContainer)
         }
 
         conversationBinding.leaderboardTxt.setOnClickListener {
             openLeaderBoard()
         }
         conversationBinding.points.setOnClickListener {
-            openUserProfileActivity(Mentor.getInstance().getId(),USER_PROFILE_FLOW_FROM.FLOATING_BAR.value)
+            openUserProfileActivity(
+                Mentor.getInstance().getId(),
+                USER_PROFILE_FLOW_FROM.FLOATING_BAR.value
+            )
         }
 
         findViewById<View>(R.id.ll_audio).setOnClickListener {
@@ -825,7 +831,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         view.getLocationOnScreen(fromLocattion)
         val animSet = AnimationSet(false)
         animSet.fillAfter = true
-        animSet.duration = 500
+        animSet.duration = 250
         //animSet.interpolator = LinearInterpolator()
         val translate = TranslateAnimation(
             Animation.ABSOLUTE,  //from xType
@@ -855,13 +861,39 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         view.startAnimation(animSet)
     }
 
-    private fun moveViewToScreenCenter(view: View) {
+    fun collapse(v: View) {
+        val initialHeight = v.measuredHeight
+        val initialWidth = v.measuredWidth
+        val a: Animation = object : Animation() {
+            override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {
+                if (interpolatedTime == 1000f) {
+                    v.visibility = GONE
+                } else {
+                    v.layoutParams.height =
+                        initialHeight - (initialHeight * interpolatedTime).toInt()
+                    v.layoutParams.width =
+                        initialWidth - (initialWidth * interpolatedTime).toInt()
+                    v.requestLayout()
+                }
+            }
+
+            override fun willChangeBounds(): Boolean {
+                return true
+            }
+        }
+
+        // Collapse speed of 1dp/ms
+        a.setDuration(1000)
+        v.startAnimation(a)
+    }
+
+    private fun slideOutAnimationLeaderboard(view: View) {
         val fromLocattion = IntArray(2)
         view.getLocationOnScreen(fromLocattion)
         val animSet = AnimationSet(false)
         animSet.fillAfter = false
         animSet.duration = 700
-        //animSet.interpolator = LinearInterpolator()
+        animSet.interpolator = LinearInterpolator()
         val translate = TranslateAnimation(
             Animation.ABSOLUTE,  //from xType
             0f,
@@ -882,7 +914,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             Animation.RELATIVE_TO_SELF,
             1f,
             Animation.RELATIVE_TO_SELF,
-            1f
+            0f
         )
         animSet.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationEnd(p0: Animation?) {
@@ -897,11 +929,11 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             override fun onAnimationRepeat(p0: Animation?) {
             }
         })
-        translate.interpolator = LinearInterpolator()
+        //translate.interpolator = LinearInterpolator()
         scaleAnimation.interpolator = LinearInterpolator()
         animSet.addAnimation(scaleAnimation)
-        animSet.addAnimation(translate)
-        animSet.addAnimation(fade)
+        //animSet.addAnimation(translate)
+        //animSet.addAnimation(fade)
         view.startAnimation(animSet)
     }
 
@@ -1075,9 +1107,11 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     }
 
     private fun addSlideInAnimationForContainer() {
-        conversationBinding.userPointContainer.visibility = VISIBLE
+        if( conversationBinding.userPointContainer.visibility != VISIBLE) {
+            conversationBinding.userPointContainer.visibility = VISIBLE
+            slideInAnimation(conversationBinding.userPointContainer)
+        }
         shiftGroupChatIconDown()
-        slideInAnimation(conversationBinding.userPointContainer)
     }
 
     private fun showGroupChatScreen(groupDetails: GroupDetails) {
@@ -1458,7 +1492,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 .subscribeOn(Schedulers.computation())
                 .subscribe({
                     it.id?.let { id ->
-                        openUserProfileActivity(id,USER_PROFILE_FLOW_FROM.BEST_PERFORMER.value)
+                        openUserProfileActivity(id, USER_PROFILE_FLOW_FROM.BEST_PERFORMER.value)
                     }
                 }, {
                     it.printStackTrace()
@@ -1858,7 +1892,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
 
     private fun hideCourseProgressTooltip() {
         if (conversationBinding.courseProgressTooltip.visibility == VISIBLE) {
-            moveViewToScreenCenter(conversationBinding.courseProgressTooltip)
+            slideOutAnimationLeaderboard(conversationBinding.courseProgressTooltip)
         }
         conversationBinding.courseProgressTooltip.visibility = GONE
         conversationBinding.shader.visibility = GONE
