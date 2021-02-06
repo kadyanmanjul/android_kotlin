@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -16,6 +15,7 @@ import android.os.Environment
 import android.provider.Settings
 import android.util.DisplayMetrics
 import android.view.View
+import android.widget.ImageView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -82,7 +82,6 @@ import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.userprofile.ShowAnimatedLeaderBoardFragment
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
-import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.smartlook.sdk.smartlook.Smartlook
 import com.smartlook.sdk.smartlook.analytics.identify.UserProperties
 import com.smartlook.sdk.smartlook.integrations.IntegrationListener
@@ -734,18 +733,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             //SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
             PointSnackbar.make(view, duration, action_lable)?.show()
-            val mediaplayer: MediaPlayer = MediaPlayer.create(
-                this,
-                R.raw.ting
-            ) //You Can Put Your File Name Instead Of abc
-
-            mediaplayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
-                override fun onCompletion(mediaPlayer: MediaPlayer) {
-                    mediaPlayer.reset()
-                    mediaPlayer.release()
-                }
-            })
-            mediaplayer.start()
+            playSnackbarSound(this)
         }
     }
 

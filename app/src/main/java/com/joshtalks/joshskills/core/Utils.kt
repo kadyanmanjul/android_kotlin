@@ -21,6 +21,7 @@ import android.graphics.drawable.VectorDrawable
 import android.media.AudioManager
 import android.media.AudioManager.STREAM_MUSIC
 import android.media.MediaMetadataRetriever
+import android.media.MediaPlayer
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
@@ -1184,4 +1185,19 @@ fun getRandomName(): String {
     val name = "ABCDFGHIJKLMNOPRSTUVZ"
     val ename = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     return name.random().toString().plus(ename.random().toString())
+}
+
+fun playSnackbarSound(context: Context){
+    val mediaplayer: MediaPlayer = MediaPlayer.create(
+        context,
+        R.raw.ting
+    )
+
+    mediaplayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
+        override fun onCompletion(mediaPlayer: MediaPlayer) {
+            mediaPlayer.reset()
+            mediaPlayer.release()
+        }
+    })
+    mediaplayer.start()
 }

@@ -4,7 +4,6 @@ package com.joshtalks.joshskills.ui.voip.voip_rating
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +20,7 @@ import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
+import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.databinding.VoipRatingFragmentBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
@@ -154,18 +154,7 @@ class VoipRatingFragment : DialogFragment() {
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             //SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
             PointSnackbar.make(view, duration, action_lable)?.show()
-            val mediaplayer: MediaPlayer = MediaPlayer.create(
-                requireActivity(),
-                R.raw.ting
-            ) //You Can Put Your File Name Instead Of abc
-
-            mediaplayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
-                override fun onCompletion(mediaPlayer: MediaPlayer) {
-                    mediaPlayer.reset()
-                    mediaPlayer.release()
-                }
-            })
-            mediaplayer.start()
+            playSnackbarSound(requireActivity())
         }
     }
 

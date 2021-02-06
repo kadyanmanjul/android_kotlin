@@ -2,11 +2,9 @@ package com.joshtalks.joshskills.ui.day_wise_course
 
 import android.content.Context
 import android.content.Intent
-import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -32,6 +30,7 @@ import com.joshtalks.joshskills.core.LESSON__CHAT_ID
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
+import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.databinding.DaywiseCourseActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
@@ -43,7 +42,6 @@ import com.joshtalks.joshskills.ui.chat.LESSON_REQUEST_CODE
 import com.joshtalks.joshskills.ui.day_wise_course.unlock_next_class.ActivityUnlockNextClass
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
-import com.joshtalks.joshskills.ui.voip.util.SoundPoolManager
 
 
 class DayWiseCourseActivity : CoreJoshActivity(),
@@ -203,18 +201,7 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                 //SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
                 PointSnackbar.make(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
                     ?.show()
-                val mediaplayer: MediaPlayer = MediaPlayer.create(
-                    this,
-                    R.raw.ting
-                ) //You Can Put Your File Name Instead Of abc
-
-                mediaplayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
-                    override fun onCompletion(mediaPlayer: MediaPlayer) {
-                        mediaPlayer.reset()
-                        mediaPlayer.release()
-                    }
-                })
-                mediaplayer.start()
+                playSnackbarSound(this)
             }
             if (it.awardMentorList.isNullOrEmpty().not()) {
                 //TODO add when awards functionality is over
