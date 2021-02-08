@@ -444,6 +444,8 @@ class VocabularyPracticeAdapter(
                 }
 
                 if (choice.userSelectedOrder == 1) {
+                    if (choice.isCorrect)
+                        isCorrectAns = true
                     binding.quizRadioGroup.setOnCheckedChangeListener(null)
                     radioButton.isChecked = true
                     binding.quizRadioGroup.setOnCheckedChangeListener(quizCheckedChangeListener)
