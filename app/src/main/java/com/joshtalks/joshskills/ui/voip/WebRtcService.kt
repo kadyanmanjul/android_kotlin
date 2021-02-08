@@ -26,6 +26,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -45,15 +46,16 @@ import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.reactivex.Completable
 import io.reactivex.disposables.CompositeDisposable
-import java.lang.ref.WeakReference
-import java.util.*
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.TimeUnit
-import kotlin.math.min
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.lang.ref.WeakReference
+import java.nio.charset.StandardCharsets
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.TimeUnit
+import kotlin.math.min
 
 const val RTC_TOKEN_KEY = "token"
 const val RTC_CHANNEL_KEY = "channel_name"
@@ -82,7 +84,15 @@ open class WebRtcService : Service(), SensorEventListener {
 
     companion object {
         private val TAG = WebRtcService::class.java.simpleName
-        private var phoneCallState = CallState.CALL_STATE_IDLE
+        var phoneCallState = CallState.CALL_STATE_IDLE
+
+        @JvmStatic
+        private val callReconnectTime = AppObjectController.getFirebaseRemoteConfig()
+            .getLong(FirebaseRemoteConfigKey.VOIP_CALL_RECONNECT_TIME)
+
+        @JvmStatic
+        private val callDisconnectTime = AppObjectController.getFirebaseRemoteConfig()
+            .getLong(FirebaseRemoteConfigKey.VOIP_CALL_DISCONNECT_TIME)
 
         @Volatile
         private var isSpeakerEnable = false
@@ -108,6 +118,9 @@ open class WebRtcService : Service(), SensorEventListener {
 
         @Volatile
         var isCallerJoin: Boolean = false
+
+        @Volatile
+        var holdCall: Boolean = false
 
         @Volatile
         var retryInitLibrary: Int = 0
@@ -280,16 +293,8 @@ open class WebRtcService : Service(), SensorEventListener {
         }
     }
 
-    fun addListener(callback: WebRtcCallback?) {
-        callCallback = WeakReference(callback)
-    }
-
     @Volatile
     private var eventListener: IRtcEngineEventHandler? = object : IRtcEngineEventHandler() {
-        override fun onWarning(warn: Int) {
-            Timber.tag(TAG).e("onWarning=  $warn")
-            super.onWarning(warn)
-        }
 
         override fun onError(errorCode: Int) {
             Timber.tag(TAG).e("onError=  $errorCode")
@@ -341,15 +346,21 @@ open class WebRtcService : Service(), SensorEventListener {
             isCallWasOnGoing = false
             isCallerJoin = false
             if (switchChannel.not()) {
-                callCallback?.get()?.onDisconnect(callId, callData?.let { getChannelName(it) })
+                callCallback?.get()?.onDisconnect(
+                    callId,
+                    callData?.let { getChannelName(it) },
+                    TimeUnit.SECONDS.toMillis(stats.totalDuration.toLong())
+                )
                 switchChannel = false
             }
             callData = null
+
         }
 
         override fun onUserJoined(uid: Int, elapsed: Int) {
             Timber.tag(TAG).e("onUserJoined=  $uid  $elapsed")
             super.onUserJoined(uid, elapsed)
+            compositeDisposable.clear()
             isCallWasOnGoing = true
             isCallerJoin = true
             startCallTimer()
@@ -373,28 +384,31 @@ open class WebRtcService : Service(), SensorEventListener {
                     endCall(apiCall = true)
                     isCallWasOnGoing = false
                 } else if (id != uid && reason == Constants.USER_OFFLINE_DROPPED) {
-                    endCall(apiCall = true)
+                    lostNetwork()
                 }
             }
         }
 
         override fun onRejoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
-            Timber.tag(TAG).e("onRejoinChannelSuccess")
             super.onRejoinChannelSuccess(channel, uid, elapsed)
+            Timber.tag(TAG).e("onRejoinChannelSuccess")
             gainNetwork()
         }
 
         override fun onConnectionStateChanged(state: Int, reason: Int) {
             super.onConnectionStateChanged(state, reason)
-            if (state == Constants.CONNECTION_STATE_RECONNECTING) {
-                lostNetwork()
-            }
             Timber.tag(TAG).e("onConnectionStateChanged " + state + "  " + reason)
+        }
+
+        override fun onNetworkTypeChanged(type: Int) {
+            super.onNetworkTypeChanged(type)
+            Timber.tag(TAG).e("onNetworkTypeChanged" + type)
         }
 
         override fun onConnectionLost() {
             super.onConnectionLost()
             Timber.tag(TAG).e("onConnectionLost")
+            lostNetwork()
         }
 
         override fun onChannelMediaRelayEvent(code: Int) {
@@ -402,11 +416,13 @@ open class WebRtcService : Service(), SensorEventListener {
             Timber.tag(TAG).e("onChannelMediaRelayEvent")
         }
 
-        override fun onRtmpStreamingStateChanged(url: String?, state: Int, errCode: Int) {
-            super.onRtmpStreamingStateChanged(url, state, errCode)
-            Timber.tag(TAG).e("onRtmpStreamingStateChanged")
-        }
+        override fun onStreamMessage(uid: Int, streamId: Int, data: ByteArray) {
+            super.onStreamMessage(uid, streamId, data)
+            Timber.tag(TAG).e("onStreamMessage-> ")
+            val str = String(data, StandardCharsets.UTF_8)
+            Timber.tag(TAG).e("onStreamMessage-> " + str)
 
+        }
 
         override fun onStreamMessageError(
             uid: Int,
@@ -415,53 +431,18 @@ open class WebRtcService : Service(), SensorEventListener {
             missed: Int,
             cached: Int
         ) {
+            Timber.tag(TAG).e("onStreamMessageError-> ")
             super.onStreamMessageError(uid, streamId, error, missed, cached)
-            Timber.tag(TAG).e("onStreamMessageError")
-
-        }
-
-        override fun onNetworkTypeChanged(type: Int) {
-            super.onNetworkTypeChanged(type)
-            Timber.tag(TAG).e("onNetworkTypeChanged")
-
-        }
-
-        /*override fun onRemoteAudioStateChanged(uid: Int, state: Int, reason: Int, elapsed: Int) {
-            super.onRemoteAudioStateChanged(uid, state, reason, elapsed)
-            Timber.tag(TAG)
-                .e("onRemoteAudioStateChanged->" + uid + ", state->" + state + ", reason->" + reason + " time-> " + elapsed + " Connextion state->" + mRtcEngine?.connectionState)
-
-            if (state == Constants.REMOTE_AUDIO_STATE_STARTING) {
-                isRemoteUserAudioConnected = true
-                return
-            }
-            try {
-                mRtcEngine?.connectionState
-                if (state == Constants.REMOTE_AUDIO_STATE_FROZEN) {
-                    isRemoteUserAudioConnected = isRemoteUserAudioConnected.not()
-                    if (isRemoteUserAudioConnected) {
-                        gainNetwork()
-                    } else {
-                        lostNetwork()
-                    }
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-
-        }*/
-
-        override fun onRemoteAudioStats(stats: RemoteAudioStats) {
-            super.onRemoteAudioStats(stats)
-            Timber.tag(TAG).e("onRemoteAudioStats-> " + stats.quality)
         }
 
         private fun lostNetwork() {
+            addTimerReconnect()
             callCallback?.get()?.onNetworkLost()
             joshAudioManager?.reconnectCommunication()
         }
 
         private fun gainNetwork() {
+            compositeDisposable.clear()
             callCallback?.get()?.onNetworkReconnect()
             joshAudioManager?.reconnectCommunicationStop()
         }
@@ -478,11 +459,22 @@ open class WebRtcService : Service(), SensorEventListener {
         override fun onCallStateChanged(state: Int, phoneNumber: String?) {
             super.onCallStateChanged(state, phoneNumber)
             Timber.tag(TAG).e("RTC=    %s", state)
-            if (state == TelephonyManager.CALL_STATE_IDLE) {
-                phoneCallState = CallState.CALL_STATE_IDLE
-            } else {
-                phoneCallState = CallState.CALL_STATE_BUSY
-                disconnectCall()
+            when (state) {
+                TelephonyManager.CALL_STATE_IDLE -> {
+                    phoneCallState = CallState.CALL_STATE_IDLE
+                    holdCall = false
+                    callCallback?.get()?.onUnHoldCall()
+                    mRtcEngine?.sendStreamMessage(2, "0".toByteArray())
+                }
+                TelephonyManager.CALL_STATE_OFFHOOK -> {
+                    phoneCallState = CallState.CALL_STATE_CONNECTED
+                    holdCall = true
+                    callCallback?.get()?.onHoldCall()
+                    mRtcEngine?.sendStreamMessage(1, "1".toByteArray())
+                }
+                else -> {
+                    phoneCallState = CallState.CALL_STATE_BUSY
+                }
             }
         }
     }
@@ -524,6 +516,10 @@ open class WebRtcService : Service(), SensorEventListener {
                 mRtcEngine?.addHandler(eventListener)
             }
             mRtcEngine?.apply {
+                if (BuildConfig.DEBUG) {
+                    setParameters("{\"rtc.log_filter\": 65535}")
+                }
+                setParameters("{\"rtc.peer.offline_period\":$callReconnectTime}")
                 disableVideo()
                 enableAudio()
                 enableAudioVolumeIndication(1000, 3, true)
@@ -660,6 +656,10 @@ open class WebRtcService : Service(), SensorEventListener {
         return START_NOT_STICKY
     }
 
+    fun addListener(callback: WebRtcCallback?) {
+        callCallback = WeakReference(callback)
+    }
+
     private fun phoneBusySoDisconnect(intent: Intent) {
         /*    (intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?)?.let {
                 //   callStatusNetworkApi(it, CallAction.DECLINE)
@@ -718,6 +718,22 @@ open class WebRtcService : Service(), SensorEventListener {
                 }
                 .subscribe())
     }
+
+    private fun addTimerReconnect() {
+        compositeDisposable.add(
+            Completable.complete()
+                .delay(callDisconnectTime, TimeUnit.MILLISECONDS)
+                .doOnComplete {
+                    Timber.tag("WebRtcService").e("doOnComplete")
+                }
+                .subscribeOn(Schedulers.io())
+                .subscribe {
+                    Timber.tag("WebRtcService").e("Complete")
+                    endCall(apiCall = true)
+                })
+
+    }
+
 
     fun isCallNotConnected(): Boolean {
         return (mRtcEngine?.connectionState == Constants.CONNECTION_STATE_DISCONNECTED || isCallWasOnGoing.not())
@@ -843,6 +859,8 @@ open class WebRtcService : Service(), SensorEventListener {
             }
         }
         isCallWasOnGoing = true
+        mRtcEngine?.createDataStream(true, true)
+
     }
 
     @SuppressLint("InvalidWakeLockTag")
@@ -866,6 +884,24 @@ open class WebRtcService : Service(), SensorEventListener {
         }
     }
 
+    private fun removeSensor() {
+        try {
+            if (proximityWakelock != null && proximityWakelock!!.isHeld) {
+                proximityWakelock?.release()
+            }
+            if (cpuWakelock != null && cpuWakelock!!.isHeld) {
+                cpuWakelock?.release()
+            }
+            val sm = getSystemService(SENSOR_SERVICE) as SensorManager
+            val proximity = sm.getDefaultSensor(Sensor.TYPE_PROXIMITY)
+            if (proximity != null) {
+                sm.unregisterListener(this)
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
     private fun getToken(data: HashMap<String, String?>): String? {
         return data[RTC_TOKEN_KEY]
     }
@@ -878,6 +914,7 @@ open class WebRtcService : Service(), SensorEventListener {
         return data[RTC_UID_KEY]?.toInt() ?: 0
     }
 
+    @SuppressLint("MissingPermission")
     private fun stopRing() {
         try {
             if (ringtonePlayer != null) {
@@ -981,18 +1018,7 @@ open class WebRtcService : Service(), SensorEventListener {
             .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_NONE)
         phoneCallState = CallState.CALL_STATE_IDLE
         Timber.tag(TAG).e("onDestroy")
-
-        if (proximityWakelock != null && proximityWakelock!!.isHeld) {
-            proximityWakelock?.release()
-        }
-        if (cpuWakelock != null && cpuWakelock!!.isHeld) {
-            cpuWakelock?.release()
-        }
-        val sm = getSystemService(SENSOR_SERVICE) as SensorManager
-        val proximity = sm.getDefaultSensor(Sensor.TYPE_PROXIMITY)
-        if (proximity != null) {
-            sm.unregisterListener(this)
-        }
+        removeSensor()
         executor.shutdown()
         super.onDestroy()
     }
@@ -1307,7 +1333,7 @@ open class WebRtcService : Service(), SensorEventListener {
                 val time = getTimeOfTalk()
                 data["mentor_id"] = Mentor.getInstance().getId()
                 data["call_response"] = callAction.action
-                data["duration"] = TimeUnit.MILLISECONDS.toSeconds(time.toLong()).toString()
+                data["duration"] = TimeUnit.MILLISECONDS.toSeconds(time).toString()
                 AppObjectController.p2pNetworkService.getAgoraCallResponse(data)
                 if (CallAction.ACCEPT == callAction) {
                     callCallback?.get()?.onServerConnect()
@@ -1316,6 +1342,35 @@ open class WebRtcService : Service(), SensorEventListener {
                 ex.printStackTrace()
             }
         }
+    }
+
+    override fun onSensorChanged(event: SensorEvent) {
+        if (event.sensor.type == Sensor.TYPE_PROXIMITY) {
+            val am = getSystemService(AUDIO_SERVICE) as AudioManager
+            if (am.isSpeakerphoneOn && am.isBluetoothScoOn) {
+                return
+            }
+            val newIsNear: Boolean = event.values[0] < min(event.sensor.maximumRange, 3F)
+            checkIsNear(newIsNear)
+        }
+    }
+
+    private fun checkIsNear(newIsNear: Boolean) {
+        if (newIsNear != isProximityNear) {
+            isProximityNear = newIsNear
+            try {
+                if (isProximityNear) {
+                    proximityWakelock?.acquire(30 * 60L * 60)
+                } else {
+                    proximityWakelock?.release(1)
+                }
+            } catch (x: Exception) {
+                x.printStackTrace()
+            }
+        }
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
     }
 
     @SuppressLint("MissingPermission")
@@ -1368,35 +1423,6 @@ open class WebRtcService : Service(), SensorEventListener {
         }
     }
 
-    override fun onSensorChanged(event: SensorEvent) {
-        if (event.sensor.type == Sensor.TYPE_PROXIMITY) {
-            val am = getSystemService(AUDIO_SERVICE) as AudioManager
-            if (am.isSpeakerphoneOn && am.isBluetoothScoOn) {
-                return
-            }
-            val newIsNear: Boolean = event.values[0] < min(event.sensor.maximumRange, 3F)
-            checkIsNear(newIsNear)
-        }
-    }
-
-    private fun checkIsNear(newIsNear: Boolean) {
-        if (newIsNear != isProximityNear) {
-            isProximityNear = newIsNear
-            try {
-                if (isProximityNear) {
-                    proximityWakelock?.acquire(30 * 60L * 60)
-                } else {
-                    proximityWakelock?.release(1)
-                }
-            } catch (x: Exception) {
-                x.printStackTrace()
-            }
-        }
-    }
-
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-    }
-
 }
 
 sealed class WebRtcCalling
@@ -1422,7 +1448,7 @@ data class NoUserFound(val action: String = "calling.action.no_user_found") :
 
 
 enum class CallState {
-    CALL_STATE_IDLE, CALL_STATE_BUSY, CONNECT, DISCONNECT, REJECT
+    CALL_STATE_CONNECTED, CALL_STATE_IDLE, CALL_STATE_BUSY, CONNECT, DISCONNECT, REJECT
 }
 
 enum class CallAction(val action: String) {
@@ -1441,7 +1467,7 @@ class NotificationId {
 interface WebRtcCallback {
     fun onChannelJoin() {}
     fun onConnect(callId: String) {}
-    fun onDisconnect(callId: String?, channelName: String?) {}
+    fun onDisconnect(callId: String?, channelName: String?, time: Long = 0) {}
     fun onCallReject(callId: String?) {}
     fun switchChannel(data: HashMap<String, String?>) {}
     fun onNoUserFound() {}
@@ -1449,6 +1475,9 @@ interface WebRtcCallback {
     fun onIncomingCall() {}
     fun onNetworkLost() {}
     fun onNetworkReconnect() {}
+    fun onHoldCall() {}
+    fun onUnHoldCall() {}
+
     fun onRemoteUserNetworkStateChanged(state: Boolean) {}
 
 }
