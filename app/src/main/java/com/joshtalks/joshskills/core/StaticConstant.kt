@@ -214,6 +214,11 @@ class FirebaseRemoteConfigKey {
 
         // GroupChat
         const val GROUP_CHAT_TAGLINE = "GROUP_CHAT_TAGLINE"
+
+        // P2P
+        const val VOIP_CALL_DISCONNECT_TIME = "VOIP_CALL_DISCONNECT_TIME"
+        const val VOIP_CALL_RECONNECT_TIME = "VOIP_CALL_RECONNECT_TIME"
+
     }
 }
 

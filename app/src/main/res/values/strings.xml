@@ -835,6 +835,7 @@
     <string name="p2p_subtitle">Speaking Practice</string>
     <string name="reconnecting">Reconnecting</string>
     <string name="last_seen">Last Seen %1$s</string>
+    <string name="hold_call">Hold call</string>
 
 
 </resources>
