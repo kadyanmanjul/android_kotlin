@@ -621,4 +621,15 @@
         <value>false
         </value>
     </entry>
+
+    <entry>
+        <key>VOIP_CALL_RECONNECT_TIME</key>
+        <value>600</value>
+    </entry>
+
+    <entry>
+        <key>VOIP_CALL_DISCONNECT_TIME</key>
+        <value>25000</value>
+    </entry>
+
 </defaultsMap>
