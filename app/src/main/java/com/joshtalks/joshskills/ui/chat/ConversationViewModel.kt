@@ -58,6 +58,9 @@ class ConversationViewModel(application: Application) :
     private var lastChatTime: Date? = null
     var context: JoshApplication = getApplication()
     var appDatabase = AppObjectController.appDatabase
+
+    val conversationList: MutableList<ChatModel> = ArrayList()
+
     val chatObservableLiveData: MutableLiveData<List<ChatModel>> = MutableLiveData()
     val emptyChatLiveData: MutableLiveData<Nothing> = MutableLiveData()
     val refreshViewLiveData: MutableLiveData<ChatModel> = MutableLiveData()
@@ -232,6 +235,7 @@ class ConversationViewModel(application: Application) :
         }
         lastMessageTime = chatReturn.last().created
         chatObservableLiveData.postValue(chatReturn)
+
         updateAllMessageReadByUser()
     }
 
@@ -244,7 +248,7 @@ class ConversationViewModel(application: Application) :
             } else {
                 //Check if list already constains chat with this lesson id
                 val lessonPosition =
-                    chatList.indexOfFirst { chatModel -> chatModel.lessonId == lessonModel.id }
+                    conversationList.indexOfFirst { chatModel -> chatModel.lessonId == lessonModel.id }
                 if (lessonPosition == -1) {
                     //if its not then we create a new chat object with same data as current chat obejct but chane type to Lesson and add it to list
                     addNewLesson(lessonModel, chatList, chat)
@@ -253,6 +257,7 @@ class ConversationViewModel(application: Application) :
         } else {
             //current chat object is not part of any lesson we will directly add it to the list
             chatList.add(chat)
+            conversationList.add(chat)
         }
 
     }
@@ -266,6 +271,7 @@ class ConversationViewModel(application: Application) :
         chat.lessons = lessonModel
         chat.lessonId = lessonModel.id
         chatList.add(chat)
+        conversationList.add(chat)
     }
 
     private fun updateAllMessageReadByUser() {
@@ -459,6 +465,7 @@ class ConversationViewModel(application: Application) :
             return@launch
         }
         lastMessageTime = chatReturn.last().created
+        conversationList.addAll(chatReturn)
         chatObservableLiveData.postValue(chatReturn)
         updateAllMessageReadByUser()
         RxBus2.publish(MessageCompleteEventBus(false))

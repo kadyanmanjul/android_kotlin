@@ -93,6 +93,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
 import com.joshtalks.joshskills.repository.local.eventbus.InternalSeekBarProgressEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.repository.local.eventbus.P2PStartEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.PdfOpenEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEvent
@@ -100,7 +101,6 @@ import com.joshtalks.joshskills.repository.local.eventbus.PractiseSubmitEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.StartCertificationExamEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.UnlockNextClassEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
-import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -229,7 +229,6 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     private val cMessageType: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.TX
     private val compositeDisposable = CompositeDisposable()
     private var revealAttachmentView: Boolean = false
-    private val conversationList: MutableList<ChatModel> = ArrayList()
     private var removingConversationList = linkedSetOf<ChatModel>()
     private val readChatList: MutableSet<ChatModel> = mutableSetOf()
     private var readMessageTimerTask: TimerTask? = null
@@ -446,8 +445,10 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                         openHelpActivity()
                     }
                     R.id.profile_setting -> {
-                        openUserProfileActivity(Mentor.getInstance().getId(),
-                            USER_PROFILE_FLOW_FROM.MENU.value)
+                        openUserProfileActivity(
+                            Mentor.getInstance().getId(),
+                            USER_PROFILE_FLOW_FROM.MENU.value
+                        )
                     }
                     R.id.leaderboard_setting -> {
                         openLeaderBoard()
@@ -695,7 +696,10 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             openLeaderBoard()
         }
         conversationBinding.points.setOnClickListener {
-            openUserProfileActivity(Mentor.getInstance().getId(),USER_PROFILE_FLOW_FROM.FLOATING_BAR.value)
+            openUserProfileActivity(
+                Mentor.getInstance().getId(),
+                USER_PROFILE_FLOW_FROM.FLOATING_BAR.value
+            )
         }
 
         findViewById<View>(R.id.ll_audio).setOnClickListener {
@@ -765,7 +769,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
 
         val isGroupChatHintAlreadySeen = PrefManager.getBoolValue(IS_GROUP_CHAT_HINT_SEEN, true)
         if (inboxEntity.isGroupActive && isGroupChatHintAlreadySeen.not()) {
-            val lastLesson = conversationList.filter { it.lessons != null }.lastOrNull()
+            val lastLesson =
+                conversationViewModel.conversationList.filter { it.lessons != null }.lastOrNull()
             lastLesson?.lessons?.let {
                 if (it.lessonNo > 3 || (it.lessonNo == 3 && it.status != LESSON_STATUS.NO)) {
                     conversationBinding.balloonText.text =
@@ -905,7 +910,6 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     conversationBinding.chatRv.removeView(unlockViewHolder)
                 }
                 chatModelLast = listChat.find { it.isSeen.not() }
-                conversationList.addAll(listChat)
 
                 val temp = listChat.groupBy { it.created }
                 val tempList = temp.toSortedMap(compareBy { it })
@@ -1418,7 +1422,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 .subscribeOn(Schedulers.computation())
                 .subscribe({
                     it.id?.let { id ->
-                        openUserProfileActivity(id,USER_PROFILE_FLOW_FROM.BEST_PERFORMER.value)
+                        openUserProfileActivity(id, USER_PROFILE_FLOW_FROM.BEST_PERFORMER.value)
                     }
                 }, {
                     it.printStackTrace()
@@ -1788,8 +1792,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             conversationBinding.courseProgressTooltip.visibility = VISIBLE
             conversationBinding.shader.visibility = VISIBLE
 
-            if(conversationBinding.userPointContainer.visibility== VISIBLE){
-                conversationBinding.userPointContainer.visibility= GONE
+            if (conversationBinding.userPointContainer.visibility == VISIBLE) {
+                conversationBinding.userPointContainer.visibility = GONE
                 shiftGroupChatIconUp()
             }
         }
@@ -1805,6 +1809,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         paramsBadge.topMargin = Utils.dpToPx(16)
         conversationBinding.txtUnreadCount.layoutParams = paramsBadge
     }
+
     private fun shiftGroupChatIconDown() {
         val paramsChat: ViewGroup.MarginLayoutParams =
             conversationBinding.imgGroupChat.layoutParams as ViewGroup.MarginLayoutParams
@@ -2113,7 +2118,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         if (inboxEntity.isGroupActive) {
             conversationViewModel.getUnreadMessageCount(inboxEntity.conversation_id)
         }
-        if (inboxEntity.isCapsuleCourse){
+        if (inboxEntity.isCapsuleCourse) {
             conversationViewModel.getProfileData(Mentor.getInstance().getId())
         }
     }
@@ -2158,7 +2163,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             startActivity(
                 CourseProgressActivityNew.getCourseProgressActivityNew(
                     this,
-                    conversationList[0].question?.course_id ?: 0
+                    conversationViewModel.conversationList[0].question?.course_id ?: 0
                 )
             )
             hideCourseProgressTooltip()
