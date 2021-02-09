@@ -12,13 +12,21 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentVocabularyBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
@@ -106,6 +114,10 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         practiceViewModel.getAssessmentData(chatModelList)
         binding.vocabularyCompletedTv.text = AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.VOCABULARY_COMPLETED)
+
+        if (isAllQuestionsAttempted()) {
+            binding.vocabularyCompleteLayout.visibility = View.VISIBLE
+        }
         return binding.root
     }
 
@@ -205,18 +217,19 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     }
 
     override fun openNextScreen() {
-        var openNextScreen = true
-        chatModelList?.forEach { item ->
-            if (item.question?.status != QUESTION_STATUS.AT) {
-                openNextScreen = false
-                return@forEach
-            }
-        }
-
-        if (openNextScreen && isVisible) {
+        if (isAllQuestionsAttempted() && isVisible) {
             binding.vocabularyCompleteLayout.visibility = View.VISIBLE
             activityCallback?.onSectionStatusUpdate(1, true)
         }
+    }
+
+    private fun isAllQuestionsAttempted(): Boolean {
+        chatModelList?.forEach { item ->
+            if (item.question?.status != QUESTION_STATUS.AT) {
+                return false
+            }
+        }
+        return true
     }
 
     fun onContinueClick() {

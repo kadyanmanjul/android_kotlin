@@ -38,6 +38,7 @@ import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.server.Award
+import com.joshtalks.joshskills.ui.day_wise_course.unlock_next_class.ActivityUnlockNextClass
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 
@@ -437,7 +438,12 @@ class DayWiseCourseActivity : CoreJoshActivity(),
                         })
                         finish()
                     }
-                }
+                }.launch(
+                    ActivityUnlockNextClass.getActivityUnlockNextClassIntent(
+                        this,
+                        it, lessonModel!!
+                    )
+                )
             }
         }
     }
