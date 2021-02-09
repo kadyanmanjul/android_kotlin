@@ -1,24 +1,20 @@
 package com.joshtalks.joshskills.ui.course_details.viewholder
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.location.Geocoder
+import android.location.Location
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
-import com.google.android.gms.location.LocationRequest
+import androidx.fragment.app.FragmentActivity
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.VERSION
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-import com.joshtalks.joshskills.repository.server.SearchLocality
-import com.joshtalks.joshskills.repository.server.UpdateUserLocality
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
 import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.repository.server.course_detail.LocationStats
 import com.karumi.dexter.MultiplePermissionsReport
@@ -27,21 +23,17 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
-import com.patloew.rxlocation.RxLocation
-import io.reactivex.CompletableObserver
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import com.patloew.colocation.CoGeocoder
+import kotlinx.coroutines.*
 import java.util.*
 import java.util.regex.Pattern
 
 @Layout(R.layout.layout_location_stats_view_holder)
-class LocationStatViewHolder(
+open class LocationStatViewHolder(
     override val type: CardType,
     override val sequenceNumber: Int,
     private var locationStats: LocationStats,
-    val activity: Activity,
+    val activity: FragmentActivity,
     private val context: Context = AppObjectController.joshApplication
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
 
@@ -59,9 +51,7 @@ class LocationStatViewHolder(
 
     @com.mindorks.placeholderview.annotations.View(R.id.progress_bar)
     lateinit var progressBar: FrameLayout
-
-    private var compositeDisposable = CompositeDisposable()
-
+    var location: Location? = null
     private var index = 0
     val p: Pattern = Pattern.compile("\\d+")
     var city: String? = null
@@ -88,6 +78,9 @@ class LocationStatViewHolder(
         checkLocation.setOnClickListener {
             progressBar.visibility = View.VISIBLE
             onClick()
+        }
+        location?.let {
+            getAddressAndSetView(it.latitude, it.longitude)
         }
     }
 
@@ -133,69 +126,21 @@ class LocationStatViewHolder(
     }
 
     @SuppressLint("MissingPermission")
-    private fun getLocationAndUpload() {
-        val rxLocation = RxLocation(AppObjectController.joshApplication)
-        val locationRequest = LocationRequest.create()
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-            .setInterval(10000)
-        rxLocation.settings().checkAndHandleResolutionCompletable(locationRequest)
-            .subscribeOn(Schedulers.computation())
-            .observeOn(Schedulers.computation())
-            .subscribe(object : CompletableObserver {
-                override fun onSubscribe(d: Disposable) {
-                }
-
-                override fun onComplete() {
-                    compositeDisposable.add(
-                        rxLocation.location().updates(locationRequest)
-                            .subscribeOn(Schedulers.computation())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe({ location ->
-                                try {
-                                    val request = UpdateUserLocality()
-                                    request.locality =
-                                        SearchLocality(location.latitude, location.longitude)
-                                    getAddressAndSetView(location.latitude, location.longitude)
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                }
-                                hideProgressBar()
-                                compositeDisposable.clear()
-                            }, { ex ->
-                                ex.printStackTrace()
-                            })
-                    )
-                }
-
-                override fun onError(e: Throwable) {
-                    e.printStackTrace()
-                    hideProgressBar()
-                }
-            })
-    }
-
-    private fun hideProgressBar() {
-        AppObjectController.uiHandler.post {
-            progressBar.visibility = View.GONE
-        }
+    protected fun getLocationAndUpload() {
+        RxBus2.publish(EmptyEventBus())
     }
 
     private fun getAddressAndSetView(latitude: Double, longitude: Double) {
-        if (Geocoder.isPresent().not())
-            return
-        val geocoder = Geocoder(context, Locale.getDefault())
-        val addresses = geocoder.getFromLocation(
-            latitude,
-            longitude,
-            1
-        )
-        if (city.isNullOrBlank().not() && city.equals(addresses[0].locality))
-            return
-        city = addresses[0].locality
-        state = addresses[0].adminArea
-        AppObjectController.uiHandler.post {
-            stateCityName.text = city.plus(" , ").plus(state)
-            showNextImageAndRandomData()
+        CoroutineScope(Dispatchers.IO).launch {
+            val coGeocoder = CoGeocoder.from(context)
+            coGeocoder.getAddressFromLocation(latitude, longitude)?.let {
+                if (city.isNullOrBlank().not() && city.equals(it.locality))
+                    return@launch
+                AppObjectController.uiHandler.post {
+                    stateCityName.text = it.locality.plus(" , ").plus(it.subAdminArea)
+                    showNextImageAndRandomData()
+                }
+            }
         }
     }
 

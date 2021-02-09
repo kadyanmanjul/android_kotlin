@@ -1,11 +1,12 @@
 package com.joshtalks.joshskills.repository.service
 
+import com.joshtalks.joshskills.repository.server.voip.RequestUserLocation
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
-import java.util.HashMap
+import java.util.*
 
 interface P2PNetworkService {
 
@@ -23,6 +24,9 @@ interface P2PNetworkService {
 
     @GET("$DIR/voicecall/agora_user_profile/{id}/")
     suspend fun getUserDetailOnCall(@Path("id") id: String): HashMap<String, String>
+
+    @POST("$DIR/voicecall/agora_call_location/")
+    suspend fun uploadUserLocationAgora(@Body params: RequestUserLocation): Response<Void>
 
 
 }

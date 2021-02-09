@@ -1,9 +1,9 @@
 package com.joshtalks.joshskills.ui.inbox
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.location.Location
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.SpannableString
@@ -16,7 +16,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.cometchat.pro.constants.CometChatConstants
 import com.facebook.share.internal.ShareConstants.ACTION_TYPE
-import com.google.android.gms.location.LocationRequest
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.joshtalks.joshskills.BuildConfig
@@ -63,12 +62,9 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.patloew.rxlocation.RxLocation
 import io.agora.rtc.RtcEngine
-import io.reactivex.CompletableObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.find_more_layout.*
@@ -577,11 +573,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
                             if (flag) {
-                                getLocationAndUpload()
+                                fetchUserLocation()
                             }
                         }
                     }
-
                 }).check()
         }
     }
@@ -867,53 +862,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private fun getLocationAndUpload() {
-        val rxLocation = RxLocation(application)
-        val locationRequest = LocationRequest.create()
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-            .setInterval(10000)
-
-        rxLocation.settings().checkAndHandleResolutionCompletable(locationRequest)
-            .subscribeOn(Schedulers.computation())
-            .subscribe(object : CompletableObserver {
-                override fun onSubscribe(d: Disposable) {
-                }
-
-                override fun onComplete() {
-                    compositeDisposable.add(
-                        rxLocation.location().updates(locationRequest)
-                            .subscribeOn(Schedulers.computation())
-                            .subscribe({ location ->
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    try {
-                                        val request = UpdateUserLocality()
-                                        request.locality =
-                                            SearchLocality(location.latitude, location.longitude)
-                                        AppAnalytics.setLocation(
-                                            location.latitude,
-                                            location.longitude
-                                        )
-                                        val response: ProfileResponse =
-                                            AppObjectController.signUpNetworkService.updateUserAddressAsync(
-                                                Mentor.getInstance().getId(),
-                                                request
-                                            ).await()
-                                        Mentor.getInstance().setLocality(response.locality).update()
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
-                                    }
-                                    compositeDisposable.clear()
-                                }
-                            }, { _ ->
-                            })
-                    )
-                }
-
-                override fun onError(e: Throwable) {
-                }
-            })
-    }
 
     override fun onResume() {
         super.onResume()
@@ -1025,6 +973,12 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun showOverlayToolTip(remainingTrialDays: Int) {
         overlay_layout.visibility = View.VISIBLE
         (overlay_tip as TopTrialTooltipView).setInboxOverayTipText(7.minus(remainingTrialDays))
+    }
+
+    override fun onUpdateLocation(location: Location) {
+        CoroutineScope(Dispatchers.IO).launch {
+            uploadUserLocation(location)
+        }
     }
 
     override fun onDestroy() {

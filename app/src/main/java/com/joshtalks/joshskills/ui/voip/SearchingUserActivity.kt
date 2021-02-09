@@ -6,6 +6,7 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
+import android.location.Location
 import android.os.*
 import android.view.KeyEvent
 import android.view.View
@@ -14,6 +15,7 @@ import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -211,19 +213,21 @@ class SearchingUserActivity : BaseActivity() {
 
 
     private fun startProgressBarCountDown() {
-        binding.progressBar.max = 100
-        binding.progressBar.progress = 0
-        timer = object : CountDownTimer(5000, 500) {
-            override fun onTick(millisUntilFinished: Long) {
-                val diff = binding.progressBar.progress + 10
-                fillProgressBar(diff)
-            }
+        runOnUiThread {
+            binding.progressBar.max = 100
+            binding.progressBar.progress = 0
+            timer = object : CountDownTimer(5000, 500) {
+                override fun onTick(millisUntilFinished: Long) {
+                    val diff = binding.progressBar.progress + 10
+                    fillProgressBar(diff)
+                }
 
-            override fun onFinish() {
-                startProgressBarCountDown()
+                override fun onFinish() {
+                    startProgressBarCountDown()
+                }
             }
+            timer?.start()
         }
-        timer?.start()
     }
 
     private fun fillProgressBar(diff: Int) {
@@ -240,15 +244,28 @@ class SearchingUserActivity : BaseActivity() {
         animation.start()
     }
 
-    private fun requestForSearchUser() {
+    override fun onUpdateLocation(location: Location) {
         appAnalytics?.addParam(AnalyticsEvent.SEARCH_USER_FOR_VOIP.NAME, courseId)
         startProgressBarCountDown()
-        initApiForSearchUser()
+        initApiForSearchUser(location)
     }
 
-    private fun initApiForSearchUser() {
+    override fun onDenyLocation() {
+        MaterialDialog(this).show {
+            message(R.string.call_start_permission_message)
+            positiveButton(R.string.exit) {
+                finish()
+            }
+        }
+    }
+
+    private fun requestForSearchUser() {
+        fetchUserLocation()
+    }
+
+    private fun initApiForSearchUser(location: Location) {
         courseId?.let {
-            viewModel.getUserForTalk(it, topicId, ::callback)
+            viewModel.getUserForTalk(it, topicId, location, ::callback)
         }
     }
 

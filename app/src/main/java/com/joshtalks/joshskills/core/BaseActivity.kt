@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.core
 
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DownloadManager
 import android.app.LauncherActivity
@@ -8,6 +9,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.location.Location
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -29,6 +31,7 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.android.installreferrer.api.InstallReferrerClient
 import com.flurry.android.FlurryAgent
+import com.google.android.gms.location.LocationRequest
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.inappmessaging.FirebaseInAppMessagingClickListener
@@ -54,8 +57,7 @@ import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
-import com.joshtalks.joshskills.repository.server.Award
-import com.joshtalks.joshskills.repository.server.OutrankedDataResponse
+import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
@@ -81,7 +83,7 @@ import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.userprofile.ShowAnimatedLeaderBoardFragment
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
-import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
+import com.patloew.colocation.CoLocation
 import com.smartlook.sdk.smartlook.Smartlook
 import com.smartlook.sdk.smartlook.analytics.identify.UserProperties
 import com.smartlook.sdk.smartlook.integrations.IntegrationListener
@@ -90,16 +92,15 @@ import com.uxcam.OnVerificationListener
 import com.uxcam.UXCam
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.*
 import kotlin.random.Random
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
+const val REQUEST_SHOW_SETTINGS = 123
 
 abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
     FirebaseInAppMessagingImpressionListener, FirebaseInAppMessagingClickListener {
@@ -129,6 +130,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         if (AppObjectController.isSettingUpdate) {
             reCreateActivity()
         }
+
     }
 
     protected var onDownloadComplete = object : BroadcastReceiver() {
@@ -757,7 +759,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
             //if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             ShowAnimatedLeaderBoardFragment.showDialog(
                 supportFragmentManager,
-                outrankData,lessonInterval,chatId,lessonNo
+                outrankData, lessonInterval, chatId, lessonNo
             )
         }
     }
@@ -769,4 +771,86 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         } catch (ex: Exception) {
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_SHOW_SETTINGS) {
+            if (resultCode == Activity.RESULT_OK) {
+                startLocationUpdates()
+            } else {
+                onDenyLocation()
+            }
+        }
+    }
+
+    private var locationUpdatesJob: Job? = null
+    private val coLocation: CoLocation by lazy {
+        CoLocation.from(applicationContext)
+    }
+    private val locationRequest: LocationRequest by lazy {
+        LocationRequest.create()
+            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+            .setInterval(5000)
+    }
+
+
+    @SuppressLint("MissingPermission")
+    protected fun fetchUserLocation() {
+        CoroutineScope(Dispatchers.IO).launch {
+            when (val settingsResult = coLocation.checkLocationSettings(locationRequest)) {
+                CoLocation.SettingsResult.Satisfied -> {
+                    val location = coLocation.getLastLocation()
+                    if (null == location) {
+                        startLocationUpdates()
+                    } else {
+                        onUpdateLocation(location)
+                    }
+                }
+                is CoLocation.SettingsResult.Resolvable -> {
+                    settingsResult.resolve(this@BaseActivity, REQUEST_SHOW_SETTINGS)
+                }
+                else -> { /* Ignore for now, we can't resolve this anyway */
+                }
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    fun startLocationUpdates() {
+        locationUpdatesJob?.cancel()
+        locationUpdatesJob = CoroutineScope(Dispatchers.IO).launch {
+            try {
+                coLocation.getLocationUpdates(locationRequest).collectLatest {
+                    onUpdateLocation(it)
+                    locationUpdatesJob?.cancel()
+                }
+            } catch (e: CancellationException) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    protected suspend fun uploadUserLocation(location: Location) {
+        try {
+            val request = UpdateUserLocality()
+            request.locality =
+                SearchLocality(location.latitude, location.longitude)
+            AppAnalytics.setLocation(
+                location.latitude,
+                location.longitude
+            )
+            val response: ProfileResponse =
+                AppObjectController.signUpNetworkService.updateUserAddressAsync(
+                    Mentor.getInstance().getId(), request
+                )
+            Mentor.getInstance().setLocality(response.locality).update()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    open fun onUpdateLocation(location: Location) {}
+    open fun onDenyLocation() {}
+
+
 }

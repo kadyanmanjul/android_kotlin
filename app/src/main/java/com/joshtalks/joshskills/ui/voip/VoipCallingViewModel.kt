@@ -1,24 +1,29 @@
 package com.joshtalks.joshskills.ui.voip
 
 import android.app.Application
+import android.location.Location
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.voip.RequestUserLocation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.net.ProtocolException
 import java.util.*
 
-
 class VoipCallingViewModel(application: Application) : AndroidViewModel(application) {
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
 
-
-    fun getUserForTalk(courseId: String, topicId: Int?, aFunction: (String, String, Int) -> Unit) {
+    fun getUserForTalk(
+        courseId: String,
+        topicId: Int?,
+        location: Location,
+        aFunction: (String, String, Int) -> Unit
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val requestParams: HashMap<String, String> = HashMap()
@@ -34,6 +39,7 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
                             it["channel_name"]!!,
                             it["uid"]!!.toInt()
                         )
+                        uploadUserCurrentLocation(it["channel_name"]!!, location)
                     }
                 } else if (response.code() == 204) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.INVALIDED)
@@ -53,4 +59,15 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
+    private fun uploadUserCurrentLocation(channelName: String, location: Location) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestObj =
+                    RequestUserLocation(channelName, location.latitude, location.longitude)
+                AppObjectController.p2pNetworkService.uploadUserLocationAgora(requestObj)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
 }

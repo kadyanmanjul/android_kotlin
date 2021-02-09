@@ -187,9 +187,16 @@ object PermissionUtils {
             context,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
 
+        ) + ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+
+        ) + ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+
         ) == PackageManager.PERMISSION_GRANTED
     }
-
 
     fun callingFeaturePermission(
         activity: Activity,
@@ -202,14 +209,16 @@ object PermissionUtils {
                 Manifest.permission.MODIFY_AUDIO_SETTINGS,
                 Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
             )
             .withListener(multiplePermissionsListener).check()
     }
 
     fun callingPermissionPermanentlyDeniedDialog(
         activity: Activity,
-        message: Int = R.string.storage_permission_message
+        message: Int = R.string.call_start_permission_message
     ) {
         MaterialDialog(activity).show {
             message(message)
