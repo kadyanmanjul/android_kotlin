@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.leaderboard
 
 import android.content.Context
-import android.util.Log
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -82,7 +81,6 @@ class LeaderBoardItemViewHolder(
                 user_pic.setUserImageOrInitials(response.photoUrl, response.name!!)
                 user_pic.visibility = android.view.View.VISIBLE
             }
-            Log.d("Manjul", "onViewInflated() called ${response.isOnline}")
             if (response.isOnline != null && response.isOnline!!) {
                 onlineStatusLayout.visibility = android.view.View.VISIBLE
             } else {
