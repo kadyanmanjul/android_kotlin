@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:background="#000000">
         <FrameLayout
             android:id="@+id/circle_bg_container"
             android:layout_width="wrap_content"
@@ -39,10 +39,9 @@
 
         <WebView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/web_view"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.7"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -92,7 +91,7 @@
             android:id="@+id/appCompatTextView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_24sdp"
             android:text="@string/congratulations"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
             android:textColor="@color/white"
