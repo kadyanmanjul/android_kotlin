@@ -7,12 +7,12 @@
 
     <ImageView
         android:id="@+id/image_iv"
-        android:layout_width="@dimen/_36sdp"
-        android:layout_height="@dimen/_40sdp"
+        android:layout_width="@dimen/_32sdp"
+        android:layout_height="@dimen/_36sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="@dimen/_2sdp"
+        android:layout_marginEnd="@dimen/_2sdp"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/ic_points_bg" />
 
