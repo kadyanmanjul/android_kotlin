@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.leaderboard
 
 import android.content.Context
+import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -42,6 +43,9 @@ class LeaderBoardWinnerItemViewHolder(
     @View(R.id.user_pic)
     lateinit var userPic: CircleImageView
 
+    @View(R.id.online_status_iv)
+    lateinit var onlineStatusLayout: FrameLayout
+
     lateinit var linearLayoutManager: SmoothLinearLayoutManager
 
     @Resolve
@@ -49,9 +53,10 @@ class LeaderBoardWinnerItemViewHolder(
         title.text = response.title.toString()
         val resp = StringBuilder()
         response.name?.split(" ")?.forEach {
-            resp.append(it.toLowerCase(Locale.getDefault()).capitalize(Locale.getDefault())).append(" ")
+            resp.append(it.toLowerCase(Locale.getDefault()).capitalize(Locale.getDefault()))
+                .append(" ")
         }
-        name.text =resp
+        name.text = resp
         points.text = (response.points.toString()).plus(" points")
         userPic.post {
             userPic.setUserImageOrInitials(response.photoUrl, response.name!!)
@@ -59,6 +64,12 @@ class LeaderBoardWinnerItemViewHolder(
         response.award_url?.let {
             award.setImage(it)
         }
+        if (response.isOnline != null && response.isOnline!!) {
+            onlineStatusLayout.visibility = android.view.View.VISIBLE
+        } else {
+            onlineStatusLayout.visibility = android.view.View.GONE
+        }
+
     }
 
     @Click(R.id.user_pic)
@@ -74,6 +85,7 @@ class LeaderBoardWinnerItemViewHolder(
             RxBus2.publish(OpenUserProfile(it))
         }
     }
+
     @Click(R.id.container)
     fun onSecondClickContainer() {
         response?.id?.let {

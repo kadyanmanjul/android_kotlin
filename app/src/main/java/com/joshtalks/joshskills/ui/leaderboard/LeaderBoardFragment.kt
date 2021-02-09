@@ -216,6 +216,12 @@ class LeaderBoardFragment : Fragment() {
         binding.points.text = response.points.toString()
         binding.userPic.setUserImageOrInitials(response.photoUrl, response.name!!)
         binding.userLayout.visibility = View.VISIBLE
+
+        if (response.isOnline != null && response.isOnline!!) {
+            binding.onlineStatusIv.visibility = View.VISIBLE
+        } else {
+            binding.onlineStatusIv.visibility = View.GONE
+        }
     }
 
 
@@ -231,7 +237,7 @@ class LeaderBoardFragment : Fragment() {
                 .subscribeOn(Schedulers.computation())
                 .subscribe({
                     it.id?.let { id ->
-                        openUserProfileActivity(id,type)
+                        openUserProfileActivity(id, type)
                     }
                 }, {
                     it.printStackTrace()

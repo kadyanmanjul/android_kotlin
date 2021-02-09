@@ -1,10 +1,11 @@
 package com.joshtalks.joshskills.ui.leaderboard
 
 import android.content.Context
+import android.util.Log
+import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
@@ -16,7 +17,6 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 import de.hdodenhof.circleimageview.CircleImageView
-import java.text.DecimalFormat
 import java.util.Locale
 
 @Layout(R.layout.list_item)
@@ -42,6 +42,9 @@ class LeaderBoardItemViewHolder(
     @View(R.id.user_pic)
     lateinit var user_pic: CircleImageView
 
+    @View(R.id.online_status_iv)
+    lateinit var onlineStatusLayout: FrameLayout
+
     lateinit var linearLayoutManager: SmoothLinearLayoutManager
 
     @Resolve
@@ -53,6 +56,7 @@ class LeaderBoardItemViewHolder(
             user_pic.visibility = android.view.View.GONE
             container.isClickable = false
             container.isEnabled = false
+            onlineStatusLayout.visibility = android.view.View.GONE
 
         } else {
             container.isClickable = true
@@ -69,13 +73,20 @@ class LeaderBoardItemViewHolder(
             rank.text = response.ranking.toString()
             val resp = StringBuilder()
             response.name?.split(" ")?.forEach {
-                resp.append(it.toLowerCase(Locale.getDefault()).capitalize(Locale.getDefault())).append(" ")
+                resp.append(it.toLowerCase(Locale.getDefault()).capitalize(Locale.getDefault()))
+                    .append(" ")
             }
-            name.text =resp
+            name.text = resp
             points.text = response.points.toString()
             user_pic.post {
                 user_pic.setUserImageOrInitials(response.photoUrl, response.name!!)
                 user_pic.visibility = android.view.View.VISIBLE
+            }
+            Log.d("Manjul", "onViewInflated() called ${response.isOnline}")
+            if (response.isOnline != null && response.isOnline!!) {
+                onlineStatusLayout.visibility = android.view.View.VISIBLE
+            } else {
+                onlineStatusLayout.visibility = android.view.View.GONE
             }
         }
 

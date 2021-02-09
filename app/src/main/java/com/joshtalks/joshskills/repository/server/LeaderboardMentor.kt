@@ -19,5 +19,7 @@ data class LeaderboardMentor(
     @SerializedName("points")
     val points: Int,
     @SerializedName("ranking")
-    var ranking: Int
+    var ranking: Int,
+    @SerializedName("is_online")
+    val isOnline: Boolean? = true
 ) : Parcelable
