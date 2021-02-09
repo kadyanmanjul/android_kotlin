@@ -15,7 +15,9 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.databinding.VoipRatingFragmentBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
+import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -109,11 +111,11 @@ class VoipRatingFragment : DialogFragment() {
                 val res = AppObjectController.commonNetworkService.feedbackVoipCallAsync(request)
                 if (res.isSuccessful && res.body() != null) {
                     if (res.body()?.awardMentorList.isNullOrEmpty().not()) {
-                        (requireActivity() as BaseActivity).showAward(
+                        showAward(
                             res.body()!!.awardMentorList!!
                         )
                     }
-                    if(res.body()!!.pointsList.isNullOrEmpty().not()){
+                    if (res.body()!!.pointsList.isNullOrEmpty().not()) {
                         PrefManager.put(SPEAKING_POINTS, res.body()!!.pointsList?.get(0).toString())
                     }
                 }
@@ -126,9 +128,21 @@ class VoipRatingFragment : DialogFragment() {
         }
     }
 
+    fun showAward(awarList: List<Award>, isFromUserProfile: Boolean = false) {
+        if (false) {
+            //TODO add when awards functionality is over
+            //if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+            ShowAwardFragment.showDialog(
+                childFragmentManager,
+                awarList,
+                isFromUserProfile
+            )
+        }
+    }
+
     fun exitDialog() {
         val intent = Intent()
-        intent.putExtra("points_list",pointsString)
+        intent.putExtra("points_list", pointsString)
         requireActivity().setResult(Activity.RESULT_OK, intent)
         requireActivity().finishAndRemoveTask()
     }
