@@ -215,6 +215,12 @@ interface CommonNetworkService {
         @Query("mentor_id") id: String
     ): Response<PointsHistoryResponse>
 
+
+    @Headers(
+        "Accept: application/json",
+        "Content-type:application/json",
+        "Cache-Control: public, only-if-cached,  max-stale=640000,  max-age=640000"
+    )
     @GET("$DIR/reputation/get_points_working/")
     suspend fun getPointsInfo(): Response<PointsInfoResponse>
 
@@ -254,7 +260,7 @@ interface CommonNetworkService {
     @POST("$DIR/leaderboard/leaderboard_impression/")
     suspend fun engageLeaderBoardImpressions(
         @Body params: Map<String, String>
-    ): Void
+    ): Any
 
     @GET("$DIR/reputation/award_render/")
     suspend fun get3DWebView(
