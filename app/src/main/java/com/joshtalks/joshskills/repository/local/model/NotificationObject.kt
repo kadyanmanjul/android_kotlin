@@ -129,6 +129,12 @@ enum class NotificationAction(val type: String) {
     @SerializedName("no_user_found_notification")
     CALL_NO_USER_FOUND_NOTIFICATION("no_user_found_notification"),
 
+    @SerializedName("call_onhold_notification")
+    CALL_ON_HOLD_NOTIFICATION("call_onhold_notification"),
+
+    @SerializedName("call_resume_notification")
+    CALL_RESUME_NOTIFICATION("call_resume_notification"),
+
     @SerializedName("GROUP_CHAT_MESSAGE_NOTIFICATION")
     GROUP_CHAT_MESSAGE_NOTIFICATION("GROUP_CHAT_MESSAGE_NOTIFICATION"),
 

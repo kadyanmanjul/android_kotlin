@@ -67,6 +67,8 @@ import com.joshtalks.joshskills.ui.voip.RTC_CHANNEL_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_TOKEN_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
 import com.joshtalks.joshskills.ui.voip.WebRtcService
+import org.json.JSONObject
+import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
 import java.lang.reflect.Type
@@ -76,8 +78,6 @@ import java.util.*
 import java.util.concurrent.ExecutorService
 import kotlin.collections.HashMap
 import kotlin.collections.set
-import org.json.JSONObject
-import timber.log.Timber
 
 
 const val FCM_TOKEN = "fcmToken"
@@ -394,6 +394,14 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             }
             NotificationAction.CALL_NO_USER_FOUND_NOTIFICATION -> {
                 WebRtcService.noUserFoundCallDisconnect()
+                return null
+            }
+            NotificationAction.CALL_ON_HOLD_NOTIFICATION -> {
+                WebRtcService.holdCall()
+                return null
+            }
+            NotificationAction.CALL_RESUME_NOTIFICATION -> {
+                WebRtcService.resumeCall()
                 return null
             }
             NotificationAction.AUDIO_FEEDBACK_REPORT -> {
