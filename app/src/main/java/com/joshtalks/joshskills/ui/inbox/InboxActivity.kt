@@ -10,14 +10,6 @@ import android.view.View
 import android.view.animation.OvershootInterpolator
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.*
-import com.google.android.gms.location.LocationRequest
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.observe
-import com.google.android.gms.location.LocationRequest
-import com.cometchat.pro.constants.CometChatConstants
-import com.facebook.share.internal.ShareConstants.ACTION_TYPE
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.play.core.review.ReviewManagerFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -172,89 +164,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
         overlay_layout.setOnClickListener {
             overlay_layout.visibility = View.GONE
         }
-
-    private fun initView() {
-        text_message_title.text = getString(R.string.inbox_header)
-        iv_reminder.visibility = View.GONE
-        iv_setting.visibility = View.VISIBLE
-        findMoreLayout = findViewById(R.id.parent_layout)
-        recycler_view_inbox.adapter = inboxAdapter
-        recycler_view_inbox.itemAnimator?.apply {
-            addDuration = 2000
-            changeDuration = 2000
-        }
-        recycler_view_inbox.itemAnimator = SlideInUpAnimator(OvershootInterpolator(2f))
-        recycler_view_inbox.layoutManager = SmoothLinearLayoutManager(applicationContext)
-        recycler_view_inbox.addItemDecoration(
-            LayoutMarginDecoration(
-                Utils.dpToPx(
-                    applicationContext,
-                    6f
-                )
-            )
-        )
-
-
-        iv_setting.setOnClickListener {
-            openPopupMenu(it)
-        }
-        find_more.setOnClickListener {
-            courseExploreClick()
-        }
-        txtConvert.setOnClickListener {
-            logEvent(AnalyticsEvent.CONVERT_CLICKED.name)
-            PaymentSummaryActivity.startPaymentSummaryActivity(
-                this, PrefManager.getIntValue(SUBSCRIPTION_TEST_ID).toString()
-            )
-        }
-        txtConvert2.setOnClickListener {
-            overlay_layout.visibility = View.GONE
-            logEvent(AnalyticsEvent.CONVERT_CLICKED.name)
-            PaymentSummaryActivity.startPaymentSummaryActivity(
-                this, PrefManager.getIntValue(SUBSCRIPTION_TEST_ID).toString()
-            )
-
     }
-
-    private fun openPopupMenu(view: View) {
-        if (popupMenu == null) {
-            popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
-            popupMenu?.inflate(R.menu.more_options_menu)
-            popupMenu?.setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.menu_referral -> {
-                        AppAnalytics
-                            .create(AnalyticsEvent.REFER_BUTTON_CLICKED.NAME)
-                            .addBasicParam()
-                            .addUserDetails()
-                            .addParam(
-                                AnalyticsEvent.REFERRAL_CODE.NAME,
-                                Mentor.getInstance().referralCode
-                            )
-                            .push()
-                        ReferralActivity.startReferralActivity(this@InboxActivity)
-                        return@setOnMenuItemClickListener true
-                    }
-                    R.id.menu_help -> {
-                        openHelpActivity()
-                    }
-                    R.id.menu_settings ->
-                        openSettingActivity()
-                }
-                return@setOnMenuItemClickListener false
-            }
-        }
-        popupMenu?.show()
-    }
-        overlay_layout.setOnClickListener {
-            overlay_layout.visibility = View.GONE
-        }
-
-
-    override fun showExpiryTimeToolTip() {
-
-    }
-
     private fun openPopupMenu(view: View) {
         if (popupMenu == null) {
             popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
@@ -550,56 +460,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
 
     }
 
-
-    @SuppressLint("MissingPermission")
-    private fun getLocationAndUpload() {
-        val rxLocation = RxLocation(application)
-        val locationRequest = LocationRequest.create()
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-            .setInterval(10000)
-
-        rxLocation.settings().checkAndHandleResolutionCompletable(locationRequest)
-            .subscribeOn(Schedulers.computation())
-            .subscribe(object : CompletableObserver {
-                override fun onSubscribe(d: Disposable) {
-                }
-
-                override fun onComplete() {
-                    compositeDisposable.add(
-                        rxLocation.location().updates(locationRequest)
-                            .subscribeOn(Schedulers.computation())
-                            .subscribe({ location ->
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    try {
-                                        val request = UpdateUserLocality()
-                                        request.locality =
-                                            SearchLocality(location.latitude, location.longitude)
-                                        AppAnalytics.setLocation(
-                                            location.latitude,
-                                            location.longitude
-                                        )
-                                        val response: ProfileResponse =
-                                            AppObjectController.signUpNetworkService.updateUserAddressAsync(
-                                                Mentor.getInstance().getId(),
-                                                request
-                                            ).await()
-                                        Mentor.getInstance().setLocality(response.locality).update()
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
-                                    }
-                                    compositeDisposable.clear()
-                                }
-                            }, { _ ->
-                            })
-                    )
-                }
-
-                override fun onError(e: Throwable) {
-                }
-            })
-    }
-
-
     override fun onResume() {
         super.onResume()
         Runtime.getRuntime().gc()
@@ -750,66 +610,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
             finish()
         }
     }
-
-
-    override fun openCourseExplorer() {
-        CourseExploreActivity.startCourseExploreActivity(
-            this,
-            COURSE_EXPLORER_CODE,
-            courseListSet, state = ActivityEnum.Inbox
-        )
-    }
-
-    override fun openCourseSelectionExplorer(alreadyHaveCourses: Boolean) {
-        OnBoardingActivityNew.startOnBoardingActivity(
-            this,
-            COURSE_EXPLORER_NEW,
-            true,
-            alreadyHaveCourses
-        )
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REGISTER_INFO_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                overridePendingTransition(0, 0)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-                finish()
-                overridePendingTransition(0, 0)
-                startActivity(intent)
-            } else {
-                finish()
-            }
-        } else if (requestCode == REQ_CODE_VERSION_UPDATE) {
-            if (resultCode == Activity.RESULT_CANCELED) {
-                val forceUpdateMinVersion =
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getLong("force_upgrade_after_version")
-                val forceUpdateFlag =
-                    AppObjectController.getFirebaseRemoteConfig().getBoolean("update_force")
-                val currentAppVersion = BuildConfig.VERSION_CODE
-
-                if (currentAppVersion <= forceUpdateMinVersion && forceUpdateFlag) {
-                    inAppUpdateManager?.checkForAppUpdate()
-                }
-            }
-        } else if (requestCode == COURSE_EXPLORER_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                overridePendingTransition(0, 0)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-                finish()
-                overridePendingTransition(0, 0)
-                startActivity(intent)
-            } else if (resultCode == Activity.RESULT_CANCELED && courseListSet.isNullOrEmpty()) {
-                this@InboxActivity.finish()
-            }
-        } else if (requestCode == USER_DETAILS_CODE && resultCode == Activity.RESULT_CANCELED) {
-            finish()
-        }
-    }
-
-
     override fun onUpdateLocation(location: Location) {
         CoroutineScope(Dispatchers.IO).launch {
             uploadUserLocation(location)
