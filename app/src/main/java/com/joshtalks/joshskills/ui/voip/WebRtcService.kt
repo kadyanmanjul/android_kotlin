@@ -82,6 +82,7 @@ class WebRtcService : Service(), SensorEventListener {
     private var callForceDisconnect = false
     private var mHandler: Handler? = null
     private var handlerThread: HandlerThread? = null
+    private var userAgoraId: Int? = null
 
     companion object {
         private val TAG = WebRtcService::class.java.simpleName
@@ -353,6 +354,7 @@ class WebRtcService : Service(), SensorEventListener {
         override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
             Timber.tag(TAG).e("onJoinChannelSuccess=  $channel = $uid   ")
             super.onJoinChannelSuccess(channel, uid, elapsed)
+            userAgoraId = uid
             compositeDisposable.clear()
             isCallWasOnGoing = true
             callData?.let {
@@ -908,8 +910,6 @@ class WebRtcService : Service(), SensorEventListener {
             }
         }
         isCallWasOnGoing = true
-        mRtcEngine?.createDataStream(true, true)
-
     }
 
     @SuppressLint("InvalidWakeLockTag")
@@ -1040,6 +1040,8 @@ class WebRtcService : Service(), SensorEventListener {
     fun getSpeaker() = isSpeakerEnable
 
     fun getMic() = isMicEnable
+
+    fun getUserAgoraId() = userAgoraId
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         AppObjectController.mRtcEngine = null

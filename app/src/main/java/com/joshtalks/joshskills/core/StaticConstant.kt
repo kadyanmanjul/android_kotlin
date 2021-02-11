@@ -218,6 +218,8 @@ class FirebaseRemoteConfigKey {
         // P2P
         const val VOIP_CALL_DISCONNECT_TIME = "VOIP_CALL_DISCONNECT_TIME"
         const val VOIP_CALL_RECONNECT_TIME = "VOIP_CALL_RECONNECT_TIME"
+        const val VOIP_FEEDBACK_MESSAGE = "VOIP_FEEDBACK_MESSAGE"
+
 
     }
 }
