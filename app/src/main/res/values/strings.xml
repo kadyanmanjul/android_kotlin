@@ -837,6 +837,9 @@
     <string name="last_seen">Last Seen %1$s</string>
     <string name="hold_call">Hold call</string>
     <string name="call_start_permission_message">To start practicing with partner please allow permissions. Tap Settings > Permissions, and turn Microphone on and Storage on and Location on.</string>
+    <string name="spoke_for_minute">Spoke for %1$s </string>
+    <string name="maybe">Maybe</string>
+    <string name="block_user_hint">By clicking no you are blocking %s</string>
 
 
 </resources>
