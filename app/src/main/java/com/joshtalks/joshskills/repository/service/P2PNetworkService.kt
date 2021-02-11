@@ -28,5 +28,8 @@ interface P2PNetworkService {
     @POST("$DIR/voicecall/agora_call_location/")
     suspend fun uploadUserLocationAgora(@Body params: RequestUserLocation): Response<Void>
 
+    @POST("$DIR/voicecall/agora_call_feedback/")
+    suspend fun p2pCallFeedbackV2(@Body params: Map<String, String?>): Response<Void>//FeedbackVoipResponse
+
 
 }
