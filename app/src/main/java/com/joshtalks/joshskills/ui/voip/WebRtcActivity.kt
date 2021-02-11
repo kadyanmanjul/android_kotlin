@@ -26,7 +26,8 @@ import com.joshtalks.joshskills.core.custom_ui.TextDrawable
 import com.joshtalks.joshskills.databinding.ActivityCallingBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
-import com.joshtalks.joshskills.ui.voip.voip_rating.VoipRatingFragment
+import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackView
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -106,42 +107,47 @@ class WebRtcActivity : AppCompatActivity() {
 
         override fun onServerConnect() {
             super.onServerConnect()
+            Timber.tag(TAG).e("onServerConnect")
             val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
             setUserInfo(map?.get(RTC_CALLER_UID_KEY))
         }
 
         override fun onNetworkLost() {
             super.onNetworkLost()
-            runOnUiThread {
-                binding.callTime.visibility = View.INVISIBLE
+            Timber.tag(TAG).e("onNetworkLost")
+            AppObjectController.uiHandler.postDelayed({
                 binding.connectionLost.text = getString(R.string.reconnecting)
                 binding.connectionLost.visibility = View.VISIBLE
-            }
+                binding.callTime.visibility = View.INVISIBLE
+            }, 250)
         }
 
         override fun onNetworkReconnect() {
             super.onNetworkReconnect()
-            runOnUiThread {
-                binding.connectionLost.text = EMPTY
+            Timber.tag(TAG).e("onNetworkReconnect")
+            AppObjectController.uiHandler.postDelayed({
+                // binding.connectionLost.text = EMPTY
+                binding.connectionLost.visibility = View.GONE
                 binding.callTime.visibility = View.VISIBLE
-                binding.connectionLost.visibility = View.INVISIBLE
-            }
+            }, 250)
         }
 
         override fun onHoldCall() {
             super.onHoldCall()
+            Timber.tag(TAG).e("onHoldCall")
             runOnUiThread {
-                binding.callTime.visibility = View.INVISIBLE
                 binding.connectionLost.text = getString(R.string.hold_call)
                 binding.connectionLost.visibility = View.VISIBLE
+                binding.callTime.visibility = View.INVISIBLE
             }
         }
 
         override fun onUnHoldCall() {
             super.onUnHoldCall()
+            Timber.tag(TAG).e("onUnHoldCall")
             runOnUiThread {
-                binding.connectionLost.text = EMPTY
-                binding.connectionLost.visibility = View.INVISIBLE
+                //      binding.connectionLost.text = EMPTY
+                binding.connectionLost.visibility = View.GONE
                 binding.callTime.visibility = View.VISIBLE
             }
         }
@@ -155,18 +161,25 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun showCallRatingScreen(callTime: Long) {
-        val prev = supportFragmentManager.findFragmentByTag(VoipRatingFragment::class.java.name)
+        val prev = supportFragmentManager.findFragmentByTag(VoipCallFeedbackView::class.java.name)
         if (prev != null) {
             return
         }
         var time = mBoundService?.getTimeOfTalk() ?: 0
         if (callTime > 0) {
-            time = callTime.toLong()
+            time = callTime
         }
 
         if (time > 0 && channelName.isNullOrEmpty().not()) {
-            VoipRatingFragment.newInstance(channelName, time)
-                .show(supportFragmentManager, VoipRatingFragment::class.java.name)
+            VoipCallFeedbackView.showCallRatingDialog(
+                this.supportFragmentManager,
+                channelName = channelName,
+                callTime = time,
+                callerName = userDetailLiveData.value?.get("name"),
+                callerImage = userDetailLiveData.value?.get("profile_pic"),
+                yourName = User.getInstance().firstName,
+                yourAgoraId = mBoundService?.getUserAgoraId()
+            )
             return
         }
         this@WebRtcActivity.finishAndRemoveTask()
@@ -239,7 +252,8 @@ class WebRtcActivity : AppCompatActivity() {
 
     private fun removeRatingDialog() {
         try {
-            val prev = supportFragmentManager.findFragmentByTag(VoipRatingFragment::class.java.name)
+            val prev =
+                supportFragmentManager.findFragmentByTag(VoipCallFeedbackView::class.java.name)
             if (prev != null) {
                 val df = prev as DialogFragment
                 df.dismiss()
@@ -336,6 +350,9 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun startCallTimer() {
+        if (getCallTime() > 0) {
+            return
+        }
         binding.callTime.base = SystemClock.elapsedRealtime() - getCallTime()
         binding.callTime.start()
         if (WebRtcService.phoneCallState == CallState.CALL_STATE_IDLE) {
@@ -473,7 +490,7 @@ class WebRtcActivity : AppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     val prev =
-                        supportFragmentManager.findFragmentByTag(VoipRatingFragment::class.java.name)
+                        supportFragmentManager.findFragmentByTag(VoipCallFeedbackView::class.java.name)
                     if (prev != null) {
                         return@subscribe
                     }

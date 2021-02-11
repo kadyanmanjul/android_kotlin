@@ -77,7 +77,7 @@
             app:layout_constraintEnd_toEndOf="@+id/c_image"
             app:layout_constraintStart_toStartOf="@+id/c_image"
             tools:ignore="MissingPrefix"
-            tools:visibility="visible" />
+            tools:visibility="invisible" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/connection_lost"
@@ -93,7 +93,7 @@
             app:layout_constraintEnd_toEndOf="@+id/c_image"
             app:layout_constraintStart_toStartOf="@+id/c_image"
             tools:ignore="MissingPrefix"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
 
         <de.hdodenhof.circleimageview.CircleImageView
