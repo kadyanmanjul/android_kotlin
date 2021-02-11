@@ -7,7 +7,6 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +14,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
-import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.content.ContextCompat
@@ -176,6 +174,7 @@ class ShowAwardFragment : DialogFragment() {
         )
 
         binding.webView.settings.javaScriptEnabled = true
+        binding.webView.settings.setSupportZoom(false)
         binding.webView.setBackgroundColor(Color.TRANSPARENT)
         binding.webView.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null)
 
@@ -187,9 +186,7 @@ class ShowAwardFragment : DialogFragment() {
              null
          )*/
 
-        binding.webView.getSettings().setJavaScriptEnabled(true) // enable javascript
-
-        binding.webView.setWebViewClient(object : WebViewClient() {
+        binding.webView.webViewClient = object : WebViewClient() {
 
             override fun onReceivedError(
                 view: WebView?,
@@ -209,25 +206,23 @@ class ShowAwardFragment : DialogFragment() {
                 // Redirect to deprecated method, so you can use it in all SDK versions
                 onReceivedError(
                     view,
-                    rerr.getErrorCode(),
-                    rerr.getDescription().toString(),
-                    req.getUrl().toString()
+                    rerr.errorCode,
+                    rerr.description.toString(),
+                    req.url.toString()
                 )
             }
-        })
+        }
         val url =
             "http://${getHostOfUrl()}/$DIR/reputation/award_render/?award_mentor_id=${award!!.get(0).id}"
         binding.webView.loadUrl(url)
-        binding.webView.getSettings().setDefaultZoom(WebSettings.ZoomDensity.FAR);
-
 
     }
 
     override fun show(manager: FragmentManager, tag: String?) {
         try {
-            val ft = manager?.beginTransaction()
-            ft?.add(this, tag)
-            ft?.commitAllowingStateLoss()
+            val ft = manager.beginTransaction()
+            ft.add(this, tag)
+            ft.commitAllowingStateLoss()
         } catch (ignored: IllegalStateException) {
 
         }
