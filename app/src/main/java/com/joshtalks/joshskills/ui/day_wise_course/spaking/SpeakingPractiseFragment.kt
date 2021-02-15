@@ -13,14 +13,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
+import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshFragment
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SPEAKING_POINTS
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
@@ -37,15 +33,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.speaking_practise_fragment.btn_continue
-import kotlinx.android.synthetic.main.speaking_practise_fragment.btn_start
-import kotlinx.android.synthetic.main.speaking_practise_fragment.group_one
-import kotlinx.android.synthetic.main.speaking_practise_fragment.group_two
-import kotlinx.android.synthetic.main.speaking_practise_fragment.progress_bar
-import kotlinx.android.synthetic.main.speaking_practise_fragment.root_view
-import kotlinx.android.synthetic.main.speaking_practise_fragment.text_view
-import kotlinx.android.synthetic.main.speaking_practise_fragment.tv_practise_time
-import kotlinx.android.synthetic.main.speaking_practise_fragment.tv_today_topic
+import kotlinx.android.synthetic.main.speaking_practise_fragment.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -163,16 +151,21 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
-                        if (flag) {
-                            startPractiseSearchScreen()
-                            return
-                        }
                         if (report.isAnyPermissionPermanentlyDenied) {
                             PermissionUtils.callingPermissionPermanentlyDeniedDialog(
                                 requireActivity(),
-                                message = R.string.call_request_permission_permanent_message
+                                message = R.string.call_start_permission_message
                             )
                             return
+                        }
+                        if (flag) {
+                            startPractiseSearchScreen()
+                            return
+                        } else {
+                            MaterialDialog(requireActivity()).show {
+                                message(R.string.call_start_permission_message_rational)
+                                positiveButton(R.string.ok)
+                            }
                         }
                     }
                 }

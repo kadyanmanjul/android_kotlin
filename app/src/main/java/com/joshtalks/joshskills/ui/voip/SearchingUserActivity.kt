@@ -252,7 +252,7 @@ class SearchingUserActivity : BaseActivity() {
 
     override fun onDenyLocation() {
         MaterialDialog(this).show {
-            message(R.string.call_start_permission_message)
+            message(R.string.call_start_permission_message_rational)
             positiveButton(R.string.exit) {
                 finish()
             }
@@ -275,7 +275,7 @@ class SearchingUserActivity : BaseActivity() {
     }
 
     fun stopCalling() {
-        mBoundService?.endCall(apiCall = true)
+        mBoundService?.endCall(apiCall = false)
         AppAnalytics.create(AnalyticsEvent.STOP_USER_FOR_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()
