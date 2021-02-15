@@ -289,7 +289,19 @@ class AppObjectController {
             signUpNetworkService = retrofit.create(SignUpNetworkService::class.java)
             chatNetworkService = retrofit.create(ChatNetworkService::class.java)
             commonNetworkService = retrofit.create(CommonNetworkService::class.java)
-            p2pNetworkService = retrofit.create(P2PNetworkService::class.java)
+
+            val p2pRetrofitBuilder = Retrofit.Builder()
+                .baseUrl(BuildConfig.BASE_URL)
+                .client(
+                    builder.connectTimeout(5L, TimeUnit.SECONDS)
+                        .writeTimeout(5L, TimeUnit.SECONDS)
+                        .readTimeout(5L, TimeUnit.SECONDS)
+                        .callTimeout(5L, TimeUnit.SECONDS).build()
+                )
+                .addCallAdapterFactory(CoroutineCallAdapterFactory())
+                .addConverterFactory(GsonConverterFactory.create(gsonMapper))
+                .build()
+            p2pNetworkService = p2pRetrofitBuilder.create(P2PNetworkService::class.java)
 
             initObjectInThread(context)
             return INSTANCE
