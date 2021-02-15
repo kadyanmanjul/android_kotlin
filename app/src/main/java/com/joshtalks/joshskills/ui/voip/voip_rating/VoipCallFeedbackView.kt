@@ -9,18 +9,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
-import com.joshtalks.joshskills.core.custom_ui.blurdialog.BlurDialogFragment
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
-import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -32,7 +33,7 @@ const val ARG_YOUR_NAME = "your_name"
 const val ARG_YOUR_AGORA_ID = "your_agora_id"
 
 
-class VoipCallFeedbackView : BlurDialogFragment() {
+class VoipCallFeedbackView : DialogFragment() {
 
     private lateinit var binding: VoipCallFeedbackViewBinding
     private var channelName: String = EMPTY
@@ -48,6 +49,9 @@ class VoipCallFeedbackView : BlurDialogFragment() {
             window?.setLayout(width.toInt(), height)
             setCanceledOnTouchOutside(true)
             setCancelable(true)
+            val lp: WindowManager.LayoutParams? = window?.attributes
+            lp?.dimAmount = 0.85f
+            window?.attributes = lp
         }
     }
 
@@ -133,9 +137,10 @@ class VoipCallFeedbackView : BlurDialogFragment() {
                 } else {
                     exitDialog()
                 }*/
+                delay(750)
                 exitDialog()
             } catch (ex: Throwable) {
-                ex.showAppropriateMsg()
+                delay(750)
                 exitDialog()
             }
         }
@@ -143,6 +148,7 @@ class VoipCallFeedbackView : BlurDialogFragment() {
 
     private fun exitDialog() {
         FullScreenProgressDialog.hideProgressBar(requireActivity())
+        //dismissAllowingStateLoss()
         val intent = Intent()
         intent.putExtra("points_list", pointsString)
         requireActivity().setResult(Activity.RESULT_OK, intent)
@@ -153,26 +159,6 @@ class VoipCallFeedbackView : BlurDialogFragment() {
         if (false) {
             ShowAwardFragment.showDialog(childFragmentManager, awardList, isFromUserProfile)
         }
-    }
-
-    override fun getDownScaleFactor(): Float {
-        return 4.0F
-    }
-
-    override fun getBlurRadius(): Int {
-        return 20
-    }
-
-    override fun isRenderScriptEnable(): Boolean {
-        return true
-    }
-
-    override fun isDebugEnable(): Boolean {
-        return true
-    }
-
-    override fun isActionBarBlurred(): Boolean {
-        return true
     }
 
     companion object {

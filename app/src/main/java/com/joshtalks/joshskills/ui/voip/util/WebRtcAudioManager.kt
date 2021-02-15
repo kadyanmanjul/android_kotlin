@@ -24,6 +24,7 @@ class WebRtcAudioManager(context: Context) {
     private var soundPool: SoundPool
     private var vibrator: Vibrator
     private var engageCallRinger: EngageCallRinger
+    private var toneThread: ToneThread? = null
 
     private val maxVolume = (context.getSystemService(Context.AUDIO_SERVICE) as AudioManager)
         .getStreamMaxVolume(AudioManager.STREAM_MUSIC).toFloat()
@@ -36,6 +37,9 @@ class WebRtcAudioManager(context: Context) {
             .setMaxStreams(1)
             .setAudioAttributes(att)
             .build()
+        toneThread = ToneThread("EngageThread")
+        toneThread?.start()
+
         connectedSoundId = soundPool.load(context, R.raw.join_call, 1)
         disconnectedSoundId = soundPool.load(context, R.raw.end_call, 1)
         engageCallRinger = EngageCallRinger(context)
@@ -54,6 +58,8 @@ class WebRtcAudioManager(context: Context) {
 
     fun startCommunication() {
         try {
+            // stopConnectTone()
+            //reconnectCommunicationStop()
             stopRinging()
             if (loaded && !playing) {
                 soundPool.play(connectedSoundId, maxVolume, maxVolume, 1, 0, 1.0f)
@@ -70,6 +76,7 @@ class WebRtcAudioManager(context: Context) {
 
     fun endCommunication() {
         try {
+            stopConnectTone()
             stopRinging()
             if (loaded && !playing) {
                 soundPool.play(disconnectedSoundId, maxVolume, maxVolume, 1, 0, 1.0f)
@@ -83,12 +90,23 @@ class WebRtcAudioManager(context: Context) {
         }
     }
 
-    fun reconnectCommunication() {
-        engageCallRinger.start()
+    fun startConnectTone() {
+        toneThread?.startBusyTone()
+        //engageCallRinger.start()
     }
 
-    fun reconnectCommunicationStop() {
-        engageCallRinger.stop()
+    fun stopConnectTone() {
+        toneThread?.stopBusyTone()
+        //engageCallRinger.stop()
+    }
+
+    fun quitEverything() {
+        try {
+            toneThread?.quitSafely()
+            soundPool.release()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
     }
 
 

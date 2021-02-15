@@ -53,7 +53,6 @@ class WebRtcActivity : AppCompatActivity() {
     private var mServiceBound = false
     private val compositeDisposable = CompositeDisposable()
     private val userDetailLiveData: MutableLiveData<HashMap<String, String>> = MutableLiveData()
-    private var channelName: String? = null
 
     companion object {
         fun startOutgoingCallActivity(
@@ -87,10 +86,11 @@ class WebRtcActivity : AppCompatActivity() {
 
         override fun onConnect(callId: String) {
             Timber.tag(TAG).e("onConnect")
-            runOnUiThread {
+            AppObjectController.uiHandler.postDelayed({
                 binding.callStatus.text = getText(R.string.practice)
                 startCallTimer()
-            }
+                binding.connectionLost.visibility = View.GONE
+            }, 500)
         }
 
         override fun onDisconnect(callId: String?, channelName: String?, time: Long) {
@@ -156,7 +156,6 @@ class WebRtcActivity : AppCompatActivity() {
     private fun checkAndShowRating(id: String?, channelName: String? = null, callTime: Long = 0) {
         Timber.tag(TAG)
             .e("checkAndShowRating   %s %s %s", id, mBoundService?.getTimeOfTalk(), callTime)
-        this.channelName = channelName
         showCallRatingScreen(callTime)
     }
 
@@ -169,7 +168,7 @@ class WebRtcActivity : AppCompatActivity() {
         if (callTime > 0) {
             time = callTime
         }
-
+        val channelName = mBoundService?.channelName
         if (time > 0 && channelName.isNullOrEmpty().not()) {
             VoipCallFeedbackView.showCallRatingDialog(
                 this.supportFragmentManager,
@@ -312,6 +311,9 @@ class WebRtcActivity : AppCompatActivity() {
     private fun setUserInfo(uuid: String?) {
         if (uuid.isNullOrEmpty())
             return
+        if (userDetailLiveData.value != null) {
+            return
+        }
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = AppObjectController.p2pNetworkService.getUserDetailOnCall(uuid)
@@ -350,9 +352,6 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun startCallTimer() {
-        if (getCallTime() > 0) {
-            return
-        }
         binding.callTime.base = SystemClock.elapsedRealtime() - getCallTime()
         binding.callTime.start()
         if (WebRtcService.phoneCallState == CallState.CALL_STATE_IDLE) {
@@ -418,6 +417,9 @@ class WebRtcActivity : AppCompatActivity() {
 
     fun onDisconnectCall() {
         WebRtcService.disconnectCall()
+        AppObjectController.uiHandler.postDelayed({
+            RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
+        }, 1000)
     }
 
     private fun answerCall() {
@@ -465,6 +467,7 @@ class WebRtcActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         compositeDisposable.clear()
+        AppObjectController.uiHandler.removeCallbacksAndMessages(null)
     }
 
     override fun onStop() {
@@ -475,6 +478,7 @@ class WebRtcActivity : AppCompatActivity() {
 
 
     override fun onDestroy() {
+
         volumeControlStream = AudioManager.STREAM_MUSIC
         super.onDestroy()
     }
@@ -495,7 +499,7 @@ class WebRtcActivity : AppCompatActivity() {
                         return@subscribe
                     }
                     onStopCall()
-                    finishAndRemoveTask()
+                    checkAndShowRating(mBoundService?.getCallId())
                 }, {
                     it.printStackTrace()
                 })
