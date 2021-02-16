@@ -6,6 +6,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.joshtalks.joshskills.R
@@ -27,8 +28,8 @@ object InboxBindingAdapter {
 
         val multi = MultiTransformation(
             CropTransformation(
-                Utils.dpToPx(240),
-                Utils.dpToPx(240),
+                Utils.dpToPx(48),
+                Utils.dpToPx(48),
                 CropTransformation.CropType.CENTER
             ),
             RoundedCornersTransformation(
@@ -46,6 +47,8 @@ object InboxBindingAdapter {
             .apply(
                 RequestOptions.bitmapTransform(multi).error(R.drawable.ic_josh_course)
             )
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .skipMemoryCache(false)
             .into(imageView)
     }
 }
