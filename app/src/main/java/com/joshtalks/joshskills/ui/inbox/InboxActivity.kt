@@ -125,7 +125,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
         iv_reminder.visibility = View.GONE
         iv_setting.visibility = View.VISIBLE
         findMoreLayout = findViewById(R.id.parent_layout)
-        recycler_view_inbox.adapter = inboxAdapter
+//        recycler_view_inbox.setHasFixedSize(true)
+
         recycler_view_inbox.itemAnimator?.apply {
             addDuration = 2000
             changeDuration = 2000
@@ -140,7 +141,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
                 )
             )
         )
-
+        recycler_view_inbox.setItemViewCacheSize(20)
+        recycler_view_inbox.adapter = inboxAdapter
 
         iv_setting.setOnClickListener {
             openPopupMenu(it)
@@ -418,9 +420,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
             }
         courseListSet.addAll(temp)
         inboxAdapter.addItems(temp)
-        if (progress_bar.visibility == View.VISIBLE) {
-            progress_bar.visibility = View.GONE
-        }
         if (findMoreLayout.visibility == View.INVISIBLE) {
             findMoreLayout.visibility = View.VISIBLE
         }

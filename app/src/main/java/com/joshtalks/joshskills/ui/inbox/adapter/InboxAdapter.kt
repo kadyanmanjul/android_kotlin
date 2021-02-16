@@ -35,6 +35,8 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner) :
     init {
         progressBarStatus = AppObjectController.getFirebaseRemoteConfig()
             .getBoolean(FirebaseRemoteConfigKey.INBOX_SCREEN_COURSE_PROGRESS)
+        setHasStableIds(true)
+
     }
 
     fun getAppContext() = AppObjectController.joshApplication
@@ -71,6 +73,9 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner) :
         holder.bind(items[position], position)
     }
 
+    override fun getItemId(position: Int): Long {
+        return items[position].courseId.toLong()
+    }
 
     inner class InboxViewHolder(val binding: InboxItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
