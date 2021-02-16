@@ -1,34 +1,37 @@
 package com.joshtalks.joshskills.ui.voip.util
 
-import android.media.AudioManager
-import android.media.ToneGenerator
+import android.content.Context
 import android.os.Handler
 import android.os.HandlerThread
 
-class ToneThread(name: String) : HandlerThread(name) {
+class ToneThread(name: String, context: Context) : HandlerThread(name) {
     private var mHandler: Handler? = null
-    private val toneGen = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
-    private var canStop = true
+    private var engageCallRinger: EngageCallRinger = EngageCallRinger(context)
+    private var isPlaying = false
+
     override fun onLooperPrepared() {
         super.onLooperPrepared()
         mHandler = Handler(looper) {
-            if (canStop) {
+            if (it.what == 1) {
+                if (isPlaying) {
+                    return@Handler true
+                }
+                engageCallRinger.start()
+                isPlaying = true
+            } else if (it.what == 2) {
+                engageCallRinger.stop()
                 mHandler?.removeCallbacksAndMessages(null)
-            } else {
-                toneGen.startTone(ToneGenerator.TONE_PROP_BEEP, 250)
-                mHandler?.sendEmptyMessageDelayed(0, 1500)
+                isPlaying = false
             }
             true
         }
     }
 
     fun startBusyTone() {
-        canStop = false
-        mHandler?.sendEmptyMessage(0)
+        mHandler?.sendEmptyMessage(1)
     }
 
     fun stopBusyTone() {
-        canStop = true
-        mHandler?.sendEmptyMessage(0)
+        mHandler?.sendEmptyMessage(2)
     }
 }

@@ -23,7 +23,6 @@ class WebRtcAudioManager(context: Context) {
 
     private var soundPool: SoundPool
     private var vibrator: Vibrator
-    private var engageCallRinger: EngageCallRinger
     private var toneThread: ToneThread? = null
 
     private val maxVolume = (context.getSystemService(Context.AUDIO_SERVICE) as AudioManager)
@@ -37,12 +36,11 @@ class WebRtcAudioManager(context: Context) {
             .setMaxStreams(1)
             .setAudioAttributes(att)
             .build()
-        toneThread = ToneThread("EngageThread")
+        toneThread = ToneThread("EngageThread", context)
         toneThread?.start()
 
         connectedSoundId = soundPool.load(context, R.raw.join_call, 1)
         disconnectedSoundId = soundPool.load(context, R.raw.end_call, 1)
-        engageCallRinger = EngageCallRinger(context)
         vibrator = context.getSystemService(Service.VIBRATOR_SERVICE) as Vibrator
         soundPool.setOnLoadCompleteListener { s: SoundPool, _: Int, _: Int ->
             JoshSkillExecutors.BOUNDED.execute {
@@ -58,8 +56,7 @@ class WebRtcAudioManager(context: Context) {
 
     fun startCommunication() {
         try {
-            // stopConnectTone()
-            //reconnectCommunicationStop()
+            stopConnectTone()
             stopRinging()
             if (loaded && !playing) {
                 soundPool.play(connectedSoundId, maxVolume, maxVolume, 1, 0, 1.0f)
@@ -92,12 +89,10 @@ class WebRtcAudioManager(context: Context) {
 
     fun startConnectTone() {
         toneThread?.startBusyTone()
-        //engageCallRinger.start()
     }
 
     fun stopConnectTone() {
         toneThread?.stopBusyTone()
-        //engageCallRinger.stop()
     }
 
     fun quitEverything() {

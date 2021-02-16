@@ -13,10 +13,7 @@ import java.io.IOException;
 
 public class EngageCallRinger {
 
-    private static final String TAG = EngageCallRinger.class.getSimpleName();
-
     private final Context context;
-
     private MediaPlayer mediaPlayer;
 
     public EngageCallRinger(@NonNull Context context) {
@@ -25,14 +22,15 @@ public class EngageCallRinger {
 
     public void start() {
         int soundId = R.raw.voip_reconnect;
-        if (mediaPlayer != null) {
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.release();
+            mediaPlayer = null;
         }
 
         mediaPlayer = new MediaPlayer();
 
         mediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
-                .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                 .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
                 .build());
         mediaPlayer.setLooping(true);
@@ -50,8 +48,13 @@ public class EngageCallRinger {
     }
 
     public void stop() {
-        if (mediaPlayer == null) return;
-        mediaPlayer.release();
-        mediaPlayer = null;
+        try {
+            if (mediaPlayer == null) return;
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
