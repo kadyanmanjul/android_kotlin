@@ -52,7 +52,7 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
             StrictMode.setThreadPolicy(
                 StrictMode.ThreadPolicy.Builder()
                     .penaltyLog()
-                    .penaltyDialog()
+                    //   .penaltyDialog()
                     .detectAll()
                     .build()
             )
