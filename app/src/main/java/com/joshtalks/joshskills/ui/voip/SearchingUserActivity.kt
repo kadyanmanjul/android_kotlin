@@ -115,7 +115,7 @@ class SearchingUserActivity : BaseActivity() {
 
         override fun onNoUserFound() {
             showToast(getString(R.string.did_not_answer_message))
-            stopCalling()
+            timer?.cancel()
             this@SearchingUserActivity.finishAndRemoveTask()
         }
 

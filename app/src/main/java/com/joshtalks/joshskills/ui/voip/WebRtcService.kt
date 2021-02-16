@@ -62,6 +62,7 @@ class WebRtcService : BaseWebRtcService() {
     private var handlerThread: HandlerThread? = null
     private var userAgoraId: Int? = null
     var channelName: String? = null
+    private var isEngineInit = false
 
     companion object {
         private val TAG = WebRtcService::class.java.simpleName
@@ -562,6 +563,10 @@ class WebRtcService : BaseWebRtcService() {
             if (eventListener != null) {
                 mRtcEngine?.addHandler(eventListener)
             }
+            if (isEngineInit) {
+                callback.invoke()
+                return
+            }
             mRtcEngine?.apply {
                 if (BuildConfig.DEBUG) {
                     //     setParameters("{\"rtc.log_filter\": 65535}")
@@ -588,6 +593,7 @@ class WebRtcService : BaseWebRtcService() {
 
             }
             if (mRtcEngine != null) {
+                isEngineInit = true
                 callback.invoke()
             }
         } catch (ex: Throwable) {
@@ -973,6 +979,7 @@ class WebRtcService : BaseWebRtcService() {
         AppObjectController.mRtcEngine = null
         joshAudioManager?.quitEverything()
         handlerThread?.quitSafely()
+        isEngineInit = false
         isTimeOutToPickCall = false
         isCallRecordOngoing = false
         switchChannel = false
@@ -986,6 +993,7 @@ class WebRtcService : BaseWebRtcService() {
     override fun onDestroy() {
         RtcEngine.destroy()
         stopRing()
+        isEngineInit = false
         joshAudioManager?.quitEverything()
         AppObjectController.mRtcEngine = null
         handlerThread?.quitSafely()
