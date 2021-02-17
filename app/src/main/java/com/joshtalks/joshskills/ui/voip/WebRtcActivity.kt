@@ -165,7 +165,7 @@ class WebRtcActivity : AppCompatActivity() {
             return
         }
         var time = mBoundService?.getTimeOfTalk() ?: 0
-        if (callTime > 0) {
+        if (time <= 0) {
             time = callTime
         }
         val channelName = mBoundService?.channelName

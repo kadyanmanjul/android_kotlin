@@ -129,7 +129,6 @@ class WebRtcService : BaseWebRtcService() {
                 action = InitLibrary().action
             }
             AppObjectController.joshApplication.startService(serviceIntent)
-
         }
 
         fun startOutgoingCall(map: HashMap<String, String?>) {
@@ -141,14 +140,7 @@ class WebRtcService : BaseWebRtcService() {
                 putExtra(CALL_USER_OBJ, map)
                 putExtra(CALL_TYPE, CallType.OUTGOING)
             }
-            if (JoshApplication.isAppVisible) {
-                AppObjectController.joshApplication.startService(serviceIntent)
-            } else {
-                ContextCompat.startForegroundService(
-                    AppObjectController.joshApplication,
-                    serviceIntent
-                )
-            }
+            serviceIntent.startServiceForWebrtc()
         }
 
         fun startOnNotificationIncomingCall(data: HashMap<String, String>) {
@@ -160,14 +152,7 @@ class WebRtcService : BaseWebRtcService() {
                 putExtra(CALL_USER_OBJ, data)
                 putExtra(CALL_TYPE, CallType.INCOMING)
             }
-            if (JoshApplication.isAppVisible) {
-                AppObjectController.joshApplication.startService(serviceIntent)
-            } else {
-                ContextCompat.startForegroundService(
-                    AppObjectController.joshApplication,
-                    serviceIntent
-                )
-            }
+            serviceIntent.startServiceForWebrtc()
         }
 
         fun disconnectCall() {
@@ -177,14 +162,7 @@ class WebRtcService : BaseWebRtcService() {
             ).apply {
                 action = CallDisconnect().action
             }
-            if (JoshApplication.isAppVisible) {
-                AppObjectController.joshApplication.startService(serviceIntent)
-            } else {
-                ContextCompat.startForegroundService(
-                    AppObjectController.joshApplication,
-                    serviceIntent
-                )
-            }
+            serviceIntent.startServiceForWebrtc()
         }
 
         fun disconnectCallFromCallie() {
@@ -194,14 +172,7 @@ class WebRtcService : BaseWebRtcService() {
             ).apply {
                 action = CallStop().action
             }
-            if (JoshApplication.isAppVisible) {
-                AppObjectController.joshApplication.startService(serviceIntent)
-            } else {
-                ContextCompat.startForegroundService(
-                    AppObjectController.joshApplication,
-                    serviceIntent
-                )
-            }
+            serviceIntent.startServiceForWebrtc()
         }
 
         fun rejectCall() {
@@ -211,14 +182,7 @@ class WebRtcService : BaseWebRtcService() {
             ).apply {
                 action = CallReject().action
             }
-            if (JoshApplication.isAppVisible) {
-                AppObjectController.joshApplication.startService(serviceIntent)
-            } else {
-                ContextCompat.startForegroundService(
-                    AppObjectController.joshApplication,
-                    serviceIntent
-                )
-            }
+            serviceIntent.startServiceForWebrtc()
         }
 
         fun forceConnect(data: HashMap<String, String>) {
@@ -230,14 +194,7 @@ class WebRtcService : BaseWebRtcService() {
                 putExtra(CALL_USER_OBJ, data)
                 putExtra(CALL_TYPE, CallType.INCOMING)
             }
-            if (JoshApplication.isAppVisible) {
-                AppObjectController.joshApplication.startService(serviceIntent)
-            } else {
-                ContextCompat.startForegroundService(
-                    AppObjectController.joshApplication,
-                    serviceIntent
-                )
-            }
+            serviceIntent.startServiceForWebrtc()
         }
 
         fun forceDisconnect() {
@@ -247,14 +204,7 @@ class WebRtcService : BaseWebRtcService() {
             ).apply {
                 action = CallForceDisconnect().action
             }
-            if (JoshApplication.isAppVisible) {
-                AppObjectController.joshApplication.startService(serviceIntent)
-            } else {
-                ContextCompat.startForegroundService(
-                    AppObjectController.joshApplication,
-                    serviceIntent
-                )
-            }
+            serviceIntent.startServiceForWebrtc()
         }
 
         fun noUserFoundCallDisconnect() {
@@ -264,14 +214,7 @@ class WebRtcService : BaseWebRtcService() {
             ).apply {
                 action = NoUserFound().action
             }
-            if (JoshApplication.isAppVisible) {
-                AppObjectController.joshApplication.startService(serviceIntent)
-            } else {
-                ContextCompat.startForegroundService(
-                    AppObjectController.joshApplication,
-                    serviceIntent
-                )
-            }
+            serviceIntent.startServiceForWebrtc()
         }
 
         fun holdCall() {
@@ -281,14 +224,7 @@ class WebRtcService : BaseWebRtcService() {
             ).apply {
                 action = HoldCall().action
             }
-            if (JoshApplication.isAppVisible) {
-                AppObjectController.joshApplication.startService(serviceIntent)
-            } else {
-                ContextCompat.startForegroundService(
-                    AppObjectController.joshApplication,
-                    serviceIntent
-                )
-            }
+            serviceIntent.startServiceForWebrtc()
         }
 
         fun resumeCall() {
@@ -298,14 +234,7 @@ class WebRtcService : BaseWebRtcService() {
             ).apply {
                 action = ResumeCall().action
             }
-            if (JoshApplication.isAppVisible) {
-                AppObjectController.joshApplication.startService(serviceIntent)
-            } else {
-                ContextCompat.startForegroundService(
-                    AppObjectController.joshApplication,
-                    serviceIntent
-                )
-            }
+            serviceIntent.startServiceForWebrtc()
         }
 
     }
@@ -405,7 +334,7 @@ class WebRtcService : BaseWebRtcService() {
                 val id = getUID(it)
                 Timber.tag(TAG).e("onUserOffline =  $id")
                 if (id != uid && reason == Constants.USER_OFFLINE_QUIT) {
-                    endCall(apiCall = true)
+                    endCall(apiCall = true, action = CallAction.AUTO_DISCONNECT)
                     isCallWasOnGoing = false
                 } else if (id != uid && reason == Constants.USER_OFFLINE_DROPPED) {
                     lostNetwork()
@@ -654,7 +583,11 @@ class WebRtcService : BaseWebRtcService() {
                             this == CallDisconnect().action -> {
                                 addNotification(CallDisconnect().action, null)
                                 callData?.let {
-                                    callStatusNetworkApi(it, CallAction.DISCONNECT)
+                                    callStatusNetworkApi(
+                                        it,
+                                        CallAction.DISCONNECT,
+                                        hasDisconnected = true
+                                    )
                                 }
                                 endCall()
                                 isCallRecordOngoing = false
@@ -816,11 +749,11 @@ class WebRtcService : BaseWebRtcService() {
         disconnectService()
     }
 
-    fun endCall(apiCall: Boolean = false) {
+    fun endCall(apiCall: Boolean = false, action: CallAction = CallAction.DISCONNECT) {
         Timber.tag(TAG).e("call_status%s", mRtcEngine?.connectionState)
         if (apiCall) {
             callData?.let {
-                callStatusNetworkApi(it, CallAction.DISCONNECT)
+                callStatusNetworkApi(it, action)
             }
         }
         joshAudioManager?.endCommunication()
@@ -1303,13 +1236,19 @@ class WebRtcService : BaseWebRtcService() {
         return spannable
     }
 
-    private fun callStatusNetworkApi(data: HashMap<String, String?>, callAction: CallAction) {
+    private fun callStatusNetworkApi(
+        data: HashMap<String, String?>,
+        callAction: CallAction,
+        hasDisconnected: Boolean = false
+    ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val time = getTimeOfTalk()
                 data["mentor_id"] = Mentor.getInstance().getId()
                 data["call_response"] = callAction.action
                 data["duration"] = TimeUnit.MILLISECONDS.toSeconds(time).toString()
+                data["has_disconnected"] = hasDisconnected.toString()
+
                 AppObjectController.p2pNetworkService.getAgoraCallResponse(data)
                 if (CallAction.ACCEPT == callAction) {
                     callCallback?.get()?.onServerConnect()
@@ -1351,7 +1290,8 @@ enum class CallState(val state: Int) {
 
 enum class CallAction(val action: String) {
     ACCEPT("ACCEPT"), DECLINE("DECLINE"), DISCONNECT("DISCONNECT"), TIMEOUT("TIMEOUT"),
-    ONHOLD("ONHOLD"), RESUME("RESUME"), NOUSERFOUND("NOUSERFOUND")
+    ONHOLD("ONHOLD"), RESUME("RESUME"), NOUSERFOUND("NOUSERFOUND"),
+    AUTO_DISCONNECT("AUTO_DISCONNECT")
 }
 
 class NotificationId {
