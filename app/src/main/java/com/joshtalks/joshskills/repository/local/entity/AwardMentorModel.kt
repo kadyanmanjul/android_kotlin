@@ -55,7 +55,17 @@ data class AwardMentorModel(
     @ColumnInfo(name = "mentor_id")
     @SerializedName("mentor_id")
     @Expose
-    var mentorId: String?
+    var mentorId: String?,
+
+    @ColumnInfo(name = "award_type")
+    @SerializedName("award_type")
+    @Expose
+    var awardType: AwardTypes = AwardTypes.SOTD,
+
+    @ColumnInfo(name = "date_text")
+    @SerializedName("date_text")
+    @Expose
+    var dateText: String?
 ) : Parcelable
 
 @Dao
@@ -70,4 +80,10 @@ interface AwardMentorModelDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAll(awardMentorModelList: List<AwardMentorModel>)
 
+}
+
+enum class AwardTypes(val type: String) {
+    SOTD("SOTD"),
+    SOTW("SOTW"),
+    SOTM("SOTM"),
 }
