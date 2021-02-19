@@ -399,4 +399,8 @@ dependencies {
     debugImplementation 'com.itkacher.okhttpprofiler:okhttpprofiler:1.0.7'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
 
+    def paging_version = "3.0.0-beta01"
+
+    implementation "androidx.paging:paging-runtime:$paging_version" // For Kotlin use paging-runtime-ktx
+
 }
