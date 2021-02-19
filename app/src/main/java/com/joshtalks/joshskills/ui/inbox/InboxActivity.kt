@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.inbox
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.location.Location
@@ -10,6 +9,7 @@ import android.view.View
 import android.view.animation.OvershootInterpolator
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.*
+import androidx.paging.LoadState
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -25,12 +25,9 @@ import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventB
 import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.OpenLeaderBoardEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
-import com.joshtalks.joshskills.repository.server.onboarding.SubscriptionData
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
@@ -41,11 +38,6 @@ import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.util.FileUploadService
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.agora.rtc.RtcEngine
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -59,6 +51,9 @@ import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
@@ -89,35 +84,15 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
         WorkManagerAdmin.requiredTaskInLandingPage()
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         super.onCreate(savedInstanceState)
-        /*  if (intent != null && intent.hasExtra(StringContract.IntentStrings.GUID)) {
-              val groupId = intent.getStringExtra(StringContract.IntentStrings.GUID)
-              viewModel.groupIdLiveData.observe(this, Observer {
-                  startActivity(
-                      Intent(applicationContext, CometChatMessageListActivity::class.java).apply {
-                          putExtra(HAS_NOTIFICATION, true)
-                          putExtra(StringContract.IntentStrings.GUID, it)
-                          putExtra(
-                              StringContract.IntentStrings.TYPE,
-                              CometChatConstants.RECEIVER_TYPE_GROUP
-                          )
-                      }
-                  )
-              })
-              viewModel.initCometChat(groupId)
-          }*/
-        AppObjectController.isSettingUpdate = false
         lifecycle.addObserver(this)
         setContentView(R.layout.activity_inbox)
         initView()
-        addLiveDataObservable()
-        viewModel.updateSubscriptionStatus()
+        initAdapterObserable()
         workInBackground()
         handelIntentAction()
         initNewUserTip()
         viewModel.getTotalWatchTime()
         FileUploadService.uploadAllPendingTasks(AppObjectController.joshApplication)
-        //viewModel.getProfileData(Mentor.getInstance().getId())
-
     }
 
     private fun initView() {
@@ -125,11 +100,9 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
         iv_reminder.visibility = View.GONE
         iv_setting.visibility = View.VISIBLE
         findMoreLayout = findViewById(R.id.parent_layout)
-//        recycler_view_inbox.setHasFixedSize(true)
-
         recycler_view_inbox.itemAnimator?.apply {
-            addDuration = 2000
-            changeDuration = 2000
+            addDuration = 500
+            changeDuration = 500
         }
         recycler_view_inbox.itemAnimator = SlideInUpAnimator(OvershootInterpolator(2f))
         recycler_view_inbox.layoutManager = SmoothLinearLayoutManager(applicationContext)
@@ -141,7 +114,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
                 )
             )
         )
-        recycler_view_inbox.setItemViewCacheSize(20)
+        //recycler_view_inbox.setItemViewCacheSize(20)
         recycler_view_inbox.adapter = inboxAdapter
 
         iv_setting.setOnClickListener {
@@ -167,6 +140,38 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
             overlay_layout.visibility = View.GONE
         }
     }
+
+    private fun initAdapterObserable() {
+        lifecycleScope.launchWhenCreated {
+            inboxAdapter.loadStateFlow.collectLatest { loadStates ->
+            }
+        }
+
+        lifecycleScope.launchWhenCreated {
+            viewModel.registerCourseData.collectLatest {
+                inboxAdapter.submitData(it)
+            }
+        }
+
+        lifecycleScope.launchWhenCreated {
+            inboxAdapter.loadStateFlow
+                // Only emit when REFRESH LoadState for RemoteMediator changes.
+                .distinctUntilChangedBy { it.refresh }
+                // Only react to cases where Remote REFRESH completes i.e., NotLoading.
+                .filter { it.refresh is LoadState.NotLoading }
+                .collect {
+                    courseListSet.addAll(inboxAdapter.snapshot().items)
+                    if (findMoreLayout.visibility == View.INVISIBLE) {
+                        findMoreLayout.visibility = View.VISIBLE
+                    }
+                    if (courseListSet.size == 0) {
+                        openCourseExplorer()
+                        return@collect
+                    }
+                }
+        }
+    }
+
     private fun openPopupMenu(view: View) {
         if (popupMenu == null) {
             popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
@@ -198,7 +203,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
         popupMenu?.show()
     }
 
-
     override fun showExpiryTimeToolTip() {
         expiry_tool_tip.visibility = View.VISIBLE
         startThreadForTextUpdate()
@@ -213,8 +217,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
         startTimer(time_in_milli_seconds)
     }
 
-    private fun startTimer(time_in_seconds: Long) {
-        countdown_timer = object : CountDownTimer(time_in_seconds, 1000) {
+    private fun startTimer(timeInSeconds: Long) {
+        countdown_timer = object : CountDownTimer(timeInSeconds, 1000) {
             override fun onFinish() {
                 if (PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED).not()) {
                     PrefManager.put(IS_TRIAL_ENDED, true)
@@ -261,35 +265,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
         expiry_tool_tip_text.text = "${expiryToolText.plus(SINGLE_SPACE)}$time"
     }
 
-
     override fun showToolTipBelowFindMoreCourse(remainingTrialDays: Int) {
         bb_tip_below_find_btn.visibility = View.VISIBLE
         (bb_tip_below_find_btn as TopTrialTooltipView).setFindMoreCourseTipText(remainingTrialDays)
     }
-
-    private fun setCTAButtonText(exploreType: ExploreCardType) {
-        if (isGuestUser()) {
-            find_more.text = AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_ONBOARD_FLOW)
-        } else {
-            find_more.text = when (exploreType) {
-
-                ExploreCardType.NORMAL ->
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_NORMAL)
-
-                ExploreCardType.FFCOURSE ->
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_FFCOURSE)
-
-                ExploreCardType.FREETRIAL ->
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_FREETRIAL)
-
-            }
-        }
-    }
-
 
     private fun openSettingActivity() {
         openSettingActivity.launch(SettingsActivity.getIntent(this))
@@ -320,112 +299,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
         this.intent = intent
         handelIntentAction()
     }
-
-
-    private fun locationFetch() {
-        if (Mentor.getInstance().getLocality() == null) {
-            Dexter.withContext(this)
-                .withPermissions(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-
-                )
-                .withListener(object : MultiplePermissionsListener {
-                    override fun onPermissionRationaleShouldBeShown(
-                        permissions: MutableList<PermissionRequest>?,
-                        token: PermissionToken?
-                    ) {
-                        token?.continuePermissionRequest()
-                    }
-
-                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                        report?.areAllPermissionsGranted()?.let { flag ->
-                            if (flag) {
-                                fetchUserLocation()
-                            }
-                        }
-                    }
-                }).check()
-        }
-    }
-
-
-    private fun addLiveDataObservable() {
-        lifecycleScope.launchWhenStarted {
-            viewModel.registerCourseNetworkData.collect {
-                if (it.isNotEmpty())
-                    addCourseInRecyclerView(it)
-                else {
-                    if (isGuestUser()) {
-                        openOnBoardFlow()
-                    } else {
-                        openCourseExplorer()
-                    }
-                }
-            }
-        }
-        lifecycleScope.launchWhenStarted {
-            viewModel.registerCourseLocalData.collect {
-                addCourseInRecyclerView(it)
-            }
-        }
-        viewModel.onBoardingLiveData.observe(this) {
-            setTrialEndParam()
-            setSubscriptionEndParam()
-            val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, false)
-            val exploreType =
-                if (exploreTypeStr.isNotBlank()) ExploreCardType.valueOf(exploreTypeStr) else ExploreCardType.NORMAL
-            updateSubscriptionTipView(
-                exploreType,
-                it.showTooltip1,
-                it.showTooltip2,
-                courseListSet.size
-            )
-            setCTAButtonText(exploreType)
-
-            val showOverlay = intent.getBooleanExtra(
-                SHOW_OVERLAY,
-                false
-            ) && it.subscriptionData.isSubscriptionBought.not()
-            if (showOverlay && it.showTooltip3 && it.freeTrialData.remainingDays in 4..7) {
-                showOverlayToolTip(it.freeTrialData.remainingDays)
-            } else {
-                overlay_layout.visibility = View.GONE
-            }
-
-            if (User.getInstance().isVerified.not() && it?.subscriptionData?.isSubscriptionBought == true) {
-                showSignUpDialog()
-            }
-        }
-
-    }
-
-    private fun addCourseInRecyclerView(items: List<InboxEntity>) {
-        if (items.isEmpty()) {
-            return
-        }
-        val temp: ArrayList<InboxEntity> = arrayListOf()
-        items.filter { it.isCapsuleCourse }.sortedByDescending { it.courseCreatedDate }.let {
-            temp.addAll(it)
-        }
-
-        items.filter { (it.created == null || it.created == 0L) && it.courseId != TRIAL_COURSE_ID && it.isCapsuleCourse.not() }
-            .sortedByDescending { it.courseCreatedDate }.let {
-                temp.addAll(it)
-            }
-
-        items.filter { it.created != null && it.created != 0L && it.isCapsuleCourse.not() }
-            .sortedByDescending { it.created }.let {
-                temp.addAll(it)
-            }
-        courseListSet.addAll(temp)
-        inboxAdapter.addItems(temp)
-        if (findMoreLayout.visibility == View.INVISIBLE) {
-            findMoreLayout.visibility = View.VISIBLE
-        }
-    }
-
-
     private fun addObserver() {
         compositeDisposable.add(
             RxBus2.listen(OpenCourseEventBus::class.java)
@@ -463,7 +336,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
         super.onResume()
         Runtime.getRuntime().gc()
         addObserver()
-        viewModel.getRegisterCourses()
+        inboxAdapter.refresh()
         viewModel.getProfileData(Mentor.getInstance().getId())
     }
 
@@ -471,88 +344,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
         super.onPause()
         compositeDisposable.clear()
     }
-
-
-    private fun setTrialEndParam() {
-        val freeTrialData = FreeTrialData.getMapObject()
-        freeTrialData?.let {
-            if (it.is7DFTBought == false) {
-                PrefManager.put(IS_TRIAL_ENDED, false, false)
-                PrefManager.put(IS_TRIAL_STARTED, false, false)
-                PrefManager.put(REMAINING_TRIAL_DAYS, -1)
-            } else {
-                (it.remainingDays < 0).let { trialExpired ->
-                    PrefManager.put(
-                        IS_TRIAL_ENDED,
-                        trialExpired,
-                        false
-                    )
-
-                    if (trialExpired)
-                        logTrialEventExpired()
-                }
-
-                PrefManager.put(
-                    IS_TRIAL_STARTED,
-                    it.is7DFTBought, false
-                )
-
-                PrefManager.put(REMAINING_TRIAL_DAYS, it.remainingDays)
-            }
-        }
-    }
-
-    private fun setSubscriptionEndParam() {
-        val subscriptionData = SubscriptionData.getMapObject()
-        subscriptionData?.let {
-            if (it.isSubscriptionBought == false) {
-                PrefManager.put(IS_SUBSCRIPTION_ENDED, false, false)
-                PrefManager.put(IS_SUBSCRIPTION_STARTED, false, false)
-                PrefManager.put(REMAINING_SUBSCRIPTION_DAYS, -1, false)
-            } else {
-                (it.remainingDays < 0).let { subsEnded ->
-                    PrefManager.put(
-                        IS_SUBSCRIPTION_ENDED,
-                        subsEnded,
-                        false
-                    )
-                    if (subsEnded)
-                        logSubscriptionExpired()
-                }
-                PrefManager.put(
-                    IS_SUBSCRIPTION_STARTED, it.isSubscriptionBought, false
-                )
-                PrefManager.put(
-                    REMAINING_SUBSCRIPTION_DAYS, it.remainingDays,
-                    false
-                )
-            }
-        }
-    }
-
-    private fun logTrialEventExpired() {
-        if (PrefManager.getBoolValue(IS_TRIAL_ENDED, false).not()) {
-            AppAnalytics.create(AnalyticsEvent.SEVEN_DAY_TRIAL_OVER.NAME)
-                .addBasicParam()
-                .addUserDetails()
-                .push()
-        }
-    }
-
-    private fun logSubscriptionExpired() {
-        if (PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED, false).not()) {
-            AppAnalytics.create(AnalyticsEvent.SUBSCRIPTION_EXPIRED.NAME)
-                .addBasicParam()
-                .addUserDetails()
-                .push()
-        }
-    }
-
-    private fun showOverlayToolTip(remainingTrialDays: Int) {
-        overlay_layout.visibility = View.VISIBLE
-        (overlay_tip as TopTrialTooltipView).setInboxOverayTipText(7.minus(remainingTrialDays))
-    }
-
     override fun openCourseExplorer() {
         CourseExploreActivity.startCourseExploreActivity(
             this,
@@ -609,6 +400,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
             finish()
         }
     }
+
     override fun onUpdateLocation(location: Location) {
         CoroutineScope(Dispatchers.IO).launch {
             uploadUserLocation(location)

@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.inbox
 
+import android.Manifest
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -18,12 +19,17 @@ import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
-import com.joshtalks.joshskills.repository.local.model.ExploreCardType
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.inbox.extra.NewUserLayout
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.coroutines.CoroutineScope
@@ -54,6 +60,7 @@ abstract class InboxBaseActivity : CoreJoshActivity(),
         lifecycleScope.launchWhenCreated {
             versionResponse = VersionResponse.getInstance()
         }
+        AppObjectController.isSettingUpdate = false
     }
 
     override fun onStart() {
@@ -217,137 +224,31 @@ abstract class InboxBaseActivity : CoreJoshActivity(),
         }
     }
 
-    protected fun openOnBoardFlow() {
-        versionResponse?.version?.name.let {
-            when (it) {
-                ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V7, ONBOARD_VERSIONS.ONBOARDING_V8 -> {
-                    openCourseExplorer()
-                }
-                ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V5, ONBOARD_VERSIONS.ONBOARDING_V6 -> {
-                    openCourseSelectionExplorer()
-                }
-                else -> {
-                    openCourseExplorer()
-                }
-            }
+    protected fun locationFetch() {
+        if (Mentor.getInstance().getLocality() == null) {
+            Dexter.withContext(this)
+                .withPermissions(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+
+                )
+                .withListener(object : MultiplePermissionsListener {
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
+
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (flag) {
+                                fetchUserLocation()
+                            }
+                        }
+                    }
+                }).check()
         }
-    }
-
-    protected fun updateSubscriptionTipView(
-        exploreType: ExploreCardType,
-        showTooltip1: Boolean,
-        showTooltip2: Boolean,
-        courseSize: Int
-    ) {
-        if (PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED).not()) {
-            when (exploreType) {
-                ExploreCardType.FREETRIAL -> {
-                    subscriptionTipContainer.visibility = View.VISIBLE
-
-                    val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS)
-                    if (remainingTrialDays in 0..7 && showTooltip1) {
-                        showToolTipBelowFindMoreCourse(remainingTrialDays)
-                    }
-                    if (remainingTrialDays in 0..4 && showTooltip2) {
-                        showExpiryTimeToolTip()
-                    }
-                    txtSubscriptionTip.isSelected = true
-                    when {
-                        remainingTrialDays <= 0 -> {
-                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY7)
-                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY7)
-                        }
-
-                        remainingTrialDays == 1 -> {
-                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY6)
-                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY6)
-
-                        }
-
-                        remainingTrialDays == 2 -> {
-                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY5)
-                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY5)
-
-                        }
-
-                        remainingTrialDays == 3 -> {
-                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY4)
-                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY4)
-
-                        }
-
-                        remainingTrialDays == 4 -> {
-                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY3)
-                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY3)
-                        }
-
-                        remainingTrialDays == 5 -> {
-                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY2)
-                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY2)
-                        }
-
-                        remainingTrialDays == 6 -> {
-                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY1)
-                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY1)
-                        }
-
-                        remainingTrialDays > 6 -> {
-                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY0)
-                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
-                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY0)
-                        }
-                    }
-                }
-
-                ExploreCardType.FFCOURSE -> {
-                    subscriptionTipContainer.visibility = View.VISIBLE
-                    txtSubscriptionTip.text = if (courseSize > 1) {
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_NORMAL_TIP)
-                    } else {
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_FFCOURSE_TIP)
-                    }
-                    txtSubscriptionTip2.text = if (courseSize > 1) {
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_NORMAL_TIP)
-                    } else {
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_FFCOURSE_TIP)
-                    }
-                }
-
-                ExploreCardType.NORMAL -> {
-                    subscriptionTipContainer.visibility = View.VISIBLE
-                    if (courseSize > 0) {
-                        txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_NORMAL_TIP)
-                        txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_NORMAL_TIP)
-                        subscriptionTipContainer.visibility = View.GONE
-                    }
-                }
-
-            }
-        } else {
-            subscriptionTipContainer.visibility = View.GONE
-        }
-
     }
 
     abstract fun showExpiryTimeToolTip()

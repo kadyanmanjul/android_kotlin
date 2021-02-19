@@ -3,7 +3,7 @@ package com.joshtalks.joshskills.ui.inbox.adapter
 import androidx.recyclerview.widget.DiffUtil
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 
-class InboxDiffCallback(
+data class InboxDiffCallback(
     private val mOldInboxModelList: List<InboxEntity>,
     private val mNewInboxModelList: List<InboxEntity>
 ) : DiffUtil.Callback() {
@@ -18,7 +18,7 @@ class InboxDiffCallback(
     }
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return mOldInboxModelList[oldItemPosition].conversation_id == mNewInboxModelList[newItemPosition].conversation_id
+        return mOldInboxModelList[oldItemPosition] == mNewInboxModelList[newItemPosition]
     }
 
 
