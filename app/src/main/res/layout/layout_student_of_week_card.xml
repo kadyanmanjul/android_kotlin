@@ -9,7 +9,7 @@
     android:layout_marginTop="@dimen/_2sdp"
     android:layout_marginBottom="@dimen/_2sdp"
     android:background="@drawable/wooden_bg"
-    android:padding="@dimen/_10sdp">
+    android:padding="@dimen/_14sdp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -33,7 +33,7 @@
             android:id="@+id/bg_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_12sdp"
             android:background="@drawable/rect_round_4dp_yellow"
             android:backgroundTint="#E4BD71"
             app:layout_constraintBottom_toBottomOf="@id/date_text"
@@ -77,7 +77,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
-            android:layout_marginTop="@dimen/_2sdp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
             android:textColor="@color/brown"
             app:layout_constraintBottom_toBottomOf="@+id/user_pic"
@@ -112,11 +112,12 @@
             app:layout_constraintVertical_bias="0"
             tools:text="Vedant won this award by earning 47ww gew  weguh iuhew gig er giuigyuer  iyegr u ge 0 points through his hardwork yesterday" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/date_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_8sdp"
+            android:textStyle="italic"
             android:layout_marginTop="@dimen/_4sdp"
             android:paddingBottom="@dimen/_10sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"

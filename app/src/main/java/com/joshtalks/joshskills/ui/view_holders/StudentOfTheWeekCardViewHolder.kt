@@ -1,8 +1,10 @@
 package com.joshtalks.joshskills.ui.view_holders
 
+import android.graphics.Typeface
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -58,16 +60,19 @@ class StudentOfTheWeekCardViewHolder(
     override fun onViewInflated() {
         super.onViewInflated()
         message.awardMentorModel?.let { awardMentorModel ->
-
             val resp = StringBuilder()
             awardMentorModel.performerName?.split(" ")?.forEach {
                 resp.append(it.toLowerCase(Locale.getDefault()).capitalize(Locale.getDefault()))
                     .append(" ")
             }
             studentName.text = resp
-            totalPoints.text = awardMentorModel.totalPointsText
+            awardMentorModel.totalPointsText?.let {
+                totalPoints.text = HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            }
             userText.text = awardMentorModel.description
             dateText.text = awardMentorModel.dateText
+
+            dateText.setTypeface(dateText.typeface, Typeface.ITALIC)
             userPic.post {
                 userPic.setUserImageOrInitials(
                     awardMentorModel.performerPhotoUrl,
