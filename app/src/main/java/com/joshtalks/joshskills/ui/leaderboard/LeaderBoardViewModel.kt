@@ -12,6 +12,8 @@ import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 
 class LeaderBoardViewModel(application: Application) : AndroidViewModel(application) {
@@ -22,19 +24,26 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
     val leaderBoardDataOfPage: MutableLiveData<LeaderboardResponse> = MutableLiveData()
 
     fun getFullLeaderBoardData(mentorId: String) {
-        jobs == viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiCallStatusLiveData.postValue(ApiCallStatus.START)
                 val map = HashMap<String, LeaderboardResponse>()
-                getMentorData(mentorId, "TODAY")?.let {
-                    map.put("TODAY", it)
+                val call1 = async(Dispatchers.IO) {
+                    getMentorData(mentorId, "TODAY")?.let {
+                        map.put("TODAY", it)
+                    }
                 }
-                getMentorData(mentorId, "WEEK")?.let {
-                    map.put("WEEK", it)
+                val call2 = async(Dispatchers.IO) {
+                    getMentorData(mentorId, "WEEK")?.let {
+                        map.put("WEEK", it)
+                    }
                 }
-                getMentorData(mentorId, "MONTH")?.let {
-                    map.put("MONTH", it)
+                val call3 = async(Dispatchers.IO) {
+                    getMentorData(mentorId, "MONTH")?.let {
+                        map.put("MONTH", it)
+                    }
                 }
+                joinAll(call1, call2, call3)
                 leaderBoardData.postValue(map)
                 apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                 return@launch
