@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout xmlns:wheel="http://schemas.android.com/apk/res-auto"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white">
@@ -22,12 +22,13 @@
                 android:id="@+id/text_view_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_12sdp"
                 android:gravity="center"
                 android:text="@string/speak_practise_title"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                 android:textColor="@color/black"
+                app:layout_constraintBottom_toTopOf="@+id/text_view_2"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -35,20 +36,20 @@
                 android:id="@+id/text_view_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/_12ssp"
                 android:gravity="start|center"
                 android:text="@string/today_topic"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
                 android:textColor="@color/black"
-                app:layout_constraintBottom_toTopOf="@id/tv_today_topic"
+                app:layout_constraintBottom_toTopOf="@+id/tv_today_topic"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_view_1" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_today_topic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/_28sdp"
                 android:gravity="center"
                 android:paddingHorizontal="@dimen/_16sdp"
                 android:text="@string/today_topic"
@@ -56,25 +57,26 @@
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toTopOf="@+id/progress_bar"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_view_2"
                 tools:text="Geeting with New Members" />
 
             <com.mikhaellopez.circularprogressbar.CircularProgressBar
                 android:id="@+id/progress_bar"
                 android:layout_width="@dimen/_96sdp"
                 android:layout_height="@dimen/_96sdp"
-                android:layout_marginTop="@dimen/_32sdp"
                 app:cpb_background_progressbar_color="#ECF4FD"
                 app:cpb_background_progressbar_width="@dimen/_12sdp"
                 app:cpb_progress_direction="to_right"
                 app:cpb_progressbar_color="@color/colorAccent"
                 app:cpb_progressbar_width="@dimen/_12sdp"
                 app:cpb_round_border="false"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/info_container"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.45" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_today_topic" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_practise_time"
@@ -84,23 +86,24 @@
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_12ssp"
-                tools:text="5 / 10 \n min"
                 app:layout_constraintBottom_toBottomOf="@id/progress_bar"
                 app:layout_constraintEnd_toEndOf="@id/progress_bar"
                 app:layout_constraintStart_toStartOf="@id/progress_bar"
-                app:layout_constraintTop_toTopOf="@id/progress_bar" />
+                app:layout_constraintTop_toTopOf="@id/progress_bar"
+                tools:text="5 / 10 \n min" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/info_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_24sdp"
-                android:layout_marginTop="@dimen/_28sdp"
                 android:background="@drawable/rounded_rectangle_attach"
                 android:backgroundTint="#ECF4FD"
                 android:paddingHorizontal="@dimen/_8sdp"
                 android:paddingVertical="@dimen/_12sdp"
+                app:layout_constraintBottom_toTopOf="@+id/btn_start"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/progress_bar">
 
@@ -137,7 +140,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/_8sdp"
                 android:backgroundTint="@color/colorAccent"
                 android:gravity="center"
                 android:insetTop="0dp"
@@ -147,16 +149,15 @@
                 android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_12ssp"
-                android:layout_marginTop="@dimen/_8sdp"
                 app:cornerRadius="@dimen/_36sdp"
+                app:layout_constraintBottom_toTopOf="@+id/btn_continue"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintVertical_bias="1"
+                app:layout_constraintTop_toBottomOf="@+id/info_container"
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.7"
-                app:rippleColor="@color/white"
-                wheel:layout_constraintBottom_toTopOf="@id/btn_continue"
-                wheel:layout_constraintTop_toBottomOf="@+id/info_container" />
+                app:rippleColor="@color/white" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_continue"
@@ -164,7 +165,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/_8sdp"
                 android:backgroundTint="@color/colorAccent"
                 android:gravity="center"
                 android:insetTop="0dp"
@@ -175,14 +175,16 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/_12ssp"
                 android:visibility="gone"
-                tools:visibility="visible"
                 app:cornerRadius="@dimen/_36sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_start"
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.7"
-                app:rippleColor="@color/white" />
+                app:rippleColor="@color/white"
+                tools:visibility="visible" />
 
 
             <com.pnikosis.materialishprogress.ProgressWheel
@@ -194,18 +196,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                wheel:matProg_barColor="@color/button_color"
-                wheel:matProg_fillRadius="true"
-                wheel:matProg_linearProgress="false"
-                wheel:matProg_progressIndeterminate="true" />
-
-
-            <androidx.constraintlayout.widget.Group
-                android:id="@+id/group_one"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="visible"
-                app:constraint_referenced_ids="progress_view" />
+                app:matProg_barColor="@color/button_color"
+                app:matProg_fillRadius="true"
+                app:matProg_linearProgress="false"
+                app:matProg_progressIndeterminate="true" />
 
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/group_two"
@@ -216,5 +210,7 @@
                 tools:visibility="visible" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </LinearLayout>
+
 </ScrollView>

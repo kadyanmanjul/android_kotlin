@@ -65,7 +65,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val practiceFeedback2LiveData: MutableLiveData<PracticeFeedback2> = MutableLiveData()
     val practiceEngagementData: MutableLiveData<PracticeEngagement> = MutableLiveData()
     val courseId: MutableLiveData<String> = MutableLiveData()
-    val speakingTopicLiveData: MutableLiveData<SpeakingTopic> = MutableLiveData()
+    val speakingTopicLiveData: MutableLiveData<SpeakingTopic?> = MutableLiveData()
 
     fun getLesson(lessonId: Int) {
         viewModelScope.launch {
@@ -494,11 +494,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 getTopicFromDB(topicId)
             }
 
-            if (topicDetails != null) {
-                speakingTopicLiveData.postValue(topicDetails)
-            } else {
-                showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
-            }
+            speakingTopicLiveData.postValue(topicDetails)
         }
     }
 

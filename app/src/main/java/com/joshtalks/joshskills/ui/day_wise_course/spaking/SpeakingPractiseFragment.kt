@@ -16,11 +16,13 @@ import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SPEAKING_POINTS
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
@@ -36,9 +38,9 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.speaking_practise_fragment.btn_continue
 import kotlinx.android.synthetic.main.speaking_practise_fragment.btn_start
-import kotlinx.android.synthetic.main.speaking_practise_fragment.group_one
 import kotlinx.android.synthetic.main.speaking_practise_fragment.group_two
 import kotlinx.android.synthetic.main.speaking_practise_fragment.progress_bar
+import kotlinx.android.synthetic.main.speaking_practise_fragment.progress_view
 import kotlinx.android.synthetic.main.speaking_practise_fragment.root_view
 import kotlinx.android.synthetic.main.speaking_practise_fragment.text_view
 import kotlinx.android.synthetic.main.speaking_practise_fragment.tv_practise_time
@@ -48,7 +50,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
 
     var lessonActivityListener: LessonActivityListener? = null
     private var compositeDisposable = CompositeDisposable()
-    private var lessonId: String = EMPTY
+    private var lessonId: Int? = null
     private var courseId: String = EMPTY
     private var topicId: String? = null
     private var questionId: String? = null
@@ -64,8 +66,9 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is LessonActivityListener)
+        if (context is LessonActivityListener) {
             lessonActivityListener = context
+        }
     }
 
     override fun onCreateView(
@@ -85,7 +88,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
         viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner, {
             val spQuestion = it.filter { it.chatType == CHAT_TYPE.SP }.getOrNull(0)
             questionId = spQuestion?.id
-            lessonId = spQuestion?.lessonId.toString()
+            lessonId = spQuestion?.lessonId
             topicId = spQuestion?.topicId
         })
         viewModel.courseId.observe(viewLifecycleOwner, {
@@ -101,46 +104,50 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
         }
 
         viewModel.speakingTopicLiveData.observe(viewLifecycleOwner, { response ->
-            try {
-                tv_today_topic.text = response.topicName
-                tv_practise_time.text =
-                    response.alreadyTalked.toString().plus(" / ").plus(response.duration.toString())
-                        .plus("\n Minutes")
-                progress_bar.progress = response.alreadyTalked.toFloat()
-                progress_bar.progressMax = response.duration.toFloat()
+            progress_view.visibility = View.GONE
+            if (response == null) {
+                showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
+            } else {
+                try {
+                    tv_today_topic.text = response.topicName
+                    tv_practise_time.text =
+                        response.alreadyTalked.toString().plus(" / ")
+                            .plus(response.duration.toString())
+                            .plus("\n Minutes")
+                    progress_bar.progress = response.alreadyTalked.toFloat()
+                    progress_bar.progressMax = response.duration.toFloat()
 
-                text_view.text = if (response.duration >= 10) {
-                    getString(R.string.pp_messages, response.duration.toString())
-                } else {
-                    getString(R.string.pp_message, response.duration.toString())
+                    text_view.text = if (response.duration >= 10) {
+                        getString(R.string.pp_messages, response.duration.toString())
+                    } else {
+                        getString(R.string.pp_message, response.duration.toString())
+                    }
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
                 }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-            group_two.visibility = View.VISIBLE
-            group_one.visibility = View.GONE
-            val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
-            if (points.isEmpty().not()) {
-                showSnackBar(root_view, Snackbar.LENGTH_LONG, points)
-                PrefManager.put(SPEAKING_POINTS, EMPTY)
-            }
+                group_two.visibility = View.VISIBLE
+                val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
+                if (points.isEmpty().not()) {
+                    showSnackBar(root_view, Snackbar.LENGTH_LONG, points)
+                    PrefManager.put(SPEAKING_POINTS, EMPTY)
+                }
 
-            if (response.alreadyTalked >= response.duration) {
-                btn_continue.visibility = View.VISIBLE
-                lessonActivityListener?.onQuestionStatusUpdate(
-                    QUESTION_STATUS.AT,
-                    questionId
-                )
-                lessonActivityListener?.onSectionStatusUpdate(3, true)
+                if (response.alreadyTalked >= response.duration) {
+                    btn_continue.visibility = View.VISIBLE
+                    lessonActivityListener?.onQuestionStatusUpdate(
+                        QUESTION_STATUS.AT,
+                        questionId
+                    )
+                    lessonActivityListener?.onSectionStatusUpdate(3, true)
+                }
             }
         })
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onFragmentResume() {
-        topicId?.let {
-            viewModel.getTopicDetail(it)
-        }
+        topicId?.let { viewModel.getTopicDetail(it) }
+        lessonId?.let { viewModel.getCourseIdByLessonId(it) }
     }
 
     private fun startPractise() {
