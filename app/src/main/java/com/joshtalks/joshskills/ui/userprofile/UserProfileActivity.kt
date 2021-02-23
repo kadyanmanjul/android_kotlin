@@ -253,10 +253,6 @@ class UserProfileActivity : BaseActivity() {
             binding.awardsHeading.visibility = View.GONE
         } else {
             this.awardCategory = userData.awardCategory
-
-            if (mentorId == Mentor.getInstance().getId()) {
-                binding.moreInfo.visibility = View.VISIBLE
-            }
             binding.awardsHeading.visibility = View.VISIBLE
             if (checkIsAwardAchieved(userData.awardCategory)) {
                 userData.awardCategory?.forEach { awardCategory ->
@@ -312,6 +308,8 @@ class UserProfileActivity : BaseActivity() {
         awardCategory.awards?.forEach {
             if (mentorId == Mentor.getInstance().getId()) {
                 setAwardView(it, index, view!!)
+
+                view.tag = it.id
                 index = index.plus(1)
             } else if (it.is_achieved) {
                 haveAchievedAwards = true
@@ -326,9 +324,12 @@ class UserProfileActivity : BaseActivity() {
     }
 
     private fun setAwardView(award: Award, index: Int, view: View) {
+        var v: View? = null
         when (index) {
             0 -> {
-                view.findViewById<ConstraintLayout>(R.id.award1).visibility = View.VISIBLE
+                v = view.findViewById<ConstraintLayout>(R.id.award1)
+                v.visibility = View.VISIBLE
+
                 setViewToLayout(
                     award,
                     view.findViewById(R.id.image_award1),
@@ -337,7 +338,9 @@ class UserProfileActivity : BaseActivity() {
                 )
             }
             1 -> {
-                view.findViewById<ConstraintLayout>(R.id.award2).visibility = View.VISIBLE
+                v = view.findViewById<ConstraintLayout>(R.id.award2)
+                v.visibility = View.VISIBLE
+
                 setViewToLayout(
                     award,
                     view.findViewById(R.id.image_award2),
@@ -346,7 +349,8 @@ class UserProfileActivity : BaseActivity() {
                 )
             }
             2 -> {
-                view.findViewById<ConstraintLayout>(R.id.award3).visibility = View.VISIBLE
+                v = view.findViewById<ConstraintLayout>(R.id.award3)
+                v.visibility = View.VISIBLE
                 setViewToLayout(
                     award,
                     view.findViewById(R.id.image_award3),
@@ -358,6 +362,12 @@ class UserProfileActivity : BaseActivity() {
 
             }
         }
+        if (mentorId == Mentor.getInstance().getId())
+            v?.setOnClickListener {
+                RxBus2.publish(
+                    AwardItemClickedEventBus(award)
+                )
+            }
     }
 
     private fun setViewToLayout(
