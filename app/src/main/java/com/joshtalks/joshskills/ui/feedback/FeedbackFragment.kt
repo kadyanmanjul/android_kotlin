@@ -33,12 +33,12 @@ import com.joshtalks.joshskills.repository.server.feedback.FeedbackTypes
 import com.joshtalks.joshskills.repository.server.feedback.RatingDetails
 import com.joshtalks.joshskills.repository.server.feedback.RatingModel
 import io.reactivex.disposables.CompositeDisposable
+import java.lang.reflect.Type
 import kotlinx.android.synthetic.main.progress_layout.progress_layout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.lang.reflect.Type
 
 const val QUESTION_ID = "question_id"
 const val FEEDBACK_TYPE = "feedback_type"
@@ -255,5 +255,3 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
             }
     }
 }
-
-

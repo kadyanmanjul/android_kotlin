@@ -2,7 +2,11 @@ package com.joshtalks.joshskills.repository.local
 
 //import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementDao
 import android.content.Context
-import androidx.room.*
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.gson.reflect.TypeToken
@@ -18,7 +22,43 @@ import com.joshtalks.joshskills.repository.local.dao.ChatDao
 import com.joshtalks.joshskills.repository.local.dao.LessonDao
 import com.joshtalks.joshskills.repository.local.dao.PendingTaskDao
 import com.joshtalks.joshskills.repository.local.dao.reminder.ReminderDao
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.AudioType
+import com.joshtalks.joshskills.repository.local.entity.AwardMentorModel
+import com.joshtalks.joshskills.repository.local.entity.AwardMentorModelDao
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.CExamStatus
+import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
+import com.joshtalks.joshskills.repository.local.entity.ChatDao
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.Course
+import com.joshtalks.joshskills.repository.local.entity.CourseDao
+import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.FeedbackEngageModel
+import com.joshtalks.joshskills.repository.local.entity.FeedbackEngageModelDao
+import com.joshtalks.joshskills.repository.local.entity.ImageType
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LessonMaterialType
+import com.joshtalks.joshskills.repository.local.entity.LessonModel
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestionDao
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestionType
+import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
+import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
+import com.joshtalks.joshskills.repository.local.entity.NPSEvent
+import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
+import com.joshtalks.joshskills.repository.local.entity.NPSEventModelDao
+import com.joshtalks.joshskills.repository.local.entity.OptionType
+import com.joshtalks.joshskills.repository.local.entity.PdfType
+import com.joshtalks.joshskills.repository.local.entity.PendingTask
+import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
+import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.entity.Question
+import com.joshtalks.joshskills.repository.local.entity.User
+import com.joshtalks.joshskills.repository.local.entity.VideoEngage
+import com.joshtalks.joshskills.repository.local.entity.VideoEngageDao
+import com.joshtalks.joshskills.repository.local.entity.VideoType
 import com.joshtalks.joshskills.repository.local.entity.practise.Phonetic
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementDao
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
@@ -26,24 +66,33 @@ import com.joshtalks.joshskills.repository.local.entity.practise.WrongWord
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
-import com.joshtalks.joshskills.repository.local.type_converter.*
+import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentMediaType
+import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentStatus
+import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentType
+import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterChoiceColumn
+import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterChoiceType
+import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterQuestionStatus
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentIntro
 import com.joshtalks.joshskills.repository.server.assessment.ReviseConcept
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
-import java.util.*
+import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
+import com.joshtalks.joshskills.repository.server.voip.SpeakingTopicDao
+import java.util.Collections
+import java.util.Date
 
 
 const val DATABASE_NAME = "JoshEnglishDB.db"
 
 @Database(
-    entities = [Course::class, ChatModel::class, Question::class, VideoType::class,
+    entities = [
+        Course::class, ChatModel::class, Question::class, VideoType::class,
         AudioType::class, OptionType::class, PdfType::class, ImageType::class, VideoEngage::class,
         FeedbackEngageModel::class, NPSEventModel::class, Assessment::class, AssessmentQuestion::class,
         Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class,
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class,
-        PracticeEngagementV2::class, AwardMentorModel::class
+        PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class
     ],
     version = 27,
     exportSchema = true
@@ -56,7 +105,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     MessageDeliveryTypeConverter::class,
     MessageStatusTypeConverters::class,
     ExpectedEngageTypeConverter::class,
-    ConvectorForEngagement::class,
+    ConvertorForEngagement::class,
     ConvectorForGraph::class,
     ConvectorForNPSEvent::class,
     TypeConverterAssessmentStatus::class,
@@ -73,7 +122,9 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     PendingTaskRequestTypeConverter::class,
     ListConverters::class,
     ConvectorForWrongWord::class,
-    ConvectorForPhoneticClass::class
+    ConvectorForPhoneticClass::class,
+    ConverterForLessonQuestionType::class,
+    ConverterForLessonMaterialType::class
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -414,9 +465,11 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun appUsageDao(): AppUsageDao
     abstract fun appActivityDao(): AppActivityDao
     abstract fun lessonDao(): LessonDao
+    abstract fun lessonQuestionDao(): LessonQuestionDao
     abstract fun awardMentorModelDao(): AwardMentorModelDao
     abstract fun pendingTaskDao(): PendingTaskDao
     abstract fun practiceEngagementDao(): PracticeEngagementDao
+    abstract fun speakingTopicDao(): SpeakingTopicDao
 
 }
 
@@ -544,7 +597,7 @@ class ExpectedEngageTypeConverter {
 }
 
 
-class ConvectorForEngagement {
+class ConvertorForEngagement {
     @TypeConverter
     fun fromEngagement(value: List<PracticeEngagement>?): String {
         val type = object : TypeToken<List<PracticeEngagement>>() {}.type
@@ -769,3 +822,28 @@ class ConvectorForPhoneticClass {
     }
 }
 
+class ConverterForLessonQuestionType {
+    @TypeConverter
+    fun toLessonQuestionType(value: String): LessonQuestionType {
+        val type = object : TypeToken<LessonQuestionType>() {}.type
+        return AppObjectController.gsonMapper.fromJson(value, type)
+    }
+
+    @TypeConverter
+    fun fromLessonQuestionType(enumVal: LessonQuestionType): String {
+        return AppObjectController.gsonMapper.toJson(enumVal)
+    }
+}
+
+class ConverterForLessonMaterialType {
+    @TypeConverter
+    fun toLessonMaterialType(value: String): LessonMaterialType {
+        val type = object : TypeToken<LessonMaterialType>() {}.type
+        return AppObjectController.gsonMapper.fromJson(value, type)
+    }
+
+    @TypeConverter
+    fun fromLessonMaterialType(enumVal: LessonMaterialType): String {
+        return AppObjectController.gsonMapper.toJson(enumVal)
+    }
+}

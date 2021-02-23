@@ -11,71 +11,61 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SPEAKING_POINTS
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
-import com.joshtalks.joshskills.repository.server.voip.SpeakingTopicModel
-import com.joshtalks.joshskills.ui.day_wise_course.CapsuleActivityCallback
-import com.joshtalks.joshskills.ui.feedback.QUESTION_ID
-import com.joshtalks.joshskills.ui.voip.COURSE_ID
+import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
+import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
-import com.joshtalks.joshskills.ui.voip.TOPIC_ID
-import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.speaking_practise_fragment.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-
-const val LESSON_ID = "lesson_id"
+import kotlinx.android.synthetic.main.speaking_practise_fragment.btn_continue
+import kotlinx.android.synthetic.main.speaking_practise_fragment.btn_start
+import kotlinx.android.synthetic.main.speaking_practise_fragment.group_one
+import kotlinx.android.synthetic.main.speaking_practise_fragment.group_two
+import kotlinx.android.synthetic.main.speaking_practise_fragment.progress_bar
+import kotlinx.android.synthetic.main.speaking_practise_fragment.root_view
+import kotlinx.android.synthetic.main.speaking_practise_fragment.text_view
+import kotlinx.android.synthetic.main.speaking_practise_fragment.tv_practise_time
+import kotlinx.android.synthetic.main.speaking_practise_fragment.tv_today_topic
 
 class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
 
-    var activityCallback: CapsuleActivityCallback? = null
+    var lessonActivityListener: LessonActivityListener? = null
     private var compositeDisposable = CompositeDisposable()
     private var lessonId: String = EMPTY
     private var courseId: String = EMPTY
     private var topicId: String? = null
     private var questionId: String? = null
 
-    private val speakingTopicModelLiveData: MutableLiveData<SpeakingTopicModel> = MutableLiveData()
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ) { result ->
+    ) {
+    }
+
+    private val viewModel: LessonViewModel by lazy {
+        ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is CapsuleActivityCallback)
-            activityCallback = context
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.getString(LESSON_ID)?.run {
-            lessonId = this
-        }
-        arguments?.getString(COURSE_ID)?.run {
-            courseId = this
-        }
-        arguments?.getString(TOPIC_ID)?.run {
-            topicId = this
-        }
-        arguments?.getString(QUESTION_ID)?.run {
-            questionId = this
-        }
+        if (context is LessonActivityListener)
+            lessonActivityListener = context
     }
 
     override fun onCreateView(
@@ -91,14 +81,26 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner, {
+            val spQuestion = it.filter { it.chatType == CHAT_TYPE.SP }.getOrNull(0)
+            questionId = spQuestion?.id
+            lessonId = spQuestion?.lessonId.toString()
+            topicId = spQuestion?.topicId
+        })
+        viewModel.courseId.observe(viewLifecycleOwner, {
+            courseId = it
+        })
         viewLifecycleOwner.lifecycle.addObserver(this)
+
         btn_start.setOnClickListener {
             startPractise()
         }
         btn_continue.setOnClickListener {
-            activityCallback?.onNextTabCall(3)
+            lessonActivityListener?.onNextTabCall(3)
         }
-        speakingTopicModelLiveData.observe(viewLifecycleOwner, { response ->
+
+        viewModel.speakingTopicLiveData.observe(viewLifecycleOwner, { response ->
             try {
                 tv_today_topic.text = response.topicName
                 tv_practise_time.text =
@@ -118,18 +120,18 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
             group_two.visibility = View.VISIBLE
             group_one.visibility = View.GONE
             val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
-            if (points.isNullOrEmpty().not()) {
+            if (points.isEmpty().not()) {
                 showSnackBar(root_view, Snackbar.LENGTH_LONG, points)
                 PrefManager.put(SPEAKING_POINTS, EMPTY)
             }
 
             if (response.alreadyTalked >= response.duration) {
                 btn_continue.visibility = View.VISIBLE
-                activityCallback?.onQuestionStatusUpdate(
+                lessonActivityListener?.onQuestionStatusUpdate(
                     QUESTION_STATUS.AT,
-                    questionId?.toInt() ?: 0
+                    questionId
                 )
-                activityCallback?.onSectionStatusUpdate(3, true)
+                lessonActivityListener?.onSectionStatusUpdate(3, true)
             }
         })
     }
@@ -137,7 +139,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onFragmentResume() {
         topicId?.let {
-            getTopicDetail(it)
+            viewModel.getTopicDetail(it)
         }
     }
 
@@ -180,7 +182,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
     }
 
     private fun startPractiseSearchScreen() {
-        speakingTopicModelLiveData.value?.run {
+        viewModel.speakingTopicLiveData.value?.run {
             openCallActivity.launch(
                 SearchingUserActivity.startUserForPractiseOnPhoneActivity(
                     requireActivity(),
@@ -192,20 +194,6 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
         }
 
     }
-
-
-    private fun getTopicDetail(topicId: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                delay(1500)
-                val response = AppObjectController.commonNetworkService.getTopicDetail(topicId)
-                speakingTopicModelLiveData.postValue(response)
-            } catch (ex: Throwable) {
-                ex.showAppropriateMsg()
-            }
-        }
-    }
-
 
     private fun subscribeRXBus() {
         compositeDisposable.add(
@@ -232,15 +220,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
 
     companion object {
         @JvmStatic
-        fun newInstance(courseId: String, lessonId: Int, topicId: String?, questionId: String?) =
+        fun newInstance() =
             SpeakingPractiseFragment()
-                .apply {
-                    arguments = Bundle().apply {
-                        putString(COURSE_ID, courseId)
-                        putString(LESSON_ID, lessonId.toString())
-                        putString(TOPIC_ID, topicId)
-                        putString(QUESTION_ID, questionId)
-                    }
-                }
     }
 }

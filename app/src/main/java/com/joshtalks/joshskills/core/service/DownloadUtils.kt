@@ -15,6 +15,9 @@ import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LessonMaterialType
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestionType
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadCompletedEventBus
 import com.joshtalks.joshskills.ui.view_holders.BaseChatViewHolder
 import com.tonyodev.fetch2.FetchListener
@@ -23,13 +26,13 @@ import com.tonyodev.fetch2.Priority
 import com.tonyodev.fetch2.Request
 import com.tonyodev.fetch2core.Extras
 import com.tonyodev.fetch2core.Func
+import java.lang.reflect.Type
+import java.util.HashMap
+import java.util.concurrent.ExecutorService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.lang.reflect.Type
-import java.util.*
-import java.util.concurrent.ExecutorService
 
 const val DOWNLOAD_OBJECT = "DownloadObject"
 
@@ -45,15 +48,25 @@ object DownloadUtils {
         url: String,
         filePath: String,
         tag: String,
-        chatModel: ChatModel,
-        fetchListener: FetchListener
+        chatModel: ChatModel?,
+        fetchListener: FetchListener,
+        isLesson: Boolean = false,
+        lessonQuestion: LessonQuestion? = null
     ) {
         executor.execute {
             val request = Request(url, filePath)
             request.priority = Priority.HIGH
             request.networkType = NetworkType.ALL
             request.tag = tag
-            request.extras =
+            request.extras = if (isLesson) {
+                Extras(
+                    mapOf(
+                        DOWNLOAD_OBJECT to AppObjectController.gsonMapperForLocal.toJson(
+                            lessonQuestion
+                        )
+                    )
+                )
+            } else {
                 Extras(
                     mapOf(
                         DOWNLOAD_OBJECT to AppObjectController.gsonMapperForLocal.toJson(
@@ -61,14 +74,19 @@ object DownloadUtils {
                         )
                     )
                 )
+            }
             AppObjectController.getFetchObject().addListener(fetchListener)
             objectFetchListener[tag] = fetchListener
             AppObjectController.getFetchObject().remove(request.id)
             AppObjectController.getFetchObject().enqueue(
-                request, {
-                    updateDownloadStatus(it.file, it.extras)
+                request, Func {
+                    updateDownloadStatus(
+                        filePath = it.file,
+                        extras = it.extras,
+                        isLesson = isLesson
+                    )
                 },
-                {
+                Func {
                     it.throwable?.printStackTrace()
                     request.tag?.let { tag ->
                         objectFetchListener[tag]?.let { it1 ->
@@ -96,10 +114,10 @@ object DownloadUtils {
             objectFetchListener[tag] = fetchListener
             AppObjectController.getFetchObject().remove(request.id)
             AppObjectController.getFetchObject().enqueue(
-                request, {
+                request, Func {
                     updateDownloadStatus(it.file, it.extras)
                 },
-                {
+                Func {
                     it.throwable?.printStackTrace()
                     request.tag?.let { tag ->
                         objectFetchListener[tag]?.let { it1 ->
@@ -120,53 +138,106 @@ object DownloadUtils {
 
     }
 
-    fun updateDownloadStatus(filePath: String, extras: Extras, callBack: (() -> Unit)? = null) {
+    fun updateDownloadStatus(
+        filePath: String,
+        extras: Extras,
+        isLesson: Boolean = false,
+        callBack: (() -> Unit)? = null,
+    ) {
         executor.execute {
 
             try {
-                val chatModel = AppObjectController.gsonMapperForLocal.fromJson<ChatModel>(
-                    extras.map[DOWNLOAD_OBJECT],
-                    CHAT_MODEL_TYPE_TOKEN
-                )
-                chatModel.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
+                if (isLesson) {
+                    val lessonQuestion =
+                        AppObjectController.gsonMapperForLocal.fromJson<LessonQuestion>(
+                            extras.map[DOWNLOAD_OBJECT],
+                            CHAT_MODEL_TYPE_TOKEN
+                        )
+                    lessonQuestion.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
+                    if (lessonQuestion.type == LessonQuestionType.Q) {
+                        lessonQuestion?.let { question ->
+                            when (question.materialType) {
+                                LessonMaterialType.IM ->
+                                    question.imageList?.get(0).let { imageType ->
+                                        imageType?.downloadedLocalPath = filePath
+                                        appDatabase.chatDao().updateImageObject(imageType!!)
 
-                if (chatModel.type == BASE_MESSAGE_TYPE.Q || chatModel.type == BASE_MESSAGE_TYPE.AR) {
-                    chatModel.question?.let { question ->
-                        when (question.material_type) {
-                            BASE_MESSAGE_TYPE.IM ->
-                                question.imageList?.get(0).let { imageType ->
-                                    imageType?.downloadedLocalPath = filePath
-                                    appDatabase.chatDao().updateImageObject(imageType!!)
+                                    }
+                                LessonMaterialType.VI ->
+                                    question.videoList?.get(0).let { videoType ->
+                                        videoType?.downloadedLocalPath = filePath
+                                        appDatabase.chatDao().updateVideoObject(videoType!!)
 
-                                }
-                            BASE_MESSAGE_TYPE.VI ->
-                                question.videoList?.get(0).let { videoType ->
-                                    videoType?.downloadedLocalPath = filePath
-                                    appDatabase.chatDao().updateVideoObject(videoType!!)
+                                    }
 
-                                }
-                            BASE_MESSAGE_TYPE.AU ->
-                                question.audioList?.get(0).let { audioType ->
-                                    audioType?.downloadedLocalPath = filePath
-                                    appDatabase.chatDao().updateAudioObject(audioType!!)
+                                LessonMaterialType.AU ->
+                                    question.audioList?.get(0).let { audioType ->
+                                        audioType?.downloadedLocalPath = filePath
+                                        appDatabase.chatDao().updateAudioObject(audioType!!)
 
-                                }
-                            BASE_MESSAGE_TYPE.PD ->
-                                question.pdfList?.get(0).let { pdfType ->
-                                    pdfType?.questionId = question.questionId
-                                    pdfType?.downloadedLocalPath = filePath
-                                    appDatabase.chatDao().updatePdfObject(pdfType!!)
+                                    }
 
-                                }
-                            else -> return@let
+                                LessonMaterialType.PD ->
+                                    question.pdfList?.get(0).let { pdfType ->
+                                        pdfType?.questionId = question.id
+                                        pdfType?.downloadedLocalPath = filePath
+                                        appDatabase.chatDao().updatePdfObject(pdfType!!)
+
+                                    }
+                                else -> return@let
+                            }
                         }
-                    }
 
+                    } else {
+                        lessonQuestion.downloadedLocalPath = filePath
+                    }
+                    appDatabase.lessonQuestionDao()
+                        .insertQuestionForLessonOnAnyThread(lessonQuestion)
+                    callBack?.invoke()
                 } else {
-                    chatModel.downloadedLocalPath = filePath
+                    val chatModel = AppObjectController.gsonMapperForLocal.fromJson<ChatModel>(
+                        extras.map[DOWNLOAD_OBJECT],
+                        CHAT_MODEL_TYPE_TOKEN
+                    )
+                    chatModel.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
+                    if (chatModel.type == BASE_MESSAGE_TYPE.Q || chatModel.type == BASE_MESSAGE_TYPE.AR) {
+                        chatModel.question?.let { question ->
+                            when (question.material_type) {
+                                BASE_MESSAGE_TYPE.IM ->
+                                    question.imageList?.get(0).let { imageType ->
+                                        imageType?.downloadedLocalPath = filePath
+                                        appDatabase.chatDao().updateImageObject(imageType!!)
+
+                                    }
+                                BASE_MESSAGE_TYPE.VI ->
+                                    question.videoList?.get(0).let { videoType ->
+                                        videoType?.downloadedLocalPath = filePath
+                                        appDatabase.chatDao().updateVideoObject(videoType!!)
+
+                                    }
+                                BASE_MESSAGE_TYPE.AU ->
+                                    question.audioList?.get(0).let { audioType ->
+                                        audioType?.downloadedLocalPath = filePath
+                                        appDatabase.chatDao().updateAudioObject(audioType!!)
+
+                                    }
+                                BASE_MESSAGE_TYPE.PD ->
+                                    question.pdfList?.get(0).let { pdfType ->
+                                        pdfType?.questionId = question.questionId
+                                        pdfType?.downloadedLocalPath = filePath
+                                        appDatabase.chatDao().updatePdfObject(pdfType!!)
+
+                                    }
+                                else -> return@let
+                            }
+                        }
+
+                    } else {
+                        chatModel.downloadedLocalPath = filePath
+                    }
+                    appDatabase.chatDao().updateChatMessageOnAnyThread(chatModel)
+                    callBack?.invoke()
                 }
-                appDatabase.chatDao().updateChatMessageOnAnyThread(chatModel)
-                callBack?.invoke()
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -194,7 +265,7 @@ object DownloadUtils {
                     .load(imageUrl).submit().get()
 
                 val filePath = Utils.writeBitmapIntoFile(imageBitmap, destPath)
-                updateDownloadStatus(filePath, extras, null).let {
+                updateDownloadStatus(filePath, extras, isLesson = false, null).let {
                     RxBus2.publish(DownloadCompletedEventBus(viewHolder, message))
                 }
             } catch (ex: Exception) {

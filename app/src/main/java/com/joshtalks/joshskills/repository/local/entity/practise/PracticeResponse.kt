@@ -1,7 +1,19 @@
 package com.joshtalks.joshskills.repository.local.entity.practise
 
 import android.os.Parcelable
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Dao
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Ignore
+import androidx.room.Index
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.PrimaryKey
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.TypeConverters
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
@@ -10,8 +22,8 @@ import com.joshtalks.joshskills.repository.local.ConvectorForWrongWord
 import com.joshtalks.joshskills.repository.local.ListConverters
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.entity.Question
+import java.util.Date
 import kotlinx.android.parcel.Parcelize
-import java.util.*
 
 
 @Entity(

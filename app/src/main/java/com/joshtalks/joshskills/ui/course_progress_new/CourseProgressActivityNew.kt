@@ -21,7 +21,7 @@ import com.joshtalks.joshskills.repository.server.course_overview.CourseOverview
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewResponse
 import com.joshtalks.joshskills.repository.server.course_overview.PdfInfo
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
-import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
+import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.pdfviewer.MESSAGE_ID
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.util.CustomDialog
@@ -33,10 +33,10 @@ import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
 import com.tonyodev.fetch2core.DownloadBlock
+import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.File
 
 
 class CourseProgressActivityNew : BaseActivity(),
@@ -246,9 +246,9 @@ class CourseProgressActivityNew : BaseActivity(),
                         }
 
                     dayWiseActivityListener.launch(
-                        DayWiseCourseActivity.getDayWiseCourseActivityIntent(
-                            this@CourseProgressActivityNew, item.lessonId,
-                            courseId = courseId.toString()
+                        LessonActivity.getActivityIntent(
+                            this@CourseProgressActivityNew,
+                            item.lessonId
                         )
                     )
                 } else {
@@ -297,7 +297,7 @@ class CourseProgressActivityNew : BaseActivity(),
                             ActivityResultContracts.StartActivityForResult()
                         ) { result ->
                             if (result.resultCode == Activity.RESULT_OK) {
-                                result.data?.getStringExtra(MESSAGE_ID)?.let { chatId ->
+                                result.data.getStringExtra(MESSAGE_ID).let { chatId ->
                                     viewModel.getCourseOverview(courseId)
                                 }
                             }

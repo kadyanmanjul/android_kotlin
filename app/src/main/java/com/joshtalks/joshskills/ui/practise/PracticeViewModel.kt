@@ -29,16 +29,16 @@ import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import io.reactivex.disposables.CompositeDisposable
+import java.io.File
+import java.lang.reflect.Type
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Response
-import java.io.File
-import java.lang.reflect.Type
-import java.util.*
-import kotlin.collections.ArrayList
 
 
 class PracticeViewModel(application: Application) :
@@ -114,7 +114,6 @@ class PracticeViewModel(application: Application) :
 
     fun stopRecording() {
         AudioRecording.audioRecording.stopPlaying()
-
     }
 
     fun submitPractise(

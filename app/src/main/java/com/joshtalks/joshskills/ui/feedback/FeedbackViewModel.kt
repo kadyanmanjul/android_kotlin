@@ -14,11 +14,11 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.entity.FeedbackEngageModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.feedback.UserFeedbackRequest
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 
 
 class FeedbackViewModel(application: Application) : AndroidViewModel(application) {
@@ -38,8 +38,8 @@ class FeedbackViewModel(application: Application) : AndroidViewModel(application
                 val resp =
                     AppObjectController.commonNetworkService.postUserFeedback(userFeedbackRequest)
                 if (resp.isSuccessful) {
-                    AppObjectController.appDatabase.chatDao()
-                        .userSubmitFeedbackStatusUpdate(questionId)
+//                    AppObjectController.appDatabase.chatDao()
+//                        .userSubmitFeedbackStatusUpdate(questionId)
                 }
                 AppObjectController.appDatabase.feedbackEngageModelDao()
                     .insertFeedbackEngage(FeedbackEngageModel(questionId))
@@ -64,7 +64,7 @@ class FeedbackViewModel(application: Application) : AndroidViewModel(application
 
     fun updateQuestionFeedbackStatus(questionId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            AppObjectController.appDatabase.chatDao().userSubmitFeedbackStatusUpdate(questionId)
+            //AppObjectController.appDatabase.chatDao().userSubmitFeedbackStatusUpdate(questionId)
         }
     }
 

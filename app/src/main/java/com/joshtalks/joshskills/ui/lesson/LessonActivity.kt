@@ -1,0 +1,340 @@
+package com.joshtalks.joshskills.ui.lesson
+
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import android.os.Handler
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
+import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.LESSON_TWO_OPENED
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.databinding.LessonActivityBinding
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LessonModel
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.ui.day_wise_course.LessonPagerAdapter
+
+class LessonActivity : CoreJoshActivity(), LessonActivityListener {
+
+    private lateinit var binding: LessonActivityBinding
+    lateinit var lesson: LessonModel
+    private val viewModel: LessonViewModel by lazy {
+        ViewModelProvider(this).get(LessonViewModel::class.java)
+    }
+
+    lateinit var titleView: TextView
+    private lateinit var tabs: ViewGroup
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding = DataBindingUtil.setContentView(
+            this,
+            R.layout.lesson_activity
+        )
+
+        val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
+
+        titleView = findViewById(R.id.text_message_title)
+
+        setObservers()
+        viewModel.getLesson(lessonId)
+        viewModel.getQuestions(lessonId)
+    }
+
+    private fun setObservers() {
+
+        viewModel.lessonLiveData.observe(this, {
+            lesson = it
+        })
+
+        viewModel.lessonQuestionsLiveData.observe(this, {
+            if (lesson.lessonNo >= 2) {
+                PrefManager.put(LESSON_TWO_OPENED, true)
+            }
+
+            titleView.text =
+                getString(R.string.lesson_no, lesson.lessonNo)
+
+            setUpTabLayout()
+            setTabCompletionStatus()
+
+        })
+
+    }
+
+    override fun onNextTabCall(currentTabNumber: Int) {
+        try {
+            val lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
+                    lesson.vocabStatus == LESSON_STATUS.CO &&
+                    lesson.readingStatus == LESSON_STATUS.CO &&
+                    lesson.speakingStatus == LESSON_STATUS.CO
+
+            if (lessonCompleted) {
+                openLessonCompleteScreen()
+            } else
+                openIncompleteTab(currentTabNumber)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onQuestionStatusUpdate(
+        status: QUESTION_STATUS,
+        questionId: String?,
+        isVideoPercentComplete: Boolean,
+        quizCorrectQuestionIds: ArrayList<Int>
+    ) {
+        viewModel.updateQuestionStatus(
+            status,
+            questionId,
+            isVideoPercentComplete,
+            quizCorrectQuestionIds
+        )
+    }
+
+    override fun onSectionStatusUpdate(tabPosition: Int, isSectionCompleted: Boolean) {
+        val status = if (isSectionCompleted) LESSON_STATUS.CO else LESSON_STATUS.NO
+        when (tabPosition) {
+            0 -> lesson.grammarStatus = status
+            1 -> lesson.vocabStatus = status
+            2 -> lesson.readingStatus = status
+            3 -> lesson.speakingStatus = status
+        }
+        viewModel.updateSectionStatus(lesson.id, status, tabPosition)
+    }
+
+
+    private fun setUpTabLayout() {
+        val adapter = LessonPagerAdapter(
+            supportFragmentManager,
+            this.lifecycle
+        )
+
+        binding.lessonViewpager.adapter = adapter
+
+        tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
+        for (i in 0 until tabs.childCount) {
+            val tab = tabs.getChildAt(i)
+            val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
+            layoutParams.weight = 0f
+            layoutParams.marginEnd = Utils.dpToPx(2)
+            layoutParams.marginStart = Utils.dpToPx(2)
+        }
+        binding.lessonTabLayout.requestLayout()
+
+        TabLayoutMediator(
+            binding.lessonTabLayout,
+            binding.lessonViewpager
+        ) { tab, position ->
+            tab.setCustomView(R.layout.capsule_tab_layout_view)
+            when (position) {
+                0 -> {
+                    setSelectedColor(tab)
+                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
+                }
+                1 -> {
+                    setUnselectedColor(tab)
+                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.VOCABULARY_TITLE)
+                }
+                2 -> {
+                    setUnselectedColor(tab)
+                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.READING_TITLE)
+                }
+                3 -> {
+                    setUnselectedColor(tab)
+                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
+                }
+            }
+        }.attach()
+
+        binding.lessonTabLayout.addOnTabSelectedListener(object :
+            TabLayout.OnTabSelectedListener {
+
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                setSelectedColor(tab)
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                setSelectedColor(tab)
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                setUnselectedColor(tab)
+            }
+        })
+
+        Handler().postDelayed({
+            openIncompleteTab(3)
+        }, 50)
+    }
+
+    private fun openIncompleteTab(currentTabNumber: Int) {
+        var nextTabIndex = currentTabNumber + 1
+        while (nextTabIndex != currentTabNumber) {
+            if (nextTabIndex == 4) {
+                nextTabIndex = 0
+            } else {
+                when (nextTabIndex) {
+                    0 ->
+                        if (lesson.grammarStatus != LESSON_STATUS.CO) {
+                            binding.lessonViewpager.currentItem = 0
+                            return
+                        } else {
+                            nextTabIndex++
+                        }
+                    1 ->
+                        if (lesson.vocabStatus != LESSON_STATUS.CO) {
+                            binding.lessonViewpager.currentItem = 1
+                            return
+                        } else {
+                            nextTabIndex++
+                        }
+                    2 ->
+                        if (lesson.readingStatus != LESSON_STATUS.CO) {
+                            binding.lessonViewpager.currentItem = 2
+                            return
+                        } else {
+                            nextTabIndex++
+                        }
+                    3 ->
+                        if (lesson.speakingStatus != LESSON_STATUS.CO) {
+                            binding.lessonViewpager.currentItem = 3
+                            return
+                        } else {
+                            nextTabIndex++
+                        }
+                }
+            }
+        }
+    }
+
+    private fun setTabCompletionStatus() {
+        setTabCompletionStatus(
+            tabs.getChildAt(0),
+            lesson.grammarStatus == LESSON_STATUS.CO
+        )
+        setTabCompletionStatus(
+            tabs.getChildAt(1),
+            lesson.vocabStatus == LESSON_STATUS.CO
+        )
+        setTabCompletionStatus(
+            tabs.getChildAt(2),
+            lesson.readingStatus == LESSON_STATUS.CO
+        )
+        setTabCompletionStatus(
+            tabs.getChildAt(3),
+            lesson.speakingStatus == LESSON_STATUS.CO
+        )
+    }
+
+    private fun setTabCompletionStatus(tab: View?, isSectionCompleted: Boolean) {
+        tab?.let {
+            if (isSectionCompleted) {
+                it.findViewById<ImageView>(R.id.tab_iv).visibility = View.VISIBLE
+            } else {
+                it.findViewById<ImageView>(R.id.tab_iv).visibility = View.GONE
+            }
+        }
+    }
+
+    private fun setSelectedColor(tab: TabLayout.Tab?) {
+        tab?.let {
+
+            tab.view.findViewById<TextView>(R.id.title_tv)
+                ?.setTextColor(ContextCompat.getColor(this, R.color.white))
+
+            when (tab.position) {
+                0 -> {
+                    tab.view.background =
+                        ContextCompat.getDrawable(this, R.drawable.capsule_selection_tab)
+                }
+                1 -> {
+                    tab.view.background =
+                        ContextCompat.getDrawable(this, R.drawable.vocabulary_tab_bg)
+                }
+                2 -> {
+                    tab.view.background = ContextCompat.getDrawable(this, R.drawable.reading_tab_bg)
+                }
+                3 -> {
+                    tab.view.background =
+                        ContextCompat.getDrawable(this, R.drawable.speaking_tab_bg)
+                }
+            }
+        }
+    }
+
+    private fun setUnselectedColor(tab: TabLayout.Tab?) {
+        tab?.let {
+            tab.view.background = ContextCompat.getDrawable(this, R.drawable.unselected_tab_bg)
+            tab.view.findViewById<TextView>(R.id.title_tv)
+                ?.setTextColor(ContextCompat.getColor(this, R.color.black))
+        }
+    }
+
+    private fun openLessonCompleteScreen() {
+//        TODO() - Uncomment and pass chatId and conversationId when UnlockNextClass logic is working fine
+//        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//            if (result.resultCode == RESULT_OK && result.data.hasExtra(IS_BATCH_CHANGED) == true) {
+//                setResult(RESULT_OK, Intent().apply {
+//                    putExtra(IS_BATCH_CHANGED, false)
+//                    putExtra(LAST_LESSON_INTERVAL, lesson.interval)
+//                    putExtra(DayWiseCourseActivity.LAST_LESSON_STATUS, true)
+//                    putExtra(LESSON__CHAT_ID, chatId)
+//                })
+//                finish()
+//            }
+//        }.launch(
+//            ActivityUnlockNextClass.getActivityUnlockNextClassIntent(
+//                this,
+//                conversationId,
+//                lesson
+//            )
+//        )
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        intent?.let {
+            val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
+
+            viewModel.getLesson(lessonId)
+            viewModel.getQuestions(lessonId)
+        }
+    }
+
+    companion object {
+        private const val LESSON_ID = "lesson_id"
+        const val LAST_LESSON_STATUS = "last_lesson_status"
+
+        fun getActivityIntent(
+            context: Context,
+            lessonId: Int,
+        ) = Intent(context, LessonActivity::class.java).apply {
+            putExtra(LESSON_ID, lessonId)
+            addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+        }
+
+    }
+}

@@ -14,25 +14,30 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.OnWordClick
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.AutoLinkMode
+import com.joshtalks.joshskills.core.getSpannableString
+import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.ReadingPracticeFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
 import com.joshtalks.joshskills.repository.local.entity.practise.PractiseType
 import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventBus
-import com.joshtalks.joshskills.ui.day_wise_course.CapsuleActivityCallback
 import com.joshtalks.joshskills.ui.day_wise_course.reading.feedback.FeedbackListAdapter
 import com.joshtalks.joshskills.ui.day_wise_course.reading.feedback.ReadingPractiseCallback
-import com.joshtalks.joshskills.ui.practise.PracticeViewModel
+import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
+import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.translation.LanguageTranslationDialog
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -53,32 +58,22 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
     }
 
     private lateinit var binding: ReadingPracticeFragmentBinding
-    private var chatModel: ChatModel? = null
-    private var chatList: ArrayList<ChatModel>? = null
-    var activityCallback: CapsuleActivityCallback? = null
+
+    private var rpQuestion: LessonQuestion? = null
+    var lessonActivityListener: LessonActivityListener? = null
     private var compositeDisposable = CompositeDisposable()
 
 
-    private val practiceViewModel: PracticeViewModel by lazy {
-        ViewModelProvider(requireActivity()).get(PracticeViewModel::class.java)
+    private val viewModel: LessonViewModel by lazy {
+        ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
     }
 
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is CapsuleActivityCallback) {
-            activityCallback = context
+        if (context is LessonActivityListener) {
+            lessonActivityListener = context
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            arguments?.let {
-                chatList = it.getParcelableArrayList(PRACTISE_OBJECT)
-            }
-        }
-        chatModel = chatList?.getOrNull(0)
     }
 
     override fun onCreateView(
@@ -99,7 +94,15 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
     }
 
     private fun addObserver() {
-        practiceViewModel.pointsSnackBarText.observe(this.viewLifecycleOwner, androidx.lifecycle.Observer {
+
+        viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner, {
+            rpQuestion = it.filter { it.chatType == CHAT_TYPE.RP }.getOrNull(0)
+            if (rpQuestion == null) {
+                requireActivity().finish()
+            }
+        })
+
+        viewModel.pointsSnackBarText.observe(this.viewLifecycleOwner, {
             if (it.pointsList.isNullOrEmpty().not()) {
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
             }
@@ -109,7 +112,7 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        chatModel?.question?.run {
+        rpQuestion?.run {
             coreJoshActivity?.feedbackEngagementStatus(this)
         }
     }
@@ -120,7 +123,7 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
 
-        chatModel?.question?.run {
+        rpQuestion?.run {
             if (audioList.isNullOrEmpty()) {
                 binding.cardViewDemoVoiceNote.visibility = View.GONE
                 binding.imgQuotes.visibility = View.GONE
@@ -137,7 +140,7 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
                     selectedColor = ContextCompat.getColor(requireContext(), R.color.black),
                     clickListener = object : OnWordClick {
                         override fun clickedWord(word: String) {
-                            if (practiceViewModel.isRecordingStarted()) {
+                            if (viewModel.isRecordingStarted()) {
                                 return
                             }
                             LanguageTranslationDialog.showLanguageDialog(childFragmentManager, word)
@@ -164,7 +167,7 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
                 this,
                 arrayListOf(
                     PracticeEngagementV2(
-                        questionForId = chatModel?.question?.questionId,
+                        questionForId = rpQuestion?.id,
                         practiseType = PractiseType.NOT_SUBMITTED
                     )
                 )
@@ -200,14 +203,14 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
                 return@launch
             }
 
-            chatModel?.question?.run {
+            rpQuestion?.run {
                 val tempList = arrayListOf<PracticeEngagementV2>()
                 if (practiseEngagementV2.isNullOrEmpty().not()) {
                     tempList.addAll(practiseEngagementV2!!.toMutableList())
                 }
                 tempList.add(
                     PracticeEngagementV2(
-                        questionForId = chatModel?.question?.questionId,
+                        questionForId = rpQuestion?.id,
                         practiseType = PractiseType.NOT_SUBMITTED
                     )
                 )
@@ -222,15 +225,15 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
     }
 
     override fun onContinue() {
-        activityCallback?.onNextTabCall(2)
+        lessonActivityListener?.onNextTabCall(2)
     }
 
     override fun onPracticeSubmitted() {
-        activityCallback?.onQuestionStatusUpdate(
+        lessonActivityListener?.onQuestionStatusUpdate(
             QUESTION_STATUS.AT,
-            chatModel?.question?.questionId?.toIntOrNull() ?: 0
+            rpQuestion?.id
         )
-        activityCallback?.onSectionStatusUpdate(2, true)
+        lessonActivityListener?.onSectionStatusUpdate(2, true)
     }
 
     override fun onResume() {
@@ -248,8 +251,8 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
             RxBus2.listenWithoutDelay(EmptyEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .subscribe({
-                    chatModel?.chatId?.let {
-                        practiceViewModel.getPracticeAfterUploaded(it, ::callback)
+                    rpQuestion?.id?.let {
+                        viewModel.getPracticeAfterUploaded(it, ::callback)
                     }
                 }, {
                     it.printStackTrace()
@@ -270,13 +273,16 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
 
     }
 
-    private fun callback(chatModel: ChatModel) {
-        this@ReadingFragment.chatModel = chatModel
-        CoroutineScope(Dispatchers.Main).launch {
-            this@ReadingFragment.chatModel?.question?.practiseEngagementV2?.run {
-                initAdapter(this)
-                binding.viewPager.currentItem = this.size - 1
+    private fun callback(lessonQuestion: LessonQuestion?) {
+        lessonQuestion?.let {
+            this@ReadingFragment.rpQuestion = it
+            CoroutineScope(Dispatchers.Main).launch {
+                this@ReadingFragment.rpQuestion?.practiseEngagementV2?.run {
+                    initAdapter(this)
+                    binding.viewPager.currentItem = this.size - 1
+                }
             }
         }
     }
+
 }

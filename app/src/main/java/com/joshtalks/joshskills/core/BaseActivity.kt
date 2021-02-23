@@ -51,6 +51,7 @@ import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.entity.Question
@@ -92,12 +93,12 @@ import com.uxcam.OnVerificationListener
 import com.uxcam.UXCam
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
-import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.*
 import kotlin.random.Random
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
+import timber.log.Timber
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 const val COURSE_EXPLORER_NEW = 2008
@@ -375,9 +376,18 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
     }
 
     fun feedbackEngagementStatus(question: Question?) {
-        if (question != null && question.needFeedback == null) {
+        if (question != null) {
             WorkManager.getInstance(applicationContext)
                 .getWorkInfoByIdLiveData(WorkManagerAdmin.getQuestionFeedback(question.questionId))
+                .observe(this, {
+                })
+        }
+    }
+
+    fun feedbackEngagementStatus(question: LessonQuestion?) {
+        if (question != null) {
+            WorkManager.getInstance(applicationContext)
+                .getWorkInfoByIdLiveData(WorkManagerAdmin.getQuestionFeedback(question.id))
                 .observe(this, {
                 })
         }

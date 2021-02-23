@@ -6,7 +6,20 @@ import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
-import com.joshtalks.joshskills.repository.server.*
+import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
+import com.joshtalks.joshskills.repository.server.BaseResponse
+import com.joshtalks.joshskills.repository.server.CertificateDetail
+import com.joshtalks.joshskills.repository.server.ComplaintResponse
+import com.joshtalks.joshskills.repository.server.FAQ
+import com.joshtalks.joshskills.repository.server.FAQCategory
+import com.joshtalks.joshskills.repository.server.FeedbackVoipResponse
+import com.joshtalks.joshskills.repository.server.FreshChatRestoreIDResponse
+import com.joshtalks.joshskills.repository.server.LeaderboardResponse
+import com.joshtalks.joshskills.repository.server.NPSByUserRequest
+import com.joshtalks.joshskills.repository.server.RequestCertificateGenerate
+import com.joshtalks.joshskills.repository.server.RequestComplaint
+import com.joshtalks.joshskills.repository.server.SuccessResponse
+import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
 import com.joshtalks.joshskills.repository.server.certification_exam.RequestSubmitCertificateExam
@@ -27,12 +40,23 @@ import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
 import com.joshtalks.joshskills.repository.server.translation.WordDetailsResponse
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
-import com.joshtalks.joshskills.repository.server.voip.SpeakingTopicModel
+import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
+import java.util.HashMap
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
-import retrofit2.http.*
-import java.util.*
+import retrofit2.http.Body
+import retrofit2.http.Field
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
+import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 @JvmSuppressWildcards
 interface CommonNetworkService {
@@ -161,7 +185,7 @@ interface CommonNetworkService {
     suspend fun feedbackVoipCallAsync(@Body request: RequestVoipRating): Response<FeedbackVoipResponse>
 
     @GET("$DIR/voicecall/topic/v2/{id}/")
-    suspend fun getTopicDetail(@Path("id") id: String): SpeakingTopicModel
+    suspend fun getTopicDetail(@Path("id") id: String): SpeakingTopic
 
     @GET("$DIR/voicecall/recipient_mentor")
     suspend fun getP2PUser(@QueryMap params: Map<String, String?>): VoipCallDetailModel

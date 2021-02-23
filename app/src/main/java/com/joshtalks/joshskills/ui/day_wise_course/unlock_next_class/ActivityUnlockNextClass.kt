@@ -61,7 +61,7 @@ class ActivityUnlockNextClass : BaseActivity() {
 
         lessonModel?.let {
             lessonName.text = getString(R.string.lesson_name, it.lessonNo, it.lessonName)
-            Utils.setImage(lessonIv, it.varthumbnail)
+            Utils.setImage(lessonIv, it.thumbnailUrl)
         }
 
         findViewById<TextView>(R.id.continue_btn).setOnClickListener {

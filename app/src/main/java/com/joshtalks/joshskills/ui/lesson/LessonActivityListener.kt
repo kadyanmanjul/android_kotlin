@@ -1,15 +1,17 @@
-package com.joshtalks.joshskills.ui.day_wise_course
+package com.joshtalks.joshskills.ui.lesson
 
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 
-interface CapsuleActivityCallback {
+interface LessonActivityListener {
+
     fun onNextTabCall(currentTabNumber: Int)
+
     fun onQuestionStatusUpdate(
         status: QUESTION_STATUS,
-        questionId: Int,
+        questionId: String?,
         isVideoPercentComplete: Boolean = false,
         quizCorrectQuestionIds: ArrayList<Int> = ArrayList()
     )
 
-    fun onSectionStatusUpdate(tabPosition: Int, status: Boolean)
+    fun onSectionStatusUpdate(tabPosition: Int, isSectionCompleted: Boolean)
 }

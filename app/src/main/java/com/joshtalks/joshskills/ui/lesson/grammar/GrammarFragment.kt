@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.day_wise_course.grammar
+package com.joshtalks.joshskills.ui.lesson.grammar
 
 import android.content.Context
 import android.os.Bundle
@@ -13,6 +13,7 @@ import androidx.core.text.HtmlCompat
 import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.joshtalks.joshskills.BuildConfig
@@ -27,18 +28,19 @@ import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentGrammarLayoutBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LessonMaterialType
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestionType
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
-import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
-import com.joshtalks.joshskills.ui.day_wise_course.CapsuleActivityCallback
-import com.joshtalks.joshskills.ui.day_wise_course.CapsuleViewModel
-import com.joshtalks.joshskills.ui.day_wise_course.vocabulary.PRACTISE_OBJECT
+import com.joshtalks.joshskills.ui.lesson.LessonActivity
+import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
+import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.karumi.dexter.MultiplePermissionsReport
@@ -57,127 +59,24 @@ import java.util.ArrayList
 
 class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
 
-    private var currentQuizQuestion: Int = 0
-    private var desExpanded: Boolean = false
-    private var appAnalytics: AppAnalytics? = null
-    private var chatModelList: ArrayList<ChatModel>? = null
     lateinit var binding: FragmentGrammarLayoutBinding
+    private var lessonActivityListener: LessonActivityListener? = null
+    private val viewModel: LessonViewModel by lazy {
+        ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
+    }
+    private var appAnalytics: AppAnalytics? = null
+
     private val compositeDisposable = CompositeDisposable()
+    private var pdfQuestion: LessonQuestion? = null
+    private var quizQuestion: LessonQuestion? = null
+    private var currentQuizQuestion: Int = 0
     private var correctAns = 0
-    private var activityCallback: CapsuleActivityCallback? = null
     private var assessmentQuestions: ArrayList<AssessmentQuestionWithRelations> = ArrayList()
-
-    private var quizQuestion: Question? = null
-    private var pdfQuestion: ChatModel? = null
-
-    private val viewModel: CapsuleViewModel by lazy {
-        ViewModelProvider(this).get(CapsuleViewModel::class.java)
-    }
-
-    companion object {
-        private const val DOWNLOAD_PDF_REQUEST_CODE = 0
-        private const val OPEN_PDF_REQUEST_CODE = 1
-
-        @JvmStatic
-        fun instance(chatModelList: ArrayList<ChatModel>) = GrammarFragment().apply {
-            arguments = Bundle().apply {
-                putParcelableArrayList(PRACTISE_OBJECT, chatModelList)
-            }
-        }
-    }
-
-    private var downloadListener = object : FetchListener {
-        override fun onAdded(download: Download) {
-
-        }
-
-        override fun onCancelled(download: Download) {
-            DownloadUtils.removeCallbackListener(download.tag)
-            pdfQuestion?.downloadStatus = DOWNLOAD_STATUS.FAILED
-            fileNotDownloadView()
-
-        }
-
-        override fun onCompleted(download: Download) {
-            DownloadUtils.removeCallbackListener(download.tag)
-            pdfQuestion?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
-            fileDownloadSuccess()
-        }
-
-        override fun onDeleted(download: Download) {
-
-        }
-
-        override fun onDownloadBlockUpdated(
-            download: Download,
-            downloadBlock: DownloadBlock,
-            totalBlocks: Int
-        ) {
-
-        }
-
-        override fun onError(download: Download, error: Error, throwable: Throwable?) {
-            DownloadUtils.removeCallbackListener(download.tag)
-            pdfQuestion?.downloadStatus = DOWNLOAD_STATUS.FAILED
-            fileNotDownloadView()
-
-        }
-
-        override fun onPaused(download: Download) {
-
-        }
-
-        override fun onProgress(
-            download: Download,
-            etaInMilliSeconds: Long,
-            downloadedBytesPerSecond: Long
-        ) {
-        }
-
-        override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
-
-        }
-
-        override fun onRemoved(download: Download) {
-
-        }
-
-        override fun onResumed(download: Download) {
-
-        }
-
-        override fun onStarted(
-            download: Download,
-            downloadBlocks: List<DownloadBlock>,
-            totalBlocks: Int
-        ) {
-            pdfQuestion?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
-            fileDownloadingInProgressView()
-
-        }
-
-        override fun onWaitingNetwork(download: Download) {
-
-        }
-
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        if (arguments != null) {
-            chatModelList = arguments?.getParcelableArrayList(PRACTISE_OBJECT)
-        }
-        if (chatModelList == null) {
-            requireActivity().finish()
-        }
-
-    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is CapsuleActivityCallback)
-            activityCallback = context
+        if (context is LessonActivityListener)
+            lessonActivityListener = context
     }
 
     override fun onCreateView(
@@ -191,41 +90,66 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
 
         binding.grammarScrollView.viewTreeObserver.addOnScrollChangedListener(this)
         binding.expandIv.setOnClickListener {
-            if (desExpanded) {
-                binding.grammarDescTv.maxLines = 2
-                binding.expandIv.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        requireContext(),
-                        R.drawable.arrow_down
-                    )
-                )
-            } else {
-                binding.grammarDescTv.maxLines = 100
+            if (binding.grammarDescTv.maxLines == COLLAPSED_DESCRIPTION_MAX_LINES) {
+                binding.grammarDescTv.maxLines = EXPANDED_DESCRIPTION_MAX_LINES
                 binding.expandIv.setImageDrawable(
                     ContextCompat.getDrawable(
                         requireContext(),
                         R.drawable.arrow_up
                     )
                 )
+            } else {
+                binding.grammarDescTv.maxLines = COLLAPSED_DESCRIPTION_MAX_LINES
+                binding.expandIv.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.arrow_down
+                    )
+                )
             }
-            desExpanded = desExpanded.not()
         }
-
-        addObservables()
-        chatModelList?.forEach { setupUi(it) }
+        setObservers()
 
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.PDF_VH.NAME)
+            .addBasicParam()
+            .addUserDetails()
+    }
 
     override fun onPause() {
         binding.videoPlayer.onPause()
         super.onPause()
     }
 
-    private fun addObservables() {
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
+    }
+
+    private fun setObservers() {
+        viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner, Observer {
+            binding.practiceTitleTv.text =
+                getString(
+                    R.string.today_lesson,
+                    (requireActivity() as LessonActivity).lesson.lessonName
+                )
+
+            val grammarQuestions = it.filter { it.chatType == CHAT_TYPE.GR }
+//            if (grammarQuestions.isNullOrEmpty()) {
+//                requireActivity().finish()
+//            }
+            grammarQuestions.forEach {
+                setupUi(it)
+            }
+
+        })
+
         assessmentQuestions.clear()
-        viewModel.assessmentLiveData.observe(owner = viewLifecycleOwner) { assessmentRelations ->
+        viewModel.grammarAssessmentLiveData.observe(owner = viewLifecycleOwner) { assessmentRelations ->
             assessmentRelations.questionList.sortedBy { it.question.sortOrder }
                 .forEach { item -> assessmentQuestions.add(item) }
 
@@ -249,110 +173,92 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        appAnalytics = AppAnalytics.create(AnalyticsEvent.PDF_VH.NAME)
-            .addBasicParam()
-            .addUserDetails()
-    }
+    private fun setupUi(lessonQuestion: LessonQuestion) {
 
-    private fun setupUi(chatModel: ChatModel) {
-        chatModel.question?.run {
-            if (this.type == BASE_MESSAGE_TYPE.QUIZ) {
-                binding.quizTv.text = AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.TODAYS_QUIZ_TITLE)
-                this.assessmentId?.let {
-                    quizQuestion = this
-                    viewModel.fetchAssessmentDetails(it)
-                }
-            } else
-                when (this.material_type) {
-                    BASE_MESSAGE_TYPE.VI -> {
+        if (lessonQuestion.type == LessonQuestionType.QUIZ) {
+            binding.quizTv.text = AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.TODAYS_QUIZ_TITLE)
+            lessonQuestion.assessmentId?.let {
+                quizQuestion = lessonQuestion
+                viewModel.fetchAssessmentDetails(it)
+            }
+        } else {
+            when (lessonQuestion.materialType) {
 
-                        binding.practiceTitleTv.text =
-                            getString(R.string.today_lesson, this.lesson?.lessonName ?: 0)
-                        binding.videoPlayer.visibility = View.VISIBLE
-                        this.videoList?.getOrNull(0)?.video_url?.let {
-                            val videoId = this.videoList?.getOrNull(0)?.id
+                LessonMaterialType.VI -> {
+                    binding.videoPlayer.visibility = View.VISIBLE
+                    lessonQuestion.videoList?.getOrNull(0)?.video_url?.let {
+                        val videoId = lessonQuestion.videoList?.getOrNull(0)?.id
 
-                            binding.videoPlayer.setUrl(it)
-                            binding.videoPlayer.setVideoId(videoId)
-                            binding.videoPlayer.setCourseId(course_id)
-                            binding.videoPlayer.fitToScreen()
-                            binding.videoPlayer.setPlayListener {
+                        binding.videoPlayer.setUrl(it)
+                        binding.videoPlayer.setVideoId(videoId)
+                        //binding.videoPlayer.setCourseId(course_id)
+                        binding.videoPlayer.fitToScreen()
+                        binding.videoPlayer.setPlayListener {
 
-                                val videoUrl = it
-                                VideoPlayerActivity.startVideoActivity(
-                                    requireContext(),
-                                    "",
-                                    videoId,
-                                    videoUrl
-                                )
-                            }
-                            binding.videoPlayer.downloadStreamButNotPlay()
+                            val videoUrl = it
+                            VideoPlayerActivity.startVideoActivity(
+                                requireContext(),
+                                "",
+                                videoId,
+                                videoUrl
+                            )
+                        }
+                        binding.videoPlayer.downloadStreamButNotPlay()
 
-                            videoId?.toIntOrNull()?.let { id ->
-                                viewModel.getMaxIntervalForVideo(id)
-                            }
-                            viewModel.videoInterval.observe(owner = this@GrammarFragment.viewLifecycleOwner)
-                            { graph ->
-                                binding.videoPlayer.setProgress(graph?.endTime ?: 0)
-                            }
-
+                        videoId?.toIntOrNull()?.let { id ->
+                            viewModel.getMaxIntervalForVideo(id)
+                        }
+                        viewModel.grammarVideoInterval.observe(owner = this@GrammarFragment.viewLifecycleOwner) { graph ->
+                            binding.videoPlayer.setProgress(graph?.endTime ?: 0)
                         }
 
-                        if (this.status == QUESTION_STATUS.NA) {
-                            binding.quizShader.visibility = View.VISIBLE
-                        } else {
-                            binding.quizShader.visibility = View.GONE
-                        }
-
-                        setUpVideoProgressListener(this)
-
-                        this.qText?.let {
-                            binding.grammarDescTv.visibility = View.VISIBLE
-                            binding.grammarDescTv.text =
-                                HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
-                        }
-                    }
-                    BASE_MESSAGE_TYPE.PD -> {
-                        pdfQuestion = chatModel
-                        binding.additionalMaterialTv.visibility = View.VISIBLE
-                        binding.additionalMaterialTv.text = this.title
-                        setUpPdfView(chatModel)
                     }
 
-                    BASE_MESSAGE_TYPE.QUIZ -> {
-                        this.assessmentId?.let {
-                            viewModel.fetchAssessmentDetails(it)
-                        }
+                    if (lessonQuestion.status == QUESTION_STATUS.NA) {
+                        binding.quizShader.visibility = View.VISIBLE
+                    } else {
+                        binding.quizShader.visibility = View.GONE
                     }
-                    else -> {
 
+                    setUpVideoProgressListener(lessonQuestion)
+
+                    lessonQuestion.qText?.let {
+                        binding.grammarDescTv.visibility = View.VISIBLE
+                        binding.grammarDescTv.text =
+                            HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
                     }
                 }
+
+                LessonMaterialType.PD -> {
+                    pdfQuestion = lessonQuestion
+                    binding.additionalMaterialTv.visibility = View.VISIBLE
+                    binding.additionalMaterialTv.text = lessonQuestion.title
+                    setUpPdfView(lessonQuestion)
+                }
+            }
         }
     }
 
-    private fun setUpVideoProgressListener(question: Question) {
+    private fun setUpVideoProgressListener(question: LessonQuestion) {
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(MediaProgressEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ eventBus ->
-                    if (eventBus.progress > 3000 && question.status != QUESTION_STATUS.AT) {
+                .subscribe({ mediaProgressEvent ->
+                    if (mediaProgressEvent.progress > 3000 && question.status != QUESTION_STATUS.AT) {
                         updateVideoQuestionStatus(question)
                         question.status = QUESTION_STATUS.AT
                         question.isVideoWatchTimeSend = true
                     }
                     val videoPercent =
                         binding.videoPlayer.player?.duration?.let {
-                            eventBus.progress.div(
+                            mediaProgressEvent.progress.div(
                                 it
                             ).times(100).toInt()
                         } ?: -1
                     val percentVideoWatched =
-                        eventBus.watchTime.times(100).div(
+                        mediaProgressEvent.watchTime.times(100).div(
                             binding.videoPlayer.player?.duration!!
                         ).toInt()
 
@@ -361,7 +267,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                         question.isVideoWatchTimeSend = false
                     }
 
-                    if (eventBus.progress + 1000 >= question.videoList?.get(0)?.duration ?: 0) {
+                    if (mediaProgressEvent.progress + 1000 >= question.videoList?.get(0)?.duration ?: 0) {
                         binding.quizShader.visibility = View.GONE
                         compositeDisposable.clear()
                         showScrollToBottomView()
@@ -550,9 +456,9 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                 }
             }
             if (currentQuizQuestion == assessmentQuestions.size - 1)
-                activityCallback?.onQuestionStatusUpdate(
+                lessonActivityListener?.onQuestionStatusUpdate(
                     QUESTION_STATUS.AT,
-                    quizQuestion?.questionId?.toIntOrNull() ?: 0,
+                    quizQuestion?.id,
                     quizCorrectQuestionIds = correctQuestionList
                 )
 
@@ -586,12 +492,12 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
             updateQuiz(assessmentQuestions[++currentQuizQuestion])
         } else {
             showQuizCompleteLayout()
-            activityCallback?.onSectionStatusUpdate(0, true)
+            lessonActivityListener?.onSectionStatusUpdate(0, true)
         }
     }
 
     fun onGrammarContinueClick() {
-        activityCallback?.onNextTabCall(0)
+        lessonActivityListener?.onNextTabCall(0)
     }
 
     fun onRedoQuizClick() {
@@ -639,11 +545,11 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
         }
     }
 
-    private fun setUpPdfView(message: ChatModel) {
-        message.question?.let {
+    private fun setUpPdfView(pdfQuestion: LessonQuestion) {
+        pdfQuestion.let {
             it.pdfList?.getOrNull(0)?.let { pdfObj ->
                 try {
-                    if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
+                    if (pdfQuestion.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
                         download()
                     } else if (PermissionUtils.isStoragePermissionEnabled(requireContext()) && AppDirectory.getFileSize(
                             File(
@@ -651,10 +557,10 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                             )
                         ) > 0
                     ) {
-                        message.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
+                        pdfQuestion.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
                         fileDownloadSuccess()
                     } else {
-                        message.downloadStatus = DOWNLOAD_STATUS.NOT_START
+                        pdfQuestion.downloadStatus = DOWNLOAD_STATUS.NOT_START
                         fileNotDownloadView()
                     }
                 } catch (ex: Exception) {
@@ -745,11 +651,11 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
             return
         }
         if (pdfQuestion?.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
-            pdfQuestion?.question?.pdfList?.getOrNull(0)?.let { pdfType ->
+            pdfQuestion?.pdfList?.getOrNull(0)?.let { pdfType ->
                 PdfViewerActivity.startPdfActivity(
                     context = requireContext(),
                     pdfId = pdfType.id,
-                    courseName = pdfQuestion!!.question!!.title!!,
+                    courseName = pdfQuestion?.title ?: "Josh Skills",
                     pdfPath = AppDirectory.docsReceivedFile(pdfType.url).absolutePath
                 )
             }
@@ -808,14 +714,16 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
             askStoragePermission(DOWNLOAD_PDF_REQUEST_CODE)
             return
         }
-        pdfQuestion?.question?.pdfList?.let {
+        pdfQuestion?.pdfList?.let {
             if (it.isNotEmpty()) {
                 DownloadUtils.downloadFile(
                     it[0].url,
                     AppDirectory.docsReceivedFile(it[0].url).absolutePath,
-                    pdfQuestion!!.chatId,
-                    pdfQuestion!!,
-                    downloadListener
+                    pdfQuestion!!.id,
+                    null,
+                    downloadListener,
+                    true,
+                    pdfQuestion
                 )
             } else if (BuildConfig.DEBUG) {
                 showToast("Pdf size is 0")
@@ -824,23 +732,18 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
     }
 
     private fun updateVideoQuestionStatus(
-        question: Question,
+        question: LessonQuestion,
         isVideoPercentComplete: Boolean = false
     ) {
-        activityCallback?.onQuestionStatusUpdate(
+        lessonActivityListener?.onQuestionStatusUpdate(
             QUESTION_STATUS.AT,
-            question.questionId.toIntOrNull() ?: 0, isVideoPercentComplete
+            question.id, isVideoPercentComplete
         )
 
-        pdfQuestion?.question?.let {
+        pdfQuestion?.let {
             it.status = QUESTION_STATUS.AT
             viewModel.updateQuestionInLocal(it)
         }
-    }
-
-    override fun onDestroy() {
-        compositeDisposable.dispose()
-        super.onDestroy()
     }
 
     override fun onScrollChanged() {
@@ -851,6 +754,92 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
         if (bottomDetector == 0) {
             binding.scrollToBottomIv.visibility = View.GONE
         }
+    }
+
+    private var downloadListener = object : FetchListener {
+        override fun onAdded(download: Download) {
+
+        }
+
+        override fun onCancelled(download: Download) {
+            DownloadUtils.removeCallbackListener(download.tag)
+            pdfQuestion?.downloadStatus = DOWNLOAD_STATUS.FAILED
+            fileNotDownloadView()
+
+        }
+
+        override fun onCompleted(download: Download) {
+            DownloadUtils.removeCallbackListener(download.tag)
+            pdfQuestion?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
+            fileDownloadSuccess()
+        }
+
+        override fun onDeleted(download: Download) {
+
+        }
+
+        override fun onDownloadBlockUpdated(
+            download: Download,
+            downloadBlock: DownloadBlock,
+            totalBlocks: Int
+        ) {
+
+        }
+
+        override fun onError(download: Download, error: Error, throwable: Throwable?) {
+            DownloadUtils.removeCallbackListener(download.tag)
+            pdfQuestion?.downloadStatus = DOWNLOAD_STATUS.FAILED
+            fileNotDownloadView()
+
+        }
+
+        override fun onPaused(download: Download) {
+
+        }
+
+        override fun onProgress(
+            download: Download,
+            etaInMilliSeconds: Long,
+            downloadedBytesPerSecond: Long
+        ) {
+        }
+
+        override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
+
+        }
+
+        override fun onRemoved(download: Download) {
+
+        }
+
+        override fun onResumed(download: Download) {
+
+        }
+
+        override fun onStarted(
+            download: Download,
+            downloadBlocks: List<DownloadBlock>,
+            totalBlocks: Int
+        ) {
+            pdfQuestion?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
+            fileDownloadingInProgressView()
+
+        }
+
+        override fun onWaitingNetwork(download: Download) {
+
+        }
+
+    }
+
+    companion object {
+        private const val DOWNLOAD_PDF_REQUEST_CODE = 0
+        private const val OPEN_PDF_REQUEST_CODE = 1
+        private const val COLLAPSED_DESCRIPTION_MAX_LINES = 2
+        private const val EXPANDED_DESCRIPTION_MAX_LINES = 100
+
+        @JvmStatic
+        fun getInstance() = GrammarFragment()
     }
 
 }

@@ -48,6 +48,7 @@ object NetworkRequestHelper {
                             .getNullableChatObject(chatModel.chatId)
                     if (chatObj == null) {
                         chatModel.downloadStatus = DOWNLOAD_STATUS.NOT_START
+                        chatModel.conversationId = conversationId
                         AppObjectController.appDatabase.chatDao().insertAMessage(chatModel)
                     } else {
                         chatObj.chatId = chatModel.chatId
@@ -57,11 +58,11 @@ object NetworkRequestHelper {
                         chatObj.created = chatModel.created
                         chatObj.messageDeliverStatus = chatModel.messageDeliverStatus
                         chatObj.type = chatModel.type
+                        chatObj.conversationId = conversationId
                         AppObjectController.appDatabase.chatDao().updateChatMessage(chatObj)
                     }
                     chatModel.question?.let { question ->
                         question.chatId = chatModel.chatId
-                        question.tempType = question.type
                         AppObjectController.appDatabase.chatDao().insertChatQuestion(question)
                         question.audioList?.let {
                             it.listIterator().forEach { audioType ->
@@ -104,9 +105,6 @@ object NetworkRequestHelper {
                             AppObjectController.appDatabase.chatDao().insertVideoMessageList(it)
                         }
 
-                        question.lesson?.let {
-                            AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
-                        }
                         try {
                             if (question.practiseEngagementV2.isNullOrEmpty().not()) {
                                 question.practiceEngagement =
@@ -133,10 +131,17 @@ object NetworkRequestHelper {
                             }
                         }
                     }
+
                     chatModel.awardMentorModel?.let { awardMentorModel ->
                         AppObjectController.appDatabase.awardMentorModelDao()
                             .insertSingleItem(awardMentorModel)
                     }
+
+                    chatModel.lesson?.let {
+                        it.chatId = chatModel.chatId
+                        AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
+                    }
+
                 }
                 RxBus2.publish(DBInsertion("Chat"))
 
@@ -164,8 +169,7 @@ object NetworkRequestHelper {
                 conversationId,
                 queryMap
             )
-            if (resp.chatModelList.isNullOrEmpty()) {
-            } else {
+            if (resp.chatModelList.isNullOrEmpty().not()) {
                 PrefManager.put(
                     conversationId.trim(),
                     resp.chatModelList.last().messageTimeInMilliSeconds
@@ -178,6 +182,7 @@ object NetworkRequestHelper {
                         .getNullableChatObject(chatModel.chatId)
                 if (chatObj == null) {
                     chatModel.downloadStatus = DOWNLOAD_STATUS.NOT_START
+                    chatModel.conversationId = conversationId
                     AppObjectController.appDatabase.chatDao().insertAMessage(chatModel)
                 } else {
                     chatObj.chatId = chatModel.chatId
@@ -187,6 +192,7 @@ object NetworkRequestHelper {
                     chatObj.created = chatModel.created
                     chatObj.messageDeliverStatus = chatModel.messageDeliverStatus
                     chatObj.type = chatModel.type
+                    chatObj.conversationId = conversationId
                     AppObjectController.appDatabase.chatDao().updateChatMessage(chatObj)
                 }
                 chatModel.question?.let { question ->
@@ -225,11 +231,6 @@ object NetworkRequestHelper {
 
                     }
 
-                    question.lesson?.let {
-                        AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
-
-                    }
-
                     question.videoList?.let {
                         it.listIterator().forEach { videoType ->
                             videoType.questionId = question.questionId
@@ -245,6 +246,12 @@ object NetworkRequestHelper {
                     AppObjectController.appDatabase.awardMentorModelDao()
                         .insertSingleItem(awardMentorModel)
                 }
+
+                chatModel.lesson?.let {
+                    it.chatId = chatModel.chatId
+                    AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
+                }
+
             }
 
             resp.next?.let {
@@ -282,7 +289,8 @@ object NetworkRequestHelper {
                 created = chatMessageReceiver.created,
                 messageDeliverStatus = MESSAGE_DELIVER_STATUS.SENT_RECEIVED,
                 isSync = true,
-                question_id = null
+                question_id = null,
+                modified = chatMessageReceiver.created
             )
 
             if (messageObject is BaseMediaMessage)

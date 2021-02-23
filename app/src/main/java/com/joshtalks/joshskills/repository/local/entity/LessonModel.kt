@@ -4,7 +4,6 @@ import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
@@ -14,61 +13,58 @@ data class LessonModel(
 
     @PrimaryKey
     @SerializedName("id")
-    @Expose
     @ColumnInfo(name = "lesson_id")
     var id: Int,
 
+    @ColumnInfo(name = "chat_id")
+    @SerializedName("chat_id") var chatId: String = "",
+
     @ColumnInfo(name = "lesson_no")
     @SerializedName("lesson_no")
-    @Expose
     var lessonNo: Int,
 
     @ColumnInfo(name = "lesson_name")
     @SerializedName("lesson_name")
-    @Expose
     var lessonName: String,
 
     @ColumnInfo(name = "thumbnail")
     @SerializedName("thumbnail")
-    @Expose
-    val varthumbnail: String,
-
-    @ColumnInfo(name = "status")
-    @SerializedName("status")
-    @Expose
-    var status: LESSON_STATUS? = LESSON_STATUS.NO,
+    val thumbnailUrl: String,
 
     @ColumnInfo(name = "course")
     @SerializedName("course")
-    @Expose
-    var course: Int,
+    var courseId: Int,
 
     @ColumnInfo(name = "interval")
     @SerializedName("interval")
-    @Expose
     var interval: Int,
+
+    @ColumnInfo(name = "status")
+    @SerializedName("status")
+    var status: LESSON_STATUS? = LESSON_STATUS.NO,
+
     @ColumnInfo(name = "grammarStatus")
     @SerializedName("grammarStatus")
-    @Expose
     var grammarStatus: LESSON_STATUS? = LESSON_STATUS.NO,
 
     @ColumnInfo(name = "vocabularyStatus")
     @SerializedName("vocabularyStatus")
-    @Expose
     var vocabStatus: LESSON_STATUS? = LESSON_STATUS.NO,
 
     @ColumnInfo(name = "readingStatus")
     @SerializedName("readingStatus")
-    @Expose
     var readingStatus: LESSON_STATUS? = LESSON_STATUS.NO,
 
     @ColumnInfo(name = "speakingStatus")
     @SerializedName("speakingStatus")
-    @Expose
     var speakingStatus: LESSON_STATUS? = LESSON_STATUS.NO,
 
-    @ColumnInfo(name = "attempt_number")
-    @SerializedName("attempt_number")
-    @Expose
-    var attempt_number: Int=0
-) : Parcelable
+    @ColumnInfo(name = "created")
+    @SerializedName("created")
+    var created: Long = 0L,
+
+    @ColumnInfo(name = "modified")
+    @SerializedName("modified")
+    var modified: Long = 0L,
+
+    ) : Parcelable

@@ -394,7 +394,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme" />
         <activity
-            android:name=".ui.day_wise_course.DayWiseCourseActivity"
+            android:name=".ui.lesson.LessonActivity"
             android:alwaysRetainTaskState="true"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTop"

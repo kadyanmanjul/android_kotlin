@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -23,17 +22,16 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentVocabularyBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.RequestEngage
-import com.joshtalks.joshskills.ui.day_wise_course.CapsuleActivityCallback
-import com.joshtalks.joshskills.ui.practise.PracticeViewModel
+import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
+import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -54,45 +52,27 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     private var compositeDisposable = CompositeDisposable()
 
     private lateinit var binding: FragmentVocabularyBinding
-    private var chatModelList: ArrayList<ChatModel>? = null
     private var isVideoRecordDone = false
     private var isDocumentAttachDone = false
     private var startTime: Long = 0
     private var totalTimeSpend: Long = 0
     private var filePath: String? = null
-    private var currentChatModel: ChatModel? = null
+    private var currentQuestion: LessonQuestion? = null
 
-    private var activityCallback: CapsuleActivityCallback? = null
+    private var lessonActivityListener: LessonActivityListener? = null
 
-    private val practiceViewModel: PracticeViewModel by lazy {
-        ViewModelProvider(this).get(PracticeViewModel::class.java)
-    }
-
-    companion object {
-        @JvmStatic
-        fun instance(chatModelList: ArrayList<ChatModel>) = VocabularyFragment().apply {
-            arguments = Bundle().apply {
-                putParcelableArrayList(PRACTISE_OBJECT, chatModelList)
-            }
-        }
+    private val viewModel: LessonViewModel by lazy {
+        ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is CapsuleActivityCallback)
-            activityCallback = context
+        if (context is LessonActivityListener)
+            lessonActivityListener = context
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        if (arguments != null) {
-            chatModelList = arguments?.getParcelableArrayList(PRACTISE_OBJECT)
-        }
-        if (chatModelList == null) {
-            requireActivity().finish()
-        }
         totalTimeSpend = System.currentTimeMillis()
 
     }
@@ -106,14 +86,11 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
             DataBindingUtil.inflate(inflater, R.layout.fragment_vocabulary, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
-        binding.progressLayout.setOnClickListener {
-
-        }
-
-        addObserver()
-        practiceViewModel.getAssessmentData(chatModelList)
         binding.vocabularyCompletedTv.text = AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.VOCABULARY_COMPLETED)
+        binding.progressLayout.setOnClickListener { }
+
+        addObserver()
 
         if (isAllQuestionsAttempted()) {
             binding.vocabularyCompleteLayout.visibility = View.VISIBLE
@@ -122,75 +99,60 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     }
 
     private fun addObserver() {
-        practiceViewModel.requestStatusLiveData.observe(viewLifecycleOwner, {
-            if (it) {
-//                onPracticeSubmitted()
-            }
-            binding.progressLayout.visibility = View.GONE
+
+        viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner, {
+
+            viewModel.getAssessmentData(it)
+
         })
 
-        practiceViewModel.assessmentData.observe(viewLifecycleOwner, {
+        viewModel.vocabAssessmentData.observe(viewLifecycleOwner, {
             initAdapter(it)
         })
 
-        practiceViewModel.pointsSnackBarText.observe(viewLifecycleOwner, Observer {
+        viewModel.pointsSnackBarText.observe(viewLifecycleOwner) {
             if (it.pointsList.isNullOrEmpty().not()) {
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
             }
-        })
+        }
     }
 
-    private fun initAdapter(arrayList: ArrayList<AssessmentWithRelations>) {
-        val itemSize =
-            chatModelList?.filter { it.question?.type == BASE_MESSAGE_TYPE.QUIZ }?.size ?: 0
-        var quizSort = 1
-        var wordSort = 1
-        chatModelList?.forEach {
-            it.question?.let {
-                if (it.type == BASE_MESSAGE_TYPE.QUIZ) {
-                    it.vocabOrder = quizSort
-                    quizSort = quizSort.plus(1)
-                } else {
-                    it.vocabOrder = wordSort
-                    wordSort = wordSort.plus(1)
-                }
-            }
+    private fun initAdapter(assessmentList: ArrayList<AssessmentWithRelations>) {
+        viewModel.lessonQuestionsLiveData.value?.let {
+            it.sortedBy { it.vpSortOrder }
+            adapter = VocabularyPracticeAdapter(
+                requireContext(),
+                it,
+                assessmentList,
+                this
+            )
         }
-        adapter = VocabularyPracticeAdapter(
-            requireContext(),
-            chatModelList!!,
-            this,
-            quizsItemSize = itemSize,
-            arrayList
-        )
-        chatModelList?.let {
-            it.sortedBy { it.question?.vpSortOrder }
-        }
+
         binding.practiceRv.layoutManager = LinearLayoutManager(requireContext())
         binding.practiceRv.adapter = adapter
     }
 
-    override fun submitQuiz(chatModel: ChatModel, isCorrect: Boolean, questionId: Int) {
-        onQuestionSubmitted(chatModel, isCorrect, questionId)
+    override fun submitQuiz(lessonQuestion: LessonQuestion, isCorrect: Boolean, questionId: Int) {
+        onQuestionSubmitted(lessonQuestion, isCorrect, questionId)
         openNextScreen()
     }
 
     override fun quizOptionSelected(
-        chatModel: ChatModel,
+        lessonQuestion: LessonQuestion,
         assessmentQuestions: AssessmentQuestionWithRelations
     ) {
-        practiceViewModel.saveAssessmentQuestion(assessmentQuestions)
-        activityCallback?.onQuestionStatusUpdate(
+        viewModel.saveAssessmentQuestion(assessmentQuestions)
+        lessonActivityListener?.onQuestionStatusUpdate(
             QUESTION_STATUS.IP,
-            chatModel.question?.questionId?.toIntOrNull() ?: 0
+            lessonQuestion.id
         )
-        chatModel.question?.status = QUESTION_STATUS.IP
-        currentChatModel = null
+        lessonQuestion.status = QUESTION_STATUS.IP
+        currentQuestion = null
         adapter.notifyDataSetChanged()
     }
 
     private fun onQuestionSubmitted(
-        chatModel: ChatModel,
+        lessonQuestion: LessonQuestion,
         isCorrect: Boolean = false,
         questionId: Int = -1
     ) {
@@ -198,34 +160,34 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         if (isCorrect && questionId != -1) {
             val quizQuestion = arrayListOf<Int>()
             quizQuestion.add(questionId)
-            activityCallback?.onQuestionStatusUpdate(
+            lessonActivityListener?.onQuestionStatusUpdate(
                 QUESTION_STATUS.AT,
-                chatModel.question?.questionId?.toIntOrNull() ?: 0,
+                lessonQuestion.id,
                 quizCorrectQuestionIds = quizQuestion
             )
         } else {
-            activityCallback?.onQuestionStatusUpdate(
+            lessonActivityListener?.onQuestionStatusUpdate(
                 QUESTION_STATUS.AT,
-                chatModel.question?.questionId?.toIntOrNull() ?: 0
+                lessonQuestion.id
             )
         }
 
-        chatModel.question?.status = QUESTION_STATUS.AT
+        lessonQuestion.status = QUESTION_STATUS.AT
 
-        currentChatModel = null
+        currentQuestion = null
         adapter.notifyDataSetChanged()
     }
 
     override fun openNextScreen() {
         if (isAllQuestionsAttempted() && isVisible) {
             binding.vocabularyCompleteLayout.visibility = View.VISIBLE
-            activityCallback?.onSectionStatusUpdate(1, true)
+            lessonActivityListener?.onSectionStatusUpdate(1, true)
         }
     }
 
     private fun isAllQuestionsAttempted(): Boolean {
-        chatModelList?.forEach { item ->
-            if (item.question?.status != QUESTION_STATUS.AT) {
+        viewModel.lessonQuestionsLiveData.value?.forEach { item ->
+            if (item.status != QUESTION_STATUS.AT) {
                 return false
             }
         }
@@ -233,20 +195,20 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     }
 
     fun onContinueClick() {
-        activityCallback?.onNextTabCall(1)
+        lessonActivityListener?.onNextTabCall(1)
     }
 
     fun onCloseDialog() {
         binding.vocabularyCompleteLayout.visibility = View.GONE
     }
 
-    override fun submitPractice(chatModel: ChatModel): Boolean {
-        if (chatModel.question != null && chatModel.question!!.expectedEngageType != null) {
-            chatModel.question?.expectedEngageType?.let {
+    override fun submitPractice(lessonQuestion: LessonQuestion): Boolean {
+        if (lessonQuestion.expectedEngageType != null) {
+            lessonQuestion.expectedEngageType?.let {
                 if (EXPECTED_ENGAGE_TYPE.TX == it) {
                     showToast(getString(R.string.submit_practise_msz))
                     return false
-                } else if (EXPECTED_ENGAGE_TYPE.AU == it && chatModel.filePath == null) {
+                } else if (EXPECTED_ENGAGE_TYPE.AU == it && lessonQuestion.filePath == null) {
                     showToast(getString(R.string.submit_practise_msz))
                     return false
                 } else if (EXPECTED_ENGAGE_TYPE.VI == it && isVideoRecordDone.not()) {
@@ -256,26 +218,27 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                     showToast(getString(R.string.submit_practise_msz))
                     return false
                 }
-                currentChatModel = chatModel
-                chatModel.question!!.status = QUESTION_STATUS.IP
-                practiceViewModel.getPointsForVocabAndReading(chatModel.question?.questionId!!)
-                onQuestionSubmitted(chatModel)
+                currentQuestion = lessonQuestion
+                lessonQuestion.status = QUESTION_STATUS.IP
+                viewModel.getPointsForVocabAndReading(lessonQuestion.id)
+                onQuestionSubmitted(lessonQuestion)
                 openNextScreen()
 
                 CoroutineScope(Dispatchers.Main).launch {
                     val requestEngage = RequestEngage()
 //                requestEngage.text = binding.etPractise.text.toString()
-                    requestEngage.localPath = chatModel.filePath
+                    requestEngage.localPath = lessonQuestion.filePath
                     requestEngage.duration =
-                        Utils.getDurationOfMedia(requireActivity(), chatModel.filePath)?.toInt()
-                    requestEngage.feedbackRequire = chatModel.question?.feedback_require
-                    requestEngage.questionId = chatModel.question?.questionId!!
+                        Utils.getDurationOfMedia(requireActivity(), lessonQuestion.filePath)
+                            ?.toInt()
+                    //requestEngage.feedbackRequire = lessonQuestion.feedback_require
+                    requestEngage.questionId = lessonQuestion.id
                     requestEngage.mentor = Mentor.getInstance().getId()
                     if (it == EXPECTED_ENGAGE_TYPE.AU || it == EXPECTED_ENGAGE_TYPE.VI || it == EXPECTED_ENGAGE_TYPE.DX) {
-                        requestEngage.answerUrl = chatModel.filePath
+                        requestEngage.answerUrl = lessonQuestion.filePath
                     }
                     delay(1000)
-                    practiceViewModel.addTaskToService(requestEngage)
+                    viewModel.addTaskToService(requestEngage)
 
                 }
                 return true
@@ -285,11 +248,15 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     }
 
 
-    override fun startRecording(chatModel: ChatModel, position: Int, startTimeUnit: Long) {
+    override fun startRecording(
+        lessonQuestion: LessonQuestion,
+        position: Int,
+        startTimeUnit: Long
+    ) {
         this.startTime = startTimeUnit
         if (isAdded && activity != null)
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        practiceViewModel.startRecordAudio(object : OnAudioRecordListener {
+        viewModel.startRecordAudio(object : OnAudioRecordListener {
             override fun onRecordFinished(recordingItem: RecordingItem?) {
                 recordingItem?.filePath?.let {
                     filePath = AppDirectory.getAudioSentFile(
@@ -297,14 +264,14 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                         audioExtension = ".m4a"
                     ).absolutePath
                     AppDirectory.copy(it, filePath!!)
-                    chatModel.filePath = filePath
+                    lessonQuestion.filePath = filePath
                 }
             }
         })
     }
 
-    override fun stopRecording(chatModel: ChatModel, position: Int, stopTime: Long) {
-        practiceViewModel.stopRecordingAudio(false)
+    override fun stopRecording(lessonQuestion: LessonQuestion, position: Int, stopTime: Long) {
+        viewModel.stopRecordingAudio(false)
         if (isAdded && activity != null)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val timeDifference =
@@ -312,13 +279,12 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                 startTime
             )
         if (timeDifference > 1) {
-            practiceViewModel.recordFile?.let {
+            viewModel.recordFile?.let {
 //                                isAudioRecordDone = true
                 // filePath = AppDirectory.getAudioSentFile(null, audioExtension = ".m4a").absolutePath
                 //   AppDirectory.copy(it.absolutePath, filePath!!)
                 //      chatModel.filePath = filePath
             }
-
         }
     }
 
@@ -379,4 +345,10 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         super.onStop()
         compositeDisposable.clear()
     }
+
+    companion object {
+        @JvmStatic
+        fun getInstance() = VocabularyFragment()
+    }
+
 }

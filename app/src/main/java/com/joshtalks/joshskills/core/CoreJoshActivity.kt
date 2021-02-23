@@ -113,12 +113,13 @@ abstract class CoreJoshActivity : BaseActivity() {
             if (todaySubmitCount >= minFeedbackCount) {
                 return@withContext false
             }
-            val flag =
-                AppObjectController.appDatabase.chatDao().getFeedbackStatusOfQuestion(questionId)
-            if (flag != null && flag) {
-                return@withContext true
-            }
-            return@withContext false
+//            val flag =
+//                AppObjectController.appDatabase.chatDao().getFeedbackStatusOfQuestion(questionId)
+//            if (flag != null && flag) {
+//                return@withContext true
+//            }
+//            return@withContext false
+            return@withContext true
         }
     }
 

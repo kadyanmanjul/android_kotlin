@@ -45,7 +45,7 @@ data class AssessmentResponse(
     val questions: List<AssessmentQuestionResponse>,
 
     @SerializedName("intro")
-    val intro: List<AssessmentIntroResponse>?  // TODO(27/07/2020) - Make this nullable
+    val intro: List<AssessmentIntroResponse>?
 
 ) : Parcelable
 

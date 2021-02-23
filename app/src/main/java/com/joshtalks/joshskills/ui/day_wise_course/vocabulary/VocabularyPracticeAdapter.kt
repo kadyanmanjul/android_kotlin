@@ -47,20 +47,19 @@ import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 
 class VocabularyPracticeAdapter(
     val context: Context,
-    val itemList: ArrayList<ChatModel>,
-    val clickListener: PracticeClickListeners,
-    val quizsItemSize: Int,
-    val assessmentQuizList: ArrayList<AssessmentWithRelations>
+    val itemList: List<LessonQuestion>,
+    val assessmentQuizList: ArrayList<AssessmentWithRelations>,
+    val clickListener: PracticeClickListeners
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var audioManager = ExoAudioPlayer.getInstance()
-    var currentChatModel: ChatModel? = null
+    var currentQuestion: LessonQuestion? = null
     var currentPlayingPosition: Int = 0
     private var expandCard: Boolean = true
     private var QUIZ_TYPE: Int = 1
     private var VOCAB_TYPE: Int = 0
-    val wordsItemSize = itemList.size.minus(quizsItemSize)
+    val wordsItemSize = itemList.size.minus(assessmentQuizList.size)
     val appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTICE_SCREEN.NAME)
         .addBasicParam()
         .addUserDetails()
@@ -68,7 +67,7 @@ class VocabularyPracticeAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
             VOCAB_TYPE -> {
-                return PracticeViewHolder(
+                return VocabularyViewHolder(
                     PracticeItemLayoutBinding.inflate(
                         LayoutInflater.from(
                             context
@@ -91,11 +90,11 @@ class VocabularyPracticeAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder.itemViewType) {
             VOCAB_TYPE -> {
-                (holder as PracticeViewHolder).bind(itemList[position], position)
+                (holder as VocabularyViewHolder).bind(itemList[position], position)
             }
             else -> {
                 if (assessmentQuizList.isNotEmpty()) {
-                    assessmentQuizList.filter { it.assessment.remoteId == itemList[position].question?.assessmentId }
+                    assessmentQuizList.filter { it.assessment.remoteId == itemList[position].assessmentId }
                         .let {
                             if (it.isNotEmpty()) {
                                 it.getOrNull(0)?.let { asWr ->
@@ -117,12 +116,12 @@ class VocabularyPracticeAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        when (itemList[position].question?.type) {
-            BASE_MESSAGE_TYPE.QUIZ -> {
-                return QUIZ_TYPE
+        return when (itemList[position].type) {
+            LessonQuestionType.QUIZ -> {
+                QUIZ_TYPE
             }
             else -> {
-                return VOCAB_TYPE
+                VOCAB_TYPE
             }
         }
     }
@@ -132,20 +131,20 @@ class VocabularyPracticeAdapter(
         val context: Context
     ) :
         RecyclerView.ViewHolder(binding.root) {
-        private lateinit var chatModel: ChatModel
+        private lateinit var lessonQuestion: LessonQuestion
         private var isCorrect: Boolean = false
         private var quizQuestionId: Int = -1
 
         fun bind(
-            chatModel: ChatModel,
+            lessonQuestion: LessonQuestion,
             assessmentRelations: AssessmentWithRelations?,
             position: Int
         ) {
             if (assessmentRelations == null) {
                 return
             }
-            this.chatModel = chatModel
-            if (expandCard && chatModel.question?.status == QUESTION_STATUS.NA) {
+            this.lessonQuestion = lessonQuestion
+            if (expandCard && lessonQuestion.status == QUESTION_STATUS.NA) {
                 expandCard = false
                 expandCard()
                 if (position > 0)
@@ -171,8 +170,8 @@ class VocabularyPracticeAdapter(
             binding.practiceTitleTv.text =
                 context.getString(
                     R.string.quiz_tag,
-                    chatModel.question?.vocabOrder ?: 0,
-                    quizsItemSize
+                    lessonQuestion.vpSortOrder,
+                    assessmentQuizList.size
                 )
 
             binding.practiceTitleTv.setOnClickListener {
@@ -199,14 +198,14 @@ class VocabularyPracticeAdapter(
             binding.continueBtn.setOnClickListener {
                 expandCard = true
                 clickListener.submitQuiz(
-                    chatModel,
+                    lessonQuestion,
                     isCorrect,
                     assessmentQuestions.question.remoteId
                 )
                 onContinueClick()
             }
 
-            if (chatModel.question?.status == QUESTION_STATUS.IP) {
+            if (lessonQuestion.status == QUESTION_STATUS.IP) {
                 binding.quizLayout.visibility = VISIBLE
                 binding.continueBtn.visibility = VISIBLE
                 assessmentQuestions.reviseConcept?.let {
@@ -241,12 +240,12 @@ class VocabularyPracticeAdapter(
                 updateRadioGroupUi(assessmentQuestions)
 
                 clickListener.submitQuiz(
-                    chatModel,
+                    lessonQuestion,
                     isCorrect,
                     assessmentQuestions.question.remoteId
                 )
 
-                clickListener.quizOptionSelected(chatModel, assessmentQuestions)
+                clickListener.quizOptionSelected(lessonQuestion, assessmentQuestions)
 
                 assessmentQuestions.reviseConcept?.let {
                     binding.showExplanationBtn.visibility = VISIBLE
@@ -464,17 +463,18 @@ class VocabularyPracticeAdapter(
         }
     }
 
-    inner class PracticeViewHolder(val binding: PracticeItemLayoutBinding) :
-        RecyclerView.ViewHolder(binding.root), AudioPlayerEventListener,
+    inner class VocabularyViewHolder(val binding: PracticeItemLayoutBinding) :
+        RecyclerView.ViewHolder(binding.root),
+        AudioPlayerEventListener,
         ExoAudioPlayer.ProgressUpdateListener {
         private var startTime: Long = 0L
         var filePath: String? = null
-        var chatModel: ChatModel? = null
+        var lessonQuestion: LessonQuestion? = null
         private var mUserIsSeeking = false
 
-        fun bind(chatModel: ChatModel, position: Int) {
-            this.chatModel = chatModel
-            if (expandCard && chatModel.question?.status == QUESTION_STATUS.NA) {
+        fun bind(lessonQuestion: LessonQuestion, position: Int) {
+            this.lessonQuestion = lessonQuestion
+            if (expandCard && lessonQuestion.status == QUESTION_STATUS.NA) {
                 expandCard = false
                 expandCard()
                 if (position > 0)
@@ -483,7 +483,7 @@ class VocabularyPracticeAdapter(
                 collapsCard()
             }
 
-            setPracticeInfoView(chatModel)
+            setPracticeInfoView(lessonQuestion)
 
             binding.titleView.setOnClickListener {
                 if (binding.practiceContentLl.visibility == GONE) {
@@ -495,24 +495,28 @@ class VocabularyPracticeAdapter(
 
             binding.btnPlayInfo.setOnClickListener {
                 appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio Played")
-                    ?.addParam("chatId", chatModel.chatId)?.push()
-                playPracticeAudio(chatModel, layoutPosition)
+                    ?.addParam("lesson_id", lessonQuestion.lessonId)
+                    ?.addParam("question_id", lessonQuestion.id)
+                    ?.push()
+                playPracticeAudio(lessonQuestion, layoutPosition)
             }
 
             binding.submitBtnPlayInfo.setOnClickListener {
                 appAnalytics?.addParam(
                     AnalyticsEvent.PRACTICE_EXTRA.NAME,
                     "Already Submitted audio Played"
-                )?.addParam("chatId", chatModel.chatId)
+                )
+                    ?.addParam("lesson_id", lessonQuestion.lessonId)
+                    ?.addParam("question_id", lessonQuestion.id)
 
-                playSubmitPracticeAudio(chatModel, layoutPosition)
+                playSubmitPracticeAudio(lessonQuestion, layoutPosition)
 //                filePath = chatModel.downloadedLocalPath
                 val state =
-                    if (chatModel.isPlaying) {
-                        currentChatModel?.isPlaying = true
+                    if (lessonQuestion.isPlaying) {
+                        currentQuestion?.isPlaying = true
                         MaterialPlayPauseDrawable.State.Pause
                     } else {
-                        currentChatModel?.isPlaying = false
+                        currentQuestion?.isPlaying = false
                         MaterialPlayPauseDrawable.State.Play
                     }
                 binding.submitBtnPlayInfo.state = state
@@ -546,27 +550,28 @@ class VocabularyPracticeAdapter(
 
 
             binding.ivCancel.setOnClickListener {
-                chatModel.filePath = null
+                lessonQuestion.filePath = null
                 removeAudioPractise()
                 removeAudioPractice()
             }
 
             binding.submitAnswerBtn.setOnClickListener {
                 expandCard = true
-                if (chatModel.filePath == null) {
+                if (lessonQuestion.filePath == null) {
                     showToast(context.getString(R.string.submit_practise_msz))
                     return@setOnClickListener
                 }
 
-                if (clickListener.submitPractice(chatModel)) {
+                if (clickListener.submitPractice(lessonQuestion)) {
                     if (isAudioPlaying()) {
                         binding.submitPractiseSeekbar.progress = 0
                         binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
-                        chatModel.isPlaying = false
+                        lessonQuestion.isPlaying = false
                         audioManager?.resumeOrPause()
                     }
                     appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
-                        ?.addParam("chatId", chatModel.chatId)
+                        ?.addParam("lesson_id", lessonQuestion.lessonId)
+                        ?.addParam("question_id", lessonQuestion.id)
                         ?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Submitted")
                         ?.addParam(
                             AnalyticsEvent.PRACTICE_TYPE_SUBMITTED.NAME,
@@ -575,7 +580,8 @@ class VocabularyPracticeAdapter(
                         ?.addParam(
                             AnalyticsEvent.PRACTICE_SUBMITTED.NAME,
                             "Submit Practice $"
-                        )?.push()
+                        )
+                        ?.push()
                 }
 
             }
@@ -614,14 +620,14 @@ class VocabularyPracticeAdapter(
             binding.practiseSeekbar.progress = 0
             binding.submitPractiseSeekbar.progress = 0
             binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
-            currentChatModel?.isPlaying = false
+            currentQuestion?.isPlaying = false
         }
 
         override fun onProgressUpdate(progress: Long) {
-            currentChatModel?.playProgress = progress.toInt()
+            currentQuestion?.playProgress = progress.toInt()
             if (currentPlayingPosition != -1) {
                 binding.progressBarImageView.progress = progress.toInt()
-                if (chatModel?.question?.material_type == BASE_MESSAGE_TYPE.AU) {
+                if (lessonQuestion?.materialType == LessonMaterialType.AU) {
                     binding.practiseSeekbar.progress = progress.toInt()
                 }
                 Log.d(TAG, "onProgressUpdate() called with: progress = $progress")
@@ -645,21 +651,25 @@ class VocabularyPracticeAdapter(
             return this.checkIsPlayer() && audioManager!!.isPlaying()
         }
 
-        private fun onPlayAudio(chatModel: ChatModel, audioObject: AudioType, position: Int) {
+        private fun onPlayAudio(
+            lessonQuestion: LessonQuestion,
+            audioObject: AudioType,
+            position: Int
+        ) {
 
             currentPlayingPosition = position
 
-            currentChatModel = chatModel
+            currentQuestion = lessonQuestion
             val audioList = java.util.ArrayList<AudioType>()
             audioList.add(audioObject)
             audioManager?.playerListener = this
             audioManager?.play(audioObject.audio_url)
             audioManager?.setProgressUpdateListener(this)
 
-            chatModel.isPlaying = chatModel.isPlaying.not()
+            lessonQuestion.isPlaying = lessonQuestion.isPlaying.not()
         }
 
-        fun playPracticeAudio(chatModel: ChatModel, position: Int) {
+        fun playPracticeAudio(lessonQuestion: LessonQuestion, position: Int) {
             if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
                 StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
                     .text(context.getString(R.string.volume_up_message)).cornerRadius(16)
@@ -667,38 +677,41 @@ class VocabularyPracticeAdapter(
                     .solidBackground().show()
             }
 
-            if (currentChatModel == null) {
-                chatModel.question?.audioList?.getOrNull(0)
-                    ?.let {
-                        onPlayAudio(chatModel, it, position)
-                    }
+            if (currentQuestion == null) {
+                lessonQuestion.audioList?.getOrNull(0)?.let {
+                    onPlayAudio(lessonQuestion, it, position)
+                }
             } else {
-                if (currentChatModel == chatModel) {
+                if (currentQuestion == lessonQuestion) {
                     if (checkIsPlayer()) {
                         audioManager?.setProgressUpdateListener(this)
                         audioManager?.resumeOrPause()
                     } else {
                         onPlayAudio(
-                            chatModel,
-                            chatModel.question?.audioList?.getOrNull(0)!!,
+                            lessonQuestion,
+                            lessonQuestion.audioList?.getOrNull(0)!!,
                             position
                         )
                     }
                 } else {
-                    onPlayAudio(chatModel, chatModel.question?.audioList?.getOrNull(0)!!, position)
+                    onPlayAudio(
+                        lessonQuestion,
+                        lessonQuestion.audioList?.getOrNull(0)!!,
+                        position
+                    )
                 }
             }
         }
 
-        fun playSubmitPracticeAudio(chatModel: ChatModel, position: Int) {
+        fun playSubmitPracticeAudio(lessonQuestion: LessonQuestion, position: Int) {
             try {
-                var audioType = AudioType()
+                val audioType = AudioType()
                 if (filePath == null) {
-                    if (chatModel.question?.practiceEngagement.isNullOrEmpty() && chatModel.question?.status != QUESTION_STATUS.NA) {
-                        filePath = chatModel.filePath
+                    if (lessonQuestion.practiceEngagement.isNullOrEmpty() && lessonQuestion.status != QUESTION_STATUS.NA) {
+                        filePath = lessonQuestion.filePath
                     } else {
                         val practiseEngagement =
-                            chatModel.question?.practiceEngagement?.getOrNull(0)
+                            lessonQuestion.practiceEngagement?.getOrNull(0)
                         if (PermissionUtils.isStoragePermissionEnabled(context) && AppDirectory.isFileExist(
                                 practiseEngagement?.localPath
                             )
@@ -726,21 +739,21 @@ class VocabularyPracticeAdapter(
                         .solidBackground().show()
                 }
 
-                if (currentChatModel == null) {
-                    onPlayAudio(chatModel, audioType, position)
+                if (currentQuestion == null) {
+                    onPlayAudio(lessonQuestion, audioType, position)
                 } else {
                     if (audioManager?.currentPlayingUrl?.isNotEmpty() == true && audioManager?.currentPlayingUrl == audioType.audio_url) {
                         if (checkIsPlayer()) {
                             currentPlayingPosition = position
                             audioManager?.setProgressUpdateListener(this)
-                            chatModel.isPlaying = chatModel.isPlaying.not()
+                            lessonQuestion.isPlaying = lessonQuestion.isPlaying.not()
                             audioManager?.resumeOrPause()
 //                            notifyItemChanged(layoutPosition)
                         } else {
-                            onPlayAudio(chatModel, audioType, position)
+                            onPlayAudio(lessonQuestion, audioType, position)
                         }
                     } else {
-                        onPlayAudio(chatModel, audioType, position)
+                        onPlayAudio(lessonQuestion, audioType, position)
 
                     }
                 }
@@ -757,22 +770,22 @@ class VocabularyPracticeAdapter(
         }
 
         fun pauseAudio() {
-            chatModel?.let {
-                if (chatModel!!.isPlaying) {
+            lessonQuestion?.let {
+                if (lessonQuestion!!.isPlaying) {
                     playSubmitPracticeAudio(it, layoutPosition)
-                    currentChatModel?.isPlaying = false
+                    currentQuestion?.isPlaying = false
                     binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
                 }
             }
         }
 
         //============================================================================
-        private fun setPracticeInfoView(chatModel: ChatModel) {
-            chatModel.question?.run {
+        private fun setPracticeInfoView(lessonQuestion: LessonQuestion) {
+            lessonQuestion.run {
                 binding.practiceTitleTv.text =
                     context.getString(
                         R.string.word_tag,
-                        this.vocabOrder,
+                        this.vpSortOrder,
                         wordsItemSize,
                         this.practiceWord
                     )
@@ -791,8 +804,8 @@ class VocabularyPracticeAdapter(
                         0
                     )
                 }
-                when (this.material_type) {
-                    BASE_MESSAGE_TYPE.AU -> {
+                when (this.materialType) {
+                    LessonMaterialType.AU -> {
                         binding.audioViewContainer.visibility = VISIBLE
                         this.audioList?.getOrNull(0)?.audio_url?.let {
                             binding.btnPlayInfo.tag = it
@@ -801,10 +814,10 @@ class VocabularyPracticeAdapter(
                                 binding.practiseSeekbar.max = 2_00_000
                             }
                         }
-                        initializePractiseSeekBar(chatModel)
+                        initializePractiseSeekBar(lessonQuestion)
 
                     }
-                    BASE_MESSAGE_TYPE.IM -> {
+                    LessonMaterialType.IM -> {
                         binding.imageView.visibility = VISIBLE
                         this.imageList?.getOrNull(0)?.imageUrl?.let { path ->
                             setImageInImageView(path, binding.imageView)
@@ -814,7 +827,7 @@ class VocabularyPracticeAdapter(
                             }
                         }
                     }
-                    BASE_MESSAGE_TYPE.VI -> {
+                    LessonMaterialType.VI -> {
                         binding.videoPlayer.visibility = VISIBLE
                         this.videoList?.getOrNull(0)?.video_url?.let {
                             binding.videoPlayer.setUrl(it)
@@ -832,7 +845,7 @@ class VocabularyPracticeAdapter(
                             binding.videoPlayer.downloadStreamButNotPlay()
                         }
                     }
-                    BASE_MESSAGE_TYPE.PD -> {
+                    LessonMaterialType.PD -> {
                         binding.imageView.visibility = VISIBLE
                         binding.imageView.setImageResource(R.drawable.ic_practise_pdf_ph)
                         this.pdfList?.getOrNull(0)?.let { pdfType ->
@@ -846,8 +859,7 @@ class VocabularyPracticeAdapter(
                             }
                         }
                     }
-
-                    BASE_MESSAGE_TYPE.TX -> {
+                    LessonMaterialType.TX -> {
                         this.qText?.let {
                             binding.infoTv.visibility = VISIBLE
                             binding.infoTv.text =
@@ -859,8 +871,8 @@ class VocabularyPracticeAdapter(
                     }
                 }
 
-                if ((this.material_type == BASE_MESSAGE_TYPE.TX).not() && this.qText.isNullOrEmpty()
-                        .not()
+                if (this.materialType != LessonMaterialType.TX &&
+                    this.qText.isNullOrEmpty().not()
                 ) {
                     binding.infoTv2.text =
                         HtmlCompat.fromHtml(this.qText!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
@@ -869,11 +881,11 @@ class VocabularyPracticeAdapter(
 
                 if (this.status == QUESTION_STATUS.NA) {
                     binding.submitAnswerBtn.visibility = VISIBLE
-                    setViewAccordingExpectedAnswer(chatModel)
+                    setViewAccordingExpectedAnswer(lessonQuestion)
                 } else {
                     hidePracticeInputLayout()
                     binding.submitAnswerBtn.visibility = GONE
-                    setViewUserSubmitAnswer(chatModel)
+                    setViewUserSubmitAnswer(lessonQuestion)
                 }
 
             }
@@ -917,8 +929,8 @@ class VocabularyPracticeAdapter(
                 .into(imageView)
         }
 
-        private fun setViewAccordingExpectedAnswer(chatModel: ChatModel) {
-            chatModel.question?.run {
+        private fun setViewAccordingExpectedAnswer(lessonQuestion: LessonQuestion) {
+            lessonQuestion.run {
                 showPracticeInputLayout()
                 this.expectedEngageType?.let {
                     binding.uploadPractiseView.visibility = VISIBLE
@@ -926,7 +938,7 @@ class VocabularyPracticeAdapter(
                     binding.practiseInputHeader.text = AppObjectController.getFirebaseRemoteConfig()
                         .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
                     binding.uploadPractiseView.setImageResource(R.drawable.recv_ic_mic_white)
-                    audioRecordTouchListener(chatModel)
+                    audioRecordTouchListener(lessonQuestion)
                     binding.audioPractiseHint.visibility = VISIBLE
                     binding.submitAudioViewContainer.visibility = GONE
                     binding.yourSubAnswerTv.visibility = GONE
@@ -934,53 +946,51 @@ class VocabularyPracticeAdapter(
             }
         }
 
-        private fun setViewUserSubmitAnswer(chatModel: ChatModel) {
-            chatModel.question?.run {
-                this.expectedEngageType?.let {
-                    hidePracticeInputLayout()
-                    showPracticeSubmitLayout()
-                    binding.yourSubAnswerTv.visibility = VISIBLE
-                    val params: ViewGroup.MarginLayoutParams =
-                        binding.subPractiseSubmitLayout.layoutParams as ViewGroup.MarginLayoutParams
-                    params.topMargin = Utils.dpToPx(20)
-                    binding.subPractiseSubmitLayout.layoutParams = params
-                    binding.yourSubAnswerTv.text = context.getString(R.string.your_submitted_answer)
-                    if (practiceEngagement.isNullOrEmpty() && this.status == QUESTION_STATUS.IP) {
-                        filePath = chatModel.filePath
+        private fun setViewUserSubmitAnswer(lessonQuestion: LessonQuestion) {
+            lessonQuestion.expectedEngageType?.let {
+                hidePracticeInputLayout()
+                showPracticeSubmitLayout()
+                binding.yourSubAnswerTv.visibility = VISIBLE
+                val params: ViewGroup.MarginLayoutParams =
+                    binding.subPractiseSubmitLayout.layoutParams as ViewGroup.MarginLayoutParams
+                params.topMargin = Utils.dpToPx(20)
+                binding.subPractiseSubmitLayout.layoutParams = params
+                binding.yourSubAnswerTv.text = context.getString(R.string.your_submitted_answer)
+                if (lessonQuestion.practiceEngagement.isNullOrEmpty() && lessonQuestion.status == QUESTION_STATUS.IP) {
+                    filePath = lessonQuestion.filePath
+                    binding.submitPractiseSeekbar.max =
+                        Utils.getDurationOfMedia(context, filePath!!)
+                            ?.toInt() ?: 1_00_000
+                } else {
+                    val practiseEngagement = lessonQuestion.practiceEngagement?.getOrNull(0)
+                    if (EXPECTED_ENGAGE_TYPE.AU == it) {
+                        binding.submitAudioViewContainer.visibility = VISIBLE
+                    }
+                    if (PermissionUtils.isStoragePermissionEnabled(context) && AppDirectory.isFileExist(
+                            practiseEngagement?.localPath
+                        )
+                    ) {
+                        filePath = practiseEngagement?.localPath
                         binding.submitPractiseSeekbar.max =
                             Utils.getDurationOfMedia(context, filePath!!)
-                                ?.toInt() ?: 1_00_000
+                                ?.toInt() ?: 0
                     } else {
-                        val practiseEngagement = this.practiceEngagement?.getOrNull(0)
-                        if (EXPECTED_ENGAGE_TYPE.AU == it) {
-                            binding.submitAudioViewContainer.visibility = VISIBLE
-                        }
-                        if (PermissionUtils.isStoragePermissionEnabled(context) && AppDirectory.isFileExist(
-                                practiseEngagement?.localPath
-                            )
-                        ) {
-                            filePath = practiseEngagement?.localPath
-                            binding.submitPractiseSeekbar.max =
-                                Utils.getDurationOfMedia(context, filePath!!)
-                                    ?.toInt() ?: 0
+                        filePath = practiseEngagement?.answerUrl
+                        if (practiseEngagement?.duration != null || practiseEngagement?.duration == 0) {
+                            binding.submitPractiseSeekbar.max = practiseEngagement.duration!!
                         } else {
-                            filePath = practiseEngagement?.answerUrl
-                            if (practiseEngagement?.duration != null || practiseEngagement?.duration == 0) {
-                                binding.submitPractiseSeekbar.max = practiseEngagement.duration!!
-                            } else {
-                                binding.submitPractiseSeekbar.max = 1_00_000
-                            }
+                            binding.submitPractiseSeekbar.max = 1_00_000
                         }
                     }
-
-                    initializePractiseSeekBar(chatModel)
-                    binding.ivCancel.visibility = GONE
                 }
+
+                initializePractiseSeekBar(lessonQuestion)
+                binding.ivCancel.visibility = GONE
             }
         }
 
         @SuppressLint("ClickableViewAccessibility")
-        private fun audioRecordTouchListener(chatModel: ChatModel) {
+        private fun audioRecordTouchListener(lessonQuestion: LessonQuestion) {
             binding.uploadPractiseView.setOnTouchListener { _, event ->
                 if (PermissionUtils.isAudioAndStoragePermissionEnable(context).not()) {
                     clickListener.askRecordPermission()
@@ -997,11 +1007,12 @@ class VocabularyPracticeAdapter(
 
                         binding.counterTv.start()
                         this.startTime = System.currentTimeMillis()
-                        clickListener.startRecording(chatModel, layoutPosition, startTime)
+                        clickListener.startRecording(lessonQuestion, layoutPosition, startTime)
                         binding.audioPractiseHint.visibility = GONE
 
                         appAnalytics?.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
-                            ?.addParam("chatId", chatModel.chatId)
+                            ?.addParam("lesson_id", lessonQuestion.lessonId)
+                            ?.addParam("question_id", lessonQuestion.id)
                             ?.push()
                     }
                     MotionEvent.ACTION_MOVE -> {
@@ -1011,7 +1022,7 @@ class VocabularyPracticeAdapter(
                         binding.counterTv.stop()
                         val stopTime = System.currentTimeMillis()
 //                        stopRecording(chatModel, stopTime)
-                        clickListener.stopRecording(chatModel, layoutPosition, stopTime)
+                        clickListener.stopRecording(lessonQuestion, layoutPosition, stopTime)
                         binding.uploadPractiseView.clearAnimation()
                         binding.counterContainer.visibility = GONE
                         binding.audioPractiseHint.visibility = VISIBLE
@@ -1023,7 +1034,7 @@ class VocabularyPracticeAdapter(
                                 startTime
                             )
                         if (timeDifference > 1) {
-                            audioAttachmentInit(chatModel)
+                            audioAttachmentInit(lessonQuestion)
                         }
                     }
                 }
@@ -1032,25 +1043,25 @@ class VocabularyPracticeAdapter(
             }
         }
 
-        private fun startRecording(chatModel: ChatModel, startTime: Long) {
+        private fun startRecording(lessonQuestion: LessonQuestion, startTime: Long) {
 
         }
 
-        fun stopRecording(chatModel: ChatModel, stopTime: Long) {
+        fun stopRecording(lessonQuestion: LessonQuestion, stopTime: Long) {
 
         }
 
-        private fun audioAttachmentInit(chatModel: ChatModel) {
+        private fun audioAttachmentInit(lessonQuestion: LessonQuestion) {
             showPracticeSubmitLayout()
             binding.submitAudioViewContainer.visibility = VISIBLE
-            initializePractiseSeekBar(chatModel)
+            initializePractiseSeekBar(lessonQuestion)
             binding.submitPractiseSeekbar.max =
                 Utils.getDurationOfMedia(context, filePath)?.toInt() ?: 0
             enableSubmitButton()
         }
 
-        private fun initializePractiseSeekBar(chatModel: ChatModel) {
-            binding.practiseSeekbar.progress = chatModel.playProgress
+        private fun initializePractiseSeekBar(lessonQuestion: LessonQuestion) {
+            binding.practiseSeekbar.progress = lessonQuestion.playProgress
             binding.practiseSeekbar.setOnSeekBarChangeListener(
                 object : SeekBar.OnSeekBarChangeListener {
                     var userSelectedPosition = 0
@@ -1084,7 +1095,8 @@ class VocabularyPracticeAdapter(
             binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
             disableSubmitButton()
             appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio practise removed")
-                ?.addParam("chatId", chatModel?.chatId)
+                ?.addParam("lesson_id", lessonQuestion?.lessonId!!)
+                ?.addParam("question_id", lessonQuestion?.id)
                 ?.push()
         }
 
@@ -1168,17 +1180,16 @@ class VocabularyPracticeAdapter(
     }
 
     interface PracticeClickListeners {
-        fun submitPractice(chatModel: ChatModel): Boolean
-        fun startRecording(chatModel: ChatModel, position: Int, startTimeUnit: Long)
-        fun stopRecording(chatModel: ChatModel, position: Int, stopTime: Long)
+        fun submitPractice(lessonQuestion: LessonQuestion): Boolean
+        fun startRecording(lessonQuestion: LessonQuestion, position: Int, startTimeUnit: Long)
+        fun stopRecording(lessonQuestion: LessonQuestion, position: Int, stopTime: Long)
         fun askRecordPermission()
         fun focusChild(position: Int)
-        fun submitQuiz(chatModel: ChatModel, isCorrect: Boolean, questionId: Int)
+        fun submitQuiz(lessonQuestion: LessonQuestion, isCorrect: Boolean, questionId: Int)
+        fun openNextScreen()
         fun quizOptionSelected(
-            chatModel: ChatModel,
+            lessonQuestion: LessonQuestion,
             assessmentQuestions: AssessmentQuestionWithRelations
         )
-
-        fun openNextScreen()
     }
 }

@@ -32,8 +32,8 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.OutrankedDataResponse
-import com.joshtalks.joshskills.ui.day_wise_course.DayWiseCourseActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardItemViewHolder
+import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import kotlinx.coroutines.CoroutineScope
@@ -279,15 +279,16 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
                     0f,
                     (binding.recyclerView.top.toFloat().minus(binding.userItem.top.toFloat()))
                 )
-                animation.setDuration(400)
-                animation.setFillAfter(false)
+                animation.duration = 400
+                animation.fillAfter = false
                 animation.setAnimationListener(object : Animation.AnimationListener {
                     override fun onAnimationStart(p0: Animation?) {
                         binding.rank.text = currentRank.plus(1).toString()
                     }
 
                     override fun onAnimationEnd(p0: Animation?) {
-                        binding.recyclerView.addView(0,
+                        binding.recyclerView.addView(
+                            0,
                             currentMentor?.let {
                                 LeaderBoardItemViewHolder(
                                     it,
@@ -317,15 +318,16 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
                     (binding.recyclerView.top.toFloat().minus(binding.userPic.bottom.toFloat()))
 
                 )
-                animation.setDuration(400)
-                animation.setFillAfter(false)
+                animation.duration = 400
+                animation.fillAfter = false
                 animation.setAnimationListener(object : Animation.AnimationListener {
                     override fun onAnimationStart(p0: Animation?) {
                         binding.rank.text = currentRank.plus(1).toString()
                     }
 
                     override fun onAnimationEnd(p0: Animation?) {
-                        binding.recyclerView.addView(1,
+                        binding.recyclerView.addView(
+                            1,
                             currentMentor?.let {
                                 LeaderBoardItemViewHolder(
                                     it,
@@ -370,11 +372,11 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
         if (lessonInterval==0){
             dismiss()
         } else {
-            requireActivity()?.let { activity ->
+            requireActivity().let { activity ->
                 val resultIntent = Intent()
                 resultIntent.putExtra(IS_BATCH_CHANGED, false)
                 resultIntent.putExtra(LAST_LESSON_INTERVAL, lessonInterval)
-                resultIntent.putExtra(DayWiseCourseActivity.LAST_LESSON_STATUS, LESSON_STATUS.CO)
+                resultIntent.putExtra(LessonActivity.LAST_LESSON_STATUS, LESSON_STATUS.CO)
                 resultIntent.putExtra(LESSON__CHAT_ID, chatId)
                 resultIntent.putExtra(LESSON_NUMBER, lessonNumber)
                 activity.setResult(AppCompatActivity.RESULT_OK, resultIntent)
