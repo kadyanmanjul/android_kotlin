@@ -229,15 +229,35 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             when (tabPosition) {
                 0 -> {
                     appDatabase.lessonDao().updateGrammarSectionStatus(lessonId, status)
+                    lessonLiveData.postValue(
+                        lessonLiveData.value?.apply {
+                            this.grammarStatus = status
+                        }
+                    )
                 }
                 1 -> {
                     appDatabase.lessonDao().updateVocabularySectionStatus(lessonId, status)
+                    lessonLiveData.postValue(
+                        lessonLiveData.value?.apply {
+                            this.vocabStatus = status
+                        }
+                    )
                 }
                 2 -> {
                     appDatabase.lessonDao().updateReadingSectionStatus(lessonId, status)
+                    lessonLiveData.postValue(
+                        lessonLiveData.value?.apply {
+                            this.readingStatus = status
+                        }
+                    )
                 }
                 3 -> {
                     appDatabase.lessonDao().updateSpeakingSectionStatus(lessonId, status)
+                    lessonLiveData.postValue(
+                        lessonLiveData.value?.apply {
+                            this.speakingStatus = status
+                        }
+                    )
                 }
             }
         }
@@ -276,6 +296,12 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 } else {
                     if (status == QUESTION_STATUS.IP) {
                         appDatabase.lessonQuestionDao().updateQuestionStatus("$questionId", status)
+                        val lessonQuestions = lessonQuestionsLiveData.value
+                        lessonQuestionsLiveData.postValue(
+                            lessonQuestions?.apply {
+                                this.filter { it.id == questionId }
+                                    .getOrNull(0)?.status = status
+                            })
                     } else {
                         val resp = AppObjectController.chatNetworkService.updateQuestionStatus(
                             UpdateQuestionStatus(

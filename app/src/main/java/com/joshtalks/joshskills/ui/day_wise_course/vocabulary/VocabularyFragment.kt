@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentVocabularyBinding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
@@ -43,8 +44,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
-const val PRACTISE_OBJECT = "practise_object"
 
 class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.PracticeClickListeners {
     private lateinit var adapter: VocabularyPracticeAdapter
@@ -102,7 +101,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 
         viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner, {
 
-            viewModel.getAssessmentData(it)
+            viewModel.getAssessmentData(it.filter { it.chatType == CHAT_TYPE.VP })
 
         })
 
@@ -118,15 +117,15 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     }
 
     private fun initAdapter(assessmentList: ArrayList<AssessmentWithRelations>) {
-        viewModel.lessonQuestionsLiveData.value?.let {
-            it.sortedBy { it.vpSortOrder }
-            adapter = VocabularyPracticeAdapter(
-                requireContext(),
-                it,
-                assessmentList,
-                this
-            )
-        }
+        viewModel.lessonQuestionsLiveData.value?.filter { it.chatType == CHAT_TYPE.VP }
+            ?.let { lessonQuestions ->
+                adapter = VocabularyPracticeAdapter(
+                    requireContext(),
+                    lessonQuestions.sortedBy { it.vpSortOrder },
+                    assessmentList,
+                    this
+                )
+            }
 
         binding.practiceRv.layoutManager = LinearLayoutManager(requireContext())
         binding.practiceRv.adapter = adapter
@@ -186,11 +185,12 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     }
 
     private fun isAllQuestionsAttempted(): Boolean {
-        viewModel.lessonQuestionsLiveData.value?.forEach { item ->
-            if (item.status != QUESTION_STATUS.AT) {
-                return false
+        viewModel.lessonQuestionsLiveData.value?.filter { it.chatType == CHAT_TYPE.VP }
+            ?.forEach { item ->
+                if (item.status != QUESTION_STATUS.AT) {
+                    return false
+                }
             }
-        }
         return true
     }
 

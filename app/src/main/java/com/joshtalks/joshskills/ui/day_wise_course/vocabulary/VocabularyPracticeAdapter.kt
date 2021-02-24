@@ -150,7 +150,7 @@ class VocabularyPracticeAdapter(
                 if (position > 0)
                     clickListener.focusChild(position - 1)
             } else {
-                collapsCard()
+                collapseCard()
             }
 
             val assessmentQuestions: AssessmentQuestionWithRelations =
@@ -178,14 +178,14 @@ class VocabularyPracticeAdapter(
                 if (binding.quizLayout.visibility == GONE) {
                     expandCard()
                 } else {
-                    collapsCard()
+                    collapseCard()
                 }
             }
             binding.expandIv.setOnClickListener {
                 if (binding.quizLayout.visibility == GONE) {
                     expandCard()
                 } else {
-                    collapsCard()
+                    collapseCard()
                 }
             }
             binding.submitAnswerBtn.setOnClickListener {
@@ -266,7 +266,7 @@ class VocabularyPracticeAdapter(
             )
         }
 
-        private fun collapsCard() {
+        private fun collapseCard() {
             binding.quizLayout.visibility = GONE
             binding.expandIv.setImageDrawable(
                 ContextCompat.getDrawable(

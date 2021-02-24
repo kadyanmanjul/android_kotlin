@@ -1,8 +1,6 @@
 package com.joshtalks.joshskills.repository.local.entity
 
-//import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
 import android.os.Parcelable
-import androidx.lifecycle.LiveData
 import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Delete
@@ -22,7 +20,7 @@ import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.ConvectorForEngagement
+import com.joshtalks.joshskills.repository.local.ConvertorForEngagement
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
@@ -67,13 +65,16 @@ data class ChatModel(
     var sender: Sender? = Sender(),
 
     @ColumnInfo
-    @SerializedName("text") var text: String? = "",
+    @SerializedName("text")
+    var text: String? = "",
 
     @ColumnInfo
-    @SerializedName("type") var type: BASE_MESSAGE_TYPE? = BASE_MESSAGE_TYPE.TX,
+    @SerializedName("type")
+    var type: BASE_MESSAGE_TYPE? = BASE_MESSAGE_TYPE.TX,
 
     @ColumnInfo
-    @SerializedName("url") var url: String?,
+    @SerializedName("url")
+    var url: String?,
 
     @ColumnInfo
     var duration: Int = 0,
@@ -536,7 +537,7 @@ data class PracticeFeedback2(
 open class DataBaseClass(
     @ColumnInfo
     @Expose
-    var questionId: String = "",
+    open var questionId: String = "",
 
     @ColumnInfo
     @Expose
@@ -568,9 +569,6 @@ interface ChatDao {
 
     @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND is_delete_message=0 ORDER BY created ASC,question_id ASC ")
     suspend fun getLastChats(conversationId: String): List<ChatModel>
-
-    @Query(value = "SELECT * FROM chat_table where lesson_id= :lessonId AND is_delete_message=0 ORDER BY created ASC,question_id ASC ")
-    suspend fun getChatsForLessonId(lessonId: Int): List<ChatModel>
 
     @Query(value = "SELECT * FROM chat_table  where chat_id=:chatId")
     suspend fun getChatObject(chatId: String): ChatModel
@@ -626,9 +624,6 @@ interface ChatDao {
 
     @Query("SELECT * FROM question_table WHERE questionId= :questionId")
     suspend fun getQuestionByQuestionId(questionId: String): Question?
-
-    @Query("SELECT * FROM question_table WHERE lesson_id= :lessonId")
-    fun getQuestionsForLesson(lessonId: String): LiveData<List<Question>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAudioMessageList(audioList: List<AudioType>)
@@ -716,15 +711,13 @@ interface ChatDao {
                     question.imageList = AppObjectController.appDatabase.chatDao()
                         .getImagesOfQuestion(questionId = question.questionId)
                 }
-                if (question.lesson != null) {
-                    chatModel.lessons = question.lesson
-                }
 
                 chatModel.question = question
+
                 val lessonModel =
-                    AppObjectController.appDatabase.lessonDao().getLesson(question.lesson_id)
-                chatModel.lessons = lessonModel
-                chatModel.question?.lesson = lessonModel
+                    AppObjectController.appDatabase.lessonDao()
+                        .getLessonFromChatId(chatModel.chatId)
+                chatModel.lesson = lessonModel
             }
         }
         return chatModel
@@ -891,14 +884,14 @@ interface ChatDao {
     @Query("SELECT * FROM  PdfTable  WHERE id= :pdfId")
     suspend fun getPdfById(pdfId: String): PdfType
 
-    @Query("UPDATE question_table SET need_feedback = :status WHERE questionId= :questionId")
-    suspend fun updateFeedbackStatus(questionId: String, status: Boolean?)
+//    @Query("UPDATE question_table SET need_feedback = :status WHERE questionId= :questionId")
+//    suspend fun updateFeedbackStatus(questionId: String, status: Boolean?)
 
-    @Query("SELECT need_feedback from question_table  WHERE questionId= :questionId AND upload_feedback_status=0;")
-    suspend fun getFeedbackStatusOfQuestion(questionId: String): Boolean?
+//    @Query("SELECT need_feedback from question_table  WHERE questionId= :questionId AND upload_feedback_status=0;")
+//    suspend fun getFeedbackStatusOfQuestion(questionId: String): Boolean?
 
-    @Query("UPDATE question_table SET upload_feedback_status = 1 WHERE questionId= :questionId")
-    suspend fun userSubmitFeedbackStatusUpdate(questionId: String)
+//    @Query("UPDATE question_table SET upload_feedback_status = 1 WHERE questionId= :questionId")
+//    suspend fun userSubmitFeedbackStatusUpdate(questionId: String)
 
     @Query("UPDATE chat_table SET last_use_time = :date where chat_id=:chatId ")
     fun lastUsedBy(chatId: String, date: Date = Date())
@@ -928,40 +921,81 @@ enum class OPTION_TYPE(val type: String) {
 }
 
 enum class BASE_MESSAGE_TYPE(val type: String) {
-    A("A"), TX("TX"), VI("VI"), AU("AU"), IM("IM"), Q("Q"), PD("PD"), PR("PR"), AR("AR"),
-    CP("CP"), QUIZ("QUIZ"), TEST("TEST"), OTHER("OTHER"), UNLOCK("UN"), P2P("P2P"),
-    LESSON("LESSON"), CE("CE"), BEST_PERFORMER("BEST_PERFORMER"), NEW_CLASS("NEW_CLASS"),
+    TX("TX"),           // Text
+    VI("VI"),           // Video
+    AU("AU"),           // Audio
+    IM("IM"),           // Image
+    PD("PD"),           // PDF
+    OTHER("OTHER"),
+    Q("Q"),             // Question
+    A("A"),             // Answer
+    AR("AR"),           // Answer in Reply
+    PR("PR"),           // Practice
+    CP("CP"),           // Conversation Practice
+    CE("CE"),           // Certification Exam
+    QUIZ("QUIZ"),
+    TEST("TEST"),
+    UNLOCK("UN"),       // Unlock Next Class
+    P2P("P2P"),         // Voice Calling
+    LESSON("LESSON"),
+    BEST_PERFORMER("BEST_PERFORMER"),
+    NEW_CLASS("NEW_CLASS"),
 }
 
 
 enum class EXPECTED_ENGAGE_TYPE(val type: String) {
-    TX("TX"), VI("VI"), AU("AU"), IM("IM"), DX("DX")
-
+    TX("TX"),       // Text
+    VI("VI"),       // Video
+    AU("AU"),       // Audio
+    IM("IM"),       // Image
+    DX("DX")        // Document
 }
 
 
 enum class MESSAGE_DELIVER_STATUS(val type: Int) {
-    SENT(0), SENT_RECEIVED(1), READ(2)
+    SENT(0),
+    SENT_RECEIVED(1),
+    READ(2)
 }
 
 
 enum class DOWNLOAD_STATUS {
-    DOWNLOADED, DOWNLOADING, FAILED, NOT_START, UPLOADING, UPLOADED, STARTED, REQUEST_DOWNLOADING
+    DOWNLOADED,
+    DOWNLOADING,
+    FAILED,
+    NOT_START,
+    UPLOADING,
+    UPLOADED,
+    STARTED,
+    REQUEST_DOWNLOADING
 }
 
 enum class MESSAGE_STATUS(val type: String) {
-    SEEN_BY_USER("seen_by_user"), DELIVERED("delivered"), SEEN_BY_SERVER("seen")
+    SEEN_BY_USER("seen_by_user"),
+    DELIVERED("delivered"),
+    SEEN_BY_SERVER("seen")
 }
 
 enum class QUESTION_STATUS(val type: String) {
-    NA("NA"), AT("AT"), IP("IP")
+    NA("NA"),       // Not Attempted
+    AT("AT"),       // Attempted
+    IP("IP")        // In Progress
 }
 
 enum class LESSON_STATUS(val type: String) {
-    NO("NO"), AT("AT"), CO("CO")
+    NO("NO"),       // Not Opened
+    AT("AT"),       // Attempted (InProgress)
+    CO("CO")        // Completed
 }
 
 enum class CHAT_TYPE(val type: String) {
-    GR("GR"), VP("VP"), RP("RP"), SP("SP"), OTHER("OTHER"),
-    SOTD("SOTD"), SOTW("SOTW"), SOTM("SOTM"), SOTY("SOTY")
+    GR("GR"),           // Grammar Practice
+    VP("VP"),           // Vocabulary Practice
+    RP("RP"),           // Reading Practice
+    SP("SP"),           // Speaking Practice
+    OTHER("OTHER"),
+    SOTD("SOTD"),       // Student Of The Day
+    SOTW("SOTW"),       // Student Of The Week
+    SOTM("SOTM"),       // Student Of The Month
+    SOTY("SOTY")        // Student Of The Year
 }

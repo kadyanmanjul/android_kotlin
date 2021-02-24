@@ -143,46 +143,14 @@ data class LessonQuestion(
     @Ignore
     var playProgress: Int = 0,
 
-    ) : DataBaseClass(), Parcelable {
-
-//    constructor() : this(
-//        id="",
-//        lessonId = 0,
-//        qText = null,
-//        type = LessonQuestionType.OTHER,
-//        materialType = LessonMaterialType.OTHER,
-//        isDeleted = false,
-//        title = "",
-//        practiceWord = "",
-//        audioList = null,
-//        imageList = null,
-//        videoList = null,
-//        pdfList = null,practiceEngagement = emptyList(),
-//        practiseEngagementV2 = emptyList(),
-//        optionsList = null,
-//        expectedEngageType = null,
-//        interval = -1,
-//        assessmentId = null,
-//        topicId = null,
-//        chatType = CHAT_TYPE.OTHER,
-//        status = QUESTION_STATUS.NA,
-//        vpSortOrder = -1,
-//        created = Date(),
-//        modified = Date(),
-//        isVideoWatchTimeSend = false,
-//        isPlaying = false,
-//        filePath = null,
-//        playProgress = 0
-//    )
-
-}
+    ) : DataBaseClass(), Parcelable
 
 enum class LessonQuestionType(val type: String) {
-    Q("Q"),         // QUESTION
-    PR("PR"),       // PRACTICE
-    QUIZ("QUIZ"),   // QUIZ
-    P2P("P2P"),     // P2P
-    OTHER("OTHER")  // OTHER
+    Q("Q"),             // QUESTION
+    PR("PR"),           // PRACTICE
+    QUIZ("QUIZ"),       // QUIZ
+    P2P("P2P"),         // P2P
+    OTHER("OTHER")      // Default Value
 }
 
 enum class LessonMaterialType(val type: String) {

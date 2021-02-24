@@ -176,6 +176,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
     private fun setupUi(lessonQuestion: LessonQuestion) {
 
         if (lessonQuestion.type == LessonQuestionType.QUIZ) {
+            // LessonQuestionType is QUIZ
             binding.quizTv.text = AppObjectController.getFirebaseRemoteConfig()
                 .getString(FirebaseRemoteConfigKey.TODAYS_QUIZ_TITLE)
             lessonQuestion.assessmentId?.let {
@@ -183,6 +184,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                 viewModel.fetchAssessmentDetails(it)
             }
         } else {
+            // LessonQuestionType is Q
             when (lessonQuestion.materialType) {
 
                 LessonMaterialType.VI -> {
@@ -247,9 +249,9 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ mediaProgressEvent ->
                     if (mediaProgressEvent.progress > 3000 && question.status != QUESTION_STATUS.AT) {
-                        updateVideoQuestionStatus(question)
                         question.status = QUESTION_STATUS.AT
                         question.isVideoWatchTimeSend = true
+                        updateVideoQuestionStatus(question)
                     }
                     val videoPercent =
                         binding.videoPlayer.player?.duration?.let {
@@ -737,7 +739,8 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
     ) {
         lessonActivityListener?.onQuestionStatusUpdate(
             QUESTION_STATUS.AT,
-            question.id, isVideoPercentComplete
+            question.id,
+            isVideoPercentComplete
         )
 
         pdfQuestion?.let {
