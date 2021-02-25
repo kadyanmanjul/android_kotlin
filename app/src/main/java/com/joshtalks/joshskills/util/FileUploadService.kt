@@ -29,6 +29,10 @@ import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
+import java.io.File
+import java.util.*
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.BlockingQueue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -37,10 +41,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
-import java.util.*
-import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.BlockingQueue
 
 
 class FileUploadService : Service() {
@@ -141,7 +141,7 @@ class FileUploadService : Service() {
             try {
                 val filePath = fileQueue.take()
                 Log.e(TAG, "Upload File: $filePath")
-                if (filePath.type == PendingTask.READING_PRACTICE) {
+                if (filePath.type == PendingTask.READING_PRACTICE_NEW) {
                     callUploadFileApiForReadingPractice(filePath)
                 } else {
                     callUploadFileApi(filePath)
@@ -189,13 +189,13 @@ class FileUploadService : Service() {
                 val resp = AppObjectController.chatNetworkService.submitPracticeAsync(requestEngage)
                 if (resp.isSuccessful && resp.body() != null) {
                     // update question status and engagement data here from response
-                    val engangementList = List(1) {
+                    val engagementList = List(1) {
                         resp.body()!!
                     }
                     val question = AppObjectController.appDatabase.chatDao()
                         .getQuestionOnId(pendingTaskModel.requestObject.questionId)
-                    question?.let {
-                        question.practiceEngagement = engangementList
+                    if (question != null) {
+                        question.practiceEngagement = engagementList
                         question.status = QUESTION_STATUS.AT
                         question.practiceEngagement!!.get(0).duration = requestEngage.duration
                         question.practiceEngagement!!.get(0).localPath = requestEngage.localPath
@@ -209,6 +209,26 @@ class FileUploadService : Service() {
                                     pendingTaskModel.requestObject.questionId
                                 )
                             )
+                        }
+                    } else {
+                        val lessonQuestion = AppObjectController.appDatabase.lessonQuestionDao()
+                            .getLessonQuestionById(pendingTaskModel.requestObject.questionId)
+                        lessonQuestion?.let {
+                            it.practiceEngagement = engagementList
+                            it.status = QUESTION_STATUS.AT
+                            it.practiceEngagement!!.get(0).duration = requestEngage.duration
+                            it.practiceEngagement!!.get(0).localPath = requestEngage.localPath
+                            AppObjectController.appDatabase.lessonQuestionDao()
+                                .updateQuestionObject(it)
+
+                            if (resp.body()!!.pointsList.isNullOrEmpty().not()) {
+                                RxBus2.publish(
+                                    SnackBarEvent(
+                                        resp.body()!!.pointsList?.get(0),
+                                        pendingTaskModel.requestObject.questionId
+                                    )
+                                )
+                            }
                         }
                     }
                     AppObjectController.appDatabase.pendingTaskDao().deleteTask(pendingTaskModel.id)
@@ -226,7 +246,10 @@ class FileUploadService : Service() {
             try {
                 val requestEngage = pendingTaskModel.requestObject
                 if (requestEngage.localPath.isNullOrEmpty().not()) {
-                    val obj = mapOf("media_path" to File(requestEngage.localPath!!).name)
+                    val obj = mapOf(
+                        "media_path" to File(requestEngage.localPath!!).name,
+                        "question_id" to pendingTaskModel.requestObject.questionId
+                    )
                     val responseObj =
                         AppObjectController.chatNetworkService.requestUploadMediaAsync(obj).await()
                     val statusCode: Int = uploadOnS3Server(responseObj, requestEngage.localPath!!)
@@ -276,19 +299,19 @@ class FileUploadService : Service() {
     }
 
     private suspend fun deleteRequestFromDbAndMarkQuestionIncomplete(pendingTaskModel: PendingTaskModel) {
-        val lessonId = AppObjectController.appDatabase.chatDao()
+        val lessonId = AppObjectController.appDatabase.lessonQuestionDao()
             .getLessonIdOfQuestion(pendingTaskModel.requestObject.questionId)
 
-        AppObjectController.appDatabase.chatDao().updateQuestionAndLessonStatus(
+        AppObjectController.appDatabase.lessonQuestionDao().updateQuestionStatus(
             pendingTaskModel.requestObject.questionId,
-            QUESTION_STATUS.NA, LESSON_STATUS.AT
+            QUESTION_STATUS.NA
         )
         AppObjectController.appDatabase.lessonDao().updateLessonStatus(
             lessonId,
             LESSON_STATUS.AT
         )
 
-        if (pendingTaskModel.type == PendingTask.READING_PRACTICE) {
+        if (pendingTaskModel.type == PendingTask.READING_PRACTICE_NEW || pendingTaskModel.type == PendingTask.READING_PRACTICE_OLD) {
             AppObjectController.appDatabase.lessonDao()
                 .updateReadingSectionStatus(lessonId, LESSON_STATUS.NO)
         } else {

@@ -1189,7 +1189,7 @@ class VocabularyPracticeAdapter(
         fun openNextScreen()
         fun quizOptionSelected(
             lessonQuestion: LessonQuestion,
-            assessmentQuestions: AssessmentQuestionWithRelations
+            assessmentQuestion: AssessmentQuestionWithRelations
         )
     }
 }

@@ -38,7 +38,6 @@ import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
-import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
@@ -135,7 +134,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
             binding.practiceTitleTv.text =
                 getString(
                     R.string.today_lesson,
-                    (requireActivity() as LessonActivity).lesson.lessonName
+                    viewModel.lessonLiveData.value?.lessonName
                 )
 
             val grammarQuestions = it.filter { it.chatType == CHAT_TYPE.GR }
@@ -452,9 +451,9 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
 
             viewModel.saveAssessmentQuestion(question)
             val correctQuestionList = ArrayList<Int>()
-            assessmentQuestions.forEach { questionWithRealtion ->
-                if (questionWithRealtion.question.isAttempted && questionWithRealtion.question.status == QuestionStatus.CORRECT) {
-                    correctQuestionList.add(questionWithRealtion.question.remoteId)
+            assessmentQuestions.forEach { questionWithRelation ->
+                if (questionWithRelation.question.isAttempted && questionWithRelation.question.status == QuestionStatus.CORRECT) {
+                    correctQuestionList.add(questionWithRelation.question.remoteId)
                 }
             }
             if (currentQuizQuestion == assessmentQuestions.size - 1)
@@ -463,7 +462,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                     quizQuestion?.id,
                     quizCorrectQuestionIds = correctQuestionList
                 )
-
+            viewModel.saveQuizToServer(assessmentQuestions[currentQuizQuestion].question.assessmentId)
             binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.tag as Int)
                 .setBackgroundResource(R.drawable.rb_correct_rect_bg)
 

@@ -148,7 +148,9 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }*/
         try {
-            binding.videoPlayer.onResume()
+            if (isVisible) {
+                binding.videoPlayer.onResume()
+            }
         } catch (ex: Exception) {
         }
         try {
@@ -623,9 +625,6 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
         //binding.improveAnswerBtn.visibility = VISIBLE
         binding.continueBtn.visibility = View.VISIBLE
 
-        lessonActivityListener?.onSectionStatusUpdate(2, true)
-        // activityCallback?.onSectionStatusUpdate(3, true)
-
 
         CoroutineScope(Dispatchers.IO).launch {
             currentLessonQuestion?.interval?.run {
@@ -635,6 +634,8 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                 QUESTION_STATUS.AT,
                 currentLessonQuestion?.id
             )
+            lessonActivityListener?.onSectionStatusUpdate(2, true)
+            // activityCallback?.onSectionStatusUpdate(3, true)
         }
     }
 
@@ -1342,7 +1343,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
             disableSubmitButton()
             //practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
             viewModel.getPointsForVocabAndReading(currentLessonQuestion!!.id)
-            viewModel.addTaskToService(requestEngage)
+            viewModel.addTaskToService(requestEngage, PendingTask.READING_PRACTICE_OLD)
 
             currentLessonQuestion!!.status = QUESTION_STATUS.IP
             showCompletedPractise()

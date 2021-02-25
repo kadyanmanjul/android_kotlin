@@ -367,7 +367,7 @@ class PracticeViewModel(application: Application) :
                 AppObjectController.appDatabase.pendingTaskDao().insertPendingTask(
                     PendingTaskModel(
                         requestEngage,
-                        PendingTask.READING_PRACTICE
+                        PendingTask.READING_PRACTICE_NEW
                     )
                 )
             FileUploadService.uploadSinglePendingTasks(insertedTaskLocalId = insertedId)

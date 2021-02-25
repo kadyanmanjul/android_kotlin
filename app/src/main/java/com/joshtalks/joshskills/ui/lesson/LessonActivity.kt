@@ -18,19 +18,21 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.LESSON_NUMBER
 import com.joshtalks.joshskills.core.LESSON_TWO_OPENED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.ui.day_wise_course.LessonPagerAdapter
+import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 
 class LessonActivity : CoreJoshActivity(), LessonActivityListener {
 
     private lateinit var binding: LessonActivityBinding
-    lateinit var lesson: LessonModel
+
+    //lateinit var lesson: LessonModel
     private val viewModel: LessonViewModel by lazy {
         ViewModelProvider(this).get(LessonViewModel::class.java)
     }
@@ -53,40 +55,49 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
         setObservers()
         viewModel.getLesson(lessonId)
         viewModel.getQuestions(lessonId)
+
+        val helpIv: ImageView = findViewById(R.id.iv_help)
+        helpIv.visibility = View.GONE
+        findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
+        findViewById<View>(R.id.iv_back).setOnClickListener {
+            onBackPressed()
+        }
     }
 
     private fun setObservers() {
 
-        viewModel.lessonLiveData.observe(this, {
-            lesson = it
-        })
+//        viewModel.lessonLiveData.observe(this, {
+//            setUpTabLayout()
+//            setTabCompletionStatus()
+//        })
 
         viewModel.lessonQuestionsLiveData.observe(this, {
-            if (lesson.lessonNo >= 2) {
-                PrefManager.put(LESSON_TWO_OPENED, true)
+            viewModel.lessonLiveData.value?.let {
+                if (it.lessonNo >= 2) {
+                    PrefManager.put(LESSON_TWO_OPENED, true)
+                }
+                titleView.text =
+                    getString(R.string.lesson_no, it.lessonNo)
             }
-
-            titleView.text =
-                getString(R.string.lesson_no, lesson.lessonNo)
-
             setUpTabLayout()
             setTabCompletionStatus()
-
         })
 
     }
 
     override fun onNextTabCall(currentTabNumber: Int) {
         try {
-            val lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
-                    lesson.vocabStatus == LESSON_STATUS.CO &&
-                    lesson.readingStatus == LESSON_STATUS.CO &&
-                    lesson.speakingStatus == LESSON_STATUS.CO
+            viewModel.lessonLiveData.value?.let { lesson ->
+                val lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
+                        lesson.vocabStatus == LESSON_STATUS.CO &&
+                        lesson.readingStatus == LESSON_STATUS.CO &&
+                        lesson.speakingStatus == LESSON_STATUS.CO
 
-            if (lessonCompleted) {
-                openLessonCompleteScreen()
-            } else
-                openIncompleteTab(currentTabNumber)
+                if (lessonCompleted) {
+                    openLessonCompleteScreen()
+                } else
+                    openIncompleteTab(currentTabNumber)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -104,17 +115,21 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
             isVideoPercentComplete,
             quizCorrectQuestionIds
         )
+        setTabCompletionStatus()
     }
 
     override fun onSectionStatusUpdate(tabPosition: Int, isSectionCompleted: Boolean) {
-        val status = if (isSectionCompleted) LESSON_STATUS.CO else LESSON_STATUS.NO
-        when (tabPosition) {
-            0 -> lesson.grammarStatus = status
-            1 -> lesson.vocabStatus = status
-            2 -> lesson.readingStatus = status
-            3 -> lesson.speakingStatus = status
+        viewModel.lessonLiveData.value?.let { lesson ->
+            val status = if (isSectionCompleted) LESSON_STATUS.CO else LESSON_STATUS.NO
+            when (tabPosition) {
+                0 -> lesson.grammarStatus = status
+                1 -> lesson.vocabStatus = status
+                2 -> lesson.readingStatus = status
+                3 -> lesson.speakingStatus = status
+            }
+            viewModel.updateSectionStatus(lesson.id, status, tabPosition)
         }
-        viewModel.updateSectionStatus(lesson.id, status, tabPosition)
+        setTabCompletionStatus()
     }
 
 
@@ -196,57 +211,65 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
             if (nextTabIndex == 4) {
                 nextTabIndex = 0
             } else {
-                when (nextTabIndex) {
-                    0 ->
-                        if (lesson.grammarStatus != LESSON_STATUS.CO) {
-                            binding.lessonViewpager.currentItem = 0
-                            return
-                        } else {
-                            nextTabIndex++
-                        }
-                    1 ->
-                        if (lesson.vocabStatus != LESSON_STATUS.CO) {
-                            binding.lessonViewpager.currentItem = 1
-                            return
-                        } else {
-                            nextTabIndex++
-                        }
-                    2 ->
-                        if (lesson.readingStatus != LESSON_STATUS.CO) {
-                            binding.lessonViewpager.currentItem = 2
-                            return
-                        } else {
-                            nextTabIndex++
-                        }
-                    3 ->
-                        if (lesson.speakingStatus != LESSON_STATUS.CO) {
+                viewModel.lessonLiveData.value?.let { lesson ->
+                    when (nextTabIndex) {
+                        0 ->
+                            if (lesson.grammarStatus != LESSON_STATUS.CO) {
+                                binding.lessonViewpager.currentItem = 0
+                                return
+                            } else {
+                                nextTabIndex++
+                            }
+                        1 ->
+                            if (lesson.vocabStatus != LESSON_STATUS.CO) {
+                                binding.lessonViewpager.currentItem = 1
+                                return
+                            } else {
+                                nextTabIndex++
+                            }
+                        2 ->
+                            if (lesson.readingStatus != LESSON_STATUS.CO) {
+                                binding.lessonViewpager.currentItem = 2
+                                return
+                            } else {
+                                nextTabIndex++
+                            }
+                        3 ->
+                            if (lesson.speakingStatus != LESSON_STATUS.CO) {
+                                binding.lessonViewpager.currentItem = 3
+                                return
+                            } else {
+                                nextTabIndex++
+                            }
+                        else -> {
                             binding.lessonViewpager.currentItem = 3
                             return
-                        } else {
-                            nextTabIndex++
                         }
+                    }
                 }
             }
         }
     }
 
     private fun setTabCompletionStatus() {
-        setTabCompletionStatus(
-            tabs.getChildAt(0),
-            lesson.grammarStatus == LESSON_STATUS.CO
-        )
-        setTabCompletionStatus(
-            tabs.getChildAt(1),
-            lesson.vocabStatus == LESSON_STATUS.CO
-        )
-        setTabCompletionStatus(
-            tabs.getChildAt(2),
-            lesson.readingStatus == LESSON_STATUS.CO
-        )
-        setTabCompletionStatus(
-            tabs.getChildAt(3),
-            lesson.speakingStatus == LESSON_STATUS.CO
-        )
+        viewModel.lessonLiveData.value?.let { lesson ->
+            setTabCompletionStatus(
+                tabs.getChildAt(0),
+                lesson.grammarStatus == LESSON_STATUS.CO
+            )
+            setTabCompletionStatus(
+                tabs.getChildAt(1),
+                lesson.vocabStatus == LESSON_STATUS.CO
+            )
+            setTabCompletionStatus(
+                tabs.getChildAt(2),
+                lesson.readingStatus == LESSON_STATUS.CO
+            )
+            setTabCompletionStatus(
+                tabs.getChildAt(3),
+                lesson.speakingStatus == LESSON_STATUS.CO
+            )
+        }
     }
 
     private fun setTabCompletionStatus(tab: View?, isSectionCompleted: Boolean) {
@@ -321,6 +344,17 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
 
             viewModel.getLesson(lessonId)
             viewModel.getQuestions(lessonId)
+        }
+    }
+
+    override fun onBackPressed() {
+        viewModel.lessonLiveData.value?.let {
+            val resultIntent = Intent()
+            resultIntent.putExtra(LAST_LESSON_INTERVAL, it.interval)
+            resultIntent.putExtra(LAST_LESSON_STATUS, it.status?.name)
+            resultIntent.putExtra(LESSON_NUMBER, it.lessonNo)
+            setResult(RESULT_OK, resultIntent)
+            this@LessonActivity.finish()
         }
     }
 

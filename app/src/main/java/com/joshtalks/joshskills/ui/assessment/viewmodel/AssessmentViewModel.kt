@@ -83,7 +83,7 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
     private suspend fun getAssessmentFromServer(assessmentId: Int) =
         AppObjectController.chatNetworkService.getAssessmentId(assessmentId)
 
-    private fun getAssessmentResponse(assessmentWithRelations: AssessmentWithRelations) =
+    private fun getAssessmentRequest(assessmentWithRelations: AssessmentWithRelations) =
         AssessmentRequest((assessmentWithRelations))
 
 
@@ -101,7 +101,7 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
             updateAssessmentStatus(assessmentId)
             jobs += viewModelScope.launch(Dispatchers.IO) {
                 try {
-                    val assessmentRequest = getAssessmentResponse(assessmentWithRelations)
+                    val assessmentRequest = getAssessmentRequest(assessmentWithRelations)
                     AppObjectController.chatNetworkService.submitTestAsync(assessmentRequest)
 
                 } catch (ex: Throwable) {

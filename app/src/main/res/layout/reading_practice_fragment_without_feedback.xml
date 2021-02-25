@@ -376,7 +376,6 @@
                             android:focusable="true"
                             android:visibility="gone"
                             app:controller_layout_id="@layout/layout_live_player_controller"
-
                             tools:visibility="visible" />
 
                         <com.mindorks.placeholderview.PlaceHolderView

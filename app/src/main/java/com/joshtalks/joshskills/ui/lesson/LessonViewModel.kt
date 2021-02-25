@@ -30,6 +30,7 @@ import com.joshtalks.joshskills.repository.local.entity.practise.PointsListRespo
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.RequestEngage
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
@@ -44,6 +45,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class LessonViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -146,6 +148,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 )
 
                 response.data.forEach {
+                    it.questionId = it.id
                     it.lessonId = lessonId
                     saveQuestionToDB(it)
                 }
@@ -211,10 +214,10 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                             question.practiseEngagementV2?.toString(),
                             NetworkRequestHelper.practiceEnagagement
                         )
-                    question.practiseEngagementV2?.forEach { pe ->
-                        pe.questionForId = question.id
+                    question.practiseEngagementV2?.forEach { practiceEngagementV2 ->
+                        practiceEngagementV2.questionForId = question.id
                         appDatabase.practiceEngagementDao()
-                            .insertPractise(pe)
+                            .insertPractise(practiceEngagementV2)
                     }
                 }
             } catch (ex: Exception) {
@@ -284,24 +287,33 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     )
                     if (resp.isSuccessful && resp.body() != null) {
                         appDatabase.lessonQuestionDao().updateQuestionStatus("$questionId", status)
-                        val lessonQuestions = lessonQuestionsLiveData.value
-                        lessonQuestionsLiveData.postValue(
-                            lessonQuestions?.apply {
-                                this.filter { it.id == questionId }
-                                    .getOrNull(0)?.status = status
-                            })
+                        updateLessonStatus()
+                        appDatabase.lessonQuestionDao().getLessonQuestionById(questionId!!)
+//                        val lessonQuestions = lessonQuestionsLiveData.value
+//                        lessonQuestionsLiveData.postValue(
+//                            lessonQuestions?.apply {
+//                                this.filter { it.id == questionId }
+//                                    .getOrNull(0)?.status = status
+//                            })
                         //updatedLessonResponseLiveData.postValue(resp.body())
                         return@launch
                     }
                 } else {
                     if (status == QUESTION_STATUS.IP) {
                         appDatabase.lessonQuestionDao().updateQuestionStatus("$questionId", status)
-                        val lessonQuestions = lessonQuestionsLiveData.value
-                        lessonQuestionsLiveData.postValue(
-                            lessonQuestions?.apply {
-                                this.filter { it.id == questionId }
-                                    .getOrNull(0)?.status = status
-                            })
+                        updateLessonStatus()
+//                        val updatedQuestion =
+//                            appDatabase.lessonQuestionDao().getLessonQuestionById(questionId!!)
+//                        val lessonQuestions = lessonQuestionsLiveData.value
+//                        lessonQuestionsLiveData.postValue(
+//                            lessonQuestions?.apply {
+//                                this.filter { it.id == questionId }
+//                                    .getOrNull(0)?.apply {
+//                                        this.practiceEngagement =
+//                                            updatedQuestion?.practiceEngagement
+//                                        this.status = status
+//                                    }
+//                            })
                     } else {
                         val resp = AppObjectController.chatNetworkService.updateQuestionStatus(
                             UpdateQuestionStatus(
@@ -315,12 +327,19 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         if (resp.isSuccessful && resp.body() != null) {
                             appDatabase.lessonQuestionDao()
                                 .updateQuestionStatus("$questionId", status)
-                            val lessonQuestions = lessonQuestionsLiveData.value
-                            lessonQuestionsLiveData.postValue(
-                                lessonQuestions?.apply {
-                                    this.filter { it.id == questionId }
-                                        .getOrNull(0)?.status = status
-                                })
+                            updateLessonStatus()
+//                            val updatedQuestion =
+//                                appDatabase.lessonQuestionDao().getLessonQuestionById(questionId!!)
+//                            val lessonQuestions = lessonQuestionsLiveData.value
+//                            lessonQuestionsLiveData.postValue(
+//                                lessonQuestions?.apply {
+//                                    this.filter { it.id == questionId }
+//                                        .getOrNull(0)?.apply {
+//                                            this.practiceEngagement =
+//                                                updatedQuestion?.practiceEngagement
+//                                            this.status = status
+//                                        }
+//                                })
                             //updatedLessonResponseLiveData.postValue(resp.body())
                             return@launch
                         }
@@ -405,6 +424,21 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    fun saveQuizToServer(assessmentId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val assessmentWithRelations: AssessmentWithRelations? =
+                    appDatabase.assessmentDao().getAssessmentById(assessmentId)
+                assessmentWithRelations?.let {
+                    val assessmentRequest = AssessmentRequest((it))
+                    AppObjectController.chatNetworkService.submitTestAsync(assessmentRequest)
+                }
+            } catch (ex: Throwable) {
+                Timber.e(ex)
+            }
+        }
+    }
+
     fun getMaxIntervalForVideo(videoId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             appDatabase.videoEngageDao()
@@ -429,11 +463,11 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun addTaskToService(requestEngage: RequestEngage) {
+    fun addTaskToService(requestEngage: RequestEngage, pendingTaskType: PendingTask) {
         viewModelScope.launch(Dispatchers.IO) {
             val insertedId =
                 appDatabase.pendingTaskDao().insertPendingTask(
-                    PendingTaskModel(requestEngage, PendingTask.READING_PRACTICE_OLD)
+                    PendingTaskModel(requestEngage, pendingTaskType)
                 )
             FileUploadService.uploadSinglePendingTasks(
                 AppObjectController.joshApplication,
@@ -544,6 +578,24 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             }
             getTopicFromDB(topicId)
         }
+    }
+
+    private suspend fun updateLessonStatus() {
+        lessonLiveData.postValue(
+            lessonLiveData.value?.apply {
+                val lessonStatus = if (
+                    this.grammarStatus == LESSON_STATUS.CO &&
+                    this.vocabStatus == LESSON_STATUS.CO &&
+                    this.readingStatus == LESSON_STATUS.CO &&
+                    this.speakingStatus == LESSON_STATUS.CO
+                ) {
+                    LESSON_STATUS.CO
+                } else {
+                    LESSON_STATUS.AT
+                }
+                appDatabase.lessonDao().updateLessonStatus(this.id, lessonStatus)
+            }
+        )
     }
 
 }

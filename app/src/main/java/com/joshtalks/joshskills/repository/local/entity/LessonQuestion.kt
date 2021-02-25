@@ -143,7 +143,11 @@ data class LessonQuestion(
     @Ignore
     var playProgress: Int = 0,
 
-    ) : DataBaseClass(), Parcelable
+    ) : DataBaseClass(), Parcelable {
+    init {
+        questionId = id
+    }
+}
 
 enum class LessonQuestionType(val type: String) {
     Q("Q"),             // QUESTION
@@ -174,13 +178,16 @@ interface LessonQuestionDao {
     @Update
     suspend fun updateQuestionObject(vararg question: LessonQuestion)
 
-    @Query("UPDATE lesson_question set status = :questionStatus WHERE questionId=:questionId")
+    @Query("UPDATE lesson_question set status = :questionStatus WHERE id=:questionId")
     suspend fun updateQuestionStatus(questionId: String, questionStatus: QUESTION_STATUS)
+
+    @Query("SELECT lessonId FROM lesson_question WHERE id = :questionId")
+    fun getLessonIdOfQuestion(questionId: String): Int
 
     @Query("SELECT * FROM lesson_question WHERE lessonId= :lessonId")
     fun getQuestionsForLesson(lessonId: Int): List<LessonQuestion>
 
-    @Query(value = "SELECT * FROM lesson_question  where questionId=:questionId")
+    @Query(value = "SELECT * FROM lesson_question  where id=:questionId")
     suspend fun getLessonQuestionById(questionId: String): LessonQuestion?
 
     @Transaction

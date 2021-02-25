@@ -26,8 +26,8 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_back"
-            android:layout_width="@dimen/_24sdp"
-            android:layout_height="@dimen/_24sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/_4sdp"
@@ -35,7 +35,8 @@
             android:clickable="true"
             android:focusable="true"
             android:gravity="center_vertical|start"
-            android:padding="@dimen/_4sdp"
+            android:paddingTop="@dimen/_6sdp"
+            android:paddingBottom="@dimen/_6sdp"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_arrow_back"
             tools:visibility="visible" />
@@ -65,7 +66,7 @@
             android:foreground="?android:attr/selectableItemBackground"
             android:gravity="start|center"
             android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
             android:textColor="@color/white"
             tools:text="Spoken English Course" />
 
@@ -97,13 +98,13 @@
             android:id="@+id/iv_help"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignWithParentIfMissing="true"
             android:layout_centerVertical="true"
             android:layout_toStartOf="@id/iv_setting"
-            android:layout_alignWithParentIfMissing="true"
             android:padding="@dimen/_4sdp"
-            app:srcCompat="@drawable/ic_help_outline"
             android:tint="@color/white"
-            android:visibility="visible" />
+            android:visibility="visible"
+            app:srcCompat="@drawable/ic_help_outline" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_setting"
@@ -114,8 +115,8 @@
             android:padding="@dimen/_4sdp"
             android:tint="@color/white"
             android:visibility="gone"
-            tools:visibility="visible"
-            app:srcCompat="@drawable/ic_more_option" />
+            app:srcCompat="@drawable/ic_more_option"
+            tools:visibility="visible" />
     </RelativeLayout>
 
 </com.google.android.material.appbar.MaterialToolbar>

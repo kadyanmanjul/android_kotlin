@@ -16,13 +16,17 @@ data class ChoiceRequest(
     var userSelectedOrder: Int? = 100,
 
     @SerializedName("right_matching")
-    var rightMatchingId: Int? = 100
+    var rightMatchingId: Int? = 100,
+
+    @SerializedName("is_correct")
+    val isCorrect: Boolean = false
 
 ) : Parcelable {
     constructor(choice: Choice) : this(
         id = choice.remoteId,
         userSelectedOrder = choice.userSelectedOrder,
-        rightMatchingId = null
+        rightMatchingId = null,
+        isCorrect = choice.isCorrect
     )
 
     constructor(choice: Choice, choiceList: List<Choice>) : this(
@@ -42,6 +46,7 @@ data class ChoiceRequest(
         } else {
             100
         },
-        userSelectedOrder = choice.userSelectedOrder.plus(1)
+        userSelectedOrder = choice.userSelectedOrder.plus(1),
+        isCorrect = choice.isCorrect
     )
 }

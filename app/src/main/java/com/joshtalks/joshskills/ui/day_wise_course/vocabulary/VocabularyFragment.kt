@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
+import com.joshtalks.joshskills.repository.local.entity.PendingTask
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -138,13 +139,14 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 
     override fun quizOptionSelected(
         lessonQuestion: LessonQuestion,
-        assessmentQuestions: AssessmentQuestionWithRelations
+        assessmentQuestion: AssessmentQuestionWithRelations
     ) {
-        viewModel.saveAssessmentQuestion(assessmentQuestions)
+        viewModel.saveAssessmentQuestion(assessmentQuestion)
         lessonActivityListener?.onQuestionStatusUpdate(
             QUESTION_STATUS.IP,
             lessonQuestion.id
         )
+        viewModel.saveQuizToServer(assessmentQuestion.question.assessmentId)
         lessonQuestion.status = QUESTION_STATUS.IP
         currentQuestion = null
         adapter.notifyDataSetChanged()
@@ -238,7 +240,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                         requestEngage.answerUrl = lessonQuestion.filePath
                     }
                     delay(1000)
-                    viewModel.addTaskToService(requestEngage)
+                    viewModel.addTaskToService(requestEngage, PendingTask.VOCABULARY_PRACTICE)
 
                 }
                 return true

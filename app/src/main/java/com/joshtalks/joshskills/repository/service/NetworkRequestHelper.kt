@@ -27,10 +27,10 @@ object NetworkRequestHelper {
     ): Job {
         return CoroutineScope(Dispatchers.IO).launch {
             try {
-                val tempMap: Map<String, String> = mapOf(Pair("created", "0"))
+//                val tempMap: Map<String, String> = mapOf(Pair("created", "0"))
                 val resp = AppObjectController.chatNetworkService.getUnReceivedMessageAsync(
                     conversationId,
-                    tempMap
+                    queryMap
                 )
                 if (resp.chatModelList.isNullOrEmpty()) {
                     RxBus2.publish(MessageCompleteEventBus(false))
@@ -166,10 +166,10 @@ object NetworkRequestHelper {
     ): VideoType? {
         var videoType1: VideoType? = null
         try {
-            val tempMap: Map<String, String> = mapOf(Pair("created", "0"))
+//            val tempMap: Map<String, String> = mapOf(Pair("created", "0"))
             val resp = AppObjectController.chatNetworkService.getUnReceivedMessageAsync(
                 conversationId,
-                tempMap
+                queryMap
             )
             if (resp.chatModelList.isNullOrEmpty().not()) {
                 PrefManager.put(
