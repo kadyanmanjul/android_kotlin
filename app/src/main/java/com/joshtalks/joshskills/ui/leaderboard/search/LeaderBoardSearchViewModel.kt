@@ -20,7 +20,7 @@ class LeaderBoardSearchViewModel : ViewModel() {
     private var debounceJob: Job? = null
     private var currentSearchedKey: String = ""
 
-    //    val searchedKeyLiveData: MutableLiveData<String> = MutableLiveData()
+        val searchedKeyLiveData: MutableLiveData<String> = MutableLiveData()
     val leaderBoardDataOfToday: MutableLiveData<List<LeaderboardMentor>> = MutableLiveData()
     val leaderBoardDataOfWeek: MutableLiveData<List<LeaderboardMentor>> = MutableLiveData()
     val leaderBoardDataOfMonth: MutableLiveData<List<LeaderboardMentor>> = MutableLiveData()
@@ -30,8 +30,13 @@ class LeaderBoardSearchViewModel : ViewModel() {
     fun performSearch(key: String) {
         debounceJob?.cancel()
         currentSearchedKey = key
-//        searchedKeyLiveData.postValue(currentSearchedKey)
+        searchedKeyLiveData.postValue(currentSearchedKey)
         debounceJob = viewModelScope.launch(Dispatchers.IO) {
+            leaderBoardDataOfToday.postValue(ArrayList())
+            leaderBoardDataOfWeek.postValue(ArrayList())
+            leaderBoardDataOfMonth.postValue(ArrayList())
+            if (key.isEmpty())
+                return@launch
             delay(waitMs)
             val call1 = async(Dispatchers.IO) {
                 searchQuery(key, LeaderboardType.TODAY, 0)?.let {

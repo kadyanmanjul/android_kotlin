@@ -99,6 +99,11 @@ class LeaderboardSearchResultFragment : Fragment() {
                 })
             }
         }
+
+        viewModel.searchedKeyLiveData.observe(viewLifecycleOwner, {
+            itemList.clear()
+            adapter.notifyDataSetChanged()
+        })
     }
 
     private fun setData(leaderboardResponse1: List<LeaderboardMentor>) {
