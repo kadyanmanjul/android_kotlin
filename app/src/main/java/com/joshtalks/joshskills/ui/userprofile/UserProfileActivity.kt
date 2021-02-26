@@ -31,7 +31,6 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.AwardCategory
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
-import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
 import com.karumi.dexter.MultiplePermissionsReport
@@ -41,12 +40,12 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.text.DecimalFormat
+import java.util.*
 import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.text.DecimalFormat
-import java.util.*
 
 class UserProfileActivity : BaseActivity() {
 
@@ -436,7 +435,7 @@ class UserProfileActivity : BaseActivity() {
         CoroutineScope(Dispatchers.IO).launch {
 
             // There are no request code
-            result.data?.data?.let {
+            result.data.data.let {
                 val selectedImage: Uri = it
                 val filePathColumn = arrayOf<String>(MediaStore.Images.Media.DATA)
                 var bitmap: Bitmap? = null
@@ -461,10 +460,10 @@ class UserProfileActivity : BaseActivity() {
     ) { result ->
         CoroutineScope(Dispatchers.IO).launch {
 
-            if (result.data?.hasExtra(JoshCameraActivity.IMAGE_RESULTS)!!) {
+            if (result.data.hasExtra(JoshCameraActivity.IMAGE_RESULTS)!!) {
                 val returnValue =
-                    result.data?.getStringArrayListExtra(JoshCameraActivity.IMAGE_RESULTS)
-                returnValue?.get(0)?.let { addUserImageInView(it) }
+                    result.data.getStringArrayListExtra(JoshCameraActivity.IMAGE_RESULTS)
+                returnValue.get(0).let { addUserImageInView(it) }
             }
         }
     }
