@@ -296,6 +296,14 @@
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
+            android:name=".ui.leaderboard.search.LeaderBoardSearchActivity"
+            android:alwaysRetainTaskState="true"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
+            android:launchMode="singleTop"
+            android:theme="@style/AppNoBarTheme"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />

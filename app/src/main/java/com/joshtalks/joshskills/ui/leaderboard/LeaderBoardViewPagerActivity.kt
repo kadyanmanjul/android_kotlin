@@ -1,7 +1,11 @@
 package com.joshtalks.joshskills.ui.leaderboard
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -14,9 +18,11 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.ActivityLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
+import com.joshtalks.joshskills.ui.leaderboard.search.LeaderBoardSearchActivity
 import java.util.HashMap
 import java.util.Locale
 import kotlinx.android.synthetic.main.base_toolbar.iv_back
+import kotlinx.android.synthetic.main.base_toolbar.iv_earn
 import kotlinx.android.synthetic.main.base_toolbar.iv_help
 import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 
@@ -50,7 +56,28 @@ class LeaderBoardViewPagerActivity : BaseActivity() {
                 openHelpActivity()
             }
         }
+        with(iv_earn) {
+            visibility = View.VISIBLE
+            setImageDrawable(
+                ContextCompat.getDrawable(
+                    this@LeaderBoardViewPagerActivity,
+                    R.drawable.ic_search
+                )
+            )
+            setOnClickListener { openSearchActivity() }
+        }
         text_message_title.text = getString(R.string.leaderboard)
+    }
+
+    private fun openSearchActivity() {
+
+        val searchActivityResult: ActivityResultLauncher<Intent> =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    viewModel.getFullLeaderBoardData(Mentor.getInstance().getId())
+                }
+            }
+        searchActivityResult.launch(LeaderBoardSearchActivity.getSearchActivityIntent(this))
     }
 
     private fun addObserver() {
@@ -58,8 +85,7 @@ class LeaderBoardViewPagerActivity : BaseActivity() {
             mapOfVisitedPage.put(0, 0)
             mapOfVisitedPage.put(1, 0)
             mapOfVisitedPage.put(2, 0)
-            binding.viewPager.adapter =
-                LeaderBoardViewPagerAdapter(this, it)
+
             setTabText(it)
 
             binding.viewPager.registerOnPageChangeCallback(object :
@@ -116,6 +142,8 @@ class LeaderBoardViewPagerActivity : BaseActivity() {
     private fun initViewPager() {
         binding.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         binding.viewPager.isUserInputEnabled = true
+        binding.viewPager.adapter =
+            LeaderBoardViewPagerAdapter(this)
         //binding.viewPager.offscreenPageLimit = 10
     }
 

@@ -946,25 +946,30 @@ fun ImageView.setImage(url: String, context: Context = AppObjectController.joshA
         .into(this)
 }
 
+fun ImageView.setUserInitial(userName: String, dpToPx: Int = 16) {
+    val font = Typeface.createFromAsset(
+        AppObjectController.joshApplication.assets,
+        "fonts/OpenSans-SemiBold.ttf"
+    )
+    val drawable: TextDrawable = TextDrawable.builder()
+        .beginConfig()
+        .textColor(ContextCompat.getColor(AppObjectController.joshApplication, R.color.white))
+        .useFont(font)
+        .fontSize(Utils.dpToPx(dpToPx))
+        .toUpperCase()
+        .endConfig()
+        .buildRound(
+            getUserNameInShort(userName),
+            ContextCompat.getColor(AppObjectController.joshApplication, R.color.button_color)
+        )
+    this.background = drawable
+    this.setImageDrawable(drawable)
+}
+
+
 fun ImageView.setUserImageOrInitials(url: String?, userName: String, dpToPx: Int = 16) {
     if (url.isNullOrEmpty()) {
-        val font = Typeface.createFromAsset(
-            AppObjectController.joshApplication.assets,
-            "fonts/OpenSans-SemiBold.ttf"
-        )
-        val drawable: TextDrawable = TextDrawable.builder()
-            .beginConfig()
-            .textColor(ContextCompat.getColor(AppObjectController.joshApplication, R.color.white))
-            .useFont(font)
-            .fontSize(Utils.dpToPx(dpToPx))
-            .toUpperCase()
-            .endConfig()
-            .buildRound(
-                getUserNameInShort(userName),
-                ContextCompat.getColor(AppObjectController.joshApplication, R.color.button_color)
-            )
-        this.background = drawable
-        this.setImageDrawable(drawable)
+        setUserInitial(userName, dpToPx)
     } else {
         this.setImage(url)
     }
@@ -1217,7 +1222,7 @@ fun getRandomName(): String {
     return name.random().toString().plus(ename.random().toString())
 }
 
-fun playSnackbarSound(context: Context){
+fun playSnackbarSound(context: Context) {
     val mediaplayer: MediaPlayer = MediaPlayer.create(
         context,
         //R.raw.ting

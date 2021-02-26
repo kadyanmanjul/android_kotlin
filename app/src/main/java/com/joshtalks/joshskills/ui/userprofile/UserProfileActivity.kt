@@ -255,6 +255,7 @@ class UserProfileActivity : BaseActivity() {
             this.awardCategory = userData.awardCategory
             binding.awardsHeading.visibility = View.VISIBLE
             if (checkIsAwardAchieved(userData.awardCategory)) {
+                binding.multiLineLl.removeAllViews()
                 userData.awardCategory?.forEach { awardCategory ->
                     val view = addLinerLayout(awardCategory)
                     if (view != null) {

@@ -22,6 +22,9 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val leaderBoardData: MutableLiveData<HashMap<String, LeaderboardResponse>> = MutableLiveData()
     val leaderBoardDataOfPage: MutableLiveData<LeaderboardResponse> = MutableLiveData()
+    val leaderBoardDataOfToday: MutableLiveData<LeaderboardResponse> = MutableLiveData()
+    val leaderBoardDataOfWeek: MutableLiveData<LeaderboardResponse> = MutableLiveData()
+    val leaderBoardDataOfMonth: MutableLiveData<LeaderboardResponse> = MutableLiveData()
 
     fun getFullLeaderBoardData(mentorId: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -30,16 +33,19 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
                 val map = HashMap<String, LeaderboardResponse>()
                 val call1 = async(Dispatchers.IO) {
                     getMentorData(mentorId, "TODAY")?.let {
+                        leaderBoardDataOfToday.postValue(it)
                         map.put("TODAY", it)
                     }
                 }
                 val call2 = async(Dispatchers.IO) {
                     getMentorData(mentorId, "WEEK")?.let {
+                        leaderBoardDataOfWeek.postValue(it)
                         map.put("WEEK", it)
                     }
                 }
                 val call3 = async(Dispatchers.IO) {
                     getMentorData(mentorId, "MONTH")?.let {
+                        leaderBoardDataOfMonth.postValue(it)
                         map.put("MONTH", it)
                     }
                 }

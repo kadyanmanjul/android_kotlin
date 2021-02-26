@@ -14,7 +14,9 @@ import com.joshtalks.joshskills.repository.server.FAQ
 import com.joshtalks.joshskills.repository.server.FAQCategory
 import com.joshtalks.joshskills.repository.server.FeedbackVoipResponse
 import com.joshtalks.joshskills.repository.server.FreshChatRestoreIDResponse
+import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
+import com.joshtalks.joshskills.repository.server.LeaderboardType
 import com.joshtalks.joshskills.repository.server.NPSByUserRequest
 import com.joshtalks.joshskills.repository.server.RequestCertificateGenerate
 import com.joshtalks.joshskills.repository.server.RequestComplaint
@@ -291,5 +293,11 @@ interface CommonNetworkService {
     suspend fun getUnreadMessageCount(
         @Path("conversation_id") conversationId: String
     ): Response<JsonObject>
+
+    @GET("$DIR/leaderboard/get_filtered_leaderboard")
+    suspend fun searchLeaderboardMember(
+        @Query("key") word: String,
+        @Query("interval_type") intervalType: LeaderboardType
+    ): Response<List<LeaderboardMentor>>
 
 }

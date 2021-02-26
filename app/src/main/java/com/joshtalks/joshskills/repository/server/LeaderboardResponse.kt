@@ -32,5 +32,12 @@ data class LeaderboardResponse(
     @SerializedName("last_mentor_list")
     val last_mentor_list: List<LeaderboardMentor>?,
     @SerializedName("above_list_total_pages")
-    val totalpage: Int=1,
+    val totalpage: Int = 1,
 ) : Parcelable
+
+enum class LeaderboardType {
+    TODAY,
+    WEEK,
+    MONTH
+}
+

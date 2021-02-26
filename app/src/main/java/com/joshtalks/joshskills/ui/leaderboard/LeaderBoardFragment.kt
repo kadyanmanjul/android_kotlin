@@ -30,19 +30,17 @@ class LeaderBoardFragment : Fragment() {
 
     private lateinit var binding: FragmentLeaderboardViewPagerBinding
     private lateinit var type: String
-    private var leaderboardResponse: LeaderboardResponse? = null
     private var compositeDisposable = CompositeDisposable()
     private lateinit var linearLayoutManager: LinearLayoutManager
     private var userPosition: Int = 0
     private var userRank: Int = Int.MAX_VALUE
-    private val viewModel by lazy { ViewModelProvider(this).get(LeaderBoardViewModel::class.java) }
+    private val viewModel by lazy { ViewModelProvider(requireActivity()).get(LeaderBoardViewModel::class.java) }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             type = it.getString(TYPE) ?: EMPTY
-            leaderboardResponse = it.getParcelable(RESPONSE)
         }
     }
 
@@ -58,19 +56,19 @@ class LeaderBoardFragment : Fragment() {
                 false
             )
         binding.lifecycleOwner = this
+
+
         return binding.root
     }
 
     companion object {
         private const val TYPE = "leadberboard_type"
-        private const val RESPONSE = "leadberboard_response"
 
         @JvmStatic
-        fun newInstance(type: String, leaderboardResponse: LeaderboardResponse?) =
+        fun newInstance(type: String) =
             LeaderBoardFragment().apply {
                 arguments = Bundle().apply {
                     putString(TYPE, type)
-                    putParcelable(RESPONSE, leaderboardResponse)
                 }
             }
     }
@@ -112,9 +110,6 @@ class LeaderBoardFragment : Fragment() {
 
         binding.recyclerView.addOnScrollListener(object :
             RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-            }
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -133,65 +128,21 @@ class LeaderBoardFragment : Fragment() {
     }
 
     private fun addObserver() {
-        leaderboardResponse?.let {
-            //binding.infoText.text = it.info
-            userRank = it.current_mentor?.ranking ?: 0
-            it.current_mentor?.let {
-                setCurrentUserDetails(it)
+        when (type) {
+            "TODAY" -> {
+                viewModel.leaderBoardDataOfToday.observe(viewLifecycleOwner, Observer {
+                    setData(it)
+                })
             }
-            it.lastWinner?.let {
-                binding.recyclerView.addView(LeaderBoardWinnerItemViewHolder(it, requireContext()))
+            "WEEK" -> {
+                viewModel.leaderBoardDataOfWeek.observe(viewLifecycleOwner, Observer {
+                    setData(it)
+                })
             }
-            binding.recyclerView.addView(
-                LeaderBoardItemViewHolder(
-                    LeaderboardMentor(
-                        null, null, null, null, null, 0, 0
-                    ), requireContext(), isHeader = true
-                )
-            )
-            it.top_50_mentor_list?.forEach {
-                binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
-            }
-
-            if (userRank in 1..47) {
-                userPosition = userRank.minus(3)
-            } else if (userRank in 48..50) {
-                userPosition = userRank.minus(3)
-            } else {
-                userPosition = 53
-            }
-
-            if (it.below_three_mentor_list.isNullOrEmpty().not() &&
-                it.below_three_mentor_list?.get(0)?.ranking!! > 51
-            )
-                binding.recyclerView.addView(EmptyItemViewHolder())
-            it.below_three_mentor_list?.forEach {
-                binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
-            }
-            if (userPosition == 53)
-                it.current_mentor?.let {
-                    binding.recyclerView.addView(
-                        LeaderBoardItemViewHolder(
-                            it,
-                            requireContext(),
-                            true
-                        )
-                    )
-                }
-
-            it.above_three_mentor_list?.forEach {
-                binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
-            }
-            var lastPosition = it.current_mentor?.ranking ?: 0
-            if (it.above_three_mentor_list?.isNullOrEmpty()!!.not()) {
-                lastPosition =
-                    it.above_three_mentor_list.get(it.above_three_mentor_list.size.minus(1)).ranking
-            }
-
-            binding.recyclerView.addView(EmptyItemViewHolder())
-
-            it.last_mentor_list?.forEach {
-                binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
+            "MONTH" -> {
+                viewModel.leaderBoardDataOfMonth.observe(viewLifecycleOwner, Observer {
+                    setData(it)
+                })
             }
         }
 
@@ -203,6 +154,71 @@ class LeaderBoardFragment : Fragment() {
             }
 
         })
+    }
+
+    private fun setData(leaderboardResponse1: LeaderboardResponse) {
+        userRank = leaderboardResponse1.current_mentor?.ranking ?: 0
+        leaderboardResponse1.current_mentor?.let {
+            setCurrentUserDetails(it)
+        }
+        leaderboardResponse1.lastWinner?.let {
+            binding.recyclerView.addView(LeaderBoardWinnerItemViewHolder(it, requireContext()))
+        }
+        binding.recyclerView.addView(
+            LeaderBoardItemViewHolder(
+                LeaderboardMentor(
+                    null, null, null, null, null, 0, 0
+                ), requireContext(), isHeader = true
+            )
+        )
+        leaderboardResponse1.top_50_mentor_list?.forEach {
+            binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
+        }
+
+        if (userRank in 1..47) {
+            userPosition = userRank.minus(3)
+        } else if (userRank in 48..50) {
+            userPosition = userRank.minus(3)
+        } else {
+            userPosition = 53
+        }
+
+        if (leaderboardResponse1.below_three_mentor_list.isNullOrEmpty().not() &&
+            leaderboardResponse1.below_three_mentor_list?.get(0)?.ranking!! > 51
+        )
+            binding.recyclerView.addView(EmptyItemViewHolder())
+        leaderboardResponse1.below_three_mentor_list?.forEach {
+            binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
+        }
+        if (userPosition == 53)
+            leaderboardResponse1.current_mentor?.let {
+                binding.recyclerView.addView(
+                    LeaderBoardItemViewHolder(
+                        it,
+                        requireContext(),
+                        true
+                    )
+                )
+            }
+
+        leaderboardResponse1.above_three_mentor_list?.forEach {
+            binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
+        }
+        var lastPosition = leaderboardResponse1.current_mentor?.ranking ?: 0
+        if (leaderboardResponse1.above_three_mentor_list?.isNullOrEmpty()!!.not()) {
+            lastPosition =
+                leaderboardResponse1.above_three_mentor_list.get(
+                    leaderboardResponse1.above_three_mentor_list.size.minus(
+                        1
+                    )
+                ).ranking
+        }
+
+        binding.recyclerView.addView(EmptyItemViewHolder())
+
+        leaderboardResponse1.last_mentor_list?.forEach {
+            binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
+        }
     }
 
     private fun setCurrentUserDetails(response: LeaderboardMentor) {
@@ -217,7 +233,7 @@ class LeaderBoardFragment : Fragment() {
         binding.userPic.setUserImageOrInitials(response.photoUrl, response.name!!)
         binding.userLayout.visibility = View.VISIBLE
 
-        if (response.isOnline != null && response.isOnline!!) {
+        if (response.isOnline != null && response.isOnline) {
             binding.onlineStatusIv.visibility = View.VISIBLE
         } else {
             binding.onlineStatusIv.visibility = View.GONE

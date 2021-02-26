@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.leaderboard.search.LeaderBoardSearchActivity" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/search_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/colorPrimaryDark"
+            android:paddingBottom="@dimen/_8sdp"
+            app:layout_constraintBottom_toTopOf="@+id/tab_layout">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/back_iv"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:onClick="@{()->handler.onBackPressed()}"
+                android:paddingVertical="@dimen/_4sdp"
+                android:src="@drawable/ic_arrow_back"
+                android:tint="@color/black"
+                app:layout_constraintBottom_toBottomOf="@+id/search_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/search_view" />
+
+            <View
+                android:id="@+id/search_bg"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/grey_rounded_bg"
+                android:paddingHorizontal="@dimen/_16sdp"
+                app:layout_constraintBottom_toBottomOf="@+id/search_view"
+                app:layout_constraintEnd_toEndOf="@+id/clear_iv"
+                app:layout_constraintStart_toStartOf="@+id/search_view"
+                app:layout_constraintTop_toTopOf="@+id/search_view" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/search_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:background="@color/transparent"
+                android:hint="@string/search_leaderboard"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:maxLines="1"
+                android:minHeight="@dimen/_20sdp"
+                android:paddingHorizontal="@dimen/_12sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toStartOf="@+id/clear_iv"
+                app:layout_constraintStart_toEndOf="@id/back_iv"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/clear_iv"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:onClick="@{()->handler.clearSearchText()}"
+                android:paddingVertical="@dimen/_4sdp"
+                android:paddingEnd="@dimen/_8sdp"
+                android:src="@drawable/ic_cross"
+                android:tint="@color/black"
+                app:layout_constraintBottom_toBottomOf="@+id/search_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/search_view" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/rank"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="@dimen/_8sdp"
+            android:text="@string/rank"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.01"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:text="@string/name"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/points"
+            app:layout_constraintEnd_toStartOf="@id/points"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/rank"
+            app:layout_constraintTop_toTopOf="@+id/points"
+            app:layout_goneMarginStart="@dimen/_84sdp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/points"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:text="@string/points"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/rank"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/rank" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:tabStripEnabled="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/search_layout"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="@color/button_color"
+            app:tabIndicatorFullWidth="false"
+            app:tabIndicatorHeight="@dimen/_2sdp"
+            app:tabMode="fixed"
+            app:tabPaddingEnd="0dp"
+            app:tabPaddingStart="0dp"
+            app:tabSelectedTextColor="@color/button_color"
+            app:tabTextAppearance="@style/LeaderBoardTabLayoutStyle" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rank" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

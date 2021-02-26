@@ -1,10 +1,11 @@
-package com.joshtalks.joshskills.ui.leaderboard
+package com.joshtalks.joshskills.ui.leaderboard.search
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.joshtalks.joshskills.repository.server.LeaderboardType
 
-class LeaderBoardViewPagerAdapter(
+class LeaderboardSearchPagerAdapter(
     fragmentActivity: FragmentActivity
 ) :
     FragmentStateAdapter(fragmentActivity) {
@@ -17,13 +18,13 @@ class LeaderBoardViewPagerAdapter(
     override fun createFragment(position: Int): Fragment {
         return when (position) {
             0 -> {
-                LeaderBoardFragment.newInstance("TODAY")
+                LeaderboardSearchResultFragment.newInstance(LeaderboardType.TODAY)
             }
             1 -> {
-                LeaderBoardFragment.newInstance("WEEK")
+                LeaderboardSearchResultFragment.newInstance(LeaderboardType.WEEK)
             }
             else -> {
-                LeaderBoardFragment.newInstance("MONTH")
+                LeaderboardSearchResultFragment.newInstance(LeaderboardType.MONTH)
             }
         }
 

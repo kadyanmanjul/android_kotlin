@@ -841,6 +841,8 @@
     <string name="spoke_for_minute">Spoke for %1$s </string>
     <string name="maybe">Maybe</string>
     <string name="block_user_hint">By clicking no you are blocking %s</string>
+    <string name="search_leaderboard">Search Leaderboard</string>
+    <string name="rank">Rank</string>
 
 
 </resources>
