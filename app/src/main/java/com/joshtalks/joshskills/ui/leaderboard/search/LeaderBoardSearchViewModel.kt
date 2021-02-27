@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearch
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardType
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -20,12 +21,21 @@ class LeaderBoardSearchViewModel : ViewModel() {
     private var debounceJob: Job? = null
     private var currentSearchedKey: String = ""
 
-        val searchedKeyLiveData: MutableLiveData<String> = MutableLiveData()
+    val searchedKeyLiveData: MutableLiveData<String> = MutableLiveData()
     val leaderBoardDataOfToday: MutableLiveData<List<LeaderboardMentor>> = MutableLiveData()
     val leaderBoardDataOfWeek: MutableLiveData<List<LeaderboardMentor>> = MutableLiveData()
     val leaderBoardDataOfMonth: MutableLiveData<List<LeaderboardMentor>> = MutableLiveData()
+    val recentSearchLiveData: MutableLiveData<List<RecentSearch>> = MutableLiveData()
 
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
+
+    fun fetchRecentSearch() {
+        viewModelScope.launch {
+            recentSearchLiveData.postValue(
+                AppObjectController.appDatabase.recentSearch().getRecentSearchHistory()
+            )
+        }
+    }
 
     fun performSearch(key: String) {
         debounceJob?.cancel()
@@ -68,6 +78,7 @@ class LeaderBoardSearchViewModel : ViewModel() {
             val response =
                 AppObjectController.commonNetworkService.searchLeaderboardMember(
                     key,
+                    pageNo,
                     intervalType
                 )
             if (response.isSuccessful && response.body() != null) {
@@ -101,7 +112,7 @@ class LeaderBoardSearchViewModel : ViewModel() {
             apiCallStatusLiveData.postValue(ApiCallStatus.START)
             val result = searchQuery(key, LeaderboardType.TODAY, pageNo)
             if (result != null)
-                leaderBoardDataOfMonth.postValue(result)
+                leaderBoardDataOfToday.postValue(result)
         }
     }
 
@@ -110,7 +121,7 @@ class LeaderBoardSearchViewModel : ViewModel() {
             apiCallStatusLiveData.postValue(ApiCallStatus.START)
             val result = searchQuery(key, LeaderboardType.WEEK, pageNo)
             if (result != null)
-                leaderBoardDataOfMonth.postValue(result)
+                leaderBoardDataOfWeek.postValue(result)
         }
     }
 
@@ -120,6 +131,17 @@ class LeaderBoardSearchViewModel : ViewModel() {
             val result = searchQuery(key, LeaderboardType.MONTH, pageNo)
             if (result != null)
                 leaderBoardDataOfMonth.postValue(result)
+        }
+    }
+
+    fun insertRecentSearch(keyword: String) {
+        viewModelScope.launch {
+            val result = AppObjectController.appDatabase.recentSearch()
+                .insertSearch(
+                    RecentSearch(keyword)
+                )
+            if (result > 0)
+                fetchRecentSearch()
         }
     }
 

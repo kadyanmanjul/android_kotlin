@@ -15,13 +15,17 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.ActivityLeaderboardSearchBinding
+import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearch
 import java.time.DayOfWeek.SUNDAY
 import java.time.LocalDate
 import java.time.Period
 import java.time.temporal.TemporalAdjusters.next
+import java.util.ArrayList
 
 
 class LeaderBoardSearchActivity : BaseActivity() {
+    private lateinit var adapter: RecentSearchListAdapter
+    private val itemList: MutableList<RecentSearch> = ArrayList()
     lateinit var binding: ActivityLeaderboardSearchBinding
     private val searchViewModel by lazy { ViewModelProvider(this).get(LeaderBoardSearchViewModel::class.java) }
 
@@ -32,6 +36,8 @@ class LeaderBoardSearchActivity : BaseActivity() {
         binding.handler = this
 
         initViewPager()
+        initRecentSearchRecyclerview()
+        addObserver()
 
         binding.searchView.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -60,6 +66,37 @@ class LeaderBoardSearchActivity : BaseActivity() {
             }
 
         })
+    }
+
+    private fun addObserver() {
+        searchViewModel.recentSearchLiveData.observe(this, {
+            if (it.isNullOrEmpty().not()) {
+                if (binding.searchView.text.toString().isEmpty())
+                    binding.recentRv.visibility = View.VISIBLE
+                else
+                    binding.recentRv.visibility = View.GONE
+                itemList.clear()
+                itemList.addAll(it)
+                adapter.notifyDataSetChanged()
+            } else {
+                binding.recentRv.visibility = View.GONE
+            }
+        })
+    }
+
+    private fun initRecentSearchRecyclerview() {
+        val linearLayoutManager =
+            com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager(this)
+        linearLayoutManager.isSmoothScrollbarEnabled = true
+        binding.recentRv.layoutManager = linearLayoutManager
+        searchViewModel.fetchRecentSearch()
+        adapter = RecentSearchListAdapter(itemList, this::performSearch)
+        binding.recentRv.adapter = adapter
+    }
+
+    private fun performSearch(keyword: String) {
+        binding.searchView.setText(keyword)
+        binding.recentRv.visibility = View.GONE
     }
 
     private fun initViewPager() {
@@ -109,6 +146,7 @@ class LeaderBoardSearchActivity : BaseActivity() {
         binding.backIv.setColorFilter(ContextCompat.getColor(this, R.color.black))
         binding.clearIv.setColorFilter(ContextCompat.getColor(this, R.color.black))
         binding.searchBg.background = ContextCompat.getDrawable(this, R.drawable.grey_rounded_bg)
+        binding.recentRv.visibility = View.VISIBLE
     }
 
     fun showViewpager() {
@@ -122,6 +160,7 @@ class LeaderBoardSearchActivity : BaseActivity() {
         binding.clearIv.setColorFilter(ContextCompat.getColor(this, R.color.white))
         binding.searchBg.background =
             ContextCompat.getDrawable(this, R.drawable.primary_dark_rounded_bg)
+        binding.recentRv.visibility = View.GONE
     }
 
     fun clearSearchText() {

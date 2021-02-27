@@ -56,6 +56,8 @@ import com.joshtalks.joshskills.repository.local.entity.User
 import com.joshtalks.joshskills.repository.local.entity.VideoEngage
 import com.joshtalks.joshskills.repository.local.entity.VideoEngageDao
 import com.joshtalks.joshskills.repository.local.entity.VideoType
+import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearch
+import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearchDao
 import com.joshtalks.joshskills.repository.local.entity.practise.Phonetic
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementDao
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
@@ -76,7 +78,6 @@ import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopicDao
-import java.util.*
 import java.util.Collections
 import java.util.Date
 
@@ -90,9 +91,9 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         FeedbackEngageModel::class, NPSEventModel::class, Assessment::class, AssessmentQuestion::class,
         Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class,
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class,
-        PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class
+        PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class , RecentSearch::class
     ],
-    version = 28,
+    version = 29,
     exportSchema = true
 )
 @TypeConverters(
@@ -166,7 +167,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_24_25,
                                 MIGRATION_25_26,
                                 MIGRATION_26_27,
-                                MIGRATION_27_28
+                                MIGRATION_27_28,
+                                MIGRATION_28_29
                             )
                             //  .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -431,6 +433,8 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("UPDATE chat_table SET is_seen =1")
                 //Db migration for course id
+                database.execSQL("CREATE TABLE IF NOT EXISTS `RecentSearch` (`keyword` TEXT PRIMARY KEY NOT NULL)")
+
             }
         }
 
@@ -478,6 +482,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun pendingTaskDao(): PendingTaskDao
     abstract fun practiceEngagementDao(): PracticeEngagementDao
     abstract fun speakingTopicDao(): SpeakingTopicDao
+    abstract fun recentSearch(): RecentSearchDao
 
 }
 
