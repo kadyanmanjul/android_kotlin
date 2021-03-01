@@ -130,67 +130,6 @@ interface ChatDao {
     @Update
     fun updatePdfObject(vararg pdfObj: PdfType)
 
-    @Transaction
-    suspend fun getUpdatedChatObjectViaId(id: String): ChatModel {
-        val chatModel: ChatModel = getChatObject(chatId = id)
-        if (chatModel.type == BASE_MESSAGE_TYPE.Q) {
-            val question: Question? = getQuestion(id)
-            if (question != null) {
-                when (question.material_type) {
-                    BASE_MESSAGE_TYPE.IM ->
-                        question.imageList =
-                            getImagesOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.VI -> question.videoList =
-                        getVideosOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.AU -> question.audioList =
-                        getAudiosOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.PD -> question.pdfList =
-                        getPdfOfQuestion(questionId = question.questionId)
-                }
-                if (question.type == BASE_MESSAGE_TYPE.PR) {
-                    question.practiseEngagementV2 =
-                        AppObjectController.appDatabase.practiceEngagementDao()
-                            .getPractice(question.questionId)
-                    question.imageList = AppObjectController.appDatabase.chatDao()
-                        .getImagesOfQuestion(questionId = question.questionId)
-                }
-
-                chatModel.question = question
-                if (chatModel.type == BASE_MESSAGE_TYPE.LESSON) {
-                    AppObjectController.appDatabase.lessonDao()
-                        .getLessonFromChatId(chatModel.chatId)
-                        ?.let {
-                            chatModel.lesson = it
-                        }
-                }
-            }
-        }
-        return chatModel
-    }
-
-
-    @Transaction
-    suspend fun getUpdatedQuestionObjectViaId(id: String): ChatModel {
-        val chatModel: ChatModel = getChatObject(chatId = id)
-        if (chatModel.type == BASE_MESSAGE_TYPE.Q) {
-            val question: Question? = getQuestion(id)
-            if (question != null) {
-                when (question.material_type) {
-                    BASE_MESSAGE_TYPE.IM ->
-                        question.imageList =
-                            getImagesOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.VI -> question.videoList =
-                        getVideosOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.AU -> question.audioList =
-                        getAudiosOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.PD -> question.pdfList =
-                        getPdfOfQuestion(questionId = question.questionId)
-                }
-                chatModel.question = question
-            }
-        }
-        return chatModel
-    }
 
     @Query("UPDATE chat_table SET downloadStatus = :status where downloadStatus == :whereStatus")
     suspend fun updateDownloadVideoStatusFailed(
@@ -205,7 +144,6 @@ interface ChatDao {
     suspend fun getLastOneChat(conversationId: String): ChatModel?
 
     suspend fun getMaxIntervalForVideo(conversationId: String): Int {
-
         val chatModel: ChatModel? = getLastQuestionInterval(conversationId)
         if (chatModel?.type == BASE_MESSAGE_TYPE.Q) {
             val question: Question? = getQuestion(chatModel.chatId)
@@ -412,44 +350,80 @@ interface ChatDao {
         if (listOfChat.isEmpty()) {
             return emptyList()
         }
-        listOfChat.forEach { chat ->
-            val question: Question? = getQuestion(chat.chatId)
-            question?.apply {
-                when (this.material_type) {
-                    BASE_MESSAGE_TYPE.IM -> imageList =
-                        getImagesOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.VI -> videoList =
-                        getVideosOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.AU -> audioList =
-                        getAudiosOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.PD -> pdfList =
-                        getPdfOfQuestion(questionId = question.questionId)
-                }
-                if (type == BASE_MESSAGE_TYPE.PR) {
-                    practiseEngagementV2 = AppObjectController.appDatabase.practiceEngagementDao()
-                        .getPractice(questionId)
-                    imageList = AppObjectController.appDatabase.chatDao()
-                        .getImagesOfQuestion(questionId = question.questionId)
-                }
 
-                if (assessmentId != null) {
-                    vAssessmentCount = AppObjectController.appDatabase.assessmentDao()
-                        .countOfAssessment(assessmentId)
-                }
-                chat.question = question
-            }
-            if (chat.awardMentorId > 0) {
-                chat.awardMentorModel = AppObjectController.appDatabase.awardMentorModelDao()
-                    .getAwardMentorModel(chat.awardMentorId)
-            }
+        listOfChat.forEach { chatModel ->
+            chatModel.awardMentorModel = getAwardMentor(chatModel)
 
-            if (chat.type == BASE_MESSAGE_TYPE.LESSON)
-                AppObjectController.appDatabase.lessonDao().getLessonFromChatId(chat.chatId)?.let {
-                    chat.lesson = it
-                }
+            chatModel.lesson = getLesson(chatModel)  //Add Lesson
+
+            chatModel.question = getQuestion(chatModel)  //Add Question
 
         }
         return listOfChat
+    }
+
+    @Transaction
+    suspend fun getUpdatedChatObjectViaId(id: String): ChatModel {
+        val chatModel: ChatModel = getChatObject(chatId = id)
+
+        chatModel.awardMentorModel = getAwardMentor(chatModel)
+
+        chatModel.lesson = getLesson(chatModel)  //Add Lesson
+
+        chatModel.question = getQuestion(chatModel)  //Add Question
+
+        return chatModel
+    }
+
+    private fun getAwardMentor(chatModel: ChatModel): AwardMentorModel? {
+        //Add Award
+        if (chatModel.awardMentorId > 0) {
+            return AppObjectController.appDatabase.awardMentorModelDao()
+                .getAwardMentorModel(chatModel.awardMentorId)
+        }
+        return null
+    }
+
+    private fun getLesson(chatModel: ChatModel): LessonModel? {
+        if (chatModel.type == BASE_MESSAGE_TYPE.LESSON) {
+            return AppObjectController.appDatabase.lessonDao().getLessonFromChatId(chatModel.chatId)
+        }
+        return null
+    }
+
+    private suspend fun getQuestion(chatModel: ChatModel): Question? {
+        if (chatModel.type == BASE_MESSAGE_TYPE.Q) {
+            val question: Question? = getQuestion(chatModel.chatId)
+            if (null != question) {
+                when (question.material_type) {
+                    BASE_MESSAGE_TYPE.IM ->
+                        question.imageList =
+                            getImagesOfQuestion(questionId = question.questionId)
+                    BASE_MESSAGE_TYPE.VI -> question.videoList =
+                        getVideosOfQuestion(questionId = question.questionId)
+                    BASE_MESSAGE_TYPE.AU -> question.audioList =
+                        getAudiosOfQuestion(questionId = question.questionId)
+                    BASE_MESSAGE_TYPE.PD -> question.pdfList =
+                        getPdfOfQuestion(questionId = question.questionId)
+                }
+
+                //Add Pr V2
+                /*  if (question.type == BASE_MESSAGE_TYPE.PR) {
+                      question.practiseEngagementV2 =
+                          AppObjectController.appDatabase.practiceEngagementDao()
+                              .getPractice(question.questionId)
+                      question.imageList = AppObjectController.appDatabase.chatDao()
+                          .getImagesOfQuestion(questionId = question.questionId)
+                  }*/
+
+                if (question.assessmentId != null) {
+                    question.vAssessmentCount = AppObjectController.appDatabase.assessmentDao()
+                        .countOfAssessment(question.assessmentId)
+                }
+            }
+            return question
+        }
+        return null
     }
 
 

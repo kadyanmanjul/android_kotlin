@@ -13,8 +13,6 @@ import android.view.*
 import android.view.View.*
 import android.view.animation.*
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
@@ -54,7 +52,6 @@ import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.chat_message.*
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
-import com.joshtalks.joshskills.ui.certification_exam.EXAM_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.chat.adapter.ConversationAdapter
 import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
@@ -65,7 +62,6 @@ import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.groupchat.listeners.StickyHeaderDecoration
 import com.joshtalks.joshskills.ui.groupchat.messagelist.CometChatMessageListActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
-import com.joshtalks.joshskills.ui.pdfviewer.MESSAGE_ID
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
@@ -109,6 +105,8 @@ const val VIDEO_OPEN_REQUEST_CODE = 1102
 const val CONVERSATION_PRACTISE_REQUEST_CODE = 1105
 const val ASSESSMENT_REQUEST_CODE = 1106
 const val LESSON_REQUEST_CODE = 1107
+const val CERTIFICATION_REQUEST_CODE = 1108
+
 
 const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
 const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
@@ -1155,20 +1153,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
             RxBus2.listenWithoutDelay(StartCertificationExamEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .subscribe({
-                    val cExamActivityListener: ActivityResultLauncher<Intent> =
-                        registerForActivityResult(
-                            ActivityResultContracts.StartActivityForResult()
-                        ) { result ->
-                            if (result.resultCode == Activity.RESULT_OK) {
-                                result.data.getStringExtra(MESSAGE_ID).let { chatId ->
-                                    refreshView(chatId)
-                                }
-                                result.data.getIntExtra(EXAM_LESSON_INTERVAL, -1).let {
-                                    //addUnlockNextClassCard(it, fromLesson = true)
-                                }
-                            }
-                        }
-                    cExamActivityListener.launch(
+                    startActivityForResult(
                         CertificationBaseActivity.certificationExamIntent(
                             this,
                             conversationId = it.conversationId,
@@ -1176,7 +1161,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                             certificationId = it.certificationExamId,
                             cExamStatus = it.examStatus,
                             lessonInterval = it.lessonInterval
-                        )
+                        ), CERTIFICATION_REQUEST_CODE
                     )
                 }, {
                     it.printStackTrace()
@@ -1310,9 +1295,13 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 (data?.getParcelableExtra(VIDEO_OBJECT) as ChatModel?)?.let {
                     unlockClassViewModel.canWeAddUnlockNextClass(it.chatId)
                 }
-            } else if (resultCode == Activity.RESULT_OK && (requestCode == ASSESSMENT_REQUEST_CODE || requestCode == LESSON_REQUEST_CODE)) {
-                data?.getStringExtra(CHAT_ROOM_ID)?.let {
-                    conversationViewModel.refreshMessageObject(it)
+            } else if (resultCode == Activity.RESULT_OK) {
+                when (requestCode) {
+                    ASSESSMENT_REQUEST_CODE, LESSON_REQUEST_CODE, CERTIFICATION_REQUEST_CODE -> {
+                        data?.getStringExtra(CHAT_ROOM_ID)?.let {
+                            conversationViewModel.refreshMessageObject(it)
+                        }
+                    }
                 }
             }
 

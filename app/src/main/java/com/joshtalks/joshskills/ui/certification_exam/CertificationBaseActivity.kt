@@ -17,10 +17,9 @@ import com.joshtalks.joshskills.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.ui.certification_exam.examview.CExamMainActivity
 import com.joshtalks.joshskills.ui.certification_exam.report.CExamReportActivity
 import com.joshtalks.joshskills.ui.certification_exam.view.InstructionFragment
-import com.joshtalks.joshskills.ui.pdfviewer.MESSAGE_ID
-import kotlinx.android.synthetic.main.activity_certification_base.progress_bar
-import kotlinx.android.synthetic.main.inbox_toolbar.iv_back
-import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
+import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
+import kotlinx.android.synthetic.main.activity_certification_base.*
+import kotlinx.android.synthetic.main.inbox_toolbar.*
 
 const val CERTIFICATION_EXAM_ID = "certification_exam_ID"
 const val CERTIFICATION_EXAM_QUESTION = "certification_exam_question"
@@ -41,7 +40,7 @@ class CertificationBaseActivity : BaseActivity() {
         ): Intent {
             return Intent(activity, CertificationBaseActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, conversationId)
-                putExtra(MESSAGE_ID, chatMessageId)
+                putExtra(CHAT_ROOM_ID, chatMessageId)
                 putExtra(CONVERSATION_ID, conversationId)
                 putExtra(CERTIFICATION_EXAM_ID, certificationId)
                 putExtra(EXAM_STATUS, cExamStatus)
@@ -167,8 +166,8 @@ class CertificationBaseActivity : BaseActivity() {
     override fun onBackPressed() {
         if (viewModel.isUserSubmitExam.value != null && viewModel.isUserSubmitExam.value!!) {
             val resultIntent = Intent().apply {
-                putExtra(MESSAGE_ID, intent.getStringExtra(MESSAGE_ID))
-                putExtra(EXAM_LESSON_INTERVAL, intent.getIntExtra(EXAM_LESSON_INTERVAL,-1))
+                putExtra(CHAT_ROOM_ID, intent.getStringExtra(CHAT_ROOM_ID))
+                putExtra(EXAM_LESSON_INTERVAL, intent.getIntExtra(EXAM_LESSON_INTERVAL, -1))
             }
             setResult(RESULT_OK, resultIntent)
             this.finish()
