@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.engage_notification.AppActivityModel
 import com.joshtalks.joshskills.engage_notification.AppUsageDao
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.repository.local.dao.AssessmentDao
+import com.joshtalks.joshskills.repository.local.dao.ChatDao
 import com.joshtalks.joshskills.repository.local.dao.LessonDao
 import com.joshtalks.joshskills.repository.local.dao.PendingTaskDao
 import com.joshtalks.joshskills.repository.local.dao.reminder.ReminderDao
@@ -375,6 +376,12 @@ abstract class AppDatabase : RoomDatabase() {
 
             }
         }
+        private val MIGRATION_28_29: Migration = object : Migration(28, 29) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("UPDATE chat_table SET is_seen =1")
+            }
+        }
+
 
         fun clearDatabase() {
             INSTANCE?.clearAllTables()
