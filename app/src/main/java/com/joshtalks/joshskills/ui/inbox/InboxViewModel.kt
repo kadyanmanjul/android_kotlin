@@ -14,8 +14,6 @@ import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.repository.inbox.DbInboxRepository
-import com.joshtalks.joshskills.repository.local.repository.inbox.InboxModelRepository
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -32,13 +30,6 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     private val _overAllWatchTime = MutableSharedFlow<Long>(replay = 0)
     val overAllWatchTime: SharedFlow<Long>
         get() = _overAllWatchTime
-
-
-    private val repository: InboxModelRepository = DbInboxRepository(
-        AppObjectController.appDatabase,
-        AppObjectController.chatNetworkService
-    )
-
 
     private val _registerCourseNetworkData = MutableSharedFlow<List<InboxEntity>>(replay = 0)
     val registerCourseNetworkData: SharedFlow<List<InboxEntity>>

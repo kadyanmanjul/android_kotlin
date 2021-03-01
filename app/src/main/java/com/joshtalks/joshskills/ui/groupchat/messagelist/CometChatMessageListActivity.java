@@ -1,75 +1,50 @@
 package com.joshtalks.joshskills.ui.groupchat.messagelist;
 
 import android.Manifest;
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.*;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.util.Log;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
+import android.view.*;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.widget.*;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.*;
+
 import com.cometchat.pro.constants.CometChatConstants;
 import com.cometchat.pro.core.CometChat;
 import com.cometchat.pro.core.MessagesRequest;
 import com.cometchat.pro.exceptions.CometChatException;
-import com.cometchat.pro.models.Action;
-import com.cometchat.pro.models.Attachment;
-import com.cometchat.pro.models.BaseMessage;
-import com.cometchat.pro.models.CustomMessage;
-import com.cometchat.pro.models.Group;
-import com.cometchat.pro.models.MediaMessage;
-import com.cometchat.pro.models.MessageReceipt;
-import com.cometchat.pro.models.TextMessage;
-import com.cometchat.pro.models.TypingIndicator;
-import com.cometchat.pro.models.User;
+import com.cometchat.pro.models.*;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.snackbar.Snackbar;
 import com.joshtalks.joshskills.R;
-import com.joshtalks.joshskills.core.AppObjectController;
-import com.joshtalks.joshskills.core.BaseActivity;
-import com.joshtalks.joshskills.core.PermissionUtils;
-import com.joshtalks.joshskills.core.PrefManager;
+import com.joshtalks.joshskills.core.*;
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener;
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService;
 import com.joshtalks.joshskills.messaging.RxBus2;
 import com.joshtalks.joshskills.repository.local.eventbus.PauseAudioEventBus;
+import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails;
 import com.joshtalks.joshskills.ui.chat.ConversationActivity;
 import com.joshtalks.joshskills.ui.groupchat.adapter.MessageAdapter;
 import com.joshtalks.joshskills.ui.groupchat.constant.StringContract;
-import com.joshtalks.joshskills.ui.groupchat.listeners.ComposeActionListener;
-import com.joshtalks.joshskills.ui.groupchat.listeners.MessageActionCloseListener;
-import com.joshtalks.joshskills.ui.groupchat.listeners.OnRepliedMessageClick;
-import com.joshtalks.joshskills.ui.groupchat.listeners.StickyHeaderDecoration;
+import com.joshtalks.joshskills.ui.groupchat.listeners.*;
 import com.joshtalks.joshskills.ui.groupchat.screens.CometChatGroupDetailScreenActivity;
 import com.joshtalks.joshskills.ui.groupchat.uikit.Avatar;
 import com.joshtalks.joshskills.ui.groupchat.uikit.ComposeBox.ComposeBox;
-import com.joshtalks.joshskills.ui.groupchat.utils.MediaUtils;
-import com.joshtalks.joshskills.ui.groupchat.utils.MessageSwipeController;
-import com.joshtalks.joshskills.ui.groupchat.utils.SwipeControllerActions;
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils;
+import com.joshtalks.joshskills.ui.groupchat.utils.*;
 import com.joshtalks.joshskills.ui.help.HelpActivity;
 import com.joshtalks.joshskills.ui.referral.ReferralActivity;
 import com.joshtalks.joshskills.util.ExoAudioPlayer;
@@ -77,14 +52,13 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
+import java.util.*;
+
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.joshtalks.joshskills.core.PrefManagerKt.GROUP_CHAT_LAST_READ_MESSAGE_ID;
@@ -159,6 +133,22 @@ public class CometChatMessageListActivity extends BaseActivity implements View.O
     private AppCompatImageView settingsImg;
     private AppCompatImageView scrollToEndButton;
     private int tempMessageId = -1;
+
+    public static void showGroupChatScreen(Context context, GroupDetails groupDetails) {
+        Intent intent = new Intent(context, CometChatMessageListActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(StringContract.IntentStrings.GUID, groupDetails.getGroupId());
+        intent.putExtra(StringContract.IntentStrings.AVATAR, groupDetails.getGroupIconUrl());
+        intent.putExtra(StringContract.IntentStrings.GROUP_OWNER, groupDetails.getGroupOwnerUid());
+        intent.putExtra(StringContract.IntentStrings.NAME, groupDetails.getGroupName());
+        intent.putExtra(StringContract.IntentStrings.TYPE, CometChatConstants.RECEIVER_TYPE_GROUP);
+        intent.putExtra(StringContract.IntentStrings.MEMBER_COUNT, groupDetails.getGroupMemberCount());
+        intent.putExtra(StringContract.IntentStrings.GROUP_DESC, groupDetails.getGroupDescription());
+        intent.putExtra(StringContract.IntentStrings.GROUP_PASSWORD, groupDetails.getGroupPassword());
+        intent.putExtra(StringContract.IntentStrings.GROUP_TYPE, groupDetails.getGroupType());
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
