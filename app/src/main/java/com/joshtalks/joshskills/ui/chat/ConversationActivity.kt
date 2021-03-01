@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.*
 import android.view.View.*
 import android.view.animation.*
@@ -65,6 +64,7 @@ import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.groupchat.listeners.StickyHeaderDecoration
 import com.joshtalks.joshskills.ui.groupchat.messagelist.CometChatMessageListActivity
+import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.pdfviewer.MESSAGE_ID
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
@@ -276,7 +276,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         linearLayoutManager = SnappingLinearLayoutManager(this)
         linearLayoutManager.stackFromEnd = true
         linearLayoutManager.isItemPrefetchEnabled = true
-        linearLayoutManager.initialPrefetchItemCount = 10
+        //  linearLayoutManager.initialPrefetchItemCount = 10
         linearLayoutManager.isSmoothScrollbarEnabled = true
         conversationBinding.chatRv.apply {
             layoutManager = linearLayoutManager
@@ -420,8 +420,8 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         val isGroupChatHintAlreadySeen = PrefManager.getBoolValue(IS_GROUP_CHAT_HINT_SEEN, true)
         if (inboxEntity.isGroupActive && isGroupChatHintAlreadySeen.not()) {
             val lastLesson =
-                conversationViewModel.conversationList.lastOrNull { it.lessons != null }
-            lastLesson?.lessons?.let {
+                conversationViewModel.conversationList.lastOrNull { it.lesson != null }
+            lastLesson?.lesson?.let {
                 if (it.lessonNo > 3 || (it.lessonNo == 3 && it.status != LESSON_STATUS.NO)) {
                     conversationBinding.balloonText.text =
                         AppObjectController.getFirebaseRemoteConfig()
@@ -672,12 +672,14 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     }
                 }
                 //End Logic
+                checkLessonType(items)
                 conversationAdapter.addMessagesList(items)
             }
         }
         lifecycleScope.launchWhenCreated {
             conversationViewModel.userReadCourseChat.collectLatest { items ->
                 conversationAdapter.addMessagesList(items)
+                checkLessonType(items)
             }
         }
         lifecycleScope.launchWhenCreated {
@@ -699,8 +701,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     unlockClassViewModel.insertUnlockClassToDatabase(message)
                     val isAdded = conversationAdapter.addUnlockClassMessage(message)
                     val cPosition = linearLayoutManager.findFirstVisibleItemPosition()
-                    Log.e("position", "" + cPosition)
-
                     if (isAdded && cPosition == conversationAdapter.itemCount - 1) {
                         scrollToEnd()
                     }
@@ -728,10 +728,12 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
             }
         }
 
-        conversationViewModel.userData.observe(this, {
+    }
 
-        })
-
+    private fun checkLessonType(items: List<ChatModel>) {
+        // Start Logic for  lesson type
+        isLessonTypeChat = items.any { it.type == BASE_MESSAGE_TYPE.LESSON }
+        // end logic
     }
 
 
@@ -973,7 +975,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
             .subscribe {
                 CoroutineScope(Dispatchers.IO).launch {
                     val obj = AppObjectController.appDatabase.chatDao()
-                        .getUpdatedChatObject(it.chatModel)
+                        .getUpdatedChatObjectViaId(it.chatModel.chatId)
                     refreshViewAtPos(obj)
                 }
 
@@ -1192,6 +1194,20 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     it.printStackTrace()
                 })
         )
+
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(LessonItemClickEventBus::class.java)
+                .subscribeOn(Schedulers.computation())
+                .subscribe({
+                    startActivityForResult(
+                        LessonActivity.getActivityIntent(this, it.lessonId),
+                        LESSON_REQUEST_CODE
+                    )
+                }, {
+                    it.printStackTrace()
+                })
+        )
+
     }
 
 
@@ -1294,11 +1310,12 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 (data?.getParcelableExtra(VIDEO_OBJECT) as ChatModel?)?.let {
                     unlockClassViewModel.canWeAddUnlockNextClass(it.chatId)
                 }
-            } else if (resultCode == Activity.RESULT_OK && requestCode == ASSESSMENT_REQUEST_CODE) {
+            } else if (resultCode == Activity.RESULT_OK && (requestCode == ASSESSMENT_REQUEST_CODE || requestCode == LESSON_REQUEST_CODE)) {
                 data?.getStringExtra(CHAT_ROOM_ID)?.let {
                     conversationViewModel.refreshMessageObject(it)
                 }
             }
+
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -1399,8 +1416,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         if (isLessonTypeChat) {
             startActivity(
                 CourseProgressActivityNew.getCourseProgressActivityNew(
-                    this,
-                    conversationViewModel.conversationList[0].question?.course_id ?: 0
+                    this, inboxEntity.courseId.toInt()
                 )
             )
             hideCourseProgressTooltip()

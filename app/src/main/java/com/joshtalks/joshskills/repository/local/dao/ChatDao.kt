@@ -14,8 +14,6 @@ interface ChatDao {
     @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND is_delete_message=0 ORDER BY created ASC,question_id   ")
     suspend fun getLastChats(conversationId: String): List<ChatModel>
 
-    @Query(value = "SELECT * FROM chat_table where lesson_id= :lessonId AND is_delete_message=0 ORDER BY created ASC,question_id ASC ")
-    suspend fun getChatsForLessonId(lessonId: Int): List<ChatModel>
 
     @Query(value = "SELECT * FROM chat_table  where chat_id=:chatId")
     suspend fun getChatObject(chatId: String): ChatModel
@@ -133,29 +131,6 @@ interface ChatDao {
     fun updatePdfObject(vararg pdfObj: PdfType)
 
     @Transaction
-    suspend fun getUpdatedChatObject(chat: ChatModel): ChatModel {
-        val chatModel: ChatModel = getChatObject(chatId = chat.chatId)
-        if (chatModel.type == BASE_MESSAGE_TYPE.Q) {
-            val question: Question? = getQuestion(chat.chatId)
-            if (question != null) {
-                when (question.material_type) {
-                    BASE_MESSAGE_TYPE.IM ->
-                        question.imageList =
-                            getImagesOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.VI -> question.videoList =
-                        getVideosOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.AU -> question.audioList =
-                        getAudiosOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.PD -> question.pdfList =
-                        getPdfOfQuestion(questionId = question.questionId)
-                }
-                chatModel.question = question
-            }
-        }
-        return chatModel
-    }
-
-    @Transaction
     suspend fun getUpdatedChatObjectViaId(id: String): ChatModel {
         val chatModel: ChatModel = getChatObject(chatId = id)
         if (chatModel.type == BASE_MESSAGE_TYPE.Q) {
@@ -179,15 +154,15 @@ interface ChatDao {
                     question.imageList = AppObjectController.appDatabase.chatDao()
                         .getImagesOfQuestion(questionId = question.questionId)
                 }
-                if (question.lesson != null) {
-                    chatModel.lessons = question.lesson
-                }
 
                 chatModel.question = question
-                val lessonModel =
-                    AppObjectController.appDatabase.lessonDao().getLesson(question.lesson_id)
-                chatModel.lessons = lessonModel
-                chatModel.question?.lesson = lessonModel
+                if (chatModel.type == BASE_MESSAGE_TYPE.LESSON) {
+                    AppObjectController.appDatabase.lessonDao()
+                        .getLessonFromChatId(chatModel.chatId)
+                        ?.let {
+                            chatModel.lesson = it
+                        }
+                }
             }
         }
         return chatModel
@@ -343,15 +318,6 @@ interface ChatDao {
     @Query("SELECT * FROM  PdfTable  WHERE id= :pdfId")
     suspend fun getPdfById(pdfId: String): PdfType
 
-    @Query("UPDATE question_table SET need_feedback = :status WHERE questionId= :questionId")
-    suspend fun updateFeedbackStatus(questionId: String, status: Boolean?)
-
-    @Query("SELECT need_feedback from question_table  WHERE questionId= :questionId AND upload_feedback_status=0;")
-    suspend fun getFeedbackStatusOfQuestion(questionId: String): Boolean?
-
-    @Query("UPDATE question_table SET upload_feedback_status = 1 WHERE questionId= :questionId")
-    suspend fun userSubmitFeedbackStatusUpdate(questionId: String)
-
     @Query("UPDATE chat_table SET last_use_time = :date where chat_id=:chatId ")
     fun lastUsedBy(chatId: String, date: Date = Date())
 
@@ -476,6 +442,12 @@ interface ChatDao {
                 chat.awardMentorModel = AppObjectController.appDatabase.awardMentorModelDao()
                     .getAwardMentorModel(chat.awardMentorId)
             }
+
+            if (chat.type == BASE_MESSAGE_TYPE.LESSON)
+                AppObjectController.appDatabase.lessonDao().getLessonFromChatId(chat.chatId)?.let {
+                    chat.lesson = it
+                }
+
         }
         return listOfChat
     }

@@ -214,6 +214,14 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
                 view.tag = ASSESSMENT_MESSAGE
                 AssessmentViewHolder(view, userId)
             }
+            LESSON_MESSAGE -> {
+                view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.layout_lesson_item, parent, false)
+                view.tag = LESSON_MESSAGE
+                LessonViewHolder(view, userId).apply {
+                    setIsRecyclable(false)
+                }
+            }
             BEST_PERFORMER_EXAM_MESSAGE -> {
                 view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.cell_best_performer_message, parent, false)
@@ -232,6 +240,8 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
                 view.tag = UNLOCK_CLASS_MESSAGE
                 UnlockNextClassViewHolder(view, userId)
             }
+
+            //LessonViewHolder
 
             else -> {
                 view = LayoutInflater.from(parent.context)
@@ -305,7 +315,7 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
                 return UNLOCK_CLASS_MESSAGE
             }
             BASE_MESSAGE_TYPE.LESSON -> {
-                return type(cSender, oSender, LEFT_TEXT_MESSAGE, RIGHT_TEXT_MESSAGE)
+                return LESSON_MESSAGE//type(cSender, oSender, LEFT_TEXT_MESSAGE, RIGHT_TEXT_MESSAGE)
             }
             BASE_MESSAGE_TYPE.BEST_PERFORMER ->
                 return BEST_PERFORMER_EXAM_MESSAGE
@@ -412,6 +422,8 @@ private const val CERTIFICATION_EXAM_MESSAGE = 15
 //private const val RIGHT_CERTIFICATION_EXAM_MESSAGE = 16
 
 private const val ASSESSMENT_MESSAGE = 17
+
+private const val LESSON_MESSAGE = 18
 
 
 private const val BEST_PERFORMER_EXAM_MESSAGE = 21

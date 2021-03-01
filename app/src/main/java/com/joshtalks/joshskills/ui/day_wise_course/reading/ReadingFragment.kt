@@ -14,12 +14,8 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.CoreJoshFragment
-import com.joshtalks.joshskills.core.OnWordClick
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.AutoLinkMode
-import com.joshtalks.joshskills.core.getSpannableString
-import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.ReadingPracticeFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
@@ -112,9 +108,6 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        rpQuestion?.run {
-            coreJoshActivity?.feedbackEngagementStatus(this)
-        }
     }
 
     private fun initView() {

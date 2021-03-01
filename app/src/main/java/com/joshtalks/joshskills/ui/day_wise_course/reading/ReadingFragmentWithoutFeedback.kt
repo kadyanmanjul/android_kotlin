@@ -75,12 +75,12 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
     AudioPlayerEventListener,
@@ -541,8 +541,6 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
             }
 
             setPracticeInfoView()
-            coreJoshActivity?.feedbackEngagementStatus(currentLessonQuestion)
-
             try {
                 binding.videoPlayer.onResume()
             } catch (ex: Exception) {

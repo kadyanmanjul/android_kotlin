@@ -15,16 +15,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.LESSON_NUMBER
-import com.joshtalks.joshskills.core.LESSON_TWO_OPENED
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.day_wise_course.LessonPagerAdapter
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 
@@ -348,14 +343,15 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
     }
 
     override fun onBackPressed() {
+        val resultIntent = Intent()
         viewModel.lessonLiveData.value?.let {
-            val resultIntent = Intent()
+            resultIntent.putExtra(CHAT_ROOM_ID, it.chatId)
             resultIntent.putExtra(LAST_LESSON_INTERVAL, it.interval)
             resultIntent.putExtra(LAST_LESSON_STATUS, it.status?.name)
             resultIntent.putExtra(LESSON_NUMBER, it.lessonNo)
-            setResult(RESULT_OK, resultIntent)
-            this@LessonActivity.finish()
         }
+        setResult(RESULT_OK, resultIntent)
+        this@LessonActivity.finish()
     }
 
     companion object {

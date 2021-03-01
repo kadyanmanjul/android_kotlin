@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.repository.service
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
@@ -44,6 +45,7 @@ object NetworkRequestHelper {
 
 
                 for (chatModel in resp.chatModelList) {
+                    Log.e("type", chatModel.type?.type)
                     val chatObj =
                         AppObjectController.appDatabase.chatDao()
                             .getNullableChatObject(chatModel.chatId)
@@ -62,8 +64,16 @@ object NetworkRequestHelper {
                         chatObj.conversationId = conversationId
                         AppObjectController.appDatabase.chatDao().updateChatMessage(chatObj)
                     }
+                    if (chatModel.type == BASE_MESSAGE_TYPE.LESSON) {
+                        chatModel.lesson?.apply {
+                            chatId = chatModel.chatId
+                        }?.let {
+                            AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
+                        }
+                    }
                     chatModel.question?.let { question ->
                         question.chatId = chatModel.chatId
+
                         AppObjectController.appDatabase.chatDao().insertChatQuestion(question)
                         question.audioList?.let {
                             it.listIterator().forEach { audioType ->

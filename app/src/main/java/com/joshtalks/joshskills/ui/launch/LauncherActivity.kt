@@ -11,16 +11,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.bumptech.glide.Glide
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
-import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import io.branch.referral.Branch
@@ -38,6 +34,7 @@ class LauncherActivity : CoreJoshActivity() {
         setContentView(R.layout.activity_launcher)
         animatedProgressBar()
         initAppInFirstTime()
+        startNextActivity()
     }
 
     private fun initApp() {
@@ -46,7 +43,6 @@ class LauncherActivity : CoreJoshActivity() {
         WorkManagerAdmin.appStartWorker()
         logAppLaunchEvent(getNetworkOperatorName())
         AppObjectController.initialiseFreshChat()
-        clearGlideCache()
         //logNotificationData()
     }
 
@@ -114,16 +110,6 @@ class LauncherActivity : CoreJoshActivity() {
         }
     }
 
-    private fun clearGlideCache() {
-        if (PrefManager.hasKey(CLEAR_CACHE).not()) {
-            Glide.get(applicationContext).clearMemory()
-            JoshSkillExecutors.BOUNDED.execute {
-                Glide.get(applicationContext).clearDiskCache()
-            }
-            PrefManager.put(CLEAR_CACHE, true)
-        }
-    }
-
     private fun handleIntent() {
         JoshSkillExecutors.BOUNDED.submit {
 
@@ -149,6 +135,7 @@ class LauncherActivity : CoreJoshActivity() {
                     initReferral(testId = testId, exploreType = exploreType, jsonParams)
                     initAfterBranch(testId = testId, exploreType = exploreType)
                 } catch (ex: Throwable) {
+                    startNextActivity()
                     LogException.catchException(ex)
                 }
             }.withData(this.intent.data).init()
@@ -282,6 +269,8 @@ class LauncherActivity : CoreJoshActivity() {
     }
 
     private fun navigateToNextScreen() {
+        startNextActivity()
+/*
         JoshSkillExecutors.BOUNDED.submit {
             val versionResponse = VersionResponse.getInstance()
             if (null == versionResponse.version) {
@@ -310,7 +299,7 @@ class LauncherActivity : CoreJoshActivity() {
                     }
                 }
             }
-        }
+        }*/
     }
 
     private fun startOnboardingNewActivity() {

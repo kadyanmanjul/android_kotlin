@@ -415,35 +415,6 @@ class FeedbackRatingWorker(context: Context, workerParams: WorkerParameters) :
     }
 }
 
-class FeedbackStatusForQuestionWorker(
-    context: Context,
-    private var workerParams: WorkerParameters
-) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        try {
-            val questionId = workerParams.inputData.getString("question_id")
-            if (questionId.isNullOrEmpty().not()) {
-                val response =
-                    AppObjectController.commonNetworkService.getQuestionFeedbackStatus(questionId!!)
-                if (response.isSuccessful) {
-                    val id = response.body()?.submittedData?.id ?: 0
-                    var feedbackRequire = response.body()?.feedbackRequire
-                    if (id > 0) {
-                        feedbackRequire = false
-                    }
-                    AppObjectController.appDatabase.chatDao()
-                        .updateFeedbackStatus(questionId, feedbackRequire)
-                }
-            }
-            val outputData = workDataOf("question_id" to questionId, "status" to 1)
-            return Result.success(outputData)
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-        return Result.failure()
-    }
-}
 
 class NPAQuestionViaEventWorker(
     context: Context,

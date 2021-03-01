@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'com.google.gms.google-services'
+
 if (!project.hasProperty("devBuild")) {
     apply plugin: 'com.google.firebase.firebase-perf'
 }

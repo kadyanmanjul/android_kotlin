@@ -166,8 +166,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                 setViewUserSubmitAnswer()
             }
         }
-        feedbackEngagementStatus(chatModel.question)
-
 
     }
 

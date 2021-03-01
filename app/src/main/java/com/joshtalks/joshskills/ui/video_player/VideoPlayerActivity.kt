@@ -131,7 +131,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                     courseId = question.course_id
                 }
                 videoId = this.question?.videoList?.getOrNull(0)?.id
-                feedbackEngagementStatus(this.question)
                 DatabaseUtils.updateLastUsedModification(this.chatId)
                 chatObject?.question?.interval?.let {
                     WorkManagerAdmin.determineNPAEvent(

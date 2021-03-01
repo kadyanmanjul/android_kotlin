@@ -172,7 +172,7 @@
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
         android:visibility="gone"
-        tools:visibility="visible">
+        tools:visibility="gone">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

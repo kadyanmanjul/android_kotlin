@@ -161,15 +161,6 @@ object WorkManagerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
 
-    fun getQuestionFeedback(questionId: String): UUID {
-        val data = workDataOf("question_id" to questionId)
-        val workRequest = OneTimeWorkRequestBuilder<FeedbackStatusForQuestionWorker>()
-            .setInputData(data)
-            .build()
-        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
-        return workRequest.id
-    }
-
     fun getQuestionNPA(eventName: String): UUID {
         val data = workDataOf("event" to eventName)
         val workRequest = OneTimeWorkRequestBuilder<NPAQuestionViaEventWorker>()
