@@ -32,25 +32,20 @@ import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.AudioPlayEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadCompletedEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.InternalSeekBarProgressEventBus
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.mindorks.placeholderview.annotations.Click
-import com.mindorks.placeholderview.annotations.Layout
-import com.mindorks.placeholderview.annotations.Recycle
-import com.mindorks.placeholderview.annotations.Resolve
-import com.mindorks.placeholderview.annotations.View
+import com.mindorks.placeholderview.annotations.*
 import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
 import com.tonyodev.fetch2core.DownloadBlock
 import io.reactivex.disposables.CompositeDisposable
 import java.lang.ref.WeakReference
-import java.util.Locale
+import java.util.*
 import kotlin.math.roundToInt
 
 @Layout(R.layout.audio_player_view)
@@ -449,12 +444,12 @@ class AudioPlayerViewHolder(
 
     @Click(R.id.start_download_iv)
     fun startAudioDownload() {
-        RxBus2.publish(
-            DownloadMediaEventBus(
-                audioPlayerViewHolder,
-                message
-            )
-        )
+        /*  RxBus2.publish(
+              DownloadMediaEventBus(
+                  audioPlayerViewHolder,
+                  message
+              )
+          )*/
     }
 
 

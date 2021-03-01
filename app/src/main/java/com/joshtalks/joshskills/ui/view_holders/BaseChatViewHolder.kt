@@ -21,11 +21,7 @@ import com.joshtalks.joshskills.core.custom_ui.PlayerUtil
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.AutoLinkMode
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
-import com.joshtalks.joshskills.repository.local.entity.Question
-import com.joshtalks.joshskills.repository.local.entity.Sender
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.GotoChatEventBus
 import java.lang.ref.WeakReference
 
@@ -141,6 +137,8 @@ abstract class BaseChatViewHolder(
         rootSubView: FrameLayout,
         messageView: ViewGroup?
     ) {
+        rootSubView.setBackgroundResource(resourceId)
+
         rootView.setPadding(getLeftPaddingForSender(), 0, getRightPaddingForSender(), 0)
         val params = FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -148,7 +146,6 @@ abstract class BaseChatViewHolder(
         )
         params.gravity = Gravity.END
         rootSubView.layoutParams = params
-        rootSubView.setBackgroundResource(resourceId)
         val paramsMessage = FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT

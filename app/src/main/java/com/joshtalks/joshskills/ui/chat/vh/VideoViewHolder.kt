@@ -1,11 +1,10 @@
-package com.joshtalks.joshskills.ui.view_holders
+package com.joshtalks.joshskills.ui.chat.vh
 
 import android.graphics.Color
 import android.net.Uri
-import android.view.View.*
-import android.view.ViewGroup
+import android.view.View
+import android.view.View.VISIBLE
 import android.widget.FrameLayout
-import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
@@ -17,152 +16,129 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+import com.joshtalks.joshskills.core.extension.setImageViewPH
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEvent
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.mindorks.placeholderview.annotations.*
 import com.pnikosis.materialishprogress.ProgressWheel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
 
-
-@Layout(R.layout.video_view_holder)
 class VideoViewHolder(
-    activityRef: WeakReference<FragmentActivity>,
-    message: ChatModel,
-    previousMessage: ChatModel?
-) :
-    BaseChatViewHolder(activityRef, message, previousMessage) {
-
-    @View(R.id.image_view)
-    lateinit var imageView: AppCompatImageView
-
-    @View(R.id.root_view)
-    lateinit var rootView: FrameLayout
-
-    @View(R.id.root_sub_view)
-    lateinit var rootSubView: FrameLayout
-
-    @View(R.id.message_view)
-    lateinit var messageView: ViewGroup
-
-    @View(R.id.text_title)
-    lateinit var textTitle: TextView
-
-    @View(R.id.text_message_body)
-    lateinit var textMessageBody: JoshTextView
-
-
-    @View(R.id.text_message_time)
-    lateinit var textMessageTime: AppCompatTextView
-
-
-    @View(R.id.download_container)
-    lateinit var downloadContainer: FrameLayout
-
-    @View(R.id.iv_cancel_download)
-    lateinit var ivCancelDownload: AppCompatImageView
-
-    @View(R.id.iv_start_download)
-    lateinit var ivStartDownload: AppCompatImageView
-
-
-    @View(R.id.play_icon)
-    lateinit var playIcon: android.view.View
-
-
-    @View(R.id.progress_dialog)
-    lateinit var progressDialog: ProgressWheel
-
-
-    lateinit var videoViewHolder: VideoViewHolder
-
+    view: View, private val activityRef: WeakReference<FragmentActivity>, userId: String
+) : BaseViewHolder(view, userId) {
+    private val rootSubView: FrameLayout = view.findViewById(R.id.root_sub_view)
+    private val messageBody: JoshTextView = view.findViewById(R.id.text_message_body)
+    private val titleView: AppCompatTextView = view.findViewById(R.id.text_title)
+    private val textMessageTime: AppCompatTextView = view.findViewById(R.id.text_message_time)
+    private val imageView: AppCompatImageView = view.findViewById(R.id.image_view)
+    private val downloadContainer: FrameLayout = view.findViewById(R.id.download_container)
+    private val ivCancelDownload: AppCompatImageView = view.findViewById(R.id.iv_cancel_download)
+    private val ivStartDownload: AppCompatImageView = view.findViewById(R.id.iv_start_download)
+    private val playIcon: AppCompatImageView = view.findViewById(R.id.play_icon)
+    private val progressDialog: ProgressWheel = view.findViewById(R.id.progress_dialog)
     private val compositeDisposable = CompositeDisposable()
+    private var message: ChatModel? = null
 
-    private lateinit var appAnalytics: AppAnalytics
+    private var appAnalytics: AppAnalytics = AppAnalytics.create(AnalyticsEvent.VIDEO_VH.NAME)
+        .addBasicParam()
+        .addUserDetails()
 
 
-    @Resolve
-    override fun onViewInflated() {
-        super.onViewInflated()
-        imageView.setImageResource(0)
-        textTitle.visibility = GONE
-        textMessageBody.visibility = GONE
-        textTitle.text = EMPTY
-        videoViewHolder = this
-        textMessageBody.text = EMPTY
-        downloadContainer.visibility = INVISIBLE
-        textMessageTime.text = Utils.messageTimeConversion(message.created)
-        messageView.findViewById<ViewGroup>(R.id.tag_view).visibility = GONE
-        message.sender?.let {
-            setViewHolderBG(previousMessage?.sender, it, rootView, rootSubView, messageView)
+    init {
+        ivStartDownload.also {
+            it.setOnClickListener {
+                executeDownload()
+
+            }
         }
-        message.parentQuestionObject?.run {
-            addLinkToTagMessage(messageView, this, message.sender)
+        downloadContainer.also {
+            it.setOnClickListener {
+                executeDownload()
+            }
         }
-        if (message.chatId.isNotEmpty() && sId == message.chatId) {
-            highlightedViewForSomeTime(rootView)
+        playIcon.also {
+            it.setOnClickListener {
+                executeDownload()
+            }
         }
-        appAnalytics = AppAnalytics.create(AnalyticsEvent.VIDEO_VH.NAME)
-            .addBasicParam()
-            .addUserDetails()
-            .addParam(AnalyticsEvent.VIDEO_ID.NAME, message.chatId)
+        imageView.also {
+            it.setOnClickListener {
+                executeDownload()
+            }
+        }
+        ivCancelDownload.also {
+            it.setOnClickListener {
+                downloadCancel()
+            }
+        }
+
+    }
+
+    override fun bind(message: ChatModel, previousMessage: ChatModel?) {
+        compositeDisposable.clear()
+        if (null != message.sender) {
+            setViewHolderBG(previousMessage?.sender, message.sender!!, rootSubView)
+        }
+        this.message = message
+        appAnalytics.addParam(AnalyticsEvent.VIDEO_ID.NAME, message.chatId)
             .addParam(
                 AnalyticsEvent.VIDEO_DURATION.NAME,
                 message.duration.toString()
             )
-        updateTime(textMessageTime)
-        addMessageAutoLink(textMessageBody)
+
+        imageView.setImageResource(0)
+        titleView.text = EMPTY
+        messageBody.text = EMPTY
+        titleView.visibility = View.GONE
+        messageBody.visibility = View.GONE
+        downloadContainer.visibility = View.INVISIBLE
+
+        textMessageTime.text = Utils.messageTimeConversion(message.created)
+        addMessageAutoLink(messageBody)
 
         if (message.url != null) {
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
                 if (AppDirectory.isFileExist(message.downloadedLocalPath)) {
                     Utils.fileUrl(message.downloadedLocalPath, message.url)?.run {
-                        setImageInImageView(
-                            imageView, message.downloadedLocalPath!!,
-                            Runnable {
-                                playIcon.visibility = VISIBLE
-                            })
-                        downloadContainer.visibility = GONE
+                        imageView.setImageViewPH(this, {
+                            playIcon.visibility = VISIBLE
+                        })
+                        downloadContainer.visibility = View.GONE
                     }
                 } else {
-                    downloadContainer.visibility = GONE
+                    downloadContainer.visibility = View.GONE
                     imageView.background =
-                        ContextCompat.getDrawable(activityRef.get()!!, R.drawable.video_placeholder)
+                        ContextCompat.getDrawable(getAppContext(), R.drawable.video_placeholder)
                 }
 
             } else if (message.downloadStatus == DOWNLOAD_STATUS.UPLOADING) {
                 fileDownloadingInProgressView()
-                setImageInImageView(imageView, message.downloadedLocalPath!!)
+                imageView.setImageViewPH(message.downloadedLocalPath!!)
             } else {
                 imageView.background =
-                    ContextCompat.getDrawable(activityRef.get()!!, R.drawable.video_placeholder)
-//                setVideoImageView(imageView, R.drawable.ic_file_error)
+                    ContextCompat.getDrawable(getAppContext(), R.drawable.video_placeholder)
             }
         } else {
             message.question?.videoList?.getOrNull(0)?.let { videoObj ->
-                subscribeDownloader()
-                if (videoObj.video_image_url.isEmpty()) {
-                    imageView.background =
-                        ContextCompat.getDrawable(activityRef.get()!!, R.drawable.video_placeholder)
-                } else {
-                    setImageView(imageView, videoObj.video_image_url)
-                }
+                imageView.setImageViewPH(videoObj.video_image_url)
                 when (message.downloadStatus) {
                     DOWNLOAD_STATUS.DOWNLOADED -> {
                         fileDownloadSuccess()
                     }
                     DOWNLOAD_STATUS.DOWNLOADING -> {
+                        subscribeDownloader()
                         videoObj.video_url?.run {
                             fileDownloadingInProgressView()
                             download(this)
@@ -184,89 +160,58 @@ class VideoViewHolder(
 
             message.question?.let { question ->
                 if (question.title.isNullOrEmpty().not()) {
-                    textTitle.text = HtmlCompat.fromHtml(
+                    titleView.text = HtmlCompat.fromHtml(
                         question.title!!,
                         HtmlCompat.FROM_HTML_MODE_LEGACY
                     )
-                    textTitle.visibility = VISIBLE
+                    titleView.visibility = VISIBLE
                 }
                 if (question.qText.isNullOrEmpty().not()) {
-                    textMessageBody.text = HtmlCompat.fromHtml(
+                    messageBody.text = HtmlCompat.fromHtml(
                         question.qText!!,
                         HtmlCompat.FROM_HTML_MODE_LEGACY
                     )
-                    textMessageBody.visibility = VISIBLE
+                    messageBody.visibility = VISIBLE
                 }
-
             }
         }
     }
 
+    override fun unBind() {
+    }
+
     private fun fileDownloadSuccess() {
         appAnalytics.addParam(AnalyticsEvent.VIDEO_VIEW_STATUS.NAME, "Downloaded")
-        downloadContainer.visibility = GONE
-        ivStartDownload.visibility = GONE
-        progressDialog.visibility = GONE
-        ivCancelDownload.visibility = GONE
-
+        downloadContainer.visibility = View.GONE
+        ivStartDownload.visibility = View.GONE
+        progressDialog.visibility = View.GONE
+        ivCancelDownload.visibility = View.GONE
     }
 
     private fun fileNotDownloadView() {
         appAnalytics.addParam(AnalyticsEvent.VIDEO_VIEW_STATUS.NAME, "Not downloaded")
         downloadContainer.visibility = VISIBLE
         ivStartDownload.visibility = VISIBLE
-        progressDialog.visibility = GONE
-        ivCancelDownload.visibility = GONE
+        progressDialog.visibility = View.GONE
+        ivCancelDownload.visibility = View.GONE
     }
 
     private fun fileDownloadingInProgressView() {
         downloadContainer.visibility = VISIBLE
-        ivStartDownload.visibility = GONE
+        ivStartDownload.visibility = View.GONE
         progressDialog.visibility = VISIBLE
         ivCancelDownload.visibility = VISIBLE
     }
 
 
     private fun download(url: String) {
-        AppObjectController.videoDownloadTracker.download(
-            message,
-            Uri.parse(url),
-            VideoDownloadController.getInstance().buildRenderersFactory(true)
-        )
         appAnalytics.addParam(AnalyticsEvent.VIDEO_DOWNLOAD_STATUS.NAME, "Downloading")
     }
 
-
-    private fun setImageView(iv: AppCompatImageView, url: String) {
-        setImageInImageView(iv, url, Runnable {
-            playIcon.visibility = VISIBLE
-        })
-    }
-
-    @Click(R.id.video_container_fl)
-    fun onClick() {
-        executeDownload()
-    }
-
-    @Click(R.id.play_icon)
-    fun playVideo() {
-        executeDownload()
-    }
-
-
-    @Click(R.id.iv_start_download)
-    fun downloadStart() {
-        executeDownload()
-    }
-
-    @Click(R.id.download_container)
-    fun downloadStartContainer() {
-        executeDownload()
-    }
-
-
     private fun executeDownload() {
-        if (PermissionUtils.isStoragePermissionEnabled(activityRef.get()!!).not()) {
+        if (PermissionUtils.isStoragePermissionEnabled(activityRef.get()!!)) {
+            videoDownload()
+        } else {
             PermissionUtils.storageReadAndWritePermission(
                 activityRef.get()!!,
                 object : MultiplePermissionsListener {
@@ -295,49 +240,57 @@ class VideoViewHolder(
                 })
             return
         }
-        videoDownload()
     }
 
     private fun videoDownload() {
-        if (message.url != null) {
-            when {
-                message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED -> {
-                    RxBus2.publish(PlayVideoEvent(message))
-                }
-                AppDirectory.isFileExist(message.downloadedLocalPath).not() -> {
-                    showToast(getAppContext().getString(R.string.video_url_not_exist))
-                }
-                else -> {
+        message?.let {
+            if (it.url == null) {
+                it.question?.videoList?.getOrNull(0)?.let { _ ->
                     appAnalytics.push()
-                    RxBus2.publish(PlayVideoEvent(message))
+                    if (it.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
+                        RxBus2.publish(PlayVideoEvent(it))
+                        return
+                    }
+                    if (it.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
+                        RxBus2.publish(PlayVideoEvent(it))
+                        return
+                    }
+                    RxBus2.publish(
+                        DownloadMediaEventBus(
+                            DOWNLOAD_STATUS.REQUEST_DOWNLOADING,
+                            it.chatId,
+                            BASE_MESSAGE_TYPE.VI,
+                            chatModel = it,
+                            url = getUrlForDownload(it)
+                        )
+                    )
+                    RxBus2.publish(PlayVideoEvent(it))
                 }
-            }
-        } else {
-            appAnalytics.push()
-            message.question?.videoList?.getOrNull(0)?.let { _ ->
-                if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
-                    RxBus2.publish(PlayVideoEvent(message))
-                    return
+            } else {
+                when {
+                    it.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED -> {
+                        RxBus2.publish(PlayVideoEvent(it))
+                    }
+                    AppDirectory.isFileExist(it.downloadedLocalPath).not() -> {
+                        showToast(getAppContext().getString(R.string.video_url_not_exist))
+                    }
+                    else -> {
+                        appAnalytics.push()
+                        RxBus2.publish(PlayVideoEvent(it))
+                    }
                 }
-                if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
-                    RxBus2.publish(PlayVideoEvent(message))
-                    return
-                }
-                //  RxBus2.publish(DownloadMediaEventBus(this, message))
-                RxBus2.publish(PlayVideoEvent(message))
+
             }
         }
     }
 
-
-    @Click(R.id.iv_cancel_download)
     fun downloadCancel() {
         appAnalytics.addParam(AnalyticsEvent.VIDEO_DOWNLOAD_STATUS.NAME, "Cancelled")
-        message.question?.videoList?.getOrNull(0)?.video_url?.run {
+        message?.question?.videoList?.getOrNull(0)?.video_url?.run {
             AppObjectController.videoDownloadTracker.cancelDownload(Uri.parse(this))
         }
         fileNotDownloadView()
-        message.downloadStatus = DOWNLOAD_STATUS.NOT_START
+        message?.downloadStatus = DOWNLOAD_STATUS.NOT_START
     }
 
     private fun updateProgress(progress: Int) {
@@ -364,13 +317,13 @@ class VideoViewHolder(
                         if (AppObjectController.gsonMapperForLocal.fromJson(
                                 it.id,
                                 ChatModel::class.java
-                            ).chatId == message.chatId
+                            ).chatId == message?.chatId
                         ) {
 
                             when {
                                 Download.STATE_STOPPED == it.state -> updateProgress()
                                 Download.STATE_DOWNLOADING == it.state -> {
-                                    message.progress = it.progress.toInt()
+                                    message?.progress = it.progress.toInt()
                                     updateProgress(it.progress.toInt())
                                 }
                                 Download.STATE_FAILED == it.state -> updateProgress()
@@ -383,15 +336,6 @@ class VideoViewHolder(
                     it.printStackTrace()
                 })
         )
-    }
-
-    override fun getRoot(): FrameLayout {
-        return rootView
-    }
-
-    @Recycle
-    fun onRecycled() {
-        compositeDisposable.clear()
     }
 
 }

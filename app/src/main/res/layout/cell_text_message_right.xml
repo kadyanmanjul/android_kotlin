@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/_48sdp"
+    android:paddingEnd="@dimen/_8sdp">
+
+    <FrameLayout
+        android:id="@+id/root_sub_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end">
+
+        <LinearLayout
+            android:id="@+id/message_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/_3sdp">
+
+            <include layout="@layout/tag_practise_layout" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/parent_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="start">
+
+                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/text_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:gravity="center_vertical|start"
+                    android:paddingHorizontal="@dimen/_4sdp"
+                    android:paddingVertical="@dimen/_6sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
+                    android:textColor="@color/black"
+                    android:visibility="gone"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Lesson 0 - Course Introduction"
+                    tools:visibility="visible" />
+
+                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/text_message_body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:gravity="center_vertical|start"
+                    android:paddingHorizontal="@dimen/_4sdp"
+                    android:paddingBottom="@dimen/_4sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toTopOf="@+id/text_message_time"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/text_title"
+                    app:layout_constraintVertical_bias="1.0"
+                    tools:text="Hello! Apne courses ki shuruat BASICS se karte hai. Yaad rakhna, ye English bhasha ke basics hai, toh in par humein bahut dhyaan dena hai, aap saath mein notes bhi le sakte hai." />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_message_time"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="1dp"
+                    android:drawablePadding="@dimen/_4sdp"
+                    android:gravity="center"
+                    android:paddingStart="@dimen/_20sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                    android:textColor="@color/gray_9E"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    tools:text="2:44 PM" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</FrameLayout>

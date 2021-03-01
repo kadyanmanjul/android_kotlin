@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/_48sdp"
+    android:paddingEnd="@dimen/_8sdp">
+
+    <FrameLayout
+        android:id="@+id/root_sub_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end">
+
+        <include
+            layout="@layout/tag_practise_layout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tag_height"
+            android:layout_margin="@dimen/_4sdp"
+            tools:visibility="gone" />
+
+        <RelativeLayout
+            android:id="@+id/message_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:orientation="horizontal"
+            android:padding="@dimen/_2sdp">
+
+            <include
+                android:id="@+id/audio_view_sent"
+                layout="@layout/audio_sent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <RelativeLayout
+                android:id="@+id/audio_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/audio_view_received"
+                android:layout_toEndOf="@+id/audio_view_sent">
+
+                <FrameLayout
+                    android:id="@+id/fl_controller"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:minWidth="@dimen/_36sdp">
+
+                    <FrameLayout
+                        android:id="@+id/download_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:visibility="visible">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/start_download_iv"
+                            android:layout_width="@dimen/_22sdp"
+                            android:layout_height="@dimen/_22sdp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/circle_pdf_bg"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:padding="@dimen/_4sdp"
+                            android:tint="#7A7A7A"
+                            android:visibility="gone"
+                            app:srcCompat="@drawable/ic_download"
+                            tools:visibility="visible" />
+
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/cancel_download_iv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:padding="@dimen/_4sdp"
+                            android:tint="#7A7A7A"
+                            android:visibility="invisible"
+                            app:srcCompat="@drawable/ic_cross"
+                            tools:visibility="visible" />
+
+                        <ProgressBar
+                            android:id="@+id/progress_bar"
+                            android:layout_width="@dimen/_36sdp"
+                            android:layout_height="@dimen/_36sdp"
+                            android:layout_gravity="center"
+                            android:indeterminate="true"
+                            android:indeterminateTint="@color/button_color"
+                            android:visibility="invisible"
+                            tools:visibility="visible" />
+
+
+                    </FrameLayout>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/btnPlay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@null"
+                        android:contentDescription="@string/play_button_description"
+                        android:visibility="invisible"
+                        app:srcCompat="@drawable/ic_play_24dp"
+                        tools:visibility="visible" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/btnPause"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@null"
+                        android:contentDescription="@string/play_button_description"
+                        android:visibility="invisible"
+                        app:srcCompat="@drawable/ic_pause_24dp"
+                        tools:visibility="visible" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/fl_seek_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@id/fl_controller"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:layout_toEndOf="@id/fl_controller">
+
+                    <SeekBar
+                        android:id="@+id/seekBar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/_6sdp"
+                        android:paddingEnd="@dimen/_6sdp"
+                        android:progressTint="@color/colorPrimary"
+                        android:thumb="@drawable/seek_thumb"
+                        android:thumbTint="@color/colorPrimary"
+                        android:visibility="visible" />
+
+                </FrameLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txtCurrentDuration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/fl_seek_bar"
+                    android:layout_alignStart="@id/fl_seek_bar"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                    android:textColor="@color/gray_9E"
+                    app:layout_goneMarginTop="@dimen/spacing_large"
+                    tools:text="00:24" />
+
+                <TextView
+                    android:id="@+id/message_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/fl_seek_bar"
+                    android:layout_alignEnd="@id/fl_seek_bar"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:gravity="center|end"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                    android:textColor="@color/gray_9E"
+                    app:layout_goneMarginTop="@dimen/spacing_large"
+                    tools:ignore="MissingPrefix"
+                    tools:text="12:35PM" />
+            </RelativeLayout>
+
+            <include
+                android:id="@+id/audio_view_received"
+                layout="@layout/audio_received"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+        </RelativeLayout>
+    </FrameLayout>
+
+</FrameLayout>
