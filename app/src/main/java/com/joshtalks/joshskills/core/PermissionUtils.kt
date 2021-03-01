@@ -22,10 +22,10 @@ enum class PermissionAction(val action: String) {
 object PermissionUtils {
 
     fun storageReadAndWritePermission(
-        activity: Activity?,
+        context: Context?,
         multiplePermissionsListener: MultiplePermissionsListener
     ) {
-        Dexter.withContext(activity)
+        Dexter.withContext(context)
             .withPermissions(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE

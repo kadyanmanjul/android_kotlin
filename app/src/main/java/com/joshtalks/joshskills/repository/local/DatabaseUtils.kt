@@ -2,15 +2,16 @@ package com.joshtalks.joshskills.repository.local
 
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshSkillExecutors
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CertificationExamDetailModel
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.util.Calendar
-import java.util.Date
+import java.util.*
 import java.util.concurrent.ExecutorService
 
 object DatabaseUtils {
@@ -44,15 +45,17 @@ object DatabaseUtils {
 
     @JvmStatic
     fun updateVideoDownload(objs: String, downloadStatus: DOWNLOAD_STATUS) {
-        CoroutineScope(Dispatchers.IO).launch {
+        executor.execute {
             try {
                 val chatModel =
                     AppObjectController.gsonMapperForLocal.fromJson(objs, ChatModel::class.java)
                 AppObjectController.appDatabase.chatDao()
-                    .updateDownloadVideoStatus(chatModel, downloadStatus)
-
+                    .updateDownloadStatus(chatModel.chatId, downloadStatus)
+                if (downloadStatus == DOWNLOAD_STATUS.FAILED || downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
+                    RxBus2.publish(VideoDownloadedBus(chatModel))
+                }
             } catch (ex: Exception) {
-
+                ex.printStackTrace()
             }
         }
 

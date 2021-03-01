@@ -1,64 +1,44 @@
 package com.joshtalks.joshskills.messaging
 
-import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
-import com.joshtalks.joshskills.repository.local.entity.Sender
-import com.joshtalks.joshskills.repository.local.entity.User
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TUnlockClassMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
-import com.joshtalks.joshskills.ui.view_holders.AudioPlayerViewHolder
-import com.joshtalks.joshskills.ui.view_holders.BaseChatViewHolder
-import com.joshtalks.joshskills.ui.view_holders.ImageViewHolder
-import com.joshtalks.joshskills.ui.view_holders.TextViewHolder
-import com.joshtalks.joshskills.ui.view_holders.UnlockNextClassViewHolder
-import com.joshtalks.joshskills.ui.view_holders.VideoViewHolder
+import com.joshtalks.joshskills.repository.server.chat_message.*
 import com.joshtalks.joshskills.util.RandomString
-import java.lang.ref.WeakReference
 import java.util.*
 
 object MessageBuilderFactory {
 
     fun getMessage(
-        activityRef: WeakReference<FragmentActivity>,
         cMessageType: BASE_MESSAGE_TYPE,
         message: BaseChatMessage,
-        prevMessage:ChatModel?
-    ): BaseChatViewHolder {
+    ): ChatModel {
         when (cMessageType) {
             BASE_MESSAGE_TYPE.TX -> {
-                return TextViewHolder(activityRef, getTextChatModel(message),prevMessage)
+                return getTextChatModel(message)
             }
             BASE_MESSAGE_TYPE.VI -> {
-                return VideoViewHolder(activityRef, getVideoChatModel(message),prevMessage)
+                return getVideoChatModel(message)
 
             }
             BASE_MESSAGE_TYPE.IM -> {
-                return ImageViewHolder(activityRef, getImageChatModel(message),prevMessage)
+                return getImageChatModel(message)
 
             }
             BASE_MESSAGE_TYPE.AU -> {
-                return AudioPlayerViewHolder(activityRef, getAudioChatModel(message),prevMessage)
+                return getAudioChatModel(message)
             }
             BASE_MESSAGE_TYPE.UNLOCK -> {
-                return UnlockNextClassViewHolder(activityRef, getUnlockChatModel(message),prevMessage)
+                return getUnlockChatModel(message)
             }//add new
-            else -> return TextViewHolder(activityRef, ChatModel(),prevMessage)
+            else -> return ChatModel(BASE_MESSAGE_TYPE.NEW_CLASS)
         }
 
     }
 
     private fun getUnlockChatModel(message: BaseChatMessage): ChatModel {
-        val model = ChatModel()
+        val model = ChatModel(BASE_MESSAGE_TYPE.NEW_CLASS)
         model.text = (message as TUnlockClassMessage).text
         model.type = BASE_MESSAGE_TYPE.UNLOCK
         model.created = Date(System.currentTimeMillis())
@@ -70,19 +50,19 @@ object MessageBuilderFactory {
     }
 
     private fun getTextChatModel(message: BaseChatMessage): ChatModel {
-        val model = ChatModel()
+        val model = ChatModel(BASE_MESSAGE_TYPE.NEW_CLASS)
         model.text = (message as TChatMessage).text
         model.type = BASE_MESSAGE_TYPE.TX
         model.created = Date(System.currentTimeMillis())
         model.messageDeliverStatus = MESSAGE_DELIVER_STATUS.SENT
         model.chatLocalId = RandomString().nextString()
-        model.isSync = false
+        model.isSync = true
         model.sender = Sender(Mentor.getInstance().getId(), User(), "")
         return model
     }
 
     private fun getAudioChatModel(message: BaseChatMessage): ChatModel {
-        val model = ChatModel()
+        val model = ChatModel(BASE_MESSAGE_TYPE.NEW_CLASS)
         model.type = BASE_MESSAGE_TYPE.AU
 
         model.url = (message as TAudioMessage).url
@@ -91,22 +71,23 @@ object MessageBuilderFactory {
         model.messageDeliverStatus = MESSAGE_DELIVER_STATUS.SENT
         model.sender = Sender(Mentor.getInstance().getId(), User(), "")
         model.downloadedLocalPath = model.url
-        model.isSync = false
+        model.isSync = true
         model.chatLocalId = RandomString().nextString()
         model.url?.let {
-            model.mediaDuration = Utils.getDurationOfMedia(AppObjectController.joshApplication, it)
+            model.duration =
+                Utils.getDurationOfMedia(AppObjectController.joshApplication, it)?.toInt() ?: 0
         }
         return model
     }
 
     private fun getImageChatModel(message: BaseChatMessage): ChatModel {
-        val model = ChatModel()
+        val model = ChatModel(BASE_MESSAGE_TYPE.NEW_CLASS)
         model.url = (message as TImageMessage).url
         model.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
         model.messageDeliverStatus = MESSAGE_DELIVER_STATUS.SENT
         model.created = Date(System.currentTimeMillis())
         model.downloadedLocalPath = message.localPathUrl
-        model.isSync = false
+        model.isSync = true
         model.type = BASE_MESSAGE_TYPE.IM
         model.chatLocalId = RandomString().nextString()
         model.sender = Sender(Mentor.getInstance().getId(), User(), "")
@@ -115,7 +96,7 @@ object MessageBuilderFactory {
 
 
     private fun getVideoChatModel(message: BaseChatMessage): ChatModel {
-        val model = ChatModel()
+        val model = ChatModel(BASE_MESSAGE_TYPE.NEW_CLASS)
         model.url = (message as TVideoMessage).url
         model.created = Date(System.currentTimeMillis())
         model.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
@@ -123,10 +104,11 @@ object MessageBuilderFactory {
         model.sender = Sender(Mentor.getInstance().getId(), User(), "")
         model.downloadedLocalPath = model.url
         model.type = BASE_MESSAGE_TYPE.VI
-        model.isSync = false
+        model.isSync = true
         model.chatLocalId = RandomString().nextString()
         model.url?.let {
-            model.mediaDuration = Utils.getDurationOfMedia(AppObjectController.joshApplication, it)
+            model.duration =
+                Utils.getDurationOfMedia(AppObjectController.joshApplication, it)?.toInt() ?: 0
         }
         return model
     }

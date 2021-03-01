@@ -64,6 +64,7 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
                     .detectAll()
                     .build()
             )
+            Timber.plant(Timber.DebugTree())
         }
     }
 

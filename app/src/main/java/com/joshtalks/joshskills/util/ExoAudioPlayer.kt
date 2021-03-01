@@ -150,7 +150,7 @@ class ExoAudioPlayer {
         override fun run() {
             val currentPosition = player?.currentPosition ?: 0
             progressUpdateListener?.onProgressUpdate(currentPosition)
-            handler.postDelayed(this, 500 /* ms */)
+            handler.postDelayed(this, 50 /* ms */)
         }
 
         init {
