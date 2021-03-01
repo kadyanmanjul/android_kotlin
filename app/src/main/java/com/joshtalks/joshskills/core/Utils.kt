@@ -315,6 +315,23 @@ object Utils {
     }
 
 
+    fun openUrl(url: String, context: Context) {
+        try {
+            val intent = Intent(ACTION_VIEW).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+
+            if (url.trim().startsWith("http://").not()) {
+                intent.data = Uri.parse("http://" + url.replace("https://", "").trim())
+            } else {
+                intent.data = Uri.parse(url.trim())
+            }
+            context.startActivity(intent)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
     fun openUrl(url: String, activity: Activity) {
 
         try {
