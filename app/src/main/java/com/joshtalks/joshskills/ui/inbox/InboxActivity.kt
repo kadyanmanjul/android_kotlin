@@ -9,7 +9,6 @@ import android.view.View
 import android.view.animation.OvershootInterpolator
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.*
-import androidx.paging.LoadState
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -51,9 +50,6 @@ import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
@@ -87,7 +83,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
         lifecycle.addObserver(this)
         setContentView(R.layout.activity_inbox)
         initView()
-        initAdapterObserable()
+        addLiveDataObservable()
         workInBackground()
         handelIntentAction()
         initNewUserTip()
@@ -101,8 +97,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
         iv_setting.visibility = View.VISIBLE
         findMoreLayout = findViewById(R.id.parent_layout)
         recycler_view_inbox.itemAnimator?.apply {
-            addDuration = 500
-            changeDuration = 500
+            addDuration = 250
+            changeDuration = 250
         }
         recycler_view_inbox.itemAnimator = SlideInUpAnimator(OvershootInterpolator(2f))
         recycler_view_inbox.layoutManager = SmoothLinearLayoutManager(applicationContext)
@@ -114,7 +110,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
                 )
             )
         )
-        //recycler_view_inbox.setItemViewCacheSize(20)
+        recycler_view_inbox.setItemViewCacheSize(20)
         recycler_view_inbox.adapter = inboxAdapter
 
         iv_setting.setOnClickListener {
@@ -138,37 +134,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
         }
         overlay_layout.setOnClickListener {
             overlay_layout.visibility = View.GONE
-        }
-    }
-
-    private fun initAdapterObserable() {
-        lifecycleScope.launchWhenCreated {
-            inboxAdapter.loadStateFlow.collectLatest { loadStates ->
-            }
-        }
-
-        lifecycleScope.launchWhenCreated {
-            viewModel.registerCourseData.collectLatest {
-                inboxAdapter.submitData(it)
-            }
-        }
-
-        lifecycleScope.launchWhenCreated {
-            inboxAdapter.loadStateFlow
-                // Only emit when REFRESH LoadState for RemoteMediator changes.
-                .distinctUntilChangedBy { it.refresh }
-                // Only react to cases where Remote REFRESH completes i.e., NotLoading.
-                .filter { it.refresh is LoadState.NotLoading }
-                .collect {
-                    courseListSet.addAll(inboxAdapter.snapshot().items)
-                    if (findMoreLayout.visibility == View.INVISIBLE) {
-                        findMoreLayout.visibility = View.VISIBLE
-                    }
-                    if (courseListSet.size == 0) {
-                        openCourseExplorer()
-                        return@collect
-                    }
-                }
         }
     }
 
@@ -299,6 +264,50 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
         this.intent = intent
         handelIntentAction()
     }
+
+    private fun addLiveDataObservable() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.registerCourseNetworkData.collect {
+                if (it.isNotEmpty()) {
+                    addCourseInRecyclerView(it)
+                } else {
+                    openCourseExplorer()
+                }
+            }
+        }
+        lifecycleScope.launchWhenStarted {
+            viewModel.registerCourseLocalData.collect {
+                addCourseInRecyclerView(it)
+            }
+        }
+
+    }
+
+    private fun addCourseInRecyclerView(items: List<InboxEntity>) {
+        if (items.isEmpty()) {
+            return
+        }
+        val temp: ArrayList<InboxEntity> = arrayListOf()
+        items.filter { it.isCapsuleCourse }.sortedByDescending { it.courseCreatedDate }.let {
+            temp.addAll(it)
+        }
+
+        items.filter { (it.created == null || it.created == 0L) && it.courseId != TRIAL_COURSE_ID && it.isCapsuleCourse.not() }
+            .sortedByDescending { it.courseCreatedDate }.let {
+                temp.addAll(it)
+            }
+
+        items.filter { it.created != null && it.created != 0L && it.isCapsuleCourse.not() }
+            .sortedByDescending { it.created }.let {
+                temp.addAll(it)
+            }
+        courseListSet.addAll(temp)
+        inboxAdapter.addItems(temp)
+        if (findMoreLayout.visibility == View.INVISIBLE) {
+            findMoreLayout.visibility = View.VISIBLE
+        }
+    }
+
     private fun addObserver() {
         compositeDisposable.add(
             RxBus2.listen(OpenCourseEventBus::class.java)
@@ -336,7 +345,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
         super.onResume()
         Runtime.getRuntime().gc()
         addObserver()
-        inboxAdapter.refresh()
+        viewModel.getRegisterCourses()
         viewModel.getProfileData(Mentor.getInstance().getId())
     }
 

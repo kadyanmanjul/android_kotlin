@@ -14,7 +14,7 @@ data class InboxEntity constructor(
     val conversation_id: String = "",
     val course_icon: String? = "",
     val courseId: String = "",
-    val duration: Int? = 0,
+    val duration: Int = 0,
     val is_deleted: Boolean? = false,
     val teacher_id: String? = "",
     var chat_id: String? = "",

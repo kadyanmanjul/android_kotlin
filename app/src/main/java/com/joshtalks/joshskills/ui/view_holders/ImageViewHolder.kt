@@ -16,7 +16,6 @@ import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
@@ -178,7 +177,7 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
     @Click(R.id.download_container)
     fun downloadStart() {
-        RxBus2.publish(DownloadMediaEventBus(this, message))
+        //RxBus2.publish(DownloadMediaEventBus(this, message))
         AppAnalytics.create(AnalyticsEvent.IMAGE_DOWNLOAD.NAME).addParam("ChatId", message.chatId)
     }
 
@@ -191,7 +190,7 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
     @Click(R.id.iv_start_download)
     fun downloadStart1() {
-        RxBus2.publish(DownloadMediaEventBus(this, message))
+        // RxBus2.publish(DownloadMediaEventBus(this, message))
     }
 }
 

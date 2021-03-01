@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import androidx.paging.cachedIn
 import com.cometchat.pro.core.AppSettings
 import com.cometchat.pro.core.CometChat
 import com.cometchat.pro.exceptions.CometChatException
@@ -13,6 +12,7 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
+import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.repository.inbox.DbInboxRepository
 import com.joshtalks.joshskills.repository.local.repository.inbox.InboxModelRepository
@@ -39,11 +39,49 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         AppObjectController.chatNetworkService
     )
 
-    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-    val registerCourseData = flowOf(
-        repository.getAllRegisterCourse(100)
-            .cachedIn(viewModelScope)
-    ).flattenMerge(2)
+
+    private val _registerCourseNetworkData = MutableSharedFlow<List<InboxEntity>>(replay = 0)
+    val registerCourseNetworkData: SharedFlow<List<InboxEntity>>
+        get() = _registerCourseNetworkData
+
+    private val _registerCourseLocalData = MutableSharedFlow<List<InboxEntity>>(replay = 0)
+    val registerCourseLocalData: SharedFlow<List<InboxEntity>>
+        get() = _registerCourseLocalData
+
+
+    fun getRegisterCourses() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                getAllRegisterCourseMinimalFromDB()
+                delay(500)
+                getCourseFromServer()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    private fun getAllRegisterCourseMinimalFromDB() = viewModelScope.launch {
+        _registerCourseLocalData.emit(appDatabase.courseDao().getRegisterCourseMinimal())
+    }
+
+    private fun getCourseFromServer() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val courseListResponse =
+                    AppObjectController.chatNetworkService.getRegisteredCourses()
+                if (courseListResponse.isNotEmpty()) {
+                    appDatabase.courseDao().insertRegisterCourses(courseListResponse).let {
+                        _registerCourseNetworkData.emit(
+                            appDatabase.courseDao().getRegisterCourseMinimal()
+                        )
+                    }
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
 
 
     fun getProfileData(mentorId: String) {
