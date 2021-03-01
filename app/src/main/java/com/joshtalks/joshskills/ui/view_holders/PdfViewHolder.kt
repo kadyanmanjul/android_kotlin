@@ -18,7 +18,6 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadCompletedEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.PdfOpenEventBus
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -33,8 +32,8 @@ import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
 import com.tonyodev.fetch2core.DownloadBlock
-import java.lang.ref.WeakReference
 import timber.log.Timber
+import java.lang.ref.WeakReference
 
 @Layout(R.layout.pdf_view_holder)
 class PdfViewHolder(
@@ -283,7 +282,7 @@ class PdfViewHolder(
             ) {
                 RxBus2.publish(PdfOpenEventBus(message.chatId, pdfObj))
             } else {
-                RxBus2.publish(DownloadMediaEventBus(pdfViewHolder, message))
+                // RxBus2.publish(DownloadMediaEventBus(pdfViewHolder, message))
             }
         }
 
@@ -302,7 +301,7 @@ class PdfViewHolder(
         if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
             return
         }
-        RxBus2.publish(DownloadMediaEventBus(this, message))
+        //RxBus2.publish(DownloadMediaEventBus(this, message))
     }
 
     private fun download(url: String) {
