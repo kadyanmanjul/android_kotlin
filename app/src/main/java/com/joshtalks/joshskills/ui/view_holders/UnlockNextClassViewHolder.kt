@@ -48,12 +48,12 @@ class UnlockNextClassViewHolder(activityRef: WeakReference<FragmentActivity>, me
 
     @Click(R.id.card_top)
     fun onClickRootView() {
-        RxBus2.publish(UnlockNextClassEventBus(message.question?.assessmentId ?: 0, viewHolder))
+        RxBus2.publish(UnlockNextClassEventBus())
     }
 
     @Click(R.id.btn_start)
     fun onClickStartView() {
-        RxBus2.publish(UnlockNextClassEventBus(message.question?.assessmentId ?: 0, viewHolder))
+        RxBus2.publish(UnlockNextClassEventBus())
     }
 
     override fun getRoot(): FrameLayout {

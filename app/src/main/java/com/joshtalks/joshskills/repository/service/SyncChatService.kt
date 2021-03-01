@@ -7,17 +7,8 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
-import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
-import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import com.joshtalks.joshskills.repository.server.chat_message.*
+import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -135,7 +126,7 @@ object SyncChatService {
             try {
                 messageObject.conversation = conversation_id
                 val responseChat =
-                    AppObjectController.chatNetworkService.sendMessageAsync(messageObject).await()
+                    AppObjectController.chatNetworkService.sendMessageAsync(messageObject)
                 NetworkRequestHelper.updateChat(
                     responseChat,
                     refreshViewLiveData,
