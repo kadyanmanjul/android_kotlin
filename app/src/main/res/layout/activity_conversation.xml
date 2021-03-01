@@ -86,12 +86,11 @@
                     android:layout_centerVertical="true"
                     android:layout_marginHorizontal="@dimen/_8sdp"
                     android:layout_marginVertical="@dimen/_4sdp"
-                    android:layout_toStartOf="@id/iv_call"
                     android:layout_toEndOf="@id/image_view_logo"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="start|center"
                     android:singleLine="true"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                     android:textColor="@color/white"
                     tools:text="Spoken English Course" />
 
@@ -106,19 +105,6 @@
                     android:gravity="start"
                     android:tint="@color/wh_fc"
                     android:visibility="invisible"
-                    tools:visibility="visible" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_call"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:onClick="@{()->handler.practiseOnCall()}"
-                    android:padding="@dimen/_4sdp"
-                    android:tint="@color/white"
-                    android:visibility="gone"
-                    app:srcCompat="@drawable/ic_group_call"
                     tools:visibility="visible" />
             </RelativeLayout>
 
@@ -137,18 +123,16 @@
                 android:layout_height="match_parent"
                 app:srl_direction="bottom">
 
-                <com.mindorks.placeholderview.PlaceHolderView
+                <androidx.recyclerview.widget.RecyclerView
+                    android:scrollbars="vertical"
+                    tools:itemCount="5"
                     android:id="@+id/chatRv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="true"
                     android:paddingTop="@dimen/_6sdp"
                     android:paddingBottom="@dimen/_4sdp"
-                    android:scrollbars="vertical"
-                    app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable_rv"
-                    app:fastScrollHorizontalTrackDrawable="@drawable/thumb_drawable_rv"
-                    app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable_rv"
-                    app:fastScrollVerticalTrackDrawable="@drawable/thumb_drawable_rv" />
+                    tools:listitem="@layout/inbox_row_layout" />
             </com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout>
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -220,8 +204,8 @@
             android:clickable="true"
             android:focusable="true"
             android:focusableInTouchMode="true"
+            tools:visibility="visible"
             android:visibility="gone" />
-
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bottom_bar"
@@ -283,13 +267,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:onClick="@{()->handler.uploadAttachment()}"
+                        android:onClick="@{()->handler.addAttachmentUIUpdate()}"
                         android:paddingLeft="@dimen/_10sdp"
                         android:paddingTop="@dimen/_10sdp"
                         android:paddingRight="@dimen/_10sdp"
                         android:paddingBottom="@dimen/_10sdp"
                         android:visibility="gone"
-                        tools:visibility="gone">
+                        tools:visibility="visible">
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/attachment_view"
@@ -311,7 +295,7 @@
                         android:paddingTop="@dimen/_10sdp"
                         android:paddingBottom="@dimen/_10sdp"
                         android:visibility="gone"
-                        tools:visibility="gone">
+                        tools:visibility="visible">
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="wrap_content"
@@ -389,6 +373,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/user_point_container"
                 android:layout_width="match_parent"
+                android:paddingVertical="@dimen/_6sdp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_8sdp"
                 android:layout_marginTop="@dimen/_50sdp"
@@ -402,9 +387,7 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/points"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/_8sdp"
-                    android:elevation="@dimen/_8sdp"
+                    android:layout_height="0dp"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
                     android:text="0 Points"
@@ -430,8 +413,7 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/leaderboard_txt"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="@dimen/_8sdp"
+                    android:layout_height="0dp"
                     android:elevation="@dimen/_8sdp"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
@@ -479,6 +461,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/toolbar"
             android:layout_marginHorizontal="@dimen/_16sdp"
+            tools:visibility="visible"
             android:visibility="gone" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -489,7 +472,7 @@
             android:elevation="@dimen/_4sdp"
             android:paddingVertical="@dimen/_8sdp"
             android:visibility="gone"
-            tools:visibility="gone">
+            tools:visibility="visible">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgGroupChatOverlay"
