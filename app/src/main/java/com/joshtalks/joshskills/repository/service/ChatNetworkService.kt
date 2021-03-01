@@ -22,7 +22,7 @@ interface ChatNetworkService {
     suspend fun getRegisteredCourses(): List<Course>
 
     @POST("$DIR/chat/message/")
-    fun sendMessageAsync(@Body messageObject: Any): Deferred<ChatMessageReceiver>
+    suspend fun sendMessageAsync(@Body messageObject: Any): ChatMessageReceiver
 
     @PATCH("$DIR/chat/message/{id}")
     suspend fun deleteMessage(
@@ -95,7 +95,7 @@ interface ChatNetworkService {
     ): Response<AssessmentResponse>
 
     @PATCH("$DIR/chat/add_next_class/{id}/")
-    suspend fun changeBatchRequest(@Path("id") conversationId: String): Response<Any>
+    suspend fun changeBatchRequest(@Path("id") conversationId: String): Response<Void>
 
     @GET("$DIR/chat/lessons/")
     suspend fun getLessonList(

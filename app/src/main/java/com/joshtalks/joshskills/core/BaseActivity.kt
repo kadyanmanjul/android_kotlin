@@ -305,15 +305,17 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
 
     protected fun processIntent(mIntent: Intent?) {
         try {
-            if (mIntent != null && mIntent.hasExtra(HAS_NOTIFICATION) && mIntent.hasExtra(
-                    NOTIFICATION_ID
-                ) && mIntent.getStringExtra(NOTIFICATION_ID).isNullOrEmpty().not()
-            ) {
-                EngagementNetworkHelper.clickNotification(
-                    mIntent.getStringExtra(
+            CoroutineScope(Dispatchers.IO).launch {
+                if (mIntent != null && mIntent.hasExtra(HAS_NOTIFICATION) && mIntent.hasExtra(
                         NOTIFICATION_ID
+                    ) && mIntent.getStringExtra(NOTIFICATION_ID).isNullOrEmpty().not()
+                ) {
+                    EngagementNetworkHelper.clickNotification(
+                        mIntent.getStringExtra(
+                            NOTIFICATION_ID
+                        )
                     )
-                )
+                }
             }
         } catch (ex: Throwable) {
             LogException.catchException(ex)

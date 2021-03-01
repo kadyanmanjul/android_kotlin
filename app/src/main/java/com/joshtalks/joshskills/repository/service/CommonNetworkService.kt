@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.repository.service
 
 import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
@@ -241,5 +242,14 @@ interface CommonNetworkService {
 
     @POST("$DIR/mentor/gaid/")
     suspend fun registerGAIdDetailsV2Async(@Body body: RequestRegisterGAId): Response<GaIDMentorModel>
+
+
+    @POST("$DIR/group/updatelastmessage/")
+    suspend fun updateLastReadMessage(@Body params: Map<String, Any>): Response<JsonObject>
+
+    @GET("$DIR/group/{conversation_id}/unread_message/ ")
+    suspend fun getUnreadMessageCount(
+        @Path("conversation_id") conversationId: String
+    ): Response<JsonObject>
 
 }
