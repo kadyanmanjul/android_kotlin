@@ -28,7 +28,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.reflect.Type
-import java.util.HashMap
+import java.util.*
 import java.util.concurrent.ExecutorService
 
 const val DOWNLOAD_OBJECT = "DownloadObject"
@@ -65,10 +65,10 @@ object DownloadUtils {
             objectFetchListener[tag] = fetchListener
             AppObjectController.getFetchObject().remove(request.id)
             AppObjectController.getFetchObject().enqueue(
-                request, Func {
+                request, {
                     updateDownloadStatus(it.file, it.extras)
                 },
-                Func {
+                {
                     it.throwable?.printStackTrace()
                     request.tag?.let { tag ->
                         objectFetchListener[tag]?.let { it1 ->
@@ -96,10 +96,10 @@ object DownloadUtils {
             objectFetchListener[tag] = fetchListener
             AppObjectController.getFetchObject().remove(request.id)
             AppObjectController.getFetchObject().enqueue(
-                request, Func {
+                request, {
                     updateDownloadStatus(it.file, it.extras)
                 },
-                Func {
+                {
                     it.throwable?.printStackTrace()
                     request.tag?.let { tag ->
                         objectFetchListener[tag]?.let { it1 ->

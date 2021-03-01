@@ -611,6 +611,11 @@
             android:enabled="true"
             android:exported="true"
             tools:ignore="ExportedService" />
+        <service
+            android:name=".ui.chat.service.DownloadMediaService"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <meta-data
             android:name="com.cometchat.pro.uikit"
