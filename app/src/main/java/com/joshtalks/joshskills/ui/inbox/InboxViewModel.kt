@@ -61,12 +61,14 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 val courseListResponse =
                     AppObjectController.chatNetworkService.getRegisteredCourses()
-                if (courseListResponse.isNotEmpty()) {
-                    appDatabase.courseDao().insertRegisterCourses(courseListResponse).let {
-                        _registerCourseNetworkData.emit(
-                            appDatabase.courseDao().getRegisterCourseMinimal()
-                        )
-                    }
+                if (courseListResponse.isEmpty()) {
+                    _registerCourseNetworkData.emit(emptyList())
+                    return@launch
+                }
+                appDatabase.courseDao().insertRegisterCourses(courseListResponse).let {
+                    _registerCourseNetworkData.emit(
+                        appDatabase.courseDao().getRegisterCourseMinimal()
+                    )
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()

@@ -94,23 +94,6 @@ object WorkManagerAdmin {
         )
     }
 
-    fun updatedCourseForConversation(conversationId: String) {
-        val data = workDataOf(CONVERSATION_ID to conversationId)
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .setRequiresBatteryNotLow(true)
-            .build()
-        val workRequest = OneTimeWorkRequestBuilder<GetUserConversationWorker>()
-            .setInputData(data)
-            .setConstraints(constraints)
-            .build()
-        WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniqueWork(
-            "Update_Chat",
-            ExistingWorkPolicy.APPEND_OR_REPLACE,
-            workRequest
-        )
-    }
-
     fun readMessageUpdating() {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)

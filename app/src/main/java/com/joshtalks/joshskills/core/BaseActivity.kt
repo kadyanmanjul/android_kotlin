@@ -332,8 +332,8 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
             firebaseCrashlytics.setCustomKey("gaid", gaid)
             firebaseCrashlytics.setCustomKey("mentor_id", mentor.getId())
             firebaseCrashlytics.setCustomKey("phone", getPhoneNumber())
-            firebaseCrashlytics.setCustomKey("first_name", user.firstName)
-            firebaseCrashlytics.setCustomKey("email", user.email)
+            firebaseCrashlytics.setCustomKey("first_name", user.firstName ?: EMPTY)
+            firebaseCrashlytics.setCustomKey("email", user.email ?: EMPTY)
             firebaseCrashlytics.setCustomKey("username", user.username)
             firebaseCrashlytics.setCustomKey("user_type", user.userType)
             firebaseCrashlytics.setCustomKey(
@@ -496,10 +496,10 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
     fun isUserProfileComplete(): Boolean {
         try {
             val user = User.getInstance()
-            if (user.phoneNumber.isNotEmpty() && user.firstName.isEmpty()) {
+            if (user.phoneNumber.isNullOrEmpty() && user.firstName.isNullOrEmpty()) {
                 return true
             }
-            if (user.firstName.isEmpty()) {
+            if (user.firstName.isNullOrEmpty()) {
                 return true
             }
         } catch (ex: Exception) {

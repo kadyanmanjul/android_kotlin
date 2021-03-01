@@ -20,21 +20,36 @@ class UnlockClassViewModel(
     AndroidViewModel(application) {
     private val chatNetworkService = AppObjectController.chatNetworkService
     private val chatDao = AppObjectController.appDatabase.chatDao()
+    private val lessonDao = AppObjectController.appDatabase.lessonDao()
+
     val batchChange = MutableSharedFlow<Boolean>(replay = 0)
     val unlockNextClass = MutableSharedFlow<Boolean>(replay = 0)
 
     fun canWeAddUnlockNextClass(chatId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val chatInterval = chatDao.getUpdatedChatObjectViaId(chatId).question?.interval ?: 0
-            val courseDuration = inboxEntity.duration
-            if (chatInterval < courseDuration) {
-                val nextClassAvailable =
-                    chatDao.nextQuestionIntervalExist(inboxEntity.courseId, chatInterval)
-                if (nextClassAvailable == 0L) {
-                    unlockNextClass.emit(true)
-                    return@launch
+            val chatModel = chatDao.getChatObject(chatId)
+            if (chatModel.type == BASE_MESSAGE_TYPE.LESSON) {
+                val obj = lessonDao.getLessonFromChatId(chatModel.chatId)
+                obj?.let {
+                    val nextLessonAvailable =
+                        lessonDao.nextLessonIntervalExist(inboxEntity.courseId, it.interval)
+                    if (nextLessonAvailable == 0L) {
+                        unlockNextClass.emit(true)
+                        return@launch
+                    }
+                }
+            } else if (chatModel.type == BASE_MESSAGE_TYPE.Q) {
+                val obj = chatDao.getQuestion(chatModel.chatId)
+                obj?.let {
+                    val nextQuestionAvailable =
+                        chatDao.nextQuestionIntervalExist(inboxEntity.courseId, it.interval)
+                    if (nextQuestionAvailable == 0L) {
+                        unlockNextClass.emit(true)
+                        return@launch
+                    }
                 }
             }
+
             unlockNextClass.emit(false)
         }
     }

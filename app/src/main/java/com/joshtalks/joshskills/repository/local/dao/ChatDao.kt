@@ -331,7 +331,7 @@ interface ChatDao {
         }
     }
 
-    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND  created >= :compareTime AND  is_delete_message=0 ORDER BY created ASC,question_id ASC ")
+    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND  created > :compareTime AND  is_delete_message=0 ORDER BY created ASC,question_id ASC ")
     suspend fun getNewMessages(conversationId: String, compareTime: Long): List<ChatModel>
 
     suspend fun getNewFetchMessages(conversationId: String, compareTime: Long): List<ChatModel> {
@@ -425,6 +425,5 @@ interface ChatDao {
         }
         return null
     }
-
 
 }

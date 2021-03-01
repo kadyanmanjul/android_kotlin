@@ -235,6 +235,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         WorkManagerAdmin.requiredTaskAfterLoginComplete()
         fetchMentor()
         WorkManagerAdmin.userActiveStatusWorker(true)
+
     }
 
     private fun deleteMentor(mentorId: String, oldMentorId: String) {
@@ -280,10 +281,10 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun analyzeUserProfile() {
         val user = User.getInstance()
-        if (user.phoneNumber.isNotEmpty() && user.firstName.isEmpty()) {
+        if (user.phoneNumber.isNullOrEmpty() && user.firstName.isNullOrEmpty()) {
             return _signUpStatus.postValue(SignUpStepStatus.ProfileInCompleted)
         }
-        if (user.firstName.isEmpty() || user.dateOfBirth.isNullOrEmpty() || user.gender.isEmpty()) {
+        if (user.firstName.isNullOrEmpty() || user.dateOfBirth.isNullOrEmpty() || user.gender.isNullOrEmpty()) {
             return _signUpStatus.postValue(SignUpStepStatus.ProfileInCompleted)
         }
         _signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
@@ -369,7 +370,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                         // Update Version Data in local
                         PrefManager.put(SUBSCRIPTION_TEST_ID, this.subscriptionTestId)
                         val versionData = VersionResponse.getInstance()
-                        versionData.version?.let {
+                        versionData.version.let {
                             it.name = this.version.name
                             it.id = this.version.id
                             VersionResponse.update(versionData)

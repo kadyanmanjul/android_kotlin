@@ -13,16 +13,9 @@ import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.GENDER
-import com.joshtalks.joshskills.core.MAX_YEAR
-import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SINGLE_SPACE
-import com.joshtalks.joshskills.core.SignUpStepStatus
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePickerDialog
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfileBinding
 import com.joshtalks.joshskills.repository.local.model.User
 import java.text.SimpleDateFormat
@@ -113,20 +106,20 @@ class SignUpProfileFragment : BaseSignUpFragment() {
         initCountryCodePicker()
         val user = User.getInstance()
 
-        if (user.firstName.isNotEmpty()) {
+        if (user.firstName.isNullOrEmpty().not()) {
             binding.nameEditText.setText(user.firstName)
             binding.nameEditText.isEnabled = false
         }
 
-        if (user.email.isNotEmpty()) {
+        if (user.email.isNullOrEmpty().not()) {
             binding.textViewEmail.visibility = View.VISIBLE
             binding.emailEditText.setText(user.email)
             binding.emailEditText.visibility = View.VISIBLE
         }
 
-        if (user.phoneNumber.isNotEmpty()) {
-            val word = user.phoneNumber
-            val length = word.length
+        if (user.phoneNumber.isNullOrEmpty()) {
+            val word = user.phoneNumber?.let { EMPTY }
+            val length = word!!.length
             if (length > 10) {
                 binding.phoneNumberEt.setText(word.substring(length - 10))
                 binding.etContainer.visibility = View.VISIBLE
@@ -143,7 +136,7 @@ class SignUpProfileFragment : BaseSignUpFragment() {
                 binding.textViewPhone.visibility = View.VISIBLE
             }
         }
-        if (binding.phoneNumberEt.text.isNullOrEmpty() && user.email.isEmpty()) {
+        if (binding.phoneNumberEt.text.isNullOrEmpty() && user.email.isNullOrEmpty()) {
             binding.textViewEmail.visibility = View.VISIBLE
             binding.emailEditText.isFocusableInTouchMode = true
             binding.emailEditText.isClickable = true

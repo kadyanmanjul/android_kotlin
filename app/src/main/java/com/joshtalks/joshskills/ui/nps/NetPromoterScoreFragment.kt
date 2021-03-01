@@ -3,11 +3,7 @@ package com.joshtalks.joshskills.ui.nps
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
@@ -23,15 +19,10 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
-import com.joshtalks.joshskills.core.hideKeyboard
 import com.joshtalks.joshskills.databinding.FragmentNetPromotorScoreBinding
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -136,7 +127,7 @@ class NetPromoterScoreFragment : BottomSheetDialogFragment(),
         val ar = npsQuestionModelList?.get(0)?.question?.split("~")
         binding.tvTitle.text = ar?.getOrElse(0) { EMPTY }
         binding.tvQuestion.text = ar?.getOrElse(1) { EMPTY }
-        if (User.getInstance().firstName.isNotEmpty()) {
+        if (User.getInstance().firstName.isNullOrEmpty().not()) {
             binding.tvUserName.text = User.getInstance().firstName
         }
         initView()
@@ -151,7 +142,7 @@ class NetPromoterScoreFragment : BottomSheetDialogFragment(),
                         binding.groupRoot1.visibility = View.INVISIBLE
                         binding.btnSubmit.isEnabled = true
                         binding.btnSubmit.hideProgress(getString(R.string.continue_label))
-                        if (User.getInstance().firstName.isEmpty()) {
+                        if (User.getInstance().firstName.isNullOrEmpty()) {
                             binding.tvUserName.visibility = View.GONE
                         }
                         AppAnalytics.create(AnalyticsEvent.NPS_FEEDBACK_SUBMITTED.NAME)

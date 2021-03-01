@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.core
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.os.StrictMode
@@ -36,7 +35,6 @@ import com.joshtalks.joshskills.core.service.video_download.VideoDownloadControl
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.service.*
-import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.smartlook.sdk.smartlook.Smartlook
 import com.smartlook.sdk.smartlook.interceptors.SmartlookOkHttpInterceptor
 import com.tonyodev.fetch2.Fetch
@@ -658,7 +656,7 @@ class HeaderInterceptor : Interceptor {
 class StatusCodeInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val response = chain.proceed(chain.request())
-        if (response.code in 401..403) {
+        /*if (response.code in 401..403) {
             if (Utils.isAppRunning(
                     AppObjectController.joshApplication,
                     AppObjectController.joshApplication.packageName
@@ -676,7 +674,7 @@ class StatusCodeInterceptor : Interceptor {
                     AppObjectController.joshApplication.startActivity(intent)
                 }
             }
-        }
+        }*/
         WorkManagerAdmin.userActiveStatusWorker(JoshApplication.isAppVisible)
         Timber.i("Status code: %s", response.code)
         return response

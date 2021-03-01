@@ -124,11 +124,15 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
         notifyItemRemoved(index)
     }
 
+    fun isLessonType(): Boolean {
+        return messageList.stream().anyMatch { it.type == BASE_MESSAGE_TYPE.LESSON }
+    }
+
 
     @MainThread
     fun initializePool(@NonNull pool: RecyclerView.RecycledViewPool) {
-        /*    pool.setMaxRecycledViews(MESSAGE_TYPE_INCOMING_TEXT, 15)
-            pool.setMaxRecycledViews(MESSAGE_TYPE_INCOMING_MULTIMEDIA, 15)
+        pool.setMaxRecycledViews(LESSON_MESSAGE, 15)
+        /*      pool.setMaxRecycledViews(MESSAGE_TYPE_INCOMING_MULTIMEDIA, 15)
             pool.setMaxRecycledViews(MESSAGE_TYPE_OUTGOING_TEXT, 15)
             pool.setMaxRecycledViews(MESSAGE_TYPE_OUTGOING_MULTIMEDIA, 15)
             pool.setMaxRecycledViews(MESSAGE_TYPE_PLACEHOLDER, 15)

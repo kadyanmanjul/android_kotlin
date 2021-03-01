@@ -39,6 +39,8 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 
+const val COURSE_ID = "course_id"
+
 class CourseProgressActivityNew : BaseActivity(),
     CourseProgressAdapter.ProgressItemClickListener {
 
@@ -47,7 +49,7 @@ class CourseProgressActivityNew : BaseActivity(),
     private var lastAvailableLessonNo: Int? = null
     lateinit var binding: CourseProgressActivityNewBinding
     lateinit var adapter: ProgressActivityAdapter
-    var courseId: Int = 0
+    var courseId: Int = -1
     var pdfInfo: PdfInfo? = null
 //    var courseOverviewResponse: CourseOverviewResponse? = null
 
@@ -134,7 +136,6 @@ class CourseProgressActivityNew : BaseActivity(),
     }
 
     companion object {
-        private val COURSE_ID = "course_id"
         fun getCourseProgressActivityNew(
             context: Context,
             courseId: Int
@@ -466,8 +467,15 @@ class CourseProgressActivityNew : BaseActivity(),
                 downloadListener
             )
 
-
         }
+    }
+
+
+    override fun onBackPressed() {
+        val resultIntent = Intent()
+        resultIntent.putExtra(COURSE_ID, courseId)
+        setResult(RESULT_OK, resultIntent)
+        this.finish()
     }
 
 }

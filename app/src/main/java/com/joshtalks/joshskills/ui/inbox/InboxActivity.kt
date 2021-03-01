@@ -268,10 +268,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
     private fun addLiveDataObservable() {
         lifecycleScope.launchWhenStarted {
             viewModel.registerCourseNetworkData.collect {
-                if (it.isNotEmpty()) {
-                    addCourseInRecyclerView(it)
-                } else {
+                if (it.isNullOrEmpty()) {
                     openCourseExplorer()
+                } else {
+                    addCourseInRecyclerView(it)
                 }
             }
         }

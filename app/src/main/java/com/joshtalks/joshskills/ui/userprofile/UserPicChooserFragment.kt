@@ -1,17 +1,7 @@
 package com.joshtalks.joshskills.ui.userprofile
 
-import android.content.Intent
-import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
+import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -22,19 +12,13 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.UserPicChooserDialogBinding
-import com.joshtalks.joshskills.messaging.MessageBuilderFactory
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventBus
-import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
 import com.joshtalks.joshskills.ui.chat.IMAGE_SELECT_REQUEST_CODE
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class UserPicChooserFragment : BottomSheetDialogFragment() {
 
@@ -88,9 +72,9 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
 
     override fun show(manager: FragmentManager, tag: String?) {
         try {
-            val ft = manager?.beginTransaction()
-            ft?.add(this, tag)
-            ft?.commitAllowingStateLoss()
+            val ft = manager.beginTransaction()
+            ft.add(this, tag)
+            ft.commitAllowingStateLoss()
         } catch (ignored: IllegalStateException) {
         }
     }
@@ -170,10 +154,7 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
     }
 
     fun openSomeActivityForResult(options: Options) {
-        val cameraIntent =Intent(context, JoshCameraActivity::class.java).apply {
-            putExtra("options", options)
-        }
-        (requireActivity() as UserProfileActivity).activityResultLauncher2.launch(cameraIntent)
+        (requireActivity() as UserProfileActivity).selectImageActivity(options)
     }
 
     private fun getIntentAndStartActivity() {

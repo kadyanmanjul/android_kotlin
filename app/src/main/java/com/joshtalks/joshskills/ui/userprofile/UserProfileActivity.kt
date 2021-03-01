@@ -20,6 +20,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshcamerax.JoshCameraActivity
+import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -31,6 +32,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.AwardCategory
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.ui.chat.IMAGE_SELECT_REQUEST_CODE
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
 import com.karumi.dexter.MultiplePermissionsReport
@@ -455,14 +457,12 @@ class UserProfileActivity : BaseActivity() {
             }
         }
     }
-    var activityResultLauncher2: ActivityResultLauncher<Intent> = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        result.data.getStringArrayListExtra(JoshCameraActivity.IMAGE_RESULTS).let { returnValue ->
-            returnValue.get(0).let { path ->
-                addUserImageInView(path)
-            }
+
+    fun selectImageActivity(options: Options) {
+        val cameraIntent = Intent(this, JoshCameraActivity::class.java).apply {
+            putExtra("options", options)
         }
+        startActivityForResult(cameraIntent, IMAGE_SELECT_REQUEST_CODE)
     }
 
     fun openSomeActivityForResult() {
@@ -524,6 +524,17 @@ class UserProfileActivity : BaseActivity() {
                 }
             }.run {
                 activity.startActivity(this)
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == IMAGE_SELECT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            data?.getStringArrayListExtra(JoshCameraActivity.IMAGE_RESULTS)?.getOrNull(0)?.let {
+                if (it.isNotBlank()) {
+                    addUserImageInView(it)
+                }
             }
         }
     }

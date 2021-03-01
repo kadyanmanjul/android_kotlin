@@ -6,7 +6,7 @@ import com.joshtalks.joshskills.core.EMPTY
 
 open class User {
     @SerializedName("mobile")
-    var phoneNumber: String = EMPTY
+    var phoneNumber: String? = EMPTY
 
     @SerializedName("token")
     var token: String = EMPTY
@@ -15,16 +15,22 @@ open class User {
     var username: String = EMPTY
 
     @SerializedName("email")
-    var email: String = EMPTY
+    var email: String? = EMPTY
 
     @SerializedName("gender")
-    var gender: String = EMPTY
+    var gender: String? = EMPTY
 
     @SerializedName("date_of_birth")
     var dateOfBirth: String? = EMPTY
 
     @SerializedName("first_name")
-    var firstName: String = EMPTY
+    var firstName: String? = EMPTY
+        set(value) {
+            if (value == null) field = EMPTY
+        }
+        get() {
+            return field ?: EMPTY
+        }
 
     @SerializedName("photo_url")
     var photo: String? = null

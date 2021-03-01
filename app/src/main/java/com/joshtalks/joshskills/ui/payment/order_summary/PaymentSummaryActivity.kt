@@ -34,29 +34,10 @@ import com.google.android.gms.auth.api.credentials.CredentialsOptions
 import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CTA_PAYMENT_SUMMARY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PAYMENT_SUMMARY_CTA_LABEL_FREE
-import com.joshtalks.joshskills.core.INSTANCE_ID
-import com.joshtalks.joshskills.core.IS_PAYMENT_DONE
-import com.joshtalks.joshskills.core.JoshSkillExecutors
-import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.RC_HINT
-import com.joshtalks.joshskills.core.REFERRED_REFERRAL_CODE
-import com.joshtalks.joshskills.core.SINGLE_SPACE
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
-import com.joshtalks.joshskills.core.analytics.LogException
-import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
-import com.joshtalks.joshskills.core.getPhoneNumber
-import com.joshtalks.joshskills.core.isValidFullNumber
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.databinding.ActivityPaymentSummaryBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -80,16 +61,15 @@ import io.branch.referral.util.CurrencyType
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.util.HashMap
-import java.util.Locale
-import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.*
+import kotlin.math.roundToInt
 
 const val TRANSACTION_ID = "TRANSACTION_ID"
 
@@ -563,14 +543,16 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         try {
             val preFill = JSONObject()
 
-            if (!viewModel.hasRegisteredMobileNumber && User.getInstance().email.isNotBlank())
+            if (!viewModel.hasRegisteredMobileNumber && User.getInstance().email.isNullOrEmpty()
+                    .not()
+            )
                 preFill.put("email", User.getInstance().email)
             else
                 preFill.put("email", Utils.getUserPrimaryEmail(applicationContext))
 
             if (!viewModel.hasRegisteredMobileNumber)
                 preFill.put("contact", binding.mobileEt.text.toString())
-            else if (User.getInstance().phoneNumber.isNotBlank())
+            else if (User.getInstance().phoneNumber.isNullOrEmpty())
                 preFill.put("contact", User.getInstance().phoneNumber)
             else if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotBlank())
                 preFill.put(

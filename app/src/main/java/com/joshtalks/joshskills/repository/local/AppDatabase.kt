@@ -384,6 +384,7 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_28_29: Migration = object : Migration(28, 29) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("UPDATE chat_table SET is_seen =1")
+                //Db migration for course id
             }
         }
 

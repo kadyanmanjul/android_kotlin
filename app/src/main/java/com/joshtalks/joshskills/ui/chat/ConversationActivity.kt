@@ -106,6 +106,7 @@ const val CONVERSATION_PRACTISE_REQUEST_CODE = 1105
 const val ASSESSMENT_REQUEST_CODE = 1106
 const val LESSON_REQUEST_CODE = 1107
 const val CERTIFICATION_REQUEST_CODE = 1108
+const val COURSE_PROGRESS_NEW_REQUEST_CODE = 1109
 
 
 const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
@@ -139,7 +140,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         )
     }
     private var userProfileData: UserProfileResponse? = null
-    private var isLessonTypeChat: Boolean = false
     private var currentAudioPosition: Int = -1
     private lateinit var conversationBinding: ActivityConversationBinding
     private lateinit var inboxEntity: InboxEntity
@@ -190,7 +190,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 scrollToPosition(this)
             }
         }
-        inboxEntity.chat_type = "ABC"
         conversationViewModel = ViewModelProvider(
             this, ConversationViewModelFactory(this, this.application, inboxEntity)
         ).get(ConversationViewModel::class.java)
@@ -658,8 +657,11 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         lifecycleScope.launchWhenCreated {
             conversationViewModel.userUnreadCourseChat.collectLatest { items ->
                 //  Start Add new Message UI add logic
-                if (isNewMessageShowing.not() && items.isNotEmpty()) {
-                    val index = items.indexOfLast { it.isSeen.not() }
+                if (items.isEmpty()) {
+                    return@collectLatest
+                }
+                if (isNewMessageShowing.not()) {
+                    val index = items.indexOfFirst { it.isSeen.not() }
                     if (index > -1) {
                         conversationAdapter.addMessagesList(arrayListOf(getNewMessageObj()))
                         linearLayoutManager.scrollToPositionWithOffset(
@@ -670,14 +672,15 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     }
                 }
                 //End Logic
-                checkLessonType(items)
+
                 conversationAdapter.addMessagesList(items)
             }
         }
         lifecycleScope.launchWhenCreated {
             conversationViewModel.userReadCourseChat.collectLatest { items ->
-                conversationAdapter.addMessagesList(items)
-                checkLessonType(items)
+                if (items.isNotEmpty()) {
+                    conversationAdapter.addMessagesList(items)
+                }
             }
         }
         lifecycleScope.launchWhenCreated {
@@ -689,6 +692,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         lifecycleScope.launchWhenCreated {
             conversationViewModel.updateChatMessage.collectLatest { chat ->
                 conversationAdapter.updateItem(chat)
+                unlockClassViewModel.canWeAddUnlockNextClass(chat.chatId)
             }
         }
         lifecycleScope.launchWhenCreated {
@@ -698,9 +702,9 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     val message = getUnlockClassMessage()
                     unlockClassViewModel.insertUnlockClassToDatabase(message)
                     val isAdded = conversationAdapter.addUnlockClassMessage(message)
-                    val cPosition = linearLayoutManager.findFirstVisibleItemPosition()
+                    val cPosition = linearLayoutManager.findLastVisibleItemPosition()
                     if (isAdded && cPosition == conversationAdapter.itemCount - 1) {
-                        scrollToEnd()
+                        conversationBinding.chatRv.smoothScrollToPosition(conversationAdapter.itemCount - 1)
                     }
                 }
             }
@@ -725,15 +729,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 hideProgressBar()
             }
         }
-
     }
-
-    private fun checkLessonType(items: List<ChatModel>) {
-        // Start Logic for  lesson type
-        isLessonTypeChat = items.any { it.type == BASE_MESSAGE_TYPE.LESSON }
-        // end logic
-    }
-
 
     private fun bottomAudioAttachment() {
         addAttachmentUIUpdate()
@@ -1297,9 +1293,16 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 }
             } else if (resultCode == Activity.RESULT_OK) {
                 when (requestCode) {
-                    ASSESSMENT_REQUEST_CODE, LESSON_REQUEST_CODE, CERTIFICATION_REQUEST_CODE -> {
+                    ASSESSMENT_REQUEST_CODE,
+                    LESSON_REQUEST_CODE,
+                    CERTIFICATION_REQUEST_CODE -> {
                         data?.getStringExtra(CHAT_ROOM_ID)?.let {
                             conversationViewModel.refreshMessageObject(it)
+                        }
+                    }
+                    COURSE_PROGRESS_NEW_REQUEST_CODE -> {
+                        data?.getIntExtra(COURSE_ID, -1)?.let {
+                            conversationViewModel.refreshLesson(it)
                         }
                     }
                 }
@@ -1387,7 +1390,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         super.onDestroy()
         AppObjectController.currentPlayingAudioObject = null
         audioPlayerManager?.release()
-        NPSEventModel.removeCurrentNPA()
     }
 
     override fun onBackPressed() {
@@ -1402,11 +1404,13 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     }
 
     private fun openCourseProgressListingScreen() {
+        val isLessonTypeChat = conversationAdapter.isLessonType()
         if (isLessonTypeChat) {
-            startActivity(
+            startActivityForResult(
                 CourseProgressActivityNew.getCourseProgressActivityNew(
-                    this, inboxEntity.courseId.toInt()
-                )
+                    this,
+                    inboxEntity.courseId.toInt()
+                ), COURSE_PROGRESS_NEW_REQUEST_CODE
             )
             hideCourseProgressTooltip()
 

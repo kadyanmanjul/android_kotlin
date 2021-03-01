@@ -835,7 +835,7 @@ fun showToast(message: String, length: Int = Toast.LENGTH_SHORT) {
 }
 
 fun getUserNameInShort(
-    name: String = User.getInstance().firstName.trim().toUpperCase(Locale.ROOT)
+    name: String = User.getInstance().firstName?.trim()?.toUpperCase(Locale.ROOT) ?: EMPTY
 ): String {
     return try {
         if (name.contains(" ")) {
@@ -890,8 +890,8 @@ fun isValidFullNumber(countryCode: String, number: String? = EMPTY): Boolean {
 
 fun getPhoneNumber() =
     when {
-        User.getInstance().phoneNumber.isNotBlank() ->
-            User.getInstance().phoneNumber
+        User.getInstance().phoneNumber.isNullOrEmpty().not() ->
+            User.getInstance().phoneNumber ?: EMPTY
         PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotBlank() ->
             PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).replace(SINGLE_SPACE, EMPTY)
         else ->

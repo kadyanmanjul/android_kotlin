@@ -26,7 +26,6 @@ import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
-import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.sinch.verification.PhoneNumberUtils
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
@@ -219,26 +218,6 @@ private fun updateFromLoginResponse(loginResponse: LoginResponse) {
     WorkManagerAdmin.requiredTaskAfterLoginComplete()
 }
 
-
-class GetUserConversationWorker(var context: Context, private var workerParams: WorkerParameters) :
-    Worker(context, workerParams) {
-
-    override fun doWork(): Result {
-        try {
-            val conversationId = workerParams.inputData.getString(CONVERSATION_ID)
-            conversationId?.run {
-                val arguments = mutableMapOf<String, String>()
-                val (key, value) = PrefManager.getLastSyncTime(this)
-                arguments[key] = value
-                NetworkRequestHelper.getUpdatedChat(this, queryMap = arguments)
-            }
-        } catch (ex: Throwable) {
-            LogException.catchException(ex)
-        }
-        return Result.success()
-    }
-
-}
 
 class MessageReadPeriodicWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {

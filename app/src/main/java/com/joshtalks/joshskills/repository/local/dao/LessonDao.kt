@@ -46,4 +46,9 @@ interface LessonDao {
     @Query("SELECT MAX(lesson_no) FROM lessonmodel WHERE course =:courseId")
     fun getLastLessonForCourse(courseId: Int): Int
 
+
+    @Query(value = "SELECT COUNT(lesson_id) FROM lessonmodel where course= :courseId  AND interval>:interval")
+    suspend fun nextLessonIntervalExist(courseId: String, interval: Int): Long
+
+
 }

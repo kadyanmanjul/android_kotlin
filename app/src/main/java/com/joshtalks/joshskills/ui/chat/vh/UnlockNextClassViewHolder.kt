@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.chat.vh
 
-import android.widget.FrameLayout
 import androidx.cardview.widget.CardView
 import com.google.android.material.button.MaterialButton
 import com.joshtalks.joshskills.R
@@ -12,14 +11,12 @@ import com.joshtalks.joshskills.repository.local.eventbus.UnlockNextClassEventBu
 
 class UnlockNextClassViewHolder(view: android.view.View, userId: String) :
     BaseViewHolder(view, userId) {
-    private val rootView: FrameLayout = view.findViewById(R.id.root_view_fl)
     private val subRootView: CardView = view.findViewById(R.id.card_top)
-
     private val btnStart: MaterialButton = view.findViewById(R.id.btn_start)
     private var message: ChatModel? = null
 
     init {
-        rootView.also {
+        btnStart.also {
             it.setOnClickListener {
                 RxBus2.publish(UnlockNextClassEventBus())
             }

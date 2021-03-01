@@ -36,20 +36,13 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CERTIFICATE_GENERATE
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.AnimationView
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
-import com.joshtalks.joshskills.core.getUserNameInShort
 import com.joshtalks.joshskills.core.interfaces.OnDismissClaimCertificateDialog
 import com.joshtalks.joshskills.core.interfaces.OnDismissDialog
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityCourseProgressBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
@@ -70,15 +63,15 @@ import com.joshtalks.joshskills.ui.view_holders.PerformHeaderViewHolder
 import com.joshtalks.joshskills.ui.view_holders.PerformItemViewHolder
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import java.net.ProtocolException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import retrofit2.HttpException
 
 class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
     OnDismissClaimCertificateDialog {
@@ -138,7 +131,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
     @SuppressLint("DefaultLocale")
     private fun initView() {
         setUserImage(User.getInstance().photo)
-        binding.tvUserName.text = User.getInstance().firstName.capitalize()
+        binding.tvUserName.text = User.getInstance().firstName?.capitalize()
 
         binding.tvCourseCompleteStatus.text = HtmlCompat.fromHtml(
             getString(R.string.course_progress_detail),

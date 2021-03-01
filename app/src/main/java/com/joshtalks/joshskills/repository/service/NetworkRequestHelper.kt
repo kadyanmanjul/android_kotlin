@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.repository.service
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
@@ -24,7 +23,8 @@ object NetworkRequestHelper {
     val practiceEnagagement = object : TypeToken<List<PracticeEngagement>>() {}.type
     fun getUpdatedChat(
         conversationId: String,
-        queryMap: Map<String, String> = emptyMap()
+        queryMap: Map<String, String> = emptyMap(),
+        courseId: Int
     ): Job {
         return CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -45,7 +45,6 @@ object NetworkRequestHelper {
 
 
                 for (chatModel in resp.chatModelList) {
-                    Log.e("type", chatModel.type?.type)
                     val chatObj =
                         AppObjectController.appDatabase.chatDao()
                             .getNullableChatObject(chatModel.chatId)
@@ -73,6 +72,7 @@ object NetworkRequestHelper {
                     }
                     chatModel.question?.let { question ->
                         question.chatId = chatModel.chatId
+                        question.course_id = courseId
 
                         AppObjectController.appDatabase.chatDao().insertChatQuestion(question)
                         question.audioList?.let {
@@ -161,7 +161,7 @@ object NetworkRequestHelper {
                     PrefManager.getLastSyncTime(conversationId).let { keys ->
                         arguments[keys.first] = keys.second
                     }
-                    getUpdatedChat(conversationId, queryMap = arguments)
+                    getUpdatedChat(conversationId, queryMap = arguments, courseId)
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()

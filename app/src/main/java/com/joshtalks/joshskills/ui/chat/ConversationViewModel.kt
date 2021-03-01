@@ -255,7 +255,8 @@ class ConversationViewModel(
             arguments[key] = value
             jobs += NetworkRequestHelper.getUpdatedChat(
                 inboxEntity.conversation_id,
-                queryMap = arguments
+                queryMap = arguments,
+                courseId = inboxEntity.courseId.toInt()
             )
         } else {
             RxBus2.publish(MessageCompleteEventBus(false))
@@ -277,6 +278,16 @@ class ConversationViewModel(
             updateChatMessage.emit(chatObj)
         }
     }
+
+    fun refreshLesson(lessonId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val lessonModel = appDatabase.lessonDao().getLesson(lessonId)
+            lessonModel?.let {
+                refreshMessageObject(it.chatId)
+            }
+        }
+    }
+
 
     fun getAwardMentorModel(awardMentorId: Int): AwardMentorModel? {
         return appDatabase.awardMentorModelDao().getAwardMentorModel(awardMentorId)

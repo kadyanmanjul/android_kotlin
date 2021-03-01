@@ -11,25 +11,14 @@ import com.flurry.android.FlurryAgent;
 import com.freshchat.consumer.sdk.FreshchatUser;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.joshtalks.joshskills.BuildConfig;
-import com.joshtalks.joshskills.core.AppObjectController;
-import com.joshtalks.joshskills.core.JoshSkillExecutors;
-import com.joshtalks.joshskills.core.PrefManager;
-import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel;
-import com.joshtalks.joshskills.repository.local.model.Mentor;
-import com.joshtalks.joshskills.repository.local.model.User;
+import com.joshtalks.joshskills.core.*;
+import com.joshtalks.joshskills.repository.local.model.*;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import timber.log.Timber;
 
@@ -91,7 +80,7 @@ public class AppAnalytics {
 
             AppObjectController.getFreshChat().setUser(freshchatUser);
         } catch (Exception e) {
-            e.printStackTrace();
+            //   e.printStackTrace();
         }
     }
 
@@ -149,8 +138,10 @@ public class AppAnalytics {
         FlurryAgent.setUserId(PrefManager.INSTANCE.getStringValue(INSTANCE_ID, false, EMPTY));
         FlurryAgent.setVersionName(BuildConfig.VERSION_NAME);
         FlurryAgent.setAge(getAge(user.getDateOfBirth()));
-        FlurryAgent.setGender((user.getGender().equals("M") ? Constants.MALE : Constants.FEMALE));
-
+        user.getGender();
+        if (user.getGender() != null) {
+            FlurryAgent.setGender((user.getGender().equals("M") ? Constants.MALE : Constants.FEMALE));
+        }
         //User Properties
         List<String> list = new ArrayList<>();
         list.add(user.getUserType());
