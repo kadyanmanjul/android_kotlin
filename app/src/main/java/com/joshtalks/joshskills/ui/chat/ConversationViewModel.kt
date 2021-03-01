@@ -4,157 +4,60 @@ import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
-import android.widget.Toast
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
-import com.cometchat.pro.core.AppSettings
-import com.cometchat.pro.core.CometChat
-import com.cometchat.pro.exceptions.CometChatException
-import com.cometchat.pro.models.User
-import com.joshtalks.joshskills.BuildConfig
-import com.joshtalks.joshskills.R
+import androidx.lifecycle.*
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.analytics.LogException.catchException
 import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.*
-import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
-import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import id.zelory.compressor.Compressor
-import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import java.io.File
-import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import timber.log.Timber
+import java.io.File
+import java.util.*
 
 
-class ConversationViewModel(application: Application) :
+class ConversationViewModel(
+    application: Application,
+    private val savedStateHandle: SavedStateHandle,
+    private var inboxEntity: InboxEntity
+) :
     AndroidViewModel(application) {
-    lateinit var inboxEntity: InboxEntity
-    private var compositeDisposable = CompositeDisposable()
     lateinit var recordFile: File
-    private var lastChatTime: Date? = null
-    var context: JoshApplication = getApplication()
-    var appDatabase = AppObjectController.appDatabase
-
-    val conversationList: MutableList<ChatModel> = ArrayList()
-
-    val chatObservableLiveData: MutableLiveData<List<ChatModel>> = MutableLiveData()
-    val emptyChatLiveData: MutableLiveData<Nothing> = MutableLiveData()
-    val refreshViewLiveData: MutableLiveData<ChatModel> = MutableLiveData()
-    private var lastMessageTime: Date? = null
-    private var broadCastForNetwork = CheckConnectivity()
+    private var context: JoshApplication = getApplication()
+    private var appDatabase = AppObjectController.appDatabase
+    private var chatDao = AppObjectController.appDatabase.chatDao()
     private var mRefreshControl = true
     private val mAudioRecording: AudioRecording = AudioRecording()
     private var isRecordingStarted = false
     private val jobs = arrayListOf<Job>()
-    val userLoginLiveData: MutableLiveData<GroupDetails> = MutableLiveData()
-    val isLoading: MutableLiveData<Boolean> = MutableLiveData()
+    val conversationList: MutableList<ChatModel> = ArrayList()
+    val userUnreadCourseChat = MutableSharedFlow<List<ChatModel>>()
+    val userReadCourseChat = MutableSharedFlow<List<ChatModel>>()
+    val oldMessageCourse = MutableSharedFlow<List<ChatModel>>()
+    val updateChatMessage = MutableSharedFlow<ChatModel>()
+
+    val refreshViewLiveData: MutableLiveData<ChatModel> = MutableLiveData()
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
     val unreadMessageCount: MutableLiveData<Int> = MutableLiveData()
 
-    init {
-        addObserver()
-    }
-
-    fun getProfileData(mentorId: String) {
-        jobs += viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response = AppObjectController.commonNetworkService.getUserProfileData(
-                    mentorId, null,
-                    USER_PROFILE_FLOW_FROM.CONVERSATION.value
-                )
-                if (response.isSuccessful && response.body() != null) {
-                    response.body()?.awardCategory?.sortedBy { it.sortOrder }?.map {
-                        it.awards?.sortedBy { it.sortOrder }
-                    }
-                    PrefManager.put(
-                        IS_PROFILE_FEATURE_ACTIVE,
-                        response.body()?.isPointsActive ?: false
-                    )
-                    userData.postValue(response.body()!!)
-                    return@launch
-                }
-
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
-            }
-        }
-    }
-
-    @Synchronized
-    fun startRecord(recordListener: OnAudioRecordListener?) {
-        val onRecordListener: OnAudioRecordListener = object :
-            OnAudioRecordListener {
-            override fun onRecordFinished(recordingItem: RecordingItem) {
-                isRecordingStarted = false
-                recordListener?.onRecordFinished(recordingItem)
-            }
-
-            override fun onError(e: Int) {
-                recordListener?.onError(e)
-            }
-
-            override fun onRecordingStarted() {
-                isRecordingStarted = true
-                recordListener?.onRecordingStarted()
-            }
-        }
-        AppDirectory.tempRecordingFile().let {
-            mAudioRecording.setOnAudioRecordListener(onRecordListener)
-            mAudioRecording.setFile(it.absolutePath)
-            recordFile = it
-            mAudioRecording.startRecording()
-            return@let true
-        }
-    }
-
-    fun isRecordingStarted(): Boolean {
-        return isRecordingStarted
-    }
-
-    @Synchronized
-    fun stopRecording(cancel: Boolean) {
-        mAudioRecording.stopRecording(cancel)
-        isRecordingStarted = false
-    }
-
-    private fun addObserver() {
-        compositeDisposable.add(
-            RxBus2.listen(DBInsertion::class.java).subscribeOn(Schedulers.io()).subscribe {
-                jobs += getUserRecentChats()
-            })
-        val filter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
-        context.registerReceiver(
-            broadCastForNetwork,
-            filter
-        )
-    }
 
     inner class CheckConnectivity : BroadcastReceiver() {
-
         override fun onReceive(context: Context, arg1: Intent) {
             if (Utils.isInternetAvailable()) {
                 SyncChatService.syncChatWithServer(refreshViewLiveData)
@@ -163,142 +66,29 @@ class ConversationViewModel(application: Application) :
     }
 
 
-    private fun getUserRecentChats() = viewModelScope.launch(Dispatchers.IO) {
-
-        val chatReturn: MutableList<ChatModel> = mutableListOf()
-
-        val listOfChat: List<ChatModel> = if (lastChatTime != null) {
-            appDatabase.chatDao().getRecentChatAfterTime(inboxEntity.conversation_id, lastChatTime)
-        } else {
-            appDatabase.chatDao().getLastChats(inboxEntity.conversation_id)
-        }
-        if (listOfChat.isNotEmpty()) {
-            lastChatTime = listOfChat.last().created
-        }
-        listOfChat.forEach { chat ->
-            val question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
-            question?.run {
-
-                question.lesson = appDatabase.lessonDao().getLesson(question.lesson_id)
-
-                when (this.material_type) {
-                    BASE_MESSAGE_TYPE.IM -> question.imageList =
-                        appDatabase.chatDao()
-                            .getImagesOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.VI -> question.videoList =
-                        appDatabase.chatDao()
-                            .getVideosOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.AU -> question.audioList =
-                        appDatabase.chatDao()
-                            .getAudiosOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.PD -> question.pdfList =
-                        appDatabase.chatDao()
-                            .getPdfOfQuestion(questionId = question.questionId)
-                }
-                if (this.parent_id.isNullOrEmpty().not()) {
-                    chat.parentQuestionObject =
-                        appDatabase.chatDao().getQuestionOnId(this.parent_id!!)
-                }
-                if (type == BASE_MESSAGE_TYPE.PR) {
-                    question.practiseEngagementV2 =
-                        AppObjectController.appDatabase.practiceEngagementDao()
-                            .getPractice(questionId)
-                    question.imageList = appDatabase.chatDao()
-                        .getImagesOfQuestion(questionId = question.questionId)
-                }
-
-                if (assessmentId != null) {
-                    question.vAssessmentCount = AppObjectController.appDatabase.assessmentDao()
-                        .countOfAssessment(assessmentId)
-                }
-                chat.question = question
-            }
-            if (chat.awardMentorId != 0) {
-                val awardMentorModel =
-                    appDatabase.awardMentorModelDao().getAwardMentorModel(chat.awardMentorId)
-                awardMentorModel?.run {
-                    chat.awardMentorModel = this
-                }
-            }
-
-            if (chat.type == BASE_MESSAGE_TYPE.Q && question == null) {
-                return@forEach
-            }
-
-            checkLesson(chatReturn, chat)
-        }
-        if (chatReturn.isNullOrEmpty()) {
-            if (lastMessageTime != null) {
-                emptyChatLiveData.postValue(null)
-            }
-            return@launch
-        }
-        lastMessageTime = chatReturn.last().created
-        chatObservableLiveData.postValue(chatReturn)
-
-        updateAllMessageReadByUser()
-    }
-
-    private fun checkLesson(chatList: MutableList<ChatModel>, chat: ChatModel) {
-        val lessonModel = chat.question?.lesson
-        if (lessonModel != null) {
-            //It means This chat is a part of some lesson.
-            if (chatList.isEmpty()) {
-                addNewLesson(lessonModel, chatList, chat)
-            } else {
-                //Check if list already constains chat with this lesson id
-                val lessonPosition =
-                    conversationList.indexOfFirst { chatModel -> chatModel.lessonId == lessonModel.id }
-                if (lessonPosition == -1) {
-                    //if its not then we create a new chat object with same data as current chat obejct but chane type to Lesson and add it to list
-                    addNewLesson(lessonModel, chatList, chat)
-                }
-            }
-        } else {
-            //current chat object is not part of any lesson we will directly add it to the list
-            chatList.add(chat)
-            conversationList.add(chat)
-        }
-
-    }
-
-    private fun addNewLesson(
-        lessonModel: LessonModel,
-        chatList: MutableList<ChatModel>,
-        chat: ChatModel
-    ) {
-        chat.type = BASE_MESSAGE_TYPE.LESSON
-        chat.lessons = lessonModel
-        chat.lessonId = lessonModel.id
-        chatList.add(chat)
-        conversationList.add(chat)
-    }
-
-    private fun updateAllMessageReadByUser() {
-        viewModelScope.launch(Dispatchers.IO) {
-            appDatabase.chatDao().readAllChatBYUser(inboxEntity.conversation_id)
-        }
-    }
-
-
     fun sendTextMessage(messageObject: BaseChatMessage, chatModel: ChatModel?) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                chatModel?.let {
-                    it.conversationId = inboxEntity.conversation_id
-                    if (Utils.isInternetAvailable().not()) {
+                if (Utils.isInternetAvailable().not()) {
+                    chatModel?.let {
+                        it.conversationId = inboxEntity.conversation_id
                         DatabaseUtils.addChat(it)
                     }
                 }
                 messageObject.conversation = inboxEntity.conversation_id
-                val responseChat =
-                    AppObjectController.chatNetworkService.sendMessageAsync(messageObject).await()
-                NetworkRequestHelper.updateChat(
-                    responseChat,
-                    refreshViewLiveData,
-                    messageObject,
-                    chatModel
-                )
+                val receiverObj =
+                    AppObjectController.chatNetworkService.sendMessageAsync(messageObject)
+                chatModel?.chatId = receiverObj.id
+                chatModel?.created = receiverObj.created
+                chatModel?.conversationId = receiverObj.conversationId
+                chatModel?.isSync = true
+                chatModel?.messageDeliverStatus = MESSAGE_DELIVER_STATUS.SENT_RECEIVED
+                chatModel?.downloadStatus = DOWNLOAD_STATUS.UPLOADED
+                chatModel?.let {
+                    chatDao.updateChatMessage(chatModel)
+                    delay(500)
+                    refreshMessageObject(chatModel.chatId)
+                }
             } catch (ex: Exception) {
                 //registerCourseLiveData.postValue(null)
                 ex.printStackTrace()
@@ -307,8 +97,11 @@ class ConversationViewModel(application: Application) :
         }
     }
 
-
-    fun uploadMedia(mediaPath: String, messageObject: BaseChatMessage, chatModel: ChatModel) {
+    fun sendMediaMessage(
+        mediaPath: String,
+        messageObject: BaseChatMessage,
+        chatModel: ChatModel
+    ) {
         chatModel.conversationId = inboxEntity.conversation_id
         viewModelScope.launch(Dispatchers.IO) {
             var compressImagePath = mediaPath
@@ -362,7 +155,6 @@ class ConversationViewModel(application: Application) :
         }.await()
     }
 
-
     private suspend fun uploadOnS3Server(
         responseObj: AmazonPolicyResponse,
         mediaPath: String
@@ -379,392 +171,160 @@ class ConversationViewModel(application: Application) :
                 responseObj.fields["key"],
                 requestFile
             )
-            val responseUpload = AppObjectController.mediaDUNetworkService.uploadMediaAsync(
-                responseObj.url,
-                parameters,
-                body
-            ).execute()
-            return@async responseUpload.code()
+
+            try {
+                val responseUpload = AppObjectController.mediaDUNetworkService.uploadMediaAsync(
+                    responseObj.url,
+                    parameters,
+                    body
+                ).execute()
+                return@async responseUpload.code()
+
+            } catch (ex: Exception) {
+                return@async 220
+            }
         }.await()
     }
 
 
-    fun getAllUserMessage() {
+    fun getAllCourseMessage() {
         viewModelScope.launch(Dispatchers.IO) {
-            val rows = appDatabase.chatDao().getTotalCountOfRows(inboxEntity.conversation_id)
-            jobs += getUserRecentChats()
-            try {
-                if (rows > 0) {
-                    delay(2500)
-                } else {
-                    delay(250)
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
+            val totalMessage = chatDao.getTotalCountOfRows(inboxEntity.conversation_id)
+            if (totalMessage == 0L) {
+                getNewMessageFromServer()
+                return@launch
             }
-            if (Utils.isInternetAvailable()) {
-                val arguments = mutableMapOf<String, String>()
-                val (key, value) = PrefManager.getLastSyncTime(inboxEntity.conversation_id)
-                arguments[key] = value
-                NetworkRequestHelper.getUpdatedChat(
-                    inboxEntity.conversation_id,
-                    queryMap = arguments
-                )
+
+            val lastUnreadMessage = chatDao.getLastUnreadReadMessage(inboxEntity.conversation_id)
+            if (lastUnreadMessage == null) {
+                userReadCourseChat.emit(
+                    chatDao.getOneShotMessageList(inboxEntity.conversation_id)
+                        .sortedBy { it.created })
             } else {
-                RxBus2.publish(MessageCompleteEventBus(false))
+                userReadCourseChat.emit(
+                    chatDao.getPagingMessage(
+                        inboxEntity.conversation_id,
+                        lastUnreadMessage.created.time
+                    ).sortedBy { it.created })
+
+                userUnreadCourseChat.emit(
+                    chatDao.getUnreadMessageList(
+                        inboxEntity.conversation_id,
+                        lastUnreadMessage.created.time
+                    ).sortedBy { it.created }
+                )
             }
+            updateAllMessageReadByUser()
+            getNewMessageFromServer()
         }
-        refreshChatEverySomeTime()
     }
 
-    fun getAllUnlockedMessage(date: Date) {
-        getUserUnlockClass(date)
+
+    fun loadPagingMessage(lastMessage: ChatModel) {
+        viewModelScope.launch(Dispatchers.IO) {
+            oldMessageCourse.emit(
+                chatDao.getPagingMessage(
+                    inboxEntity.conversation_id,
+                    lastMessage.created.time
+                ).sortedBy { it.created })
+            updateAllMessageReadByUser()
+        }
     }
 
-    private fun getUserUnlockClass(date: Date) = viewModelScope.launch(Dispatchers.IO) {
-
-        val chatReturn: MutableList<ChatModel> = mutableListOf()
-
-        val listOfChat: List<ChatModel> =
-            appDatabase.chatDao().getRecentChatAfterTime(inboxEntity.conversation_id, date)
-        if (listOfChat.isNotEmpty()) {
-            lastChatTime = listOfChat.last().created
+    fun addNewMessages(lastMessageTime: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            userUnreadCourseChat.emit(
+                chatDao.getNewFetchMessages(
+                    inboxEntity.conversation_id, lastMessageTime
+                ).sortedBy { it.created })
+            updateAllMessageReadByUser()
         }
-        listOfChat.forEach { chat ->
-            val question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
-            question?.run {
-                when (this.material_type) {
-                    BASE_MESSAGE_TYPE.IM -> question.imageList =
-                        appDatabase.chatDao()
-                            .getImagesOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.VI -> question.videoList =
-                        appDatabase.chatDao()
-                            .getVideosOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.AU -> question.audioList =
-                        appDatabase.chatDao()
-                            .getAudiosOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.PD -> question.pdfList =
-                        appDatabase.chatDao()
-                            .getPdfOfQuestion(questionId = question.questionId)
-                }
-                chat.question = question
-                if (this.parent_id.isNullOrEmpty().not()) {
-                    chat.parentQuestionObject =
-                        appDatabase.chatDao().getQuestionOnId(this.parent_id!!)
-                }
-            }
+    }
 
-            if (chat.type == BASE_MESSAGE_TYPE.Q && question == null) {
-                return@forEach
-            }
-
-            chatReturn.add(chat)
+    private fun updateAllMessageReadByUser() {
+        viewModelScope.launch(Dispatchers.IO) {
+            appDatabase.chatDao().readAllChatBYUser(inboxEntity.conversation_id)
         }
-        if (chatReturn.isNullOrEmpty()) {
+    }
+
+
+    private fun getNewMessageFromServer() {
+        if (Utils.isInternetAvailable()) {
+            val arguments = mutableMapOf<String, String>()
+            val (key, value) = PrefManager.getLastSyncTime(inboxEntity.conversation_id)
+            arguments[key] = value
+            jobs += NetworkRequestHelper.getUpdatedChat(
+                inboxEntity.conversation_id,
+                queryMap = arguments
+            )
+        } else {
             RxBus2.publish(MessageCompleteEventBus(false))
-            return@launch
         }
-        lastMessageTime = chatReturn.last().created
-        conversationList.addAll(chatReturn)
-        chatObservableLiveData.postValue(chatReturn)
-        updateAllMessageReadByUser()
-        RxBus2.publish(MessageCompleteEventBus(false))
     }
 
     fun setMRefreshControl(control: Boolean) {
         mRefreshControl = control
     }
 
-    private fun refreshChatEverySomeTime() {
-        compositeDisposable.add(
-            Observable.interval(1, 1, TimeUnit.MINUTES)
-                .subscribeOn(Schedulers.computation())
-                .timeInterval()
-                .subscribe({
-                    if (Utils.isInternetAvailable() && mRefreshControl) {
-                        val arguments = mutableMapOf<String, String>()
-                        val (key, value) = PrefManager.getLastSyncTime(inboxEntity.conversation_id)
-                        arguments[key] = value
-                        NetworkRequestHelper.getUpdatedChat(
-                            inboxEntity.conversation_id,
-                            queryMap = arguments
-                        )
-                    }
-                }, {
-                    it.printStackTrace()
-                })
-        )
-    }
-
-    fun updateInDatabaseReadMessage(readChatList: MutableSet<ChatModel>) {
-        jobs += viewModelScope.launch(Dispatchers.IO) {
-            try {
-                if (readChatList.isNullOrEmpty().not()) {
-                    val idList = readChatList.map { it.chatId }.toMutableList()
-                    appDatabase.chatDao().updateMessageStatus(MESSAGE_STATUS.SEEN_BY_USER, idList)
-                }
-            } catch (ex: ConcurrentModificationException) {
-                ex.printStackTrace()
-            }
-        }
-
-    }
-
     fun refreshChatOnManual() {
-        val arguments = mutableMapOf<String, String>()
-        val (key, value) = PrefManager.getLastSyncTime(inboxEntity.conversation_id)
-        arguments[key] = value
-        jobs += NetworkRequestHelper.getUpdatedChat(
-            inboxEntity.conversation_id,
-            queryMap = arguments
-        )
+        getNewMessageFromServer()
     }
 
-    fun updateBatchChangeRequest() {
-        jobs += viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response =
-                    AppObjectController.chatNetworkService.changeBatchRequest(inboxEntity.conversation_id)
-                if (response.isSuccessful) {
-                    deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
-                    refreshChatOnManual()
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
+
+    fun refreshMessageObject(chatId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val chatObj = chatDao.getUpdatedChatObjectViaId(chatId)
+            updateChatMessage.emit(chatObj)
         }
-
-    }
-
-    fun deleteChatModelOfType(type: BASE_MESSAGE_TYPE) {
-        jobs += viewModelScope.launch(Dispatchers.IO) {
-            AppObjectController.appDatabase.chatDao()
-                .deleteSpecificTypeChatModel(inboxEntity.conversation_id, type)
-        }
-    }
-
-    suspend fun insertUnlockClassToDatabase(unlockChatModel: ChatModel) {
-        deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
-        val chatObj =
-            AppObjectController.appDatabase.chatDao()
-                .getNullableChatObject(unlockChatModel.chatId)
-        if (chatObj == null) {
-            AppObjectController.appDatabase.chatDao().insertAMessage(unlockChatModel)
-        } else {
-            chatObj.chatId = unlockChatModel.chatLocalId.toString()
-            chatObj.conversationId = inboxEntity.conversation_id
-            chatObj.created = unlockChatModel.created
-            chatObj.type = unlockChatModel.type
-            AppObjectController.appDatabase.chatDao().updateChatMessage(chatObj)
-        }
-    }
-
-    fun refreshChat() {
-        lastChatTime = null
-        getAllUserMessage()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        compositeDisposable.clear()
-        context.unregisterReceiver(broadCastForNetwork)
-        if (isRecordingStarted) {
-            mAudioRecording.stopRecording(true)
-        }
-        try {
-            val iterator = jobs.listIterator()
-            while (iterator.hasNext()) {
-                val item = iterator.next()
-                item.cancel()
-                iterator.remove()
-            }
-        } catch (ex: Throwable) {
-            ex.printStackTrace()
-        }
-    }
-
-    fun initCometChat(groupDetails: GroupDetails? = null) {
-        isLoading.postValue(true)
-        jobs += viewModelScope.launch(Dispatchers.IO) {
-            try {
-                if (CometChat.isInitialized().not()) {
-                    // CometChat not initialized
-                    val appSettings = AppSettings.AppSettingsBuilder()
-                        .subscribePresenceForAllUsers()
-                        .setRegion(BuildConfig.COMETCHAT_REGION)
-                        .build()
-
-                    CometChat.init(
-                        AppObjectController.joshApplication,
-                        BuildConfig.COMETCHAT_APP_ID,
-                        appSettings,
-                        object : CometChat.CallbackListener<String>() {
-                            override fun onSuccess(p0: String?) {
-                                Timber.d("Initialization completed successfully")
-                                if (groupDetails == null) {
-                                    getGroupDetails(inboxEntity.conversation_id)
-                                } else {
-                                    loginUser(groupDetails)
-                                }
-                            }
-
-                            override fun onError(p0: CometChatException?) {
-                                Timber.d("Initialization failed with exception: %s", p0?.message)
-                                isLoading.postValue(false)
-                                showToast(
-                                    context.getString(R.string.generic_message_for_error),
-                                    Toast.LENGTH_SHORT
-                                )
-                            }
-
-                        })
-                } else {
-                    // CometChat already initialized
-                    if (groupDetails == null) {
-                        getGroupDetails(inboxEntity.conversation_id)
-                    } else {
-                        loginUser(groupDetails)
-                    }
-                }
-            } catch (ex: Exception) {
-                catchException(ex)
-            }
-
-        }
-    }
-
-    private fun getGroupDetails(conversationId: String) {
-        jobs += viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val params = mapOf(Pair("conversation_id", conversationId))
-                val response =
-                    AppObjectController.chatNetworkService.getGroupDetails(params)
-
-                loginUser(response)
-
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                isLoading.postValue(false)
-                showToast(context.getString(R.string.generic_message_for_error), Toast.LENGTH_SHORT)
-            }
-        }
-    }
-
-    private fun loginUser(groupDetails: GroupDetails) {
-
-        jobs += viewModelScope.launch(Dispatchers.IO) {
-            if (CometChat.getLoggedInUser() == null) {
-                // User not logged in
-                try {
-                    CometChat.login(
-                        groupDetails.userId,
-                        BuildConfig.COMETCHAT_API_KEY,
-                        object : CometChat.CallbackListener<User>() {
-                            override fun onSuccess(p0: User?) {
-                                Timber.d("Login Successful : %s", p0?.toString())
-                                registerFCMTokenWithCometChat()
-                                userLoginLiveData.postValue(groupDetails)
-                                isLoading.postValue(false)
-                            }
-
-                            override fun onError(p0: CometChatException?) {
-                                Timber.d("Login failed with exception: %s", p0?.message)
-                                isLoading.postValue(false)
-                                showToast(
-                                    context.getString(R.string.generic_message_for_error),
-                                    Toast.LENGTH_SHORT
-                                )
-                            }
-
-                        })
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-            } else if (CometChat.getLoggedInUser().uid != groupDetails.userId) {
-                // Any other user is logged in. So we have to logout first
-                try {
-                    CometChat.logout(object : CometChat.CallbackListener<String>() {
-                        override fun onSuccess(p0: String?) {
-                            loginUser(groupDetails)
-                        }
-
-                        override fun onError(p0: CometChatException?) {
-                            Timber.d("Logout previous user failed with exception: %s", p0?.message)
-                            isLoading.postValue(false)
-                            showToast(
-                                context.getString(R.string.generic_message_for_error),
-                                Toast.LENGTH_SHORT
-                            )
-                        }
-
-                    })
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-            } else {
-                // User already logged in
-                registerFCMTokenWithCometChat()
-                userLoginLiveData.postValue(groupDetails)
-                isLoading.postValue(false)
-            }
-        }
-    }
-
-    fun getUnreadMessageCount(conversationId: String) {
-        jobs += viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response =
-                    AppObjectController.chatNetworkService.getUnreadMessageCount(conversationId)
-                if (response.isSuccessful && response.body() != null) {
-                    if (response.body()!!.has("count")) {
-                        val count = response.body()!!.get("count").asInt
-                        unreadMessageCount.postValue(count)
-                    }
-                    return@launch
-                }
-            } catch (ex: Throwable) {
-                Timber.d(ex)
-            }
-        }
-    }
-
-    fun getLessonStatus(lessonId: Int): Boolean {
-        return when (appDatabase.lessonDao().getLesson(lessonId)?.status) {
-            LESSON_STATUS.CO -> {
-                true
-            }
-            else -> {
-                false
-            }
-        }
-    }
-
-    fun getLessonModel(lessonId: Int): LessonModel? {
-        return appDatabase.lessonDao().getLesson(lessonId)
     }
 
     fun getAwardMentorModel(awardMentorId: Int): AwardMentorModel? {
         return appDatabase.awardMentorModelDao().getAwardMentorModel(awardMentorId)
     }
 
-    fun registerFCMTokenWithCometChat() {
-        jobs += viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val token = PrefManager.getStringValue(FCM_TOKEN)
-                CometChat.registerTokenForPushNotification(
-                    token,
-                    object : CometChat.CallbackListener<String?>() {
-                        override fun onSuccess(s: String?) {
-                            Timber.d("FCM Token $token Registered with CometChat")
-                        }
-
-                        override fun onError(e: CometChatException) {
-                            Timber.d("Unable to register FCM Token with CometChat")
-                        }
-                    })
-            } catch (ex: Throwable) {
-                Timber.d(ex)
+    @Synchronized
+    fun startRecord(recordListener: OnAudioRecordListener?) {
+        val onRecordListener: OnAudioRecordListener = object :
+            OnAudioRecordListener {
+            override fun onRecordFinished(recordingItem: RecordingItem) {
+                isRecordingStarted = false
+                recordListener?.onRecordFinished(recordingItem)
             }
+
+            override fun onError(e: Int) {
+                recordListener?.onError(e)
+            }
+
+            override fun onRecordingStarted() {
+                isRecordingStarted = true
+                recordListener?.onRecordingStarted()
+            }
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            AppDirectory.tempRecordingFile().let {
+                mAudioRecording.setOnAudioRecordListener(onRecordListener)
+                mAudioRecording.setFile(it.absolutePath)
+                recordFile = it
+                mAudioRecording.startRecording()
+            }
+        }
+    }
+
+    fun isRecordingStarted(): Boolean {
+        return isRecordingStarted
+    }
+
+    @Synchronized
+    fun stopRecording(cancel: Boolean) {
+        mAudioRecording.stopRecording(cancel)
+        isRecordingStarted = false
+    }
+
+
+    override fun onCleared() {
+        super.onCleared()
+        if (isRecordingStarted) {
+            mAudioRecording.stopRecording(true)
         }
     }
 
