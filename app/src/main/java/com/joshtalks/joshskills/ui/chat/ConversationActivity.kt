@@ -80,16 +80,16 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.lang.ref.WeakReference
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.concurrent.scheduleAtFixedRate
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.lang.ref.WeakReference
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.concurrent.scheduleAtFixedRate
 
 
 const val CHAT_ROOM_OBJECT = "chat_room"
@@ -272,8 +272,8 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         conversationBinding.chatRv.setHasFixedSize(false)
         linearLayoutManager = SmoothScrollingLinearLayoutManager(this, false)
         linearLayoutManager.stackFromEnd = true
-        //linearLayoutManager.isItemPrefetchEnabled = true
-        //linearLayoutManager.initialPrefetchItemCount = 10
+        linearLayoutManager.isItemPrefetchEnabled = true
+        linearLayoutManager.initialPrefetchItemCount = 10
         linearLayoutManager.isSmoothScrollbarEnabled = true
         conversationBinding.chatRv.apply {
             addItemDecoration(LayoutMarginDecoration(Utils.dpToPx(context, 4f)))

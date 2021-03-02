@@ -15,12 +15,25 @@ import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.Sender
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.chat.vh.*
+import com.joshtalks.joshskills.ui.chat.vh.AssessmentViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.AudioViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.BaseViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.BestPerformerViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.CertificationExamViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.DateItemHolder
+import com.joshtalks.joshskills.ui.chat.vh.ImageViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.LessonViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.NewMessageViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.PdfViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.PracticeOldViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.TextViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.UnlockNextClassViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.VideoViewHolder
 import com.joshtalks.joshskills.ui.groupchat.listeners.StickyHeaderAdapter
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils
-import timber.log.Timber
 import java.lang.ref.WeakReference
-import java.util.*
+import java.util.ArrayList
+import timber.log.Timber
 
 
 class ConversationAdapter(private val activityRef: WeakReference<FragmentActivity>) :
@@ -131,7 +144,7 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
 
     @MainThread
     fun initializePool(@NonNull pool: RecyclerView.RecycledViewPool) {
-        pool.setMaxRecycledViews(LESSON_MESSAGE, 15)
+        pool.setMaxRecycledViews(LESSON_MESSAGE, 20)
         /*      pool.setMaxRecycledViews(MESSAGE_TYPE_INCOMING_MULTIMEDIA, 15)
             pool.setMaxRecycledViews(MESSAGE_TYPE_OUTGOING_TEXT, 15)
             pool.setMaxRecycledViews(MESSAGE_TYPE_OUTGOING_MULTIMEDIA, 15)
@@ -142,7 +155,7 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
     }
 
     override fun getItemId(position: Int): Long {
-        return messageList[position].hashCode().toLong()
+        return messageList[position].chatId.hashCode().toLong()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
@@ -225,9 +238,7 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
                 view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.layout_lesson_item, parent, false)
                 view.tag = LESSON_MESSAGE
-                LessonViewHolder(view, userId).apply {
-                    setIsRecyclable(false)
-                }
+                LessonViewHolder(view, userId)
             }
             BEST_PERFORMER_EXAM_MESSAGE -> {
                 view = LayoutInflater.from(parent.context)
@@ -260,6 +271,9 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+        if (messageList[position].type == BASE_MESSAGE_TYPE.LESSON) {
+            holder.setIsRecyclable(false)
+        }
         holder.bind(messageList[position], getPreviousMessage(position))
     }
 
@@ -271,7 +285,7 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
     override fun getItemViewType(position: Int): Int {
         val type: BASE_MESSAGE_TYPE?
         val item = messageList[position]
-        val prevSender = getPreviousSender(position - 1)
+        val prevSender = getPreviousSender(position)
         val questionType = item.question?.type ?: BASE_MESSAGE_TYPE.TX
 
         if (item.type == BASE_MESSAGE_TYPE.Q) {
