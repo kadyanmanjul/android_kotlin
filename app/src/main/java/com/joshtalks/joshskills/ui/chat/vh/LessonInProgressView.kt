@@ -37,7 +37,7 @@ class LessonInProgressView : FrameLayout {
             null
         )
     }
-    val drawableUnattempted: Drawable? by lazy {
+    private val drawableUnattempted: Drawable? by lazy {
         ResourcesCompat.getDrawable(
             AppObjectController.joshApplication.resources,
             R.drawable.ic_lesson_disabled_tick,

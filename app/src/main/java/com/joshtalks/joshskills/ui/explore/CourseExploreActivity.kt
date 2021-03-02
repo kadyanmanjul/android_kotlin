@@ -12,7 +12,6 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
-import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityCourseExploreBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -25,24 +24,13 @@ import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.subscription.StartSubscriptionActivity
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.MutableList
-import kotlin.collections.MutableSet
-import kotlin.collections.find
-import kotlin.collections.groupBy
-import kotlin.collections.isNullOrEmpty
-import kotlin.collections.linkedSetOf
 import kotlin.collections.set
-import kotlin.collections.sortedBy
-import kotlin.collections.toMutableList
-import kotlin.collections.toSortedMap
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 const val COURSE_EXPLORER_SCREEN_NAME = "Course Explorer"
 const val USER_COURSES = "user_courses"
@@ -94,7 +82,8 @@ class CourseExploreActivity : CoreJoshActivity() {
             }
         }
         initView()
-        registerUserGAID()
+        loadCourses()
+        //  registerUserGAID()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -170,11 +159,6 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     private fun loadCourses() {
         CoroutineScope(Dispatchers.IO).launch {
-            val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, false)
-            WorkManagerAdmin.registerUserGAID(
-                null,
-                if (exploreType.isNotBlank()) exploreType else null
-            )
 
             try {
                 var list: ArrayList<InboxEntity>? = null

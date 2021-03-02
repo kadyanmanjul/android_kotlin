@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.core
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.os.StrictMode
@@ -22,7 +23,12 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
-import com.google.gson.*
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonParseException
 import com.itkacher.okhttpprofiler.OkHttpProfilerInterceptor
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.joshtalks.joshskills.BuildConfig
@@ -34,7 +40,12 @@ import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.service.*
+import com.joshtalks.joshskills.repository.service.ChatNetworkService
+import com.joshtalks.joshskills.repository.service.CommonNetworkService
+import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
+import com.joshtalks.joshskills.repository.service.P2PNetworkService
+import com.joshtalks.joshskills.repository.service.SignUpNetworkService
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.smartlook.sdk.smartlook.Smartlook
 import com.smartlook.sdk.smartlook.interceptors.SmartlookOkHttpInterceptor
 import com.tonyodev.fetch2.Fetch
@@ -52,11 +63,6 @@ import io.branch.referral.Branch
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
-import okhttp3.*
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import timber.log.Timber
 import java.io.File
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
@@ -64,8 +70,23 @@ import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import java.net.URL
 import java.text.DateFormat
-import java.util.*
+import java.util.Collections
+import java.util.Date
 import java.util.concurrent.TimeUnit
+import okhttp3.Cache
+import okhttp3.CacheControl
+import okhttp3.CertificatePinner
+import okhttp3.CipherSuite
+import okhttp3.ConnectionSpec
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.TlsVersion
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import timber.log.Timber
 
 const val KEY_AUTHORIZATION = "Authorization"
 const val KEY_APP_VERSION_CODE = "app-version-code"
@@ -656,7 +677,7 @@ class HeaderInterceptor : Interceptor {
 class StatusCodeInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val response = chain.proceed(chain.request())
-        /*if (response.code in 401..403) {
+        if (response.code in 401..403) {
             if (Utils.isAppRunning(
                     AppObjectController.joshApplication,
                     AppObjectController.joshApplication.packageName
@@ -674,7 +695,7 @@ class StatusCodeInterceptor : Interceptor {
                     AppObjectController.joshApplication.startActivity(intent)
                 }
             }
-        }*/
+        }
         WorkManagerAdmin.userActiveStatusWorker(JoshApplication.isAppVisible)
         Timber.i("Status code: %s", response.code)
         return response

@@ -1,7 +1,10 @@
 package com.joshtalks.joshskills.core.custom_ui.decorator;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.*;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
     // Sets the starting page index
@@ -129,6 +132,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
                 maxSize = lastVisibleItemPositions[i];
             } else if (lastVisibleItemPositions[i] > maxSize) {
                 maxSize = lastVisibleItemPositions[i];
+
             }
         }
         return maxSize;

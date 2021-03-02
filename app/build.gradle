@@ -11,8 +11,8 @@ if (!project.hasProperty("devBuild")) {
 //-PdevBuild command
 //-PdevBuild --warning-mode=all --stacktrace
 def majorVersion = 3
-def minorVersion = 0
-def patchVersion = 42
+def minorVersion = 4
+def patchVersion = 0
 
 android {
     compileSdkVersion 29
@@ -400,5 +400,5 @@ dependencies {
     debugImplementation 'com.itkacher.okhttpprofiler:okhttpprofiler:1.0.7'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
     implementation 'com.github.dhaval2404:imagepicker:1.8'
-    implementation 'androidx.paging:paging-runtime:2.1.1'
+   // implementation 'androidx.paging:paging-runtime:2.1.1'
 }

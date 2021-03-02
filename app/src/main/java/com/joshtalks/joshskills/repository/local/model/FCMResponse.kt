@@ -32,6 +32,12 @@ class FCMResponse(
                 null
             }
         }
+
+        @JvmStatic
+        fun removeOldFCM() {
+            PrefManager.removeKey(FCM_PERSISTENT_KEY)
+        }
+
     }
 
     fun update() {

@@ -29,10 +29,10 @@ import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.sinch.verification.PhoneNumberUtils
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
-import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.system.exitProcess
+import timber.log.Timber
 
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
@@ -84,12 +84,6 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
                     exitProcess(0)
                 }
             }
-            val npsEvent = AppObjectController.getFirebaseRemoteConfig().getString("NPS_EVENT_LIST")
-            NPSEventModel.setNPSList(npsEvent)
-            AppObjectController.firebaseAnalytics.setUserProperty(
-                "App Version",
-                BuildConfig.VERSION_CODE.toString()
-            )
 
         }.addOnFailureListener { exception ->
             exception.printStackTrace()
@@ -237,30 +231,6 @@ class MessageReadPeriodicWorker(context: Context, workerParams: WorkerParameters
         } catch (ex: Throwable) {
             LogException.catchException(ex)
             return Result.retry()
-        }
-    }
-
-}
-
-
-class ReferralCodeRefreshWorker(context: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        return try {
-            if (Mentor.getInstance().hasId() && Mentor.getInstance().referralCode.isEmpty()) {
-                val reqObj = mapOf("mentor" to Mentor.getInstance().getId())
-                val response =
-                    AppObjectController.signUpNetworkService.validateOrGetAndReferralOrCouponAsync(
-                        reqObj
-                    ).await()
-                response.getOrNull(0)?.code?.let {
-                    Mentor.getInstance().setReferralCode(it).update()
-                }
-            }
-            Result.success()
-        } catch (ex: Throwable) {
-            LogException.catchException(ex)
-            Result.retry()
         }
     }
 

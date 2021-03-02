@@ -11,20 +11,26 @@ import com.cometchat.pro.exceptions.CometChatException
 import com.cometchat.pro.models.User
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
+import com.joshtalks.joshskills.core.JoshApplication
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
 import com.joshtalks.joshskills.core.analytics.LogException.catchException
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
+import java.util.ConcurrentModificationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.*
 
 
 class UtilConversationViewModel(application: Application, private var inboxEntity: InboxEntity) :
@@ -55,6 +61,7 @@ class UtilConversationViewModel(application: Application, private var inboxEntit
                         IS_PROFILE_FEATURE_ACTIVE,
                         response.body()?.isPointsActive ?: false
                     )
+                    delay(1500)
                     userData.emit(ur)
                 }
             } catch (ex: Throwable) {
@@ -211,6 +218,7 @@ class UtilConversationViewModel(application: Application, private var inboxEntit
                 val response =
                     AppObjectController.chatNetworkService.getUnreadMessageCount(conversationId)
                 val count = response.body()?.get("count")?.asInt ?: 0
+                delay(1800)
                 unreadMessageCount.emit(count)
             } catch (ex: Throwable) {
                 Timber.d(ex)

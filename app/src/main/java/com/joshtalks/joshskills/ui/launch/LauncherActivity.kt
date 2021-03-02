@@ -34,7 +34,6 @@ class LauncherActivity : CoreJoshActivity() {
         setContentView(R.layout.activity_launcher)
         animatedProgressBar()
         initAppInFirstTime()
-        startNextActivity()
     }
 
     private fun initApp() {

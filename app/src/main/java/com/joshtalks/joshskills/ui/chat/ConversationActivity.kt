@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.*
 import android.view.View.*
 import android.view.animation.*
@@ -706,8 +707,14 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     unlockClassViewModel.insertUnlockClassToDatabase(message)
                     val isAdded = conversationAdapter.addUnlockClassMessage(message)
                     val cPosition = linearLayoutManager.findLastVisibleItemPosition()
-                    if (isAdded && cPosition == conversationAdapter.itemCount - 1) {
-                        conversationBinding.chatRv.smoothScrollToPosition(conversationAdapter.itemCount - 1)
+                    val lastVisiblePosition =
+                        linearLayoutManager.findLastCompletelyVisibleItemPosition()
+                    Log.e(
+                        "aaaa",
+                        "" + isAdded + "   " + cPosition + "    " + lastVisiblePosition + "     " + conversationAdapter.itemCount
+                    )
+                    if (isAdded && (cPosition >= conversationAdapter.itemCount - 1 || lastVisiblePosition >= conversationAdapter.itemCount - 1)) {
+                        conversationBinding.chatRv.smoothScrollToPosition(conversationAdapter.itemCount)
                     }
                 }
             }

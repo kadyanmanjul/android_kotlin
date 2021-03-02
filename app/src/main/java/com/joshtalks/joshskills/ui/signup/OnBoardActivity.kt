@@ -14,14 +14,12 @@ import com.afollestad.materialdialogs.customview.getCustomView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.REFERRED_REFERRAL_CODE
 import com.joshtalks.joshskills.core.USER_LOCALE_UPDATED
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
-import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityOnboardBinding
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
@@ -41,7 +39,7 @@ class OnBoardActivity : CoreJoshActivity() {
         layout.lifecycleOwner = this
         if (PrefManager.getStringValue(REFERRED_REFERRAL_CODE).isBlank())
             layout.haveAReferralCode.visibility = View.VISIBLE
-        VersionResponse.getInstance().version?.name?.let {
+        VersionResponse.getInstance().version.name?.let {
             if (it == ONBOARD_VERSIONS.ONBOARDING_V7 && AppObjectController.isSettingUpdate.not() && PrefManager.getBoolValue(
                     USER_LOCALE_UPDATED
                 ).not()
@@ -64,13 +62,15 @@ class OnBoardActivity : CoreJoshActivity() {
     }
 
     fun openCourseExplore() {
+        /*
         val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, false)
+
         if (exploreType.isNotBlank()) {
             WorkManagerAdmin.registerUserGAID(null, exploreType)
         } else {
             WorkManagerAdmin.registerUserGAID(null, null)
         }
-
+*/
         AppAnalytics.create(AnalyticsEvent.EXPLORE_BTN_CLICKED.NAME)
             .addParam("name", this.javaClass.simpleName)
             .addBasicParam()

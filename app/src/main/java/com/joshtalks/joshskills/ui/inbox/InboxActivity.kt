@@ -5,6 +5,8 @@ import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.view.animation.OvershootInterpolator
 import androidx.appcompat.widget.PopupMenu
@@ -41,6 +43,7 @@ import io.agora.rtc.RtcEngine
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.find_more_layout.*
@@ -51,7 +54,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -301,11 +303,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
             .sortedByDescending { it.created }.let {
                 temp.addAll(it)
             }
-        courseListSet.addAll(temp)
         inboxAdapter.addItems(temp)
-        if (findMoreLayout.visibility == View.INVISIBLE) {
-            findMoreLayout.visibility = View.VISIBLE
-        }
+        courseListSet.addAll(temp)
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (findMoreLayout.visibility == View.INVISIBLE) {
+                findMoreLayout.visibility = View.VISIBLE
+            }
+        }, 750)
     }
 
     private fun addObserver() {
@@ -353,6 +357,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
         super.onPause()
         compositeDisposable.clear()
     }
+
     override fun openCourseExplorer() {
         CourseExploreActivity.startCourseExploreActivity(
             this,

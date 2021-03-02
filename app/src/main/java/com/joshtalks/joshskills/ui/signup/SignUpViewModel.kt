@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
+import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.RequestVerifyOTP
@@ -25,9 +26,9 @@ import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.truecaller.android.sdk.TrueProfile
+import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
 
 class SignUpViewModel(application: Application) : AndroidViewModel(application) {
     private val _signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()
@@ -217,6 +218,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private fun updateFromLoginResponse(loginResponse: LoginResponse) {
+        FCMResponse.removeOldFCM()
         deleteMentor(loginResponse.mentorId, Mentor.getInstance().getId())
         val user = User.getInstance()
         user.userId = loginResponse.userId

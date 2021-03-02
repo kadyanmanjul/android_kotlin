@@ -1,12 +1,21 @@
 package com.joshtalks.joshskills.core.service
 
-import androidx.work.*
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequest
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 object WorkManagerAdmin {
@@ -22,8 +31,12 @@ object WorkManagerAdmin {
             .then(
                 mutableListOf(
                     OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build(),
-                    OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build()
+                    OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build(),
+                    //  OneTimeWorkRequestBuilder<InstanceIdGenerationWorker>().build(),
                 )
+            )
+            .then(
+                OneTimeWorkRequestBuilder<GenerateGuestUserMentorWorker>().build(),
             )
             .then(
                 mutableListOf(
@@ -54,7 +67,7 @@ object WorkManagerAdmin {
     fun requiredTaskAfterLoginComplete() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .beginWith(OneTimeWorkRequestBuilder<WorkerAfterLoginInApp>().build())
-            .then(OneTimeWorkRequestBuilder<PatchUserIdToGAIdV2>().build())
+            // .then(OneTimeWorkRequestBuilder<PatchUserIdToGAIdV2>().build())
             .then(OneTimeWorkRequestBuilder<MergeMentorWithGAIDWorker>().build())
             .then(
                 mutableListOf(
@@ -127,21 +140,6 @@ object WorkManagerAdmin {
             ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
-    }
-
-
-    fun registerUserGAID(testId: String?, exploreType: String? = null) {
-        val data =
-            when {
-                testId?.isNotBlank() == true -> workDataOf("test_id" to testId)
-                exploreType?.isNotBlank() == true -> workDataOf("explore_type" to exploreType)
-                else -> workDataOf()
-            }
-
-        val workRequest = OneTimeWorkRequestBuilder<PatchUserIdToGAIdV2>()
-            .setInputData(data)
-            .build()
-        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
 
     fun getQuestionNPA(eventName: String): UUID {
