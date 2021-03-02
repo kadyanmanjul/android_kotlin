@@ -1,3 +1,4 @@
+/*
 package com.joshtalks.joshskills.ui.day_wise_course
 
 import android.content.Context
@@ -466,3 +467,4 @@ class DayWiseCourseActivity : CoreJoshActivity(),
 
 }
 
+*/

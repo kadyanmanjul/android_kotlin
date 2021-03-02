@@ -298,7 +298,7 @@ class CourseProgressActivityNew : BaseActivity(),
                             ActivityResultContracts.StartActivityForResult()
                         ) { result ->
                             if (result.resultCode == Activity.RESULT_OK) {
-                                result.data.getStringExtra(MESSAGE_ID).let { chatId ->
+                                result.data?.getStringExtra(MESSAGE_ID).let { chatId ->
                                     viewModel.getCourseOverview(courseId)
                                 }
                             }

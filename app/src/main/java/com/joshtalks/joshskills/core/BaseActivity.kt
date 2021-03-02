@@ -100,6 +100,9 @@ import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.*
 import kotlin.random.Random
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 const val COURSE_EXPLORER_NEW = 2008

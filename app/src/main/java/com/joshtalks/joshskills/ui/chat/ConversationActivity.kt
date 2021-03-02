@@ -605,13 +605,15 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     }
 
     private fun openUserProfileActivity(id: String, previousPage: String?) {
-        UserProfileActivity.startUserProfileActivity(
-            this,
-            id,
-            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-            null,
-            previousPage
-        )
+        previousPage?.let {
+            UserProfileActivity.startUserProfileActivity(
+                this,
+                id,
+                arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                null,
+                it
+            )
+        }
     }
 
     private fun fetchMessage() {

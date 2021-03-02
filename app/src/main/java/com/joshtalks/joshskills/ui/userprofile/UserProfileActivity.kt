@@ -15,8 +15,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.github.dhaval2404.imagepicker.ImagePicker
-import com.joshtalks.joshcamerax.JoshCameraActivity
-import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -28,7 +26,6 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.AwardCategory
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
-import com.joshtalks.joshskills.ui.chat.IMAGE_SELECT_REQUEST_CODE
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -431,21 +428,6 @@ class UserProfileActivity : BaseActivity() {
         showAward(listOf(award), true)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            ImagePicker.getFilePath(data)?.let {
-                addUserImageInView(it)
-            }
-        } else if (resultCode == ImagePicker.RESULT_ERROR) {
-            Timber.e(ImagePicker.getError(data))
-            //Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
-        } else {
-            Timber.e("Task Cancelled")
-            //Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     override fun onStop() {
         compositeDisposable.clear()
         super.onStop()
@@ -499,13 +481,25 @@ class UserProfileActivity : BaseActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+        /*super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == IMAGE_SELECT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             data?.getStringArrayListExtra(JoshCameraActivity.IMAGE_RESULTS)?.getOrNull(0)?.let {
                 if (it.isNotBlank()) {
                     addUserImageInView(it)
                 }
             }
+        }*/
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            ImagePicker.getFilePath(data)?.let {
+                addUserImageInView(it)
+            }
+        } else if (resultCode == ImagePicker.RESULT_ERROR) {
+            Timber.e(ImagePicker.getError(data))
+            //Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+        } else {
+            Timber.e("Task Cancelled")
+            //Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show()
         }
     }
 }

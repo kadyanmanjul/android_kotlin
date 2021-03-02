@@ -14,7 +14,6 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
-import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
@@ -38,11 +37,9 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.speaking_practise_fragment.btn_continue
 import kotlinx.android.synthetic.main.speaking_practise_fragment.btn_start
-import kotlinx.android.synthetic.main.speaking_practise_fragment.group_one
 import kotlinx.android.synthetic.main.speaking_practise_fragment.group_two
 import kotlinx.android.synthetic.main.speaking_practise_fragment.progress_bar
 import kotlinx.android.synthetic.main.speaking_practise_fragment.progress_view
-import kotlinx.android.synthetic.main.speaking_practise_fragment.root_view
 import kotlinx.android.synthetic.main.speaking_practise_fragment.text_view
 import kotlinx.android.synthetic.main.speaking_practise_fragment.tv_practise_time
 import kotlinx.android.synthetic.main.speaking_practise_fragment.tv_today_topic
@@ -127,7 +124,6 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
                     ex.printStackTrace()
                 }
                 group_two.visibility = View.VISIBLE
-                group_one.visibility = View.GONE
 
                 val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
                 if (points.isNullOrEmpty().not()) {
@@ -210,7 +206,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
             RxBus2.listenWithoutDelay(SnackBarEvent::class.java)
                 .subscribeOn(Schedulers.computation())
                 .subscribe({
-                   // showSnackBar(root_view, Snackbar.LENGTH_LONG, it.pointsSnackBarText)
+                    // showSnackBar(root_view, Snackbar.LENGTH_LONG, it.pointsSnackBarText)
                 }, {
                     it.printStackTrace()
                 })

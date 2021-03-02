@@ -29,7 +29,6 @@ import com.joshtalks.joshskills.repository.local.entity.AwardTypes
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatDao
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.Course
 import com.joshtalks.joshskills.repository.local.entity.CourseDao
@@ -39,7 +38,11 @@ import com.joshtalks.joshskills.repository.local.entity.FeedbackEngageModel
 import com.joshtalks.joshskills.repository.local.entity.FeedbackEngageModelDao
 import com.joshtalks.joshskills.repository.local.entity.ImageType
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LessonMaterialType
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestionDao
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestionType
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -123,7 +126,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     ConvectorForWrongWord::class,
     ConvectorForPhoneticClass::class,
     ConverterForLessonQuestionType::class,
-    ConverterForLessonMaterialType::class
+    ConverterForLessonMaterialType::class,
     AwardTypeConverter::class
 )
 abstract class AppDatabase : RoomDatabase() {
