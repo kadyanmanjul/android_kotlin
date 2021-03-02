@@ -32,7 +32,6 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWith
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
-import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
@@ -55,8 +54,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val requestStatusLiveData: MutableLiveData<Boolean> = MutableLiveData()
 
     val grammarAssessmentLiveData: MutableLiveData<AssessmentWithRelations> = MutableLiveData()
-    val grammarAssessmentStatus: MutableLiveData<AssessmentStatus> =
-        MutableLiveData(AssessmentStatus.NOT_STARTED)
     val grammarVideoInterval: MutableLiveData<Graph?> = MutableLiveData()
 
     val vocabAssessmentData: MutableLiveData<ArrayList<AssessmentWithRelations>> = MutableLiveData()
@@ -372,9 +369,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             getAssessmentById(assessmentId)?.let {
                 grammarAssessmentLiveData.postValue(it)
-                if (it.assessment.status == AssessmentStatus.COMPLETED) {
-                    grammarAssessmentStatus.postValue(it.assessment.status)
-                }
             }
         }
     }

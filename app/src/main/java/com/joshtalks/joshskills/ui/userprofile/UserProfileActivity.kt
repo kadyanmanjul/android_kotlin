@@ -42,12 +42,12 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.text.DecimalFormat
+import java.util.*
 import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.text.DecimalFormat
-import java.util.*
 
 class UserProfileActivity : BaseActivity() {
 
