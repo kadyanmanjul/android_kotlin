@@ -17,7 +17,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.exoplayer2.Player
 import com.greentoad.turtlebody.mediapicker.MediaPicker
@@ -30,9 +29,9 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.custom_ui.SnappingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.EndlessRecyclerViewScrollListener
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
+import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.extension.*
 import com.joshtalks.joshskills.core.interfaces.OnDismissWithSuccess
@@ -144,7 +143,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     private lateinit var conversationBinding: ActivityConversationBinding
     private lateinit var inboxEntity: InboxEntity
     private lateinit var activityRef: WeakReference<FragmentActivity>
-    private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var linearLayoutManager: SmoothScrollingLinearLayoutManager
     private var revealAttachmentView: Boolean = false
     private val readChatList: MutableSet<ChatModel> = mutableSetOf()
     private var readMessageTimerTask: TimerTask? = null
@@ -270,16 +269,18 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     }
 
     private fun initRV() {
-        linearLayoutManager = SnappingLinearLayoutManager(this)
+        conversationBinding.chatRv.setHasFixedSize(false)
+        linearLayoutManager = SmoothScrollingLinearLayoutManager(this, false)
         linearLayoutManager.stackFromEnd = true
-        linearLayoutManager.isItemPrefetchEnabled = true
-        //  linearLayoutManager.initialPrefetchItemCount = 10
+        //linearLayoutManager.isItemPrefetchEnabled = true
+        //linearLayoutManager.initialPrefetchItemCount = 10
         linearLayoutManager.isSmoothScrollbarEnabled = true
         conversationBinding.chatRv.apply {
-            layoutManager = linearLayoutManager
-            itemAnimator = null
             addItemDecoration(LayoutMarginDecoration(Utils.dpToPx(context, 4f)))
         }
+        conversationBinding.chatRv.layoutManager = linearLayoutManager
+        conversationBinding.chatRv.itemAnimator = null
+
 
         conversationBinding.chatRv.addItemDecoration(StickyHeaderDecoration(conversationAdapter), 0)
         conversationBinding.chatRv.adapter = conversationAdapter

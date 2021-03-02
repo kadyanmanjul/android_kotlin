@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view_completed"
+    android:layout_width="@dimen/_220sdp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="start"
+    android:clickable="true"
+    android:enabled="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_7sdp"
+        android:background="@drawable/round_rect_default"
+        android:backgroundTint="@color/light_shade_of_gray">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/lesson_name_tv__completed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:gravity="start"
+            android:letterSpacing="0"
+            android:lineSpacingMultiplier="1.2"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Lesson 1: title name" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/view11"
+            android:layout_width="@dimen/_12sdp"
+            android:layout_height="@dimen/_12sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/continue_lesson_tv__completed"
+            app:layout_constraintEnd_toStartOf="@+id/view12"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_lesson_green_tick" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/view12"
+            android:layout_width="@dimen/_12sdp"
+            android:layout_height="@dimen/_12sdp"
+            android:layout_marginStart="@dimen/_4sdp"
+            app:layout_constraintBottom_toBottomOf="@id/view11"
+            app:layout_constraintEnd_toStartOf="@+id/view13"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/view11"
+            app:layout_constraintTop_toTopOf="@+id/view11"
+            app:srcCompat="@drawable/ic_lesson_green_tick" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/view13"
+            android:layout_width="@dimen/_12sdp"
+            android:layout_height="@dimen/_12sdp"
+            android:layout_marginStart="@dimen/_4sdp"
+            app:layout_constraintBottom_toBottomOf="@id/view11"
+            app:layout_constraintEnd_toStartOf="@+id/view14"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/view12"
+            app:layout_constraintTop_toTopOf="@+id/view11"
+            app:srcCompat="@drawable/ic_lesson_green_tick" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/view14"
+            android:layout_width="@dimen/_12sdp"
+            android:layout_height="@dimen/_12sdp"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_4sdp"
+            app:layout_constraintBottom_toBottomOf="@id/view11"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/view13"
+            app:layout_constraintTop_toTopOf="@+id/view11"
+            app:srcCompat="@drawable/ic_lesson_green_tick" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/continue_lesson_tv__completed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
+            android:background="@drawable/round_rectangle_for_course_expo"
+            android:backgroundTint="@color/right_answer_color"
+            android:gravity="start"
+            android:letterSpacing="0"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_3sdp"
+            android:text="@string/completed"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lesson_name_tv__completed" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

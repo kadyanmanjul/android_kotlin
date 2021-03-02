@@ -141,6 +141,9 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
             pool.setMaxRecycledViews(MESSAGE_TYPE_UPDATE, 5)*/
     }
 
+    override fun getItemId(position: Int): Long {
+        return messageList[position].hashCode().toLong()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         val view: View
@@ -319,7 +322,7 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
                 return UNLOCK_CLASS_MESSAGE
             }
             BASE_MESSAGE_TYPE.LESSON -> {
-                return LESSON_MESSAGE//type(cSender, oSender, LEFT_TEXT_MESSAGE, RIGHT_TEXT_MESSAGE)
+                return LESSON_MESSAGE
             }
             BASE_MESSAGE_TYPE.BEST_PERFORMER ->
                 return BEST_PERFORMER_EXAM_MESSAGE
@@ -427,7 +430,7 @@ private const val CERTIFICATION_EXAM_MESSAGE = 15
 
 private const val ASSESSMENT_MESSAGE = 17
 
-private const val LESSON_MESSAGE = 18
+private const val LESSON_MESSAGE = 19
 
 
 private const val BEST_PERFORMER_EXAM_MESSAGE = 21
