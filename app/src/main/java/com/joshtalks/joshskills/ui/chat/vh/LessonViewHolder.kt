@@ -22,6 +22,7 @@ class LessonViewHolder(view: View, userId: String) : BaseViewHolder(view, userId
 
     private fun setupUI(lesson: LessonModel) {
         if (lesson.status == LESSON_STATUS.CO) {
+            lessonInProgressStub.get().visibility = View.GONE
             lessonCompleteStub.resolved().let {
                 lessonCompleteStub.get().setup(lesson)
             }
