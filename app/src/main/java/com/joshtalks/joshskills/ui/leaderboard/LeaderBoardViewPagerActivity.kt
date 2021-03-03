@@ -77,7 +77,7 @@ class LeaderBoardViewPagerActivity : BaseActivity() {
                     viewModel.getFullLeaderBoardData(Mentor.getInstance().getId())
                 }
             }
-        searchActivityResult.launch(LeaderBoardSearchActivity.getSearchActivityIntent(this))
+        searchActivityResult.launch(LeaderBoardSearchActivity.getSearchActivityIntent(this,viewModel.leaderBoardData.value))
     }
 
     private fun addObserver() {

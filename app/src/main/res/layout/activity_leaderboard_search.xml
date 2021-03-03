@@ -18,8 +18,9 @@
             android:id="@+id/search_layout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/colorPrimaryDark"
+            android:background="#F8FFFFFF"
             android:paddingBottom="@dimen/_8sdp"
+            android:elevation="@dimen/_8sdp"
             app:layout_constraintBottom_toTopOf="@+id/tab_layout">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -142,13 +143,23 @@
             app:tabSelectedTextColor="@color/button_color"
             app:tabTextAppearance="@style/LeaderBoardTabLayoutStyle" />
 
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginHorizontal="@dimen/_4sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@color/dark_grey"
+            app:layout_constraintTop_toBottomOf="@id/rank"/>
+
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rank" />
+            app:layout_constraintTop_toBottomOf="@id/divider" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recent_rv"

@@ -16,11 +16,9 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.ActivityLeaderboardSearchBinding
 import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearch
-import java.time.DayOfWeek.SUNDAY
-import java.time.LocalDate
-import java.time.Period
-import java.time.temporal.TemporalAdjusters.next
+import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import java.util.ArrayList
+import java.util.Locale
 
 
 class LeaderBoardSearchActivity : BaseActivity() {
@@ -28,13 +26,16 @@ class LeaderBoardSearchActivity : BaseActivity() {
     private val itemList: MutableList<RecentSearch> = ArrayList()
     lateinit var binding: ActivityLeaderboardSearchBinding
     private val searchViewModel by lazy { ViewModelProvider(this).get(LeaderBoardSearchViewModel::class.java) }
+    private var map: HashMap<String, LeaderboardResponse> = hashMapOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_leaderboard_search)
         binding.lifecycleOwner = this
         binding.handler = this
-
+        if (intent.hasExtra("hash_map")) {
+            map = intent.getSerializableExtra("hash_map") as HashMap<String, LeaderboardResponse>
+        }
         initViewPager()
         initRecentSearchRecyclerview()
         addObserver()
@@ -77,6 +78,7 @@ class LeaderBoardSearchActivity : BaseActivity() {
                     binding.recentRv.visibility = View.GONE
                 itemList.clear()
                 itemList.addAll(it)
+                itemList.add(0, RecentSearch(EMPTY))
                 adapter.notifyDataSetChanged()
             } else {
                 binding.recentRv.visibility = View.GONE
@@ -106,33 +108,31 @@ class LeaderBoardSearchActivity : BaseActivity() {
             LeaderboardSearchPagerAdapter(this)
 
         hideViewpager()
+
+        var list = EMPTY
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             when (position) {
                 0 -> {
-                    tab.text = "TODAY"
+                    list = "TODAY"
                 }
                 1 -> {
-                    val now = LocalDate.now()
-
-                    val weekEnd = LocalDate.now().with(next(SUNDAY))
-
-                    tab.text =
-                        "Week"
-                            .plus('\n')
-                            .plus("(${Period.between(now, weekEnd).days + 1} days left)")
+                    list = "WEEK"
                 }
                 2 -> {
-                    val now = LocalDate.now()
-                    val monthEnd = LocalDate.now().plusMonths(1).withDayOfMonth(1).minusDays(1)
-                    tab.text =
-                        "Month"
-                            .plus('\n')
-                            .plus("(${Period.between(now, monthEnd).days + 1} days left)")
+                    list = "MONTH"
                 }
+            }
+            if (map.get(list)?.intervalTabText.isNullOrBlank()) {
+                tab.text =
+                    map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
+            } else {
+                tab.text =
+                    map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
+                        .plus('\n')
+                        .plus(map.get(list)?.intervalTabText)
             }
 
         }.attach()
-
 
     }
 
@@ -147,6 +147,7 @@ class LeaderBoardSearchActivity : BaseActivity() {
         binding.clearIv.setColorFilter(ContextCompat.getColor(this, R.color.black))
         binding.searchBg.background = ContextCompat.getDrawable(this, R.drawable.grey_rounded_bg)
         binding.recentRv.visibility = View.VISIBLE
+        binding.divider.visibility = View.GONE
     }
 
     fun showViewpager() {
@@ -161,6 +162,7 @@ class LeaderBoardSearchActivity : BaseActivity() {
         binding.searchBg.background =
             ContextCompat.getDrawable(this, R.drawable.primary_dark_rounded_bg)
         binding.recentRv.visibility = View.GONE
+        binding.divider.visibility = View.VISIBLE
     }
 
     fun clearSearchText() {
@@ -168,8 +170,10 @@ class LeaderBoardSearchActivity : BaseActivity() {
     }
 
     companion object {
-        fun getSearchActivityIntent(context: Context): Intent {
-            return Intent(context, LeaderBoardSearchActivity::class.java)
+        fun getSearchActivityIntent(context: Context, value: HashMap<String, LeaderboardResponse>?): Intent {
+            return Intent(context, LeaderBoardSearchActivity::class.java).apply {
+                putExtra("hash_map",value)
+            }
         }
     }
 

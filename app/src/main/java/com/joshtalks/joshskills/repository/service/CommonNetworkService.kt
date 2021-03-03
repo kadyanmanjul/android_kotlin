@@ -294,7 +294,7 @@ interface CommonNetworkService {
         @Path("conversation_id") conversationId: String
     ): Response<JsonObject>
 
-    @GET("$DIR/leaderboard/get_filtered_leaderboard")
+    @GET("$DIR/leaderboard/get_filtered_leaderboard/")
     suspend fun searchLeaderboardMember(
         @Query("key") word: String,
         @Query("page") page: Int,
