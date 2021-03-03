@@ -60,6 +60,7 @@ class VocabularyPracticeAdapter(
     private var QUIZ_TYPE: Int = 1
     private var VOCAB_TYPE: Int = 0
     val wordsItemSize = itemList.size.minus(assessmentQuizList.size)
+    val revisionItemSize = assessmentQuizList.size
     val appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTICE_SCREEN.NAME)
         .addBasicParam()
         .addUserDetails()
@@ -166,12 +167,12 @@ class VocabularyPracticeAdapter(
                 )
             }
             updateRadioGroupUi(assessmentQuestions)
-
+            val revisionNumber = assessmentQuizList.indexOf(assessmentRelations) + 1
             binding.practiceTitleTv.text =
                 context.getString(
                     R.string.quiz_tag,
-                    lessonQuestion.vpSortOrder,
-                    assessmentQuizList.size
+                    revisionNumber,
+                    revisionItemSize
                 )
 
             binding.practiceTitleTv.setOnClickListener {
@@ -480,7 +481,7 @@ class VocabularyPracticeAdapter(
                 if (position > 0)
                     clickListener.focusChild(position - 1)
             } else {
-                collapsCard()
+                collapseCard()
             }
 
             setPracticeInfoView(lessonQuestion)
@@ -489,7 +490,7 @@ class VocabularyPracticeAdapter(
                 if (binding.practiceContentLl.visibility == GONE) {
                     expandCard()
                 } else {
-                    collapsCard()
+                    collapseCard()
                 }
             }
 
@@ -707,7 +708,7 @@ class VocabularyPracticeAdapter(
             try {
                 val audioType = AudioType()
                 if (filePath == null) {
-                    if (lessonQuestion.practiceEngagement.isNullOrEmpty() && lessonQuestion.status != QUESTION_STATUS.NA) {
+                    if (lessonQuestion.practiceEngagement.isNullOrEmpty() && lessonQuestion.filePath != null) {
                         filePath = lessonQuestion.filePath
                     } else {
                         val practiseEngagement =
@@ -781,11 +782,12 @@ class VocabularyPracticeAdapter(
 
         //============================================================================
         private fun setPracticeInfoView(lessonQuestion: LessonQuestion) {
+            val wordNumber = itemList.filter { it.assessmentId == null }.indexOf(lessonQuestion) + 1
             lessonQuestion.run {
                 binding.practiceTitleTv.text =
                     context.getString(
                         R.string.word_tag,
-                        this.vpSortOrder,
+                        wordNumber,
                         wordsItemSize,
                         this.practiceWord
                     )
@@ -1055,6 +1057,22 @@ class VocabularyPracticeAdapter(
             showPracticeSubmitLayout()
             binding.submitAudioViewContainer.visibility = VISIBLE
             initializePractiseSeekBar(lessonQuestion)
+            if (filePath == null) {
+                if (lessonQuestion.practiceEngagement.isNullOrEmpty() && lessonQuestion.filePath != null) {
+                    filePath = lessonQuestion.filePath
+                } else {
+                    val practiseEngagement =
+                        lessonQuestion.practiceEngagement?.getOrNull(0)
+                    if (PermissionUtils.isStoragePermissionEnabled(context) && AppDirectory.isFileExist(
+                            practiseEngagement?.localPath
+                        )
+                    ) {
+                        filePath = practiseEngagement?.localPath
+                    } else {
+                        filePath = practiseEngagement?.answerUrl
+                    }
+                }
+            }
             binding.submitPractiseSeekbar.max =
                 Utils.getDurationOfMedia(context, filePath)?.toInt() ?: 0
             enableSubmitButton()
@@ -1168,7 +1186,7 @@ class VocabularyPracticeAdapter(
             )
         }
 
-        private fun collapsCard() {
+        private fun collapseCard() {
             binding.practiceContentLl.visibility = GONE
             binding.expandIv.setImageDrawable(
                 ContextCompat.getDrawable(

@@ -80,7 +80,6 @@
                             android:focusable="true"
                             android:minHeight="@dimen/_160sdp"
                             android:visibility="gone"
-
                             app:controller_layout_id="@layout/layout_live_player_controller"
                             tools:visibility="gone" />
 
@@ -226,30 +225,6 @@
                         android:orientation="vertical"
                         android:padding="@dimen/_8sdp">
 
-                        <androidx.appcompat.widget.AppCompatEditText
-                            android:id="@+id/et_practise"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_16sdp"
-                            android:autoSizeMaxTextSize="@dimen/font_16"
-                            android:background="@drawable/rect_with_bound"
-                            android:gravity="start|top"
-                            android:hint="@string/type_your_answer_hint"
-                            android:imeOptions="actionDone"
-                            android:inputType="textCapSentences|textMultiLine"
-                            android:lines="8"
-                            android:maxLength="500"
-                            android:maxLines="8"
-                            android:padding="@dimen/_4sdp"
-                            android:singleLine="false"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                            android:textColor="@color/black"
-                            android:textColorHint="@color/emoji_bg_color"
-                            android:textCursorDrawable="@drawable/cursor_drawable"
-                            android:visibility="gone"
-                            tools:visibility="visible" />
-
-
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/upload_practise_view"
                             android:layout_width="@dimen/_52sdp"
@@ -263,7 +238,6 @@
                             android:tint="@color/white"
                             android:visibility="gone"
                             app:srcCompat="@drawable/ic_rec_mic_big"
-
                             tools:visibility="visible" />
 
                         <androidx.appcompat.widget.AppCompatTextView
@@ -277,28 +251,6 @@
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                             android:textColor="@color/black"
                             android:visibility="gone"
-                            tools:visibility="visible" />
-
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/upload_file_view"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="@dimen/_8sdp"
-                            android:drawablePadding="@dimen/_2sdp"
-                            android:gravity="center"
-                            android:onClick="@{()->handler.chooseFile()}"
-                            android:paddingStart="@dimen/_4sdp"
-                            android:paddingTop="@dimen/_4sdp"
-                            android:paddingEnd="@dimen/_4sdp"
-                            android:text="@string/upload_file_msz"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                            android:textColor="@color/gray_9E"
-                            android:visibility="gone"
-                            app:drawableStartCompat="@drawable/ic_file_upload"
-
-                            app:drawableTint="@color/emoji_icon_color"
                             tools:visibility="visible" />
 
                         <FrameLayout
@@ -367,98 +319,12 @@
                         android:orientation="vertical"
                         android:padding="@dimen/_8sdp">
 
-                        <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
-                            android:id="@+id/video_player_submit"
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/_160sdp"
-                            android:layout_gravity="center"
-                            android:background="#000"
-                            android:focusable="true"
-                            android:visibility="gone"
-                            app:controller_layout_id="@layout/layout_live_player_controller"
-                            tools:visibility="visible" />
-
                         <com.mindorks.placeholderview.PlaceHolderView
                             android:id="@+id/audio_list"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:visibility="gone"
                             tools:listitem="@layout/practice_audio_item"
-                            tools:visibility="visible" />
-
-                        <RelativeLayout
-                            android:id="@+id/submit_file_view_container"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:visibility="gone"
-                            tools:visibility="visible">
-
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/attachment_placeholder"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentStart="true"
-                                android:layout_centerVertical="true"
-                                android:layout_gravity="center"
-                                android:adjustViewBounds="true"
-                                android:clickable="true"
-                                android:focusable="true"
-                                android:onClick="@{()->handler.openAttachmentFile()}"
-                                android:padding="@dimen/_5sdp"
-                                android:scaleType="fitCenter"
-                                app:srcCompat="@drawable/ic_attchement_upload" />
-
-                            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                                android:id="@+id/file_info_attachment_tv"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerVertical="true"
-                                android:layout_gravity="center"
-                                android:layout_toStartOf="@id/iv_cancel2"
-                                android:layout_toEndOf="@+id/attachment_placeholder"
-                                android:ellipsize="end"
-                                android:gravity="start|center"
-                                android:maxLines="1"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-                                android:textColor="@color/black" />
-
-                            <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/iv_cancel2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentEnd="true"
-                                android:layout_centerVertical="true"
-                                android:layout_gravity="end|center"
-                                android:clickable="true"
-                                android:focusable="true"
-                                android:onClick="@{()->handler.removeFileAttachment()}"
-                                android:padding="@dimen/_4sdp"
-                                android:tint="#878A91"
-                                android:visibility="visible"
-                                app:srcCompat="@drawable/ic_cross" />
-
-                        </RelativeLayout>
-
-                        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                            android:id="@+id/et_submit_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:autoSizeMaxTextSize="@dimen/font_16"
-                            android:background="@drawable/round_rect_default"
-                            android:backgroundTint="#60e5e5e5"
-                            android:cursorVisible="false"
-                            android:enabled="false"
-                            android:focusable="false"
-                            android:gravity="start|top"
-                            android:imeOptions="actionDone"
-                            android:inputType="none"
-                            android:padding="@dimen/_4sdp"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                            android:textColor="@color/black"
-                            android:textCursorDrawable="@drawable/cursor_drawable"
-                            android:textSize="@dimen/font_15"
-                            android:visibility="gone"
                             tools:visibility="visible" />
 
                     </LinearLayout>

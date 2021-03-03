@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -18,9 +19,12 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.day_wise_course.LessonPagerAdapter
+import com.joshtalks.joshskills.ui.day_wise_course.unlock_next_class.LessonCompletedActivity
+import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 
 class LessonActivity : CoreJoshActivity(), LessonActivityListener {
@@ -88,8 +92,10 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
                         lesson.readingStatus == LESSON_STATUS.CO &&
                         lesson.speakingStatus == LESSON_STATUS.CO
 
+                lesson.status = LESSON_STATUS.CO
+
                 if (lessonCompleted) {
-                    openLessonCompleteScreen()
+                    openLessonCompleteScreen(lesson)
                 } else
                     openIncompleteTab(currentTabNumber)
             }
@@ -315,25 +321,23 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
         }
     }
 
-    private fun openLessonCompleteScreen() {
-//        TODO() - Uncomment and pass chatId and conversationId when UnlockNextClass logic is working fine
-//        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-//            if (result.resultCode == RESULT_OK && result.data.hasExtra(IS_BATCH_CHANGED) == true) {
-//                setResult(RESULT_OK, Intent().apply {
-//                    putExtra(IS_BATCH_CHANGED, false)
-//                    putExtra(LAST_LESSON_INTERVAL, lesson.interval)
-//                    putExtra(DayWiseCourseActivity.LAST_LESSON_STATUS, true)
-//                    putExtra(LESSON__CHAT_ID, chatId)
-//                })
-//                finish()
-//            }
-//        }.launch(
-//            ActivityUnlockNextClass.getActivityUnlockNextClassIntent(
-//                this,
-//                conversationId,
-//                lesson
-//            )
-//        )
+    private fun openLessonCompleteScreen(lesson: LessonModel) {
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK && result.data.hasExtra(IS_BATCH_CHANGED) == true) {
+                setResult(RESULT_OK, Intent().apply {
+                    putExtra(IS_BATCH_CHANGED, false)
+                    putExtra(LAST_LESSON_INTERVAL, lesson.interval)
+                    putExtra(LAST_LESSON_STATUS, true)
+                    putExtra(LESSON__CHAT_ID, lesson.chatId)
+                })
+                finish()
+            }
+        }.launch(
+            LessonCompletedActivity.getActivityUnlockNextClassIntent(
+                this,
+                lesson
+            )
+        )
     }
 
     override fun onNewIntent(intent: Intent?) {

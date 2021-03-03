@@ -17,7 +17,9 @@ class LessonViewHolder(view: View, userId: String) : BaseViewHolder(view, userId
         Stub(view.findViewById(R.id.lesson_progress_stub))
 
     override fun bind(message: ChatModel, previousMessage: ChatModel?) {
-        setupUI(message.lesson!!)
+        message.lesson?.let {
+            setupUI(it)
+        }
     }
 
     private fun setupUI(lesson: LessonModel) {
