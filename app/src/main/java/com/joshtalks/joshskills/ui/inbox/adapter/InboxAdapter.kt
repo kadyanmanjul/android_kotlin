@@ -90,14 +90,14 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner) :
                 courseProgressBar.progress = 0
                 horizontalLine.visibility = android.view.View.VISIBLE
                 //   profileImage.setInboxImageView(inboxEntity.course_icon)
-                if (inboxEntity.chat_id.isNullOrEmpty()) {
+               /* if (inboxEntity.chat_id.isNullOrEmpty()) {
                     tvLastMessageTime.setCompoundDrawablesWithIntrinsicBounds(
                         R.drawable.ic_unread,
                         0,
                         0,
                         0
                     )
-                }
+                }*/
                 if ((itemCount - 1) == bindingAdapterPosition) {
                     horizontalLine.visibility = android.view.View.GONE
                 }

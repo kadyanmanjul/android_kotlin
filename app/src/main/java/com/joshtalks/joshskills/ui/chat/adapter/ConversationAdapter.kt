@@ -271,9 +271,6 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        if (messageList[position].type == BASE_MESSAGE_TYPE.LESSON) {
-            holder.setIsRecyclable(false)
-        }
         holder.bind(messageList[position], getPreviousMessage(position))
     }
 

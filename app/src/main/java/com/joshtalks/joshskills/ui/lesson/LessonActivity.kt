@@ -114,17 +114,21 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
     }
 
     override fun onSectionStatusUpdate(tabPosition: Int, isSectionCompleted: Boolean) {
-        viewModel.lessonLiveData.value?.let { lesson ->
-            val status = if (isSectionCompleted) LESSON_STATUS.CO else LESSON_STATUS.NO
-            when (tabPosition) {
-                0 -> lesson.grammarStatus = status
-                1 -> lesson.vocabStatus = status
-                2 -> lesson.readingStatus = status
-                3 -> lesson.speakingStatus = status
+        AppObjectController.uiHandler.post {
+
+
+            viewModel.lessonLiveData.value?.let { lesson ->
+                val status = if (isSectionCompleted) LESSON_STATUS.CO else LESSON_STATUS.NO
+                when (tabPosition) {
+                    0 -> lesson.grammarStatus = status
+                    1 -> lesson.vocabStatus = status
+                    2 -> lesson.readingStatus = status
+                    3 -> lesson.speakingStatus = status
+                }
+                viewModel.updateSectionStatus(lesson.id, status, tabPosition)
             }
-            viewModel.updateSectionStatus(lesson.id, status, tabPosition)
+            setTabCompletionStatus()
         }
-        setTabCompletionStatus()
     }
 
 

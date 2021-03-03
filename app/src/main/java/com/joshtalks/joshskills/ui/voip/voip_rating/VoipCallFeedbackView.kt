@@ -14,16 +14,20 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
+import com.joshtalks.joshskills.core.setRoundImage
+import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
+import java.util.HashMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.*
 
 const val ARG_CALLER_IMAGE = "caller_image_url"
 const val ARG_CALLER_NAME = "caller_name"
@@ -47,8 +51,8 @@ class VoipCallFeedbackView : DialogFragment() {
             val width = AppObjectController.screenWidth * .85
             val height = ViewGroup.LayoutParams.WRAP_CONTENT
             window?.setLayout(width.toInt(), height)
-            setCanceledOnTouchOutside(true)
-            setCancelable(true)
+            setCanceledOnTouchOutside(false)
+            setCancelable(false)
             val lp: WindowManager.LayoutParams? = window?.attributes
             lp?.dimAmount = 0.85f
             window?.attributes = lp
@@ -74,7 +78,7 @@ class VoipCallFeedbackView : DialogFragment() {
         binding.handler = this
         dialog?.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            attributes.windowAnimations = R.style.DialogAnimation
+            //attributes.windowAnimations = R.style.DialogAnimation
         }
         return binding.root
     }

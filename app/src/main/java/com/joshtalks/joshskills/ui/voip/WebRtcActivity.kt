@@ -35,12 +35,12 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.*
-import java.util.concurrent.TimeUnit
 
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
 const val CALL_USER_OBJ = "call_user_obj"
@@ -53,6 +53,7 @@ class WebRtcActivity : AppCompatActivity() {
     private var mServiceBound = false
     private val compositeDisposable = CompositeDisposable()
     private val userDetailLiveData: MutableLiveData<HashMap<String, String>> = MutableLiveData()
+
 
     companion object {
         fun startOutgoingCallActivity(
@@ -160,10 +161,6 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun showCallRatingScreen(callTime: Long) {
-        val prev = supportFragmentManager.findFragmentByTag(VoipCallFeedbackView::class.java.name)
-        if (prev != null) {
-            return
-        }
         var time = mBoundService?.getTimeOfTalk() ?: 0
         if (time <= 0) {
             time = callTime
@@ -171,7 +168,7 @@ class WebRtcActivity : AppCompatActivity() {
         val channelName = mBoundService?.channelName
         if (time > 0 && channelName.isNullOrEmpty().not()) {
             VoipCallFeedbackView.showCallRatingDialog(
-                this.supportFragmentManager,
+                supportFragmentManager,
                 channelName = channelName,
                 callTime = time,
                 callerName = userDetailLiveData.value?.get("name"),

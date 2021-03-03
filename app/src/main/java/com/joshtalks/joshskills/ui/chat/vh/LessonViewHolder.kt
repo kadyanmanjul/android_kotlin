@@ -22,11 +22,11 @@ class LessonViewHolder(view: View, userId: String) : BaseViewHolder(view, userId
 
     private fun setupUI(lesson: LessonModel) {
         if (lesson.status == LESSON_STATUS.CO) {
-            if (lessonCompleteStub.resolved().not()) {
+            lessonCompleteStub.resolved().let {
                 lessonCompleteStub.get().setup(lesson)
             }
         } else {
-            if (lessonInProgressStub.resolved().not()) {
+            lessonInProgressStub.resolved().let {
                 lessonInProgressStub.get().setup(lesson)
             }
         }

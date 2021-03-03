@@ -264,7 +264,8 @@ class ConversationViewModel(
             jobs += NetworkRequestHelper.getUpdatedChat(
                 inboxEntity.conversation_id,
                 queryMap = arguments,
-                courseId = inboxEntity.courseId.toInt()
+                courseId = inboxEntity.courseId.toInt(),
+                delayTimeNextRequest = delayTimeNextRequest
             )
         } else {
             RxBus2.publish(MessageCompleteEventBus(false))
