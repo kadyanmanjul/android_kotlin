@@ -32,7 +32,8 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Lesson 1: title name" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <com.joshtalks.joshskills.core.custom_ui.ShimmerImageView
+            tools:background="@drawable/video_placeholder"
             android:id="@+id/lesson_iv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,6 +43,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lesson_name_tv"
             tools:srcCompat="@drawable/have_a_referral" />
+
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/continue_lesson_tv"

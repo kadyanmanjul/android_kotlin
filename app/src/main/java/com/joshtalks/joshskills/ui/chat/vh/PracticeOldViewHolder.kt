@@ -16,16 +16,16 @@ import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.extension.setResourceImageDefault
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.eventbus.PractiseSubmitEventBus
 import io.github.inflationx.calligraphy3.CalligraphyTypefaceSpan
 import io.github.inflationx.calligraphy3.TypefaceUtils
 
 class PracticeOldViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) {
 
     private val subRootView: FrameLayout = view.findViewById(R.id.root_sub_view)
-    private val messageBody: JoshTextView = view.findViewById(R.id.text_message_body)
     private val titleView: AppCompatTextView = view.findViewById(R.id.tv_title)
     private val receivedMessageTime: AppCompatTextView = view.findViewById(R.id.text_message_time)
     private val practiceStatusTv: AppCompatTextView = view.findViewById(R.id.status_tv)
@@ -34,6 +34,7 @@ class PracticeOldViewHolder(view: View, userId: String) : BaseViewHolder(view, u
     private val subTitleTV: AppCompatTextView = view.findViewById(R.id.sub_title_tv)
     private val titleTv: AppCompatTextView = view.findViewById(R.id.tv_title)
     private val messageView: ConstraintLayout = view.findViewById(R.id.message_view)
+    private var message: ChatModel? = null
 
     private val typefaceSpan =
         CalligraphyTypefaceSpan(
@@ -43,13 +44,23 @@ class PracticeOldViewHolder(view: View, userId: String) : BaseViewHolder(view, u
             )
         )
 
+    init {
+        subRootView.also { it ->
+            it.setOnClickListener {
+                message?.let {
+                    RxBus2.publish(PractiseSubmitEventBus(it))
+                }
+            }
+        }
+    }
+
 
     override fun bind(message: ChatModel, previousChatModel: ChatModel?) {
+        this.message = message
         if (null != message.sender) {
             setViewHolderBG(previousChatModel?.sender, message.sender!!, subRootView)
         }
         receivedMessageTime.text = Utils.messageTimeConversion(message.created)
-        addMessageAutoLink(messageBody)
         val sBuilder = SpannableStringBuilder().append("Status: ")
         practiceStatusTv.text = getAppContext().getString(R.string.answer_not_submitted)
         tvSubmitAnswer.visibility = View.VISIBLE

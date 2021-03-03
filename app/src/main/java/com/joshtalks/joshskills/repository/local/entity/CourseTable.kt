@@ -1,11 +1,18 @@
 package com.joshtalks.joshskills.repository.local.entity
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Dao
+import androidx.room.Entity
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.PrimaryKey
+import androidx.room.Query
+import androidx.room.RoomWarnings
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import io.reactivex.Maybe
 import java.io.Serializable
-import java.util.*
+import java.util.Date
 
 @Entity(tableName = "course")
 data class Course(
@@ -72,7 +79,7 @@ interface CourseDao {
 
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
-    @Query(value = "SELECT *, max(created) FROM (SELECT * FROM course co  LEFT JOIN chat_table ct ON  co.conversation_id = ct.conversation_id AND is_delete_message=0  LEFT JOIN question_table qt ON ct.chat_id = qt.chatId  ORDER BY created ASC) inbox WHERE is_deleted=0 GROUP BY inbox.conversation_id ORDER BY created DESC, course_created_date DESC")
+    @Query(value = "SELECT *, max(created) FROM (SELECT * FROM course co  LEFT JOIN chat_table ct ON  co.conversation_id = ct.conversation_id AND is_delete_message=0  LEFT JOIN question_table qt ON ct.chat_id = qt.chatId   LEFT JOIN lessonmodel lm ON ct.chat_id = lm.chat_id  ORDER BY created ASC) inbox WHERE is_deleted=0 GROUP BY inbox.conversation_id ORDER BY created DESC, course_created_date DESC")
     suspend fun getRegisterCourseMinimal(): List<InboxEntity>
 
 

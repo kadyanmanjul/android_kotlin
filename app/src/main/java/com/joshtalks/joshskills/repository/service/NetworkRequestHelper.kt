@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 object NetworkRequestHelper {
@@ -24,7 +25,8 @@ object NetworkRequestHelper {
     fun getUpdatedChat(
         conversationId: String,
         queryMap: Map<String, String> = emptyMap(),
-        courseId: Int
+        courseId: Int,
+        delayTimeNextRequest: Long = 0L
     ): Job {
         return CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -161,7 +163,13 @@ object NetworkRequestHelper {
                     PrefManager.getLastSyncTime(conversationId).let { keys ->
                         arguments[keys.first] = keys.second
                     }
-                    getUpdatedChat(conversationId, queryMap = arguments, courseId)
+                    delay(delayTimeNextRequest)
+                    getUpdatedChat(
+                        conversationId,
+                        queryMap = arguments,
+                        courseId,
+                        delayTimeNextRequest = 0
+                    )
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()

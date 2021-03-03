@@ -29,7 +29,6 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
-import com.itkacher.okhttpprofiler.OkHttpProfilerInterceptor
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
@@ -282,7 +281,7 @@ class AppObjectController {
             }
 
             if (BuildConfig.DEBUG) {
-                builder.addInterceptor(OkHttpProfilerInterceptor())
+                builder.addInterceptor(getOkhhtpToolInterceptor())
                 val logging =
                     HttpLoggingInterceptor { message -> Timber.tag("OkHttp").d(message) }.apply {
                         level = HttpLoggingInterceptor.Level.BODY
@@ -610,6 +609,7 @@ class AppObjectController {
                         }
                     mediaOkhttpBuilder.addInterceptor(logging)
                     mediaOkhttpBuilder.addNetworkInterceptor(getStethoInterceptor())
+                    mediaOkhttpBuilder.addInterceptor(getOkhhtpToolInterceptor())
                 }
 
                 mediaOkhttpBuilder.addInterceptor(object : Interceptor {
@@ -747,3 +747,10 @@ fun getStethoInterceptor(): Interceptor {
     val ctor: Constructor<*> = clazz.getConstructor()
     return ctor.newInstance() as Interceptor
 }
+
+fun getOkhhtpToolInterceptor(): Interceptor {
+    val clazz = Class.forName("com.itkacher.okhttpprofiler.OkHttpProfilerInterceptor")
+    val ctor: Constructor<*> = clazz.getConstructor()
+    return ctor.newInstance() as Interceptor
+}
+

@@ -6,12 +6,12 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.ResourcesCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.extension.setImageViewWRPH
+import com.joshtalks.joshskills.core.custom_ui.ShimmerImageView
+import com.joshtalks.joshskills.core.extension.setImageViewPH
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
@@ -21,7 +21,7 @@ class LessonInProgressView : FrameLayout {
     private lateinit var rootView: FrameLayout
     private var lessonModel: LessonModel? = null
 
-    private lateinit var imageView: AppCompatImageView
+    private lateinit var imageView: ShimmerImageView
     private lateinit var lessonNameTv: AppCompatTextView
     private lateinit var startLessonTv: AppCompatTextView
     private lateinit var continueLessonTv: AppCompatTextView
@@ -89,7 +89,7 @@ class LessonInProgressView : FrameLayout {
             lesson.lessonNo,
             lesson.lessonName
         )
-        imageView.setImageViewWRPH(lesson.thumbnailUrl)
+        imageView.setImageViewPH(lesson.thumbnailUrl, imageHeight = 160)
         setupUI(lesson)
     }
 

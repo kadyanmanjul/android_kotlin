@@ -4,12 +4,12 @@ import android.view.View
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.custom_ui.ShimmerImageView
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.extension.setImageViewPH
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -22,7 +22,7 @@ class ImageViewHolder(view: View, userId: String) : BaseViewHolder(view, userId)
     val messageView: ViewGroup = view.findViewById(R.id.message_view)
     val messageBody: JoshTextView = view.findViewById(R.id.text_message_body)
     val textMessageTime: AppCompatTextView = view.findViewById(R.id.text_message_time)
-    val imageView: AppCompatImageView = view.findViewById(R.id.image_view)
+    val imageView: ShimmerImageView = view.findViewById(R.id.image_view)
     private var message: ChatModel? = null
 
     init {
@@ -58,12 +58,12 @@ class ImageViewHolder(view: View, userId: String) : BaseViewHolder(view, userId)
 
         if (message.url != null) {
             Utils.fileUrl(message.downloadedLocalPath, message.url)?.run {
-                imageView.setImageViewPH(this)
+                imageView.setImageViewPH(this, placeholderImage = R.drawable.image_ph)
             }
         } else {
             message.question?.imageList?.getOrNull(0)?.let { imageObj ->
                 Utils.fileUrl(imageObj.downloadedLocalPath!!, imageObj.imageUrl)?.run {
-                    imageView.setImageViewPH(this)
+                    imageView.setImageViewPH(this, placeholderImage = R.drawable.image_ph)
                 }
             }
         }

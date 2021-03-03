@@ -18,14 +18,13 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.eventbus.AssessmentStartEventBus
-import com.mindorks.placeholderview.annotations.Layout
 import io.github.inflationx.calligraphy3.CalligraphyTypefaceSpan
 import io.github.inflationx.calligraphy3.TypefaceUtils
 
-@Layout(R.layout.assessment_item_layout)
+//@Layout(R.layout.assessment_item_layout)
 class AssessmentViewHolder(view: android.view.View, userId: String) : BaseViewHolder(view, userId) {
 
-    private val rootView: FrameLayout = view.findViewById(R.id.root_view_fl)
+    private val rootView: FrameLayout = view.findViewById(R.id.root_view)
     private var message: ChatModel? = null
     private val subRootView: FrameLayout = view.findViewById(R.id.root_sub_view)
     private val messageView: ConstraintLayout = view.findViewById(R.id.message_view)

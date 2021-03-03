@@ -6,7 +6,12 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.INSTANCE_ID
+import com.joshtalks.joshskills.core.JoshApplication
+import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -15,13 +20,13 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CreateOrderResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.repository.server.PaymentSummaryResponse
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
+import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import retrofit2.Response
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
-import java.util.*
 
 class PaymentSummaryViewModel(application: Application) : AndroidViewModel(application) {
     var context: JoshApplication = getApplication()
@@ -41,7 +46,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
     var mTestId = EMPTY
 
     val hasRegisteredMobileNumber by lazy {
-        (User.getInstance().phoneNumber.isNullOrEmpty() || PrefManager.getStringValue(
+        (User.getInstance().phoneNumber.isNullOrEmpty().not() || PrefManager.getStringValue(
             PAYMENT_MOBILE_NUMBER
         ).isNotBlank())
     }

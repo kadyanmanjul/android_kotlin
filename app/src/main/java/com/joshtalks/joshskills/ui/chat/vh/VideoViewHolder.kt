@@ -12,12 +12,17 @@ import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.android.exoplayer2.offline.Download
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.ShimmerImageView
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.extension.setImageViewPH
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
@@ -42,7 +47,7 @@ class VideoViewHolder(
     private val messageBody: JoshTextView = view.findViewById(R.id.text_message_body)
     private val titleView: AppCompatTextView = view.findViewById(R.id.text_title)
     private val textMessageTime: AppCompatTextView = view.findViewById(R.id.text_message_time)
-    private val imageView: AppCompatImageView = view.findViewById(R.id.image_view)
+    private val imageView: ShimmerImageView = view.findViewById(R.id.image_view)
     private val downloadContainer: FrameLayout = view.findViewById(R.id.download_container)
     private val ivCancelDownload: AppCompatImageView = view.findViewById(R.id.iv_cancel_download)
     private val ivStartDownload: AppCompatImageView = view.findViewById(R.id.iv_start_download)
@@ -112,9 +117,7 @@ class VideoViewHolder(
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
                 if (AppDirectory.isFileExist(message.downloadedLocalPath)) {
                     Utils.fileUrl(message.downloadedLocalPath, message.url)?.run {
-                        imageView.setImageViewPH(this, {
-                            playIcon.visibility = VISIBLE
-                        })
+                        setImageInIV(this)
                         downloadContainer.visibility = View.GONE
                     }
                 } else {
@@ -125,14 +128,14 @@ class VideoViewHolder(
 
             } else if (message.downloadStatus == DOWNLOAD_STATUS.UPLOADING) {
                 fileDownloadingInProgressView()
-                imageView.setImageViewPH(message.downloadedLocalPath!!)
+                setImageInIV(message.downloadedLocalPath!!)
             } else {
                 imageView.background =
                     ContextCompat.getDrawable(getAppContext(), R.drawable.video_placeholder)
             }
         } else {
             message.question?.videoList?.getOrNull(0)?.let { videoObj ->
-                imageView.setImageViewPH(videoObj.video_image_url)
+                setImageInIV(videoObj.video_image_url)
                 when (message.downloadStatus) {
                     DOWNLOAD_STATUS.DOWNLOADED -> {
                         fileDownloadSuccess()
@@ -175,6 +178,15 @@ class VideoViewHolder(
                 }
             }
         }
+    }
+
+    private fun setImageInIV(url: String) {
+        imageView.setImageViewPH(
+            url,
+            placeholderImage = R.drawable.image_ph,
+            callback = {
+                playIcon.visibility = VISIBLE
+            })
     }
 
     override fun unBind() {

@@ -22,14 +22,14 @@ import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import id.zelory.compressor.Compressor
+import java.io.File
+import java.util.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
-import java.util.*
 
 
 class ConversationViewModel(
@@ -191,7 +191,7 @@ class ConversationViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val totalMessage = chatDao.getTotalCountOfRows(inboxEntity.conversation_id)
             if (totalMessage == 0L) {
-                getNewMessageFromServer()
+                getNewMessageFromServer(delayTimeNextRequest = 500)
                 return@launch
             }
 
@@ -199,19 +199,21 @@ class ConversationViewModel(
             if (lastUnreadMessage == null) {
                 userReadCourseChat.emit(
                     chatDao.getOneShotMessageList(inboxEntity.conversation_id)
-                        .sortedBy { it.created })
+                        .sortedWith(compareBy({ it.created }, { it.getqId() }))
+                )
             } else {
                 userReadCourseChat.emit(
                     chatDao.getPagingMessage(
                         inboxEntity.conversation_id,
                         lastUnreadMessage.created.time
-                    ).sortedBy { it.created })
+                    ).sortedWith(compareBy({ it.created }, { it.getqId() }))
+                )
 
                 userUnreadCourseChat.emit(
                     chatDao.getUnreadMessageList(
                         inboxEntity.conversation_id,
                         lastUnreadMessage.created.time
-                    ).sortedBy { it.created }
+                    ).sortedWith(compareBy({ it.created }, { it.getqId() }))
                 )
             }
             updateAllMessageReadByUser()
@@ -226,17 +228,23 @@ class ConversationViewModel(
                 chatDao.getPagingMessage(
                     inboxEntity.conversation_id,
                     lastMessage.created.time
-                ).sortedBy { it.created })
+                )
+                    .sortedWith(compareBy({ it.created }, { it.getqId() }))
+            )
             updateAllMessageReadByUser()
         }
     }
 
     fun addNewMessages(lastMessageTime: Long) {
         viewModelScope.launch(Dispatchers.IO) {
+            if (lastMessageTime > 0L) {
+                delay(250)
+            }
             userUnreadCourseChat.emit(
                 chatDao.getNewFetchMessages(
                     inboxEntity.conversation_id, lastMessageTime
-                ).sortedBy { it.created })
+                ).sortedWith(compareBy({ it.created }, { it.getqId() }))
+            )
             updateAllMessageReadByUser()
         }
     }
@@ -248,7 +256,7 @@ class ConversationViewModel(
     }
 
 
-    private fun getNewMessageFromServer() {
+    private fun getNewMessageFromServer(delayTimeNextRequest: Long = 0L) {
         if (Utils.isInternetAvailable()) {
             val arguments = mutableMapOf<String, String>()
             val (key, value) = PrefManager.getLastSyncTime(inboxEntity.conversation_id)

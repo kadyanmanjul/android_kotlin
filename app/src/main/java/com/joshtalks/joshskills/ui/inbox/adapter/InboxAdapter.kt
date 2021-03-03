@@ -23,8 +23,10 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import java.util.ArrayList
+import java.util.Date
+import java.util.Locale
 import timber.log.Timber
-import java.util.*
 
 class InboxAdapter(private var lifecycleProvider: LifecycleOwner) :
     RecyclerView.Adapter<InboxAdapter.InboxViewHolder>() {
@@ -86,7 +88,7 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner) :
                 tvLastMessageTime.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                 tvName.text = inboxEntity.course_name
                 courseProgressBar.progress = 0
-                tvLastMessage
+                horizontalLine.visibility = android.view.View.VISIBLE
                 //   profileImage.setInboxImageView(inboxEntity.course_icon)
                 if (inboxEntity.chat_id.isNullOrEmpty()) {
                     tvLastMessageTime.setCompoundDrawablesWithIntrinsicBounds(
@@ -96,8 +98,7 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner) :
                         0
                     )
                 }
-
-                if ((itemCount - 1) == indexPos) {
+                if ((itemCount - 1) == bindingAdapterPosition) {
                     horizontalLine.visibility = android.view.View.GONE
                 }
                 if (progressBarStatus) {
@@ -225,6 +226,11 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner) :
                     binding.tvLastMessage.compoundDrawablePadding =
                         Utils.dpToPx(getAppContext(), drawablePadding)
                     binding.tvLastMessage.text = "Pdf"
+                }
+                BASE_MESSAGE_TYPE.LESSON == baseMessageType -> {
+                    binding.tvLastMessage.compoundDrawablePadding =
+                        Utils.dpToPx(getAppContext(), drawablePadding)
+                    binding.tvLastMessage.text = "Lesson ${inboxEntity.lessonNo}"
                 }
             }
         }

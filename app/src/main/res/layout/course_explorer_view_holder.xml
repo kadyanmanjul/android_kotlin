@@ -20,13 +20,13 @@
             card_view:layout_constraintStart_toStartOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/image_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:adjustViewBounds="true"
-                android:background="@drawable/place_holder_explore"
-                android:scaleType="fitCenter" />
+            android:id="@+id/image_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:adjustViewBounds="true"
+            android:background="@drawable/place_holder_explore"
+            android:scaleType="fitXY" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buy_now_button"

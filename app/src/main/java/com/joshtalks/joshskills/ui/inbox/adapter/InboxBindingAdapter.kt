@@ -45,10 +45,13 @@ object InboxBindingAdapter {
                 WebpDrawableTransformation(CircleCrop())
             )
             .apply(
-                RequestOptions.bitmapTransform(multi).error(R.drawable.ic_josh_course)
+                RequestOptions.bitmapTransform(multi).apply(
+                    RequestOptions().placeholder(R.drawable.ic_josh_course)
+                        .error(R.drawable.ic_josh_course)
+                )
+
             )
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-            .skipMemoryCache(false)
             .into(imageView)
     }
 }

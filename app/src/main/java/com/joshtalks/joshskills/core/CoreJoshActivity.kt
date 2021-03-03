@@ -1,25 +1,14 @@
 package com.joshtalks.joshskills.core
 
-import android.app.Activity
-import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import com.joshtalks.joshskills.core.analytics.LogException
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.server.feedback.FeedbackTypes
-import com.joshtalks.joshskills.ui.chat.PRACTISE_SUBMIT_REQUEST_CODE
-import com.joshtalks.joshskills.ui.chat.VIDEO_OPEN_REQUEST_CODE
 import com.joshtalks.joshskills.ui.feedback.FeedbackFragment
-import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
-import com.joshtalks.joshskills.ui.video_player.VIDEO_OBJECT
-import com.joshtalks.joshskills.ui.video_player.VIDEO_WATCH_TIME
-import java.util.concurrent.TimeUnit
 import kotlinx.android.synthetic.main.base_toolbar.iv_help
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
@@ -66,7 +55,7 @@ abstract class CoreJoshActivity : BaseActivity() {
         FeedbackFragment.newInstance(feedbackTypes, questionId)
             .show(supportFragmentManager, "feedback_fragment_dialog")
     }
-
+/*
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         CoroutineScope(Dispatchers.IO).launch {
@@ -101,7 +90,7 @@ abstract class CoreJoshActivity : BaseActivity() {
                 LogException.catchException(ex)
             }
         }
-    }
+    }*/
 
     private suspend fun canTakeRequestFeedbackFromUser(questionId: String): Boolean {
         return withContext(CoroutineScope(Dispatchers.IO).coroutineContext + Dispatchers.IO) {

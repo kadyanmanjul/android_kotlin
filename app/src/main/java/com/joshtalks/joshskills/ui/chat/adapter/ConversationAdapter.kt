@@ -287,8 +287,11 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
         val item = messageList[position]
         val prevSender = getPreviousSender(position)
         val questionType = item.question?.type ?: BASE_MESSAGE_TYPE.TX
+        val questionMaterialType = item.question?.type ?: BASE_MESSAGE_TYPE.TX
+
 
         if (item.type == BASE_MESSAGE_TYPE.Q) {
+
             type = when (questionType) {
                 BASE_MESSAGE_TYPE.P2P,
                 BASE_MESSAGE_TYPE.PR,
@@ -298,7 +301,7 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
                 BASE_MESSAGE_TYPE.CE,
                 BASE_MESSAGE_TYPE.CP,
                 BASE_MESSAGE_TYPE.BEST_PERFORMER -> {
-                    item.type
+                    questionType
                 }
                 else -> {
                     item.question?.material_type

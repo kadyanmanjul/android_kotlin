@@ -14,8 +14,9 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.ShimmerImageView
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-import com.joshtalks.joshskills.core.extension.setImageViewWRPH
+import com.joshtalks.joshskills.core.extension.setImageViewPH
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
@@ -41,7 +42,7 @@ class PdfViewHolder(
     val receivedMessageTime: AppCompatTextView = view.findViewById(R.id.text_message_time)
     val tvPdfInfo: AppCompatTextView = view.findViewById(R.id.tv_pdf_info)
     val messageDetail: JoshTextView = view.findViewById(R.id.tv_message_detail)
-    val imageView: AppCompatImageView = view.findViewById(R.id.image_view)
+    val imageView: ShimmerImageView = view.findViewById(R.id.image_view)
 
     private val downloadContainer: FrameLayout = view.findViewById(R.id.download_container)
     private val ivCancelDownload: AppCompatImageView = view.findViewById(R.id.iv_cancel_download)
@@ -84,7 +85,7 @@ class PdfViewHolder(
                         tvPdfInfo.text = it.pathSegments[it.pathSegments.size - 1].split(".")[0]
                     }
                     pdfObj.thumbnail?.let {
-                        imageView.setImageViewWRPH(it)
+                        imageView.setImageViewPH(it, placeholderImage = R.drawable.image_ph)
                     }
 
                     if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {

@@ -56,7 +56,7 @@ class UtilConversationViewModel(application: Application, private var inboxEntit
                         IS_PROFILE_FEATURE_ACTIVE,
                         response.body()?.isPointsActive ?: false
                     )
-                    delay(1500)
+                    delay(500)
                     userData.emit(ur)
                 }
             } catch (ex: Throwable) {
@@ -200,7 +200,7 @@ class UtilConversationViewModel(application: Application, private var inboxEntit
                 val response =
                     AppObjectController.chatNetworkService.getUnreadMessageCount(conversationId)
                 val count = response.body()?.get("count")?.asInt ?: 0
-                delay(1800)
+                delay(500)
                 unreadMessageCount.emit(count)
             } catch (ex: Throwable) {
                 Timber.d(ex)

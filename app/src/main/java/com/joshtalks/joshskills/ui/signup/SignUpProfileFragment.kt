@@ -117,9 +117,9 @@ class SignUpProfileFragment : BaseSignUpFragment() {
             binding.emailEditText.visibility = View.VISIBLE
         }
 
-        if (user.phoneNumber.isNullOrEmpty()) {
-            val word = user.phoneNumber?.let { EMPTY }
-            val length = word!!.length
+        if (user.phoneNumber.isNullOrEmpty().not()) {
+            val word = user.phoneNumber ?: EMPTY
+            val length = word.length
             if (length > 10) {
                 binding.phoneNumberEt.setText(word.substring(length - 10))
                 binding.etContainer.visibility = View.VISIBLE
@@ -127,6 +127,9 @@ class SignUpProfileFragment : BaseSignUpFragment() {
                 binding.countryCodePicker.isEnabled = false
                 binding.countryCodePicker.isClickable = false
                 binding.countryCodePicker.setCcpClickable(false)
+                val countryCode =
+                    word.removePrefix("+").removeSuffix(binding.phoneNumberEt.text.toString())
+                binding.countryCodePicker.setCountryForPhoneCode(countryCode.toInt())
             }
         } else if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotEmpty()) {
             val mobileNumber = PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).split(SINGLE_SPACE)
@@ -136,6 +139,7 @@ class SignUpProfileFragment : BaseSignUpFragment() {
                 binding.textViewPhone.visibility = View.VISIBLE
             }
         }
+
         if (binding.phoneNumberEt.text.isNullOrEmpty() && user.email.isNullOrEmpty()) {
             binding.textViewEmail.visibility = View.VISIBLE
             binding.emailEditText.isFocusableInTouchMode = true

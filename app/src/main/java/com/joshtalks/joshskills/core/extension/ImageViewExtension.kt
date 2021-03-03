@@ -18,12 +18,13 @@ import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.ui.view_holders.IMAGE_SIZE
+import com.joshtalks.joshskills.core.custom_ui.ShimmerImageView
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
-const val IMAGE_SIZE = 400
+const val IMAGE_WIDTH_SIZE = 500
+const val IMAGE_HEIGHT_SIZE = 335
 
 fun ImageView.setImageWithPlaceholder(
     url: String?,
@@ -52,15 +53,18 @@ fun ImageView.setResourceImageDefault(
         .into(this)
 }
 
-fun AppCompatImageView.setImageViewPH(
+fun ShimmerImageView.setImageViewPH(
     url: String,
     callback: Runnable? = null,
+    imageWidth: Int = IMAGE_WIDTH_SIZE,
+    imageHeight: Int = IMAGE_HEIGHT_SIZE,
+    placeholderImage: Int = R.drawable.josh_skill,
     context: Context = AppObjectController.joshApplication
 ) {
     val multi = MultiTransformation(
         CropTransformation(
-            Utils.dpToPx(IMAGE_SIZE),
-            Utils.dpToPx(IMAGE_SIZE),
+            Utils.dpToPx(imageWidth),
+            Utils.dpToPx(imageHeight),
             CropTransformation.CropType.CENTER
         ),
         RoundedCornersTransformation(
@@ -77,13 +81,14 @@ fun AppCompatImageView.setImageViewPH(
             WebpDrawable::class.java,
             WebpDrawableTransformation(CircleCrop())
         )
+
+        .apply(RequestOptions.bitmapTransform(multi))
         .apply(
             RequestOptions().placeholder(R.drawable.video_placeholder)
                 .error(R.drawable.video_placeholder)
         )
-        .apply(RequestOptions.bitmapTransform(multi))
-        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-        .skipMemoryCache(false)
+        .diskCacheStrategy(DiskCacheStrategy.ALL)
+        //  .skipMemoryCache(false)
         .listener(object : RequestListener<Drawable> {
             override fun onLoadFailed(
                 e: GlideException?,
@@ -101,6 +106,7 @@ fun AppCompatImageView.setImageViewPH(
                 dataSource: DataSource?,
                 isFirstResource: Boolean
             ): Boolean {
+                this@setImageViewPH
                 callback?.run()
                 return false
             }

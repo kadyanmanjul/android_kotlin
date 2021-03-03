@@ -17,9 +17,7 @@ import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.eventbus.PractiseSubmitEventBus
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
@@ -172,7 +170,7 @@ class PracticeViewHolder(
 
     @Click(R.id.root_sub_view)
     fun onClickRootView() {
-        RxBus2.publish(PractiseSubmitEventBus(viewHolder, message))
+        //RxBus2.publish(PractiseSubmitEventBus(viewHolder, message))
     }
 
     override fun getRoot(): FrameLayout {

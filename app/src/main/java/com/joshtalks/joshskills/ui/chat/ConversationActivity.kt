@@ -674,7 +674,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     }
                 }
                 //End Logic
-
                 conversationAdapter.addMessagesList(items)
             }
         }
@@ -830,12 +829,11 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
 
     private fun subscribeRXBus() {
         compositeDisposable.add(
-            RxBus2.listen(DBInsertion::class.java)
+            RxBus2.listenWithoutDelay(DBInsertion::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     conversationBinding.refreshLayout.isRefreshing = false
-
                     val time = try {
                         conversationAdapter.getLastItem().created.time
                     } catch (ex: Exception) {

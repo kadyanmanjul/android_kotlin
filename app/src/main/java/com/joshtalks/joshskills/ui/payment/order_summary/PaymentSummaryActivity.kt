@@ -61,15 +61,15 @@ import io.branch.referral.util.CurrencyType
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.*
+import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.util.*
-import kotlin.math.roundToInt
 
 const val TRANSACTION_ID = "TRANSACTION_ID"
 
@@ -141,6 +141,12 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         subscribeObservers()
         initCountryCode()
         logPaymentAnalyticsEvents()
+    }
+
+    private fun initViewModel() {
+        viewModel = ViewModelProvider(this).get(PaymentSummaryViewModel::class.java)
+        viewModel.mTestId = testId
+        getPaymentDetails(false, testId)
     }
 
     private fun logPaymentAnalyticsEvents() {
@@ -501,11 +507,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }
     }
 
-    private fun initViewModel() {
-        viewModel = ViewModelProvider(this).get(PaymentSummaryViewModel::class.java)
-        viewModel.mTestId = testId
-        getPaymentDetails(false, testId)
-    }
+
 
     private fun getPaymentDetails(isSubscription: Boolean, testId: String, coupon: String? = null) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -552,7 +554,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
             if (!viewModel.hasRegisteredMobileNumber)
                 preFill.put("contact", binding.mobileEt.text.toString())
-            else if (User.getInstance().phoneNumber.isNullOrEmpty())
+            else if (User.getInstance().phoneNumber.isNullOrEmpty().not())
                 preFill.put("contact", User.getInstance().phoneNumber)
             else if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotBlank())
                 preFill.put(

@@ -46,15 +46,21 @@
                 android:clickable="true"
                 android:focusable="true">
 
-                <androidx.appcompat.widget.AppCompatImageView
+                <com.joshtalks.joshskills.core.custom_ui.ShimmerImageView
                     android:id="@+id/image_view"
+                    app:maskSpecs_animationDuration="1500"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:adjustViewBounds="true"
-                    android:background="@drawable/video_placeholder"
                     android:clickable="false"
-                    app:radius="24" />
+                    app:maskSpecs_dropOff="0.1"
+                    app:maskSpecs_intensity="0.05"
+                    app:maskSpecs_maskColor="#FF0000"
+                    app:maskSpecs_maskMode="src_in"
+                    app:maskSpecs_startDelayed="0"
+                    app:startAnimation="false"
+                    tools:src="@drawable/josh_skill" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/play_icon"

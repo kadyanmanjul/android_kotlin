@@ -8,7 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.RequestOptions
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.showToast
@@ -50,6 +53,7 @@ class CourseExploreAdapter(private var courseList: List<CourseExploreModel>) :
             }
         }
     }
+
     inner class CourseExploreViewHolder(val binding: CourseExplorerViewHolderBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(courseExploreModel: CourseExploreModel) {
@@ -86,10 +90,15 @@ class CourseExploreAdapter(private var courseList: List<CourseExploreModel>) :
                 Glide.with(context)
                     .load(courseExploreModel.imageUrl)
                     .override(imageView.width, imageView.height)
+                    .apply(
+                        RequestOptions().placeholder(R.drawable.place_holder_explore)
+                            .error(R.drawable.place_holder_explore)
+                    )
                     .optionalTransform(
                         WebpDrawable::class.java,
                         WebpDrawableTransformation(CircleCrop())
                     )
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imageView)
             }
         }
