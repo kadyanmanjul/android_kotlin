@@ -170,8 +170,8 @@ data class ChatModel(
         lesson?.chatId = chatId
     }
 
-    fun getqId(): Int {
-        return question_id ?: 0
+    fun getMsTime(): Double {
+        return messageTimeInMilliSeconds.toDouble()
     }
 
     override fun hashCode(): Int {

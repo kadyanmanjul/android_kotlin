@@ -199,21 +199,21 @@ class ConversationViewModel(
             if (lastUnreadMessage == null) {
                 userReadCourseChat.emit(
                     chatDao.getOneShotMessageList(inboxEntity.conversation_id)
-                        .sortedWith(compareBy({ it.created }, { it.getqId() }))
+                        .sortedWith(compareBy({ it.created }, { it.getMsTime() }))
                 )
             } else {
                 userReadCourseChat.emit(
                     chatDao.getPagingMessage(
                         inboxEntity.conversation_id,
                         lastUnreadMessage.created.time
-                    ).sortedWith(compareBy({ it.created }, { it.getqId() }))
+                    ).sortedWith(compareBy({ it.created }, { it.getMsTime() }))
                 )
 
                 userUnreadCourseChat.emit(
                     chatDao.getUnreadMessageList(
                         inboxEntity.conversation_id,
                         lastUnreadMessage.created.time
-                    ).sortedWith(compareBy({ it.created }, { it.getqId() }))
+                    ).sortedWith(compareBy({ it.created }, { it.getMsTime() }))
                 )
             }
             updateAllMessageReadByUser()
@@ -229,7 +229,7 @@ class ConversationViewModel(
                     inboxEntity.conversation_id,
                     lastMessage.created.time
                 )
-                    .sortedWith(compareBy({ it.created }, { it.getqId() }))
+                    .sortedWith(compareBy({ it.created }, { it.getMsTime() }))
             )
             updateAllMessageReadByUser()
         }
@@ -243,7 +243,7 @@ class ConversationViewModel(
             userUnreadCourseChat.emit(
                 chatDao.getNewFetchMessages(
                     inboxEntity.conversation_id, lastMessageTime
-                ).sortedWith(compareBy({ it.created }, { it.getqId() }))
+                ).sortedWith(compareBy({ it.created }, { it.getMsTime() }))
             )
             updateAllMessageReadByUser()
         }
