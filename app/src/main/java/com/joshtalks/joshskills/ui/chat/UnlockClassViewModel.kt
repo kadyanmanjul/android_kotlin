@@ -7,10 +7,10 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import java.util.*
 
 
 class UnlockClassViewModel(
@@ -71,7 +71,7 @@ class UnlockClassViewModel(
                     batchChange.emit(true)
                     return@launch
                 }
-            } catch (ex: Exception) {
+            } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
             batchChange.emit(false)

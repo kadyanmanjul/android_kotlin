@@ -270,7 +270,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     }
 
     private fun initRV() {
-        conversationBinding.chatRv.setHasFixedSize(false)
         linearLayoutManager = SmoothScrollingLinearLayoutManager(this, false)
         linearLayoutManager.stackFromEnd = true
         linearLayoutManager.isItemPrefetchEnabled = true
@@ -281,11 +280,10 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         }
         conversationBinding.chatRv.layoutManager = linearLayoutManager
         conversationBinding.chatRv.itemAnimator = null
-
+        conversationBinding.chatRv.setHasFixedSize(true)
 
         conversationBinding.chatRv.addItemDecoration(StickyHeaderDecoration(conversationAdapter), 0)
         conversationBinding.chatRv.adapter = conversationAdapter
-
 
         conversationBinding.chatRv.addOnScrollListener(object :
             EndlessRecyclerViewScrollListener(linearLayoutManager, LoadOnScrollDirection.TOP) {
@@ -834,8 +832,10 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         compositeDisposable.add(
             RxBus2.listen(DBInsertion::class.java)
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    conversationBinding.refreshLayout.isRefreshing = false
+
                     val time = try {
                         conversationAdapter.getLastItem().created.time
                     } catch (ex: Exception) {
@@ -1130,6 +1130,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    conversationBinding.refreshLayout.isRefreshing = true
                     logUnlockCardEvent()
                     //conversationBinding.chatRv.removeView(it.viewHolder)
                     conversationAdapter.removeUnlockMessage()

@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.chat
 
 import android.app.Application
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -10,15 +9,12 @@ import com.cometchat.pro.core.CometChat
 import com.cometchat.pro.exceptions.CometChatException
 import com.cometchat.pro.models.User
 import com.joshtalks.joshskills.BuildConfig
-import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
-import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
 import com.joshtalks.joshskills.core.analytics.LogException.catchException
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -36,7 +32,6 @@ import timber.log.Timber
 class UtilConversationViewModel(application: Application, private var inboxEntity: InboxEntity) :
     AndroidViewModel(application) {
     private val commonNetworkService = AppObjectController.commonNetworkService
-    private var context: JoshApplication = getApplication()
     private var appDatabase = AppObjectController.appDatabase
     private val jobs = arrayListOf<Job>()
     val userLoginLiveData: MutableLiveData<GroupDetails> = MutableLiveData()
@@ -109,12 +104,8 @@ class UtilConversationViewModel(application: Application, private var inboxEntit
                             }
 
                             override fun onError(p0: CometChatException?) {
-                                Timber.d("Initialization failed with exception: %s", p0?.message)
+                                Timber.e("Initialization failed with exception: %s", p0?.message)
                                 isLoading.postValue(false)
-                                showToast(
-                                    context.getString(R.string.generic_message_for_error),
-                                    Toast.LENGTH_SHORT
-                                )
                             }
 
                         })
@@ -141,7 +132,6 @@ class UtilConversationViewModel(application: Application, private var inboxEntit
                 loginUser(response)
             } catch (ex: Exception) {
                 isLoading.postValue(false)
-                showToast(context.getString(R.string.generic_message_for_error), Toast.LENGTH_SHORT)
                 ex.printStackTrace()
             }
         }
@@ -167,10 +157,6 @@ class UtilConversationViewModel(application: Application, private var inboxEntit
                                 override fun onError(p0: CometChatException?) {
                                     Timber.d("Login failed with exception: %s", p0?.message)
                                     isLoading.postValue(false)
-                                    showToast(
-                                        context.getString(R.string.generic_message_for_error),
-                                        Toast.LENGTH_SHORT
-                                    )
                                 }
 
                             })
@@ -192,10 +178,6 @@ class UtilConversationViewModel(application: Application, private var inboxEntit
                                     p0?.message
                                 )
                                 isLoading.postValue(false)
-                                showToast(
-                                    context.getString(R.string.generic_message_for_error),
-                                    Toast.LENGTH_SHORT
-                                )
                             }
 
                         })
