@@ -15,6 +15,7 @@ import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.children
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
@@ -49,7 +50,8 @@ class VocabularyPracticeAdapter(
     val context: Context,
     val itemList: List<LessonQuestion>,
     val assessmentQuizList: ArrayList<AssessmentWithRelations>,
-    val clickListener: PracticeClickListeners
+    val clickListener: PracticeClickListeners,
+    private var lifecycleProvider: LifecycleOwner
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -73,7 +75,9 @@ class VocabularyPracticeAdapter(
                         LayoutInflater.from(
                             context
                         ), parent, false
-                    )
+                    ).apply {
+                        lifecycleOwner = lifecycleProvider
+                    }
                 )
             }
             else -> {
@@ -82,11 +86,22 @@ class VocabularyPracticeAdapter(
                         LayoutInflater.from(
                             context
                         ), parent, false
-                    ), context
+                    ).apply {
+                        lifecycleOwner = lifecycleProvider
+                    }, context
                 )
             }
         }
     }
+
+    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        if (holder is VocabularyViewHolder) {
+            holder.complete()
+        }
+        audioManager?.onPause()
+    }
+
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder.itemViewType) {
@@ -474,6 +489,7 @@ class VocabularyPracticeAdapter(
         private var mUserIsSeeking = false
 
         fun bind(lessonQuestion: LessonQuestion, position: Int) {
+            binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
             this.lessonQuestion = lessonQuestion
             if (expandCard && lessonQuestion.status == QUESTION_STATUS.NA) {
                 expandCard = false
@@ -613,7 +629,9 @@ class VocabularyPracticeAdapter(
         override fun onPlayerEmptyTrack() {
         }
 
+
         override fun complete() {
+            clickListener.playAudio(-1)
             audioManager?.onPause()
             audioManager?.setProgressUpdateListener(null)
             audioManager?.seekTo(0)
@@ -668,6 +686,7 @@ class VocabularyPracticeAdapter(
             audioManager?.setProgressUpdateListener(this)
 
             lessonQuestion.isPlaying = lessonQuestion.isPlaying.not()
+            clickListener.playAudio(bindingAdapterPosition)
         }
 
         fun playPracticeAudio(lessonQuestion: LessonQuestion, position: Int) {
@@ -1209,5 +1228,7 @@ class VocabularyPracticeAdapter(
             lessonQuestion: LessonQuestion,
             assessmentQuestion: AssessmentQuestionWithRelations
         )
+
+        fun playAudio(position: Int)
     }
 }

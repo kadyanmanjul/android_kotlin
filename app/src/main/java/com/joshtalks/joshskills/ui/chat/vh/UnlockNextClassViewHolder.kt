@@ -13,7 +13,6 @@ class UnlockNextClassViewHolder(view: android.view.View, userId: String) :
     BaseViewHolder(view, userId) {
     private val subRootView: CardView = view.findViewById(R.id.card_top)
     private val btnStart: MaterialButton = view.findViewById(R.id.btn_start)
-    private var message: ChatModel? = null
 
     init {
         btnStart.also {
@@ -30,11 +29,7 @@ class UnlockNextClassViewHolder(view: android.view.View, userId: String) :
 
 
     override fun bind(message: ChatModel, previousSender: ChatModel?) {
-        this.message = message
-        message.question?.let { question ->
-            btnStart.text =
-                AppObjectController.joshApplication.getString(R.string.unlock_class_text)
-        }
+        btnStart.text = AppObjectController.joshApplication.getString(R.string.unlock_class_text)
     }
 
     override fun unBind() {

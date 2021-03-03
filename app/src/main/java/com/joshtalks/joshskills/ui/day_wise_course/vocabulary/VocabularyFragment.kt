@@ -60,6 +60,8 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     private var currentQuestion: LessonQuestion? = null
 
     private var lessonActivityListener: LessonActivityListener? = null
+    private var aPosition: Int = -1
+
 
     private val viewModel: LessonViewModel by lazy {
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
@@ -124,6 +126,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                     requireContext(),
                     lessonQuestions.sortedBy { it.vpSortOrder },
                     assessmentList,
+                    this,
                     this
                 )
             }
@@ -150,6 +153,10 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         lessonQuestion.status = QUESTION_STATUS.IP
         currentQuestion = null
         adapter.notifyDataSetChanged()
+    }
+
+    override fun playAudio(position: Int) {
+        aPosition = position
     }
 
     private fun onQuestionSubmitted(
@@ -288,6 +295,12 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                 //      chatModel.filePath = filePath
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        adapter.notifyItemChanged(aPosition, "PAUSE_AUDIO")
+        aPosition = -1
     }
 
     override fun askRecordPermission() {
