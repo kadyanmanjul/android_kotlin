@@ -46,6 +46,8 @@ import java.util.concurrent.TimeUnit
 import kotlin.random.Random.Default.nextInt
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 
+const val PAUSE_AUDIO = "PAUSE_AUDIO"
+
 class VocabularyPracticeAdapter(
     val context: Context,
     val itemList: List<LessonQuestion>,
@@ -122,6 +124,39 @@ class VocabularyPracticeAdapter(
                                 }
                             }
                         }
+                }
+            }
+        }
+    }
+
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        if (payloads.isNotEmpty() && payloads[0] as String == PAUSE_AUDIO) {
+            audioManager?.onPause()
+            (holder as VocabularyViewHolder).pauseAudio()
+        } else {
+            when (holder.itemViewType) {
+                VOCAB_TYPE -> {
+                    (holder as VocabularyViewHolder).bind(itemList[position], position)
+                }
+                else -> {
+                    if (assessmentQuizList.isNotEmpty()) {
+                        assessmentQuizList.filter { it.assessment.remoteId == itemList[position].assessmentId }
+                            .let {
+                                if (it.isNotEmpty()) {
+                                    it.getOrNull(0)?.let { asWr ->
+                                        (holder as QuizViewHolder).bind(
+                                            itemList[position],
+                                            asWr,
+                                            position
+                                        )
+                                    }
+                                }
+                            }
+                    }
                 }
             }
         }

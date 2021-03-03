@@ -323,7 +323,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
 
     private fun openLessonCompleteScreen(lesson: LessonModel) {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK && result.data.hasExtra(IS_BATCH_CHANGED)!! == true) {
+            if (result.resultCode == RESULT_OK && result.data.hasExtra(IS_BATCH_CHANGED) == true) {
                 setResult(RESULT_OK, Intent().apply {
                     putExtra(IS_BATCH_CHANGED, false)
                     putExtra(LAST_LESSON_INTERVAL, lesson.interval)

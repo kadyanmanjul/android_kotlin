@@ -299,7 +299,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 
     override fun onPause() {
         super.onPause()
-        adapter.notifyItemChanged(aPosition, "PAUSE_AUDIO")
+        // adapter.notifyItemChanged(aPosition, PAUSE_AUDIO)
         aPosition = -1
     }
 
