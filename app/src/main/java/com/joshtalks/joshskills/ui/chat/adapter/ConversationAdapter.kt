@@ -33,7 +33,6 @@ import com.joshtalks.joshskills.ui.groupchat.listeners.StickyHeaderAdapter
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils
 import java.lang.ref.WeakReference
 import java.util.ArrayList
-import java.util.Collections
 import java.util.Locale
 import timber.log.Timber
 
@@ -43,7 +42,7 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
     StickyHeaderAdapter<DateItemHolder> {
     private val userId = Mentor.getInstance().getId()
     private var messageList: ArrayList<ChatModel> = arrayListOf()
-    private val slowList: MutableSet<ChatModel> = Collections.synchronizedSet(mutableSetOf())
+    private val slowList: MutableSet<ChatModel> =mutableSetOf()
     private val uiHandler = AppObjectController.uiHandler
 
     init {
@@ -67,10 +66,6 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
         if (checkListIsChange(newList)) {
             val oldPos = messageList.size
             this.messageList.addAll(newList)
-            // this.messageList.addAll(newList)
-            /*this.messageList.addAll(
-                slowList.sortedWith(compareBy({ it.created }, { it.getMsTime() }))
-            )*/
             notifyItemRangeInserted(oldPos, newList.size)
         }
     }
@@ -81,12 +76,6 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
         }
         if (checkListIsChange(newList)) {
             this.messageList.addAll(0, newList)
-            //this.messageList.clear()
-            //this.messageList.addAll(newList)
-            /*this.messageList.addAll(
-                slowList.sortedWith(compareBy({ it.created }, { it.getMsTime() }))
-            )*/
-            //    this.messageList.addAll(0,  slowList.sortedWith(compareBy({ it.created }, { it.getMsTime() })))
             notifyItemRangeInserted(0, newList.size)
         }
     }

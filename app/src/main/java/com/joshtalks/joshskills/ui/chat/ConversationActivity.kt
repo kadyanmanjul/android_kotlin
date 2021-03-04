@@ -82,7 +82,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
 import java.util.*
-import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.collections.ArrayList
 import kotlin.concurrent.scheduleAtFixedRate
 import kotlinx.android.synthetic.main.activity_inbox.*
@@ -151,7 +150,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     private var audioPlayerManager: ExoAudioPlayer? = null
     private var isOnlyChat = false
     private var flowFrom: String? = EMPTY
-    private val loadingPreviousData: AtomicBoolean = AtomicBoolean(false)
+    private var loadingPreviousData=false
     private var isNewMessageShowing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -326,10 +325,10 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     }
 
     private fun getPreviousRecord() {
-        if (loadingPreviousData.get().not()
+        if (loadingPreviousData.not()
                 .and(linearLayoutManager.findFirstVisibleItemPosition() in 0..8)
         ) {
-            loadingPreviousData.set(true)
+            loadingPreviousData=true
             conversationViewModel.loadPagingMessage(conversationAdapter.getFirstItem())
         }
     }
@@ -701,7 +700,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         lifecycleScope.launchWhenCreated {
             conversationViewModel.oldMessageCourse.collectLatest { items ->
                 conversationAdapter.addMessageAboveMessage(items)
-                loadingPreviousData.set(false)
+                loadingPreviousData=false
             }
         }
         lifecycleScope.launchWhenCreated {
