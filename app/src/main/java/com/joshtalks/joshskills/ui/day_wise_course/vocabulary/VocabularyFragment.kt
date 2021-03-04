@@ -112,11 +112,11 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
             initAdapter(it)
         })
 
-        viewModel.pointsSnackBarText.observe(viewLifecycleOwner) {
+        /*viewModel.pointsSnackBarText.observe(viewLifecycleOwner) {
             if (it.pointsList.isNullOrEmpty().not()) {
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
             }
-        }
+        }*/
     }
 
     private fun initAdapter(assessmentList: ArrayList<AssessmentWithRelations>) {

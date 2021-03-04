@@ -259,7 +259,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
         )
 
         compositeDisposable.add(
-            RxBus2.listen(SnackBarEvent::class.java)
+            RxBus2.listenWithoutDelay(SnackBarEvent::class.java)
                 .subscribeOn(Schedulers.computation())
                 .subscribe({
                     showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsSnackBarText)
@@ -431,13 +431,6 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
             }
         })
-        viewModel.pointsSnackBarText.observe(
-            this.viewLifecycleOwner,
-            {
-                if (it.pointsList.isNullOrEmpty().not()) {
-                    showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
-                }
-            })
     }
 
     private fun showCompletedPractise() {

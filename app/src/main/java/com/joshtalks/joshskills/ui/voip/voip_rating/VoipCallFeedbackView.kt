@@ -13,15 +13,22 @@ import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
+import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
+import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.core.setRoundImage
 import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
 import com.joshtalks.joshskills.repository.server.Award
+import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import java.util.HashMap
 import kotlinx.coroutines.CoroutineScope
@@ -44,6 +51,9 @@ class VoipCallFeedbackView : DialogFragment() {
     private var yourAgoraId: Int = -1
     private var pointsString: String = EMPTY
 
+    private val practiceViewModel: PracticeViewModel by lazy {
+        ViewModelProvider(this).get(PracticeViewModel::class.java)
+    }
 
     override fun onStart() {
         super.onStart()
@@ -80,7 +90,20 @@ class VoipCallFeedbackView : DialogFragment() {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             //attributes.windowAnimations = R.style.DialogAnimation
         }
+
+        addObserver()
+        practiceViewModel.getPointsForVocabAndReading(null, channelName = channelName)
         return binding.root
+    }
+
+    private fun addObserver() {
+        practiceViewModel.pointsSnackBarText.observe(
+            this.viewLifecycleOwner,
+            androidx.lifecycle.Observer {
+                if (it.pointsList.isNullOrEmpty().not()) {
+                    showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
+                }
+            })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -157,6 +180,14 @@ class VoipCallFeedbackView : DialogFragment() {
         intent.putExtra("points_list", pointsString)
         requireActivity().setResult(Activity.RESULT_OK, intent)
         requireActivity().finishAndRemoveTask()
+    }
+
+    fun showSnackBar(view: View, duration: Int, action_lable: String?) {
+        if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+            //SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
+            PointSnackbar.make(view, duration, action_lable)?.show()
+            playSnackbarSound(requireActivity())
+        }
     }
 
     private fun showAward(awardList: List<Award>, isFromUserProfile: Boolean = false) {

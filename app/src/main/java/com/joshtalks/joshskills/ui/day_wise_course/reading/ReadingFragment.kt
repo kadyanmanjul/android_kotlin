@@ -11,7 +11,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -95,12 +94,6 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
             rpQuestion = it.filter { it.chatType == CHAT_TYPE.RP }.getOrNull(0)
             if (rpQuestion == null) {
                 requireActivity().finish()
-            }
-        })
-
-        viewModel.pointsSnackBarText.observe(this.viewLifecycleOwner, {
-            if (it.pointsList.isNullOrEmpty().not()) {
-                showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
             }
         })
     }

@@ -104,6 +104,14 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
             }*/
         })
 
+        viewModel.pointsSnackBarText.observe(
+            this,
+            {
+                if (it.pointsList.isNullOrEmpty().not()) {
+                    showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
+                }
+            })
+
     }
 
     override fun onNextTabCall(currentTabNumber: Int) {
