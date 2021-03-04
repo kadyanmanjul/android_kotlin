@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.day_wise_course.spaking
+package com.joshtalks.joshskills.ui.day_wise_course.speaking
 
 
 import android.content.Context
@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -22,6 +23,7 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SPEAKING_POINTS
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
@@ -35,22 +37,13 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.speaking_practise_fragment.btn_continue
-import kotlinx.android.synthetic.main.speaking_practise_fragment.btn_start
-import kotlinx.android.synthetic.main.speaking_practise_fragment.group_two
-import kotlinx.android.synthetic.main.speaking_practise_fragment.progress_bar
-import kotlinx.android.synthetic.main.speaking_practise_fragment.progress_view
-import kotlinx.android.synthetic.main.speaking_practise_fragment.text_view
-import kotlinx.android.synthetic.main.speaking_practise_fragment.tv_practise_time
-import kotlinx.android.synthetic.main.speaking_practise_fragment.tv_today_topic
 
 class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
 
+    private lateinit var binding: SpeakingPractiseFragmentBinding
     var lessonActivityListener: LessonActivityListener? = null
     private var compositeDisposable = CompositeDisposable()
-    private var lessonId: Int? = null
     private var courseId: String = EMPTY
-    private var topicId: String? = null
     private var questionId: String? = null
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
@@ -73,49 +66,53 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(
-            R.layout.speaking_practise_fragment,
-            container,
-            false
-        )
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.speaking_practise_fragment, container, false)
+        binding.lifecycleOwner = this
+        binding.handler = this
+
+        addObservers()
+
+        return binding.rootView
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private fun addObservers() {
 
         viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner, {
             val spQuestion = it.filter { it.chatType == CHAT_TYPE.SP }.getOrNull(0)
             questionId = spQuestion?.id
-            lessonId = spQuestion?.lessonId
-            topicId = spQuestion?.topicId
+
+            spQuestion?.topicId?.let { viewModel.getTopicDetail(it) }
+            spQuestion?.lessonId?.let { viewModel.getCourseIdByLessonId(it) }
+
         })
         viewModel.courseId.observe(viewLifecycleOwner, {
             courseId = it
         })
         viewLifecycleOwner.lifecycle.addObserver(this)
 
-        btn_start.setOnClickListener {
+        binding.btnStart.setOnClickListener {
             startPractise()
         }
-        btn_continue.setOnClickListener {
+        binding.btnContinue.setOnClickListener {
             lessonActivityListener?.onNextTabCall(3)
         }
 
         viewModel.speakingTopicLiveData.observe(viewLifecycleOwner, { response ->
-            progress_view.visibility = View.GONE
+            binding.progressView.visibility = View.GONE
             if (response == null) {
                 showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
             } else {
                 try {
-                    tv_today_topic.text = response.topicName
-                    tv_practise_time.text =
+                    binding.tvTodayTopic.text = response.topicName
+                    binding.tvPractiseTime.text =
                         response.alreadyTalked.toString().plus(" / ")
                             .plus(response.duration.toString())
                             .plus("\n Minutes")
-                    progress_bar.progress = response.alreadyTalked.toFloat()
-                    progress_bar.progressMax = response.duration.toFloat()
+                    binding.progressBar.progress = response.alreadyTalked.toFloat()
+                    binding.progressBar.progressMax = response.duration.toFloat()
 
-                    text_view.text = if (response.duration >= 10) {
+                    binding.textView.text = if (response.duration >= 10) {
                         getString(R.string.pp_messages, response.duration.toString())
                     } else {
                         getString(R.string.pp_message, response.duration.toString())
@@ -123,7 +120,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                 }
-                group_two.visibility = View.VISIBLE
+                binding.groupTwo.visibility = View.VISIBLE
 
                 val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
                 if (points.isNullOrEmpty().not()) {
@@ -132,7 +129,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
                 }
 
                 if (response.alreadyTalked >= response.duration) {
-                    btn_continue.visibility = View.VISIBLE
+                    binding.btnContinue.visibility = View.VISIBLE
                     lessonActivityListener?.onQuestionStatusUpdate(
                         QUESTION_STATUS.AT,
                         questionId
@@ -145,8 +142,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onFragmentResume() {
-        topicId?.let { viewModel.getTopicDetail(it) }
-        lessonId?.let { viewModel.getCourseIdByLessonId(it) }
+
     }
 
     private fun startPractise() {

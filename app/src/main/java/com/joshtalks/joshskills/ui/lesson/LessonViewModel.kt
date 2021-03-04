@@ -21,7 +21,6 @@ import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonMaterialType
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
-import com.joshtalks.joshskills.repository.local.entity.LessonQuestionType
 import com.joshtalks.joshskills.repository.local.entity.PendingTask
 import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
@@ -369,11 +368,10 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     fun getAssessmentData(lessonQuestions: List<LessonQuestion>) {
         viewModelScope.launch(Dispatchers.IO) {
             val assessmentList: ArrayList<AssessmentWithRelations> = arrayListOf()
-            lessonQuestions.filter { it.type == LessonQuestionType.QUIZ }.forEach {
-                it.assessmentId?.let { assessment ->
-                    getAssessmentById(assessment)?.let { assessmentWithRelations ->
+            lessonQuestions.forEach {
+                it.assessmentId?.let { assessmentId ->
+                    getAssessmentById(assessmentId)?.let { assessmentWithRelations ->
                         assessmentList.add(assessmentWithRelations)
-                        appDatabase.assessmentDao().insertAssessment(assessmentWithRelations)
                     }
                 }
             }
@@ -403,7 +401,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     if (response.isSuccessful) {
                         response.body()?.let {
                             insertAssessmentToDB(it)
-                            assessmentRelations = getAssessmentFromDB(assessmentId)
+                            assessmentRelations = AssessmentWithRelations(it)
                             return@withContext assessmentRelations
                         }
                     }

@@ -111,8 +111,8 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 
         viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner, {
             Timber.d("Sahil : lessonQuestionsLiveData.observe Started")
+            initAdapter(ArrayList())
             viewModel.getAssessmentData(it.filter { it.chatType == CHAT_TYPE.VP })
-
         })
 
         viewModel.vocabAssessmentData.observe(viewLifecycleOwner, {
@@ -310,14 +310,13 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     override fun onPause() {
         super.onPause()
         Timber.d("Sahil : onPause() Started")
-        adapter.itemList.forEachIndexed { index, lessonQuestion ->
-            if (lessonQuestion.type != LessonQuestionType.QUIZ)
-                binding.practiceRv.findViewHolderForAdapterPosition(index)?.let {
-                    (it as VocabularyPracticeAdapter.VocabularyViewHolder?)?.pauseAudio()
-                }
-        }
-
-        aPosition = -1
+//        adapter.itemList.forEachIndexed { index, lessonQuestion ->
+//            if (lessonQuestion.type != LessonQuestionType.QUIZ)
+//                binding.practiceRv.findViewHolderForAdapterPosition(index)?.let {
+//                    (it as VocabularyPracticeAdapter.VocabularyViewHolder?)?.pauseAudio()
+//                }
+//        }
+//        aPosition = -1
         Timber.d("Sahil : onPause() Completed")
     }
 

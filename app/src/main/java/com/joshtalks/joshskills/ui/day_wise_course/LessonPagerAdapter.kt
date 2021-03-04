@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.joshtalks.joshskills.ui.day_wise_course.reading.ReadingFragmentWithoutFeedback
-import com.joshtalks.joshskills.ui.day_wise_course.spaking.SpeakingPractiseFragment
+import com.joshtalks.joshskills.ui.day_wise_course.speaking.SpeakingPractiseFragment
 import com.joshtalks.joshskills.ui.day_wise_course.vocabulary.VocabularyFragment
 import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
 

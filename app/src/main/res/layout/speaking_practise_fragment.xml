@@ -1,225 +1,235 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nested_scroll_view"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <data>
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.day_wise_course.speaking.SpeakingPractiseFragment" />
+    </data>
+
+    <FrameLayout
         android:id="@+id/root_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <ScrollView
+            android:id="@+id/nested_scroll_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_view_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/speak_practise_title"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
-                android:textColor="@color/black"
-                app:layout_constraintBottom_toTopOf="@+id/text_view_2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_view_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="start|center"
-                android:text="@string/today_topic"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-                android:textColor="@color/black"
-                app:layout_constraintBottom_toTopOf="@+id/tv_today_topic"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text_view_1" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_today_topic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingHorizontal="@dimen/_16sdp"
-                android:text="@string/today_topic"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                android:textColor="@color/black"
-                app:layout_constraintBottom_toTopOf="@+id/progress_bar"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text_view_2"
-                tools:text="Geeting with New Members" />
-
-            <com.mikhaellopez.circularprogressbar.CircularProgressBar
-                android:id="@+id/progress_bar"
-                android:layout_width="@dimen/_96sdp"
-                android:layout_height="@dimen/_96sdp"
-                app:cpb_background_progressbar_color="#ECF4FD"
-                app:cpb_background_progressbar_width="@dimen/_12sdp"
-                app:cpb_progress_direction="to_right"
-                app:cpb_progressbar_color="@color/colorAccent"
-                app:cpb_progressbar_width="@dimen/_12sdp"
-                app:cpb_round_border="false"
-                app:layout_constraintBottom_toTopOf="@+id/info_container"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_today_topic" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_practise_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_12ssp"
-                app:layout_constraintBottom_toBottomOf="@id/progress_bar"
-                app:layout_constraintEnd_toEndOf="@id/progress_bar"
-                app:layout_constraintStart_toStartOf="@id/progress_bar"
-                app:layout_constraintTop_toTopOf="@id/progress_bar"
-                tools:text="5 / 10 \n min" />
+            android:fillViewport="true">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/info_container"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_24sdp"
-                android:background="@drawable/rounded_rectangle_attach"
-                android:backgroundTint="#ECF4FD"
-                android:paddingHorizontal="@dimen/_8sdp"
-                android:paddingVertical="@dimen/_12sdp"
-                app:layout_constraintBottom_toTopOf="@+id/btn_start"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/progress_bar">
+                android:background="@color/white">
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/image_view"
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_view_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_info"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:gravity="center"
+                    android:text="@string/speak_practise_title"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toTopOf="@+id/text_view_2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/text_view"
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_view_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|center"
+                    android:text="@string/today_topic"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_today_topic"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/text_view_1" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_today_topic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/_16sdp"
+                    android:text="@string/today_topic"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toTopOf="@+id/progress_bar"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/text_view_2"
+                    tools:text="Geeting with New Members" />
+
+                <com.mikhaellopez.circularprogressbar.CircularProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="@dimen/_96sdp"
+                    android:layout_height="@dimen/_96sdp"
+                    app:cpb_background_progressbar_color="#ECF4FD"
+                    app:cpb_background_progressbar_width="@dimen/_12sdp"
+                    app:cpb_progress_direction="to_right"
+                    app:cpb_progressbar_color="@color/colorAccent"
+                    app:cpb_progressbar_width="@dimen/_12sdp"
+                    app:cpb_round_border="false"
+                    app:layout_constraintBottom_toTopOf="@+id/info_container"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_today_topic" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_practise_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12ssp"
+                    app:layout_constraintBottom_toBottomOf="@id/progress_bar"
+                    app:layout_constraintEnd_toEndOf="@id/progress_bar"
+                    app:layout_constraintStart_toStartOf="@id/progress_bar"
+                    app:layout_constraintTop_toTopOf="@id/progress_bar"
+                    tools:text="5 / 10 \n min" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/info_container"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start|center"
-                    android:layout_marginHorizontal="@dimen/_10sdp"
-                    android:gravity="start|center"
-                    android:text="@string/pp_message"
-                    android:textAllCaps="false"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                    android:textColor="@color/black"
-                    app:layout_constraintBottom_toBottomOf="@+id/image_view"
+                    android:layout_marginHorizontal="@dimen/_24sdp"
+                    android:background="@drawable/rounded_rectangle_attach"
+                    android:backgroundTint="#ECF4FD"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:paddingVertical="@dimen/_12sdp"
+                    app:layout_constraintBottom_toTopOf="@+id/btn_start"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/image_view"
-                    app:layout_constraintTop_toTopOf="@+id/image_view" />
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/progress_bar">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/image_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_info"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/text_view"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center"
+                        android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:gravity="start|center"
+                        android:text="@string/pp_message"
+                        android:textAllCaps="false"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                        android:textColor="@color/black"
+                        app:layout_constraintBottom_toBottomOf="@+id/image_view"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/image_view"
+                        app:layout_constraintTop_toTopOf="@+id/image_view" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_start"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:backgroundTint="@color/colorAccent"
+                    android:gravity="center"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingVertical="@dimen/_10sdp"
+                    android:text="@string/call_practice_partner"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12ssp"
+                    app:cornerRadius="@dimen/_36sdp"
+                    app:layout_constraintBottom_toTopOf="@+id/btn_continue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/layer"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.7"
+                    app:rippleColor="@color/white" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_continue"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:backgroundTint="@color/colorAccent"
+                    android:gravity="center"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingVertical="@dimen/_10sdp"
+                    android:text="@string/continue_label"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12ssp"
+                    android:visibility="gone"
+                    app:cornerRadius="@dimen/_36sdp"
+                    app:layout_constraintBottom_toBottomOf="@id/layer"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_start"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.7"
+                    app:rippleColor="@color/white"
+                    tools:visibility="visible" />
+
+                <androidx.constraintlayout.helper.widget.Layer
+                    android:id="@+id/layer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="btn_start,btn_continue"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/info_container" />
+
+                <com.pnikosis.materialishprogress.ProgressWheel
+                    android:id="@+id/progress_view"
+                    android:layout_width="@dimen/_96sdp"
+                    android:layout_height="@dimen/_96sdp"
+                    android:layout_gravity="center"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:matProg_barColor="@color/button_color"
+                    app:matProg_fillRadius="true"
+                    app:matProg_linearProgress="false"
+                    app:matProg_progressIndeterminate="true" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/group_two"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:constraint_referenced_ids="text_view_2,tv_today_topic,tv_practise_time,progress_bar,info_container,btn_start,text_view_1"
+                    tools:visibility="visible" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+        </ScrollView>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_start"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:backgroundTint="@color/colorAccent"
-                android:gravity="center"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingVertical="@dimen/_10sdp"
-                android:text="@string/call_practice_partner"
-                android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_12ssp"
-                app:cornerRadius="@dimen/_36sdp"
-                app:layout_constraintBottom_toTopOf="@+id/btn_continue"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/layer"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.7"
-                app:rippleColor="@color/white" />
+    </FrameLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_continue"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:backgroundTint="@color/colorAccent"
-                android:gravity="center"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingVertical="@dimen/_10sdp"
-                android:text="@string/continue_label"
-                android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_12ssp"
-                android:visibility="gone"
-                app:cornerRadius="@dimen/_36sdp"
-                app:layout_constraintBottom_toBottomOf="@id/layer"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_start"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.7"
-                app:rippleColor="@color/white"
-                tools:visibility="visible" />
-
-            <androidx.constraintlayout.helper.widget.Layer
-                android:id="@+id/layer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:constraint_referenced_ids="btn_start,btn_continue"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/info_container" />
-
-            <com.pnikosis.materialishprogress.ProgressWheel
-                android:id="@+id/progress_view"
-                android:layout_width="@dimen/_96sdp"
-                android:layout_height="@dimen/_96sdp"
-                android:layout_gravity="center"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:matProg_barColor="@color/button_color"
-                app:matProg_fillRadius="true"
-                app:matProg_linearProgress="false"
-                app:matProg_progressIndeterminate="true" />
-
-            <androidx.constraintlayout.widget.Group
-                android:id="@+id/group_two"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:constraint_referenced_ids="text_view_2,tv_today_topic,tv_practise_time,progress_bar,info_container,btn_start,text_view_1"
-                tools:visibility="visible" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </LinearLayout>
-
-</ScrollView>
+</layout>
