@@ -147,10 +147,11 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
 
         })
 
-        assessmentQuestions.clear()
         viewModel.grammarAssessmentLiveData.observe(owner = viewLifecycleOwner) { assessmentRelations ->
-            assessmentRelations.questionList.sortedBy { it.question.sortOrder }
-                .forEach { item -> assessmentQuestions.add(item) }
+            assessmentQuestions.clear()
+            assessmentRelations.questionList.sortedBy { it.question.sortOrder }.let {
+                assessmentQuestions.addAll(it)
+            }
 
             if (assessmentQuestions.size > 0) {
                 binding.quizRadioGroup.setOnCheckedChangeListener(quizCheckedChangeListener)
