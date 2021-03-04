@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.repository.local.entity.practise.PointsListRespo
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.RequestEngage
+import com.joshtalks.joshskills.repository.server.UpdateLessonResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
@@ -65,6 +66,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val practiceEngagementData: MutableLiveData<PracticeEngagement> = MutableLiveData()
     val courseId: MutableLiveData<String> = MutableLiveData()
     val speakingTopicLiveData: MutableLiveData<SpeakingTopic?> = MutableLiveData()
+    val updatedLessonResponseLiveData: MutableLiveData<UpdateLessonResponse> = MutableLiveData()
 
     fun getLesson(lessonId: Int) {
         viewModelScope.launch {
@@ -306,7 +308,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    // TODO() - Isko theek krna h baad me..
+    // TODO() - Isko theek krna h baad me.. sahi kaha krna padega isko bhi
     fun updateQuestionStatus(
         status: QUESTION_STATUS,
         questionId: String?,
@@ -326,6 +328,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         )
                     )
                     if (resp.isSuccessful && resp.body() != null) {
+                        updatedLessonResponseLiveData.postValue(resp.body()!!)
                         appDatabase.lessonQuestionDao().updateQuestionStatus("$questionId", status)
                         updateLessonStatus()
                         appDatabase.lessonQuestionDao().getLessonQuestionById(questionId!!)
@@ -346,6 +349,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                             )
                         )
                         if (resp.isSuccessful && resp.body() != null) {
+                            updatedLessonResponseLiveData.postValue(resp.body()!!)
                             appDatabase.lessonQuestionDao()
                                 .updateQuestionStatus("$questionId", status)
                             updateLessonStatus()

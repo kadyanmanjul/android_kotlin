@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
@@ -80,6 +81,27 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
             }
             setUpTabLayout()
             setTabCompletionStatus()
+        })
+
+        viewModel.updatedLessonResponseLiveData.observe(this, {
+            if (it.pointsList.isNullOrEmpty().not()) {
+                showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
+                playSnackbarSound(this)
+            }
+            /*if (it.awardMentorList.isNullOrEmpty().not()) {
+                //TODO add when awards functionality is over
+                //ShowAwardFragment.showDialog(supportFragmentManager,it.awardMentorList!!)
+            }
+            if (it.outranked!!) {
+                it.outrankedData?.let {
+                    showLeaderboardAchievement(
+                        it,
+                        lessonInterval,
+                        chatId,
+                        lessonModel?.lessonNo ?: 0
+                    )
+                }
+            }*/
         })
 
     }
@@ -323,7 +345,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
 
     private fun openLessonCompleteScreen(lesson: LessonModel) {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK && result.data.hasExtra(IS_BATCH_CHANGED) == true) {
+            if (result.resultCode == RESULT_OK && result.data?.hasExtra(IS_BATCH_CHANGED) == true) {
                 setResult(RESULT_OK, Intent().apply {
                     putExtra(IS_BATCH_CHANGED, false)
                     putExtra(LAST_LESSON_INTERVAL, lesson.interval)

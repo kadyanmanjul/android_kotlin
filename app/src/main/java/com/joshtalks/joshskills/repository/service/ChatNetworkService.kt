@@ -2,10 +2,21 @@ package com.joshtalks.joshskills.repository.service
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.CertificationExamDetailModel
+import com.joshtalks.joshskills.repository.local.entity.Course
+import com.joshtalks.joshskills.repository.local.entity.GetLessonQuestionsResponse
+import com.joshtalks.joshskills.repository.local.entity.LessonModel
+import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
+import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
 import com.joshtalks.joshskills.repository.local.entity.practise.PointsListResponse
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
-import com.joshtalks.joshskills.repository.server.*
+import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
+import com.joshtalks.joshskills.repository.server.BaseResponse
+import com.joshtalks.joshskills.repository.server.ChatMessageReceiver
+import com.joshtalks.joshskills.repository.server.CoursePerformanceResponse
+import com.joshtalks.joshskills.repository.server.RequestEngage
+import com.joshtalks.joshskills.repository.server.ResponseChatMessage
+import com.joshtalks.joshskills.repository.server.UpdateLessonResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
@@ -13,7 +24,15 @@ import com.joshtalks.joshskills.repository.server.course_overview.CourseOverview
 import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 @JvmSuppressWildcards
 interface ChatNetworkService {
@@ -113,7 +132,7 @@ interface ChatNetworkService {
     @POST("$DIR/chat/v2/update_lesson/")
     suspend fun updateQuestionStatus(
         @Body questionStatus: UpdateQuestionStatus
-    ): Response<Any>
+    ): Response<UpdateLessonResponse>
 
 
     @GET("$DIR/course/course_overview/")
