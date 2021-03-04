@@ -150,13 +150,12 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/_12ssp"
                 app:cornerRadius="@dimen/_36sdp"
-                android:layout_marginBottom="@dimen/_16sdp"
+                app:layout_constraintBottom_toTopOf="@+id/btn_continue"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/info_container"
+                app:layout_constraintTop_toTopOf="@id/layer"
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.7"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:rippleColor="@color/white" />
 
             <com.google.android.material.button.MaterialButton
@@ -165,6 +164,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_16sdp"
                 android:backgroundTint="@color/colorAccent"
                 android:gravity="center"
                 android:insetTop="0dp"
@@ -176,7 +176,7 @@
                 android:textSize="@dimen/_12ssp"
                 android:visibility="gone"
                 app:cornerRadius="@dimen/_36sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/layer"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -186,6 +186,15 @@
                 app:rippleColor="@color/white"
                 tools:visibility="visible" />
 
+            <androidx.constraintlayout.helper.widget.Layer
+                android:id="@+id/layer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="btn_start,btn_continue"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/info_container" />
 
             <com.pnikosis.materialishprogress.ProgressWheel
                 android:id="@+id/progress_view"

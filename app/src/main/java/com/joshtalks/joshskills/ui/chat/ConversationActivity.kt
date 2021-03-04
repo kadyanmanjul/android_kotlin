@@ -1519,7 +1519,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
 
     override fun onPlayerPause() {
         if (currentAudioPosition != -1) {
-            conversationBinding.chatRv.adapter.notifyItemChanged(
+            conversationBinding.chatRv.adapter?.notifyItemChanged(
                 currentAudioPosition
             )
         }
