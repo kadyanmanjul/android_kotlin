@@ -20,7 +20,6 @@ import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
@@ -98,12 +97,18 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
         iv_reminder.visibility = View.GONE
         iv_setting.visibility = View.VISIBLE
         findMoreLayout = findViewById(R.id.parent_layout)
-        recycler_view_inbox.itemAnimator?.apply {
-            addDuration = 250
-            changeDuration = 250
+        recycler_view_inbox.apply {
+            setItemViewCacheSize(20)
+            itemAnimator = SlideInUpAnimator(OvershootInterpolator(2f)).apply {
+                addDuration = 250
+                changeDuration = 250
+            }
+            layoutManager = SmoothLinearLayoutManager(applicationContext).apply {
+                isItemPrefetchEnabled = true
+                initialPrefetchItemCount = 10
+                isSmoothScrollbarEnabled = true
+            }
         }
-        recycler_view_inbox.itemAnimator = SlideInUpAnimator(OvershootInterpolator(2f))
-        recycler_view_inbox.layoutManager = SmoothLinearLayoutManager(applicationContext)
         recycler_view_inbox.addItemDecoration(
             LayoutMarginDecoration(
                 Utils.dpToPx(
@@ -112,9 +117,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
                 )
             )
         )
-        recycler_view_inbox.setItemViewCacheSize(20)
         recycler_view_inbox.adapter = inboxAdapter
-
         iv_setting.setOnClickListener {
             openPopupMenu(it)
         }
@@ -242,20 +245,9 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
     }
 
     private fun workInBackground() {
-        lifecycleScope.launchWhenCreated {
+        lifecycleScope.launchWhenResumed {
             processIntent(intent)
-            WorkManagerAdmin.determineNPAEvent()
             checkInAppUpdate()
-            when {
-                NPSEventModel.getCurrentNPA() != null -> {
-                    showNetPromoterScoreDialog()
-                }
-                else -> {
-                    if (courseListSet.isNotEmpty()) {
-                        locationFetch()
-                    }
-                }
-            }
         }
     }
 
@@ -309,7 +301,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver {
             if (findMoreLayout.visibility == View.INVISIBLE) {
                 findMoreLayout.visibility = View.VISIBLE
             }
-        }, 750)
+        }, 250)
+        locationFetch()
     }
 
     private fun addObserver() {

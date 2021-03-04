@@ -171,6 +171,9 @@ data class ChatModel(
     }
 
     fun getMsTime(): Double {
+        if (messageTimeInMilliSeconds.isEmpty()) {
+            return 0.0
+        }
         return messageTimeInMilliSeconds.toDouble()
     }
 

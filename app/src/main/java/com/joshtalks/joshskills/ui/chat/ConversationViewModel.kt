@@ -218,6 +218,7 @@ class ConversationViewModel(
             }
             updateAllMessageReadByUser()
             getNewMessageFromServer()
+
         }
     }
 
@@ -243,7 +244,7 @@ class ConversationViewModel(
             userUnreadCourseChat.emit(
                 chatDao.getNewFetchMessages(
                     inboxEntity.conversation_id, lastMessageTime
-                ).sortedWith(compareBy({ it.created }, { it.getMsTime() }))
+                )
             )
             updateAllMessageReadByUser()
         }

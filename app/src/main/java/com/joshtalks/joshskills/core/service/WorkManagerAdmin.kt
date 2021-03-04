@@ -20,6 +20,16 @@ import java.util.concurrent.TimeUnit
 
 object WorkManagerAdmin {
 
+    fun appInitWorker() {
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .beginWith(
+                mutableListOf(
+                    OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build(),
+                    OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build()
+                )
+            ).enqueue()
+    }
+
     fun appStartWorker() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .beginWith(
@@ -35,9 +45,9 @@ object WorkManagerAdmin {
                     //  OneTimeWorkRequestBuilder<InstanceIdGenerationWorker>().build(),
                 )
             )
-            .then(
-                OneTimeWorkRequestBuilder<GenerateGuestUserMentorWorker>().build(),
-            )
+            /*  .then(
+                  OneTimeWorkRequestBuilder<GenerateGuestUserMentorWorker>().build(),
+              )*/
             .then(
                 mutableListOf(
                     OneTimeWorkRequestBuilder<AppUsageSyncWorker>().build(),
@@ -46,21 +56,6 @@ object WorkManagerAdmin {
             )
             .then(OneTimeWorkRequestBuilder<GenerateRestoreIdWorker>().build())
             .enqueue()
-    }
-
-    fun initGaid(testId: String?, exploreType: String? = null): UUID {
-        val data =
-            when {
-                testId?.isNotBlank() == true -> workDataOf("test_id" to testId)
-                exploreType?.isNotBlank() == true -> workDataOf("explore_type" to exploreType)
-                else -> workDataOf()
-            }
-        val workRequest = OneTimeWorkRequestBuilder<RegisterGaidV2>()
-            .setInputData(data)
-            .setBackoffCriteria(BackoffPolicy.LINEAR, 10, TimeUnit.SECONDS)
-            .build()
-        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
-        return workRequest.id
     }
 
 

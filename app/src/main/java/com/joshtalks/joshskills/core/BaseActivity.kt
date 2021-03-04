@@ -9,8 +9,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.media.MediaPlayer
 import android.location.Location
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -92,17 +92,17 @@ import com.uxcam.OnVerificationListener
 import com.uxcam.UXCam
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.*
 import kotlin.random.Random
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 const val COURSE_EXPLORER_NEW = 2008
@@ -270,27 +270,47 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         }
     }
 
-    fun getIntentForState(): Intent? {
-        val intent: Intent? = when {
+    fun getIntentForState(): Intent {
+        val intent: Intent = when {
             User.getInstance().isVerified.not() -> {
-                if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false)) {
-                    getInboxActivityIntent()
-                } else if (PrefManager.getBoolValue(IS_PAYMENT_DONE, false)) {
-                    Intent(this, SignUpActivity::class.java)
-                } else {
-                    Intent(this, OnBoardActivity::class.java)
+                when {
+                    PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) -> {
+                        getInboxActivityIntent()
+                    }
+                    PrefManager.getBoolValue(IS_PAYMENT_DONE, false) -> {
+                        Intent(this, SignUpActivity::class.java)
+                    }
+                    else -> {
+                        Intent(this, OnBoardActivity::class.java)
+                    }
                 }
             }
-            isUserProfileComplete() -> {
+            isUserProfileNotComplete() -> {
                 Intent(this, SignUpActivity::class.java)
             }
             else -> getInboxActivityIntent()
         }
-        return intent?.apply {
+        return intent.apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
     }
+
+    fun isUserProfileNotComplete(): Boolean {
+        try {
+            val user = User.getInstance()
+            if (user.phoneNumber.isNullOrEmpty() && user.firstName.isNullOrEmpty()) {
+                return true
+            }
+            if (user.firstName.isNullOrEmpty()) {
+                return true
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return false
+    }
+
 
     fun getInboxActivityIntent(isFromOnBoardingFlow: Boolean = false): Intent {
         return Intent(this, InboxActivity::class.java).apply {

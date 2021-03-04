@@ -2,10 +2,13 @@ package com.joshtalks.joshskills.repository.local.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.local.model.googlelocation.Locality
+import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 
 const val MENTOR_PERSISTANT_KEY = "mentor"
 
@@ -41,6 +44,21 @@ class Mentor {
             } catch (ex: Exception) {
                 Mentor()
             }
+        }
+
+        fun updateFromLoginResponse(loginResponse: LoginResponse) {
+            val user = User.getInstance()
+            user.userId = loginResponse.userId
+            user.isVerified = false
+            user.token = loginResponse.token
+            User.update(user)
+            PrefManager.put(API_TOKEN, loginResponse.token)
+            getInstance()
+                .setId(loginResponse.mentorId)
+                .setReferralCode(loginResponse.referralCode)
+                .setUserId(loginResponse.userId)
+                .update()
+            AppAnalytics.updateUser()
         }
     }
 
@@ -120,3 +138,6 @@ class Mentor {
 
 
 }
+
+
+

@@ -1,6 +1,10 @@
 package com.joshtalks.joshskills.repository.service
 
 import androidx.lifecycle.MutableLiveData
+import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
@@ -70,6 +74,7 @@ object NetworkRequestHelper {
                             chatId = chatModel.chatId
                         }?.let {
                             AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
+                            downloadImageGlide(it.thumbnailUrl)
                         }
                     }
                     chatModel.question?.let { question ->
@@ -89,16 +94,9 @@ object NetworkRequestHelper {
                         question.imageList?.let {
                             it.listIterator().forEach { imageType ->
                                 imageType.questionId = question.questionId
+                                downloadImageGlide(imageType.imageUrl)
                             }
                             AppObjectController.appDatabase.chatDao().insertImageTypeMessageList(it)
-                        }
-
-                        question.optionsList?.let {
-                            it.listIterator().forEach { optionType ->
-                                optionType.questionId = question.questionId
-                            }
-                            AppObjectController.appDatabase.chatDao()
-                                .insertOptionTypeMessageList(it)
 
                         }
 
@@ -114,6 +112,7 @@ object NetworkRequestHelper {
                                 videoType.questionId = question.questionId
                                 videoType.downloadStatus = DOWNLOAD_STATUS.NOT_START
                                 videoType.interval = question.interval
+                                downloadImageGlide(videoType.video_image_url)
                             }
                             AppObjectController.appDatabase.chatDao().insertVideoMessageList(it)
                         }
@@ -354,5 +353,19 @@ object NetworkRequestHelper {
                 }
             }
         }
+    }
+
+    private fun downloadImageGlide(url: String) {
+        val requestOptions = RequestOptions()
+            .diskCacheStrategy(DiskCacheStrategy.DATA)
+            .priority(Priority.IMMEDIATE)
+            .skipMemoryCache(true)
+
+        Glide.with(AppObjectController.joshApplication)
+            .load(url)
+            .apply(
+                requestOptions
+            )
+            .submit()
     }
 }

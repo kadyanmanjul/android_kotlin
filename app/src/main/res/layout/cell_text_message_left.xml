@@ -5,8 +5,8 @@
     android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="@dimen/_8sdp"
-    android:paddingEnd="@dimen/_48sdp">
+    android:paddingStart="@dimen/cell_left_start_padding"
+    android:paddingEnd="@dimen/cell_left_end_padding">
 
     <FrameLayout
         android:id="@+id/root_sub_view"
@@ -21,8 +21,6 @@
             android:orientation="vertical"
             android:padding="@dimen/_3sdp">
 
-            <include layout="@layout/tag_practise_layout" />
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/parent_layout"
                 android:layout_width="wrap_content"
@@ -36,7 +34,6 @@
                     android:layout_gravity="start"
                     android:gravity="center_vertical|start"
                     android:paddingHorizontal="@dimen/_4sdp"
-                    android:paddingVertical="@dimen/_6sdp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
                     android:textColor="@color/black"
                     android:visibility="gone"

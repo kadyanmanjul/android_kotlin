@@ -33,6 +33,8 @@ import com.joshtalks.joshskills.ui.groupchat.listeners.StickyHeaderAdapter
 import com.joshtalks.joshskills.ui.groupchat.utils.Utils
 import java.lang.ref.WeakReference
 import java.util.ArrayList
+import java.util.Collections
+import java.util.Locale
 import timber.log.Timber
 
 
@@ -41,7 +43,7 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
     StickyHeaderAdapter<DateItemHolder> {
     private val userId = Mentor.getInstance().getId()
     private var messageList: ArrayList<ChatModel> = arrayListOf()
-    private val slowList: MutableSet<ChatModel> = mutableSetOf()
+    private val slowList: MutableSet<ChatModel> = Collections.synchronizedSet(mutableSetOf())
     private val uiHandler = AppObjectController.uiHandler
 
     init {
@@ -51,6 +53,7 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
     private fun checkListIsChange(newList: List<ChatModel>): Boolean {
         val size = slowList.size
         slowList.addAll(newList)
+
         if (size == slowList.size) {
             return false
         }
@@ -64,6 +67,10 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
         if (checkListIsChange(newList)) {
             val oldPos = messageList.size
             this.messageList.addAll(newList)
+            // this.messageList.addAll(newList)
+            /*this.messageList.addAll(
+                slowList.sortedWith(compareBy({ it.created }, { it.getMsTime() }))
+            )*/
             notifyItemRangeInserted(oldPos, newList.size)
         }
     }
@@ -74,6 +81,12 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
         }
         if (checkListIsChange(newList)) {
             this.messageList.addAll(0, newList)
+            //this.messageList.clear()
+            //this.messageList.addAll(newList)
+            /*this.messageList.addAll(
+                slowList.sortedWith(compareBy({ it.created }, { it.getMsTime() }))
+            )*/
+            //    this.messageList.addAll(0,  slowList.sortedWith(compareBy({ it.created }, { it.getMsTime() })))
             notifyItemRangeInserted(0, newList.size)
         }
     }
@@ -131,6 +144,7 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
         return false
     }
 
+
     fun removeUnlockMessage() {
         val index = messageList.indexOfLast { it.type == BASE_MESSAGE_TYPE.UNLOCK }
         messageList.removeAt(index)
@@ -139,6 +153,12 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
 
     fun isLessonType(): Boolean {
         return messageList.stream().anyMatch { it.type == BASE_MESSAGE_TYPE.LESSON }
+    }
+
+    fun removeNewClassCard() {
+        val index = messageList.indexOfLast { it.type == BASE_MESSAGE_TYPE.NEW_CLASS }
+        messageList.removeAt(index)
+        notifyItemRemoved(index)
     }
 
 
@@ -413,7 +433,7 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
     ) {
         val baseMessage: ChatModel = messageList[position]
         val formattedDate = dateHeaderDateFormat(baseMessage.created)
-        var1.txtMessageDate.text = formattedDate
+        var1.txtMessageDate.text = formattedDate.toUpperCase(Locale.getDefault())
     }
 
     override fun getItemCount(): Int {

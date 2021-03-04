@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
+import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
@@ -93,7 +94,10 @@ class CourseExploreAdapter(private var courseList: List<CourseExploreModel>) :
                     .apply(
                         RequestOptions().placeholder(R.drawable.place_holder_explore)
                             .error(R.drawable.place_holder_explore)
+                            .format(DecodeFormat.PREFER_RGB_565)
+                            .disallowHardwareConfig().dontAnimate().encodeQuality(75)
                     )
+                    .thumbnail(0.05f)
                     .optionalTransform(
                         WebpDrawable::class.java,
                         WebpDrawableTransformation(CircleCrop())

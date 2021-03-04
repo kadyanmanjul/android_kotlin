@@ -30,6 +30,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import java.lang.ref.WeakReference
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.coroutines.CoroutineScope
@@ -37,7 +38,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.lang.ref.WeakReference
 
 abstract class InboxBaseActivity : CoreJoshActivity(),
     InAppUpdateManager.InAppUpdateHandler {
@@ -72,7 +72,7 @@ abstract class InboxBaseActivity : CoreJoshActivity(),
     }
 
     private fun addObserver() {
-        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+        lifecycleScope.launchWhenResumed {
             viewModel.overAllWatchTime.collectLatest {
                 var reviewCount = PrefManager.getIntValue(IN_APP_REVIEW_COUNT)
                 val reviewFrequency =

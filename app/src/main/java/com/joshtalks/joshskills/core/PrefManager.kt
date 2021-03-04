@@ -172,12 +172,14 @@ object PrefManager {
 
     fun logoutUser() {
         prefManagerCommon.edit().clear().apply()
+        WorkManagerAdmin.appInitWorker()
         WorkManagerAdmin.appStartWorker()
     }
 
     fun clearUser() {
         prefManagerCommon.edit().clear().apply()
         AppDatabase.clearDatabase()
+        WorkManagerAdmin.appInitWorker()
         WorkManagerAdmin.appStartWorker()
     }
 

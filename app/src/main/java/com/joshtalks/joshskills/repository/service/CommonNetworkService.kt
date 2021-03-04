@@ -283,7 +283,7 @@ interface CommonNetworkService {
 
 
     @POST("$DIR/mentor/gaid/")
-    suspend fun registerGAIdDetailsV2Async(@Body body: RequestRegisterGAId): Response<GaIDMentorModel>
+    suspend fun registerGAIdDetailsV2Async(@Body body: RequestRegisterGAId): GaIDMentorModel
 
 
     @POST("$DIR/group/updatelastmessage/")

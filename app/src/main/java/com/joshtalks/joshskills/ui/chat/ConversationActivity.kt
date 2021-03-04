@@ -82,6 +82,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.collections.ArrayList
 import kotlin.concurrent.scheduleAtFixedRate
 import kotlinx.android.synthetic.main.activity_inbox.*
@@ -150,7 +151,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     private var audioPlayerManager: ExoAudioPlayer? = null
     private var isOnlyChat = false
     private var flowFrom: String? = EMPTY
-    private var loadingPreviousData = false
+    private val loadingPreviousData: AtomicBoolean = AtomicBoolean(false)
     private var isNewMessageShowing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -279,7 +280,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         }
         conversationBinding.chatRv.layoutManager = linearLayoutManager
         conversationBinding.chatRv.itemAnimator = null
-        conversationBinding.chatRv.setHasFixedSize(true)
+        conversationBinding.chatRv.setHasFixedSize(false)
 
         conversationBinding.chatRv.addItemDecoration(StickyHeaderDecoration(conversationAdapter), 0)
         conversationAdapter.initializePool(conversationBinding.chatRv.recycledViewPool)
@@ -291,10 +292,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 if (conversationAdapter.itemCount == 0) {
                     return
                 }
-                if (loadingPreviousData.not()) {
-                    conversationViewModel.loadPagingMessage(conversationAdapter.getFirstItem())
-                    loadingPreviousData = true
-                }
             }
         })
         conversationBinding.chatRv.addOnScrollListener(object :
@@ -303,6 +300,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 if (conversationAdapter.itemCount == 0) {
                     return
                 }
+                //   getPreviousRecord()
             }
         })
 
@@ -317,7 +315,23 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 }
                 visibleItem()
             }
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (recyclerView.canScrollVertically(-1)) {
+                    getPreviousRecord()
+                }
+            }
         })
+    }
+
+    private fun getPreviousRecord() {
+        if (loadingPreviousData.get().not()
+                .and(linearLayoutManager.findFirstVisibleItemPosition() in 0..8)
+        ) {
+            loadingPreviousData.set(true)
+            conversationViewModel.loadPagingMessage(conversationAdapter.getFirstItem())
+        }
     }
 
     private fun initView() {
@@ -687,7 +701,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         lifecycleScope.launchWhenCreated {
             conversationViewModel.oldMessageCourse.collectLatest { items ->
                 conversationAdapter.addMessageAboveMessage(items)
-                loadingPreviousData = false
+                loadingPreviousData.set(false)
             }
         }
         lifecycleScope.launchWhenCreated {
@@ -1127,6 +1141,8 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    conversationAdapter.removeNewClassCard()
+                    isNewMessageShowing = false
                     conversationBinding.refreshLayout.isRefreshing = true
                     logUnlockCardEvent()
                     //conversationBinding.chatRv.removeView(it.viewHolder)
@@ -1519,9 +1535,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
 
     override fun onPlayerPause() {
         if (currentAudioPosition != -1) {
-            conversationBinding.chatRv.adapter?.notifyItemChanged(
-                currentAudioPosition
-            )
+            conversationAdapter.notifyItemChanged(currentAudioPosition)
         }
     }
 

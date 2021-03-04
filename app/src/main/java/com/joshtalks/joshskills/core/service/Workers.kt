@@ -25,7 +25,6 @@ import com.joshtalks.joshskills.repository.server.ActiveUserRequest
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
-import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.sinch.verification.PhoneNumberUtils
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
@@ -91,6 +90,7 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
         if (PrefManager.hasKey(CALL_RINGTONE_NOT_MUTE).not()) {
             PrefManager.put(CALL_RINGTONE_NOT_MUTE, true)
         }
+        AppObjectController.initialiseFreshChat()
         InstallReferralUtil.installReferrer(context)
         return Result.success()
     }
@@ -171,7 +171,7 @@ class GetVersionAndFlowDataWorker(var context: Context, workerParams: WorkerPara
         return Result.success()
     }
 }
-
+/*
 class GenerateGuestUserMentorWorker(var context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
 
@@ -184,10 +184,7 @@ class GenerateGuestUserMentorWorker(var context: Context, workerParams: WorkerPa
                 val instanceId = PrefManager.getStringValue(INSTANCE_ID)
                 val response =
                     AppObjectController.signUpNetworkService.createGuestUser(mapOf("instance_id" to instanceId))
-                if (response.isSuccessful)
-                    response.body()?.let {
-                        updateFromLoginResponse(it)
-                    }
+                updateFromLoginResponse(response)
             }
         } catch (ex: Throwable) {
             LogException.catchException(ex)
@@ -195,7 +192,6 @@ class GenerateGuestUserMentorWorker(var context: Context, workerParams: WorkerPa
         return Result.success()
     }
 }
-
 private fun updateFromLoginResponse(loginResponse: LoginResponse) {
     val user = User.getInstance()
     user.userId = loginResponse.userId
@@ -211,6 +207,7 @@ private fun updateFromLoginResponse(loginResponse: LoginResponse) {
     AppAnalytics.updateUser()
     WorkManagerAdmin.requiredTaskAfterLoginComplete()
 }
+*/
 
 
 class MessageReadPeriodicWorker(context: Context, workerParams: WorkerParameters) :
@@ -524,7 +521,7 @@ class MergeMentorWithGAIDWorker(context: Context, workerParams: WorkerParameters
             }
             val data = mapOf("mentor" to Mentor.getInstance().getId())
             AppObjectController.commonNetworkService.mergeMentorWithGAId(id.toString(), data)
-            PrefManager.removeKey(SERVER_GID_ID)
+            //PrefManager.removeKey(SERVER_GID_ID)
         } catch (ex: Throwable) {
             LogException.catchException(ex)
         }
@@ -706,57 +703,6 @@ class AppUsageSyncWorker(context: Context, workerParams: WorkerParameters) :
             LogException.catchException(ex)
         }
         return Result.success()
-    }
-}
-
-
-class RegisterGaidV2(var context: Context, var workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        if (runAttemptCount > 2) {
-            return Result.failure()
-        }
-        val obj = RequestRegisterGAId()
-        obj.test = workerParams.inputData.getString("test_id")?.split("_")?.get(1)?.toInt()
-
-        if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
-            val id = getGoogleAdId(context)
-            PrefManager.put(USER_UNIQUE_ID, id)
-        }
-        obj.gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
-
-        InstallReferrerModel.getPrefObject()?.let {
-            obj.installOn = it.installOn
-            obj.utmMedium = it.utmMedium
-            obj.utmSource = it.utmSource
-        }
-
-        val exploreType = workerParams.inputData.getString("explore_type")
-        if (exploreType.isNullOrEmpty().not()) {
-            obj.exploreCardType = ExploreCardType.valueOf(exploreType!!)
-        }
-        try {
-            val resp = AppObjectController.commonNetworkService.registerGAIdDetailsV2Async(obj)
-            return if (resp.isSuccessful) {
-                resp.body()?.run {
-                    GaIDMentorModel.update(this)
-                    PrefManager.put(SERVER_GID_ID, gaidServerDbId)
-                    PrefManager.put(
-                        EXPLORE_TYPE,
-                        exploreCardType?.name ?: ExploreCardType.NORMAL.name,
-                        false
-                    )
-                    PrefManager.put(INSTANCE_ID, instanceId)
-                    PrefManager.put(INSTANCE_ID, instanceId, isConsistent = true)
-                }
-                Result.success()
-            } else {
-                Result.failure()
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            return Result.failure()
-        }
     }
 }
 

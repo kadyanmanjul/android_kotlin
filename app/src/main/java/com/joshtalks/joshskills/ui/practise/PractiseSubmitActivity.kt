@@ -65,13 +65,13 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
-import java.util.concurrent.TimeUnit
-import kotlin.random.Random
 
 const val PRACTISE_OBJECT = "practise_object"
 const val IMAGE_OR_VIDEO_SELECT_REQUEST_CODE = 1081
@@ -463,6 +463,8 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                         binding.uploadPractiseView.setImageResource(R.drawable.recv_ic_mic_white)
                         audioRecordTouchListener()
                         binding.audioPractiseHint.visibility = VISIBLE
+                        binding.uploadFileView.visibility = GONE
+
                     }
                     EXPECTED_ENGAGE_TYPE.VI == it -> {
                         binding.practiseInputHeader.text =

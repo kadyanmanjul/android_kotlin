@@ -149,7 +149,10 @@ abstract class BaseConversationActivity : CoreJoshActivity() {
     }
 
     protected fun getNewMessageObj(): ChatModel {
-        return ChatModel(type = BASE_MESSAGE_TYPE.NEW_CLASS, text = "New Class")
+        return ChatModel(
+            type = BASE_MESSAGE_TYPE.NEW_CLASS,
+            text = getString(R.string.aapki_new_class)
+        )
     }
 
     protected fun getTextMessage(text: String): ChatModel {

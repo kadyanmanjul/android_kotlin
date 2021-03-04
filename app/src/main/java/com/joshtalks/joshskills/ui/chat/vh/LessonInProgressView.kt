@@ -89,7 +89,12 @@ class LessonInProgressView : FrameLayout {
             lesson.lessonNo,
             lesson.lessonName
         )
-        imageView.setImageViewPH(lesson.thumbnailUrl, imageHeight = 160)
+        imageView.setImageViewPH(
+            lesson.thumbnailUrl,
+            imageHeight = 180,
+            scaleDownImage = true,
+            canRoundCorner = false
+        )
         setupUI(lesson)
     }
 

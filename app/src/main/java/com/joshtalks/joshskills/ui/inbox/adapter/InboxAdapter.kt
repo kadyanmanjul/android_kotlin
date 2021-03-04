@@ -98,7 +98,7 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner) :
                         0
                     )
                 }*/
-                if ((itemCount - 1) == bindingAdapterPosition) {
+                if ((itemCount - 1) == bindingAdapterPosition || (itemCount - 1) == layoutPosition) {
                     horizontalLine.visibility = android.view.View.GONE
                 }
                 if (progressBarStatus) {
