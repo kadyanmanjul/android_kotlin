@@ -43,6 +43,7 @@ import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import java.io.File
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -377,6 +378,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 }
             }
             vocabAssessmentData.postValue(assessmentList)
+            Timber.d("Sahil : lessonQuestionsLiveData.observe Completed")
         }
     }
 
@@ -435,6 +437,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     fun saveQuizToServer(assessmentId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
+            delay(1000)
             try {
                 val assessmentWithRelations: AssessmentWithRelations? =
                     appDatabase.assessmentDao().getAssessmentById(assessmentId)

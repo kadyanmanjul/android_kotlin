@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestionType
 import com.joshtalks.joshskills.repository.local.entity.PendingTask
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
@@ -45,6 +46,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.PracticeClickListeners {
     private lateinit var adapter: VocabularyPracticeAdapter
@@ -69,14 +71,17 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        Timber.d("Sahil : onAttach() Started")
         if (context is LessonActivityListener)
             lessonActivityListener = context
+        Timber.d("Sahil : onAttach() Completed")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Timber.d("Sahil : onCreate() Started")
         super.onCreate(savedInstanceState)
         totalTimeSpend = System.currentTimeMillis()
-
+        Timber.d("Sahil : onCreate() Completed")
     }
 
     override fun onCreateView(
@@ -84,32 +89,36 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        Timber.d("Sahil : onCreateView() Started")
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_vocabulary, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
         binding.vocabularyCompletedTv.text = AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.VOCABULARY_COMPLETED)
-        binding.progressLayout.setOnClickListener { }
 
         addObserver()
 
         if (isAllQuestionsAttempted()) {
             binding.vocabularyCompleteLayout.visibility = View.VISIBLE
         }
+
+        Timber.d("Sahil : onCreateView() Completed")
         return binding.root
     }
 
     private fun addObserver() {
 
         viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner, {
-
+            Timber.d("Sahil : lessonQuestionsLiveData.observe Started")
             viewModel.getAssessmentData(it.filter { it.chatType == CHAT_TYPE.VP })
 
         })
 
         viewModel.vocabAssessmentData.observe(viewLifecycleOwner, {
+            Timber.d("Sahil : vocabAssessmentData.observe Started")
             initAdapter(it)
+            Timber.d("Sahil : vocabAssessmentData.observe Completed")
         })
 
         /*viewModel.pointsSnackBarText.observe(viewLifecycleOwner) {
@@ -297,10 +306,19 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         }
     }
 
+
     override fun onPause() {
         super.onPause()
-        // adapter.notifyItemChanged(aPosition, PAUSE_AUDIO)
+        Timber.d("Sahil : onPause() Started")
+        adapter.itemList.forEachIndexed { index, lessonQuestion ->
+            if (lessonQuestion.type != LessonQuestionType.QUIZ)
+                binding.practiceRv.findViewHolderForAdapterPosition(index)?.let {
+                    (it as VocabularyPracticeAdapter.VocabularyViewHolder?)?.pauseAudio()
+                }
+        }
+
         aPosition = -1
+        Timber.d("Sahil : onPause() Completed")
     }
 
     override fun askRecordPermission() {
@@ -352,12 +370,23 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 
     override fun onResume() {
         super.onResume()
+        Timber.d("Sahil : onResume() Started")
         subscribeRXBus()
+        if (isVisible.not()) {
+            adapter.itemList.forEachIndexed { index, lessonQuestion ->
+                if (lessonQuestion.type != LessonQuestionType.QUIZ)
+                    (binding.practiceRv.findViewHolderForAdapterPosition(index)
+                            as VocabularyPracticeAdapter.VocabularyViewHolder).pauseAudio()
+            }
+        }
+        Timber.d("Sahil : onResume() Completed")
     }
 
     override fun onStop() {
         super.onStop()
+        Timber.d("Sahil : onStop() Started")
         compositeDisposable.clear()
+        Timber.d("Sahil : onStop() Completed")
     }
 
     companion object {
