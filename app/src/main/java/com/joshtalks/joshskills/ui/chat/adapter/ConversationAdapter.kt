@@ -144,7 +144,7 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
 
     @MainThread
     fun initializePool(@NonNull pool: RecyclerView.RecycledViewPool) {
-        pool.setMaxRecycledViews(LESSON_MESSAGE, 20)
+        pool.setMaxRecycledViews(LESSON_MESSAGE, 15)
         /*      pool.setMaxRecycledViews(MESSAGE_TYPE_INCOMING_MULTIMEDIA, 15)
             pool.setMaxRecycledViews(MESSAGE_TYPE_OUTGOING_TEXT, 15)
             pool.setMaxRecycledViews(MESSAGE_TYPE_OUTGOING_MULTIMEDIA, 15)
@@ -271,6 +271,9 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+        if (messageList[position].type == BASE_MESSAGE_TYPE.LESSON) {
+            holder.setIsRecyclable(false)
+        }
         holder.bind(messageList[position], getPreviousMessage(position))
     }
 

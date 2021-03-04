@@ -87,6 +87,7 @@ fun ShimmerImageView.setImageViewPH(
             RequestOptions().placeholder(R.drawable.video_placeholder)
                 .error(R.drawable.video_placeholder)
         )
+        .thumbnail(0.05f)
         .diskCacheStrategy(DiskCacheStrategy.ALL)
         //  .skipMemoryCache(false)
         .listener(object : RequestListener<Drawable> {

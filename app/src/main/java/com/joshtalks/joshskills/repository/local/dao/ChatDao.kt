@@ -409,9 +409,17 @@ interface ChatDao {
 
     private fun getLesson(chatModel: ChatModel): LessonModel? {
         if (chatModel.type == BASE_MESSAGE_TYPE.LESSON) {
-            return AppObjectController.appDatabase.lessonDao().getLessonFromChatId(chatModel.chatId)
+            //  val courseId=getCourseId(chatModel.conversationId)
+            return AppObjectController.appDatabase.lessonDao()
+                .getLessonFromChatId(chatModel.chatId)
         }
         return null
+    }
+
+    private fun getCourseId(conversationId: String): String {
+        return AppObjectController.appDatabase.courseDao()
+            .getCourseIdFromConversationId(conversationId)
+
     }
 
     private suspend fun getQuestion(chatModel: ChatModel): Question? {

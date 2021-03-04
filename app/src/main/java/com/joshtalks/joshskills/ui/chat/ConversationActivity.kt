@@ -237,7 +237,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
 
             conversationBinding.toolbar.inflateMenu(R.menu.conversation_menu)
             conversationBinding.toolbar.setOnMenuItemClickListener {
-                when (it?.itemId) {
+                when (it.itemId) {
                     R.id.menu_referral -> {
                         ReferralActivity.startReferralActivity(
                             this@ConversationActivity,
@@ -282,6 +282,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         conversationBinding.chatRv.setHasFixedSize(true)
 
         conversationBinding.chatRv.addItemDecoration(StickyHeaderDecoration(conversationAdapter), 0)
+        conversationAdapter.initializePool(conversationBinding.chatRv.recycledViewPool)
         conversationBinding.chatRv.adapter = conversationAdapter
 
         conversationBinding.chatRv.addOnScrollListener(object :
@@ -1518,7 +1519,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
 
     override fun onPlayerPause() {
         if (currentAudioPosition != -1) {
-            conversationBinding.chatRv.adapter?.notifyItemChanged(
+            conversationBinding.chatRv.adapter.notifyItemChanged(
                 currentAudioPosition
             )
         }

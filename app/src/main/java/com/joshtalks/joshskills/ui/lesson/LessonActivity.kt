@@ -146,7 +146,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
 
         binding.lessonViewpager.adapter = adapter
 
-        tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
+        tabs = binding.lessonTabLayout.getChildAt(0)
         for (i in 0 until tabs.childCount) {
             val tab = tabs.getChildAt(i)
             val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
@@ -323,7 +323,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
 
     private fun openLessonCompleteScreen(lesson: LessonModel) {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK && result.data.hasExtra(IS_BATCH_CHANGED) == true) {
+            if (result.resultCode == RESULT_OK && result.data.hasExtra(IS_BATCH_CHANGED)!! == true) {
                 setResult(RESULT_OK, Intent().apply {
                     putExtra(IS_BATCH_CHANGED, false)
                     putExtra(LAST_LESSON_INTERVAL, lesson.interval)

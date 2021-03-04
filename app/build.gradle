@@ -334,7 +334,7 @@ dependencies {
     implementation "androidx.tonyodev.fetch2rx:xfetch2rx:3.1.6"
 
     implementation 'com.karumi:dexter:6.2.2'
- //   implementation 'com.patloew.rxlocation:rxlocation:1.0.5'
+    //   implementation 'com.patloew.rxlocation:rxlocation:1.0.5'
     implementation 'com.patloew.colocation:colocation:1.0.0'
 
     implementation 'com.daimajia.easing:library:2.4@aar'

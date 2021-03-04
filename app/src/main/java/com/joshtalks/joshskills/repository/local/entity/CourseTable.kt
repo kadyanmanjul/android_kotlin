@@ -93,4 +93,9 @@ interface CourseDao {
     @Query(value = "select * from course where courseId= :courseId AND is_deleted=0  LIMIT 1")
     fun getCourseAccordingId(courseId: String): InboxEntity?
 
+
+    @Query(value = "select courseId from course where conversation_id= :conversationId AND is_deleted=0  LIMIT 1")
+    fun getCourseIdFromConversationId(conversationId: String): String
+
+
 }
