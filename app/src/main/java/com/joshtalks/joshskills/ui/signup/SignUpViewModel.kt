@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
+import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
 import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
@@ -219,6 +220,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun updateFromLoginResponse(loginResponse: LoginResponse) {
         FCMResponse.removeOldFCM()
+        DeviceDetailsResponse.removeOldDevice()
         deleteMentor(loginResponse.mentorId, Mentor.getInstance().getId())
         val user = User.getInstance()
         user.userId = loginResponse.userId
@@ -234,9 +236,9 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             .update()
         Mentor.getInstance().updateUser(user)
         AppAnalytics.updateUser()
-        WorkManagerAdmin.requiredTaskAfterLoginComplete()
         fetchMentor()
         WorkManagerAdmin.userActiveStatusWorker(true)
+        WorkManagerAdmin.requiredTaskAfterLoginComplete()
 
     }
 

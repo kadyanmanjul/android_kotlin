@@ -67,10 +67,10 @@ object WorkManagerAdmin {
             .then(
                 mutableListOf(
                     OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build(),
-                    OneTimeWorkRequestBuilder<PatchDeviceDetailsWorker>().build(),
                     OneTimeWorkRequestBuilder<JoshTalksInstallWorker>().build(),
                 )
             )
+            .then(OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build())
             .enqueue()
     }
 
@@ -86,7 +86,9 @@ object WorkManagerAdmin {
                     OneTimeWorkRequestBuilder<FeedbackRatingWorker>().build(),
                     OneTimeWorkRequestBuilder<LogAchievementLevelEventWorker>().build(),
                 )
-            ).enqueue()
+            )
+            .then(OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build())
+            .enqueue()
     }
 
     fun syncEngageVideoTask() {

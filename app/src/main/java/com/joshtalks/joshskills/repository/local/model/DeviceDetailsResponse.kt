@@ -52,12 +52,18 @@ data class DeviceDetailsResponse(
                 null
             }
         }
+
+        @JvmStatic
+        fun removeOldDevice() {
+            PrefManager.removeKey(DEVICE_DETAILS_KEY)
+        }
     }
 
     fun update() {
         val string: String = toString()
         PrefManager.put(DEVICE_DETAILS_KEY, string)
     }
+
 
 
     override fun toString(): String {

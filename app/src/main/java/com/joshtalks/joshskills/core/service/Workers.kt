@@ -438,14 +438,18 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
         try {
             val device = DeviceDetailsResponse.getInstance()
             val status = device?.apiStatus ?: ApiRespStatus.EMPTY
+            val deviceId = device?.id ?: 0
             if (ApiRespStatus.PATCH == status) {
                 return Result.success()
             } else if (ApiRespStatus.POST == status) {
-                val details = AppObjectController.signUpNetworkService.postDeviceDetails(
-                    UpdateDeviceRequest(user_id = EMPTY)
-                )
-                //  details.apiStatus=ApiRespStatus.PATCH
-                details.update()
+                if (deviceId > 0) {
+                    val details = AppObjectController.signUpNetworkService.patchDeviceDetails(
+                        deviceId,
+                        UpdateDeviceRequest()
+                    )
+                    details.apiStatus = ApiRespStatus.PATCH
+                    details.update()
+                }
             } else {
                 val details =
                     AppObjectController.signUpNetworkService.postDeviceDetails(UpdateDeviceRequest())
@@ -459,25 +463,6 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
     }
 }
 
-class PatchDeviceDetailsWorker(context: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        try {
-            if (Mentor.getInstance().hasId() && User.getInstance().isVerified) {
-                val id = DeviceDetailsResponse.getInstance()?.id!!
-                val details =
-                    AppObjectController.signUpNetworkService.patchDeviceDetails(
-                        id,
-                        UpdateDeviceRequest()
-                    )
-                details.update()
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-        return Result.success()
-    }
-}
 
 class GenerateRestoreIdWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
