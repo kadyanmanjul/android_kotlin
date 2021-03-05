@@ -344,7 +344,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         }
 
         conversationBinding.leaderboardBtnClose.setOnClickListener {
-            conversationBinding.userPointContainer.moveViewToScreenCenter(
+            conversationBinding.userPointContainer.slideOutAnimation(
                 conversationBinding.imgGroupChat,
                 conversationBinding.txtUnreadCount
             )
@@ -803,6 +803,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 conversationBinding.userPointContainer.visibility = VISIBLE
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
                 conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
+                conversationBinding.userPointContainer.slideInAnimation()
             } else {
                 conversationBinding.userPointContainer.visibility = GONE
                 conversationBinding.imgGroupChat.shiftGroupChatIconUp(conversationBinding.txtUnreadCount)

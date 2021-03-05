@@ -138,10 +138,18 @@ class LeaderBoardSearchViewModel : ViewModel() {
         viewModelScope.launch {
             val result = AppObjectController.appDatabase.recentSearch()
                 .insertSearch(
-                    RecentSearch(keyword)
+                    RecentSearch(keyword,System.currentTimeMillis())
                 )
             if (result > 0)
                 fetchRecentSearch()
+        }
+    }
+
+    fun clearResultHistory() {
+        viewModelScope.launch {
+            AppObjectController.appDatabase.recentSearch()
+                .clearHistory()
+            fetchRecentSearch()
         }
     }
 

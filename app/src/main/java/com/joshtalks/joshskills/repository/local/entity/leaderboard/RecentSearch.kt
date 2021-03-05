@@ -13,6 +13,9 @@ data class RecentSearch(
     @PrimaryKey
     @ColumnInfo(name = "keyword")
     var keyword: String,
+
+    @ColumnInfo(name = "timestamp")
+    var timestamp: Long
 )
 
 @Dao
@@ -20,6 +23,9 @@ interface RecentSearchDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSearch(item: RecentSearch): Long
 
-    @Query("SELECT * FROM RecentSearch")
+    @Query("SELECT * FROM RecentSearch ORDER BY timestamp DESC")
     suspend fun getRecentSearchHistory(): List<RecentSearch>
+
+    @Query("DELETE FROM RecentSearch")
+    suspend fun clearHistory()
 }

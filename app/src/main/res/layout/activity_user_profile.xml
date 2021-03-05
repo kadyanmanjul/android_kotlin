@@ -63,6 +63,30 @@
                     android:visibility="gone"
                     android:text="Edit"/>
 
+                <FrameLayout
+                    android:id="@+id/online_status_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/circle2"
+                    android:backgroundTint="@color/white"
+                    android:padding="@dimen/_2sdp"
+                    android:layout_margin="@dimen/_6sdp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="@id/user_pic"
+                    app:layout_constraintEnd_toEndOf="@id/user_pic"
+                    app:layout_constraintHorizontal_bias="1"
+                    app:layout_constraintStart_toStartOf="@id/user_pic"
+                    app:layout_constraintTop_toTopOf="@id/user_pic"
+                    app:layout_constraintVertical_bias="1">
+
+                    <ImageView
+                        android:layout_width="@dimen/_12sdp"
+                        android:layout_height="@dimen/_12sdp"
+                        android:background="@drawable/circle"
+                        android:backgroundTint="@color/green" />
+                </FrameLayout>
+
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/user_name"
                     android:layout_width="wrap_content"

@@ -47,6 +47,7 @@ class UserProfileActivity : BaseActivity() {
     private var impressionId: String = EMPTY
     private var intervalType: String? = EMPTY
     private var previousPage: String? = EMPTY
+    private var isUserOnline: Boolean = false
     private val compositeDisposable = CompositeDisposable()
     private var awardCategory: List<AwardCategory>? = emptyList()
     private var startTime = 0L
@@ -65,6 +66,7 @@ class UserProfileActivity : BaseActivity() {
         mentorId = intent.getStringExtra(KEY_MENTOR_ID) ?: EMPTY
         intervalType = intent.getStringExtra(INTERVAL_TYPE)
         previousPage = intent.getStringExtra(PREVIOUS_PAGE)
+        isUserOnline = intent.getBooleanExtra(IS_USER_ONLINE, false)
         addObserver()
         startTime = System.currentTimeMillis()
         initToolbar()
@@ -265,6 +267,9 @@ class UserProfileActivity : BaseActivity() {
             }
         }
         binding.scrollView.fullScroll(ScrollView.FOCUS_UP)
+        if (isUserOnline) {
+            binding.onlineStatusIv.visibility = View.VISIBLE
+        }
     }
 
     private fun checkIsAwardAchieved(awardCategory: List<AwardCategory>?): Boolean {
@@ -360,12 +365,11 @@ class UserProfileActivity : BaseActivity() {
 
             }
         }
-        if (mentorId == Mentor.getInstance().getId())
-            v?.setOnClickListener {
-                RxBus2.publish(
-                    AwardItemClickedEventBus(award)
-                )
-            }
+        v?.setOnClickListener {
+            RxBus2.publish(
+                AwardItemClickedEventBus(award)
+            )
+        }
     }
 
     private fun setViewToLayout(
@@ -402,8 +406,7 @@ class UserProfileActivity : BaseActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    if (mentorId == Mentor.getInstance().getId())
-                        openAwardPopUp(it.award)
+                    openAwardPopUp(it.award)
                 }, {
                     it.printStackTrace()
                 })
@@ -457,13 +460,15 @@ class UserProfileActivity : BaseActivity() {
         const val KEY_MENTOR_ID = "leaderboard_mentor_id"
         const val INTERVAL_TYPE = "interval_type"
         const val PREVIOUS_PAGE = "previous_page"
+        const val IS_USER_ONLINE = "is_user_online"
 
         fun startUserProfileActivity(
             activity: Activity,
             mentorId: String,
             flags: Array<Int> = arrayOf(),
             intervalType: String? = null,
-            previousPage: String
+            previousPage: String,
+            isUserOnline: Boolean = false,
         ) {
             Intent(activity, UserProfileActivity::class.java).apply {
                 putExtra(KEY_MENTOR_ID, mentorId)
@@ -471,6 +476,7 @@ class UserProfileActivity : BaseActivity() {
                     putExtra(INTERVAL_TYPE, it)
                 }
                 putExtra(PREVIOUS_PAGE, previousPage)
+                putExtra(IS_USER_ONLINE, isUserOnline)
                 flags.forEach { flag ->
                     this.addFlags(flag)
                 }

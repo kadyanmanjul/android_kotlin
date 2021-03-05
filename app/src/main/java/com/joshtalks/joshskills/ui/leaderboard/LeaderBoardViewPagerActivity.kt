@@ -16,9 +16,13 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.ActivityLeaderboardViewPagerBinding
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.OpenPreviousLeaderboard
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.ui.leaderboard.search.LeaderBoardSearchActivity
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import java.util.HashMap
 import java.util.Locale
 import kotlinx.android.synthetic.main.base_toolbar.iv_back
@@ -30,6 +34,9 @@ class LeaderBoardViewPagerActivity : BaseActivity() {
     lateinit var binding: ActivityLeaderboardViewPagerBinding
     private val viewModel by lazy { ViewModelProvider(this).get(LeaderBoardViewModel::class.java) }
     var mapOfVisitedPage = HashMap<Int, Int>()
+    private var compositeDisposable = CompositeDisposable()
+    private var tabPosition = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,7 +84,12 @@ class LeaderBoardViewPagerActivity : BaseActivity() {
                     viewModel.getFullLeaderBoardData(Mentor.getInstance().getId())
                 }
             }
-        searchActivityResult.launch(LeaderBoardSearchActivity.getSearchActivityIntent(this,viewModel.leaderBoardData.value))
+        searchActivityResult.launch(
+            LeaderBoardSearchActivity.getSearchActivityIntent(
+                this,
+                viewModel.leaderBoardData.value
+            )
+        )
     }
 
     private fun addObserver() {
@@ -92,6 +104,7 @@ class LeaderBoardViewPagerActivity : BaseActivity() {
                 ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
+                    tabPosition=position
                     mapOfVisitedPage.put(position, mapOfVisitedPage.get(position)?.plus(1) ?: 1)
                     viewModel.engageLeaderBoardimpression(mapOfVisitedPage, position)
                 }
@@ -147,4 +160,48 @@ class LeaderBoardViewPagerActivity : BaseActivity() {
         //binding.viewPager.offscreenPageLimit = 10
     }
 
+    override fun onResume() {
+        super.onResume()
+        subscribeRXBus()
+    }
+
+
+    private fun subscribeRXBus() {
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(OpenPreviousLeaderboard::class.java)
+                .subscribeOn(Schedulers.computation())
+                .subscribe({
+                    var type= EMPTY
+                    when (tabPosition) {
+                        0 -> {
+                            type = "TODAY"
+                        }
+                        1 -> {
+                            type = "WEEK"
+                        }
+                        2 -> {
+                            type = "MONTH"
+                        }
+                    }
+                    if (type.isNotBlank()) {
+                        openPreviousLeaderBoard(type)
+                    }
+                }, {
+                    it.printStackTrace()
+                })
+        )
+    }
+
+    private fun openPreviousLeaderBoard(intervalType: String) {
+        PreviousLeaderboardActivity.startPreviousLeaderboardActivity(
+            this,
+            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+            intervalType
+        )
+    }
+
+    override fun onStop() {
+        super.onStop()
+        compositeDisposable.clear()
+    }
 }

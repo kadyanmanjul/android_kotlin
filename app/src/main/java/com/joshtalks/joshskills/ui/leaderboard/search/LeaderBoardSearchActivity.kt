@@ -78,9 +78,10 @@ class LeaderBoardSearchActivity : BaseActivity() {
                     binding.recentRv.visibility = View.GONE
                 itemList.clear()
                 itemList.addAll(it)
-                itemList.add(0, RecentSearch(EMPTY))
+                itemList.add(0, RecentSearch(EMPTY, Long.MAX_VALUE))
                 adapter.notifyDataSetChanged()
             } else {
+                itemList.clear()
                 binding.recentRv.visibility = View.GONE
             }
         })
@@ -97,8 +98,12 @@ class LeaderBoardSearchActivity : BaseActivity() {
     }
 
     private fun performSearch(keyword: String) {
-        binding.searchView.setText(keyword)
-        binding.recentRv.visibility = View.GONE
+        if (keyword.equals("clear")){
+            searchViewModel.clearResultHistory()
+        } else {
+            binding.searchView.setText(keyword)
+            binding.recentRv.visibility = View.GONE
+        }
     }
 
     private fun initViewPager() {
@@ -143,6 +148,7 @@ class LeaderBoardSearchActivity : BaseActivity() {
         binding.points.visibility = View.GONE
         binding.name.visibility = View.GONE
         binding.searchLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.transparent))
+        binding.searchLayout.elevation=8f
         binding.backIv.setColorFilter(ContextCompat.getColor(this, R.color.black))
         binding.clearIv.setColorFilter(ContextCompat.getColor(this, R.color.black))
         binding.searchBg.background = ContextCompat.getDrawable(this, R.drawable.grey_rounded_bg)
@@ -157,6 +163,7 @@ class LeaderBoardSearchActivity : BaseActivity() {
         binding.points.visibility = View.VISIBLE
         binding.name.visibility = View.VISIBLE
         binding.searchLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary))
+        binding.searchLayout.elevation=8f
         binding.backIv.setColorFilter(ContextCompat.getColor(this, R.color.white))
         binding.clearIv.setColorFilter(ContextCompat.getColor(this, R.color.white))
         binding.searchBg.background =

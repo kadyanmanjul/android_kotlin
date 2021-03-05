@@ -94,7 +94,7 @@ class LeaderBoardItemViewHolder(
     fun onClick() {
         if (isHeader.not())
             response.id?.let {
-                RxBus2.publish(OpenUserProfile(it))
+                RxBus2.publish(OpenUserProfile(it,response.isOnline?:false))
             }
     }
 
@@ -102,7 +102,7 @@ class LeaderBoardItemViewHolder(
     fun onContainerClick() {
         if (isHeader.not())
             response.id?.let {
-                RxBus2.publish(OpenUserProfile(it))
+                RxBus2.publish(OpenUserProfile(it,response.isOnline?:false))
             }
     }
 }

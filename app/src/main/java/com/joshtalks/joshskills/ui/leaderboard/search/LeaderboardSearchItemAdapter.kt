@@ -26,12 +26,12 @@ class LeaderboardSearchItemAdapter(val context: Context, val itemList: List<Lead
 
             binding.container.setOnClickListener {
                 response.id?.let {
-                    RxBus2.publish(OpenUserProfile(it))
+                    RxBus2.publish(OpenUserProfile(it,response.isOnline?:false))
                 }
             }
             binding.userPic.setOnClickListener {
                 response.id?.let {
-                    RxBus2.publish(OpenUserProfile(it))
+                    RxBus2.publish(OpenUserProfile(it,response.isOnline?:false))
                 }
             }
 

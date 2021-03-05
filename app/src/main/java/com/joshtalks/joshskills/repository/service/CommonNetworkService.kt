@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.repository.server.LeaderboardType
 import com.joshtalks.joshskills.repository.server.NPSByUserRequest
+import com.joshtalks.joshskills.repository.server.PreviousLeaderboardResponse
 import com.joshtalks.joshskills.repository.server.RequestCertificateGenerate
 import com.joshtalks.joshskills.repository.server.RequestComplaint
 import com.joshtalks.joshskills.repository.server.SuccessResponse
@@ -300,5 +301,11 @@ interface CommonNetworkService {
         @Query("page") page: Int,
         @Query("interval_type") intervalType: LeaderboardType
     ): Response<List<LeaderboardMentor>>
+
+    @GET("$DIR/leaderboard/get_previous_leaderboard/")
+    suspend fun getPreviousLeaderboardData(
+        @Query("mentor_id") mentorId: String,
+        @Query("interval_type") intervalType: String
+    ): Response<PreviousLeaderboardResponse>
 
 }

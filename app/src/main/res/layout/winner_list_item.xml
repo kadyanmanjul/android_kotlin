@@ -105,7 +105,7 @@
         android:id="@+id/points"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_1sdp"
+        android:layout_marginStart="@dimen/_4sdp"
         android:layout_marginTop="@dimen/_3sdp"
         android:letterSpacing="0"
         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
@@ -120,10 +120,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_4sdp"
         android:letterSpacing="0"
-        android:text="@string/view_profile"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+        android:text="@string/view"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
         android:textColor="@color/white"
-        android:textSize="@dimen/_10ssp"
+        android:textSize="@dimen/_14ssp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/points" />
+        app:layout_constraintBottom_toBottomOf="@id/points" />
 </androidx.constraintlayout.widget.ConstraintLayout>

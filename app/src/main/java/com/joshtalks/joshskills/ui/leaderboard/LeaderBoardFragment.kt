@@ -162,7 +162,13 @@ class LeaderBoardFragment : Fragment() {
             setCurrentUserDetails(it)
         }
         leaderboardResponse1.lastWinner?.let {
-            binding.recyclerView.addView(LeaderBoardWinnerItemViewHolder(it, requireContext()))
+            binding.recyclerView.addView(
+                LeaderBoardWinnerItemViewHolder(
+                    it,
+                    requireContext(),
+                    type
+                )
+            )
         }
         binding.recyclerView.addView(
             LeaderBoardItemViewHolder(
@@ -249,11 +255,11 @@ class LeaderBoardFragment : Fragment() {
 
     private fun subscribeRXBus() {
         compositeDisposable.add(
-            RxBus2.listen(OpenUserProfile::class.java)
+            RxBus2.listenWithoutDelay(OpenUserProfile::class.java)
                 .subscribeOn(Schedulers.computation())
                 .subscribe({
                     it.id?.let { id ->
-                        openUserProfileActivity(id, type)
+                        openUserProfileActivity(id, type,it.isUserOnline)
                     }
                 }, {
                     it.printStackTrace()
@@ -261,14 +267,15 @@ class LeaderBoardFragment : Fragment() {
         )
     }
 
-    private fun openUserProfileActivity(id: String, intervalType: String) {
+    private fun openUserProfileActivity(id: String, intervalType: String,isOnline:Boolean=false) {
         context?.let {
             UserProfileActivity.startUserProfileActivity(
                 requireActivity(),
                 id,
                 arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
                 intervalType,
-                USER_PROFILE_FLOW_FROM.LEADERBOARD.value
+                USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
+                isOnline
             )
         }
     }

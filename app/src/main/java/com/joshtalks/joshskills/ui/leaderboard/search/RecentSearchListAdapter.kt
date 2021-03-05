@@ -68,7 +68,7 @@ class RecentSearchListAdapter(
         fun bind() {
             binding.recentSearch.text = "Recent Searches"
             binding.clearSearch.text = "Clear"
-            //binding.clearSearch.setOnClickListener { performSearch?.invoke() }
+            binding.clearSearch.setOnClickListener { performSearch?.invoke("clear") }
         }
     }
 }
