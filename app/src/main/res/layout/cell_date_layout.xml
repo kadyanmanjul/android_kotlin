@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:minWidth="@dimen/_360sdp"
+    android:paddingTop="@dimen/_4sdp"
+    android:paddingBottom="@dimen/_4sdp">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal|center"
+        android:elevation="@dimen/_4sdp"
+        android:foregroundGravity="center_horizontal"
+        app:cardBackgroundColor="@color/light_blue"
+        app:cardCornerRadius="@dimen/_4sdp"
+        app:cardElevation="0dp"
+        app:contentPaddingBottom="@dimen/_4sdp"
+        app:contentPaddingLeft="@dimen/_8sdp"
+        app:contentPaddingRight="@dimen/_8sdp"
+        app:contentPaddingTop="@dimen/_4sdp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/date_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+            android:textColor="@color/black"
+            tools:text="Yesterday" />
+
+    </androidx.cardview.widget.CardView>
+
+</FrameLayout>

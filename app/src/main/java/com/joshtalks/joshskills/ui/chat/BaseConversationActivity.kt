@@ -26,6 +26,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.Date
 
 abstract class BaseConversationActivity : CoreJoshActivity() {
     private lateinit var internetAvailableStatus: Snackbar
@@ -148,11 +149,13 @@ abstract class BaseConversationActivity : CoreJoshActivity() {
                 })
     }
 
-    protected fun getNewMessageObj(): ChatModel {
+    protected fun getNewMessageObj(lastMessageTime:Date): ChatModel {
         return ChatModel(
             type = BASE_MESSAGE_TYPE.NEW_CLASS,
             text = getString(R.string.aapki_new_class)
-        )
+        ).apply {
+            created=lastMessageTime
+        }
     }
 
     protected fun getTextMessage(text: String): ChatModel {

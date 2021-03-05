@@ -9,7 +9,6 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.LifecycleOwner
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -49,11 +48,9 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner) :
         if (newList.isEmpty()) {
             return
         }
-        val diffCallback = InboxDiffCallback(items, newList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
         items.clear()
         items.addAll(newList)
-        diffResult.dispatchUpdatesTo(this)
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(
@@ -98,9 +95,7 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner) :
                         0
                     )
                 }*/
-                if ((itemCount - 1) == bindingAdapterPosition || (itemCount - 1) == layoutPosition) {
-                    horizontalLine.visibility = android.view.View.GONE
-                }
+
                 if (progressBarStatus) {
                     courseProgressBar.visibility = android.view.View.VISIBLE
                     tvLastMessage.visibility = android.view.View.GONE
@@ -149,6 +144,9 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner) :
                 }
                 rootView.setOnClickListener {
                     onClickView(inboxEntity)
+                }
+                if ((itemCount - 1) == bindingAdapterPosition || (itemCount - 1) == layoutPosition) {
+                    horizontalLine.visibility = android.view.View.GONE
                 }
             }
         }
