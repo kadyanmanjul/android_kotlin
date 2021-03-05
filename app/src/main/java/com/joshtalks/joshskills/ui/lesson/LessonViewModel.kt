@@ -136,16 +136,17 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     private suspend fun getQuestionsFromAPI(lessonId: Int): List<LessonQuestion> {
         return withContext(viewModelScope.coroutineContext + Dispatchers.IO) {
-            try {
-                var lastSyncTime = PrefManager.getStringValue(lessonId.toString())
-                if (lastSyncTime.isBlank()) {
-                    lastSyncTime = "0"
-                }
-                val response = AppObjectController.chatNetworkService.getQuestionsForLesson(
-                    lastSyncTime,
-                    lessonId
-                )
 
+            var lastSyncTime = PrefManager.getStringValue(lessonId.toString())
+            if (lastSyncTime.isBlank()) {
+                lastSyncTime = "0"
+            }
+            val response = AppObjectController.chatNetworkService.getQuestionsForLesson(
+                lastSyncTime,
+                lessonId
+            )
+
+            if (response.data.isNullOrEmpty().not()) {
                 response.data.forEach {
                     it.questionId = it.id
                     it.lessonId = lessonId
@@ -157,51 +158,51 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         it.modified.time.div(1000).toString()
                     )
                 }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
             }
 
-            // Update status in case of newly added questions to an existing lesson
             val updatedQuestions = getQuestionsFromDB(lessonId)
-            val lesson = getLessonFromDB(lessonId)
-            if (lesson?.grammarStatus == LESSON_STATUS.CO) {
-                updatedQuestions.filter { it.chatType == CHAT_TYPE.GR }.forEach {
-                    if (it.status == QUESTION_STATUS.NA) {
-                        lesson.grammarStatus = LESSON_STATUS.AT
+            if (response.data.isNullOrEmpty().not()) {
+                // Update status in case of newly added questions to an existing lesson
+                val lesson = getLessonFromDB(lessonId)
+                if (lesson?.grammarStatus == LESSON_STATUS.CO) {
+                    updatedQuestions.filter { it.chatType == CHAT_TYPE.GR }.forEach {
+                        if (it.status == QUESTION_STATUS.NA) {
+                            lesson.grammarStatus = LESSON_STATUS.AT
+                        }
                     }
                 }
-            }
-            if (lesson?.vocabStatus == LESSON_STATUS.CO) {
-                updatedQuestions.filter { it.chatType == CHAT_TYPE.VP }.forEach {
-                    if (it.status == QUESTION_STATUS.NA) {
-                        lesson.vocabStatus = LESSON_STATUS.AT
+                if (lesson?.vocabStatus == LESSON_STATUS.CO) {
+                    updatedQuestions.filter { it.chatType == CHAT_TYPE.VP }.forEach {
+                        if (it.status == QUESTION_STATUS.NA) {
+                            lesson.vocabStatus = LESSON_STATUS.AT
+                        }
                     }
                 }
-            }
-            if (lesson?.readingStatus == LESSON_STATUS.CO) {
-                updatedQuestions.filter { it.chatType == CHAT_TYPE.RP }.forEach {
-                    if (it.status == QUESTION_STATUS.NA) {
-                        lesson.readingStatus = LESSON_STATUS.AT
+                if (lesson?.readingStatus == LESSON_STATUS.CO) {
+                    updatedQuestions.filter { it.chatType == CHAT_TYPE.RP }.forEach {
+                        if (it.status == QUESTION_STATUS.NA) {
+                            lesson.readingStatus = LESSON_STATUS.AT
+                        }
                     }
                 }
-            }
-            if (lesson?.speakingStatus == LESSON_STATUS.CO) {
-                updatedQuestions.filter { it.chatType == CHAT_TYPE.SP }.forEach {
-                    if (it.status == QUESTION_STATUS.NA) {
-                        lesson.speakingStatus = LESSON_STATUS.AT
+                if (lesson?.speakingStatus == LESSON_STATUS.CO) {
+                    updatedQuestions.filter { it.chatType == CHAT_TYPE.SP }.forEach {
+                        if (it.status == QUESTION_STATUS.NA) {
+                            lesson.speakingStatus = LESSON_STATUS.AT
+                        }
                     }
                 }
-            }
-            if (
-                lesson?.grammarStatus == LESSON_STATUS.AT ||
-                lesson?.vocabStatus == LESSON_STATUS.AT ||
-                lesson?.readingStatus == LESSON_STATUS.AT ||
-                lesson?.speakingStatus == LESSON_STATUS.AT
-            ) {
-                lesson.status = LESSON_STATUS.AT
-            }
-            lesson?.let {
-                updateLesson(it)
+                if (
+                    lesson?.grammarStatus == LESSON_STATUS.AT ||
+                    lesson?.vocabStatus == LESSON_STATUS.AT ||
+                    lesson?.readingStatus == LESSON_STATUS.AT ||
+                    lesson?.speakingStatus == LESSON_STATUS.AT
+                ) {
+                    lesson.status = LESSON_STATUS.AT
+                }
+                lesson?.let {
+                    updateLesson(it)
+                }
             }
             return@withContext updatedQuestions
         }
