@@ -150,7 +150,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     private var audioPlayerManager: ExoAudioPlayer? = null
     private var isOnlyChat = false
     private var flowFrom: String? = EMPTY
-    private var loadingPreviousData=false
+    private var loadingPreviousData = false
     private var isNewMessageShowing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -210,11 +210,12 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         initRV()
         initView()
         initFuture()
-        groupChatHintLogic()
-        initCourseProgressTooltip()
         addObservable()
         fetchMessage()
         readMessageDatabaseUpdate()
+        groupChatHintLogic()    //Group chat hint UI
+        initCourseProgressTooltip()    // course progress tooltip
+
     }
 
     private fun initToolbar() {
@@ -328,7 +329,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         if (loadingPreviousData.not()
                 .and(linearLayoutManager.findFirstVisibleItemPosition() in 0..8)
         ) {
-            loadingPreviousData=true
+            loadingPreviousData = true
             conversationViewModel.loadPagingMessage(conversationAdapter.getFirstItem())
         }
     }
@@ -427,30 +428,32 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     }
 
     private fun groupChatHintLogic() {
-        val isGroupChatHintAlreadySeen = PrefManager.getBoolValue(IS_GROUP_CHAT_HINT_SEEN, true)
-        if (inboxEntity.isGroupActive && isGroupChatHintAlreadySeen.not()) {
-            val lastLesson =
-                conversationViewModel.conversationList.lastOrNull { it.lesson != null }
-            lastLesson?.lesson?.let {
-                if (it.lessonNo > 3 || (it.lessonNo == 3 && it.status != LESSON_STATUS.NO)) {
-                    conversationBinding.balloonText.text =
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.GROUP_CHAT_TAGLINE)
-                    conversationBinding.overlayLayout.visibility = VISIBLE
-                    PrefManager.put(IS_GROUP_CHAT_HINT_SEEN, true, true)
+        CoroutineScope(Dispatchers.Main).launch {
+            val isGroupChatHintAlreadySeen = PrefManager.getBoolValue(IS_GROUP_CHAT_HINT_SEEN, true)
+            if (inboxEntity.isGroupActive && isGroupChatHintAlreadySeen.not()) {
+                val lesson = conversationAdapter.getLastLesson()
+                lesson?.let {
+                    if (it.lessonNo > 3 || (it.lessonNo == 3 && it.status != LESSON_STATUS.NO)) {
+                        conversationBinding.balloonText.text =
+                            AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.GROUP_CHAT_TAGLINE)
+                        conversationBinding.overlayLayout.visibility = VISIBLE
+                        PrefManager.put(IS_GROUP_CHAT_HINT_SEEN, true, true)
+                    }
                 }
             }
         }
     }
 
     private fun initCourseProgressTooltip() {
-        CoroutineScope(Dispatchers.Main).launch {
-            delay(5000)
-            if (PrefManager.getBoolValue(LESSON_TWO_OPENED) && PrefManager.getBoolValue(
-                    COURSE_PROGRESS_OPENED
-                ).not() && inboxEntity.isCapsuleCourse
-            ) {
-                showCourseProgressTooltip()
+        if (inboxEntity.isCapsuleCourse) {
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(500)
+                val flag = conversationAdapter.isUserAttemptedLesson()
+                conversationAdapter.getFirstItem()
+                if (flag && PrefManager.getBoolValue(COURSE_PROGRESS_OPENED).not()) {
+                    showCourseProgressTooltip()
+                }
             }
         }
     }
@@ -678,7 +681,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 if (isNewMessageShowing.not()) {
                     val index = items.indexOfFirst { it.isSeen.not() }
                     if (index > -1) {
-                        conversationAdapter.addMessagesList(arrayListOf(getNewMessageObj()))
+                        conversationAdapter.addMessagesList(arrayListOf(getNewMessageObj(items.first().created)))
                         linearLayoutManager.scrollToPositionWithOffset(
                             conversationAdapter.itemCount + index,
                             40
@@ -700,7 +703,8 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         lifecycleScope.launchWhenCreated {
             conversationViewModel.oldMessageCourse.collectLatest { items ->
                 conversationAdapter.addMessageAboveMessage(items)
-                loadingPreviousData=false
+                loadingPreviousData = false
+
             }
         }
         lifecycleScope.launchWhenCreated {
@@ -1134,19 +1138,18 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 })
         )
 
-
         compositeDisposable.add(
-            RxBus2.listen(UnlockNextClassEventBus::class.java)
+            RxBus2.listenWithoutDelay(UnlockNextClassEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    conversationAdapter.removeNewClassCard()
                     isNewMessageShowing = false
                     conversationBinding.refreshLayout.isRefreshing = true
-                    logUnlockCardEvent()
                     //conversationBinding.chatRv.removeView(it.viewHolder)
+                    conversationAdapter.removeNewClassCard()
                     conversationAdapter.removeUnlockMessage()
                     unlockClassViewModel.updateBatchChangeRequest()
+                    logUnlockCardEvent()
                 }, {
                     it.printStackTrace()
                 })
@@ -1321,6 +1324,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     CERTIFICATION_REQUEST_CODE -> {
                         data?.getStringExtra(CHAT_ROOM_ID)?.let {
                             conversationViewModel.refreshMessageObject(it)
+                            initCourseProgressTooltip()//Progress Tooltip
                         }
                     }
                     COURSE_PROGRESS_NEW_REQUEST_CODE -> {
@@ -1427,7 +1431,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     }
 
     private fun openCourseProgressListingScreen() {
-        val isLessonTypeChat = conversationAdapter.isLessonType()
+        val isLessonTypeChat = inboxEntity.isCapsuleCourse
         if (isLessonTypeChat) {
             startActivityForResult(
                 CourseProgressActivityNew.getCourseProgressActivityNew(

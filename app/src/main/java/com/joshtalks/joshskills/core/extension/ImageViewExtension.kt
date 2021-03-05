@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
-import androidx.appcompat.widget.AppCompatImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
@@ -147,34 +146,51 @@ fun getNoCropNoRoundTransformation(): MultiTransformation<Bitmap> {
 }
 
 
-fun AppCompatImageView.setImageViewWRPH(
+fun ShimmerImageView.setImageInLessonView(
     url: String,
+    callback: Runnable? = null,
+    placeholderImage: Int = R.drawable.video_placeholder,
     context: Context = AppObjectController.joshApplication
 ) {
-    MultiTransformation(
-        RoundedCornersTransformation(
-            Utils.dpToPx(ROUND_CORNER),
-            0,
-            RoundedCornersTransformation.CornerType.TOP
-        )
-    )
+
+    val requestOptions =
+        RequestOptions().placeholder(placeholderImage)
+            .error(placeholderImage)
+            .format(DecodeFormat.PREFER_RGB_565)
+            .disallowHardwareConfig().dontAnimate().encodeQuality(75)
     Glide.with(context)
         .load(url)
-        .override(
-            (AppObjectController.screenWidth * .8).toInt(),
-            (AppObjectController.screenHeight * .5).toInt()
-        )
+        .override(Target.SIZE_ORIGINAL)
         .optionalTransform(
             WebpDrawable::class.java,
             WebpDrawableTransformation(CircleCrop())
         )
         .apply(
-            RequestOptions().placeholder(R.drawable.video_placeholder)
-                .error(R.drawable.video_placeholder)
+            requestOptions
         )
         .fitCenter()
-        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-        .skipMemoryCache(false)
+        .thumbnail(0.05f)
+        .diskCacheStrategy(DiskCacheStrategy.ALL)
+        .listener(object : RequestListener<Drawable> {
+            override fun onLoadFailed(
+                e: GlideException?,
+                model: Any?,
+                target: Target<Drawable>?,
+                isFirstResource: Boolean
+            ): Boolean {
+                return false
+            }
+
+            override fun onResourceReady(
+                resource: Drawable?,
+                model: Any?,
+                target: Target<Drawable>?,
+                dataSource: DataSource?,
+                isFirstResource: Boolean
+            ): Boolean {
+                callback?.run()
+                return false
+            }
+        })
         .into(this)
 }
-

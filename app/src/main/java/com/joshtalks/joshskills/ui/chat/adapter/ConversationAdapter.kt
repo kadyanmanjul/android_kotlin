@@ -13,6 +13,8 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils.dateHeaderDateFormat
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.Sender
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.chat.vh.AssessmentViewHolder
@@ -42,7 +44,7 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
     StickyHeaderAdapter<DateItemHolder> {
     private val userId = Mentor.getInstance().getId()
     private var messageList: ArrayList<ChatModel> = arrayListOf()
-    private val slowList: MutableSet<ChatModel> =mutableSetOf()
+    private val slowList: MutableSet<ChatModel> = mutableSetOf()
     private val uiHandler = AppObjectController.uiHandler
 
     init {
@@ -136,8 +138,10 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
 
     fun removeUnlockMessage() {
         val index = messageList.indexOfLast { it.type == BASE_MESSAGE_TYPE.UNLOCK }
-        messageList.removeAt(index)
-        notifyItemRemoved(index)
+        if (index > -1) {
+            messageList.removeAt(index)
+            notifyItemRemoved(index)
+        }
     }
 
     fun isLessonType(): Boolean {
@@ -146,8 +150,23 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
 
     fun removeNewClassCard() {
         val index = messageList.indexOfLast { it.type == BASE_MESSAGE_TYPE.NEW_CLASS }
-        messageList.removeAt(index)
-        notifyItemRemoved(index)
+        if (index > -1) {
+            messageList.removeAt(index)
+            notifyItemRemoved(index)
+        }
+    }
+
+    fun getLastLesson(): LessonModel? {
+        return messageList.lastOrNull { it.type == BASE_MESSAGE_TYPE.LESSON }?.lesson
+    }
+
+    fun isUserAttemptedLesson(): Boolean {
+        val count = messageList.stream()
+            .filter { it.lesson != null && it.lesson?.status != LESSON_STATUS.NO }.count()
+        if (count <= 2) {
+            return true
+        }
+        return false
     }
 
 
@@ -408,7 +427,7 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
 
     override fun onCreateHeaderViewHolder(var1: ViewGroup): DateItemHolder {
         val view = LayoutInflater.from(var1.context).inflate(
-            R.layout.cc_message_list_header,
+            R.layout.cell_date_layout,
             var1, false
         )
 

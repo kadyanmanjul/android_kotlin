@@ -11,7 +11,7 @@ import androidx.core.content.res.ResourcesCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.custom_ui.ShimmerImageView
-import com.joshtalks.joshskills.core.extension.setImageViewPH
+import com.joshtalks.joshskills.core.extension.setImageInLessonView
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
@@ -89,12 +89,7 @@ class LessonInProgressView : FrameLayout {
             lesson.lessonNo,
             lesson.lessonName
         )
-        imageView.setImageViewPH(
-            lesson.thumbnailUrl,
-            imageHeight = 180,
-            scaleDownImage = true,
-            canRoundCorner = false
-        )
+        imageView.setImageInLessonView(lesson.thumbnailUrl)
         setupUI(lesson)
     }
 
