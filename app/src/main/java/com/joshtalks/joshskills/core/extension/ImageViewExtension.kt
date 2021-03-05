@@ -17,8 +17,6 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
-import com.facebook.shimmer.Shimmer
-import com.facebook.shimmer.ShimmerDrawable
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
@@ -152,28 +150,32 @@ fun getNoCropNoRoundTransformation(): MultiTransformation<Bitmap> {
 fun AppCompatImageView.setImageInLessonView(
     url: String,
     callback: Runnable? = null,
-    placeholderImage: Int = R.drawable.video_placeholder,
+    placeholderImage: Int = R.drawable.lesson_placeholder,
     context: Context = AppObjectController.joshApplication
 ) {
-
-     val shimmer = Shimmer.AlphaHighlightBuilder()// The attributes for a ShimmerDrawable is set by this builder
-        .setDuration(1800) // how long the shimmering animation takes to do one full sweep
-        .setBaseAlpha(0.7f) //the alpha of the underlying children
-        .setHighlightAlpha(0.6f) // the shimmer alpha amount
-        .setDirection(Shimmer.Direction.LEFT_TO_RIGHT)
-         .setRepeatCount(8)
-         .setShape(Shimmer.Shape.LINEAR)
-        .setAutoStart(true)
-        .build()
+/*
+    val shimmer =
+        Shimmer.AlphaHighlightBuilder()// The attributes for a ShimmerDrawable is set by this builder
+            .setDuration(1500) // how long the shimmering animation takes to do one full sweep
+            .setBaseAlpha(0.7f) //the alpha of the underlying children
+            .setHighlightAlpha(0.6f) // the shimmer alpha amount
+            .setDirection(Shimmer.Direction.LEFT_TO_RIGHT)
+            .setShape(Shimmer.Shape.LINEAR)
+            .setAutoStart(true)
+            .setFixedHeight(Utils.dpToPx(10))
+            .setClipToChildren(true)
+            .setRepeatMode(ValueAnimator.INFINITE)
+            .build()
 
     val shimmerDrawable = ShimmerDrawable().apply {
         setShimmer(shimmer)
-    }
+    }*/
 
     val requestOptions =
-        RequestOptions().placeholder(shimmerDrawable)
-            .error(placeholderImage)
-            .format(DecodeFormat.PREFER_RGB_565)
+       // RequestOptions().placeholder(shimmerDrawable)
+           //.error(shimmerDrawable)
+         RequestOptions().placeholder(placeholderImage)
+        .format(DecodeFormat.PREFER_RGB_565)
             .disallowHardwareConfig().dontAnimate().encodeQuality(75)
     Glide.with(context)
         .load(url)
@@ -185,8 +187,7 @@ fun AppCompatImageView.setImageInLessonView(
         .apply(
             requestOptions
         )
-        .fitCenter()
-        .thumbnail(0.05f)
+        //.fitCenter()
         .diskCacheStrategy(DiskCacheStrategy.ALL)
         .listener(object : RequestListener<Drawable> {
             override fun onLoadFailed(
