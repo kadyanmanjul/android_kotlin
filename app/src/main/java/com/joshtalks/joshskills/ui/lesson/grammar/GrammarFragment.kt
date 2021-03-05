@@ -86,6 +86,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_grammar_layout, container, false)
         binding.handler = this
+        binding.grammarScrollView.layoutTransition?.setAnimateParentHierarchy(false)
 
         binding.grammarScrollView.viewTreeObserver.addOnScrollChangedListener(this)
         binding.expandIv.setOnClickListener {

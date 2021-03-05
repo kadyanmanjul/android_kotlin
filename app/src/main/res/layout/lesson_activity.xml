@@ -55,5 +55,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lesson_tab_layout" />
 
+        <com.pnikosis.materialishprogress.ProgressWheel
+            android:id="@+id/progress_view"
+            android:layout_width="@dimen/_96sdp"
+            android:layout_height="@dimen/_96sdp"
+            android:layout_gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:matProg_barColor="@color/button_color"
+            app:matProg_fillRadius="true"
+            app:matProg_linearProgress="false"
+            app:matProg_progressIndeterminate="true" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

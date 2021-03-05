@@ -123,6 +123,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
             )
         binding.lifecycleOwner = this
         binding.handler = this
+        binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         scaleAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale)
 
         addObserver()
@@ -706,7 +707,9 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
 
                     binding.rootView.requestDisallowInterceptTouchEvent(true)
                     binding.counterContainer.visibility = VISIBLE
+                    binding.linearLayout.layoutTransition?.setAnimateParentHierarchy(false)
                     binding.uploadPractiseView.startAnimation(scaleAnimation)
+                    binding.linearLayout.layoutTransition?.setAnimateParentHierarchy(false)
                     requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     appAnalytics?.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
                     //appAnalytics?.create(AnalyticsEvent.AUDIO_RECORD.NAME).push()

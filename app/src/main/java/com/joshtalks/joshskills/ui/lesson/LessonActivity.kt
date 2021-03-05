@@ -72,10 +72,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
 //        })
 
         viewModel.lessonQuestionsLiveData.observe(this, {
+            binding.progressView.visibility = View.GONE
             viewModel.lessonLiveData.value?.let {
-                if (it.lessonNo >= 2) {
-                    PrefManager.put(LESSON_TWO_OPENED, true)
-                }
                 titleView.text =
                     getString(R.string.lesson_no, it.lessonNo)
             }

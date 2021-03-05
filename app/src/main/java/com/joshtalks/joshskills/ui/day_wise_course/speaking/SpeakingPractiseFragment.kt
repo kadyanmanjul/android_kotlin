@@ -70,6 +70,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
             DataBindingUtil.inflate(inflater, R.layout.speaking_practise_fragment, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
+        binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
 
         addObservers()
 

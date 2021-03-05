@@ -88,15 +88,20 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     fun getQuestions(lessonId: Int) {
         viewModelScope.launch {
-            val lessonQuestions = if (Utils.isInternetAvailable()) {
-                getQuestionsFromAPI(lessonId)
-            } else {
-                getQuestionsFromDB(lessonId)
+            val questionsFromDB = getQuestionsFromDB(lessonId)
+            if (questionsFromDB.isNotEmpty()) {
+                lessonQuestionsLiveData.postValue(questionsFromDB)
             }
 
-            if (lessonQuestions.isNotEmpty()) {
-                lessonQuestionsLiveData.postValue(lessonQuestions)
-            } else {
+            var questionsFromAPI = emptyList<LessonQuestion>()
+            if (Utils.isInternetAvailable()) {
+                questionsFromAPI = getQuestionsFromAPI(lessonId)
+                if (questionsFromAPI.isNotEmpty()) {
+                    lessonQuestionsLiveData.postValue(questionsFromAPI)
+                }
+            }
+
+            if (questionsFromDB.isEmpty() && questionsFromAPI.isEmpty()) {
                 showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
             }
         }
@@ -158,11 +163,9 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         it.modified.time.div(1000).toString()
                     )
                 }
-            }
 
-            val updatedQuestions = getQuestionsFromDB(lessonId)
-            if (response.data.isNullOrEmpty().not()) {
                 // Update status in case of newly added questions to an existing lesson
+                val updatedQuestions = getQuestionsFromDB(lessonId)
                 val lesson = getLessonFromDB(lessonId)
                 if (lesson?.grammarStatus == LESSON_STATUS.CO) {
                     updatedQuestions.filter { it.chatType == CHAT_TYPE.GR }.forEach {
@@ -203,8 +206,9 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 lesson?.let {
                     updateLesson(it)
                 }
+                return@withContext updatedQuestions
             }
-            return@withContext updatedQuestions
+            return@withContext emptyList<LessonQuestion>()
         }
     }
 
