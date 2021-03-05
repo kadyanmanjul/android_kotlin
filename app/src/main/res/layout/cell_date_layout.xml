@@ -24,7 +24,7 @@
         app:contentPaddingTop="@dimen/_4sdp">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/date_tv"
+            android:id="@+id/txt_message_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

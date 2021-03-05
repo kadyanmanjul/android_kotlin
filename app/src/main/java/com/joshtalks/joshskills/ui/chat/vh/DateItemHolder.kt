@@ -6,7 +6,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 
 class DateItemHolder internal constructor(itemView: View) : BaseViewHolder(itemView, "") {
-    var txtMessageDate: AppCompatTextView = itemView.findViewById(R.id.date_tv)
+    var txtMessageDate: AppCompatTextView = itemView.findViewById(R.id.txt_message_date)
     override fun bind(message: ChatModel, previousSender: ChatModel?) {
 
     }
