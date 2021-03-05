@@ -26,10 +26,13 @@ class LessonViewHolder(view: View, userId: String) : BaseViewHolder(view, userId
         if (lesson.status == LESSON_STATUS.CO) {
             lessonInProgressStub.get().visibility = View.GONE
             lessonCompleteStub.resolved().let {
+                lessonCompleteStub.get().visibility = View.VISIBLE
                 lessonCompleteStub.get().setup(lesson)
             }
         } else {
+            lessonCompleteStub.get().visibility = View.GONE
             lessonInProgressStub.resolved().let {
+                lessonInProgressStub.get().visibility = View.VISIBLE
                 lessonInProgressStub.get().setup(lesson)
             }
         }

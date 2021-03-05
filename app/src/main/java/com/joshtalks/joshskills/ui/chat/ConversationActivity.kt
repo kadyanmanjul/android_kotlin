@@ -450,7 +450,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
             CoroutineScope(Dispatchers.Main).launch {
                 delay(500)
                 val flag = conversationAdapter.isUserAttemptedLesson()
-                conversationAdapter.getFirstItem()
                 if (flag && PrefManager.getBoolValue(COURSE_PROGRESS_OPENED).not()) {
                     showCourseProgressTooltip()
                 }

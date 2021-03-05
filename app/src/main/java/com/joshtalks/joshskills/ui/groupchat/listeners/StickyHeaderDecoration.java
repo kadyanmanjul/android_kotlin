@@ -5,10 +5,8 @@ import android.graphics.Rect;
 import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
-
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -91,6 +89,7 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
             int var10 = ViewGroup.getChildMeasureSpec(var8, var1.getPaddingTop() + var1.getPaddingBottom(), var6.getLayoutParams().height);
             var6.measure(var9, var10);
             var6.layout(0, 0, var6.getMeasuredWidth(), var6.getMeasuredHeight());
+
             this.mHeaderCache.put(var3, var5);
             return var5;
         }

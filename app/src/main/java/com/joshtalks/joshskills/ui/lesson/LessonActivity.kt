@@ -359,6 +359,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
                     putExtra(LAST_LESSON_INTERVAL, lesson.interval)
                     putExtra(LAST_LESSON_STATUS, true)
                     putExtra(LESSON__CHAT_ID, lesson.chatId)
+                    putExtra(CHAT_ROOM_ID, lesson.chatId)
+
                 })
                 finish()
             }

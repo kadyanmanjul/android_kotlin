@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
@@ -16,6 +17,8 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.facebook.shimmer.Shimmer
+import com.facebook.shimmer.ShimmerDrawable
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
@@ -146,15 +149,29 @@ fun getNoCropNoRoundTransformation(): MultiTransformation<Bitmap> {
 }
 
 
-fun ShimmerImageView.setImageInLessonView(
+fun AppCompatImageView.setImageInLessonView(
     url: String,
     callback: Runnable? = null,
     placeholderImage: Int = R.drawable.video_placeholder,
     context: Context = AppObjectController.joshApplication
 ) {
 
+     val shimmer = Shimmer.AlphaHighlightBuilder()// The attributes for a ShimmerDrawable is set by this builder
+        .setDuration(1800) // how long the shimmering animation takes to do one full sweep
+        .setBaseAlpha(0.7f) //the alpha of the underlying children
+        .setHighlightAlpha(0.6f) // the shimmer alpha amount
+        .setDirection(Shimmer.Direction.LEFT_TO_RIGHT)
+         .setRepeatCount(8)
+         .setShape(Shimmer.Shape.LINEAR)
+        .setAutoStart(true)
+        .build()
+
+    val shimmerDrawable = ShimmerDrawable().apply {
+        setShimmer(shimmer)
+    }
+
     val requestOptions =
-        RequestOptions().placeholder(placeholderImage)
+        RequestOptions().placeholder(shimmerDrawable)
             .error(placeholderImage)
             .format(DecodeFormat.PREFER_RGB_565)
             .disallowHardwareConfig().dontAnimate().encodeQuality(75)

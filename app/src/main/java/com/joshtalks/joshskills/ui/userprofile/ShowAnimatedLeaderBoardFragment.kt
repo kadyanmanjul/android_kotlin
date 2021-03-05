@@ -32,6 +32,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.OutrankedDataResponse
+import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardItemViewHolder
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
@@ -379,6 +380,7 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
                 resultIntent.putExtra(LessonActivity.LAST_LESSON_STATUS, LESSON_STATUS.CO)
                 resultIntent.putExtra(LESSON__CHAT_ID, chatId)
                 resultIntent.putExtra(LESSON_NUMBER, lessonNumber)
+                resultIntent.putExtra(CHAT_ROOM_ID, chatId)
                 activity.setResult(AppCompatActivity.RESULT_OK, resultIntent)
                 activity.finish()
             }.run {

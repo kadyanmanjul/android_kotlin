@@ -31,7 +31,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Lesson 1: title name" />
 
-        <com.joshtalks.joshskills.core.custom_ui.ShimmerImageView
+        <androidx.appcompat.widget.AppCompatImageView
             tools:background="@drawable/video_placeholder"
             android:id="@+id/lesson_iv"
             android:layout_width="match_parent"
