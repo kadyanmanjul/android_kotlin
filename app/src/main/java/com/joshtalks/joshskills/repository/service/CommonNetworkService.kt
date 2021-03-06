@@ -302,6 +302,11 @@ interface CommonNetworkService {
         @Query("interval_type") intervalType: LeaderboardType
     ): Response<List<LeaderboardMentor>>
 
+    @Headers(
+        "Accept: application/json",
+        "Content-type:application/json",
+        "Cache-Control: public, only-if-cached,  max-stale=86400,  max-age=43200"
+    )
     @GET("$DIR/leaderboard/get_previous_leaderboard/")
     suspend fun getPreviousLeaderboardData(
         @Query("mentor_id") mentorId: String,
