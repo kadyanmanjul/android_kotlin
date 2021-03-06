@@ -66,6 +66,7 @@ import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment
 import com.joshtalks.joshskills.ui.extra.SignUpPermissionDialogFragment
+import com.joshtalks.joshskills.ui.gif.GIFActivity
 import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.inbox.IS_FROM_NEW_ONBOARDING
@@ -243,6 +244,10 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
     fun openHelpActivity() {
         val i = Intent(this, HelpActivity::class.java)
         startActivityForResult(i, HELP_ACTIVITY_REQUEST_CODE)
+    }
+
+    fun openGifActivity() {
+        startActivity(Intent(this, GIFActivity::class.java))
     }
 
     fun openLeaderBoard() {

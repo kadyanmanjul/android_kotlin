@@ -262,6 +262,10 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     R.id.leaderboard_setting -> {
                         openLeaderBoard()
                     }
+
+                    R.id.test_gif -> {
+                        openGifActivity()
+                    }
                 }
                 return@setOnMenuItemClickListener true
             }
