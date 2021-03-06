@@ -63,6 +63,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 
@@ -874,10 +875,11 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
             disableSubmitButton()
             //practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
             viewModel.getPointsForVocabAndReading(currentLessonQuestion!!.id)
-            viewModel.addTaskToService(requestEngage, PendingTask.READING_PRACTICE_OLD)
-
-            currentLessonQuestion!!.status = QUESTION_STATUS.IP
-            showCompletedPractise()
+            CoroutineScope(Dispatchers.Main).launch {
+                viewModel.addTaskToService(requestEngage, PendingTask.READING_PRACTICE_OLD)
+                delay(1000)
+                currentLessonQuestion!!.status = QUESTION_STATUS.IP
+                showCompletedPractise()            }
         }
     }
 

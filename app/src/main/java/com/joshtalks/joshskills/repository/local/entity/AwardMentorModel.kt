@@ -37,6 +37,11 @@ data class AwardMentorModel(
     @Expose
     val description: String?,
 
+    @ColumnInfo(name = "award_description")
+    @SerializedName("award_description")
+    @Expose
+    val awardDescription: String?,
+
     @ColumnInfo(name = "performer_name")
     @SerializedName("performer_name")
     @Expose

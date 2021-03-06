@@ -10,7 +10,9 @@ import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
+import com.joshtalks.joshskills.repository.server.Award
 import de.hdodenhof.circleimageview.CircleImageView
 import java.util.Locale
 
@@ -59,7 +61,20 @@ class BestPerformerViewHolder(view: View, userId: String) : BaseViewHolder(view,
                 awardImage.setImage(it, AppObjectController.joshApplication)
             }
             awardImage.setOnClickListener {
-                //RxBus2.publish(OpenAwardScreen(it))
+                RxBus2.publish(
+                    AwardItemClickedEventBus(
+                        Award(
+                            awardMentorModel.id,
+                            awardMentorModel.awardText,
+                            0,
+                            null,
+                            null,
+                            awardMentorModel.awardDescription,
+                            true,
+                            true
+                        )
+                    )
+                )
             }
         }
     }

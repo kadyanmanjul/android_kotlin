@@ -742,9 +742,9 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 }
             }
         }
-//        utilConversationViewModel.userLoginLiveData.observe(this, {
-//            CometChatMessageListActivity.showGroupChatScreen(this, it)
-//        })
+        utilConversationViewModel.userLoginLiveData.observe(this, {
+            CometChatMessageListActivity.showGroupChatScreen(this, it)
+        })
 
         utilConversationViewModel.isLoading.observe(this) { isLoading ->
             if (isLoading) {
@@ -1220,7 +1220,19 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     it.printStackTrace()
                 })
         )
+
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(OpenUserProfile::class.java)
+                .subscribeOn(Schedulers.computation())
+                .subscribe({
+                    //showAward(Award(),false)
+                }, {
+                    it.printStackTrace()
+                })
+        )
+
     }
+
 
     private fun logAssessmentEvent(assessmentId: Int) {
         AppAnalytics.create(AnalyticsEvent.QUIZ_TEST_OPENED.NAME)
