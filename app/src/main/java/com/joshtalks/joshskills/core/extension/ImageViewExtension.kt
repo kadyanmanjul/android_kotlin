@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.core.extension
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
@@ -17,6 +18,8 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.facebook.shimmer.Shimmer
+import com.facebook.shimmer.ShimmerDrawable
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
@@ -172,10 +175,10 @@ fun AppCompatImageView.setImageInLessonView(
     }*/
 
     val requestOptions =
-       // RequestOptions().placeholder(shimmerDrawable)
-           //.error(shimmerDrawable)
-         RequestOptions().placeholder(placeholderImage)
-        .format(DecodeFormat.PREFER_RGB_565)
+    // RequestOptions().placeholder(shimmerDrawable)
+        //.error(shimmerDrawable)
+        RequestOptions().placeholder(placeholderImage)
+            .format(DecodeFormat.PREFER_RGB_565)
             .disallowHardwareConfig().dontAnimate().encodeQuality(75)
     Glide.with(context)
         .load(url)
@@ -191,3 +194,71 @@ fun AppCompatImageView.setImageInLessonView(
         .diskCacheStrategy(DiskCacheStrategy.ALL)
         .into(this)
 }
+
+fun ImageView.setImageAndFitCenter(
+    url: String,
+    context: Context? = AppObjectController.joshApplication,
+    placeholderImage: Int = R.drawable.lesson_placeholder,
+) {
+
+    val shimmer =
+        Shimmer.AlphaHighlightBuilder()// The attributes for a ShimmerDrawable is set by this builder
+            .setDuration(1500) // how long the shimmering animation takes to do one full sweep
+            .setBaseAlpha(0.7f) //the alpha of the underlying children
+            .setHighlightAlpha(0.6f) // the shimmer alpha amount
+            .setDirection(Shimmer.Direction.LEFT_TO_RIGHT)
+            .setShape(Shimmer.Shape.LINEAR)
+            .setAutoStart(true)
+            .setFixedHeight(Utils.dpToPx(10))
+            .setClipToChildren(true)
+            .setRepeatMode(ValueAnimator.INFINITE)
+            .build()
+
+    val shimmerDrawable = ShimmerDrawable().apply {
+        setShimmer(shimmer)
+    }
+
+    val requestOptions =
+        RequestOptions().placeholder(shimmerDrawable)
+            .error(shimmerDrawable)
+            .format(DecodeFormat.PREFER_RGB_565)
+            .disallowHardwareConfig().dontAnimate().encodeQuality(75)
+    Glide.with(context ?: AppObjectController.joshApplication)
+        .load(url)
+        .override(Target.SIZE_ORIGINAL)
+        .optionalTransform(
+            WebpDrawable::class.java,
+            WebpDrawableTransformation(CircleCrop())
+        )
+        .apply(
+            requestOptions
+        )
+        .listener(
+            object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    return false
+
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    return false
+                }
+
+            }
+        )
+        //.fitCenter()
+        .diskCacheStrategy(DiskCacheStrategy.ALL)
+        .into(this)
+}
+

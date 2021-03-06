@@ -141,8 +141,11 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                 )
             }
 
+        adapter.setHasStableIds(true)
         binding.practiceRv.layoutManager = LinearLayoutManager(requireContext())
         binding.practiceRv.adapter = adapter
+        binding.practiceRv.setHasFixedSize(true)
+        binding.practiceRv.setItemViewCacheSize(5)
     }
 
     override fun submitQuiz(lessonQuestion: LessonQuestion, isCorrect: Boolean, questionId: Int) {

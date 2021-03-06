@@ -69,7 +69,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val updatedLessonResponseLiveData: MutableLiveData<UpdateLessonResponse> = MutableLiveData()
 
     fun getLesson(lessonId: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val lesson = getLessonFromDB(lessonId)
 
             if (lesson != null) {
@@ -87,7 +87,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun getQuestions(lessonId: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val questionsFromDB = getQuestionsFromDB(lessonId)
             if (questionsFromDB.isNotEmpty()) {
                 lessonQuestionsLiveData.postValue(questionsFromDB)
@@ -562,7 +562,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun getTopicDetail(topicId: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val topicDetails = if (Utils.isInternetAvailable()) {
                 getTopicFromAPI(topicId)
             } else {
@@ -596,26 +596,30 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private suspend fun updateLessonStatus() {
-        lessonLiveData.postValue(
-            lessonLiveData.value?.apply {
-                val lessonStatus = if (
-                    this.grammarStatus == LESSON_STATUS.CO &&
-                    this.vocabStatus == LESSON_STATUS.CO &&
-                    this.readingStatus == LESSON_STATUS.CO &&
-                    this.speakingStatus == LESSON_STATUS.CO
-                ) {
-                    LESSON_STATUS.CO
-                } else {
-                    LESSON_STATUS.AT
+        viewModelScope.launch(Dispatchers.IO) {
+            lessonLiveData.postValue(
+                lessonLiveData.value?.apply {
+                    val lessonStatus = if (
+                        this.grammarStatus == LESSON_STATUS.CO &&
+                        this.vocabStatus == LESSON_STATUS.CO &&
+                        this.readingStatus == LESSON_STATUS.CO &&
+                        this.speakingStatus == LESSON_STATUS.CO
+                    ) {
+                        LESSON_STATUS.CO
+                    } else {
+                        LESSON_STATUS.AT
+                    }
+                    appDatabase.lessonDao().updateLessonStatus(this.id, lessonStatus)
                 }
-                appDatabase.lessonDao().updateLessonStatus(this.id, lessonStatus)
-            }
-        )
+            )
+        }
     }
 
     private suspend fun updateLesson(lesson: LessonModel) {
-        appDatabase.lessonDao().insertSingleItem(lesson)
-        lessonLiveData.postValue(lesson)
+        viewModelScope.launch(Dispatchers.IO) {
+            appDatabase.lessonDao().insertSingleItem(lesson)
+            lessonLiveData.postValue(lesson)
+        }
     }
 
 }

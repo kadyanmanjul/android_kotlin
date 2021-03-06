@@ -173,6 +173,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
         )
 
         binding.lessonViewpager.adapter = adapter
+        binding.lessonViewpager.requestTransparentRegion(binding.lessonViewpager)
 
         tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
         for (i in 0 until tabs.childCount) {

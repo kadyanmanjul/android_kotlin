@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.day_wise_course.vocabulary
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.SystemClock
 import android.util.Log
@@ -17,19 +16,12 @@ import androidx.core.text.HtmlCompat
 import androidx.core.view.children
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.integration.webp.decoder.WebpDrawable
-import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.bitmap.FitCenter
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
+import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.PracticeItemLayoutBinding
 import com.joshtalks.joshskills.databinding.VocabQuizPracticeItemLayoutBinding
@@ -38,7 +30,6 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQues
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
-import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.muddzdev.styleabletoast.StyleableToast
@@ -69,67 +60,45 @@ class VocabularyPracticeAdapter(
         .addBasicParam()
         .addUserDetails()
 
+    init {
+        setHasStableIds(true)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        Timber.d("Sahil : onCreateViewHolder() Started")
         when (viewType) {
             VOCAB_TYPE -> {
-                Timber.d("Sahil : onCreateViewHolder() Completed")
-                return VocabularyViewHolder(
-                    PracticeItemLayoutBinding.inflate(
-                        LayoutInflater.from(
-                            context
-                        ), parent, false
-                    ).apply {
-                        lifecycleOwner = lifecycleProvider
-                    }
-                )
+                val binding = PracticeItemLayoutBinding.inflate(
+                    LayoutInflater.from(context), parent, false
+                ).apply {
+                    lifecycleOwner = lifecycleProvider
+                }
+                return VocabularyViewHolder(binding)
             }
             else -> {
-                Timber.d("Sahil : onCreateViewHolder() Completed")
-                return QuizViewHolder(
-                    VocabQuizPracticeItemLayoutBinding.inflate(
-                        LayoutInflater.from(
-                            context
-                        ), parent, false
-                    ).apply {
-                        lifecycleOwner = lifecycleProvider
-                    }, context
-                )
+                val binding = VocabQuizPracticeItemLayoutBinding.inflate(
+                    LayoutInflater.from(context), parent, false
+                ).apply {
+                    lifecycleOwner = lifecycleProvider
+                }
+                return QuizViewHolder(binding)
             }
         }
     }
-
-    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
-        super.onViewDetachedFromWindow(holder)
-        Timber.d("Sahil : onViewDetachedFromWindow() Started")
-        if (holder is VocabularyViewHolder) {
-            holder.complete()
-        }
-        Timber.d("Sahil : onViewDetachedFromWindow() Completed")
-    }
-
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         Timber.d("Sahil : onBindViewHolder() $position Started")
         when (holder.itemViewType) {
             VOCAB_TYPE -> {
-                (holder as VocabularyViewHolder).bind(itemList[position], position)
+                (holder as VocabularyViewHolder).lessonQuestion = itemList[position]
+                holder.bind(position)
             }
             else -> {
-                if (assessmentQuizList.isNotEmpty()) {
-                    assessmentQuizList.filter { it.assessment.remoteId == itemList[position].assessmentId }
-                        .let {
-                            if (it.isNotEmpty()) {
-                                it.getOrNull(0)?.let { asWr ->
-                                    (holder as QuizViewHolder).bind(
-                                        itemList[position],
-                                        asWr,
-                                        position
-                                    )
-                                }
-                            }
-                        }
-                }
+                (holder as QuizViewHolder).lessonQuestion = itemList[position]
+                assessmentQuizList.filter { it.assessment.remoteId == itemList[position].assessmentId }
+                    .getOrNull(0)?.let { assessmentWithRelations ->
+                        holder.assessmentWithRelations = assessmentWithRelations
+                        holder.bind(position)
+                    }
             }
         }
         Timber.d("Sahil : onBindViewHolder() $position Completed")
@@ -142,27 +111,21 @@ class VocabularyPracticeAdapter(
     ) {
         Timber.d("Sahil : onBindViewHolderWithPayload() $position Started")
         if (payloads.isNotEmpty() && payloads[0] as String == PAUSE_AUDIO) {
-            (holder as VocabularyViewHolder).pauseAudio()
+            (holder as VocabularyViewHolder).binding.root.tag = itemList[position].id
+            holder.pauseAudio()
         } else {
             when (holder.itemViewType) {
                 VOCAB_TYPE -> {
-                    (holder as VocabularyViewHolder).bind(itemList[position], position)
+                    (holder as VocabularyViewHolder).lessonQuestion = itemList[position]
+                    holder.bind(position)
                 }
                 else -> {
-                    if (assessmentQuizList.isNotEmpty()) {
-                        assessmentQuizList.filter { it.assessment.remoteId == itemList[position].assessmentId }
-                            .let {
-                                if (it.isNotEmpty()) {
-                                    it.getOrNull(0)?.let { asWr ->
-                                        (holder as QuizViewHolder).bind(
-                                            itemList[position],
-                                            asWr,
-                                            position
-                                        )
-                                    }
-                                }
-                            }
-                    }
+                    (holder as QuizViewHolder).lessonQuestion = itemList[position]
+                    assessmentQuizList.filter { it.assessment.remoteId == itemList[position].assessmentId }
+                        .getOrNull(0)?.let { assessmentWithRelations ->
+                            holder.assessmentWithRelations = assessmentWithRelations
+                            holder.bind(position)
+                        }
                 }
             }
         }
@@ -186,54 +149,35 @@ class VocabularyPracticeAdapter(
         }
     }
 
+    override fun getItemId(position: Int): Long {
+        return itemList[position].id.toLong()
+    }
+
+    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        Timber.d("Sahil : onViewDetachedFromWindow() Started")
+        if (holder is VocabularyViewHolder) {
+            holder.complete()
+        }
+        Timber.d("Sahil : onViewDetachedFromWindow() Completed")
+    }
+
     inner class QuizViewHolder(
-        val binding: VocabQuizPracticeItemLayoutBinding,
-        val context: Context
+        val binding: VocabQuizPracticeItemLayoutBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        private lateinit var lessonQuestion: LessonQuestion
         private var isCorrect: Boolean = false
-        private var quizQuestionId: Int = -1
+        var lessonQuestion: LessonQuestion? = null
+        var assessmentWithRelations: AssessmentWithRelations? = null
 
-        fun bind(
-            lessonQuestion: LessonQuestion,
-            assessmentRelations: AssessmentWithRelations?,
-            position: Int
-        ) {
-            Timber.d("Sahil : bind() $position Started")
-            if (assessmentRelations == null) {
-                return
-            }
-            this.lessonQuestion = lessonQuestion
-            if (expandCard && lessonQuestion.status == QUESTION_STATUS.NA) {
-                expandCard = false
-                expandCard()
-                if (position > 0)
-                    clickListener.focusChild(position - 1)
-            } else {
-                collapseCard()
-            }
+        init {
+            initViewHolder()
+        }
 
-            val assessmentQuestions: AssessmentQuestionWithRelations =
-                assessmentRelations.questionList[0]
-            quizQuestionId = assessmentQuestions.question.remoteId
-            isCorrect = assessmentQuestions.question.status == QuestionStatus.CORRECT
-
+        private fun initViewHolder() {
             binding.handler = this@QuizViewHolder
-
-            if (assessmentQuestions.choiceList.isNullOrEmpty().not()) {
-                binding.quizRadioGroup.setOnCheckedChangeListener(
-                    quizCheckedChangeListener
-                )
-            }
-            updateRadioGroupUi(assessmentQuestions)
-            val revisionNumber = assessmentQuizList.indexOf(assessmentRelations) + 1
-            binding.practiceTitleTv.text =
-                context.getString(
-                    R.string.quiz_tag,
-                    revisionNumber,
-                    revisionItemSize
-                )
-
+            binding.quizRadioGroup.setOnCheckedChangeListener(
+                quizCheckedChangeListener
+            )
             binding.practiceTitleTv.setOnClickListener {
                 if (binding.quizLayout.visibility == GONE) {
                     expandCard()
@@ -249,26 +193,57 @@ class VocabularyPracticeAdapter(
                 }
             }
             binding.submitAnswerBtn.setOnClickListener {
-                onSubmitQuizClick(assessmentQuestions)
+                if (lessonQuestion != null && assessmentWithRelations != null) {
+                    onSubmitQuizClick(lessonQuestion!!, assessmentWithRelations!!.questionList[0])
+                }
             }
-
             binding.showExplanationBtn.setOnClickListener {
                 showExplanation()
             }
             binding.continueBtn.setOnClickListener {
-                expandCard = true
-                clickListener.submitQuiz(
-                    lessonQuestion,
-                    isCorrect,
-                    assessmentQuestions.question.remoteId
-                )
-                onContinueClick()
+                if (lessonQuestion != null && assessmentWithRelations != null) {
+                    expandCard = true
+                    clickListener.submitQuiz(
+                        lessonQuestion!!,
+                        isCorrect,
+                        assessmentWithRelations!!.questionList[0].question.remoteId
+                    )
+                    onContinueClick()
+                }
+            }
+        }
+
+        fun bind(
+            position: Int
+        ) {
+            Timber.d("Sahil : bind() $position Started")
+            if (assessmentWithRelations?.questionList?.getOrNull(0) == null) {
+                return
+            }
+            if (expandCard && lessonQuestion?.status == QUESTION_STATUS.NA) {
+                expandCard = false
+                expandCard()
+                if (position > 0)
+                    clickListener.focusChild(position - 1)
+            } else {
+                collapseCard()
             }
 
-            if (lessonQuestion.status == QUESTION_STATUS.IP) {
+            val assessmentQuestion = assessmentWithRelations!!.questionList[0]
+            isCorrect = assessmentQuestion.question.status == QuestionStatus.CORRECT
+            updateRadioGroupUI(assessmentQuestion)
+            val revisionNumber = assessmentQuizList.indexOf(assessmentWithRelations) + 1
+            binding.practiceTitleTv.text =
+                AppObjectController.joshApplication.getString(
+                    R.string.quiz_tag,
+                    revisionNumber,
+                    revisionItemSize
+                )
+
+            if (lessonQuestion?.status == QUESTION_STATUS.IP) {
                 binding.quizLayout.visibility = VISIBLE
                 binding.continueBtn.visibility = VISIBLE
-                assessmentQuestions.reviseConcept?.let {
+                assessmentQuestion.reviseConcept?.let {
                     binding.showExplanationBtn.visibility = VISIBLE
                 }
                 binding.submitAnswerBtn.visibility = GONE
@@ -279,16 +254,19 @@ class VocabularyPracticeAdapter(
             Timber.d("Sahil : bind() $position Completed")
         }
 
-        private fun onSubmitQuizClick(assessmentQuestions: AssessmentQuestionWithRelations) {
+        private fun onSubmitQuizClick(
+            lessonQuestion: LessonQuestion,
+            assessmentQuestion: AssessmentQuestionWithRelations
+        ) {
             //binding.quizRadioGroup.tag is id of Radio button with correct answer.
             if (binding.quizRadioGroup.tag is Int) {
-                assessmentQuestions.question.isAttempted = true
-                assessmentQuestions.question.status =
+                assessmentQuestion.question.isAttempted = true
+                assessmentQuestion.question.status =
                     evaluateQuestionStatus((binding.quizRadioGroup.tag as Int) == binding.quizRadioGroup.checkedRadioButtonId)
-                isCorrect = assessmentQuestions.question.status == QuestionStatus.CORRECT
+                isCorrect = assessmentQuestion.question.status == QuestionStatus.CORRECT
 
                 val selectedChoice =
-                    assessmentQuestions.choiceList[binding.quizRadioGroup.indexOfChild(
+                    assessmentQuestion.choiceList[binding.quizRadioGroup.indexOfChild(
                         binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
                     )]
                 selectedChoice.isSelectedByUser = true
@@ -298,17 +276,17 @@ class VocabularyPracticeAdapter(
                 binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.tag as Int)
                     .setBackgroundResource(R.drawable.rb_correct_rect_bg)
 
-                updateRadioGroupUi(assessmentQuestions)
+                updateRadioGroupUI(assessmentQuestion)
 
                 clickListener.submitQuiz(
                     lessonQuestion,
                     isCorrect,
-                    assessmentQuestions.question.remoteId
+                    assessmentQuestion.question.remoteId
                 )
 
-                clickListener.quizOptionSelected(lessonQuestion, assessmentQuestions)
+                clickListener.quizOptionSelected(lessonQuestion, assessmentQuestion)
 
-                assessmentQuestions.reviseConcept?.let {
+                assessmentQuestion.reviseConcept?.let {
                     binding.showExplanationBtn.visibility = VISIBLE
                 }
 
@@ -321,7 +299,7 @@ class VocabularyPracticeAdapter(
             binding.quizLayout.visibility = VISIBLE
             binding.expandIv.setImageDrawable(
                 ContextCompat.getDrawable(
-                    context,
+                    AppObjectController.joshApplication,
                     R.drawable.ic_remove
                 )
             )
@@ -331,7 +309,7 @@ class VocabularyPracticeAdapter(
             binding.quizLayout.visibility = GONE
             binding.expandIv.setImageDrawable(
                 ContextCompat.getDrawable(
-                    context,
+                    AppObjectController.joshApplication,
                     R.drawable.ic_add
                 )
             )
@@ -340,16 +318,19 @@ class VocabularyPracticeAdapter(
         fun hideExplanation() {
             binding.explanationLbl.visibility = GONE
             binding.explanationTv.visibility = GONE
-            binding.showExplanationBtn.text = context.getString(R.string.show_explanation)
+            binding.showExplanationBtn.text =
+                AppObjectController.joshApplication.getString(R.string.show_explanation)
         }
 
         fun showExplanation() {
             if (binding.explanationLbl.visibility == VISIBLE) {
-                binding.showExplanationBtn.text = context.getString(R.string.show_explanation)
+                binding.showExplanationBtn.text =
+                    AppObjectController.joshApplication.getString(R.string.show_explanation)
                 binding.explanationLbl.visibility = GONE
                 binding.explanationTv.visibility = GONE
             } else {
-                binding.showExplanationBtn.text = context.getString(R.string.hide_explanation)
+                binding.showExplanationBtn.text =
+                    AppObjectController.joshApplication.getString(R.string.hide_explanation)
                 binding.explanationLbl.visibility = VISIBLE
                 binding.explanationTv.visibility = VISIBLE
                 binding.explanationTv.requestFocus()
@@ -375,7 +356,7 @@ class VocabularyPracticeAdapter(
 
         }
 
-        fun updateRadioGroupUi(question: AssessmentQuestionWithRelations) {
+        private fun updateRadioGroupUI(question: AssessmentQuestionWithRelations) {
             binding.quizQuestionTv.text = question.question.text
             hideExplanation()
             binding.explanationTv.text = question.reviseConcept?.description
@@ -450,7 +431,7 @@ class VocabularyPracticeAdapter(
 
         private fun resetRadioBackground(radioButton: RadioButton) {
             radioButton.setBackgroundColor(
-                ContextCompat.getColor(context, R.color.white)
+                ContextCompat.getColor(AppObjectController.joshApplication, R.color.white)
             )
             radioButton.setCompoundDrawablesWithIntrinsicBounds(
                 0,
@@ -468,12 +449,15 @@ class VocabularyPracticeAdapter(
             }
         }
 
-        val quizCheckedChangeListener =
+        private val quizCheckedChangeListener =
             RadioGroup.OnCheckedChangeListener { radioGroup: RadioGroup, checkedId: Int ->
                 resetAllRadioButtonsBg()
                 binding.submitAnswerBtn.isEnabled = true
                 radioGroup.findViewById<RadioButton>(checkedId)?.setBackgroundColor(
-                    ContextCompat.getColor(context, R.color.received_bg_BC)
+                    ContextCompat.getColor(
+                        AppObjectController.joshApplication,
+                        R.color.received_bg_BC
+                    )
                 )
             }
 
@@ -496,7 +480,7 @@ class VocabularyPracticeAdapter(
                         R.drawable.ic_green_tick,
                         0
                     )
-                    radioButton.elevation = 8F
+                    radioButton.elevation = 4F
                     radioButton.alpha = 1f
                 } else {
                     resetRadioBackground(radioButton)
@@ -530,24 +514,14 @@ class VocabularyPracticeAdapter(
         ExoAudioPlayer.ProgressUpdateListener {
         private var startTime: Long = 0L
         var filePath: String? = null
-        var lessonQuestion: LessonQuestion? = null
         private var mUserIsSeeking = false
+        var lessonQuestion: LessonQuestion? = null
 
-        fun bind(lessonQuestion: LessonQuestion, position: Int) {
-            Timber.d("Sahil : bind() $position Started")
-            binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
-            this.lessonQuestion = lessonQuestion
-            if (expandCard && lessonQuestion.status == QUESTION_STATUS.NA) {
-                expandCard = false
-                expandCard()
-                if (position > 0)
-                    clickListener.focusChild(position - 1)
-            } else {
-                collapseCard()
-            }
+        init {
+            initViewHolder()
+        }
 
-            setPracticeInfoView(lessonQuestion)
-
+        private fun initViewHolder() {
             binding.titleView.setOnClickListener {
                 if (binding.practiceContentLl.visibility == GONE) {
                     expandCard()
@@ -555,34 +529,40 @@ class VocabularyPracticeAdapter(
                     collapseCard()
                 }
             }
-
             binding.btnPlayInfo.setOnClickListener {
-                appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio Played")
-                    ?.addParam("lesson_id", lessonQuestion.lessonId)
-                    ?.addParam("question_id", lessonQuestion.id)
-                    ?.push()
-                playPracticeAudio(lessonQuestion, layoutPosition)
+                lessonQuestion?.let {
+                    appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio Played")
+                        ?.addParam("lesson_id", it.lessonId)
+                        ?.addParam("question_id", it.id)
+                        ?.push()
+
+                    playPracticeAudio(it, layoutPosition)
+                }
             }
 
             binding.submitBtnPlayInfo.setOnClickListener {
-                appAnalytics?.addParam(
-                    AnalyticsEvent.PRACTICE_EXTRA.NAME,
-                    "Already Submitted audio Played"
-                )
-                    ?.addParam("lesson_id", lessonQuestion.lessonId)
-                    ?.addParam("question_id", lessonQuestion.id)
 
-                playSubmitPracticeAudio(lessonQuestion, layoutPosition)
+                lessonQuestion?.let {
+                    appAnalytics?.addParam(
+                        AnalyticsEvent.PRACTICE_EXTRA.NAME,
+                        "Already Submitted audio Played"
+                    )
+                        ?.addParam("lesson_id", it.lessonId)
+                        ?.addParam("question_id", it.id)
+
+                    playSubmitPracticeAudio(it, layoutPosition)
 //                filePath = chatModel.downloadedLocalPath
-                val state =
-                    if (lessonQuestion.isPlaying) {
-                        currentQuestion?.isPlaying = true
-                        MaterialPlayPauseDrawable.State.Pause
-                    } else {
-                        currentQuestion?.isPlaying = false
-                        MaterialPlayPauseDrawable.State.Play
-                    }
-                binding.submitBtnPlayInfo.state = state
+                    val state =
+                        if (it.isPlaying) {
+                            currentQuestion?.isPlaying = true
+                            MaterialPlayPauseDrawable.State.Pause
+                        } else {
+                            currentQuestion?.isPlaying = false
+                            MaterialPlayPauseDrawable.State.Play
+                        }
+
+                    binding.submitBtnPlayInfo.state = state
+                }
             }
 
             binding.submitPractiseSeekbar.setOnSeekBarChangeListener(
@@ -611,42 +591,100 @@ class VocabularyPracticeAdapter(
                     }
                 })
 
-
             binding.ivCancel.setOnClickListener {
-                lessonQuestion.filePath = null
-                removeAudioPractise()
-                removeAudioPractice()
+                lessonQuestion?.let {
+                    it.filePath = null
+                    removeAudioPractise()
+                    removeAudioPractice(it)
+                }
             }
 
             binding.submitAnswerBtn.setOnClickListener {
-                expandCard = true
-                if (lessonQuestion.filePath == null) {
-                    showToast(context.getString(R.string.submit_practise_msz))
-                    return@setOnClickListener
-                }
-
-                if (clickListener.submitPractice(lessonQuestion)) {
-                    if (isAudioPlaying()) {
-                        binding.submitPractiseSeekbar.progress = 0
-                        binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
-                        lessonQuestion.isPlaying = false
-                        audioManager?.resumeOrPause()
+                lessonQuestion?.let {
+                    expandCard = true
+                    if (it.filePath == null) {
+                        showToast(AppObjectController.joshApplication.getString(R.string.submit_practise_msz))
+                        return@setOnClickListener
                     }
-                    appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
-                        ?.addParam("lesson_id", lessonQuestion.lessonId)
-                        ?.addParam("question_id", lessonQuestion.id)
-                        ?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Submitted")
-                        ?.addParam(
-                            AnalyticsEvent.PRACTICE_TYPE_SUBMITTED.NAME,
-                            "$it Practice Submitted"
-                        )
-                        ?.addParam(
-                            AnalyticsEvent.PRACTICE_SUBMITTED.NAME,
-                            "Submit Practice $"
-                        )
-                        ?.push()
+
+                    if (clickListener.submitPractice(it)) {
+                        if (isAudioPlaying()) {
+                            binding.submitPractiseSeekbar.progress = 0
+                            binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+                            it.isPlaying = false
+                            audioManager?.resumeOrPause()
+                        }
+                        appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
+                            ?.addParam("lesson_id", it.lessonId)
+                            ?.addParam("question_id", it.id)
+                            ?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Submitted")
+                            ?.addParam(
+                                AnalyticsEvent.PRACTICE_TYPE_SUBMITTED.NAME,
+                                "$it Practice Submitted"
+                            )
+                            ?.addParam(
+                                AnalyticsEvent.PRACTICE_SUBMITTED.NAME,
+                                "Submit Practice $"
+                            )
+                            ?.push()
+                    }
                 }
 
+            }
+
+            binding.videoPlayer.setPlayListener {
+                lessonQuestion?.let {
+                    val videoId = it.videoList?.getOrNull(0)?.id
+                    val videoUrl = it.videoList?.getOrNull(0)?.video_url
+                    VideoPlayerActivity.startVideoActivity(
+                        context,
+                        "",
+                        videoId,
+                        videoUrl
+                    )
+                }
+            }
+
+            setAudioRecordTouchListener()
+
+            binding.practiseSeekbar.setOnSeekBarChangeListener(
+                object : SeekBar.OnSeekBarChangeListener {
+                    var userSelectedPosition = 0
+                    override fun onStartTrackingTouch(seekBar: SeekBar) {
+                        mUserIsSeeking = true
+                    }
+
+                    override fun onProgressChanged(
+                        seekBar: SeekBar,
+                        progress: Int,
+                        fromUser: Boolean
+                    ) {
+                        if (fromUser) {
+                            userSelectedPosition = progress
+                        }
+                    }
+
+                    override fun onStopTrackingTouch(seekBar: SeekBar) {
+                        mUserIsSeeking = false
+                        audioManager?.seekTo(userSelectedPosition.toLong())
+                        //clickListener.onSeekChange(userSelectedPosition.toLong())
+                    }
+                })
+        }
+
+        fun bind(position: Int) {
+            Timber.d("Sahil : bind() $position Started")
+            binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+            if (expandCard && lessonQuestion?.status == QUESTION_STATUS.NA) {
+                expandCard = false
+                expandCard()
+                if (position > 0)
+                    clickListener.focusChild(position - 1)
+            } else {
+                collapseCard()
+            }
+            lessonQuestion?.let {
+                setPracticeInfoView(it)
             }
             Timber.d("Sahil : bind() $position Completed")
         }
@@ -676,7 +714,6 @@ class VocabularyPracticeAdapter(
         override fun onPlayerEmptyTrack() {
         }
 
-
         override fun complete() {
             clickListener.playAudio(-1)
             pauseAudio()
@@ -690,16 +727,18 @@ class VocabularyPracticeAdapter(
         }
 
         override fun onProgressUpdate(progress: Long) {
-            currentQuestion?.playProgress = progress.toInt()
-            if (currentPlayingPosition != -1) {
-                binding.progressBarImageView.progress = progress.toInt()
-                if (lessonQuestion?.materialType == LessonMaterialType.AU) {
-                    binding.practiseSeekbar.progress = progress.toInt()
-                }
-                Log.d(TAG, "onProgressUpdate() called with: progress = $progress")
-                binding.submitPractiseSeekbar.progress = progress.toInt()
+            lessonQuestion?.let {
+                currentQuestion?.playProgress = progress.toInt()
+                if (currentPlayingPosition != -1) {
+                    binding.progressBarImageView.progress = progress.toInt()
+                    if (it.materialType == LessonMaterialType.AU) {
+                        binding.practiseSeekbar.progress = progress.toInt()
+                    }
+                    Timber.d("onProgressUpdate() called with: progress = $progress")
+                    binding.submitPractiseSeekbar.progress = progress.toInt()
 
 //                notifyItemChanged(layoutPosition)
+                }
             }
         }
 
@@ -739,7 +778,8 @@ class VocabularyPracticeAdapter(
         fun playPracticeAudio(lessonQuestion: LessonQuestion, position: Int) {
             if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
                 StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
-                    .text(context.getString(R.string.volume_up_message)).cornerRadius(16)
+                    .text(AppObjectController.joshApplication.getString(R.string.volume_up_message))
+                    .cornerRadius(16)
                     .length(Toast.LENGTH_LONG)
                     .solidBackground().show()
             }
@@ -801,7 +841,8 @@ class VocabularyPracticeAdapter(
                 if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
                     StyleableToast.Builder(AppObjectController.joshApplication)
                         .gravity(Gravity.BOTTOM)
-                        .text(context.getString(R.string.volume_up_message)).cornerRadius(16)
+                        .text(AppObjectController.joshApplication.getString(R.string.volume_up_message))
+                        .cornerRadius(16)
                         .length(Toast.LENGTH_LONG)
                         .solidBackground().show()
                 }
@@ -839,7 +880,7 @@ class VocabularyPracticeAdapter(
         fun pauseAudio() {
             audioManager?.onPause()
             lessonQuestion?.let {
-                if (lessonQuestion!!.isPlaying) {
+                if (it.isPlaying) {
                     playSubmitPracticeAudio(it, layoutPosition)
                     currentQuestion?.isPlaying = false
                     binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
@@ -852,7 +893,7 @@ class VocabularyPracticeAdapter(
             val wordNumber = itemList.filter { it.assessmentId == null }.indexOf(lessonQuestion) + 1
             lessonQuestion.run {
                 binding.practiceTitleTv.text =
-                    context.getString(
+                    AppObjectController.joshApplication.getString(
                         R.string.word_tag,
                         wordNumber,
                         wordsItemSize,
@@ -889,11 +930,11 @@ class VocabularyPracticeAdapter(
                     LessonMaterialType.IM -> {
                         binding.imageView.visibility = VISIBLE
                         this.imageList?.getOrNull(0)?.imageUrl?.let { path ->
-                            setImageInImageView(path, binding.imageView)
-                            binding.imageView.setOnClickListener {
+                            binding.imageView.setImageAndFitCenter(path, context)
+//                            binding.imageView.setOnClickListener {
 //                                ImageShowFragment.newInstance(path, "", "")
 //                                    .show(supportFragmentManager, "ImageShow")
-                            }
+//                            }
                         }
                     }
                     LessonMaterialType.VI -> {
@@ -901,31 +942,17 @@ class VocabularyPracticeAdapter(
                         this.videoList?.getOrNull(0)?.video_url?.let {
                             binding.videoPlayer.setUrl(it)
                             binding.videoPlayer.fitToScreen()
-                            binding.videoPlayer.setPlayListener {
-                                val videoId = this.videoList?.getOrNull(0)?.id
-                                val videoUrl = this.videoList?.getOrNull(0)?.video_url
-                                VideoPlayerActivity.startVideoActivity(
-                                    context,
-                                    "",
-                                    videoId,
-                                    videoUrl
-                                )
-                            }
+//                            binding.videoPlayer.setPlayListener {
+//                                val videoId = lessonQuestion.videoList?.getOrNull(0)?.id
+//                                val videoUrl = lessonQuestion.videoList?.getOrNull(0)?.video_url
+//                                VideoPlayerActivity.startVideoActivity(
+//                                    context,
+//                                    "",
+//                                    videoId,
+//                                    videoUrl
+//                                )
+//                            }
                             binding.videoPlayer.downloadStreamButNotPlay()
-                        }
-                    }
-                    LessonMaterialType.PD -> {
-                        binding.imageView.visibility = VISIBLE
-                        binding.imageView.setImageResource(R.drawable.ic_practise_pdf_ph)
-                        this.pdfList?.getOrNull(0)?.let { pdfType ->
-                            binding.imageView.setOnClickListener {
-                                PdfViewerActivity.startPdfActivity(
-                                    context,
-                                    pdfType.id,
-                                    EMPTY
-                                )
-
-                            }
                         }
                     }
                     LessonMaterialType.TX -> {
@@ -960,44 +987,6 @@ class VocabularyPracticeAdapter(
             }
         }
 
-        private fun setImageInImageView(url: String, imageView: ImageView) {
-            binding.progressBarImageView.visibility = VISIBLE
-
-            Glide.with(context)
-                .load(url)
-                .override(Target.SIZE_ORIGINAL)
-                .optionalTransform(
-                    WebpDrawable::class.java,
-                    WebpDrawableTransformation(FitCenter())
-                )
-                .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any?,
-                        target: Target<Drawable>?,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        return false
-
-                    }
-
-                    override fun onResourceReady(
-                        resource: Drawable?,
-                        model: Any?,
-                        target: Target<Drawable>?,
-                        dataSource: DataSource?,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        binding.progressBarImageView.visibility = GONE
-
-                        return false
-                    }
-
-                })
-
-                .into(imageView)
-        }
-
         private fun setViewAccordingExpectedAnswer(lessonQuestion: LessonQuestion) {
             lessonQuestion.run {
                 showPracticeInputLayout()
@@ -1007,7 +996,6 @@ class VocabularyPracticeAdapter(
                     binding.practiseInputHeader.text = AppObjectController.getFirebaseRemoteConfig()
                         .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
                     binding.uploadPractiseView.setImageResource(R.drawable.recv_ic_mic_white)
-                    audioRecordTouchListener(lessonQuestion)
                     binding.audioPractiseHint.visibility = VISIBLE
                     binding.submitAudioViewContainer.visibility = GONE
                     binding.yourSubAnswerTv.visibility = GONE
@@ -1024,7 +1012,8 @@ class VocabularyPracticeAdapter(
                     binding.subPractiseSubmitLayout.layoutParams as ViewGroup.MarginLayoutParams
                 params.topMargin = Utils.dpToPx(20)
                 binding.subPractiseSubmitLayout.layoutParams = params
-                binding.yourSubAnswerTv.text = context.getString(R.string.your_submitted_answer)
+                binding.yourSubAnswerTv.text =
+                    AppObjectController.joshApplication.getString(R.string.your_submitted_answer)
                 if (lessonQuestion.practiceEngagement.isNullOrEmpty() && lessonQuestion.status == QUESTION_STATUS.IP) {
                     filePath = lessonQuestion.filePath
                     binding.submitPractiseSeekbar.max =
@@ -1059,65 +1048,66 @@ class VocabularyPracticeAdapter(
         }
 
         @SuppressLint("ClickableViewAccessibility")
-        private fun audioRecordTouchListener(lessonQuestion: LessonQuestion) {
+        private fun setAudioRecordTouchListener() {
             binding.uploadPractiseView.setOnTouchListener { _, event ->
                 if (PermissionUtils.isAudioAndStoragePermissionEnable(context).not()) {
                     clickListener.askRecordPermission()
                     return@setOnTouchListener true
                 }
-                when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        binding.videoPlayer.onPause()
-                        binding.rootView.requestDisallowInterceptTouchEvent(true)
-                        binding.counterContainer.visibility = VISIBLE
-                        val scaleAnimation = AnimationUtils.loadAnimation(context, R.anim.scale)
-                        binding.uploadPractiseView.startAnimation(scaleAnimation)
-                        binding.counterTv.base = SystemClock.elapsedRealtime()
+                lessonQuestion?.let {
+                    when (event.action) {
+                        MotionEvent.ACTION_DOWN -> {
+                            binding.videoPlayer.onPause()
+                            //binding.rootView.requestDisallowInterceptTouchEvent(true)
+                            binding.counterContainer.visibility = VISIBLE
+                            val scaleAnimation = AnimationUtils.loadAnimation(context, R.anim.scale)
+                            binding.uploadPractiseView.startAnimation(scaleAnimation)
+                            binding.counterTv.base = SystemClock.elapsedRealtime()
 
-                        binding.counterTv.start()
-                        this.startTime = System.currentTimeMillis()
-                        clickListener.startRecording(lessonQuestion, layoutPosition, startTime)
-                        binding.audioPractiseHint.visibility = GONE
+                            binding.counterTv.start()
+                            this.startTime = System.currentTimeMillis()
+                            clickListener.startRecording(it, layoutPosition, startTime)
+                            binding.audioPractiseHint.visibility = GONE
 
-                        appAnalytics?.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
-                            ?.addParam("lesson_id", lessonQuestion.lessonId)
-                            ?.addParam("question_id", lessonQuestion.id)
-                            ?.push()
-                    }
-                    MotionEvent.ACTION_MOVE -> {
-                    }
-                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                        binding.rootView.requestDisallowInterceptTouchEvent(false)
-                        binding.counterTv.stop()
-                        val stopTime = System.currentTimeMillis()
+                            appAnalytics?.addParam(
+                                AnalyticsEvent.AUDIO_RECORD.NAME,
+                                "Audio Recording"
+                            )
+                                ?.addParam("lesson_id", it.lessonId)
+                                ?.addParam("question_id", it.id)
+                                ?.push()
+                        }
+                        MotionEvent.ACTION_MOVE -> {
+                        }
+                        MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                            //binding.rootView.requestDisallowInterceptTouchEvent(false)
+                            binding.counterTv.stop()
+                            val stopTime = System.currentTimeMillis()
 //                        stopRecording(chatModel, stopTime)
-                        clickListener.stopRecording(lessonQuestion, layoutPosition, stopTime)
-                        binding.uploadPractiseView.clearAnimation()
-                        binding.counterContainer.visibility = GONE
-                        binding.audioPractiseHint.visibility = VISIBLE
-                        binding.ivCancel.visibility = VISIBLE
+                            clickListener.stopRecording(it, layoutPosition, stopTime)
+                            binding.uploadPractiseView.clearAnimation()
+                            binding.counterContainer.visibility = GONE
+                            binding.audioPractiseHint.visibility = VISIBLE
+                            binding.ivCancel.visibility = VISIBLE
 //                        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-                        val timeDifference =
-                            TimeUnit.MILLISECONDS.toSeconds(stopTime) - TimeUnit.MILLISECONDS.toSeconds(
-                                startTime
-                            )
-                        if (timeDifference > 1) {
-                            audioAttachmentInit(lessonQuestion)
+                            val timeDifference =
+                                TimeUnit.MILLISECONDS.toSeconds(stopTime) - TimeUnit.MILLISECONDS.toSeconds(
+                                    startTime
+                                )
+                            if (timeDifference > 1) {
+                                audioAttachmentInit(it)
+                            } else {
+
+                            }
+                        }
+                        else -> {
+
                         }
                     }
                 }
-
                 true
             }
-        }
-
-        private fun startRecording(lessonQuestion: LessonQuestion, startTime: Long) {
-
-        }
-
-        fun stopRecording(lessonQuestion: LessonQuestion, stopTime: Long) {
-
         }
 
         private fun audioAttachmentInit(lessonQuestion: LessonQuestion) {
@@ -1147,32 +1137,9 @@ class VocabularyPracticeAdapter(
 
         private fun initializePractiseSeekBar(lessonQuestion: LessonQuestion) {
             binding.practiseSeekbar.progress = lessonQuestion.playProgress
-            binding.practiseSeekbar.setOnSeekBarChangeListener(
-                object : SeekBar.OnSeekBarChangeListener {
-                    var userSelectedPosition = 0
-                    override fun onStartTrackingTouch(seekBar: SeekBar) {
-                        mUserIsSeeking = true
-                    }
-
-                    override fun onProgressChanged(
-                        seekBar: SeekBar,
-                        progress: Int,
-                        fromUser: Boolean
-                    ) {
-                        if (fromUser) {
-                            userSelectedPosition = progress
-                        }
-                    }
-
-                    override fun onStopTrackingTouch(seekBar: SeekBar) {
-                        mUserIsSeeking = false
-                        audioManager?.seekTo(userSelectedPosition.toLong())
-                        //clickListener.onSeekChange(userSelectedPosition.toLong())
-                    }
-                })
         }
 
-        private fun removeAudioPractice() {
+        private fun removeAudioPractice(lessonQuestion: LessonQuestion) {
             hidePracticeSubmitLayout()
             binding.submitAudioViewContainer.visibility = GONE
             binding.submitPractiseSeekbar.progress = 0
@@ -1180,8 +1147,8 @@ class VocabularyPracticeAdapter(
             binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
             disableSubmitButton()
             appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio practise removed")
-                ?.addParam("lesson_id", lessonQuestion?.lessonId!!)
-                ?.addParam("question_id", lessonQuestion?.id)
+                ?.addParam("lesson_id", lessonQuestion.lessonId)
+                ?.addParam("question_id", lessonQuestion.id)
                 ?.push()
         }
 
@@ -1247,7 +1214,7 @@ class VocabularyPracticeAdapter(
             binding.practiceContentLl.visibility = VISIBLE
             binding.expandIv.setImageDrawable(
                 ContextCompat.getDrawable(
-                    context,
+                    AppObjectController.joshApplication,
                     R.drawable.ic_remove
                 )
             )
@@ -1257,7 +1224,7 @@ class VocabularyPracticeAdapter(
             binding.practiceContentLl.visibility = GONE
             binding.expandIv.setImageDrawable(
                 ContextCompat.getDrawable(
-                    context,
+                    AppObjectController.joshApplication,
                     R.drawable.ic_add
                 )
             )

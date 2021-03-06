@@ -27,13 +27,15 @@ data class AssessmentQuestionRequest(
     ) : this(
         id = assessmentQuestion.remoteId,
         choices = if (assessmentQuestion.choiceType == ChoiceType.MATCH_TEXT) {
-            choices.filter { it.isSelectedByUser }.map {
-                ChoiceRequest(it, choices)
-            }
+            choices.filter { it.isSelectedByUser || it.userSelectedOrder != 100 || it.userSelectedOrder != 0 }
+                .map {
+                    ChoiceRequest(it, choices)
+                }
         } else {
-            choices.filter { it.isSelectedByUser }.map {
-                ChoiceRequest(it)
-            }
+            choices.filter { it.isSelectedByUser || it.userSelectedOrder != 100 || it.userSelectedOrder != 0 }
+                .map {
+                    ChoiceRequest(it)
+                }
         },
         isAttempted = assessmentQuestion.isAttempted
     )

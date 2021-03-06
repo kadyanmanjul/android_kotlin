@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -19,7 +18,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -29,14 +27,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.integration.webp.decoder.WebpDrawable
-import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.bitmap.FitCenter
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
@@ -45,6 +35,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
+import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ReadingPracticeFragmentWithoutFeedbackBinding
@@ -292,7 +283,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                 LessonMaterialType.IM -> {
                     binding.imageView.visibility = VISIBLE
                     this.imageList?.getOrNull(0)?.imageUrl?.let { path ->
-                        setImageInImageView(path, binding.imageView)
+                        binding.imageView.setImageAndFitCenter(path, context)
                         binding.imageView.setOnClickListener {
                             ImageShowFragment.newInstance(path, "", "")
                                 .show(childFragmentManager, "ImageShow")
@@ -581,47 +572,6 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
             }
         }
     }
-
-
-    private fun setImageInImageView(url: String, imageView: ImageView) {
-        binding.progressBarImageView.visibility = VISIBLE
-
-
-        Glide.with(AppObjectController.joshApplication)
-            .load(url)
-            .override(Target.SIZE_ORIGINAL)
-            .optionalTransform(
-                WebpDrawable::class.java,
-                WebpDrawableTransformation(FitCenter())
-            )
-            .listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    return false
-
-                }
-
-                override fun onResourceReady(
-                    resource: Drawable?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    dataSource: DataSource?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    binding.progressBarImageView.visibility = GONE
-
-                    return false
-                }
-
-            })
-
-            .into(imageView)
-    }
-
 
     private fun initializePractiseSeekBar() {
         binding.practiseSeekbar.setOnSeekBarChangeListener(
