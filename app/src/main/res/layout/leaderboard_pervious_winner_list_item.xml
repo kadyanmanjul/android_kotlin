@@ -85,15 +85,15 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/award"
-            android:layout_width="@dimen/_34sdp"
-            android:layout_height="@dimen/_36sdp"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_40sdp"
             android:layout_marginHorizontal="@dimen/_8sdp"
             app:layout_constraintBottom_toBottomOf="@+id/points"
             app:layout_constraintStart_toEndOf="@id/name"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintTop_toTopOf="@+id/points"
             app:layout_goneMarginStart="@dimen/_84sdp"
-            tools:src="@drawable/circle" />
+            tools:src="@drawable/sample_award" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/points"

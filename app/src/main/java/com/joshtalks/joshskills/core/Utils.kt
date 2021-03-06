@@ -77,10 +77,6 @@ import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation
-import kotlinx.coroutines.*
-import okhttp3.RequestBody.Companion.toRequestBody
-import timber.log.Timber
 import java.io.*
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -92,9 +88,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlinx.coroutines.*
+import okhttp3.RequestBody.Companion.toRequestBody
+import timber.log.Timber
 
 
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")

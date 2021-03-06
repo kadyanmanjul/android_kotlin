@@ -10,7 +10,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.location.Location
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -757,18 +756,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             //SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
             PointSnackbar.make(view, duration, action_lable)?.show()
-            val mediaplayer: MediaPlayer = MediaPlayer.create(
-                this,
-                R.raw.ting
-            ) //You Can Put Your File Name Instead Of abc
-
-            mediaplayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
-                override fun onCompletion(mediaPlayer: MediaPlayer) {
-                    mediaPlayer.reset()
-                    mediaPlayer.release()
-                }
-            })
-            mediaplayer.start()
+            playSnackbarSound(this)
         }
     }
 

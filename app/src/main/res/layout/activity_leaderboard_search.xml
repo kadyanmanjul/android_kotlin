@@ -20,6 +20,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:cardCornerRadius="0dp"
             android:elevation="@dimen/_40sdp"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -157,7 +158,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_1sdp"
             android:layout_marginHorizontal="@dimen/_4sdp"
-            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginTop="@dimen/_8sdp"
             android:background="@color/dark_grey"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -176,6 +177,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@+id/search_layout_card"
+            tools:visibility="gone"
             tools:listitem="@layout/recent_search_item" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

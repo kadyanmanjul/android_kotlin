@@ -108,38 +108,40 @@ fun View.slideOutAnimation(imgGroupChat: AppCompatImageView, txtUnreadCount: Tex
 }
 
 fun View.slideInAnimation() {
-    val fromLocattion = IntArray(2)
-    this.getLocationOnScreen(fromLocattion)
-    val animSet = AnimationSet(false)
-    animSet.fillAfter = true
-    animSet.duration = 250
-    //animSet.interpolator = LinearInterpolator()
-    val translate = TranslateAnimation(
-        Animation.ABSOLUTE,  //from xType
-        0f,
-        Animation.ABSOLUTE,  //to xType
-        0f,
-        Animation.ABSOLUTE,  //from yType
-        -this.height.toFloat(),
-        Animation.ABSOLUTE,  //to yType
-        0f
-    )
+    if (this.visibility != View.VISIBLE) {
+        this@slideInAnimation.visibility = View.VISIBLE
+        val fromLocattion = IntArray(2)
+        this.getLocationOnScreen(fromLocattion)
+        val animSet = AnimationSet(false)
+        animSet.fillAfter = true
+        animSet.duration = 250
+        //animSet.interpolator = LinearInterpolator()
+        val translate = TranslateAnimation(
+            Animation.ABSOLUTE,  //from xType
+            0f,
+            Animation.ABSOLUTE,  //to xType
+            0f,
+            Animation.ABSOLUTE,  //from yType
+            -this.height.toFloat(),
+            Animation.ABSOLUTE,  //to yType
+            0f
+        )
 
-    animSet.setAnimationListener(object : Animation.AnimationListener {
-        override fun onAnimationEnd(p0: Animation?) {
-            this@slideInAnimation.visibility = View.VISIBLE
-        }
+        animSet.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationEnd(p0: Animation?) {
+            }
 
-        override fun onAnimationStart(p0: Animation?) {
+            override fun onAnimationStart(p0: Animation?) {
 
-        }
+            }
 
-        override fun onAnimationRepeat(p0: Animation?) {
-        }
-    })
-    translate.interpolator = LinearInterpolator()
-    animSet.addAnimation(translate)
-    this.startAnimation(animSet)
+            override fun onAnimationRepeat(p0: Animation?) {
+            }
+        })
+        translate.interpolator = LinearInterpolator()
+        animSet.addAnimation(translate)
+        this.startAnimation(animSet)
+    }
 }
 
 fun AppCompatImageView.shiftGroupChatIconUp(txtUnreadCount: TextView) {

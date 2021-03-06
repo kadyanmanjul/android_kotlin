@@ -90,9 +90,6 @@ class VoipCallFeedbackView : DialogFragment() {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             //attributes.windowAnimations = R.style.DialogAnimation
         }
-
-        addObserver()
-        practiceViewModel.getPointsForVocabAndReading(null, channelName = channelName)
         return binding.root
     }
 
@@ -101,6 +98,11 @@ class VoipCallFeedbackView : DialogFragment() {
             this.viewLifecycleOwner,
             {
                 if (it.pointsList.isNullOrEmpty().not()) {
+                    /*RxBus2.publish(
+                        SnackBarEvent(
+                            it.pointsList!!.get(0),null
+                        )
+                    )*/
                     showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
                 }
             })
@@ -143,6 +145,9 @@ class VoipCallFeedbackView : DialogFragment() {
             }
             binding.txtSpoke.text = getString(R.string.spoke_for_minute, mTime.toString())
             binding.txtBottom.text = getString(R.string.block_user_hint, callerName)
+
+            addObserver()
+            practiceViewModel.getPointsForVocabAndReading(null, channelName = channelName)
         }
     }
     private fun getMinuteString(min :Int): String {

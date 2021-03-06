@@ -4,7 +4,6 @@ package com.joshtalks.joshskills.ui.leaderboard
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -41,7 +40,6 @@ class PreviousLeaderboardActivity : BaseActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_previous_leaderboard)
         binding.lifecycleOwner = this
         intervalType = intent.getStringExtra(INTERVAL_TYPE)
-        Log.d("Manjul", "onCreate() called with: intervalType = $intervalType")
         addObserver()
         initRV()
         initToolbar()
@@ -133,15 +131,6 @@ class PreviousLeaderboardActivity : BaseActivity() {
 
         leaderboardResponse.aboveThreeMentorList?.forEach {
             binding.recyclerView.addView(LeaderBoardItemViewHolder(it, this))
-        }
-        var lastPosition = leaderboardResponse.currentMentor?.ranking ?: 0
-        if (leaderboardResponse.aboveThreeMentorList?.isNullOrEmpty()!!.not()) {
-            lastPosition =
-                leaderboardResponse.aboveThreeMentorList.get(
-                    leaderboardResponse.aboveThreeMentorList.size.minus(
-                        1
-                    )
-                ).ranking
         }
 
         binding.recyclerView.addView(EmptyItemViewHolder())

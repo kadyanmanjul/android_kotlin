@@ -18,13 +18,16 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.MutableLiveData
+import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
 import com.joshtalks.joshskills.databinding.ActivityCallingBinding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackView
@@ -503,5 +506,23 @@ class WebRtcActivity : AppCompatActivity() {
                     it.printStackTrace()
                 })
         )
+
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(SnackBarEvent::class.java)
+                .subscribeOn(Schedulers.computation())
+                .subscribe({
+                    showSnackBar(binding.container, Snackbar.LENGTH_LONG, it.pointsSnackBarText)
+                }, {
+                    it.printStackTrace()
+                })
+        )
+    }
+
+    fun showSnackBar(view: View, duration: Int, action_lable: String?) {
+        if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+            //SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
+            PointSnackbar.make(view, duration, action_lable)?.show()
+            playSnackbarSound(this)
+        }
     }
 }

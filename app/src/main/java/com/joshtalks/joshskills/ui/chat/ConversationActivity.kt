@@ -800,10 +800,10 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     private fun initScoreCardView(userData: UserProfileResponse) {
         userData.isPointsActive?.let { isLeaderBoardActive ->
             if (isLeaderBoardActive) {
-                conversationBinding.userPointContainer.visibility = VISIBLE
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
                 conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
                 conversationBinding.userPointContainer.slideInAnimation()
+
             } else {
                 conversationBinding.userPointContainer.visibility = GONE
                 conversationBinding.imgGroupChat.shiftGroupChatIconUp(conversationBinding.txtUnreadCount)
