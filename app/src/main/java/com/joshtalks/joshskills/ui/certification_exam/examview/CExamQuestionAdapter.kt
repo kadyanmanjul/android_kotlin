@@ -78,6 +78,7 @@ class CExamQuestionAdapter(
         return holder.bind(questionList[position], position)
     }
 
+
     inner class ViewHolder(val binding: CexamListItemBinding, val context: Context) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -131,14 +132,8 @@ class CExamQuestionAdapter(
             radioButton.layoutParams = params
             radioButton.id = answer.id
             radioButton.text = answer.text
-            radioButton.isChecked = false
             radioButton.tag = answer.id
-            radioButton.isFocusable = false
-
-            if (userSelectedOption == answer.id) {
-                radioButton.isChecked = true
-                //      radioButton.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#F57777"))
-            }
+            radioButton.isFocusable = true
 
             if (CertificationExamView.RESULT_VIEW == examView) {
                 radioButton.isClickable = false
@@ -170,6 +165,8 @@ class CExamQuestionAdapter(
                 radioButton.setBackgroundResource(R.drawable.radio_button_selector)
                 radioButton.buttonTintList = colorStateList
             }
+            radioButton.isChecked = userSelectedOption == answer.id
+
             return radioButton
         }
     }

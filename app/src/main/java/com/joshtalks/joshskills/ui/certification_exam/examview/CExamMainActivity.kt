@@ -23,13 +23,13 @@ import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTIO
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
 import com.joshtalks.joshskills.ui.certification_exam.questionlistbottom.Callback
 import com.joshtalks.joshskills.ui.certification_exam.questionlistbottom.QuestionListBottomSheet
+import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlinx.android.synthetic.main.activity_cexam_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.*
-import java.util.concurrent.TimeUnit
 
 
 const val ARG_EXAM_VIEW = "exam_view"
@@ -79,7 +79,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
 
         certificationQuestionModel?.run {
             if (CertificationExamView.EXAM_VIEW == examView) {
-                if (lastQuestionOfExit == -1) {
+                if (lastQuestionOfExit < 0) {
                     questionsList.addAll(questions.shuffled())
                 } else {
                     questionsList.addAll(questions)

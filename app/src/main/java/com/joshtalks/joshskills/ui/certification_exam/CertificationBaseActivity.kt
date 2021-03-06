@@ -36,7 +36,7 @@ class CertificationBaseActivity : BaseActivity() {
             chatMessageId: String,
             certificationId: Int,
             cExamStatus: CExamStatus = CExamStatus.FRESH,
-            lessonInterval:Int?=-1
+            lessonInterval: Int? = -1
         ): Intent {
             return Intent(activity, CertificationBaseActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, conversationId)
@@ -164,15 +164,11 @@ class CertificationBaseActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        if (viewModel.isUserSubmitExam.value != null && viewModel.isUserSubmitExam.value!!) {
-            val resultIntent = Intent().apply {
-                putExtra(CHAT_ROOM_ID, intent.getStringExtra(CHAT_ROOM_ID))
-                putExtra(EXAM_LESSON_INTERVAL, intent.getIntExtra(EXAM_LESSON_INTERVAL, -1))
-            }
-            setResult(RESULT_OK, resultIntent)
-            this.finish()
-        } else {
-            this.finish()
+        val resultIntent = Intent().apply {
+            putExtra(CHAT_ROOM_ID, intent.getStringExtra(CHAT_ROOM_ID))
+            putExtra(EXAM_LESSON_INTERVAL, intent.getIntExtra(EXAM_LESSON_INTERVAL, -1))
         }
+        setResult(RESULT_OK, resultIntent)
+        this.finish()
     }
 }
