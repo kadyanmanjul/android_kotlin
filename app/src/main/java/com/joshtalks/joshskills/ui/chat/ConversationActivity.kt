@@ -207,14 +207,14 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
 
     private fun init() {
         initToolbar()
+      //  groupChatHintLogic()    //Group chat hint UI
+       // initCourseProgressTooltip()    // course progress tooltip
         initRV()
         initView()
         initFuture()
         addObservable()
         fetchMessage()
         readMessageDatabaseUpdate()
-        groupChatHintLogic()    //Group chat hint UI
-        initCourseProgressTooltip()    // course progress tooltip
 
     }
 

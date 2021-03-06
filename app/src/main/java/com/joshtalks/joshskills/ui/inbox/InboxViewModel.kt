@@ -44,7 +44,6 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 getAllRegisterCourseMinimalFromDB()
-                delay(500)
                 getCourseFromServer()
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -66,6 +65,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                     return@launch
                 }
                 appDatabase.courseDao().insertRegisterCourses(courseListResponse).let {
+                    delay(1000)
                     _registerCourseNetworkData.emit(
                         appDatabase.courseDao().getRegisterCourseMinimal()
                     )

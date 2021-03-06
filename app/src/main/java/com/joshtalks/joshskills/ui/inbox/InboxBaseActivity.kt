@@ -17,8 +17,6 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.inapp_update.Constants
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
-import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
@@ -65,7 +63,7 @@ abstract class InboxBaseActivity : CoreJoshActivity(),
 
     override fun onStart() {
         super.onStart()
-        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+        CoroutineScope(Dispatchers.Default).launch {
             isSubscriptionStarted = PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED)
             isSubscriptionEnd = PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED).not()
         }
@@ -201,7 +199,7 @@ abstract class InboxBaseActivity : CoreJoshActivity(),
 
     protected fun courseExploreClick() {
         if (isGuestUser().not()) {
-            RxBus2.publish(ExploreCourseEventBus())
+            openCourseExplorer()
             logEvent(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
             return
         }
@@ -209,7 +207,7 @@ abstract class InboxBaseActivity : CoreJoshActivity(),
 
             when (it) {
                 ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V7, ONBOARD_VERSIONS.ONBOARDING_V8 -> {
-                    RxBus2.publish(ExploreCourseEventBus())
+                    openCourseExplorer()
                     logEvent(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
                 }
                 ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V5, ONBOARD_VERSIONS.ONBOARDING_V6 -> {
@@ -250,9 +248,6 @@ abstract class InboxBaseActivity : CoreJoshActivity(),
                 }).check()
         }
     }
-
-    abstract fun showExpiryTimeToolTip()
-    abstract fun showToolTipBelowFindMoreCourse(remainingTrialDays: Int)
     abstract fun openCourseExplorer()
     abstract fun openCourseSelectionExplorer(alreadyHaveCourses: Boolean = false)
 }

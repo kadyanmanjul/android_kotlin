@@ -17,17 +17,16 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.YYYY_MM_DD
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.databinding.InboxItemLayoutBinding
-import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import java.util.ArrayList
 import java.util.Date
 import java.util.Locale
 import timber.log.Timber
 
-class InboxAdapter(private var lifecycleProvider: LifecycleOwner) :
+class InboxAdapter(private var lifecycleProvider: LifecycleOwner,private val openCourseListener: OnOpenCourseListener) :
     RecyclerView.Adapter<InboxAdapter.InboxViewHolder>() {
     private var items: ArrayList<InboxEntity> = arrayListOf()
     var drawablePadding: Float = 2f
@@ -248,7 +247,8 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner) :
                     inboxEntity.duration.toString()
                 )
                 .push()
-            RxBus2.publish(OpenCourseEventBus(inboxEntity))
+            openCourseListener.onClick(inboxEntity)
+         //   RxBus2.publish(OpenCourseEventBus(inboxEntity))
         }
     }
 }
