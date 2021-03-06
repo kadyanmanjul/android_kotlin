@@ -93,7 +93,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
             DataBindingUtil.inflate(inflater, R.layout.fragment_vocabulary, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
-        binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
+        binding.rootView.layoutTransition.setAnimateParentHierarchy(false)
         binding.vocabularyCompletedTv.text = AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.VOCABULARY_COMPLETED)
 

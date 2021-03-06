@@ -174,7 +174,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
         binding.lessonViewpager.adapter = adapter
         binding.lessonViewpager.requestTransparentRegion(binding.lessonViewpager)
 
-        tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
+        tabs = binding.lessonTabLayout.getChildAt(0)
         for (i in 0 until tabs.childCount) {
             val tab = tabs.getChildAt(i)
             val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
