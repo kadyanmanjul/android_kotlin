@@ -594,7 +594,7 @@ class VocabularyPracticeAdapter(
             binding.ivCancel.setOnClickListener {
                 lessonQuestion?.let {
                     it.filePath = null
-                    removeAudioPractise()
+                    clickListener.cancelAudio()
                     removeAudioPractice(it)
                 }
             }
@@ -871,12 +871,6 @@ class VocabularyPracticeAdapter(
 
         }
 
-        fun removeAudioPractise() {
-            if (isAudioPlaying()) {
-                audioManager?.resumeOrPause()
-            }
-        }
-
         fun pauseAudio() {
             audioManager?.onPause()
             lessonQuestion?.let {
@@ -1140,6 +1134,9 @@ class VocabularyPracticeAdapter(
         }
 
         private fun removeAudioPractice(lessonQuestion: LessonQuestion) {
+            if (isAudioPlaying()) {
+                audioManager?.resumeOrPause()
+            }
             hidePracticeSubmitLayout()
             binding.submitAudioViewContainer.visibility = GONE
             binding.submitPractiseSeekbar.progress = 0
@@ -1245,5 +1242,6 @@ class VocabularyPracticeAdapter(
         )
 
         fun playAudio(position: Int)
+        fun cancelAudio()
     }
 }

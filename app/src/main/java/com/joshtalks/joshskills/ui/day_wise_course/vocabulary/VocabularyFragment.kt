@@ -41,7 +41,6 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -172,6 +171,10 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         aPosition = position
     }
 
+    override fun cancelAudio() {
+        filePath = null
+    }
+
     private fun onQuestionSubmitted(
         lessonQuestion: LessonQuestion,
         isCorrect: Boolean = false,
@@ -296,18 +299,6 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         viewModel.stopRecordingAudio(false)
         if (isAdded && activity != null)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        val timeDifference =
-            TimeUnit.MILLISECONDS.toSeconds(stopTime) - TimeUnit.MILLISECONDS.toSeconds(
-                startTime
-            )
-        if (timeDifference > 1) {
-            viewModel.recordFile?.let {
-//                                isAudioRecordDone = true
-                // filePath = AppDirectory.getAudioSentFile(null, audioExtension = ".m4a").absolutePath
-                //   AppDirectory.copy(it.absolutePath, filePath!!)
-                //      chatModel.filePath = filePath
-            }
-        }
     }
 
 

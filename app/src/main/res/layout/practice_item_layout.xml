@@ -219,7 +219,6 @@
                     android:textCursorDrawable="@drawable/cursor_drawable"
                     android:visibility="gone" />
 
-
                 <FrameLayout
                     android:id="@+id/counter_container"
                     android:layout_width="match_parent"
@@ -260,7 +259,8 @@
                     android:scaleType="centerInside"
                     android:tint="@color/white"
                     android:visibility="gone"
-                    app:srcCompat="@drawable/ic_rec_mic_big" />
+                    app:srcCompat="@drawable/ic_rec_mic_big"
+                    tools:visibility="visible" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/audio_practise_hint"
