@@ -160,7 +160,6 @@ class CourseProgressActivityNew : BaseActivity(),
         CoroutineScope(Dispatchers.IO).launch {
             lastAvailableLessonNo = viewModel.getLastLessonForCourse(courseId)
 
-            PrefManager.put(COURSE_PROGRESS_OPENED, true)
         }
 
         viewModel.getCourseOverview(courseId)

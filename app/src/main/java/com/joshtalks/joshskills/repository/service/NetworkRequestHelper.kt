@@ -34,7 +34,6 @@ object NetworkRequestHelper {
     ): Job {
         return CoroutineScope(Dispatchers.IO).launch {
             try {
-//                val tempMap: Map<String, String> = mapOf(Pair("created", "0"))
                 val resp = AppObjectController.chatNetworkService.getUnReceivedMessageAsync(
                     conversationId,
                     queryMap
@@ -43,8 +42,7 @@ object NetworkRequestHelper {
                     RxBus2.publish(MessageCompleteEventBus(false))
                 } else {
                     PrefManager.put(
-                        conversationId.trim(),
-                        resp.chatModelList.last().messageTimeInMilliSeconds
+                        conversationId.trim(), getTimeInString(resp.chatModelList.last().messageTime)
                     )
                     RxBus2.publish(MessageCompleteEventBus(true))
                 }
@@ -190,8 +188,7 @@ object NetworkRequestHelper {
             )
             if (resp.chatModelList.isNullOrEmpty().not()) {
                 PrefManager.put(
-                    conversationId.trim(),
-                    resp.chatModelList.last().messageTimeInMilliSeconds
+                    conversationId.trim(), getTimeInString(resp.chatModelList.last().messageTime)
                 )
             }
 
@@ -367,5 +364,9 @@ object NetworkRequestHelper {
                 requestOptions
             )
             .submit()
+    }
+
+    private fun getTimeInString(time:Double): String {
+        return String.format("%.6f",time)
     }
 }

@@ -246,8 +246,6 @@ interface ChatDao {
         questionId: String
     ): String?
 
-    @Query(value = "SELECT message_time_in_milliSeconds FROM chat_table where question_id IS NOT NULL AND conversation_id= :conversationId ORDER BY created DESC LIMIT 1; ")
-    suspend fun getLastChatDate(conversationId: String): String?
 
     @Query(value = "SELECT * FROM (SELECT *,qt.type AS 'question_type' FROM chat_table ct LEFT JOIN question_table qt ON ct.chat_id = qt.chatId where qt.type= :typeO AND  title IS NOT NULL ) inbox  where type= :typeO AND conversation_id= :conversationId  ORDER BY created ASC;")
     suspend fun getRegisterCourseMinimal22(
@@ -321,22 +319,22 @@ interface ChatDao {
     suspend fun getOneShotMessage(conversationId: String): List<ChatModel>
 
 
-    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND created <= :compareTime AND is_delete_message=0  ORDER BY created DESC,question_id ASC  LIMIT :limit")
+    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND message_time < :messageTime AND is_delete_message=0  ORDER BY created DESC,question_id ASC  LIMIT :limit")
     suspend fun getOldPagingMessage(
         conversationId: String,
-        compareTime: Long,
+        messageTime: Double,
         limit: Int
     ): List<ChatModel>
 
     suspend fun getPagingMessage(
         conversationId: String,
-        compareTime: Long,
+        compareTime: Double,
         limit: Int = 15
     ): List<ChatModel> {
         return getLastChatsV2 {
             getOldPagingMessage(
                 conversationId,
-                compareTime = compareTime,
+                messageTime = compareTime,
                 limit = limit
             )
         }

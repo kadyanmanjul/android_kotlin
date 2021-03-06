@@ -152,6 +152,9 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     private var flowFrom: String? = EMPTY
     private var loadingPreviousData = false
     private var isNewMessageShowing = false
+    private var courseProgressUIVisible = false
+    private var reachEndOfData = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -207,8 +210,8 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
 
     private fun init() {
         initToolbar()
-      //  groupChatHintLogic()    //Group chat hint UI
-       // initCourseProgressTooltip()    // course progress tooltip
+        //  groupChatHintLogic()    //Group chat hint UI
+        initCourseProgressTooltip()    // course progress tooltip
         initRV()
         initView()
         initFuture()
@@ -326,9 +329,10 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     }
 
     private fun getPreviousRecord() {
-        if (loadingPreviousData.not()
-                .and(linearLayoutManager.findFirstVisibleItemPosition() in 0..8)
-        ) {
+        /*if (reachEndOfData) {
+            return
+        }*/
+        if (loadingPreviousData.not() && linearLayoutManager.findFirstVisibleItemPosition() in 0..8) {
             loadingPreviousData = true
             conversationViewModel.loadPagingMessage(conversationAdapter.getFirstItem())
         }
@@ -447,9 +451,10 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
 
     private fun initCourseProgressTooltip() {
         val flag = conversationAdapter.isUserAttemptedLesson()
+        courseProgressUIVisible = PrefManager.getBoolValue(COURSE_PROGRESS_OPENED)
         if (inboxEntity.isCapsuleCourse
-                    && flag
-                    && PrefManager.getBoolValue(COURSE_PROGRESS_OPENED).not()
+            && flag
+            && courseProgressUIVisible.not()
         ) {
             showCourseProgressTooltip()
         }
@@ -681,7 +686,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                         conversationAdapter.addMessagesList(arrayListOf(getNewMessageObj(items.first().created)))
                         linearLayoutManager.scrollToPositionWithOffset(
                             conversationAdapter.itemCount + index,
-                            40
+                            -10
                         )
                         isNewMessageShowing = true
                     }
@@ -698,10 +703,9 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
             }
         }
         lifecycleScope.launchWhenCreated {
-            conversationViewModel.oldMessageCourse.collectLatest { items ->
-                conversationAdapter.addMessageAboveMessage(items)
+            conversationViewModel.pagingMessagesChat.collectLatest { items ->
                 loadingPreviousData = false
-
+                reachEndOfData = conversationAdapter.addMessageAboveMessage(items)
             }
         }
         lifecycleScope.launchWhenCreated {
@@ -1321,6 +1325,8 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     CERTIFICATION_REQUEST_CODE -> {
                         data?.getStringExtra(CHAT_ROOM_ID)?.let {
                             conversationViewModel.refreshMessageObject(it)
+                        }
+                        if (requestCode == LESSON_REQUEST_CODE && courseProgressUIVisible.not()) {
                             initCourseProgressTooltip()//Progress Tooltip
                         }
                     }
@@ -1437,7 +1443,8 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 ), COURSE_PROGRESS_NEW_REQUEST_CODE
             )
             hideCourseProgressTooltip()
-
+            PrefManager.put(COURSE_PROGRESS_OPENED, true)
+            courseProgressUIVisible = true
         } else {
             AppAnalytics.create(AnalyticsEvent.COURSE_PROGRESS_OVERVIEW.NAME).push()
             CourseProgressActivity.startCourseProgressActivity(

@@ -96,9 +96,9 @@ data class ChatModel(
     @Expose
     var contentDownloadDate: Date = Date(),
 
-    @ColumnInfo(name = "message_time_in_milliSeconds")
+    @ColumnInfo(name = "message_time")
     @SerializedName("createdmilisecond")
-    var messageTimeInMilliSeconds: String = EMPTY,
+    var messageTime: Double = 0.0,
 
     @ColumnInfo(name = "last_use_time")
     @Expose
@@ -168,13 +168,6 @@ data class ChatModel(
 
     init {
         lesson?.chatId = chatId
-    }
-
-    fun getMsTime(): Double {
-        if (messageTimeInMilliSeconds.isEmpty()) {
-            return 0.0
-        }
-        return messageTimeInMilliSeconds.toDouble()
     }
 
     override fun hashCode(): Int {

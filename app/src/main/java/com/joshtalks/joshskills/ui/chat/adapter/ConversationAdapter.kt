@@ -72,14 +72,17 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
         }
     }
 
-    fun addMessageAboveMessage(newList: List<ChatModel>) {
+    fun addMessageAboveMessage(newList: List<ChatModel>): Boolean {
         if (newList.isEmpty()) {
-            return
+            return false
         }
         if (checkListIsChange(newList)) {
             this.messageList.addAll(0, newList)
             notifyItemRangeInserted(0, newList.size)
+            return true
         }
+        return false
+
     }
 
 

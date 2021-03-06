@@ -49,7 +49,7 @@ class ConversationViewModel(
     val conversationList: MutableList<ChatModel> = ArrayList()
     val userUnreadCourseChat = MutableSharedFlow<List<ChatModel>>()
     val userReadCourseChat = MutableSharedFlow<List<ChatModel>>()
-    val oldMessageCourse = MutableSharedFlow<List<ChatModel>>()
+    val pagingMessagesChat = MutableSharedFlow<List<ChatModel>>()
     val updateChatMessage = MutableSharedFlow<ChatModel>()
 
     val refreshViewLiveData: MutableLiveData<ChatModel> = MutableLiveData()
@@ -199,21 +199,21 @@ class ConversationViewModel(
             if (lastUnreadMessage == null) {
                 userReadCourseChat.emit(
                     chatDao.getOneShotMessageList(inboxEntity.conversation_id)
-                        .sortedWith(compareBy({ it.created }, { it.getMsTime() }))
+                        .sortedWith(compareBy { it.messageTime })
                 )
             } else {
                 userReadCourseChat.emit(
                     chatDao.getPagingMessage(
                         inboxEntity.conversation_id,
-                        lastUnreadMessage.created.time
-                    ).sortedWith(compareBy({ it.created }, { it.getMsTime() }))
+                        lastUnreadMessage.messageTime
+                    ).sortedWith(compareBy { it.messageTime })
                 )
 
                 userUnreadCourseChat.emit(
                     chatDao.getUnreadMessageList(
                         inboxEntity.conversation_id,
                         lastUnreadMessage.created.time
-                    ).sortedWith(compareBy({ it.created }, { it.getMsTime() }))
+                    ).sortedWith(compareBy { it.messageTime })
                 )
             }
             updateAllMessageReadByUser()
@@ -225,12 +225,13 @@ class ConversationViewModel(
 
     fun loadPagingMessage(lastMessage: ChatModel) {
         viewModelScope.launch(Dispatchers.IO) {
-            oldMessageCourse.emit(
+
+            pagingMessagesChat.emit(
                 chatDao.getPagingMessage(
                     inboxEntity.conversation_id,
-                    lastMessage.created.time
+                    lastMessage.messageTime
                 )
-                    .sortedWith(compareBy({ it.created }, { it.getMsTime() }))
+                    .sortedWith(compareBy { it.messageTime })
             )
             updateAllMessageReadByUser()
         }
