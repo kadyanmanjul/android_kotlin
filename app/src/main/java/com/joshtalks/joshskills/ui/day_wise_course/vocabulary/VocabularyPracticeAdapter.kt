@@ -35,6 +35,10 @@ import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.muddzdev.styleabletoast.StyleableToast
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random.Default.nextInt
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
 
@@ -1105,28 +1109,33 @@ class VocabularyPracticeAdapter(
         }
 
         private fun audioAttachmentInit(lessonQuestion: LessonQuestion) {
-            showPracticeSubmitLayout()
-            binding.submitAudioViewContainer.visibility = VISIBLE
-            initializePractiseSeekBar(lessonQuestion)
-            if (filePath == null) {
-                if (lessonQuestion.practiceEngagement.isNullOrEmpty() && lessonQuestion.filePath != null) {
-                    filePath = lessonQuestion.filePath
-                } else {
-                    val practiseEngagement =
-                        lessonQuestion.practiceEngagement?.getOrNull(0)
-                    if (PermissionUtils.isStoragePermissionEnabled(context) && AppDirectory.isFileExist(
-                            practiseEngagement?.localPath
-                        )
-                    ) {
-                        filePath = practiseEngagement?.localPath
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(300)
+                showPracticeSubmitLayout()
+                binding.submitAudioViewContainer.visibility = VISIBLE
+                initializePractiseSeekBar(lessonQuestion)
+                if (filePath == null) {
+                    if (lessonQuestion.practiceEngagement.isNullOrEmpty() && lessonQuestion.filePath != null) {
+                        filePath = lessonQuestion.filePath
                     } else {
-                        filePath = practiseEngagement?.answerUrl
+                        val practiseEngagement =
+                            lessonQuestion.practiceEngagement?.getOrNull(0)
+                        if (PermissionUtils.isStoragePermissionEnabled(context) && AppDirectory.isFileExist(
+                                practiseEngagement?.localPath
+                            )
+                        ) {
+                            filePath = practiseEngagement?.localPath
+                        } else {
+                            filePath = practiseEngagement?.answerUrl
+                        }
                     }
+                } else {
+                    filePath = lessonQuestion.filePath
                 }
+                binding.submitPractiseSeekbar.max =
+                    Utils.getDurationOfMedia(context, filePath)?.toInt() ?: 0
+                enableSubmitButton()
             }
-            binding.submitPractiseSeekbar.max =
-                Utils.getDurationOfMedia(context, filePath)?.toInt() ?: 0
-            enableSubmitButton()
         }
 
         private fun initializePractiseSeekBar(lessonQuestion: LessonQuestion) {
