@@ -21,7 +21,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:cardCornerRadius="0dp"
-            android:elevation="@dimen/_100sdp"
+            app:cardElevation="@dimen/_8sdp"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -142,6 +142,7 @@
             android:layout_height="wrap_content"
             android:tabStripEnabled="true"
             android:elevation="0dp"
+            android:background="@color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/search_layout_card"
             app:tabGravity="fill"

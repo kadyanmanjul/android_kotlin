@@ -6,18 +6,101 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.help.HelpActivity" />
+            type="com.joshtalks.joshskills.ui.gif.GIFActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#000000">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/image"
+
+        <ImageView
+            android:id="@+id/image_gif"
+            android:layout_width="@dimen/_250sdp"
+            android:layout_height="@dimen/_250sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            app:layout_constraintVertical_bias="0.40" />
+
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_120sdp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@id/image_gif"
+            app:layout_constraintEnd_toEndOf="@id/image_gif"
+            app:layout_constraintStart_toStartOf="@id/image_gif"
+            app:layout_constraintTop_toTopOf="@id/image_gif"
+            app:srcCompat="@drawable/sample_award" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/congratulations"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@id/text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image" />
+
+        <ImageView
+            android:id="@+id/close"
+            android:layout_width="26dp"
+            android:layout_height="27dp"
+            android:background="@drawable/ic_cross"
+            android:onClick="@{()->handler.exit()}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.9"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.05"
+            app:rippleColor="@color/colorPrimary" />
+
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/_46sdp"
+            android:text="You have earned this award for completing 3 days streak on Josh Skills on 3 of Feb 2021"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@id/btn_profile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView2"
+            app:layout_constraintVertical_bias="0.4" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_profile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_16sdp"
+            android:backgroundTint="@color/button_color"
+            android:clickable="true"
+            android:focusable="true"
+            android:maxLines="1"
+            android:onClick="@{()->handler.goToProfile()}"
+            android:paddingTop="@dimen/_12sdp"
+            android:paddingBottom="@dimen/_12sdp"
+            android:text="@string/go_to_profile"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+            android:textColor="@color/white"
+            android:visibility="visible"
+            app:cornerRadius="@dimen/_32sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.65"
+            app:rippleColor="@color/white" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
