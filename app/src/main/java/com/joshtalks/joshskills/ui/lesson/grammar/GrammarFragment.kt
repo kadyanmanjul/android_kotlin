@@ -719,6 +719,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
         }
         pdfQuestion?.pdfList?.let {
             if (it.isNotEmpty()) {
+                fileDownloadingInProgressView()
                 DownloadUtils.downloadFile(
                     it[0].url,
                     AppDirectory.docsReceivedFile(it[0].url).absolutePath,
