@@ -67,6 +67,8 @@ class LeaderBoardSearchActivity : BaseActivity() {
             }
 
         })
+        binding.searchView.setFocusableInTouchMode(true)
+        binding.searchView.requestFocus()
     }
 
     private fun addObserver() {
