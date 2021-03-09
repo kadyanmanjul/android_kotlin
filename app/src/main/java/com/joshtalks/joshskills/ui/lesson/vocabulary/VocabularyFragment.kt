@@ -272,7 +272,6 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         return false
     }
 
-
     override fun startRecording(
         lessonQuestion: LessonQuestion,
         position: Int,
