@@ -202,7 +202,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         if (findMoreLayout.visibility == View.INVISIBLE) {
             findMoreLayout.visibility = View.VISIBLE
         }
-        locationFetch()
+//        locationFetch()
     }
 
 

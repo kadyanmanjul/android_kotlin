@@ -196,10 +196,10 @@ object PrefManager {
             if (time.isNotEmpty()) {
                 Pair("createdmilisecond", time)
             } else {
-                Pair("created", getLongValue(key).toString())
+                Pair("createdmilisecond", getLongValue(key).toString())
             }
         } catch (ex: Exception) {
-            Pair("created", "0")
+            Pair("createdmilisecond", "0")
         }
     }
 }

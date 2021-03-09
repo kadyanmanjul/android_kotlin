@@ -988,7 +988,6 @@ class VocabularyPracticeAdapter(
                 showPracticeInputLayout()
                 this.expectedEngageType?.let {
                     binding.uploadPractiseView.visibility = VISIBLE
-
                     binding.practiseInputHeader.text = AppObjectController.getFirebaseRemoteConfig()
                         .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
                     binding.uploadPractiseView.setImageResource(R.drawable.recv_ic_mic_white)
@@ -1108,10 +1107,10 @@ class VocabularyPracticeAdapter(
 
         private fun audioAttachmentInit(lessonQuestion: LessonQuestion) {
             CoroutineScope(Dispatchers.Main).launch {
-                delay(300)
                 showPracticeSubmitLayout()
                 binding.submitAudioViewContainer.visibility = VISIBLE
                 initializePractiseSeekBar(lessonQuestion)
+                delay(300)
                 if (filePath == null) {
                     if (lessonQuestion.practiceEngagement.isNullOrEmpty() && lessonQuestion.filePath != null) {
                         filePath = lessonQuestion.filePath
