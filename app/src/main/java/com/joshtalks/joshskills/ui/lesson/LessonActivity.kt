@@ -286,6 +286,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
 
     private fun setTabCompletionStatus() {
         viewModel.lessonLiveData.value?.let { lesson ->
+            if (lesson.lessonNo == 2) {
+                PrefManager.put(LESSON_TWO_OPENED, true)
+            }
             setTabCompletionStatus(
                 tabs.getChildAt(0),
                 lesson.grammarStatus == LESSON_STATUS.CO

@@ -211,7 +211,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     private fun init() {
         initToolbar()
         //  groupChatHintLogic()    //Group chat hint UI
-        initCourseProgressTooltip()    // course progress tooltip
+        //initCourseProgressTooltip()    // course progress tooltip
         initRV()
         initView()
         initFuture()
@@ -288,6 +288,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         conversationBinding.chatRv.addItemDecoration(StickyHeaderDecoration(conversationAdapter), 0)
         conversationAdapter.initializePool(conversationBinding.chatRv.recycledViewPool)
         conversationBinding.chatRv.adapter = conversationAdapter
+        conversationBinding.chatRv.layoutManager?.isMeasurementCacheEnabled = false
 
         conversationBinding.chatRv.addOnScrollListener(object :
             EndlessRecyclerViewScrollListener(linearLayoutManager, LoadOnScrollDirection.TOP) {
@@ -450,12 +451,9 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     }
 
     private fun initCourseProgressTooltip() {
-        val flag = conversationAdapter.isUserAttemptedLesson()
+        val flag = PrefManager.getBoolValue(LESSON_TWO_OPENED)
         courseProgressUIVisible = PrefManager.getBoolValue(COURSE_PROGRESS_OPENED)
-        if (inboxEntity.isCapsuleCourse
-            && flag
-            && courseProgressUIVisible.not()
-        ) {
+        if (inboxEntity.isCapsuleCourse && flag && courseProgressUIVisible.not()) {
             showCourseProgressTooltip()
         }
     }
@@ -693,12 +691,14 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 }
                 //End Logic
                 conversationAdapter.addMessagesList(items)
+                addRVPatch(conversationAdapter.itemCount)
             }
         }
         lifecycleScope.launchWhenCreated {
             conversationViewModel.userReadCourseChat.collectLatest { items ->
                 if (items.isNotEmpty()) {
                     conversationAdapter.addMessagesList(items)
+                    addRVPatch(conversationAdapter.itemCount)
                 }
             }
         }
@@ -753,6 +753,11 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
             } else {
                 hideProgressBar()
             }
+        }
+    }
+    private fun addRVPatch(count:Int){
+        if (count<=3) {
+            linearLayoutManager.stackFromEnd = false
         }
     }
 
@@ -1054,7 +1059,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                         audioPlayerManager?.onPause()
                         return@subscribe
                     }
-                    setCurrentItemPosition(it.chatModel.chatId)
                     AppObjectController.currentPlayingAudioObject?.let { chatModel ->
                         refreshViewAtPos(chatModel)
                     }
@@ -1215,33 +1219,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     it.printStackTrace()
                 })
         )
-
-    }
-
-
-    private fun setCurrentItemPosition(chatId: String) {
-        /* val currentChatid = chatId.toLowerCase(Locale.getDefault())
-         CoroutineScope(Dispatchers.IO).launch {
-             try {
-                 var tempView: BaseChatViewHolder
-                 conversationBinding.chatRv.allViewResolvers?.let {
-                     it.forEachIndexed { index, view ->
-                         if (view is BaseChatViewHolder) {
-                             tempView = view
-                             if (currentChatid == tempView.message.chatId.toLowerCase(
-                                     Locale.getDefault()
-                                 )
-                             ) {
-                                 currentAudioPosition = index
-                             }
-                         }
-                     }
-                 }
-             } catch (ex: Exception) {
-                 FirebaseCrashlytics.getInstance().recordException(ex)
-                 ex.printStackTrace()
-             }
-         }*/
     }
 
     private fun logAssessmentEvent(assessmentId: Int) {

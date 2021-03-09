@@ -167,6 +167,8 @@ class WebRtcActivity : AppCompatActivity() {
         }
         val channelName = mBoundService?.channelName
         if (time > 0 && channelName.isNullOrEmpty().not()) {
+            binding.container.setBackgroundColor(ContextCompat.getColor(applicationContext,R.color.gray_48))
+            binding.container.removeAllViewsInLayout()
             VoipCallFeedbackView.showCallRatingDialog(
                 supportFragmentManager,
                 channelName = channelName,

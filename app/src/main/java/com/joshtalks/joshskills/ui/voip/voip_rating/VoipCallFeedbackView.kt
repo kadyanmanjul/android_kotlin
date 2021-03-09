@@ -99,7 +99,7 @@ class VoipCallFeedbackView : DialogFragment() {
     private fun addObserver() {
         practiceViewModel.pointsSnackBarText.observe(
             this.viewLifecycleOwner,
-            androidx.lifecycle.Observer {
+            {
                 if (it.pointsList.isNullOrEmpty().not()) {
                     showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
                 }
@@ -118,6 +118,7 @@ class VoipCallFeedbackView : DialogFragment() {
             val yourName = it.getString(ARG_YOUR_NAME) ?: EMPTY
             binding.txtMessage.text = msz.replaceFirst("#", yourName).replace("##", callerName)
 
+            binding.cImage.setImageResource(R.drawable.ic_call_placeholder)
             val image = it.getString(ARG_CALLER_IMAGE)
             if (image.isNullOrEmpty()) {
                 binding.cImage.setImageBitmap(
@@ -135,15 +136,26 @@ class VoipCallFeedbackView : DialogFragment() {
             val second: Int = (callTime / 1000 % 60).toInt()
             val minute: Int = (callTime / (1000 * 60) % 60).toInt()
             if (minute > 0) {
-                mTime.append(minute).append(" minutes").append("  ")
+                mTime.append(minute).append(getMinuteString(minute)).append("  ")
             }
             if (second > 0) {
-                mTime.append(second).append(" seconds")
+                mTime.append(second).append(getSecondString(second))
             }
             binding.txtSpoke.text = getString(R.string.spoke_for_minute, mTime.toString())
-
             binding.txtBottom.text = getString(R.string.block_user_hint, callerName)
         }
+    }
+    private fun getMinuteString(min :Int): String {
+        if (min>1){
+            return " minutes "
+        }
+        return " minute "
+    }
+    private fun getSecondString(sec :Int): String {
+        if (sec>1){
+            return " seconds "
+        }
+        return " second "
     }
 
     fun submitFeedback(response: String) {

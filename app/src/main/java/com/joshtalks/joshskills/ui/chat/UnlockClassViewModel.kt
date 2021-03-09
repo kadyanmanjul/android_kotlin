@@ -56,9 +56,9 @@ class UnlockClassViewModel(
 
     fun insertUnlockClassToDatabase(unlockChatModel: ChatModel) {
         viewModelScope.launch(Dispatchers.IO) {
-            deleteUnlockClass()
+            //deleteUnlockClass()
             unlockChatModel.conversationId = inboxEntity.conversation_id
-            chatDao.insertAMessage(unlockChatModel)
+           // chatDao.insertAMessage(unlockChatModel)
         }
     }
 
@@ -67,7 +67,7 @@ class UnlockClassViewModel(
             try {
                 val response = chatNetworkService.changeBatchRequest(inboxEntity.conversation_id)
                 if (response.isSuccessful) {
-                    deleteUnlockClass()
+                 //   deleteUnlockClass()
                     batchChange.emit(true)
                     return@launch
                 }

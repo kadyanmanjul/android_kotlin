@@ -202,8 +202,7 @@
                     tools:itemCount="5"
                     android:id="@+id/chatRv"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clipToPadding="true"
+                    android:layout_height="wrap_content"
                     android:paddingTop="@dimen/_6sdp"
                     android:paddingBottom="@dimen/_4sdp"
                     tools:listitem="@layout/inbox_row_layout" />
