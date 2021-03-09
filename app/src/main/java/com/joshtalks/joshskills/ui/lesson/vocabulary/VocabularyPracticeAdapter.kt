@@ -172,6 +172,17 @@ class VocabularyPracticeAdapter(
         private var isCorrect: Boolean = false
         var lessonQuestion: LessonQuestion? = null
         var assessmentWithRelations: AssessmentWithRelations? = null
+        private val quizCheckedChangeListener =
+            RadioGroup.OnCheckedChangeListener { radioGroup: RadioGroup, checkedId: Int ->
+                resetAllRadioButtonsBg()
+                binding.submitAnswerBtn.isEnabled = true
+                radioGroup.findViewById<RadioButton>(checkedId)?.setBackgroundColor(
+                    ContextCompat.getColor(
+                        AppObjectController.joshApplication,
+                        R.color.received_bg_BC
+                    )
+                )
+            }
 
         init {
             initViewHolder()
@@ -179,9 +190,7 @@ class VocabularyPracticeAdapter(
 
         private fun initViewHolder() {
             binding.handler = this
-            binding.quizRadioGroup.setOnCheckedChangeListener(
-                quizCheckedChangeListener
-            )
+            binding.quizRadioGroup.setOnCheckedChangeListener(quizCheckedChangeListener)
             binding.practiceTitleTv.setOnClickListener {
                 if (binding.quizLayout.visibility == GONE) {
                     expandCard()
@@ -452,18 +461,6 @@ class VocabularyPracticeAdapter(
                     resetRadioBackground(it)
             }
         }
-
-        private val quizCheckedChangeListener =
-            RadioGroup.OnCheckedChangeListener { radioGroup: RadioGroup, checkedId: Int ->
-                resetAllRadioButtonsBg()
-                binding.submitAnswerBtn.isEnabled = true
-                radioGroup.findViewById<RadioButton>(checkedId)?.setBackgroundColor(
-                    ContextCompat.getColor(
-                        AppObjectController.joshApplication,
-                        R.color.received_bg_BC
-                    )
-                )
-            }
 
         //Sets up the view of radiobutton.
         private fun setupRadioButtonOption(
