@@ -1109,8 +1109,8 @@ class VocabularyPracticeAdapter(
             CoroutineScope(Dispatchers.Main).launch {
                 showPracticeSubmitLayout()
                 binding.submitAudioViewContainer.visibility = VISIBLE
-                initializePractiseSeekBar(lessonQuestion)
                 delay(300)
+                initializePractiseSeekBar(lessonQuestion)
                 if (filePath == null) {
                     if (lessonQuestion.practiceEngagement.isNullOrEmpty() && lessonQuestion.filePath != null) {
                         filePath = lessonQuestion.filePath

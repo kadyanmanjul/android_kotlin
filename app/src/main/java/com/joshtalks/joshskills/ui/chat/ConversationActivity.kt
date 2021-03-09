@@ -95,7 +95,6 @@ import kotlinx.coroutines.launch
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
 const val CHAT_ROOM_ID = "chat_room_id"
-
 const val IMAGE_SELECT_REQUEST_CODE = 1077
 const val VISIBLE_ITEM_PERCENT = 75
 const val PRACTISE_SUBMIT_REQUEST_CODE = 1100
