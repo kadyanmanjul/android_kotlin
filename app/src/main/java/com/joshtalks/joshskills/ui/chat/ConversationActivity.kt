@@ -697,8 +697,8 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         lifecycleScope.launchWhenCreated {
             conversationViewModel.userReadCourseChat.collectLatest { items ->
                 if (items.isNotEmpty()) {
+                    addRVPatch(items.size + conversationAdapter.itemCount)
                     conversationAdapter.addMessagesList(items)
-                    addRVPatch(conversationAdapter.itemCount)
                 }
             }
         }
