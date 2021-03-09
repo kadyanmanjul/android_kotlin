@@ -677,6 +677,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 if (items.isEmpty()) {
                     return@collectLatest
                 }
+                addRVPatch(items.size + conversationAdapter.itemCount-1)
                 if (isNewMessageShowing.not()) {
                     val index = items.indexOfFirst { it.isSeen.not() }
                     if (index > -1) {
@@ -689,7 +690,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     }
                 }
                 //End Logic
-                addRVPatch(items.size + conversationAdapter.itemCount)
                 conversationAdapter.addMessagesList(items)
             }
         }
@@ -704,6 +704,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         lifecycleScope.launchWhenCreated {
             conversationViewModel.pagingMessagesChat.collectLatest { items ->
                 loadingPreviousData = false
+                addRVPatch(items.size + conversationAdapter.itemCount)
                 reachEndOfData = conversationAdapter.addMessageAboveMessage(items)
             }
         }

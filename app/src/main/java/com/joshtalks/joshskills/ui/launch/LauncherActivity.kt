@@ -272,7 +272,9 @@ class LauncherActivity : CoreJoshActivity() {
 
             } catch (ex: Exception) {
                 apiRun.set(false)
-                retry.visibility = View.VISIBLE
+                AppObjectController.uiHandler.post {
+                    retry.visibility = View.VISIBLE
+                }
                 ex.printStackTrace()
             }
         }
