@@ -10,7 +10,6 @@ import android.view.animation.AnimationSet
 import android.view.animation.LinearInterpolator
 import android.view.animation.TranslateAnimation
 import androidx.databinding.DataBindingUtil
-import com.bumptech.glide.Glide
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
@@ -35,9 +34,9 @@ class GIFActivity : CoreJoshActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_gif)
         binding.lifecycleOwner = this
         binding.handler = this
-        Glide.with(this)
+        /*Glide.with(this)
             .load(R.raw.boom_new)
-            .into(binding.imageGif)
+            .into(binding.imageGif)*/
         CoroutineScope(Dispatchers.Main).launch {
             binding.image.animationLeftToRight()
             delay(10)
