@@ -120,10 +120,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_4sdp"
         android:letterSpacing="0"
-        android:text="@string/view_profile"
+        android:text="@string/view"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
         android:textColor="@color/white"
-        android:textSize="@dimen/_10ssp"
+        android:textSize="@dimen/_14ssp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/points" />
 </androidx.constraintlayout.widget.ConstraintLayout>
