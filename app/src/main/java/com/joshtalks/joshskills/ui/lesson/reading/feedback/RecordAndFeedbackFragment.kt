@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.day_wise_course.reading.feedback
+package com.joshtalks.joshskills.ui.lesson.reading.feedback
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -37,8 +37,8 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import kotlinx.coroutines.*
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.*
 
 class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
 

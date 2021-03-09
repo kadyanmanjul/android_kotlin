@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.day_wise_course.speaking
+package com.joshtalks.joshskills.ui.lesson.speaking
 
 
 import android.content.Context

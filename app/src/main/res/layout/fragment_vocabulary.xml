@@ -8,7 +8,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.day_wise_course.vocabulary.VocabularyFragment" />
+            type="com.joshtalks.joshskills.ui.lesson.vocabulary.VocabularyFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

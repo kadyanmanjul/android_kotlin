@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.day_wise_course.reading;
+package com.joshtalks.joshskills.ui.lesson.reading;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;

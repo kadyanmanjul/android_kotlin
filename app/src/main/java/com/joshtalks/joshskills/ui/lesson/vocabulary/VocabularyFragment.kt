@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.day_wise_course.vocabulary
+package com.joshtalks.joshskills.ui.lesson.vocabulary
 
 import android.content.Context
 import android.os.Bundle

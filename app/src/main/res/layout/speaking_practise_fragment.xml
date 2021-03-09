@@ -7,7 +7,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.day_wise_course.speaking.SpeakingPractiseFragment" />
+            type="com.joshtalks.joshskills.ui.lesson.speaking.SpeakingPractiseFragment" />
     </data>
 
     <FrameLayout

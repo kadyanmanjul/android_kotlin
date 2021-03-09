@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.day_wise_course.reading
+package com.joshtalks.joshskills.ui.lesson.reading
 
 import android.content.Context
 import android.view.Gravity
@@ -24,11 +24,11 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 import com.muddzdev.styleabletoast.StyleableToast
-import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
-import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import java.util.Date
 import java.util.Locale
 import kotlin.random.Random
+import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
+import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 
 @Layout(R.layout.practice_audio_item)
 class PracticeAudioViewHolder(

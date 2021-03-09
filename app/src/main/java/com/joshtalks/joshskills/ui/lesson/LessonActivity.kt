@@ -23,8 +23,7 @@ import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
-import com.joshtalks.joshskills.ui.day_wise_course.LessonPagerAdapter
-import com.joshtalks.joshskills.ui.day_wise_course.unlock_next_class.LessonCompletedActivity
+import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 

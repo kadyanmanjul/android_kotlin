@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.day_wise_course.unlock_next_class
+package com.joshtalks.joshskills.ui.lesson.lesson_completed
 
 import android.content.Context
 import android.content.Intent

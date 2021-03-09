@@ -9,7 +9,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.day_wise_course.reading.ReadingFragmentWithoutFeedback" />
+            type="com.joshtalks.joshskills.ui.lesson.reading.ReadingFragmentWithoutFeedback" />
     </data>
 
     <ScrollView

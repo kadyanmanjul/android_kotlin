@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.day_wise_course.vocabulary
+package com.joshtalks.joshskills.ui.lesson.vocabulary
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -178,7 +178,7 @@ class VocabularyPracticeAdapter(
         }
 
         private fun initViewHolder() {
-            binding.handler = this@QuizViewHolder
+            binding.handler = this
             binding.quizRadioGroup.setOnCheckedChangeListener(
                 quizCheckedChangeListener
             )
@@ -526,6 +526,7 @@ class VocabularyPracticeAdapter(
         }
 
         private fun initViewHolder() {
+            binding.handler = this
             binding.titleView.setOnClickListener {
                 if (binding.practiceContentLl.visibility == GONE) {
                     expandCard()
@@ -1056,7 +1057,7 @@ class VocabularyPracticeAdapter(
                     when (event.action) {
                         MotionEvent.ACTION_DOWN -> {
                             binding.videoPlayer.onPause()
-                            //binding.rootView.requestDisallowInterceptTouchEvent(true)
+                            binding.practiseInfoLayout.requestDisallowInterceptTouchEvent(true)
                             binding.counterContainer.visibility = VISIBLE
                             val scaleAnimation = AnimationUtils.loadAnimation(context, R.anim.scale)
                             binding.uploadPractiseView.startAnimation(scaleAnimation)
@@ -1078,7 +1079,7 @@ class VocabularyPracticeAdapter(
                         MotionEvent.ACTION_MOVE -> {
                         }
                         MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                            //binding.rootView.requestDisallowInterceptTouchEvent(false)
+                            binding.practiseInfoLayout.requestDisallowInterceptTouchEvent(false)
                             binding.counterTv.stop()
                             val stopTime = System.currentTimeMillis()
 //                        stopRecording(chatModel, stopTime)

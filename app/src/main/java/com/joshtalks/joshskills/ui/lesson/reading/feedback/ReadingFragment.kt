@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.day_wise_course.reading
+package com.joshtalks.joshskills.ui.lesson.reading.feedback
 
 import android.content.Context
 import android.os.Bundle
@@ -25,8 +25,6 @@ import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagem
 import com.joshtalks.joshskills.repository.local.entity.practise.PractiseType
 import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventBus
-import com.joshtalks.joshskills.ui.day_wise_course.reading.feedback.FeedbackListAdapter
-import com.joshtalks.joshskills.ui.day_wise_course.reading.feedback.ReadingPractiseCallback
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.translation.LanguageTranslationDialog

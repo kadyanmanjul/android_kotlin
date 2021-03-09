@@ -8,7 +8,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.day_wise_course.vocabulary.VocabularyPracticeAdapter" />
+            type="com.joshtalks.joshskills.ui.lesson.vocabulary.VocabularyPracticeAdapter.VocabularyViewHolder" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

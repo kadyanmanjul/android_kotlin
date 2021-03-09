@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.day_wise_course.reading.feedback
+package com.joshtalks.joshskills.ui.lesson.reading.feedback
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable

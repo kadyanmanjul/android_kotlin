@@ -7,7 +7,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.day_wise_course.reading.ReadingFragment" />
+            type="com.joshtalks.joshskills.ui.lesson.reading.feedback.ReadingFragment" />
     </data>
 
     <ScrollView
@@ -120,7 +120,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/txtLabelDemoVoiceNote" />
 
 
-                    <com.joshtalks.joshskills.ui.day_wise_course.reading.ReadingPractiseAudioView
+                    <com.joshtalks.joshskills.ui.lesson.reading.ReadingPractiseAudioView
                         android:id="@+id/reading_audio_note"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/_38sdp"

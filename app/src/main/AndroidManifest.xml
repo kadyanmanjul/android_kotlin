@@ -416,7 +416,7 @@
             android:parentActivityName=".ui.inbox.InboxActivity"
             android:theme="@style/AppThemeDark" />
         <activity
-            android:name=".ui.day_wise_course.unlock_next_class.LessonCompletedActivity"
+            android:name=".ui.lesson.lesson_completed.LessonCompletedActivity"
             android:alwaysRetainTaskState="true"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTop"
