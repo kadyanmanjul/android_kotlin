@@ -81,9 +81,11 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
         })
 
         viewModel.updatedLessonResponseLiveData.observe(this, {
-            if (it.pointsList.isNullOrEmpty().not()) {
-                showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
-                playSnackbarSound(this)
+            if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+                if (it.pointsList.isNullOrEmpty().not()) {
+                    showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
+                    playSnackbarSound(this)
+                }
             }
             /*if (it.awardMentorList.isNullOrEmpty().not()) {
                 //TODO add when awards functionality is over

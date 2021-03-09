@@ -746,10 +746,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 }
             }
         }
-        utilConversationViewModel.userLoginLiveData.observe(this, {
-            CometChatMessageListActivity.showGroupChatScreen(this, it)
-        })
-
         utilConversationViewModel.isLoading.observe(this) { isLoading ->
             if (isLoading) {
                 showProgressBar()
