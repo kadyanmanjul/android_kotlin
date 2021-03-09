@@ -690,8 +690,8 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     }
                 }
                 //End Logic
+                addRVPatch(items.size + conversationAdapter.itemCount)
                 conversationAdapter.addMessagesList(items)
-                addRVPatch(conversationAdapter.itemCount)
             }
         }
         lifecycleScope.launchWhenCreated {
@@ -755,8 +755,9 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
             }
         }
     }
-    private fun addRVPatch(count:Int){
-        if (count<=3) {
+
+    private fun addRVPatch(count: Int) {
+        if (count <= 3) {
             linearLayoutManager.stackFromEnd = false
         }
     }

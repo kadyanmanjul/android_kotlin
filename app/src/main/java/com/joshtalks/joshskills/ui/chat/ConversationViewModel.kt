@@ -245,7 +245,7 @@ class ConversationViewModel(
             userUnreadCourseChat.emit(
                 chatDao.getNewFetchMessages(
                     inboxEntity.conversation_id, lastMessageTime
-                )
+                ).sortedWith(compareBy { it.messageTime })
             )
             updateAllMessageReadByUser()
         }
