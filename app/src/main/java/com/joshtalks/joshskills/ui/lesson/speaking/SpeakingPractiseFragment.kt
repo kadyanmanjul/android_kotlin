@@ -44,6 +44,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
     var lessonActivityListener: LessonActivityListener? = null
     private var compositeDisposable = CompositeDisposable()
     private var courseId: String = EMPTY
+    private var topicId: String? = EMPTY
     private var questionId: String? = null
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
@@ -83,7 +84,10 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
             val spQuestion = it.filter { it.chatType == CHAT_TYPE.SP }.getOrNull(0)
             questionId = spQuestion?.id
 
-            spQuestion?.topicId?.let { viewModel.getTopicDetail(it) }
+            spQuestion?.topicId?.let {
+                this.topicId = it
+                viewModel.getTopicDetail(it)
+            }
             spQuestion?.lessonId?.let { viewModel.getCourseIdByLessonId(it) }
 
         })
@@ -143,7 +147,9 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onFragmentResume() {
-
+        if (topicId.isNullOrBlank().not()) {
+            viewModel.getTopicDetail(topicId!!)
+        }
     }
 
     private fun startPractise() {

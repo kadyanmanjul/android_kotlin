@@ -563,13 +563,14 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     fun getTopicDetail(topicId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val topicDetails = if (Utils.isInternetAvailable()) {
-                getTopicFromAPI(topicId)
-            } else {
-                getTopicFromDB(topicId)
+            val topicDetailsFromLocal = getTopicFromDB(topicId)
+            if (topicDetailsFromLocal != null) {
+                speakingTopicLiveData.postValue(topicDetailsFromLocal)
             }
-
-            speakingTopicLiveData.postValue(topicDetails)
+            if (Utils.isInternetAvailable()) {
+                val topicDetails = getTopicFromAPI(topicId)
+                speakingTopicLiveData.postValue(topicDetails)
+            }
         }
     }
 
