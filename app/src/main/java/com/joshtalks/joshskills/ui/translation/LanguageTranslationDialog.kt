@@ -21,7 +21,7 @@ import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEvent
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.LanguageTranslationPopupBinding
 import com.joshtalks.joshskills.repository.server.translation.TranslationData
-import com.joshtalks.joshskills.ui.groupchat.uikit.ExoAudioPlayer2
+import com.joshtalks.joshskills.util.ExoAudioPlayer2
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

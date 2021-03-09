@@ -63,9 +63,9 @@ allprojects {
         maven {
             url 'https://sdk.uxcam.com/android/'
         }
-        maven {
+        /*maven {
             url "https://dl.bintray.com/cometchat/pro"
-        }
+        }*/
         maven {
             url "https://sdk.smartlook.com/android/release"
         }

@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.chat.adapter
 
 
+//import com.joshtalks.joshskills.ui.groupchat.utils.Utils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,8 +32,8 @@ import com.joshtalks.joshskills.ui.chat.vh.PracticeOldViewHolder
 import com.joshtalks.joshskills.ui.chat.vh.TextViewHolder
 import com.joshtalks.joshskills.ui.chat.vh.UnlockNextClassViewHolder
 import com.joshtalks.joshskills.ui.chat.vh.VideoViewHolder
-import com.joshtalks.joshskills.ui.groupchat.listeners.StickyHeaderAdapter
-import com.joshtalks.joshskills.ui.groupchat.utils.Utils
+import com.joshtalks.joshskills.util.StickyHeaderAdapter
+import com.joshtalks.joshskills.util.Utils
 import java.lang.ref.WeakReference
 import java.util.ArrayList
 import java.util.Locale

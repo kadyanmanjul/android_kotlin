@@ -16,7 +16,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
-import com.joshtalks.joshskills.ui.groupchat.uikit.ExoAudioPlayer2
+import com.joshtalks.joshskills.util.ExoAudioPlayer2
 import com.muddzdev.styleabletoast.StyleableToast
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable

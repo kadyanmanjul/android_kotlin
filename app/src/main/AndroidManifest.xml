@@ -625,7 +625,7 @@
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <meta-data
+        <!--<meta-data
             android:name="com.cometchat.pro.uikit"
             android:value="${file_provider}" />
 
@@ -638,7 +638,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.groupchat.messagelist.CometChatMessageListActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" />-->
 
         <provider
             android:name="androidx.core.content.FileProvider"

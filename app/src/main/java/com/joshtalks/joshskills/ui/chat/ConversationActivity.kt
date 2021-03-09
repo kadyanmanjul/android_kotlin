@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.chat
 
+//import com.joshtalks.joshskills.ui.groupchat.messagelist.CometChatMessageListActivity
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -58,8 +59,6 @@ import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressTooltip
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
-import com.joshtalks.joshskills.ui.groupchat.listeners.StickyHeaderDecoration
-import com.joshtalks.joshskills.ui.groupchat.messagelist.CometChatMessageListActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
@@ -69,6 +68,7 @@ import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.video_player.*
 import com.joshtalks.joshskills.ui.view_holders.*
 import com.joshtalks.joshskills.util.ExoAudioPlayer
+import com.joshtalks.joshskills.util.StickyHeaderDecoration
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
 import com.joshtalks.recordview.OnRecordListener
@@ -363,13 +363,13 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         conversationBinding.imgGroupChat.visibility =
             if (inboxEntity.isGroupActive) VISIBLE else GONE
 
-        conversationBinding.imgGroupChat.setOnClickListener {
-            utilConversationViewModel.initCometChat()
-        }
-        conversationBinding.imgGroupChatOverlay.setOnClickListener {
-            conversationBinding.overlayLayout.visibility = GONE
-            utilConversationViewModel.initCometChat()
-        }
+//        conversationBinding.imgGroupChat.setOnClickListener {
+//            utilConversationViewModel.initCometChat()
+//        }
+//        conversationBinding.imgGroupChatOverlay.setOnClickListener {
+//            conversationBinding.overlayLayout.visibility = GONE
+//            utilConversationViewModel.initCometChat()
+//        }
         conversationBinding.refreshLayout.setOnRefreshListener {
             if (internetAvailableFlag) {
                 conversationBinding.refreshLayout.isRefreshing = true
@@ -743,9 +743,9 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 }
             }
         }
-        utilConversationViewModel.userLoginLiveData.observe(this, {
-            CometChatMessageListActivity.showGroupChatScreen(this, it)
-        })
+//        utilConversationViewModel.userLoginLiveData.observe(this, {
+//            CometChatMessageListActivity.showGroupChatScreen(this, it)
+//        })
 
         utilConversationViewModel.isLoading.observe(this) { isLoading ->
             if (isLoading) {
@@ -1392,9 +1392,9 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     override fun onResume() {
         super.onResume()
         subscribeRXBus()
-        if (inboxEntity.isGroupActive) {
-            utilConversationViewModel.getCometChatUnreadMessageCount(inboxEntity.conversation_id)
-        }
+//        if (inboxEntity.isGroupActive) {
+//            utilConversationViewModel.getCometChatUnreadMessageCount(inboxEntity.conversation_id)
+//        }
         if (inboxEntity.isCapsuleCourse) {
             utilConversationViewModel.getProfileData(Mentor.getInstance().getId())
         }
