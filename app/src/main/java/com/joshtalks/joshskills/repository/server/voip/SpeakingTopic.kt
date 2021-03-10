@@ -9,7 +9,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 
 @Entity
@@ -31,7 +33,11 @@ data class SpeakingTopic(
 
     @ColumnInfo(name = "already_talked")
     @SerializedName("already_talked")
-    val alreadyTalked: Int
+    val alreadyTalked: Int,
+
+    @IgnoredOnParcel
+    @Expose
+    var isFromDb: Boolean=false
 
 ) : Parcelable
 

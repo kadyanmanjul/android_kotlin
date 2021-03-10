@@ -875,11 +875,12 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
             disableSubmitButton()
             //practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
             viewModel.getPointsForVocabAndReading(currentLessonQuestion!!.id)
+            viewModel.addTaskToService(requestEngage, PendingTask.READING_PRACTICE_OLD)
+            currentLessonQuestion!!.status = QUESTION_STATUS.IP
             CoroutineScope(Dispatchers.Main).launch {
-                viewModel.addTaskToService(requestEngage, PendingTask.READING_PRACTICE_OLD)
-                delay(1000)
-                currentLessonQuestion!!.status = QUESTION_STATUS.IP
-                showCompletedPractise()            }
+                delay(400)
+                showCompletedPractise()
+            }
         }
     }
 

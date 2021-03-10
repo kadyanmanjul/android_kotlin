@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.lesson.grammar
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -169,8 +170,10 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
 
     private fun setQuizScore(assessmentQuestions: ArrayList<AssessmentQuestionWithRelations>) {
         assessmentQuestions.forEach {
-            it.choiceList.filter { choice -> choice.isCorrect && choice.userSelectedOrder == 1 }
-                .map { correctAns++ }
+            it.choiceList.filter { choice -> choice.isCorrect && choice.userSelectedOrder == choice.sortOrder }
+                .forEach {
+                    correctAns=correctAns.plus(1)
+                }
         }
     }
 
@@ -380,7 +383,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
         radioButton.text = choice.text
         if (question.question.isAttempted) {
             radioButton.isClickable = false
-            if (choice.userSelectedOrder == 1) {
+            if (choice.userSelectedOrder == choice.sortOrder) {
                 binding.quizRadioGroup.setOnCheckedChangeListener(null)
                 radioButton.isChecked = true
 
@@ -449,7 +452,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                 binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
             )]
             selectedChoice.isSelectedByUser = true
-            selectedChoice.userSelectedOrder = 1
+            selectedChoice.userSelectedOrder = selectedChoice.sortOrder
 
             viewModel.saveAssessmentQuestion(question)
             val correctQuestionList = ArrayList<Int>()

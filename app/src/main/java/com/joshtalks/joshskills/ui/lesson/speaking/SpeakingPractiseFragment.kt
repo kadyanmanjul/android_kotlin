@@ -133,7 +133,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
                     PrefManager.put(SPEAKING_POINTS, EMPTY)
                 }
 
-                if (response.alreadyTalked >= response.duration) {
+                if (response.alreadyTalked >= response.duration && response.isFromDb.not()) {
                     binding.btnContinue.visibility = View.VISIBLE
                     lessonActivityListener?.onQuestionStatusUpdate(
                         QUESTION_STATUS.AT,

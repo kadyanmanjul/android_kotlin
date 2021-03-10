@@ -361,7 +361,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         }
 
         conversationBinding.imgGroupChat.visibility =
-            if (inboxEntity.isGroupActive) VISIBLE else GONE
+            if (inboxEntity.isGroupActive) GONE else GONE
 
 //        conversationBinding.imgGroupChat.setOnClickListener {
 //            utilConversationViewModel.initCometChat()
@@ -677,10 +677,12 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 if (items.isEmpty()) {
                     return@collectLatest
                 }
-                addRVPatch(items.size + conversationAdapter.itemCount-1)
+                addRVPatch(items.size + conversationAdapter.itemCount - 1)
                 if (isNewMessageShowing.not()) {
                     val index = items.indexOfFirst { it.isSeen.not() }
-                    if (index > -1) {
+                    val haveUserMessage =
+                        if (items.filter { it.sender != null }.size > 0) true else false
+                    if (index > -1 && haveUserMessage.not()) {
                         conversationAdapter.addMessagesList(arrayListOf(getNewMessageObj(items.first().created)))
                         linearLayoutManager.scrollToPositionWithOffset(
                             conversationAdapter.itemCount + index,
