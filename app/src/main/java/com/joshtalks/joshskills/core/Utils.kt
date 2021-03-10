@@ -1229,9 +1229,10 @@ fun playSnackbarSound(context: Context) {
         //R.raw.accept_confirm
         //R.raw.tinder_one
         //R.raw.tinder_two
-        R.raw.tinder_new
+        //R.raw.tinder_new
         //R.raw.moneybag
-        //R.raw.si_montok_sound_effect
+        //R.raw.si_montok_sound_effect,
+        R.raw.duolingo_sound
     )
 
     mediaplayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
