@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.inbox
 
-import android.Manifest
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -23,7 +22,6 @@ import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.inbox.extra.NewUserLayout
-import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -223,31 +221,32 @@ abstract class InboxBaseActivity : CoreJoshActivity(),
     }
 
     protected fun locationFetch() {
-        if (Mentor.getInstance().getLocality() == null) {
-            Dexter.withContext(this)
-                .withPermissions(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
+        AppObjectController.uiHandler.post {
+               if (Mentor.getInstance().getLocality() == null) {
+                   PermissionUtils.locationPermission(
+                       this,
+                       object : MultiplePermissionsListener {
+                           override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                               report?.areAllPermissionsGranted()?.let { flag ->
+                                   if (flag) {
+                                       fetchUserLocation()
+                                       return
+                                   }
+                               }
+                           }
 
-                )
-                .withListener(object : MultiplePermissionsListener {
-                    override fun onPermissionRationaleShouldBeShown(
-                        permissions: MutableList<PermissionRequest>?,
-                        token: PermissionToken?
-                    ) {
-                        token?.continuePermissionRequest()
-                    }
+                           override fun onPermissionRationaleShouldBeShown(
+                               permissions: MutableList<PermissionRequest>?,
+                               token: PermissionToken?
+                           ) {
+                               token?.continuePermissionRequest()
+                           }
 
-                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                        report?.areAllPermissionsGranted()?.let { flag ->
-                            if (flag) {
-                                fetchUserLocation()
-                            }
-                        }
-                    }
-                }).check()
+                       })
+               }
         }
     }
+
     abstract fun openCourseExplorer()
     abstract fun openCourseSelectionExplorer(alreadyHaveCourses: Boolean = false)
 }
