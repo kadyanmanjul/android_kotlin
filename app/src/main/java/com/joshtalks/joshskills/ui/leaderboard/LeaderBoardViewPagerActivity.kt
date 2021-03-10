@@ -64,7 +64,7 @@ class LeaderBoardViewPagerActivity : BaseActivity() {
             }
         }
         with(iv_earn) {
-            visibility = View.VISIBLE
+            visibility = View.GONE
             setImageDrawable(
                 ContextCompat.getDrawable(
                     this@LeaderBoardViewPagerActivity,
