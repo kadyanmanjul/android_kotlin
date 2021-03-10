@@ -445,7 +445,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 val assessmentWithRelations: AssessmentWithRelations? =
                     appDatabase.assessmentDao().getAssessmentById(assessmentId)
                 assessmentWithRelations?.let {
-                    val assessmentRequest = AssessmentRequest((it))
+                    val assessmentRequest = AssessmentRequest(it, true)
                     AppObjectController.chatNetworkService.submitTestAsync(assessmentRequest)
                 }
             } catch (ex: Throwable) {
@@ -565,7 +565,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             val topicDetailsFromLocal = getTopicFromDB(topicId)
             if (topicDetailsFromLocal != null) {
-                topicDetailsFromLocal.isFromDb=true
+                topicDetailsFromLocal.isFromDb = true
                 speakingTopicLiveData.postValue(topicDetailsFromLocal)
             }
             if (Utils.isInternetAvailable()) {

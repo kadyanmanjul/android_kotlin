@@ -57,6 +57,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private lateinit var findMoreLayout: View
     lateinit var countdown_timer: CountDownTimer
     var isRunning: Boolean = false
+    var isPermissionRequired: Boolean = true
     var time_in_milli_seconds = 0L
     var expiryToolText: String = EMPTY
     private val courseListSet: MutableSet<InboxEntity> = hashSetOf()
@@ -202,7 +203,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         if (findMoreLayout.visibility == View.INVISIBLE) {
             findMoreLayout.visibility = View.VISIBLE
         }
-       locationFetch()
+        if(isPermissionRequired) {
+            isPermissionRequired=false
+            locationFetch()
+        }
     }
 
 
