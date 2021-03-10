@@ -18,10 +18,13 @@ data class AssessmentRequest(
 
 ) : Parcelable {
 
-    constructor(assessmentWithRelations: AssessmentWithRelations) : this(
+    constructor(
+        assessmentWithRelations: AssessmentWithRelations,
+        isCapsuleQuiz: Boolean = false
+    ) : this(
         id = assessmentWithRelations.assessment.remoteId,
         questions = assessmentWithRelations.questionList.map {
-            AssessmentQuestionRequest(it.question, it.choiceList)
+            AssessmentQuestionRequest(it.question, it.choiceList, isCapsuleQuiz)
         }
     )
 }

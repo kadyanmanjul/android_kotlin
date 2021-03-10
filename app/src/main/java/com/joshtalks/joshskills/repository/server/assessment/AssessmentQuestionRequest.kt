@@ -23,13 +23,19 @@ data class AssessmentQuestionRequest(
 
     constructor(
         assessmentQuestion: AssessmentQuestion,
-        choices: List<Choice>
+        choices: List<Choice>,
+        isCapsuleQuiz: Boolean = false
     ) : this(
         id = assessmentQuestion.remoteId,
         choices = if (assessmentQuestion.choiceType == ChoiceType.MATCH_TEXT) {
             choices.filter { it.isSelectedByUser || it.userSelectedOrder != 100 || it.userSelectedOrder != 0 }
                 .map {
                     ChoiceRequest(it, choices)
+                }
+        } else if (isCapsuleQuiz) {
+            choices.filter { it.isSelectedByUser }
+                .map {
+                    ChoiceRequest(it)
                 }
         } else {
             choices.filter { it.isSelectedByUser || it.userSelectedOrder != 100 || it.userSelectedOrder != 0 }

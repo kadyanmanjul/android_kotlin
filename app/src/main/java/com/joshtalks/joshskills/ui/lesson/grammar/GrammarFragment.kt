@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.lesson.grammar
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -170,9 +169,9 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
 
     private fun setQuizScore(assessmentQuestions: ArrayList<AssessmentQuestionWithRelations>) {
         assessmentQuestions.forEach {
-            it.choiceList.filter { choice -> choice.isCorrect && choice.userSelectedOrder == choice.sortOrder }
+            it.choiceList.filter { choice -> choice.isCorrect && choice.isSelectedByUser }
                 .forEach {
-                    correctAns=correctAns.plus(1)
+                    correctAns = correctAns.plus(1)
                 }
         }
     }
