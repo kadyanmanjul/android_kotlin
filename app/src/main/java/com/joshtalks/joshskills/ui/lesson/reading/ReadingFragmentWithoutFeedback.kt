@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -25,6 +26,7 @@ import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.exoplayer2.ExoPlaybackException
@@ -293,20 +295,25 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                 }
                 LessonMaterialType.VI -> {
                     binding.videoPlayer.visibility = VISIBLE
-                    this.videoList?.getOrNull(0)?.video_url?.let {
-                        binding.videoPlayer.setUrl(it)
-                        binding.videoPlayer.fitToScreen()
-                        binding.videoPlayer.setPlayListener {
-                            val videoId = this.videoList?.getOrNull(0)?.id
-                            val videoUrl = this.videoList?.getOrNull(0)?.video_url
-                            VideoPlayerActivity.startVideoActivity(
-                                requireActivity(),
-                                "",
-                                videoId,
-                                videoUrl
-                            )
+                    this.videoList?.getOrNull(0)?.let { video ->
+                        video.video_url?.let {
+                            setVideoThumbnail(video.video_image_url)
+                            binding.videoPlayer.setUrl(it)
+                            binding.videoPlayer.fitToScreen()
+                            binding.videoPlayer.setPlayListener {
+                                val videoId = this.videoList?.getOrNull(0)?.id
+                                val videoUrl = this.videoList?.getOrNull(0)?.video_url
+                                val currentVideoProgressPosition = binding.videoPlayer.getProgress()
+                                VideoPlayerActivity.startVideoActivity(
+                                    requireActivity(),
+                                    "",
+                                    videoId,
+                                    videoUrl,
+                                    currentVideoProgressPosition
+                                )
+                            }
+                            binding.videoPlayer.downloadStreamButNotPlay()
                         }
-                        binding.videoPlayer.downloadStreamButNotPlay()
                     }
                 }
                 LessonMaterialType.PD -> {
@@ -342,6 +349,22 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                     binding.infoTv2.visibility = VISIBLE
                     binding.infoTv2.text =
                         HtmlCompat.fromHtml(this.qText!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                }
+            }
+        }
+    }
+
+    private fun setVideoThumbnail(thumbnailUrl: String?) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val thumbnailDrawable: Drawable? =
+                Utils.getDrawableFromUrl(thumbnailUrl)
+            if (thumbnailDrawable != null) {
+                AppObjectController.uiHandler.post {
+                    binding.videoPlayer.useArtwork = true
+                    binding.videoPlayer.defaultArtwork = thumbnailDrawable
+//                    val imgArtwork: ImageView = binding.videoPlayer.findViewById(R.id.exo_artwork) as ImageView
+//                    imgArtwork.setImageDrawable(thumbnailDrawable)
+//                    imgArtwork.visibility = View.VISIBLE
                 }
             }
         }

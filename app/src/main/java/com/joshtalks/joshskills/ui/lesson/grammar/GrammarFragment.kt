@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.lesson.grammar
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,12 +16,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -55,6 +58,8 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.util.ArrayList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
 
@@ -192,32 +197,33 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
 
                 LessonMaterialType.VI -> {
                     binding.videoPlayer.visibility = View.VISIBLE
-                    lessonQuestion.videoList?.getOrNull(0)?.video_url?.let {
-                        val videoId = lessonQuestion.videoList?.getOrNull(0)?.id
+                    lessonQuestion.videoList?.getOrNull(0)?.let { video ->
+                        video.video_url?.let {
+                            setVideoThumbnail(video.video_image_url)
+                            binding.videoPlayer.setUrl(it)
+                            binding.videoPlayer.setVideoId(video.id)
+                            //binding.videoPlayer.setCourseId(course_id)
+                            binding.videoPlayer.fitToScreen()
+                            binding.videoPlayer.setPlayListener {
+                                val currentVideoProgressPosition = binding.videoPlayer.getProgress()
+                                VideoPlayerActivity.startVideoActivity(
+                                    requireContext(),
+                                    "",
+                                    video.id,
+                                    it,
+                                    currentVideoProgressPosition
+                                )
+                            }
+                            binding.videoPlayer.downloadStreamButNotPlay()
 
-                        binding.videoPlayer.setUrl(it)
-                        binding.videoPlayer.setVideoId(videoId)
-                        //binding.videoPlayer.setCourseId(course_id)
-                        binding.videoPlayer.fitToScreen()
-                        binding.videoPlayer.setPlayListener {
+                            video.id.toIntOrNull()?.let { id ->
+                                viewModel.getMaxIntervalForVideo(id)
+                            }
+                            viewModel.grammarVideoInterval.observe(owner = this@GrammarFragment.viewLifecycleOwner) { graph ->
+                                binding.videoPlayer.setProgress(graph?.endTime ?: 0)
+                            }
 
-                            val videoUrl = it
-                            VideoPlayerActivity.startVideoActivity(
-                                requireContext(),
-                                "",
-                                videoId,
-                                videoUrl
-                            )
                         }
-                        binding.videoPlayer.downloadStreamButNotPlay()
-
-                        videoId?.toIntOrNull()?.let { id ->
-                            viewModel.getMaxIntervalForVideo(id)
-                        }
-                        viewModel.grammarVideoInterval.observe(owner = this@GrammarFragment.viewLifecycleOwner) { graph ->
-                            binding.videoPlayer.setProgress(graph?.endTime ?: 0)
-                        }
-
                     }
 
                     if (lessonQuestion.status == QUESTION_STATUS.NA) {
@@ -240,6 +246,22 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                     binding.additionalMaterialTv.visibility = View.VISIBLE
                     binding.additionalMaterialTv.text = lessonQuestion.title
                     setUpPdfView(lessonQuestion)
+                }
+            }
+        }
+    }
+
+    private fun setVideoThumbnail(thumbnailUrl: String?) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val thumbnailDrawable: Drawable? =
+                Utils.getDrawableFromUrl(thumbnailUrl)
+            if (thumbnailDrawable != null) {
+                AppObjectController.uiHandler.post {
+                    binding.videoPlayer.useArtwork = true
+                    binding.videoPlayer.defaultArtwork = thumbnailDrawable
+//                    val imgArtwork: ImageView = binding.videoPlayer.findViewById(R.id.exo_artwork) as ImageView
+//                    imgArtwork.setImageDrawable(thumbnailDrawable)
+//                    imgArtwork.visibility = View.VISIBLE
                 }
             }
         }

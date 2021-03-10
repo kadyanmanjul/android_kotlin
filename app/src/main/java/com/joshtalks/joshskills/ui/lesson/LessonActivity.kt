@@ -110,7 +110,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
                     showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
                 }
             })
-
     }
 
     override fun onNextTabCall(currentTabNumber: Int) {

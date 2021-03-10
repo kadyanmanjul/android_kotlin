@@ -245,6 +245,8 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             timeHandler.post(timeRunnable);
             try {
                 setControllerShowTimeoutMs(5000);
+                setRewindIncrementMs(10000);
+                setFastForwardIncrementMs(10000);
                 setControllerVisibilityListener(visibility -> {
                     if (playerControlViewVisibilityListener != null) {
                         playerControlViewVisibilityListener.onVisibilityChange(visibility);
@@ -500,7 +502,11 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     public void onResume() {
         if (player != null) {
             player.setPlayWhenReady(true);
-            player.getPlaybackState();
+            int playerState = player.getPlaybackState();
+            if (playerState == Player.STATE_IDLE) {
+                downloadStreamPlay();
+                player.setPlayWhenReady(true);
+            }
             timeHandler.post(timeRunnable);
         }
     }
@@ -525,6 +531,10 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     public void setProgress(Long progress) {
         currentPosition = progress;
         player.seekTo(progress);
+    }
+
+    public Long getProgress() {
+        return player.getCurrentPosition();
     }
 
     enum ScreenOrientation {
@@ -577,7 +587,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
         @Override
         public void onPlayerError(ExoPlaybackException e) {
-
+            e.printStackTrace();
         }
     }
 

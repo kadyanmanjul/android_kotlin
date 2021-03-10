@@ -329,7 +329,7 @@ interface ChatDao {
     suspend fun getPagingMessage(
         conversationId: String,
         compareTime: Double,
-        limit: Int = 15
+        limit: Int = 40
     ): List<ChatModel> {
         return getLastChatsV2 {
             getOldPagingMessage(

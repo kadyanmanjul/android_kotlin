@@ -16,6 +16,7 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.PictureDrawable
 import android.graphics.drawable.VectorDrawable
 import android.media.AudioManager
@@ -78,6 +79,7 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.*
+import java.net.HttpURLConnection
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.URL
@@ -807,6 +809,21 @@ object Utils {
         val date: Date = inputFormat.parse(inputDateStr)
         return outputFormat.format(date)
     }
+
+    fun getDrawableFromUrl(url: String?): Drawable? {
+        return try {
+            val bitmap: Bitmap
+            val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
+            connection.connect()
+            val input: InputStream = connection.getInputStream()
+            bitmap = BitmapFactory.decodeStream(input)
+            BitmapDrawable(Resources.getSystem(), bitmap)
+        } catch (ex: Exception) {
+            Timber.e(ex)
+            null
+        }
+    }
+
 }
 
 fun milliSecondsToSeconds(time: Long): Long {

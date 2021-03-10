@@ -13,6 +13,7 @@ import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.view.children
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
@@ -20,6 +21,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
+import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.PracticeItemLayoutBinding
 import com.joshtalks.joshskills.databinding.VocabQuizPracticeItemLayoutBinding
@@ -32,8 +34,6 @@ import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.muddzdev.styleabletoast.StyleableToast
 import java.util.concurrent.TimeUnit
-import androidx.core.view.children
-import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import kotlin.random.Random.Default.nextInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -639,11 +639,13 @@ class VocabularyPracticeAdapter(
                 lessonQuestion?.let {
                     val videoId = it.videoList?.getOrNull(0)?.id
                     val videoUrl = it.videoList?.getOrNull(0)?.video_url
+                    val currentVideoProgressPosition = binding.videoPlayer.getProgress()
                     VideoPlayerActivity.startVideoActivity(
                         context,
                         "",
                         videoId,
-                        videoUrl
+                        videoUrl,
+                        currentVideoProgressPosition
                     )
                 }
             }
@@ -942,11 +944,13 @@ class VocabularyPracticeAdapter(
 //                            binding.videoPlayer.setPlayListener {
 //                                val videoId = lessonQuestion.videoList?.getOrNull(0)?.id
 //                                val videoUrl = lessonQuestion.videoList?.getOrNull(0)?.video_url
+//                            val currentVideoProgressPosition = binding.videoPlayer.getProgress()
 //                                VideoPlayerActivity.startVideoActivity(
 //                                    context,
 //                                    "",
 //                                    videoId,
-//                                    videoUrl
+//                                    videoUrl,
+//                                    currentVideoProgressPosition
 //                                )
 //                            }
                             binding.videoPlayer.downloadStreamButNotPlay()

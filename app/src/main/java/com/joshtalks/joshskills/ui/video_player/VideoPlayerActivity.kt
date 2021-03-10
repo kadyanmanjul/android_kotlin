@@ -35,6 +35,7 @@ import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper.isVideoPresentInUpdatedChat
 import com.joshtalks.joshskills.ui.chat.VIDEO_OPEN_REQUEST_CODE
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
+import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -72,14 +73,15 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             context: Context,
             videoTitle: String?,
             videoId: String?,
-            videoUrl: String?
-
+            videoUrl: String?,
+            currentVideoProgressPosition: Long = 0
         ) {
             val intent = Intent(context, VideoPlayerActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             intent.putExtra(VIDEO_URL, videoUrl)
             intent.putExtra(VIDEO_ID, videoId)
             intent.putExtra(COURSE_NAME, videoTitle)
+            intent.putExtra(CURRENT_VIDEO_PROGRESS_POSITION, currentVideoProgressPosition)
             context.startActivity(intent)
         }
     }
@@ -98,6 +100,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     private var graph: Graph? = null
     private var videoId: String? = null
     private var videoUrl: String? = null
+    private var currentVideoProgressPosition: Long = 0
     private lateinit var appAnalytics: AppAnalytics
     private var videoDuration: Long? = 0
     private var courseDuration: Int = 0
@@ -169,11 +172,17 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         if (intent.hasExtra(VIDEO_ID)) {
             videoId = intent.getStringExtra(VIDEO_ID)
         }
+        if (intent.hasExtra(CURRENT_VIDEO_PROGRESS_POSITION)) {
+            currentVideoProgressPosition = intent.getLongExtra(CURRENT_VIDEO_PROGRESS_POSITION, 0)
+        }
 
         videoUrl?.run {
             binding.videoPlayer.setUrl(this)
             binding.videoPlayer.playVideo()
             binding.videoPlayer.getCurrentPosition()
+            if (currentVideoProgressPosition > 0) {
+                binding.videoPlayer.seekTo(currentVideoProgressPosition)
+            }
         }
 
         chatObject?.let {

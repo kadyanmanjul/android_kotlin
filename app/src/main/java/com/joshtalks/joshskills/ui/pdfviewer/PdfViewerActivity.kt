@@ -26,6 +26,7 @@ const val PDF_ID = "pdf_id"
 const val COURSE_NAME = "course_name"
 const val MESSAGE_ID = "message_id"
 const val PDF_PATH = "pdf_path"
+const val CURRENT_VIDEO_PROGRESS_POSITION = "current_video_progress_position"
 
 class PdfViewerActivity : BaseActivity() {
     private lateinit var conversationBinding: ActivityPdfViewerBinding

@@ -138,7 +138,7 @@ class VoipCallFeedbackView : DialogFragment() {
             val second: Int = (callTime / 1000 % 60).toInt()
             val minute: Int = (callTime / (1000 * 60) % 60).toInt()
             if (minute > 0) {
-                mTime.append(minute).append(getMinuteString(minute)).append("  ")
+                mTime.append(minute).append(getMinuteString(minute))
             }
             if (second > 0) {
                 mTime.append(second).append(getSecondString(second))
@@ -150,14 +150,16 @@ class VoipCallFeedbackView : DialogFragment() {
             practiceViewModel.getPointsForVocabAndReading(null, channelName = channelName)
         }
     }
-    private fun getMinuteString(min :Int): String {
-        if (min>1){
+
+    private fun getMinuteString(min: Int): String {
+        if (min > 1) {
             return " minutes "
         }
         return " minute "
     }
-    private fun getSecondString(sec :Int): String {
-        if (sec>1){
+
+    private fun getSecondString(sec: Int): String {
+        if (sec > 1) {
             return " seconds "
         }
         return " second "
