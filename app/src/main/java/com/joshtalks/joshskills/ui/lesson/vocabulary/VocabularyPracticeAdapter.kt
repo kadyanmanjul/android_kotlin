@@ -55,7 +55,7 @@ class VocabularyPracticeAdapter(
     var audioManager = ExoAudioPlayer.getInstance()
     var currentQuestion: LessonQuestion? = null
     var currentPlayingPosition: Int = 0
-    private var expandCard: Boolean = true
+    private var expandCardPosition: Int = -1
     private var QUIZ_TYPE: Int = 1
     private var VOCAB_TYPE: Int = 0
     val wordsItemSize = itemList.size.minus(assessmentQuizList.size)
@@ -91,13 +91,16 @@ class VocabularyPracticeAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         Timber.d("Sahil : onBindViewHolder() $position Started")
+        Timber.d("OnBind : VocabPosition $position")
         when (holder.itemViewType) {
             VOCAB_TYPE -> {
                 (holder as VocabularyViewHolder).lessonQuestion = itemList[position]
+                holder.positionInList = position
                 holder.bind(position)
             }
             else -> {
                 (holder as QuizViewHolder).lessonQuestion = itemList[position]
+                holder.positionInList = position
                 assessmentQuizList.filter { it.assessment.remoteId == itemList[position].assessmentId }
                     .getOrNull(0)?.let { assessmentWithRelations ->
                         holder.assessmentWithRelations = assessmentWithRelations
@@ -114,17 +117,22 @@ class VocabularyPracticeAdapter(
         payloads: MutableList<Any>
     ) {
         Timber.d("Sahil : onBindViewHolderWithPayload() $position Started")
+        Timber.d("OnBind : VocabPosition $position")
         if (payloads.isNotEmpty() && payloads[0] as String == PAUSE_AUDIO) {
             (holder as VocabularyViewHolder).binding.root.tag = itemList[position].id
+            holder.lessonQuestion = itemList[position]
+            holder.positionInList = position
             holder.pauseAudio()
         } else {
             when (holder.itemViewType) {
                 VOCAB_TYPE -> {
                     (holder as VocabularyViewHolder).lessonQuestion = itemList[position]
+                    holder.positionInList = position
                     holder.bind(position)
                 }
                 else -> {
                     (holder as QuizViewHolder).lessonQuestion = itemList[position]
+                    holder.positionInList = position
                     assessmentQuizList.filter { it.assessment.remoteId == itemList[position].assessmentId }
                         .getOrNull(0)?.let { assessmentWithRelations ->
                             holder.assessmentWithRelations = assessmentWithRelations
@@ -171,6 +179,7 @@ class VocabularyPracticeAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
         private var isCorrect: Boolean = false
         var lessonQuestion: LessonQuestion? = null
+        var positionInList = -1
         var assessmentWithRelations: AssessmentWithRelations? = null
         private val quizCheckedChangeListener =
             RadioGroup.OnCheckedChangeListener { radioGroup: RadioGroup, checkedId: Int ->
@@ -215,13 +224,17 @@ class VocabularyPracticeAdapter(
             }
             binding.continueBtn.setOnClickListener {
                 if (lessonQuestion != null && assessmentWithRelations != null) {
-                    expandCard = true
+                    binding.continueBtn.visibility = GONE
+                    expandCardPosition = positionInList + 1
+                    val hasNextItem = positionInList < itemList.size - 1
                     clickListener.submitQuiz(
                         lessonQuestion!!,
                         isCorrect,
-                        assessmentWithRelations!!.questionList[0].question.remoteId
+                        assessmentWithRelations!!.questionList[0].question.remoteId,
+                        positionInList,
+                        hasNextItem,
+                        true
                     )
-                    onContinueClick()
                 }
             }
         }
@@ -233,8 +246,8 @@ class VocabularyPracticeAdapter(
             if (assessmentWithRelations?.questionList?.getOrNull(0) == null) {
                 return
             }
-            if (expandCard && lessonQuestion?.status == QUESTION_STATUS.NA) {
-                expandCard = false
+            if (expandCardPosition == positionInList && lessonQuestion?.status == QUESTION_STATUS.NA) {
+                expandCardPosition = -1
                 expandCard()
                 if (position > 0)
                     clickListener.focusChild(position - 1)
@@ -292,13 +305,23 @@ class VocabularyPracticeAdapter(
 
                 updateRadioGroupUI(assessmentQuestion)
 
+                val hasNextItem = positionInList < itemList.size - 1
+                val canShowSectionCompletedCard = false
                 clickListener.submitQuiz(
                     lessonQuestion,
                     isCorrect,
-                    assessmentQuestion.question.remoteId
+                    assessmentQuestion.question.remoteId,
+                    positionInList,
+                    hasNextItem,
+                    canShowSectionCompletedCard
                 )
 
-                clickListener.quizOptionSelected(lessonQuestion, assessmentQuestion)
+                clickListener.quizOptionSelected(
+                    lessonQuestion,
+                    assessmentQuestion,
+                    positionInList,
+                    hasNextItem
+                )
 
                 assessmentQuestion.reviseConcept?.let {
                     binding.showExplanationBtn.visibility = VISIBLE
@@ -350,11 +373,6 @@ class VocabularyPracticeAdapter(
                 binding.explanationTv.requestFocus()
                 requestFocus(binding.explanationTv)
             }
-        }
-
-        fun onContinueClick() {
-            notifyDataSetChanged()
-            binding.continueBtn.visibility = GONE
         }
 
         private fun requestFocus(view: View) {
@@ -518,6 +536,7 @@ class VocabularyPracticeAdapter(
         var filePath: String? = null
         private var mUserIsSeeking = false
         var lessonQuestion: LessonQuestion? = null
+        var positionInList = -1
 
         init {
             initViewHolder()
@@ -603,14 +622,16 @@ class VocabularyPracticeAdapter(
             }
 
             binding.submitAnswerBtn.setOnClickListener {
+                Timber.d("Submit Button click started")
                 lessonQuestion?.let {
-                    expandCard = true
+                    expandCardPosition = positionInList + 1
                     if (it.filePath == null) {
                         showToast(AppObjectController.joshApplication.getString(R.string.submit_practise_msz))
                         return@setOnClickListener
                     }
 
-                    if (clickListener.submitPractice(it)) {
+                    val hasNextItem = positionInList < itemList.size - 1
+                    if (clickListener.submitPractice(it, positionInList, hasNextItem)) {
                         if (isAudioPlaying()) {
                             binding.submitPractiseSeekbar.progress = 0
                             binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
@@ -632,7 +653,7 @@ class VocabularyPracticeAdapter(
                             ?.push()
                     }
                 }
-
+                Timber.d("Submit Button click completed")
             }
 
             binding.videoPlayer.setPlayListener {
@@ -680,8 +701,8 @@ class VocabularyPracticeAdapter(
         fun bind(position: Int) {
             Timber.d("Sahil : bind() $position Started")
             binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
-            if (expandCard && lessonQuestion?.status == QUESTION_STATUS.NA) {
-                expandCard = false
+            if (expandCardPosition == positionInList && lessonQuestion?.status == QUESTION_STATUS.NA) {
+                expandCardPosition = -1
                 expandCard()
                 if (position > 0)
                     clickListener.focusChild(position - 1)
@@ -1240,16 +1261,31 @@ class VocabularyPracticeAdapter(
     }
 
     interface PracticeClickListeners {
-        fun submitPractice(lessonQuestion: LessonQuestion): Boolean
+        fun submitPractice(
+            lessonQuestion: LessonQuestion,
+            positionInList: Int,
+            hasNextItem: Boolean
+        ): Boolean
+
         fun startRecording(lessonQuestion: LessonQuestion, position: Int, startTimeUnit: Long)
         fun stopRecording(lessonQuestion: LessonQuestion, position: Int, stopTime: Long)
         fun askRecordPermission()
         fun focusChild(position: Int)
-        fun submitQuiz(lessonQuestion: LessonQuestion, isCorrect: Boolean, questionId: Int)
-        fun openNextScreen()
+        fun submitQuiz(
+            lessonQuestion: LessonQuestion,
+            isCorrect: Boolean,
+            questionId: Int,
+            positionInList: Int,
+            hasNextItem: Boolean,
+            canShowSectionCompletedCard: Boolean = true
+        )
+
+        fun openNextScreen(canShowSectionCompletedCard: Boolean = true)
         fun quizOptionSelected(
             lessonQuestion: LessonQuestion,
-            assessmentQuestion: AssessmentQuestionWithRelations
+            assessmentQuestion: AssessmentQuestionWithRelations,
+            positionInList: Int,
+            hasNextItem: Boolean
         )
 
         fun playAudio(position: Int)

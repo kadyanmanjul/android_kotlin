@@ -147,14 +147,29 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         binding.practiceRv.setItemViewCacheSize(5)
     }
 
-    override fun submitQuiz(lessonQuestion: LessonQuestion, isCorrect: Boolean, questionId: Int) {
-        onQuestionSubmitted(lessonQuestion, isCorrect, questionId)
-        openNextScreen()
+    override fun submitQuiz(
+        lessonQuestion: LessonQuestion,
+        isCorrect: Boolean,
+        questionId: Int,
+        positionInList: Int,
+        hasNextItem: Boolean,
+        canShowSectionCompletedCard: Boolean
+    ) {
+        onQuestionSubmitted(
+            lessonQuestion,
+            positionInList,
+            hasNextItem,
+            isCorrect,
+            questionId
+        )
+        openNextScreen(canShowSectionCompletedCard)
     }
 
     override fun quizOptionSelected(
         lessonQuestion: LessonQuestion,
-        assessmentQuestion: AssessmentQuestionWithRelations
+        assessmentQuestion: AssessmentQuestionWithRelations,
+        positionInList: Int,
+        hasNextItem: Boolean
     ) {
         viewModel.saveAssessmentQuestion(assessmentQuestion)
         lessonActivityListener?.onQuestionStatusUpdate(
@@ -164,7 +179,11 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         viewModel.saveQuizToServer(assessmentQuestion.question.assessmentId)
         lessonQuestion.status = QUESTION_STATUS.IP
         currentQuestion = null
-        adapter.notifyDataSetChanged()
+        if (hasNextItem) {
+            adapter.notifyItemRangeChanged(positionInList, 2)
+        } else {
+            adapter.notifyItemChanged(positionInList)
+        }
     }
 
     override fun playAudio(position: Int) {
@@ -177,6 +196,8 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 
     private fun onQuestionSubmitted(
         lessonQuestion: LessonQuestion,
+        positionInList: Int,
+        hasNextItem: Boolean,
         isCorrect: Boolean = false,
         questionId: Int = -1
     ) {
@@ -199,12 +220,23 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         lessonQuestion.status = QUESTION_STATUS.AT
 
         currentQuestion = null
-        adapter.notifyDataSetChanged()
+        AppObjectController.uiHandler.post {
+            if (hasNextItem) {
+                adapter.notifyItemRangeChanged(positionInList, 2)
+            } else {
+                adapter.notifyItemChanged(positionInList)
+            }
+            //adapter.notifyDataSetChanged()
+        }
     }
 
-    override fun openNextScreen() {
+    override fun openNextScreen(canShowSectionCompletedCard: Boolean) {
         if (isAllQuestionsAttempted() && isVisible) {
-            binding.vocabularyCompleteLayout.visibility = View.VISIBLE
+            if (canShowSectionCompletedCard) {
+                AppObjectController.uiHandler.post {
+                    binding.vocabularyCompleteLayout.visibility = View.VISIBLE
+                }
+            }
             lessonActivityListener?.onSectionStatusUpdate(1, true)
         }
     }
@@ -227,7 +259,11 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         binding.vocabularyCompleteLayout.visibility = View.GONE
     }
 
-    override fun submitPractice(lessonQuestion: LessonQuestion): Boolean {
+    override fun submitPractice(
+        lessonQuestion: LessonQuestion,
+        positionInList: Int,
+        hasNextItem: Boolean
+    ): Boolean {
         if (lessonQuestion.expectedEngageType != null) {
             lessonQuestion.expectedEngageType?.let {
                 if (EXPECTED_ENGAGE_TYPE.TX == it) {
@@ -245,11 +281,12 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                 }
                 currentQuestion = lessonQuestion
                 lessonQuestion.status = QUESTION_STATUS.IP
-                viewModel.getPointsForVocabAndReading(lessonQuestion.id)
-                onQuestionSubmitted(lessonQuestion)
-                openNextScreen()
 
-                CoroutineScope(Dispatchers.Main).launch {
+                CoroutineScope(Dispatchers.IO).launch {
+                    viewModel.getPointsForVocabAndReading(lessonQuestion.id)
+                    onQuestionSubmitted(lessonQuestion, positionInList, hasNextItem)
+                    openNextScreen(true)
+
                     val requestEngage = RequestEngage()
 //                requestEngage.text = binding.etPractise.text.toString()
                     requestEngage.localPath = lessonQuestion.filePath
@@ -365,12 +402,16 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         super.onResume()
         Timber.d("Sahil : onResume() Started")
         subscribeRXBus()
-        if (isVisible.not()) {
-            adapter.itemList.forEachIndexed { index, lessonQuestion ->
-                if (lessonQuestion.type != LessonQuestionType.QUIZ)
-                    (binding.practiceRv.findViewHolderForAdapterPosition(index)
-                            as VocabularyPracticeAdapter.VocabularyViewHolder).pauseAudio()
+        try {
+            if (isVisible.not()) {
+                adapter.itemList.forEachIndexed { index, lessonQuestion ->
+                    if (lessonQuestion.type != LessonQuestionType.QUIZ)
+                        (binding.practiceRv.findViewHolderForAdapterPosition(index)
+                                as VocabularyPracticeAdapter.VocabularyViewHolder).pauseAudio()
+                }
             }
+        } catch (ex: Exception) {
+            Timber.d(ex)
         }
         Timber.d("Sahil : onResume() Completed")
     }

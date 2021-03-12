@@ -108,7 +108,7 @@
                     android:background="@drawable/play_pause_button_background"
                     android:backgroundTint="@color/button_color"
                     android:contentDescription="@string/play_button_description"
-                    android:elevation="4dp"
+                    android:elevation="@dimen/_2sdp"
                     android:padding="@dimen/_4sdp"
                     android:theme="?actionBarTheme"
                     android:tint="?colorControlNormal" />
@@ -173,7 +173,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:gravity="start|center"
-                android:text="Description Text"
+                android:text="This is the description of the question"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/black"
                 android:visibility="gone"
@@ -252,6 +252,7 @@
                     android:layout_height="@dimen/_52sdp"
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_12sdp"
                     android:adjustViewBounds="true"
                     android:background="@drawable/recv_bg_mic"
                     android:backgroundTint="@color/button_color"
@@ -272,7 +273,8 @@
                     android:text="@string/hold_to_record_msz"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                     android:textColor="@color/black"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
             </LinearLayout>
 
@@ -322,7 +324,7 @@
                         android:background="@drawable/play_pause_button_background"
                         android:backgroundTint="@color/button_color"
                         android:contentDescription="@string/play_button_description"
-                        android:elevation="@dimen/_4sdp"
+                        android:elevation="@dimen/_2sdp"
                         android:padding="@dimen/_4sdp"
                         android:theme="?actionBarTheme"
                         android:tint="?colorControlNormal" />

@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class LessonActivity : CoreJoshActivity(), LessonActivityListener {
 
@@ -143,31 +144,35 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
         isVideoPercentComplete: Boolean,
         quizCorrectQuestionIds: ArrayList<Int>
     ) {
+        Timber.d("Sahil123 onQuestionStatusUpdate Started")
         viewModel.updateQuestionStatus(
             status,
             questionId,
             isVideoPercentComplete,
             quizCorrectQuestionIds
         )
-        setTabCompletionStatus()
+        AppObjectController.uiHandler.post {
+            setTabCompletionStatus()
+        }
+        Timber.d("Sahil123 onQuestionStatusUpdate Completed")
     }
 
     override fun onSectionStatusUpdate(tabPosition: Int, isSectionCompleted: Boolean) {
-        AppObjectController.uiHandler.post {
-
-
-            viewModel.lessonLiveData.value?.let { lesson ->
-                val status = if (isSectionCompleted) LESSON_STATUS.CO else LESSON_STATUS.NO
-                when (tabPosition) {
-                    0 -> lesson.grammarStatus = status
-                    1 -> lesson.vocabStatus = status
-                    2 -> lesson.readingStatus = status
-                    3 -> lesson.speakingStatus = status
-                }
-                viewModel.updateSectionStatus(lesson.id, status, tabPosition)
+        Timber.d("Sahil123 onSectionStatusUpdate Started")
+        viewModel.lessonLiveData.value?.let { lesson ->
+            val status = if (isSectionCompleted) LESSON_STATUS.CO else LESSON_STATUS.NO
+            when (tabPosition) {
+                0 -> lesson.grammarStatus = status
+                1 -> lesson.vocabStatus = status
+                2 -> lesson.readingStatus = status
+                3 -> lesson.speakingStatus = status
             }
+            viewModel.updateSectionStatus(lesson.id, status, tabPosition)
+        }
+        AppObjectController.uiHandler.post {
             setTabCompletionStatus()
         }
+        Timber.d("Sahil123 onSectionStatusUpdate Completed")
     }
 
 

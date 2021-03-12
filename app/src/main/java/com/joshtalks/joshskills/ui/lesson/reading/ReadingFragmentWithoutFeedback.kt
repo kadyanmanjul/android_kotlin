@@ -1,7 +1,9 @@
 package com.joshtalks.joshskills.ui.lesson.reading
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -21,6 +23,8 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
@@ -50,6 +54,7 @@ import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
+import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
@@ -89,6 +94,19 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
 
     private val viewModel: LessonViewModel by lazy {
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
+    }
+
+    var openVideoPlayerActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.getLongExtra(
+                CURRENT_VIDEO_PROGRESS_POSITION,
+                0
+            )?.let { progress ->
+                binding.videoPlayer.setProgress(progress)
+            }
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -304,12 +322,14 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                                 val videoId = this.videoList?.getOrNull(0)?.id
                                 val videoUrl = this.videoList?.getOrNull(0)?.video_url
                                 val currentVideoProgressPosition = binding.videoPlayer.getProgress()
-                                VideoPlayerActivity.startVideoActivity(
-                                    requireActivity(),
-                                    "",
-                                    videoId,
-                                    videoUrl,
-                                    currentVideoProgressPosition
+                                openVideoPlayerActivity.launch(
+                                    VideoPlayerActivity.getActivityIntent(
+                                        requireContext(),
+                                        "",
+                                        videoId,
+                                        videoUrl,
+                                        currentVideoProgressPosition
+                                    )
                                 )
                             }
                             binding.videoPlayer.downloadStreamButNotPlay()

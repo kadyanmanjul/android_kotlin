@@ -38,13 +38,7 @@ object NetworkRequestHelper {
                     conversationId,
                     queryMap
                 )
-                var allSendersMessages = true
-                resp.chatModelList.map {
-                    if (it.sender == null) {
-                        allSendersMessages = false
-                    }
-                }
-                if (resp.chatModelList.isNullOrEmpty() || allSendersMessages) {
+                if (resp.chatModelList.isNullOrEmpty()) {
                     RxBus2.publish(MessageCompleteEventBus(false))
                 } else {
                     PrefManager.put(

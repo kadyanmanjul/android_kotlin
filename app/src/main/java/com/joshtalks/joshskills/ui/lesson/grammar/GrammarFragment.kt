@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.ui.lesson.grammar
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +11,8 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.children
@@ -43,6 +47,7 @@ import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
+import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.karumi.dexter.MultiplePermissionsReport
@@ -76,6 +81,19 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
     private var currentQuizQuestion: Int = 0
     private var correctAns = 0
     private var assessmentQuestions: ArrayList<AssessmentQuestionWithRelations> = ArrayList()
+
+    var openVideoPlayerActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.getLongExtra(
+                CURRENT_VIDEO_PROGRESS_POSITION,
+                0
+            )?.let { progress ->
+                binding.videoPlayer.setProgress(progress)
+            }
+        }
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -144,9 +162,6 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                 )
 
             val grammarQuestions = it.filter { it.chatType == CHAT_TYPE.GR }
-//            if (grammarQuestions.isNullOrEmpty()) {
-//                requireActivity().finish()
-//            }
             grammarQuestions.forEach {
                 setupUi(it)
             }
@@ -206,12 +221,14 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                             binding.videoPlayer.fitToScreen()
                             binding.videoPlayer.setPlayListener {
                                 val currentVideoProgressPosition = binding.videoPlayer.getProgress()
-                                VideoPlayerActivity.startVideoActivity(
-                                    requireContext(),
-                                    "",
-                                    video.id,
-                                    it,
-                                    currentVideoProgressPosition
+                                openVideoPlayerActivity.launch(
+                                    VideoPlayerActivity.getActivityIntent(
+                                        requireContext(),
+                                        "",
+                                        video.id,
+                                        it,
+                                        currentVideoProgressPosition
+                                    )
                                 )
                             }
                             binding.videoPlayer.downloadStreamButNotPlay()
@@ -366,9 +383,11 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
         if (question.question.isAttempted) {
             binding.submitAnswerBtn.visibility = View.GONE
             binding.showExplanationBtn.visibility = View.VISIBLE
+            binding.continueBtn.visibility = View.VISIBLE
         } else {
-            binding.showExplanationBtn.visibility = View.GONE
             binding.submitAnswerBtn.visibility = View.VISIBLE
+            binding.showExplanationBtn.visibility = View.GONE
+            binding.continueBtn.visibility = View.GONE
         }
 
     }

@@ -84,6 +84,22 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             intent.putExtra(CURRENT_VIDEO_PROGRESS_POSITION, currentVideoProgressPosition)
             context.startActivity(intent)
         }
+
+        fun getActivityIntent(
+            context: Context,
+            videoTitle: String?,
+            videoId: String?,
+            videoUrl: String?,
+            currentVideoProgressPosition: Long = 0
+        ): Intent {
+            return Intent(context, VideoPlayerActivity::class.java).apply {
+                this.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                this.putExtra(VIDEO_URL, videoUrl)
+                this.putExtra(VIDEO_ID, videoId)
+                this.putExtra(COURSE_NAME, videoTitle)
+                this.putExtra(CURRENT_VIDEO_PROGRESS_POSITION, currentVideoProgressPosition)
+            }
+        }
     }
 
     private lateinit var usbEventReceiver: UsbEventReceiver
@@ -510,6 +526,10 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
 
     private fun setResult() {
         val resultIntent = Intent()
+        resultIntent.putExtra(
+            CURRENT_VIDEO_PROGRESS_POSITION,
+            binding.videoPlayer.getCurrentPosition()
+        )
         chatObject?.run {
             resultIntent.putExtra(VIDEO_OBJECT, this)
             resultIntent.putExtra(VIDEO_WATCH_TIME, countUpTimer.time)

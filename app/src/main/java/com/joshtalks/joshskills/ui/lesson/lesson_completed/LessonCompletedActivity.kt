@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 
@@ -52,7 +52,7 @@ class LessonCompletedActivity : BaseActivity() {
 
         lessonModel?.let {
             lessonName.text = getString(R.string.lesson_name, it.lessonNo, it.lessonName)
-            Utils.setImage(lessonIv, it.thumbnailUrl)
+            lessonIv.setImageAndFitCenter(it.thumbnailUrl)
         }
 
         findViewById<TextView>(R.id.continue_btn).setOnClickListener {
