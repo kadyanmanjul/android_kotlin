@@ -38,11 +38,18 @@ object NetworkRequestHelper {
                     conversationId,
                     queryMap
                 )
-                if (resp.chatModelList.isNullOrEmpty()) {
+                var allSendersMessages = true
+                resp.chatModelList.map {
+                    if (it.sender == null) {
+                        allSendersMessages = false
+                    }
+                }
+                if (resp.chatModelList.isNullOrEmpty() || allSendersMessages) {
                     RxBus2.publish(MessageCompleteEventBus(false))
                 } else {
                     PrefManager.put(
-                        conversationId.trim(), getTimeInString(resp.chatModelList.last().messageTime)
+                        conversationId.trim(),
+                        getTimeInString(resp.chatModelList.last().messageTime)
                     )
                     RxBus2.publish(MessageCompleteEventBus(true))
                 }
@@ -366,7 +373,7 @@ object NetworkRequestHelper {
             .submit()
     }
 
-    private fun getTimeInString(time:Double): String {
-        return String.format("%.6f",time)
+    private fun getTimeInString(time: Double): String {
+        return String.format("%.6f", time)
     }
 }
