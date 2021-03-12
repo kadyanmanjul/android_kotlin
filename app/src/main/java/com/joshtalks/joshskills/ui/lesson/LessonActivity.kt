@@ -26,6 +26,9 @@ import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class LessonActivity : CoreJoshActivity(), LessonActivityListener {
 
@@ -120,9 +123,11 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
                         lesson.readingStatus == LESSON_STATUS.CO &&
                         lesson.speakingStatus == LESSON_STATUS.CO
 
-                lesson.status = LESSON_STATUS.CO
-
                 if (lessonCompleted) {
+                    lesson.status = LESSON_STATUS.CO
+                    CoroutineScope(Dispatchers.IO).launch {
+                        viewModel.updateLesson(lesson)
+                    }
                     openLessonCompleteScreen(lesson)
                 } else
                     openIncompleteTab(currentTabNumber)

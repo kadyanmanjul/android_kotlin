@@ -617,7 +617,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private suspend fun updateLesson(lesson: LessonModel) {
+    suspend fun updateLesson(lesson: LessonModel) {
         viewModelScope.launch(Dispatchers.IO) {
             appDatabase.lessonDao().insertSingleItem(lesson)
             lessonLiveData.postValue(lesson)
