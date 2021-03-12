@@ -1245,18 +1245,29 @@ fun playSnackbarSound(context: Context) {
         //R.raw.ting
         //R.raw.accept_confirm
         //R.raw.tinder_one
-        //R.raw.tinder_two
+        R.raw.snackbar
         //R.raw.tinder_new
         //R.raw.moneybag
         //R.raw.si_montok_sound_effect,
-        R.raw.duolingo_sound
+        //R.raw.duolingo_sound
     )
+    try {
 
-    mediaplayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
-        override fun onCompletion(mediaPlayer: MediaPlayer) {
-            mediaPlayer.reset()
-            mediaPlayer.release()
-        }
-    })
-    mediaplayer.start()
+        mediaplayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
+            override fun onCompletion(mediaPlayer: MediaPlayer) {
+                mediaPlayer.reset()
+                mediaPlayer.release()
+            }
+        })
+        mediaplayer.setOnPreparedListener(object :MediaPlayer.OnPreparedListener{
+            override fun onPrepared(p0: MediaPlayer?) {
+                p0?.let {
+                    p0.start()
+                }
+            }
+        })
+        mediaplayer.prepare()
+    } catch (e:java.lang.Exception){
+        e.printStackTrace()
+    }
 }
