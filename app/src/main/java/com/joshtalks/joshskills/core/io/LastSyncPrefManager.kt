@@ -3,24 +3,17 @@ package com.joshtalks.joshskills.core.io
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.preference.PreferenceManager
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 
 
 object LastSyncPrefManager {
 
-    private const val PREF_NAME_COMMON = "JoshSkills_Last_Sync"
+    private const val LAST_SYNC_PREF_NAME = "JoshSkills_Last_Sync"
 
+    @JvmStatic
     private val lastSyncPrefManager by lazy {
-        getPref(AppObjectController.joshApplication)
-    }
-
-    @SuppressLint("RestrictedApi")
-    private fun getPref(context: Context): SharedPreferences {
-        val sharedPreferences = PreferenceManager(context).sharedPreferences
-        PreferenceManager(context).sharedPreferencesName = PREF_NAME_COMMON
-        return sharedPreferences
+        getPref(AppObjectController.joshApplication, LAST_SYNC_PREF_NAME)
     }
 
     @SuppressLint("RestrictedApi")
