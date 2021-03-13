@@ -88,6 +88,7 @@ object WorkManagerAdmin {
                 )
             )
             .then(OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build())
+            .then(OneTimeWorkRequestBuilder<SyncFavoriteCaller>().build())
             .enqueue()
     }
 
@@ -258,4 +259,25 @@ object WorkManagerAdmin {
             workRequest
         )
     }
+
+    fun syncFavoriteCaller() {
+        val constraints =
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                Constraints.Builder()
+                    .setRequiresDeviceIdle(false)
+                    .build()
+            } else {
+                Constraints.Builder()
+                    .build()
+            }
+        val workRequest = OneTimeWorkRequestBuilder<SyncFavoriteCaller>()
+            .setConstraints(constraints)
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniqueWork(
+            "SyncFavoriteCaller_Api",
+            ExistingWorkPolicy.REPLACE,
+            workRequest
+        )
+    }
+
 }

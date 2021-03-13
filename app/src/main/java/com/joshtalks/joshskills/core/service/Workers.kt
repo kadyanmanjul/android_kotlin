@@ -714,6 +714,23 @@ class PatchUserIdToGAIdV2(context: Context, private val workerParams: WorkerPara
     }
 }
 
+class SyncFavoriteCaller(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val response = AppObjectController.p2pNetworkService.getFavoriteCallerList(
+                Mentor.getInstance().getId()
+            )
+            if (response.isNotEmpty()) {
+                AppObjectController.appDatabase.favoriteCallerDao().insertFavoriteCallers(response)
+            }
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
+        }
+        return Result.success()
+    }
+}
+
 
 fun getGoogleAdId(context: Context): String {
     MobileAds.initialize(context)
