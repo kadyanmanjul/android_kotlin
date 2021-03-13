@@ -37,6 +37,13 @@ class LeaderBoardViewPagerActivity : BaseActivity() {
     private var compositeDisposable = CompositeDisposable()
     private var tabPosition = 0
 
+    val searchActivityResult: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                viewModel.getFullLeaderBoardData(Mentor.getInstance().getId())
+            }
+        }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,13 +84,6 @@ class LeaderBoardViewPagerActivity : BaseActivity() {
     }
 
     private fun openSearchActivity() {
-
-        val searchActivityResult: ActivityResultLauncher<Intent> =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == RESULT_OK) {
-                    viewModel.getFullLeaderBoardData(Mentor.getInstance().getId())
-                }
-            }
         searchActivityResult.launch(
             LeaderBoardSearchActivity.getSearchActivityIntent(
                 this,

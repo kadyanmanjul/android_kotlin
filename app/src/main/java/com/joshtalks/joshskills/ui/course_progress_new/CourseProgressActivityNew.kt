@@ -53,6 +53,26 @@ class CourseProgressActivityNew : BaseActivity(),
     var pdfInfo: PdfInfo? = null
 //    var courseOverviewResponse: CourseOverviewResponse? = null
 
+    val dayWiseActivityListener: ActivityResultLauncher<Intent> =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                viewModel.getCourseOverview(courseId)
+            }
+        }
+
+    val cExamActivityListener: ActivityResultLauncher<Intent> =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.getStringExtra(MESSAGE_ID).let { chatId ->
+                    viewModel.getCourseOverview(courseId)
+                }
+            }
+        }
+
 
     private var downloadListener = object : FetchListener {
         override fun onAdded(download: Download) {
@@ -236,15 +256,6 @@ class CourseProgressActivityNew : BaseActivity(),
             val lessonModel = viewModel.getLesson(item.lessonId)
             runOnUiThread {
                 if (lessonModel != null) {
-                    val dayWiseActivityListener: ActivityResultLauncher<Intent> =
-                        registerForActivityResult(
-                            ActivityResultContracts.StartActivityForResult()
-                        ) { result ->
-                            if (result.resultCode == Activity.RESULT_OK) {
-                                viewModel.getCourseOverview(courseId)
-                            }
-                        }
-
                     dayWiseActivityListener.launch(
                         LessonActivity.getActivityIntent(
                             this@CourseProgressActivityNew,
@@ -292,16 +303,6 @@ class CourseProgressActivityNew : BaseActivity(),
                         )
                     }
                 } else {
-                    val cExamActivityListener: ActivityResultLauncher<Intent> =
-                        registerForActivityResult(
-                            ActivityResultContracts.StartActivityForResult()
-                        ) { result ->
-                            if (result.resultCode == Activity.RESULT_OK) {
-                                result.data?.getStringExtra(MESSAGE_ID).let { chatId ->
-                                    viewModel.getCourseOverview(courseId)
-                                }
-                            }
-                        }
                     cExamActivityListener.launch(
                         CertificationBaseActivity.certificationExamIntent(
                             this@CourseProgressActivityNew,
