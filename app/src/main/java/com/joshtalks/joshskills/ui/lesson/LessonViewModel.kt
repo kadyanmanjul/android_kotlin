@@ -381,7 +381,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 }
             }
             vocabAssessmentData.postValue(assessmentList)
-            Timber.d("Sahil : lessonQuestionsLiveData.observe Completed")
         }
     }
 

@@ -41,6 +41,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import timber.log.Timber
 
 
 class FileUploadService : Service() {
@@ -410,9 +411,13 @@ class FileUploadService : Service() {
         private const val CHANNEL_ID = "FILE_UPLOAD"
         private const val NOTIFICATION_ID = 111
         fun uploadAllPendingTasks(context: Context) {
-            val intent = Intent(context, FileUploadService::class.java)
-            intent.action = UPLOAD_ALL_PENDING
-            context.startService(intent)
+            try {
+                val intent = Intent(context, FileUploadService::class.java)
+                intent.action = UPLOAD_ALL_PENDING
+                context.startService(intent)
+            } catch (ex: Exception) {
+                Timber.d(ex)
+            }
         }
 
         fun uploadSinglePendingTasks(

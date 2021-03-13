@@ -252,7 +252,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
             RxBus2.listen(RemovePracticeAudioEventBus::class.java)
                 .subscribeOn(Schedulers.computation())
                 .subscribe({
-                    Handler(Looper.getMainLooper()).post {
+                    AppObjectController.uiHandler.post {
                         binding.audioList.removeView(it.practiceAudioViewHolder)
                         currentLessonQuestion?.run {
                             if (this.practiceEngagement.isNullOrEmpty()) {
@@ -350,8 +350,6 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                         }
                     }
                 }
-
-
                 LessonMaterialType.TX -> {
                     this.qText?.let {
                         binding.infoTv.visibility = VISIBLE
@@ -713,7 +711,9 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                     val params =
                         binding.counterContainer.layoutParams as ViewGroup.MarginLayoutParams
 //                    params.topMargin = binding.rootView.scrollY
-                    viewModel.startRecord()
+                    CoroutineScope(Dispatchers.IO).launch {
+                        viewModel.startRecord()
+                    }
                     binding.audioPractiseHint.visibility = GONE
                 }
                 MotionEvent.ACTION_MOVE -> {
@@ -721,31 +721,37 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     binding.rootView.requestDisallowInterceptTouchEvent(false)
                     binding.counterTv.stop()
-                    viewModel.stopRecording()
+                    CoroutineScope(Dispatchers.IO).launch {
+                        viewModel.stopRecording()
+                    }
                     binding.uploadPractiseView.clearAnimation()
                     binding.counterContainer.visibility = GONE
                     binding.audioPractiseHint.visibility = VISIBLE
                     requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-                    val timeDifference =
-                        TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) - TimeUnit.MILLISECONDS.toSeconds(
-                            startTime
-                        )
-                    if (timeDifference > 1) {
-                        viewModel.recordFile?.let {
-                            isAudioRecordDone = true
-                            filePath = AppDirectory.getAudioSentFile(null).absolutePath
-                            AppDirectory.copy(it.absolutePath, filePath!!)
-                            audioAttachmentInit()
-                            Handler().postDelayed({
-                                binding.submitAnswerBtn.parent.requestChildFocus(
-                                    binding.submitAnswerBtn,
-                                    binding.submitAnswerBtn
-                                )
-                            }, 200)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val timeDifference =
+                            TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) - TimeUnit.MILLISECONDS.toSeconds(
+                                startTime
+                            )
+                        if (timeDifference > 1) {
+                            viewModel.recordFile?.let {
+                                isAudioRecordDone = true
+                                filePath = AppDirectory.getAudioSentFile(null).absolutePath
+                                AppDirectory.copy(it.absolutePath, filePath!!)
+                                AppObjectController.uiHandler.post {
+                                    audioAttachmentInit()
+                                }
+                                AppObjectController.uiHandler.postDelayed({
+                                    binding.submitAnswerBtn.parent.requestChildFocus(
+                                        binding.submitAnswerBtn,
+                                        binding.submitAnswerBtn
+                                    )
+                                }, 200)
+                            }
+
+
                         }
-
-
                     }
                 }
             }
@@ -882,47 +888,53 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
     }
 
     fun submitPractise() {
-        currentLessonQuestion?.expectedEngageType?.let {
-            if (EXPECTED_ENGAGE_TYPE.AU == it && isAudioRecordDone.not()) {
-                showToast(getString(R.string.submit_practise_msz))
-                return
-            }
+        CoroutineScope(Dispatchers.IO).launch {
+            currentLessonQuestion?.expectedEngageType?.let {
+                if (EXPECTED_ENGAGE_TYPE.AU == it && isAudioRecordDone.not()) {
+                    showToast(getString(R.string.submit_practise_msz))
+                } else {
+                    appAnalytics?.addParam(
+                        AnalyticsEvent.PRACTICE_SCREEN_TIME.NAME,
+                        System.currentTimeMillis() - totalTimeSpend
+                    )
+                    appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
+                    appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Submitted")
+                    appAnalytics?.addParam(
+                        AnalyticsEvent.PRACTICE_TYPE_SUBMITTED.NAME,
+                        "$it Practice Submitted"
+                    )
+                    appAnalytics?.addParam(
+                        AnalyticsEvent.PRACTICE_SUBMITTED.NAME,
+                        "Submit Practice $"
+                    )
 
-            appAnalytics?.addParam(
-                AnalyticsEvent.PRACTICE_SCREEN_TIME.NAME,
-                System.currentTimeMillis() - totalTimeSpend
-            )
-            appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
-            appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Submitted")
-            appAnalytics?.addParam(
-                AnalyticsEvent.PRACTICE_TYPE_SUBMITTED.NAME,
-                "$it Practice Submitted"
-            )
-            appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SUBMITTED.NAME, "Submit Practice $")
-
-            val requestEngage = RequestEngage()
-            requestEngage.localPath = filePath
-            requestEngage.duration =
-                Utils.getDurationOfMedia(requireActivity(), filePath)?.toInt()
-            //requestEngage.feedbackRequire = currentLessonQuestion.feedback_require
-            requestEngage.questionId = currentLessonQuestion!!.id
-            requestEngage.mentor = Mentor.getInstance().getId()
-            if (it == EXPECTED_ENGAGE_TYPE.AU) {
-                requestEngage.answerUrl = filePath
-            }
-            //binding.progressLayout.visibility = INVISIBLE
-            binding.feedbackLayout.visibility = GONE
-            binding.progressLayout.visibility = VISIBLE
-            binding.feedbackGrade.visibility = GONE
-            binding.feedbackDescription.visibility = GONE
-            disableSubmitButton()
-            //practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
-            viewModel.getPointsForVocabAndReading(currentLessonQuestion!!.id)
-            viewModel.addTaskToService(requestEngage, PendingTask.READING_PRACTICE_OLD)
-            currentLessonQuestion!!.status = QUESTION_STATUS.IP
-            CoroutineScope(Dispatchers.Main).launch {
-                delay(400)
-                showCompletedPractise()
+                    val requestEngage = RequestEngage()
+                    requestEngage.localPath = filePath
+                    requestEngage.duration =
+                        Utils.getDurationOfMedia(requireActivity(), filePath)?.toInt()
+                    //requestEngage.feedbackRequire = currentLessonQuestion.feedback_require
+                    requestEngage.questionId = currentLessonQuestion!!.id
+                    requestEngage.mentor = Mentor.getInstance().getId()
+                    if (it == EXPECTED_ENGAGE_TYPE.AU) {
+                        requestEngage.answerUrl = filePath
+                    }
+                    AppObjectController.uiHandler.post {
+                        //binding.progressLayout.visibility = INVISIBLE
+                        binding.feedbackLayout.visibility = GONE
+                        binding.progressLayout.visibility = VISIBLE
+                        binding.feedbackGrade.visibility = GONE
+                        binding.feedbackDescription.visibility = GONE
+                        disableSubmitButton()
+                    }
+                    //practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
+                    viewModel.getPointsForVocabAndReading(currentLessonQuestion!!.id)
+                    viewModel.addTaskToService(requestEngage, PendingTask.READING_PRACTICE_OLD)
+                    currentLessonQuestion!!.status = QUESTION_STATUS.IP
+                    delay(300)
+                    AppObjectController.uiHandler.post {
+                        showCompletedPractise()
+                    }
+                }
             }
         }
     }

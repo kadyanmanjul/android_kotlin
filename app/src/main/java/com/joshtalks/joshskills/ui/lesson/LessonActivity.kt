@@ -144,7 +144,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
         isVideoPercentComplete: Boolean,
         quizCorrectQuestionIds: ArrayList<Int>
     ) {
-        Timber.d("Sahil123 onQuestionStatusUpdate Started")
         viewModel.updateQuestionStatus(
             status,
             questionId,
@@ -154,11 +153,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
         AppObjectController.uiHandler.post {
             setTabCompletionStatus()
         }
-        Timber.d("Sahil123 onQuestionStatusUpdate Completed")
     }
 
     override fun onSectionStatusUpdate(tabPosition: Int, isSectionCompleted: Boolean) {
-        Timber.d("Sahil123 onSectionStatusUpdate Started")
         viewModel.lessonLiveData.value?.let { lesson ->
             val status = if (isSectionCompleted) LESSON_STATUS.CO else LESSON_STATUS.NO
             when (tabPosition) {
@@ -172,7 +169,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
         AppObjectController.uiHandler.post {
             setTabCompletionStatus()
         }
-        Timber.d("Sahil123 onSectionStatusUpdate Completed")
     }
 
 

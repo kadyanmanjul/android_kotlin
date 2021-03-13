@@ -70,17 +70,13 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        Timber.d("Sahil : onAttach() Started")
         if (context is LessonActivityListener)
             lessonActivityListener = context
-        Timber.d("Sahil : onAttach() Completed")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Timber.d("Sahil : onCreate() Started")
         super.onCreate(savedInstanceState)
         totalTimeSpend = System.currentTimeMillis()
-        Timber.d("Sahil : onCreate() Completed")
     }
 
     override fun onCreateView(
@@ -88,7 +84,6 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Timber.d("Sahil : onCreateView() Started")
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_vocabulary, container, false)
         binding.lifecycleOwner = this
@@ -103,22 +98,18 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
             binding.vocabularyCompleteLayout.visibility = View.VISIBLE
         }
 
-        Timber.d("Sahil : onCreateView() Completed")
         return binding.root
     }
 
     private fun addObserver() {
 
         viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner, {
-            Timber.d("Sahil : lessonQuestionsLiveData.observe Started")
             initAdapter(ArrayList())
             viewModel.getAssessmentData(it.filter { it.chatType == CHAT_TYPE.VP })
         })
 
         viewModel.vocabAssessmentData.observe(viewLifecycleOwner, {
-            Timber.d("Sahil : vocabAssessmentData.observe Started")
-            initAdapter(it)
-            Timber.d("Sahil : vocabAssessmentData.observe Completed")
+            adapter.updateAssessmentQuizList(it)
         })
 
         /*viewModel.pointsSnackBarText.observe(viewLifecycleOwner) {
@@ -340,7 +331,6 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 
     override fun onPause() {
         super.onPause()
-        Timber.d("Sahil : onPause() Started")
 //        adapter.itemList.forEachIndexed { index, lessonQuestion ->
 //            if (lessonQuestion.type != LessonQuestionType.QUIZ)
 //                binding.practiceRv.findViewHolderForAdapterPosition(index)?.let {
@@ -348,7 +338,6 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 //                }
 //        }
 //        aPosition = -1
-        Timber.d("Sahil : onPause() Completed")
     }
 
     override fun askRecordPermission() {
@@ -378,7 +367,11 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     }
 
     override fun focusChild(position: Int) {
-        binding.practiceRv.smoothScrollToPosition(position)
+        try {
+            binding.practiceRv.smoothScrollToPosition(position)
+        } catch (ex: java.lang.Exception) {
+            Timber.d(ex)
+        }
     }
 
     private fun subscribeRXBus() {
@@ -400,7 +393,6 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 
     override fun onResume() {
         super.onResume()
-        Timber.d("Sahil : onResume() Started")
         subscribeRXBus()
         try {
             if (isVisible.not()) {
@@ -413,14 +405,11 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         } catch (ex: Exception) {
             Timber.d(ex)
         }
-        Timber.d("Sahil : onResume() Completed")
     }
 
     override fun onStop() {
         super.onStop()
-        Timber.d("Sahil : onStop() Started")
         compositeDisposable.clear()
-        Timber.d("Sahil : onStop() Completed")
     }
 
     companion object {

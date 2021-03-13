@@ -432,19 +432,18 @@ abstract class AppDatabase : RoomDatabase() {
 
             }
         }
+        private val MIGRATION_27_28: Migration = object : Migration(27, 28) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE `awardmentormodel` ADD COLUMN award_type TEXT NOT NULL DEFAULT 'SOTD'")
+                database.execSQL("ALTER TABLE `awardmentormodel` ADD COLUMN date_text TEXT")
+
+            }
+        }
         private val MIGRATION_28_29: Migration = object : Migration(28, 29) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("UPDATE chat_table SET is_seen =1")
                 //Db migration for course id
                 database.execSQL("CREATE TABLE IF NOT EXISTS `RecentSearch` (`keyword` TEXT PRIMARY KEY NOT NULL)")
-
-            }
-        }
-
-        private val MIGRATION_27_28: Migration = object : Migration(27, 28) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE `awardmentormodel` ADD COLUMN award_type TEXT NOT NULL DEFAULT 'SOTD'")
-                database.execSQL("ALTER TABLE `awardmentormodel` ADD COLUMN date_text TEXT")
 
             }
         }

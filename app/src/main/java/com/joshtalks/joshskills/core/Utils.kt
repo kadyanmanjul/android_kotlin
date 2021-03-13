@@ -1240,23 +1240,27 @@ fun getRandomName(): String {
 }
 
 fun playSnackbarSound(context: Context) {
-    val mediaplayer: MediaPlayer = MediaPlayer.create(
-        context,
-        //R.raw.ting
-        //R.raw.accept_confirm
-        //R.raw.tinder_one
-        R.raw.tinder_two
-        //R.raw.tinder_new
-        //R.raw.moneybag
-        //R.raw.si_montok_sound_effect,
-        //R.raw.snackbar
-    )
+    try {
+        val mediaplayer: MediaPlayer = MediaPlayer.create(
+            context,
+            //R.raw.ting
+            //R.raw.accept_confirm
+            //R.raw.tinder_one
+            R.raw.tinder_two
+            //R.raw.tinder_new
+            //R.raw.moneybag
+            //R.raw.si_montok_sound_effect,
+            //R.raw.snackbar
+        )
 
-    mediaplayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
-        override fun onCompletion(mediaPlayer: MediaPlayer) {
-            mediaPlayer.reset()
-            mediaPlayer.release()
-        }
-    })
-    mediaplayer.start()
+        mediaplayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
+            override fun onCompletion(mediaPlayer: MediaPlayer) {
+                mediaPlayer.reset()
+                mediaPlayer.release()
+            }
+        })
+        mediaplayer.start()
+    } catch (ex: Exception) {
+        Timber.d(ex)
+    }
 }

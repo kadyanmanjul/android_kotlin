@@ -90,8 +90,6 @@ class VocabularyPracticeAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        Timber.d("Sahil : onBindViewHolder() $position Started")
-        Timber.d("OnBind : VocabPosition $position")
         when (holder.itemViewType) {
             VOCAB_TYPE -> {
                 (holder as VocabularyViewHolder).lessonQuestion = itemList[position]
@@ -108,7 +106,6 @@ class VocabularyPracticeAdapter(
                     }
             }
         }
-        Timber.d("Sahil : onBindViewHolder() $position Completed")
     }
 
     override fun onBindViewHolder(
@@ -116,8 +113,6 @@ class VocabularyPracticeAdapter(
         position: Int,
         payloads: MutableList<Any>
     ) {
-        Timber.d("Sahil : onBindViewHolderWithPayload() $position Started")
-        Timber.d("OnBind : VocabPosition $position")
         if (payloads.isNotEmpty() && payloads[0] as String == PAUSE_AUDIO) {
             (holder as VocabularyViewHolder).binding.root.tag = itemList[position].id
             holder.lessonQuestion = itemList[position]
@@ -141,16 +136,13 @@ class VocabularyPracticeAdapter(
                 }
             }
         }
-        Timber.d("Sahil : onBindViewHolderWithPayload() $position Completed")
     }
 
     override fun getItemCount(): Int {
-        Timber.d("Sahil : getItemCount() Called")
         return itemList.size
     }
 
     override fun getItemViewType(position: Int): Int {
-        Timber.d("Sahil : getItemViewType() Called")
         return when (itemList[position].type) {
             LessonQuestionType.QUIZ -> {
                 QUIZ_TYPE
@@ -167,11 +159,15 @@ class VocabularyPracticeAdapter(
 
     override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
         super.onViewDetachedFromWindow(holder)
-        Timber.d("Sahil : onViewDetachedFromWindow() Started")
         if (holder is VocabularyViewHolder) {
             holder.complete()
         }
-        Timber.d("Sahil : onViewDetachedFromWindow() Completed")
+    }
+
+    fun updateAssessmentQuizList(assessmentQuizList: ArrayList<AssessmentWithRelations>) {
+        this.assessmentQuizList.clear()
+        this.assessmentQuizList.addAll(assessmentQuizList)
+        notifyDataSetChanged()
     }
 
     inner class QuizViewHolder(
@@ -242,7 +238,6 @@ class VocabularyPracticeAdapter(
         fun bind(
             position: Int
         ) {
-            Timber.d("Sahil : bind() $position Started")
             if (assessmentWithRelations?.questionList?.getOrNull(0) == null) {
                 return
             }
@@ -278,7 +273,6 @@ class VocabularyPracticeAdapter(
                 if (position > 0)
                     clickListener.focusChild(position - 1)
             }
-            Timber.d("Sahil : bind() $position Completed")
         }
 
         private fun onSubmitQuizClick(
@@ -699,7 +693,6 @@ class VocabularyPracticeAdapter(
         }
 
         fun bind(position: Int) {
-            Timber.d("Sahil : bind() $position Started")
             binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
             if (expandCardPosition == positionInList && lessonQuestion?.status == QUESTION_STATUS.NA) {
                 expandCardPosition = -1
@@ -712,7 +705,6 @@ class VocabularyPracticeAdapter(
             lessonQuestion?.let {
                 setPracticeInfoView(it)
             }
-            Timber.d("Sahil : bind() $position Completed")
         }
 
         //===============================
