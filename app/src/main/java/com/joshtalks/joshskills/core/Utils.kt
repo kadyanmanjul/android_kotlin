@@ -1246,11 +1246,11 @@ fun playSnackbarSound(context: Context) {
             //R.raw.ting
             //R.raw.accept_confirm
             //R.raw.tinder_one
-            R.raw.tinder_two
+            //R.raw.tinder_two
             //R.raw.tinder_new
             //R.raw.moneybag
             //R.raw.si_montok_sound_effect,
-            //R.raw.snackbar
+            R.raw.right_answer
         )
 
         mediaplayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
