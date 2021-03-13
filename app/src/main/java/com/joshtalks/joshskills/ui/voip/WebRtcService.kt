@@ -37,12 +37,12 @@ import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
+import java.lang.ref.WeakReference
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.lang.ref.WeakReference
-import java.util.concurrent.TimeUnit
 
 
 const val RTC_TOKEN_KEY = "token"
@@ -757,9 +757,10 @@ class WebRtcService : BaseWebRtcService() {
             }
         }
         joshAudioManager?.endCommunication()
+
+        mRtcEngine?.leaveChannel()
         if (isCallWasOnGoing) {
             isCallWasOnGoing = false
-            mRtcEngine?.leaveChannel()
             disconnectService()
         } else {
             callStopWithoutIssue()

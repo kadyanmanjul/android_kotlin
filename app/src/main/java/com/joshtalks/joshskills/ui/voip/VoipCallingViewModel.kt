@@ -9,11 +9,11 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.voip.RequestUserLocation
+import java.net.ProtocolException
+import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-import java.net.ProtocolException
-import java.util.*
 
 class VoipCallingViewModel(application: Application) : AndroidViewModel(application) {
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
@@ -42,14 +42,14 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
                         uploadUserCurrentLocation(it["channel_name"]!!, location)
                     }
                 } else if (response.code() == 204) {
-                    apiCallStatusLiveData.postValue(ApiCallStatus.INVALIDED)
+                    apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
                 } else {
                     apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
                 }
             } catch (ex: Exception) {
                 when (ex) {
                     is ProtocolException, is HttpException -> {
-                        apiCallStatusLiveData.postValue(ApiCallStatus.INVALIDED)
+                        apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
                     }
                     else -> {
                         apiCallStatusLiveData.postValue(ApiCallStatus.FAILED_PERMANENT)

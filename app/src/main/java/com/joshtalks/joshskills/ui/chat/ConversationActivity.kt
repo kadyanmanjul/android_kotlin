@@ -857,9 +857,9 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     val time = try {
-                        conversationAdapter.getLastItem().created.time
+                        conversationAdapter.getLastItem().messageTime
                     } catch (ex: Exception) {
-                        0L
+                        0.0
                     }
                     conversationViewModel.addNewMessages(time)
                 }, {

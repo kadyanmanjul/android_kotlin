@@ -170,8 +170,7 @@ class WebRtcActivity : AppCompatActivity() {
         }
         val channelName = mBoundService?.channelName
         if (time > 0 && channelName.isNullOrEmpty().not()) {
-            binding.container.setBackgroundColor(ContextCompat.getColor(applicationContext,R.color.gray_48))
-            binding.container.removeAllViewsInLayout()
+            binding.placeholderBg.visibility=View.VISIBLE
             VoipCallFeedbackView.showCallRatingDialog(
                 supportFragmentManager,
                 channelName = channelName,
@@ -209,13 +208,21 @@ class WebRtcActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_calling)
         binding.lifecycleOwner = this
         binding.handler = this
+        setCallerInfoOnAppCreate()
         AppAnalytics.create(AnalyticsEvent.OPEN_CALL_SCREEN_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()
             .push()
         addObserver()
     }
-
+    private fun setCallerInfoOnAppCreate() {
+        val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
+        map?.let {
+            if (it.containsKey(RTC_CALLER_UID_KEY)) {
+                setUserInfo(it[RTC_CALLER_UID_KEY])
+            }
+        }
+    }
     private fun addObserver() {
         userDetailLiveData.observe(this, {
             binding.topic.text = it["topic_name"]
@@ -223,7 +230,6 @@ class WebRtcActivity : AppCompatActivity() {
                 it["name"]?.plus(" \n")?.plus(it["locality"])
             setImageInIV(it["profile_pic"])
         })
-
     }
 
     override fun onNewIntent(nIntent: Intent) {

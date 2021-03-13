@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
@@ -63,9 +62,9 @@ class VoipCallFeedbackView : DialogFragment() {
             window?.setLayout(width.toInt(), height)
             setCanceledOnTouchOutside(false)
             setCancelable(false)
-            val lp: WindowManager.LayoutParams? = window?.attributes
-            lp?.dimAmount = 0.85f
-            window?.attributes = lp
+           // val lp: WindowManager.LayoutParams? = window?.attributes
+        //    lp?.dimAmount = 0.85f
+            //window?.attributes = lp
         }
     }
 

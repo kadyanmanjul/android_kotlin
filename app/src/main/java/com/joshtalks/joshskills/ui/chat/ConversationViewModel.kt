@@ -212,7 +212,7 @@ class ConversationViewModel(
                 userUnreadCourseChat.emit(
                     chatDao.getUnreadMessageList(
                         inboxEntity.conversation_id,
-                        lastUnreadMessage.created.time
+                        lastUnreadMessage.messageTime
                     ).sortedWith(compareBy { it.messageTime })
                 )
             }
@@ -225,19 +225,17 @@ class ConversationViewModel(
 
     fun loadPagingMessage(lastMessage: ChatModel) {
         viewModelScope.launch(Dispatchers.IO) {
-
             pagingMessagesChat.emit(
                 chatDao.getPagingMessage(
                     inboxEntity.conversation_id,
                     lastMessage.messageTime
-                )
-                    .sortedWith(compareBy { it.messageTime })
+                ).sortedWith(compareBy { it.messageTime })
             )
             updateAllMessageReadByUser()
         }
     }
 
-    fun addNewMessages(lastMessageTime: Long) {
+    fun addNewMessages(lastMessageTime: Double) {
         viewModelScope.launch(Dispatchers.IO) {
             if (lastMessageTime > 0L) {
                 delay(250)

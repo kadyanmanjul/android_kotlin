@@ -21,6 +21,7 @@
         android:fitsSystemWindows="true"
         android:orientation="vertical">
 
+
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -230,6 +231,14 @@
             android:visibility="invisible"
             app:constraint_referenced_ids="btn_mute,btn_speaker,btn_action"
             tools:visibility="visible" />
+        <FrameLayout
+            android:id="@+id/placeholder_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#C7000000"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

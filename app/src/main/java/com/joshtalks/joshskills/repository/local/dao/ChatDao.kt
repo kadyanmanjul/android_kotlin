@@ -308,18 +308,18 @@ interface ChatDao {
     @Query(value = "SELECT COUNT(chat_id) FROM chat_table where conversation_id= :conversationId AND is_delete_message=0 AND is_seen= 0")
     suspend fun unreadMessageCount(conversationId: String): Long
 
-    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND is_delete_message=0 AND is_seen= 0 ORDER BY created ASC LIMIT 1")
+    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND is_delete_message=0 AND is_seen= 0 ORDER BY message_time ASC LIMIT 1")
     suspend fun getLastUnreadReadMessage(conversationId: String): ChatModel?
 
     suspend fun getOneShotMessageList(conversationId: String): List<ChatModel> {
         return getLastChatsV2 { getOneShotMessage(conversationId) }
     }
 
-    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND is_delete_message=0  ORDER BY created DESC,question_id DESC  LIMIT 15")
+    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND is_delete_message=0  ORDER BY message_time DESC,question_id DESC  LIMIT 15")
     suspend fun getOneShotMessage(conversationId: String): List<ChatModel>
 
 
-    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND message_time < :messageTime AND is_delete_message=0  ORDER BY created DESC,question_id ASC  LIMIT :limit")
+    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND message_time < :messageTime AND is_delete_message=0  ORDER BY message_time DESC,question_id ASC  LIMIT :limit")
     suspend fun getOldPagingMessage(
         conversationId: String,
         messageTime: Double,
@@ -329,7 +329,7 @@ interface ChatDao {
     suspend fun getPagingMessage(
         conversationId: String,
         compareTime: Double,
-        limit: Int = 40
+        limit: Int = 15
     ): List<ChatModel> {
         return getLastChatsV2 {
             getOldPagingMessage(
@@ -341,25 +341,26 @@ interface ChatDao {
     }
 
 
-    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND  created >= :compareTime AND  is_delete_message=0 AND is_seen= 0  ORDER BY created ASC,question_id ASC ")
-    suspend fun getUnreadReadMessages(conversationId: String, compareTime: Long): List<ChatModel>
-    suspend fun getUnreadMessageList(conversationId: String, compareTime: Long): List<ChatModel> {
+    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND  message_time >= :messageTime AND  is_delete_message=0 AND is_seen= 0  ORDER BY message_time ASC,question_id ASC ")
+    suspend fun getUnreadReadMessages(conversationId: String, messageTime: Double): List<ChatModel>
+
+    suspend fun getUnreadMessageList(conversationId: String, messageTime: Double): List<ChatModel> {
         return getLastChatsV2 {
             getUnreadReadMessages(
                 conversationId,
-                compareTime = compareTime
+                messageTime = messageTime
             )
         }
     }
 
-    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND  created > :compareTime AND  is_delete_message=0 ORDER BY created ASC,question_id ASC ")
-    suspend fun getNewMessages(conversationId: String, compareTime: Long): List<ChatModel>
+    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND  message_time > :messageTime AND  is_delete_message=0 ORDER BY message_time ASC,question_id ASC ")
+    suspend fun getNewMessages(conversationId: String, messageTime: Double): List<ChatModel>
 
-    suspend fun getNewFetchMessages(conversationId: String, compareTime: Long): List<ChatModel> {
+    suspend fun getNewFetchMessages(conversationId: String, messageTime: Double): List<ChatModel> {
         return getLastChatsV2 {
             getNewMessages(
                 conversationId,
-                compareTime = compareTime
+                messageTime = messageTime
             )
         }
     }
