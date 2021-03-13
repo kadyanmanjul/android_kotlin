@@ -16,7 +16,6 @@ import android.text.style.UnderlineSpan
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -43,6 +42,7 @@ import com.joshtalks.joshskills.core.custom_ui.AnimationView
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
 import com.joshtalks.joshskills.core.interfaces.OnDismissClaimCertificateDialog
 import com.joshtalks.joshskills.core.interfaces.OnDismissDialog
+import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.databinding.ActivityCourseProgressBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
@@ -63,15 +63,15 @@ import com.joshtalks.joshskills.ui.view_holders.PerformHeaderViewHolder
 import com.joshtalks.joshskills.ui.view_holders.PerformItemViewHolder
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import retrofit2.HttpException
 import java.net.ProtocolException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
     OnDismissClaimCertificateDialog {
@@ -112,7 +112,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
         if (intent.hasExtra(CHAT_ROOM_OBJECT)) {
             inboxEntity = intent.getParcelableExtra(CHAT_ROOM_OBJECT)!!
             if (inboxEntity.report_status) {
-                PrefManager.put(inboxEntity.conversation_id.trim().plus(CERTIFICATE_GENERATE), true)
+                LastSyncPrefManager.put(inboxEntity.conversation_id.trim().plus(CERTIFICATE_GENERATE), true)
             }
         }
         appAnalytics = AppAnalytics.create(AnalyticsEvent.CERTIFICATE_SCREEN.NAME)

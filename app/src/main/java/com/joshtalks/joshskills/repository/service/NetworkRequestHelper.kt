@@ -7,7 +7,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
@@ -42,7 +41,7 @@ object NetworkRequestHelper {
                 if (resp.chatModelList.isNullOrEmpty()) {
                     RxBus2.publish(MessageCompleteEventBus(false))
                 } else {
-                    PrefManager.put(
+                    LastSyncPrefManager.put(
                         conversationId.trim(),
                         getTimeInString(resp.chatModelList.last().messageTime)
                     )
@@ -189,7 +188,7 @@ object NetworkRequestHelper {
                 queryMap
             )
             if (resp.chatModelList.isNullOrEmpty().not()) {
-                PrefManager.put(
+                LastSyncPrefManager.put(
                     conversationId.trim(), getTimeInString(resp.chatModelList.last().messageTime)
                 )
             }
