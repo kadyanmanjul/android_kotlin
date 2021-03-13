@@ -58,8 +58,8 @@ class VocabularyPracticeAdapter(
     private var expandCardPosition: Int = -1
     private var QUIZ_TYPE: Int = 1
     private var VOCAB_TYPE: Int = 0
-    val wordsItemSize = itemList.size.minus(assessmentQuizList.size)
-    val revisionItemSize = assessmentQuizList.size
+    var wordsItemSize = itemList.size.minus(assessmentQuizList.size)
+    var revisionItemSize = assessmentQuizList.size
     val appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTICE_SCREEN.NAME)
         .addBasicParam()
         .addUserDetails()
@@ -167,6 +167,8 @@ class VocabularyPracticeAdapter(
     fun updateAssessmentQuizList(assessmentQuizList: ArrayList<AssessmentWithRelations>) {
         this.assessmentQuizList.clear()
         this.assessmentQuizList.addAll(assessmentQuizList)
+        this.wordsItemSize = itemList.size.minus(assessmentQuizList.size)
+        this.revisionItemSize = assessmentQuizList.size
         notifyDataSetChanged()
     }
 

@@ -708,9 +708,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                     val params =
                         binding.counterContainer.layoutParams as ViewGroup.MarginLayoutParams
 //                    params.topMargin = binding.rootView.scrollY
-                    CoroutineScope(Dispatchers.IO).launch {
-                        viewModel.startRecord()
-                    }
+                    viewModel.startRecord()
                     binding.audioPractiseHint.visibility = GONE
                 }
                 MotionEvent.ACTION_MOVE -> {
@@ -718,41 +716,31 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     binding.rootView.requestDisallowInterceptTouchEvent(false)
                     binding.counterTv.stop()
-                    CoroutineScope(Dispatchers.IO).launch {
-                        viewModel.stopRecording()
-                    }
+                    viewModel.stopRecording()
                     binding.uploadPractiseView.clearAnimation()
                     binding.counterContainer.visibility = GONE
                     binding.audioPractiseHint.visibility = VISIBLE
                     requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val timeDifference =
-                            TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) - TimeUnit.MILLISECONDS.toSeconds(
-                                startTime
-                            )
-                        if (timeDifference > 1) {
-                            viewModel.recordFile?.let {
-                                isAudioRecordDone = true
-                                filePath = AppDirectory.getAudioSentFile(null).absolutePath
-                                AppDirectory.copy(it.absolutePath, filePath!!)
-                                AppObjectController.uiHandler.post {
-                                    audioAttachmentInit()
-                                }
-                                AppObjectController.uiHandler.postDelayed({
-                                    binding.submitAnswerBtn.parent.requestChildFocus(
-                                        binding.submitAnswerBtn,
-                                        binding.submitAnswerBtn
-                                    )
-                                }, 200)
-                            }
-
-
+                    val timeDifference =
+                        TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) - TimeUnit.MILLISECONDS.toSeconds(
+                            startTime
+                        )
+                    if (timeDifference > 1) {
+                        viewModel.recordFile?.let {
+                            isAudioRecordDone = true
+                            filePath = AppDirectory.getAudioSentFile(null).absolutePath
+                            AppDirectory.copy(it.absolutePath, filePath!!)
+                            audioAttachmentInit()
+                            AppObjectController.uiHandler.postDelayed({
+                                binding.submitAnswerBtn.parent.requestChildFocus(
+                                    binding.submitAnswerBtn,
+                                    binding.submitAnswerBtn
+                                )
+                            }, 200)
                         }
                     }
                 }
             }
-
             true
         }
     }
