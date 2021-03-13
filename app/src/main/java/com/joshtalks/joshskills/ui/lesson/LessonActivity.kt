@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -29,19 +30,32 @@ import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class LessonActivity : CoreJoshActivity(), LessonActivityListener {
 
     private lateinit var binding: LessonActivityBinding
 
-    //lateinit var lesson: LessonModel
     private val viewModel: LessonViewModel by lazy {
         ViewModelProvider(this).get(LessonViewModel::class.java)
     }
 
     lateinit var titleView: TextView
+
+    var lesson: LessonModel? = null  // Do not use this var
     private lateinit var tabs: ViewGroup
+    var openLessonCompletedActivity: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK && result.data!!.hasExtra(IS_BATCH_CHANGED)) {
+                setResult(RESULT_OK, Intent().apply {
+                    putExtra(IS_BATCH_CHANGED, false)
+                    putExtra(LAST_LESSON_INTERVAL, lesson?.interval)
+                    putExtra(LAST_LESSON_STATUS, true)
+                    putExtra(LESSON__CHAT_ID, lesson?.chatId)
+                    putExtra(CHAT_ROOM_ID, lesson?.chatId)
+                })
+                finish()
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -369,20 +383,9 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
     }
 
     private fun openLessonCompleteScreen(lesson: LessonModel) {
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK && result.data!!.hasExtra(IS_BATCH_CHANGED) == true) {
-                setResult(RESULT_OK, Intent().apply {
-                    putExtra(IS_BATCH_CHANGED, false)
-                    putExtra(LAST_LESSON_INTERVAL, lesson.interval)
-                    putExtra(LAST_LESSON_STATUS, true)
-                    putExtra(LESSON__CHAT_ID, lesson.chatId)
-                    putExtra(CHAT_ROOM_ID, lesson.chatId)
-
-                })
-                finish()
-            }
-        }.launch(
-            LessonCompletedActivity.getActivityUnlockNextClassIntent(
+        this.lesson = lesson
+        openLessonCompletedActivity.launch(
+            LessonCompletedActivity.getActivityIntent(
                 this,
                 lesson
             )

@@ -24,7 +24,7 @@ class LessonCompletedActivity : BaseActivity() {
 
     companion object {
         private val LESSON_MODEL = "lesson_model"
-        fun getActivityUnlockNextClassIntent(
+        fun getActivityIntent(
             context: Context,
             lessonModel: LessonModel
         ) = Intent(context, LessonCompletedActivity::class.java).apply {

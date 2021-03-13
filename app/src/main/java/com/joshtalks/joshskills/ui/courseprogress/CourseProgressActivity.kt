@@ -16,6 +16,7 @@ import android.text.style.UnderlineSpan
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -112,7 +113,9 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
         if (intent.hasExtra(CHAT_ROOM_OBJECT)) {
             inboxEntity = intent.getParcelableExtra(CHAT_ROOM_OBJECT)!!
             if (inboxEntity.report_status) {
-                LastSyncPrefManager.put(inboxEntity.conversation_id.trim().plus(CERTIFICATE_GENERATE), true)
+                LastSyncPrefManager.put(
+                    inboxEntity.conversation_id.trim().plus(CERTIFICATE_GENERATE), true
+                )
             }
         }
         appAnalytics = AppAnalytics.create(AnalyticsEvent.CERTIFICATE_SCREEN.NAME)
