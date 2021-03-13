@@ -91,6 +91,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                 0
             )?.let { progress ->
                 binding.videoPlayer.setProgress(progress)
+                binding.videoPlayer.onResume()
             }
         }
     }

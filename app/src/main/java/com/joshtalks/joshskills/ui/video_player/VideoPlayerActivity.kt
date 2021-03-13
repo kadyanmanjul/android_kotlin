@@ -93,7 +93,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             currentVideoProgressPosition: Long = 0
         ): Intent {
             return Intent(context, VideoPlayerActivity::class.java).apply {
-                this.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 this.putExtra(VIDEO_URL, videoUrl)
                 this.putExtra(VIDEO_ID, videoId)
                 this.putExtra(COURSE_NAME, videoTitle)

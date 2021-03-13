@@ -105,6 +105,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                 0
             )?.let { progress ->
                 binding.videoPlayer.setProgress(progress)
+                binding.videoPlayer.onResume()
             }
         }
     }
