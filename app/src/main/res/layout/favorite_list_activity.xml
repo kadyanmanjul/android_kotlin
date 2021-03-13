@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorPrimary"
+                android:contentInsetStart="0dp"
+                android:contentInsetLeft="0dp"
+                android:contentInsetEnd="0dp"
+                android:contentInsetRight="0dp"
+                android:elevation="@dimen/_4sdp"
+                android:minHeight="?attr/actionBarSize"
+                app:contentInsetEnd="0dp"
+                app:contentInsetEndWithActions="0dp"
+                app:contentInsetLeft="0dp"
+                app:contentInsetRight="0dp"
+                app:contentInsetStart="0dp"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
+                app:titleTextColor="#FFFFFF">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/_4sdp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical|start"
+                        android:onClick="@{()->handler.onBackPressed()}"
+                        android:paddingTop="@dimen/_6sdp"
+                        android:paddingBottom="@dimen/_6sdp"
+                        android:visibility="visible"
+                        app:srcCompat="@drawable/ic_arrow_back"
+                        tools:visibility="visible" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_message_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerVertical="true"
+                        android:layout_marginHorizontal="@dimen/_8sdp"
+                        android:layout_marginVertical="@dimen/_4sdp"
+                        android:layout_toEndOf="@id/iv_back"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="start|center"
+                        android:singleLine="true"
+                        android:text="@string/favorites_header"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+                        android:textColor="@color/white" />
+                </RelativeLayout>
+
+            </com.google.android.material.appbar.MaterialToolbar>
+
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="?attr/actionBarSize">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_last_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_16sdp"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:maxLines="1"
+                    android:paddingVertical="@dimen/_16sdp"
+                    android:text="@string/your_favorite_practice_partners"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+                    android:textColor="@color/black"
+                    tools:text="Click to start the course"
+                    tools:visibility="visible" />
+
+                <View
+                    android:id="@+id/horizontal_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_gravity="bottom"
+                    android:background="@color/gray_e6"
+                    android:orientation="horizontal" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/favorite_list_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+
+        <com.mikhaellopez.circularprogressbar.CircularProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_60sdp"
+            android:layout_gravity="center"
+            app:cpb_background_progressbar_color="@android:color/transparent"
+            app:cpb_background_progressbar_width="0dp"
+            app:cpb_indeterminate_mode="true"
+            app:cpb_progress_direction="to_left"
+            app:cpb_progressbar_color="@color/colorAccent"
+            app:cpb_progressbar_width="@dimen/_4sdp"
+            app:cpb_round_border="true" />
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>
