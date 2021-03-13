@@ -95,7 +95,11 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
     }
 
     fun getLastItem(): ChatModel {
-        return messageList.last()
+        return try {
+            messageList.last()
+        } catch (ex: NoSuchElementException) {
+            ChatModel()
+        }
     }
 
     fun getFirstItem(): ChatModel {

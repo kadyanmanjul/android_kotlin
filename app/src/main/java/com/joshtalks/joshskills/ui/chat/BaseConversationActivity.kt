@@ -149,36 +149,51 @@ abstract class BaseConversationActivity : CoreJoshActivity() {
                 })
     }
 
-    protected fun getNewMessageObj(lastMessageTime:Date): ChatModel {
+    protected fun getNewMessageObj(lastMessageTime: Date): ChatModel {
         return ChatModel(
             type = BASE_MESSAGE_TYPE.NEW_CLASS,
             text = getString(R.string.aapki_new_class)
         ).apply {
-            created=lastMessageTime
+            created = lastMessageTime
         }
     }
 
-    protected fun getTextMessage(text: String): ChatModel {
-        return MessageBuilderFactory.getMessage(BASE_MESSAGE_TYPE.TX, TChatMessage(text))
+    protected fun getTextMessage(text: String, lastMessage: ChatModel): ChatModel {
+        return MessageBuilderFactory.getMessage(BASE_MESSAGE_TYPE.TX, TChatMessage(text)).apply {
+            messageTime = lastMessage.messageTime+10
+            created = lastMessage.created
+        }
     }
 
-    protected fun getAudioMessage(tAudioMessage: TAudioMessage): ChatModel {
-        return MessageBuilderFactory.getMessage(BASE_MESSAGE_TYPE.AU, tAudioMessage)
+    protected fun getAudioMessage(tAudioMessage: TAudioMessage,lastMessage: ChatModel): ChatModel {
+        return MessageBuilderFactory.getMessage(BASE_MESSAGE_TYPE.AU, tAudioMessage).apply {
+            messageTime = lastMessage.messageTime+10
+            created = lastMessage.created
+        }
     }
 
-    protected fun getImageMessage(tImageMessage: TImageMessage): ChatModel {
-        return MessageBuilderFactory.getMessage(BASE_MESSAGE_TYPE.IM, tImageMessage)
+    protected fun getImageMessage(tImageMessage: TImageMessage,lastMessage: ChatModel): ChatModel {
+        return MessageBuilderFactory.getMessage(BASE_MESSAGE_TYPE.IM, tImageMessage).apply {
+            messageTime = lastMessage.messageTime+10
+            created = lastMessage.created
+        }
     }
 
-    protected fun getVideoMessage(tVideoMessage: TVideoMessage): ChatModel {
-        return MessageBuilderFactory.getMessage(BASE_MESSAGE_TYPE.VI, tVideoMessage)
+    protected fun getVideoMessage(tVideoMessage: TVideoMessage,lastMessage: ChatModel): ChatModel {
+        return MessageBuilderFactory.getMessage(BASE_MESSAGE_TYPE.VI, tVideoMessage).apply {
+            messageTime = lastMessage.messageTime+10
+            created = lastMessage.created
+        }
     }
 
-    protected fun getUnlockClassMessage(): ChatModel {
+    protected fun getUnlockClassMessage(lastMessage: ChatModel): ChatModel {
         return MessageBuilderFactory.getMessage(
             BASE_MESSAGE_TYPE.UNLOCK,
             TUnlockClassMessage(getString(R.string.unlock_class_demo))
-        )
+        ).apply {
+            messageTime = lastMessage.messageTime+10
+            created = lastMessage.created
+        }
     }
 
 /*

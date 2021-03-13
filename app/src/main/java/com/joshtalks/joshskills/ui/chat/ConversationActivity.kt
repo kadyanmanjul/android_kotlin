@@ -720,7 +720,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
             unlockClassViewModel.unlockNextClass.collectLatest { flag ->
                 hideProgressBar()
                 if (flag) {
-                    val message = getUnlockClassMessage()
+                    val message = getUnlockClassMessage(conversationAdapter.getLastItem())
                     unlockClassViewModel.insertUnlockClassToDatabase(message)
                     val isAdded = conversationAdapter.addUnlockClassMessage(message)
                     val cPosition = linearLayoutManager.findLastVisibleItemPosition()
@@ -1604,7 +1604,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
             showToast(getString(R.string.message_size_limit))
             return
         }
-        val message = getTextMessage(conversationBinding.chatEdit.text.toString())
+        val message = getTextMessage(conversationBinding.chatEdit.text.toString(),conversationAdapter.getLastItem())
         conversationAdapter.addMessage(message)
         conversationViewModel.sendTextMessage(
             TChatMessage(conversationBinding.chatEdit.text.toString()),
@@ -1643,7 +1643,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
 
     private fun addAudioAttachment(recordUpdatedPath: String) {
         val tAudioMessage = TAudioMessage(recordUpdatedPath, recordUpdatedPath)
-        val message = getAudioMessage(tAudioMessage)
+        val message = getAudioMessage(tAudioMessage,conversationAdapter.getLastItem())
         uiHandler.post {
             conversationAdapter.addMessage(message)
         }
@@ -1657,7 +1657,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
             val imageUpdatedPath = AppDirectory.getImageSentFilePath()
             AppDirectory.copy(imagePath, imageUpdatedPath)
             val tImageMessage = TImageMessage(imageUpdatedPath, imageUpdatedPath)
-            val message = getImageMessage(tImageMessage)
+            val message = getImageMessage(tImageMessage,conversationAdapter.getLastItem())
             uiHandler.post {
                 conversationAdapter.addMessage(message)
             }
@@ -1673,7 +1673,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
             AppDirectory.copy(videoPath, videoSentFile.absolutePath)
             val tVideoMessage =
                 TVideoMessage(videoSentFile.absolutePath, videoSentFile.absolutePath)
-            val message = getVideoMessage(tVideoMessage)
+            val message = getVideoMessage(tVideoMessage,conversationAdapter.getLastItem())
             uiHandler.post {
                 conversationAdapter.addMessage(message)
             }
