@@ -497,15 +497,11 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
 
 
         CoroutineScope(Dispatchers.IO).launch {
-            currentLessonQuestion?.interval?.run {
-                WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
-            }
             lessonActivityListener?.onQuestionStatusUpdate(
                 QUESTION_STATUS.AT,
                 currentLessonQuestion?.id
             )
             lessonActivityListener?.onSectionStatusUpdate(2, true)
-            // activityCallback?.onSectionStatusUpdate(3, true)
         }
     }
 

@@ -36,6 +36,7 @@ import java.util.concurrent.BlockingQueue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -86,7 +87,9 @@ class FileUploadService : Service() {
                             }
                         }
                     }
-                    CANCEL_UPLOAD -> cancelFileUpload()
+                    CANCEL_UPLOAD -> {
+                        cancelFileUpload()
+                    }
                 }
             }
         } catch (ex: java.lang.Exception) {
@@ -96,62 +99,78 @@ class FileUploadService : Service() {
     }
 
     private fun cancelFileUpload() {
-        fileQueue.clear()
-        if (mFileUploadTask != null) {
-            mFileUploadHandler.removeCallbacks(mFileUploadTask)
-            isFileUploadRunning = false
-            mFileUploadTask = null
-            hideNotification()
+        CoroutineScope(Dispatchers.IO).launch {
+            fileQueue.clear()
+            if (mFileUploadTask != null) {
+                mFileUploadHandler.removeCallbacks(mFileUploadTask)
+                isFileUploadRunning = false
+                mFileUploadTask = null
+                AppObjectController.uiHandler.post {
+                    hideNotification()
+                }
+            }
         }
     }
 
     private fun startFileUpload(fileList: ArrayList<PendingTaskModel?>) {
-        for (filePath in fileList) {
-            if (!fileQueue.contains(filePath) && filePath != null) {
-                fileQueue.add(filePath)
+        CoroutineScope(Dispatchers.IO).launch {
+            for (filePath in fileList) {
+                if (!fileQueue.contains(filePath) && filePath != null) {
+                    fileQueue.add(filePath)
+                }
             }
-        }
-        startUploadingFile()
-    }
-
-    private fun startFileUpload(pendingTask: PendingTaskModel?) {
-        pendingTask?.let {
-            fileQueue.add(it)
             startUploadingFile()
         }
     }
 
-    private fun startUploadingFile() {
-        if (mFileUploadTask == null) {
-            mFileUploadTask = FileUploadTask()
+    private fun startFileUpload(pendingTask: PendingTaskModel?) {
+        CoroutineScope(Dispatchers.IO).launch {
+            pendingTask?.let {
+                fileQueue.add(it)
+                startUploadingFile()
+            }
         }
-        if (!isFileUploadRunning) {
-            isFileUploadRunning = true
-            mFileUploadHandler.post(mFileUploadTask)
+    }
+
+    private fun startUploadingFile() {
+        CoroutineScope(Dispatchers.IO).launch {
+            if (mFileUploadTask == null) {
+                mFileUploadTask = FileUploadTask()
+            }
+            if (!isFileUploadRunning) {
+                isFileUploadRunning = true
+                mFileUploadHandler.post(mFileUploadTask)
+            }
         }
     }
 
     internal inner class FileUploadTask : Runnable {
         override fun run() {
-            if (fileQueue.isEmpty()) {
-                isFileUploadRunning = false
-                Log.e(TAG, "File Upload Complete.")
-                hideNotification()
-                return
-            }
-            try {
-                val filePath = fileQueue.take()
-                Log.e(TAG, "Upload File: $filePath")
-                if (filePath.type == PendingTask.READING_PRACTICE_NEW) {
-                    callUploadFileApiForReadingPractice(filePath)
+            CoroutineScope(Dispatchers.IO).launch {
+                if (fileQueue.isEmpty()) {
+                    isFileUploadRunning = false
+                    Log.e(TAG, "File Upload Complete.")
+                    AppObjectController.uiHandler.post {
+                        hideNotification()
+                    }
                 } else {
-                    callUploadFileApi(filePath)
+                    try {
+                        val filePath = fileQueue.take()
+                        Log.e(TAG, "Upload File: $filePath")
+                        if (filePath.type == PendingTask.READING_PRACTICE_NEW) {
+                            callUploadFileApiForReadingPractice(filePath)
+                        } else {
+                            callUploadFileApi(filePath)
+                        }
+                        AppObjectController.uiHandler.post {
+                            showUploadNotification()
+                        }
+                        delay(1000)
+                        mFileUploadHandler.post(this@FileUploadTask)
+                    } catch (e: InterruptedException) {
+                        e.printStackTrace()
+                    }
                 }
-                showUploadNotification()
-                Thread.sleep(2000)
-                mFileUploadHandler.post(this)
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
             }
         }
     }
@@ -166,7 +185,8 @@ class FileUploadService : Service() {
                         "question_id" to pendingTaskModel.requestObject.questionId
                     )
                     val responseObj =
-                        AppObjectController.chatNetworkService.requestUploadMediaAsync(obj).await()
+                        AppObjectController.chatNetworkService.requestUploadMediaAsync(obj)
+                            .await()
 
                     if (responseObj.pointsList.isNullOrEmpty().not()) {
                         RxBus2.publish(
@@ -176,7 +196,8 @@ class FileUploadService : Service() {
                             )
                         )
                     }
-                    val statusCode: Int = uploadOnS3Server(responseObj, requestEngage.localPath!!)
+                    val statusCode: Int =
+                        uploadOnS3Server(responseObj, requestEngage.localPath!!)
                     if (statusCode in 200..210) {
                         val url =
                             responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
@@ -187,7 +208,8 @@ class FileUploadService : Service() {
                     }
                 }
 
-                val resp = AppObjectController.chatNetworkService.submitPracticeAsync(requestEngage)
+                val resp =
+                    AppObjectController.chatNetworkService.submitPracticeAsync(requestEngage)
                 if (resp.isSuccessful && resp.body() != null) {
                     // update question status and engagement data here from response
                     val engagementList = List(1) {
@@ -232,7 +254,8 @@ class FileUploadService : Service() {
                             }
                         }
                     }
-                    AppObjectController.appDatabase.pendingTaskDao().deleteTask(pendingTaskModel.id)
+                    AppObjectController.appDatabase.pendingTaskDao()
+                        .deleteTask(pendingTaskModel.id)
                 } else {
                     handleRetry(pendingTaskModel)
                 }
@@ -252,8 +275,10 @@ class FileUploadService : Service() {
                         "question_id" to pendingTaskModel.requestObject.questionId
                     )
                     val responseObj =
-                        AppObjectController.chatNetworkService.requestUploadMediaAsync(obj).await()
-                    val statusCode: Int = uploadOnS3Server(responseObj, requestEngage.localPath!!)
+                        AppObjectController.chatNetworkService.requestUploadMediaAsync(obj)
+                            .await()
+                    val statusCode: Int =
+                        uploadOnS3Server(responseObj, requestEngage.localPath!!)
                     if (statusCode in 200..210) {
                         val url =
                             responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
@@ -265,7 +290,9 @@ class FileUploadService : Service() {
                 }
 
                 val resp =
-                    AppObjectController.chatNetworkService.submitNewReadingPractice(requestEngage)
+                    AppObjectController.chatNetworkService.submitNewReadingPractice(
+                        requestEngage
+                    )
                 Log.e(TAG, "callUploadFileApiForReadingPractice: $resp")
                 if (resp.isSuccessful && resp.body() != null) {
                     resp.body()?.let {
@@ -274,7 +301,8 @@ class FileUploadService : Service() {
                             .insertPractiseAfterUploaded(it)
                         RxBus2.publish(EmptyEventBus())
                     }
-                    AppObjectController.appDatabase.pendingTaskDao().deleteTask(pendingTaskModel.id)
+                    AppObjectController.appDatabase.pendingTaskDao()
+                        .deleteTask(pendingTaskModel.id)
                 } else {
                     handleRetry(pendingTaskModel)
                 }

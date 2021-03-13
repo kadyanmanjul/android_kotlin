@@ -118,20 +118,25 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
 
     override fun onNextTabCall(currentTabNumber: Int) {
         try {
-            viewModel.lessonLiveData.value?.let { lesson ->
-                val lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
-                        lesson.vocabStatus == LESSON_STATUS.CO &&
-                        lesson.readingStatus == LESSON_STATUS.CO &&
-                        lesson.speakingStatus == LESSON_STATUS.CO
+            CoroutineScope(Dispatchers.IO).launch {
+                viewModel.lessonLiveData.value?.let { lesson ->
+                    val lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
+                            lesson.vocabStatus == LESSON_STATUS.CO &&
+                            lesson.readingStatus == LESSON_STATUS.CO &&
+                            lesson.speakingStatus == LESSON_STATUS.CO
 
-                if (lessonCompleted) {
-                    lesson.status = LESSON_STATUS.CO
-                    CoroutineScope(Dispatchers.IO).launch {
+                    if (lessonCompleted) {
+                        lesson.status = LESSON_STATUS.CO
                         viewModel.updateLesson(lesson)
+                        AppObjectController.uiHandler.post {
+                            openLessonCompleteScreen(lesson)
+                        }
+                    } else {
+                        AppObjectController.uiHandler.post {
+                            openIncompleteTab(currentTabNumber)
+                        }
                     }
-                    openLessonCompleteScreen(lesson)
-                } else
-                    openIncompleteTab(currentTabNumber)
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -144,27 +149,31 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
         isVideoPercentComplete: Boolean,
         quizCorrectQuestionIds: ArrayList<Int>
     ) {
-        viewModel.updateQuestionStatus(
-            status,
-            questionId,
-            isVideoPercentComplete,
-            quizCorrectQuestionIds
-        )
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.updateQuestionStatus(
+                status,
+                questionId,
+                isVideoPercentComplete,
+                quizCorrectQuestionIds
+            )
+        }
         AppObjectController.uiHandler.post {
             setTabCompletionStatus()
         }
     }
 
     override fun onSectionStatusUpdate(tabPosition: Int, isSectionCompleted: Boolean) {
-        viewModel.lessonLiveData.value?.let { lesson ->
-            val status = if (isSectionCompleted) LESSON_STATUS.CO else LESSON_STATUS.NO
-            when (tabPosition) {
-                0 -> lesson.grammarStatus = status
-                1 -> lesson.vocabStatus = status
-                2 -> lesson.readingStatus = status
-                3 -> lesson.speakingStatus = status
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.lessonLiveData.value?.let { lesson ->
+                val status = if (isSectionCompleted) LESSON_STATUS.CO else LESSON_STATUS.NO
+                when (tabPosition) {
+                    0 -> lesson.grammarStatus = status
+                    1 -> lesson.vocabStatus = status
+                    2 -> lesson.readingStatus = status
+                    3 -> lesson.speakingStatus = status
+                }
+                viewModel.updateSectionStatus(lesson.id, status, tabPosition)
             }
-            viewModel.updateSectionStatus(lesson.id, status, tabPosition)
         }
         AppObjectController.uiHandler.post {
             setTabCompletionStatus()
