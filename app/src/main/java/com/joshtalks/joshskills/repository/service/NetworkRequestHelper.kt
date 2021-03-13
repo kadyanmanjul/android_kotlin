@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.*
@@ -158,7 +159,7 @@ object NetworkRequestHelper {
 
                 resp.next?.let {
                     val arguments = mutableMapOf<String, String>()
-                    PrefManager.getLastSyncTime(conversationId).let { keys ->
+                    LastSyncPrefManager.getLastSyncTime(conversationId).let { keys ->
                         arguments[keys.first] = keys.second
                     }
                     delay(delayTimeNextRequest)
@@ -273,7 +274,7 @@ object NetworkRequestHelper {
 
             resp.next?.let {
                 val arguments = mutableMapOf<String, String>()
-                PrefManager.getLastSyncTime(conversationId).let { keys ->
+                LastSyncPrefManager.getLastSyncTime(conversationId).let { keys ->
                     arguments[keys.first] = keys.second
                 }
                 videoType1 = isVideoPresentInUpdatedChat(conversationId, queryMap = arguments)

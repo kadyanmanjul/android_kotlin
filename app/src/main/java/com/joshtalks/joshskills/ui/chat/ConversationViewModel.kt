@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.*
@@ -259,7 +260,7 @@ class ConversationViewModel(
     private fun getNewMessageFromServer(delayTimeNextRequest: Long = 0L) {
         if (Utils.isInternetAvailable()) {
             val arguments = mutableMapOf<String, String>()
-            val (key, value) = PrefManager.getLastSyncTime(inboxEntity.conversation_id)
+            val (key, value) = LastSyncPrefManager.getLastSyncTime(inboxEntity.conversation_id)
             arguments[key] = value
             jobs += NetworkRequestHelper.getUpdatedChat(
                 inboxEntity.conversation_id,

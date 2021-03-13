@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.UsbEventReceiver
 import com.joshtalks.joshskills.core.interfaces.UsbEventListener
+import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener
@@ -355,7 +356,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                         val response =
                             AppObjectController.chatNetworkService.changeBatchRequest(chatObject?.conversationId!!)
                         val arguments = mutableMapOf<String, String>()
-                        val (key, value) = PrefManager.getLastSyncTime(chatObject?.conversationId!!)
+                        val (key, value) = LastSyncPrefManager.getLastSyncTime(chatObject?.conversationId!!)
                         arguments[key] = value
                         if (response.isSuccessful) {
                             isBatchChanged = true

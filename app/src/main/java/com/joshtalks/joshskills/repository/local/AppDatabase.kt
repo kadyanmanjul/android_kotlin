@@ -96,7 +96,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class,
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class , RecentSearch::class
     ],
-    version = 29,
+    version = 30,
     exportSchema = true
 )
 @TypeConverters(
@@ -173,7 +173,7 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_27_28,
                                 MIGRATION_28_29
                             )
-                            //  .fallbackToDestructiveMigration()
+                              .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
                             .setJournalMode(JournalMode.WRITE_AHEAD_LOGGING)
                             .build()

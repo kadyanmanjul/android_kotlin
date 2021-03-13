@@ -8,12 +8,12 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.AppObjectController.Companion.appDatabase
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.m4aRecorder.M4ABaseAudioRecording
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
@@ -142,7 +142,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     private suspend fun getQuestionsFromAPI(lessonId: Int): List<LessonQuestion> {
         return withContext(viewModelScope.coroutineContext + Dispatchers.IO) {
 
-            var lastSyncTime = PrefManager.getStringValue(lessonId.toString())
+            var lastSyncTime = LastSyncPrefManager.getStringValue(lessonId.toString())
             if (lastSyncTime.isBlank()) {
                 lastSyncTime = "0"
             }
@@ -158,7 +158,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     saveQuestionToDB(it)
                 }
                 response.data.maxByOrNull { it.modified }?.let {
-                    PrefManager.put(
+                    LastSyncPrefManager.put(
                         it.lessonId.toString(),
                         it.modified.time.div(1000).toString()
                     )
