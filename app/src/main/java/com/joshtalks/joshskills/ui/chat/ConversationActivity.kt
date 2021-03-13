@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.chat
 
-//import com.joshtalks.joshskills.ui.groupchat.messagelist.CometChatMessageListActivity
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -90,7 +89,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -1578,7 +1576,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
 
     private fun scrollToEnd() {
         CoroutineScope(Dispatchers.Main).launch {
-            linearLayoutManager.scrollToPosition(conversationAdapter.itemCount - 1)
+            linearLayoutManager.scrollToPosition(conversationAdapter.itemCount )
             conversationBinding.scrollToEndButton.visibility = GONE
         }
     }
