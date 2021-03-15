@@ -37,6 +37,8 @@ data class UserProfileResponse(
     val uid: String?,
     @SerializedName("is_points_active")
     val isPointsActive: Boolean? = false,
+    @SerializedName("is_online")
+    val isOnline: Boolean? = false,
     @SerializedName("user_profile_impression_id")
     val userProfileImpressionId: String? = EMPTY,
     @SerializedName("award_category_list")

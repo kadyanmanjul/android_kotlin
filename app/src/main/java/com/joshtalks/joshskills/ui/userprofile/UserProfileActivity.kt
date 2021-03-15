@@ -48,7 +48,6 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private var impressionId: String = EMPTY
     private var intervalType: String? = EMPTY
     private var previousPage: String? = EMPTY
-    private var isUserOnline: Boolean = false
     private val compositeDisposable = CompositeDisposable()
     private var awardCategory: List<AwardCategory>? = emptyList()
     private var startTime = 0L
@@ -67,7 +66,6 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         mentorId = intent.getStringExtra(KEY_MENTOR_ID) ?: EMPTY
         intervalType = intent.getStringExtra(INTERVAL_TYPE)
         previousPage = intent.getStringExtra(PREVIOUS_PAGE)
-        isUserOnline = intent.getBooleanExtra(IS_USER_ONLINE, false)
         addObserver()
         startTime = System.currentTimeMillis()
         initToolbar()
@@ -237,6 +235,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.userName.text = resp
         binding.userAge.text = userData.age.toString()
         binding.joinedOn.text = userData.joinedOn
+        if (userData.isOnline!!) {
+            binding.onlineStatusIv.visibility = View.VISIBLE
+        }
         userData.points?.let {
             var incrementalPoints = 0
             val incrementalValue = it.div(50)
@@ -278,9 +279,6 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
         }
         binding.scrollView.fullScroll(ScrollView.FOCUS_UP)
-        if (isUserOnline) {
-            binding.onlineStatusIv.visibility = View.VISIBLE
-        }
     }
 
     private fun checkIsAwardAchieved(awardCategory: List<AwardCategory>?): Boolean {
@@ -475,7 +473,6 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         const val KEY_MENTOR_ID = "leaderboard_mentor_id"
         const val INTERVAL_TYPE = "interval_type"
         const val PREVIOUS_PAGE = "previous_page"
-        const val IS_USER_ONLINE = "is_user_online"
 
         fun startUserProfileActivity(
             activity: Activity,
@@ -483,7 +480,6 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             flags: Array<Int> = arrayOf(),
             intervalType: String? = null,
             previousPage: String,
-            isUserOnline: Boolean = false,
             conversationId: String? = null,
 
         ) {
@@ -493,7 +489,6 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     putExtra(INTERVAL_TYPE, it)
                 }
                 putExtra(PREVIOUS_PAGE, previousPage)
-                putExtra(IS_USER_ONLINE, isUserOnline)
                 putExtra(CONVERSATION_ID, conversationId)
                 flags.forEach { flag ->
                     this.addFlags(flag)

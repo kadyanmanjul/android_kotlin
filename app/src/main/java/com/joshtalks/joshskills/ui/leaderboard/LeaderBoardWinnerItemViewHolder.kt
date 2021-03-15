@@ -9,7 +9,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
+import com.joshtalks.joshskills.repository.local.eventbus.OpenPreviousLeaderboard
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import com.mindorks.placeholderview.annotations.Click
@@ -75,25 +75,25 @@ class LeaderBoardWinnerItemViewHolder(
 
     @Click(R.id.user_pic)
     fun onClick() {
-        response?.id?.let {
+        /*response?.id?.let {
             RxBus2.publish(OpenUserProfile(it))
-        }
-        //RxBus2.publish(OpenPreviousLeaderboard(type))
+        }*/
+        RxBus2.publish(OpenPreviousLeaderboard(type))
     }
 
     @Click(R.id.view_profile)
     fun onSecondClick() {
-        response?.id?.let {
+        /*response?.id?.let {
             RxBus2.publish(OpenUserProfile(it))
-        }
-        //RxBus2.publish(OpenPreviousLeaderboard(type))
+        }*/
+        RxBus2.publish(OpenPreviousLeaderboard(type))
     }
 
     @Click(R.id.container)
     fun onSecondClickContainer() {
-        response?.id?.let {
+        /*response?.id?.let {
             RxBus2.publish(OpenUserProfile(it))
-        }
-        //RxBus2.publish(OpenPreviousLeaderboard(type))
+        }*/
+        RxBus2.publish(OpenPreviousLeaderboard(type))
     }
 }
