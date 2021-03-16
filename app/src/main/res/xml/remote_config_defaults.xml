@@ -606,7 +606,7 @@
 
     <entry>
         <key>VOIP_CALL_RECONNECT_TIME</key>
-        <value>5500</value>
+        <value>5000</value>
     </entry>
 
     <entry>

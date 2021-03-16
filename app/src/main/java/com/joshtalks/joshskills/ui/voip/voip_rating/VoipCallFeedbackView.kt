@@ -182,10 +182,10 @@ class VoipCallFeedbackView : DialogFragment() {
                 } else {
                     exitDialog()
                 }*/
-                delay(750)
+                delay(550)
                 exitDialog()
             } catch (ex: Throwable) {
-                delay(750)
+                delay(550)
                 exitDialog()
             }
         }

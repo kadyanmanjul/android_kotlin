@@ -472,8 +472,12 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     fun getPointsForVocabAndReading(questionId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val response = AppObjectController.chatNetworkService.getSnackBarText(questionId)
-            pointsSnackBarText.postValue(response)
+            try {
+                val response = AppObjectController.chatNetworkService.getSnackBarText(questionId)
+                pointsSnackBarText.postValue(response)
+            }catch (ex:Exception){
+                ex.printStackTrace()
+            }
         }
     }
 

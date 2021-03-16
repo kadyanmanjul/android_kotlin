@@ -170,7 +170,9 @@ class WebRtcActivity : AppCompatActivity() {
         }
         val channelName = mBoundService?.channelName
         if (time > 0 && channelName.isNullOrEmpty().not()) {
-            binding.placeholderBg.visibility=View.VISIBLE
+            runOnUiThread {
+                binding.placeholderBg.visibility = View.VISIBLE
+            }
             VoipCallFeedbackView.showCallRatingDialog(
                 supportFragmentManager,
                 channelName = channelName,
@@ -215,6 +217,7 @@ class WebRtcActivity : AppCompatActivity() {
             .push()
         addObserver()
     }
+
     private fun setCallerInfoOnAppCreate() {
         val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
         map?.let {
@@ -223,6 +226,7 @@ class WebRtcActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun addObserver() {
         userDetailLiveData.observe(this, {
             binding.topic.text = it["topic_name"]
