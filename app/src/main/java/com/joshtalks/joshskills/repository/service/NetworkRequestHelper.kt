@@ -20,19 +20,18 @@ import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 object NetworkRequestHelper {
     val practiceEnagagement = object : TypeToken<List<PracticeEngagement>>() {}.type
-    fun getUpdatedChat(
+
+    suspend fun getUpdatedChat(
         conversationId: String,
         queryMap: Map<String, String> = emptyMap(),
         courseId: Int,
         delayTimeNextRequest: Long = 0L
-    ): Job {
-        return CoroutineScope(Dispatchers.IO).launch {
+    ) {
             try {
                 val resp = AppObjectController.chatNetworkService.getUnReceivedMessageAsync(
                     conversationId,
@@ -172,7 +171,6 @@ object NetworkRequestHelper {
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
-        }
     }
 
 

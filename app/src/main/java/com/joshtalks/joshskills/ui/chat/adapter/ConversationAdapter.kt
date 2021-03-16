@@ -176,6 +176,9 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
         }
         return false
     }
+    fun firstUnseenMessage(): Int {
+        return messageList.indexOfFirst { it.isSeen.not() }
+    }
 
 
     @MainThread

@@ -5,7 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import java.util.*
 import kotlinx.coroutines.Dispatchers
@@ -54,20 +53,11 @@ class UnlockClassViewModel(
         }
     }
 
-    fun insertUnlockClassToDatabase(unlockChatModel: ChatModel) {
-        viewModelScope.launch(Dispatchers.IO) {
-            //deleteUnlockClass()
-            unlockChatModel.conversationId = inboxEntity.conversation_id
-           // chatDao.insertAMessage(unlockChatModel)
-        }
-    }
-
     fun updateBatchChangeRequest() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = chatNetworkService.changeBatchRequest(inboxEntity.conversation_id)
                 if (response.isSuccessful) {
-                 //   deleteUnlockClass()
                     batchChange.emit(true)
                     return@launch
                 }

@@ -52,6 +52,7 @@ class ConversationViewModel(
     val userReadCourseChat = MutableSharedFlow<List<ChatModel>>()
     val pagingMessagesChat = MutableSharedFlow<List<ChatModel>>()
     val updateChatMessage = MutableSharedFlow<ChatModel>()
+    val newMessageAddFlow = MutableSharedFlow<Boolean>()
 
     val refreshViewLiveData: MutableLiveData<ChatModel> = MutableLiveData()
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
@@ -247,6 +248,8 @@ class ConversationViewModel(
                 ).sortedWith(compareBy { it.messageTime })
             )
             updateAllMessageReadByUser()
+            delay(50)
+            newMessageAddFlow.emit(true)
         }
     }
 
@@ -258,18 +261,20 @@ class ConversationViewModel(
 
 
     private fun getNewMessageFromServer(delayTimeNextRequest: Long = 0L) {
-        if (Utils.isInternetAvailable()) {
-            val arguments = mutableMapOf<String, String>()
-            val (key, value) = LastSyncPrefManager.getLastSyncTime(inboxEntity.conversation_id)
-            arguments[key] = value
-            jobs += NetworkRequestHelper.getUpdatedChat(
-                inboxEntity.conversation_id,
-                queryMap = arguments,
-                courseId = inboxEntity.courseId.toInt(),
-                delayTimeNextRequest = delayTimeNextRequest
-            )
-        } else {
-            RxBus2.publish(MessageCompleteEventBus(false))
+        viewModelScope.launch(Dispatchers.IO) {
+            if (Utils.isInternetAvailable()) {
+                val arguments = mutableMapOf<String, String>()
+                val (key, value) = LastSyncPrefManager.getLastSyncTime(inboxEntity.conversation_id)
+                arguments[key] = value
+                NetworkRequestHelper.getUpdatedChat(
+                    inboxEntity.conversation_id,
+                    queryMap = arguments,
+                    courseId = inboxEntity.courseId.toInt(),
+                    delayTimeNextRequest = delayTimeNextRequest
+                )
+            } else {
+                RxBus2.publish(MessageCompleteEventBus(false))
+            }
         }
     }
 
