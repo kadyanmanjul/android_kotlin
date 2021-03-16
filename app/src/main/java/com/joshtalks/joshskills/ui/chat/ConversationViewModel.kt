@@ -260,7 +260,7 @@ class ConversationViewModel(
     }
 
 
-    private fun getNewMessageFromServer(delayTimeNextRequest: Long = 0L) {
+    private fun getNewMessageFromServer(delayTimeNextRequest: Long = 0L,refreshMessageUser: Boolean=false) {
         viewModelScope.launch(Dispatchers.IO) {
             if (Utils.isInternetAvailable()) {
                 val arguments = mutableMapOf<String, String>()
@@ -270,7 +270,8 @@ class ConversationViewModel(
                     inboxEntity.conversation_id,
                     queryMap = arguments,
                     courseId = inboxEntity.courseId.toInt(),
-                    delayTimeNextRequest = delayTimeNextRequest
+                    delayTimeNextRequest = delayTimeNextRequest,
+                    refreshMessageUser = refreshMessageUser
                 )
             } else {
                 RxBus2.publish(MessageCompleteEventBus(false))
@@ -283,7 +284,7 @@ class ConversationViewModel(
     }
 
     fun refreshChatOnManual() {
-        getNewMessageFromServer()
+        getNewMessageFromServer(refreshMessageUser = true)
     }
 
 

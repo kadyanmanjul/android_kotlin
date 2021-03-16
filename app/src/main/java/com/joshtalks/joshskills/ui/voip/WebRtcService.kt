@@ -33,6 +33,8 @@ import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_N
 import com.joshtalks.joshskills.ui.voip.extra.FullScreenActivity
 import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
 import io.agora.rtc.Constants
+import io.agora.rtc.Constants.CONNECTION_CHANGED_INTERRUPTED
+import io.agora.rtc.Constants.CONNECTION_STATE_RECONNECTING
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.reactivex.Completable
@@ -390,6 +392,48 @@ class WebRtcService : BaseWebRtcService() {
                     AudioManager.AUDIOFOCUS_GAIN
                 )
             }
+        }
+
+        override fun onConnectionStateChanged(state: Int, reason: Int) {
+            super.onConnectionStateChanged(state, reason)
+            Timber.tag(TAG).e("onConnectionStateChanged    $state     $reason")
+            if (CONNECTION_STATE_RECONNECTING == state && reason == CONNECTION_CHANGED_INTERRUPTED) {
+                compositeDisposable.add(
+                    Completable.complete()
+                        .delay(5, TimeUnit.SECONDS)
+                        .doOnComplete {
+                            Timber.tag("Reconnect").e("doOnComplete  $isCallerJoin")
+                        }
+                        .subscribeOn(Schedulers.io())
+                        .subscribe {
+                            if (isCallerJoin) {
+                                lostNetwork()
+                            }
+                        })
+            } else {
+                compositeDisposable.clear()
+                gainNetwork()
+            }
+        }
+
+        override fun onChannelMediaRelayStateChanged(state: Int, code: Int) {
+            super.onChannelMediaRelayStateChanged(state, code)
+            Timber.tag(TAG).e("onChannelMediaRelayStateChanged")
+        }
+
+        override fun onMediaEngineLoadSuccess() {
+            super.onMediaEngineLoadSuccess()
+            Timber.tag(TAG).e("onMediaEngineLoadSuccess")
+        }
+
+        override fun onMediaEngineStartCallSuccess() {
+            super.onMediaEngineStartCallSuccess()
+            Timber.tag(TAG).e("onMediaEngineStartCallSuccess")
+        }
+
+        override fun onNetworkTypeChanged(type: Int) {
+            super.onNetworkTypeChanged(type)
+            Timber.tag(TAG).e("onNetworkTypeChanged1=     " + type)
         }
     }
 

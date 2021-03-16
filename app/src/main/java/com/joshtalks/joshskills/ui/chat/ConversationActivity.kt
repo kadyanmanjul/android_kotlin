@@ -151,6 +151,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     private var isNewMessageShowing = false
     private var courseProgressUIVisible = false
     private var reachEndOfData = false
+    private var refreshMessageByUser = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -720,11 +721,14 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         }
         lifecycleScope.launchWhenCreated {
             conversationViewModel.newMessageAddFlow.collectLatest {
-                linearLayoutManager.smoothScrollToPosition(
-                    this@ConversationActivity,
-                    conversationAdapter.itemCount+1,
-                    25F
-                )
+                if (refreshMessageByUser) {
+                    linearLayoutManager.smoothScrollToPosition(
+                        this@ConversationActivity,
+                        conversationAdapter.itemCount + 1,
+                        25F
+                    )
+                }
+                refreshMessageByUser = false
             }
         }
         lifecycleScope.launchWhenCreated {
@@ -762,7 +766,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 hideProgressBar()
             }
         }
-
 
 
     }
@@ -875,6 +878,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                         0.0
                     }
                     conversationViewModel.addNewMessages(time)
+                    refreshMessageByUser = it.refreshMessageUser
                 }, {
                     it.printStackTrace()
                 })

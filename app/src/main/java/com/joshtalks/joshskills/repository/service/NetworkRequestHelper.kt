@@ -30,147 +30,151 @@ object NetworkRequestHelper {
         conversationId: String,
         queryMap: Map<String, String> = emptyMap(),
         courseId: Int,
-        delayTimeNextRequest: Long = 0L
+        delayTimeNextRequest: Long = 0L,
+        refreshMessageUser: Boolean = false
     ) {
-            try {
-                val resp = AppObjectController.chatNetworkService.getUnReceivedMessageAsync(
-                    conversationId,
-                    queryMap
+        try {
+            val resp = AppObjectController.chatNetworkService.getUnReceivedMessageAsync(
+                conversationId,
+                queryMap
+            )
+            if (resp.chatModelList.isNullOrEmpty()) {
+                RxBus2.publish(MessageCompleteEventBus(false))
+            } else {
+                LastSyncPrefManager.put(
+                    conversationId.trim(),
+                    getTimeInString(resp.chatModelList.last().messageTime)
                 )
-                if (resp.chatModelList.isNullOrEmpty()) {
-                    RxBus2.publish(MessageCompleteEventBus(false))
-                } else {
-                    LastSyncPrefManager.put(
-                        conversationId.trim(),
-                        getTimeInString(resp.chatModelList.last().messageTime)
-                    )
-                    RxBus2.publish(MessageCompleteEventBus(true))
-                }
-
-
-                for (chatModel in resp.chatModelList) {
-                    val chatObj =
-                        AppObjectController.appDatabase.chatDao()
-                            .getNullableChatObject(chatModel.chatId)
-                    if (chatObj == null) {
-                        chatModel.downloadStatus = DOWNLOAD_STATUS.NOT_START
-                        chatModel.conversationId = conversationId
-                        AppObjectController.appDatabase.chatDao().insertAMessage(chatModel)
-                    } else {
-                        chatObj.chatId = chatModel.chatId
-                        chatObj.url = chatModel.url
-                        chatObj.isSeen = true
-                        chatObj.conversationId = chatModel.conversationId
-                        chatObj.created = chatModel.created
-                        chatObj.messageDeliverStatus = chatModel.messageDeliverStatus
-                        chatObj.type = chatModel.type
-                        chatObj.conversationId = conversationId
-                        AppObjectController.appDatabase.chatDao().updateChatMessage(chatObj)
-                    }
-                    if (chatModel.type == BASE_MESSAGE_TYPE.LESSON) {
-                        chatModel.lesson?.apply {
-                            chatId = chatModel.chatId
-                        }?.let {
-                            AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
-                            downloadImageGlide(it.thumbnailUrl)
-                        }
-                    }
-                    chatModel.question?.let { question ->
-                        question.chatId = chatModel.chatId
-                        question.course_id = courseId
-
-                        AppObjectController.appDatabase.chatDao().insertChatQuestion(question)
-                        question.audioList?.let {
-                            it.listIterator().forEach { audioType ->
-                                audioType.questionId = question.questionId
-                                //  DownloadUtils.downloadAudioFile(it)
-                            }
-
-                            AppObjectController.appDatabase.chatDao().insertAudioMessageList(it)
-                        }
-
-                        question.imageList?.let {
-                            it.listIterator().forEach { imageType ->
-                                imageType.questionId = question.questionId
-                                downloadImageGlide(imageType.imageUrl)
-                            }
-                            AppObjectController.appDatabase.chatDao().insertImageTypeMessageList(it)
-
-                        }
-
-                        question.pdfList?.let {
-                            it.listIterator().forEach { pdfType ->
-                                pdfType.questionId = question.questionId
-                            }
-                            AppObjectController.appDatabase.chatDao().insertPdfMessageList(it)
-
-                        }
-                        question.videoList?.let {
-                            it.listIterator().forEach { videoType ->
-                                videoType.questionId = question.questionId
-                                videoType.downloadStatus = DOWNLOAD_STATUS.NOT_START
-                                videoType.interval = question.interval
-                                downloadImageGlide(videoType.video_image_url)
-                            }
-                            AppObjectController.appDatabase.chatDao().insertVideoMessageList(it)
-                        }
-
-                        try {
-                            if (question.practiseEngagementV2.isNullOrEmpty().not()) {
-                                question.practiceEngagement =
-                                    AppObjectController.gsonMapper.fromJson(
-                                        question.practiseEngagementV2?.toString(),
-                                        practiceEnagagement
-                                    )
-                                question.practiseEngagementV2?.forEach { pe ->
-                                    pe.questionForId = question.questionId
-                                    AppObjectController.appDatabase.practiceEngagementDao()
-                                        .insertPractise(pe)
-                                }
-                            }
-                        } catch (ex: Exception) {
-                            ex.printStackTrace()
-                        }
-
-                        if (question.type == BASE_MESSAGE_TYPE.CE) {
-                            question.certificateExamId?.run {
-                                DatabaseUtils.getCExamDetails(
-                                    conversationId = conversationId,
-                                    certificationId = this
-                                )
-                            }
-                        }
-                    }
-
-                    chatModel.awardMentorModel?.let { awardMentorModel ->
-                        AppObjectController.appDatabase.awardMentorModelDao()
-                            .insertSingleItem(awardMentorModel)
-                    }
-
-                    chatModel.lesson?.let {
-                        it.chatId = chatModel.chatId
-                        AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
-                    }
-
-                }
-                RxBus2.publish(DBInsertion("Chat"))
-
-                resp.next?.let {
-                    val arguments = mutableMapOf<String, String>()
-                    LastSyncPrefManager.getLastSyncTime(conversationId).let { keys ->
-                        arguments[keys.first] = keys.second
-                    }
-                    delay(delayTimeNextRequest)
-                    getUpdatedChat(
-                        conversationId,
-                        queryMap = arguments,
-                        courseId,
-                        delayTimeNextRequest = 0
-                    )
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
+                RxBus2.publish(MessageCompleteEventBus(true))
             }
+
+
+            for (chatModel in resp.chatModelList) {
+                val chatObj =
+                    AppObjectController.appDatabase.chatDao()
+                        .getNullableChatObject(chatModel.chatId)
+                if (chatObj == null) {
+                    chatModel.downloadStatus = DOWNLOAD_STATUS.NOT_START
+                    chatModel.conversationId = conversationId
+                    AppObjectController.appDatabase.chatDao().insertAMessage(chatModel)
+                } else {
+                    chatObj.chatId = chatModel.chatId
+                    chatObj.url = chatModel.url
+                    chatObj.isSeen = true
+                    chatObj.conversationId = chatModel.conversationId
+                    chatObj.created = chatModel.created
+                    chatObj.messageDeliverStatus = chatModel.messageDeliverStatus
+                    chatObj.type = chatModel.type
+                    chatObj.conversationId = conversationId
+                    AppObjectController.appDatabase.chatDao().updateChatMessage(chatObj)
+                }
+                if (chatModel.type == BASE_MESSAGE_TYPE.LESSON) {
+                    chatModel.lesson?.apply {
+                        chatId = chatModel.chatId
+                    }?.let {
+                        AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
+                        downloadImageGlide(it.thumbnailUrl)
+                    }
+                }
+                chatModel.question?.let { question ->
+                    question.chatId = chatModel.chatId
+                    question.course_id = courseId
+
+                    AppObjectController.appDatabase.chatDao().insertChatQuestion(question)
+                    question.audioList?.let {
+                        it.listIterator().forEach { audioType ->
+                            audioType.questionId = question.questionId
+                            //  DownloadUtils.downloadAudioFile(it)
+                        }
+
+                        AppObjectController.appDatabase.chatDao().insertAudioMessageList(it)
+                    }
+
+                    question.imageList?.let {
+                        it.listIterator().forEach { imageType ->
+                            imageType.questionId = question.questionId
+                            downloadImageGlide(imageType.imageUrl)
+                        }
+                        AppObjectController.appDatabase.chatDao().insertImageTypeMessageList(it)
+
+                    }
+
+                    question.pdfList?.let {
+                        it.listIterator().forEach { pdfType ->
+                            pdfType.questionId = question.questionId
+                        }
+                        AppObjectController.appDatabase.chatDao().insertPdfMessageList(it)
+
+                    }
+                    question.videoList?.let {
+                        it.listIterator().forEach { videoType ->
+                            videoType.questionId = question.questionId
+                            videoType.downloadStatus = DOWNLOAD_STATUS.NOT_START
+                            videoType.interval = question.interval
+                            downloadImageGlide(videoType.video_image_url)
+                        }
+                        AppObjectController.appDatabase.chatDao().insertVideoMessageList(it)
+                    }
+
+                    try {
+                        if (question.practiseEngagementV2.isNullOrEmpty().not()) {
+                            question.practiceEngagement =
+                                AppObjectController.gsonMapper.fromJson(
+                                    question.practiseEngagementV2?.toString(),
+                                    practiceEnagagement
+                                )
+                            question.practiseEngagementV2?.forEach { pe ->
+                                pe.questionForId = question.questionId
+                                AppObjectController.appDatabase.practiceEngagementDao()
+                                    .insertPractise(pe)
+                            }
+                        }
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+
+                    if (question.type == BASE_MESSAGE_TYPE.CE) {
+                        question.certificateExamId?.run {
+                            DatabaseUtils.getCExamDetails(
+                                conversationId = conversationId,
+                                certificationId = this
+                            )
+                        }
+                    }
+                }
+
+                chatModel.awardMentorModel?.let { awardMentorModel ->
+                    AppObjectController.appDatabase.awardMentorModelDao()
+                        .insertSingleItem(awardMentorModel)
+                }
+
+                chatModel.lesson?.let {
+                    it.chatId = chatModel.chatId
+                    AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
+                }
+            }
+            if (resp.chatModelList.isEmpty()) {
+                RxBus2.publish(DBInsertion("ChatIEmpty"))
+            } else {
+                RxBus2.publish(DBInsertion("ChatInsert", refreshMessageUser))
+            }
+
+            resp.next?.let {
+                val arguments = mutableMapOf<String, String>()
+                LastSyncPrefManager.getLastSyncTime(conversationId).let { keys ->
+                    arguments[keys.first] = keys.second
+                }
+                delay(delayTimeNextRequest)
+                getUpdatedChat(
+                    conversationId,
+                    queryMap = arguments,
+                    courseId,
+                    delayTimeNextRequest = 0
+                )
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
     }
 
 

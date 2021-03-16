@@ -235,7 +235,7 @@
             android:id="@+id/placeholder_bg"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#C7000000"
+            android:background="#AA000000"
             android:visibility="gone"
             tools:visibility="visible"/>
 
