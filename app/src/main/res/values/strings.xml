@@ -836,7 +836,7 @@
     <string name="reconnecting">Reconnecting</string>
     <string name="last_seen">Last Seen %1$s</string>
     <string name="hold_call">Hold call</string>
-    <string name="call_start_permission_message_rational">To start practicing with partner, please allow the following permissions for location, making calls, storage and microphone.</string>
+    <string name="call_start_permission_message_rational">To start practicing with partner, please allow the following permissions. Tap Settings > Permissions, and turn on permissions for Microphone, Storage, Location and Phone.</string>
     <string name="call_start_permission_message">To start practicing with partner, please allow the following permissions. Tap Settings > Permissions, and turn on permissions for Microphone, Storage, Location and Phone.</string>
     <string name="spoke_for_minute">Spoke for %1$s </string>
     <string name="maybe">Maybe</string>

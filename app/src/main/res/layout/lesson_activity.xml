@@ -31,7 +31,6 @@
             android:background="@color/grey_E8"
             android:gravity="center"
             android:minHeight="0dp"
-            app:tabTextAppearance="@style/TabLayoutLesson"
             android:tabStripEnabled="false"
             android:textAlignment="center"
             app:elevation="0dp"
@@ -42,7 +41,7 @@
             app:tabBackground="@drawable/capsule_selection_tab"
             app:tabIconTint="@color/green_right_answer"
             app:tabIndicatorHeight="0dp"
-            app:tabMinWidth="@dimen/_30sdp"
+            app:tabMinWidth="@dimen/_32sdp"
             app:tabSelectedTextColor="@color/white"
             app:tabTextColor="@color/black" />
 

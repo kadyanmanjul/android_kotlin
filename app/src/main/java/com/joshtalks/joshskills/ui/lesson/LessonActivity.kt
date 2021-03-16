@@ -209,8 +209,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
             val tab = tabs.getChildAt(i)
             val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
             layoutParams.weight = 0f
-            layoutParams.marginEnd = Utils.dpToPx(2)
-            layoutParams.marginStart = Utils.dpToPx(2)
+       //     layoutParams.marginEnd = Utils.dpToPx(2)
+          //  layoutParams.marginStart = Utils.dpToPx(2)
         }
         binding.lessonTabLayout.requestLayout()
 

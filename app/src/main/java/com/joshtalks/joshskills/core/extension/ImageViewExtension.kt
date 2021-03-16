@@ -174,10 +174,7 @@ fun AppCompatImageView.setImageInLessonView(
         setShimmer(shimmer)
     }*/
 
-    val requestOptions =
-    // RequestOptions().placeholder(shimmerDrawable)
-        //.error(shimmerDrawable)
-        RequestOptions().placeholder(placeholderImage)
+    val requestOptions = RequestOptions().placeholder(placeholderImage)
             .format(DecodeFormat.PREFER_RGB_565)
             .disallowHardwareConfig().dontAnimate().encodeQuality(75)
     Glide.with(context)
