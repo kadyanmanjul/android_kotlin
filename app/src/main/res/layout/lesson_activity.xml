@@ -31,6 +31,7 @@
             android:background="@color/grey_E8"
             android:gravity="center"
             android:minHeight="0dp"
+            app:tabTextAppearance="@style/TabLayoutLesson"
             android:tabStripEnabled="false"
             android:textAlignment="center"
             app:elevation="0dp"
@@ -43,7 +44,6 @@
             app:tabIndicatorHeight="0dp"
             app:tabMinWidth="@dimen/_30sdp"
             app:tabSelectedTextColor="@color/white"
-            app:tabTextAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
             app:tabTextColor="@color/black" />
 
         <androidx.viewpager2.widget.ViewPager2
