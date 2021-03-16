@@ -952,7 +952,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
             RxBus2.listen(DownloadMediaEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { it ->
+                .subscribe {
                     when (it.downloadStatus) {
                         DOWNLOAD_STATUS.DOWNLOADED -> {
                             conversationViewModel.refreshMessageObject(it.id)
@@ -961,7 +961,8 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                             DownloadMediaService.addDownload(it.chatModel, it.url)
                         }
                         DOWNLOAD_STATUS.REQUEST_DOWNLOADING -> {
-                            PermissionUtils.storageReadAndWritePermission(this,
+                            PermissionUtils.storageReadAndWritePermission(
+                                this,
                                 object : MultiplePermissionsListener {
                                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                                         report?.areAllPermissionsGranted()?.let { flag ->

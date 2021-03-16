@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,7 +22,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -32,6 +32,7 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
+import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentGrammarLayoutBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -41,10 +42,14 @@ import com.joshtalks.joshskills.repository.local.entity.LessonMaterialType
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestionType
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBusForLessonQuestion
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEventForLessonQuestion
+import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBusForLessonQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
+import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
@@ -65,6 +70,7 @@ import java.io.File
 import java.util.ArrayList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
 
@@ -76,6 +82,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
     private var appAnalytics: AppAnalytics? = null
 
     private val compositeDisposable = CompositeDisposable()
+    private var videoQuestion: LessonQuestion? = null
     private var pdfQuestion: LessonQuestion? = null
     private var quizQuestion: LessonQuestion? = null
     private var currentQuizQuestion: Int = 0
@@ -132,6 +139,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                 )
             }
         }
+        subscribeRxBus()
         setObservers()
 
         return binding.root
@@ -142,6 +150,106 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
         appAnalytics = AppAnalytics.create(AnalyticsEvent.PDF_VH.NAME)
             .addBasicParam()
             .addUserDetails()
+    }
+
+    private fun subscribeRxBus() {
+        videoQuestion?.let {
+            setUpVideoProgressListener(it)
+        }
+
+        compositeDisposable.add(
+            RxBus2.listen(DownloadMediaEventBusForLessonQuestion::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    Timber.d(it.toString())
+                    when (it.downloadStatus) {
+                        DOWNLOAD_STATUS.DOWNLOADED -> {
+                            // TODO - Fetch updated lessonQuestion from DB and update Livedata to update UI
+                            // conversationViewModel.refreshMessageObject(it.id)
+                        }
+                        DOWNLOAD_STATUS.DOWNLOADING -> {
+                            DownloadMediaService.addDownload(it.lessonQuestion, it.url)
+                        }
+                        DOWNLOAD_STATUS.REQUEST_DOWNLOADING -> {
+                            PermissionUtils.storageReadAndWritePermission(
+                                requireContext(),
+                                object : MultiplePermissionsListener {
+                                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                                        report?.areAllPermissionsGranted()?.let { flag ->
+                                            if (flag && Utils.isInternetAvailable().not()) {
+                                                showToast(getString(R.string.internet_not_available_msz))
+                                                return@let
+                                            }
+                                            val lessonQuestion = it.lessonQuestion
+                                            lessonQuestion?.downloadStatus =
+                                                DOWNLOAD_STATUS.DOWNLOADING
+                                            lessonQuestion?.let {
+                                                // TODO - Update UI
+                                                // conversationAdapter.updateItem(it)
+                                            }
+                                            if (it.type == LessonMaterialType.PD || it.type == LessonMaterialType.AU) {
+                                                DownloadMediaService.addDownload(
+                                                    it.lessonQuestion,
+                                                    it.url
+                                                )
+                                            } else if (it.type == LessonMaterialType.VI) {
+                                                // TODO - Start downloading video
+                                                AppObjectController.videoDownloadTracker.download(
+                                                    null,
+                                                    Uri.parse(it.url),
+                                                    VideoDownloadController.getInstance()
+                                                        .buildRenderersFactory(true),
+                                                    it.lessonQuestion
+                                                )
+                                            }
+                                            return
+                                        }
+                                        if (report?.isAnyPermissionPermanentlyDenied == true) {
+                                            PermissionUtils.permissionPermanentlyDeniedDialog(
+                                                activity as Activity
+                                            )
+                                        }
+                                    }
+
+                                    override fun onPermissionRationaleShouldBeShown(
+                                        permissions: MutableList<PermissionRequest>?,
+                                        token: PermissionToken?
+                                    ) {
+                                        token?.continuePermissionRequest()
+                                    }
+                                })
+                        }
+                        else -> {
+
+                        }
+                    }
+                })
+
+        compositeDisposable.add(
+            RxBus2.listen(PlayVideoEventForLessonQuestion::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    // TODO - Check whether it loads the downloaded video automatically
+                    Timber.d(it.toString())
+                    binding.videoPlayer.onResume()
+                }, {
+                    it.printStackTrace()
+                })
+        )
+
+        compositeDisposable.add(RxBus2.listen(VideoDownloadedBusForLessonQuestion::class.java)
+            .subscribeOn(Schedulers.computation())
+            .subscribe {
+                // TODO - Fetch updated lesson question from DB and update UI to show video is downloaded
+//                CoroutineScope(Dispatchers.IO).launch {
+//                    val chatObj = AppObjectController.appDatabase.chatDao()
+//                        .getUpdatedChatObjectViaId(it.messageObject.chatId)
+//                    refreshViewAtPos(chatObj)
+//                }
+                Timber.d(it.toString())
+            })
     }
 
     override fun onPause() {
@@ -155,21 +263,21 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
     }
 
     private fun setObservers() {
-        viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner, Observer {
+        viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner, Observer { lessonQuestions ->
             binding.practiceTitleTv.text =
                 getString(
                     R.string.today_lesson,
                     viewModel.lessonLiveData.value?.lessonName
                 )
 
-            val grammarQuestions = it.filter { it.chatType == CHAT_TYPE.GR }
+            val grammarQuestions = lessonQuestions.filter { it.chatType == CHAT_TYPE.GR }
             grammarQuestions.forEach {
                 setupUi(it)
             }
 
         })
 
-        viewModel.grammarAssessmentLiveData.observe(owner = viewLifecycleOwner) { assessmentRelations ->
+        viewModel.grammarAssessmentLiveData.observe(viewLifecycleOwner) { assessmentRelations ->
             assessmentQuestions.clear()
             assessmentRelations.questionList.sortedBy { it.question.sortOrder }.let {
                 assessmentQuestions.addAll(it)
@@ -186,6 +294,11 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                 }
             }
         }
+
+        viewModel.grammarVideoInterval.observe(this@GrammarFragment.viewLifecycleOwner) { graph ->
+            binding.videoPlayer.setProgress(graph?.endTime ?: 0)
+        }
+
     }
 
     private fun setQuizScore(assessmentQuestions: ArrayList<AssessmentQuestionWithRelations>) {
@@ -212,6 +325,7 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
             when (lessonQuestion.materialType) {
 
                 LessonMaterialType.VI -> {
+                    videoQuestion = lessonQuestion
                     binding.videoPlayer.visibility = View.VISIBLE
                     lessonQuestion.videoList?.getOrNull(0)?.let { video ->
                         video.video_url?.let {
@@ -232,13 +346,13 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                                     )
                                 )
                             }
-                            binding.videoPlayer.downloadStreamButNotPlay()
+                            if (video.downloadStatus != DOWNLOAD_STATUS.DOWNLOADED) {
+                                binding.videoPlayer.downloadStreamButNotPlay()
+                            }
+                            executeDownload()
 
                             video.id.toIntOrNull()?.let { id ->
                                 viewModel.getMaxIntervalForVideo(id)
-                            }
-                            viewModel.grammarVideoInterval.observe(owner = this@GrammarFragment.viewLifecycleOwner) { graph ->
-                                binding.videoPlayer.setProgress(graph?.endTime ?: 0)
                             }
 
                         }
@@ -265,6 +379,67 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                     binding.additionalMaterialTv.text = lessonQuestion.title
                     setUpPdfView(lessonQuestion)
                 }
+            }
+        }
+    }
+
+    private fun executeDownload() {
+        if (PermissionUtils.isStoragePermissionEnabled(requireActivity())) {
+            videoDownload()
+        } else {
+            PermissionUtils.storageReadAndWritePermission(
+                requireActivity(),
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (flag) {
+                                videoDownload()
+                                return
+
+                            }
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.permissionPermanentlyDeniedDialog(
+                                    requireActivity()
+                                )
+                                return
+                            }
+                        }
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
+                })
+            return
+        }
+    }
+
+    private fun videoDownload() {
+        videoQuestion?.videoList?.getOrNull(0)?.let { video ->
+            video.video_url?.let {
+//                if (video.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
+//                    RxBus2.publish(PlayVideoEventForLessonQuestion(videoQuestion!!))
+//                    return
+//                }
+//                if (video.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
+//                    RxBus2.publish(PlayVideoEventForLessonQuestion(videoQuestion!!))
+//                    return
+//                }
+                if (video.downloadStatus != DOWNLOAD_STATUS.DOWNLOADED) {
+                    RxBus2.publish(
+                        DownloadMediaEventBusForLessonQuestion(
+                            DOWNLOAD_STATUS.REQUEST_DOWNLOADING,
+                            videoQuestion!!.id,
+                            LessonMaterialType.VI,
+                            lessonQuestion = videoQuestion,
+                            url = it
+                        )
+                    )
+                }
+//                RxBus2.publish(PlayVideoEventForLessonQuestion(videoQuestion!!))
             }
         }
     }

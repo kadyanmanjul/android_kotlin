@@ -17,18 +17,22 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LessonMaterialType
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBusForLessonQuestion
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.ui.voip.*
 import com.tonyodev.fetch2.*
 import com.tonyodev.fetch2core.DownloadBlock
 import com.tonyodev.fetch2core.Extras
-import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.concurrent.ExecutorService
+import timber.log.Timber
 
 
 const val DOWNLOAD_CHAT_OBJECT = "chat_obj"
+const val DOWNLOAD_LESSON_QUESTION_OBJECT = "lesson_question_obj"
 const val DOWNLOAD_FILE_URL = "file_url"
 
 const val DOWNLOAD_NOTIFICATION_CHANNEL = "Download Media "
@@ -45,6 +49,7 @@ class DownloadMediaService : Service(), FetchListener {
     private val fetch = AppObjectController.getFetchObject()
     private var downloadCount = 0
     private val chatDao = AppObjectController.appDatabase.chatDao()
+    private val lessonQuestionDao = AppObjectController.appDatabase.lessonQuestionDao()
 
     companion object {
         private val TAG = DownloadMediaService::class.java.simpleName
@@ -60,6 +65,25 @@ class DownloadMediaService : Service(), FetchListener {
             ).apply {
                 action = "Download Media"
                 putExtra(DOWNLOAD_CHAT_OBJECT, chatModel)
+                putExtra(DOWNLOAD_FILE_URL, url)
+            }
+            if (JoshApplication.isAppVisible) {
+                AppObjectController.joshApplication.startService(serviceIntent)
+            } else {
+                ContextCompat.startForegroundService(
+                    AppObjectController.joshApplication,
+                    serviceIntent
+                )
+            }
+        }
+
+        fun addDownload(lessonQuestion: LessonQuestion?, url: String?) {
+            val serviceIntent = Intent(
+                AppObjectController.joshApplication,
+                DownloadMediaService::class.java
+            ).apply {
+                action = "Download Media"
+                putExtra(DOWNLOAD_LESSON_QUESTION_OBJECT, lessonQuestion)
                 putExtra(DOWNLOAD_FILE_URL, url)
             }
             if (JoshApplication.isAppVisible) {
@@ -94,17 +118,28 @@ class DownloadMediaService : Service(), FetchListener {
         Timber.tag(TAG).e("onStartCommand=  %s", intent?.action)
         downloadService.execute {
             intent?.let {
-                if (it.hasExtra(DOWNLOAD_CHAT_OBJECT).not()) {
+                if (it.hasExtra(DOWNLOAD_CHAT_OBJECT)) {
+                    val data = it.getParcelableExtra(DOWNLOAD_CHAT_OBJECT) as ChatModel
+                    showNotification(
+                        downloadNotification(),
+                        NotificationId.INCOMING_CALL_NOTIFICATION_ID
+                    )
+                    val url = it.getStringExtra(DOWNLOAD_FILE_URL)!!
+                    val localAudioFile = AppDirectory.getAudioReceivedFile(url).absolutePath
+                    addDownload(data, url, localAudioFile)
+                } else if (it.hasExtra(DOWNLOAD_LESSON_QUESTION_OBJECT)) {
+                    val data =
+                        it.getParcelableExtra(DOWNLOAD_LESSON_QUESTION_OBJECT) as LessonQuestion
+                    showNotification(
+                        downloadNotification(),
+                        NotificationId.INCOMING_CALL_NOTIFICATION_ID
+                    )
+                    val url = it.getStringExtra(DOWNLOAD_FILE_URL)!!
+                    val localAudioFile = AppDirectory.getAudioReceivedFile(url).absolutePath
+                    addDownload(data, url, localAudioFile)
+                } else {
                     return@execute
                 }
-                val data = it.getParcelableExtra(DOWNLOAD_CHAT_OBJECT) as ChatModel
-                showNotification(
-                    downloadNotification(),
-                    NotificationId.INCOMING_CALL_NOTIFICATION_ID
-                )
-                val url = it.getStringExtra(DOWNLOAD_FILE_URL)!!
-                val localAudioFile = AppDirectory.getAudioReceivedFile(url).absolutePath
-                addDownload(data, url, localAudioFile)
             }
         }
         return START_NOT_STICKY
@@ -130,8 +165,32 @@ class DownloadMediaService : Service(), FetchListener {
         }
     }
 
+    private fun addDownload(lessonQuestion: LessonQuestion, source: String, destination: String) {
+        downloadService.execute {
+            downloadCount++
+            val request = Request(source, destination)
+            request.priority = Priority.HIGH
+            request.networkType = NetworkType.ALL
+            request.tag = lessonQuestion.id
+            request.extras = objToExtras(lessonQuestion)
+            fetch.remove(request.id)
+            fetch.enqueue(request, {
+                Timber.tag(TAG).e("Request   " + it.file + "  " + it.url)
+            },
+                {
+                    downloadCount--
+                    Timber.tag(TAG).e("error  ")
+                    it.throwable?.printStackTrace()
+                }).awaitFinishOrTimeout(20000)
+        }
+    }
+
     private fun objToExtras(chatModel: ChatModel): Extras {
         return Extras(mapOf(DOWNLOAD_OBJECT to jsonMapper.toJson(chatModel)))
+    }
+
+    private fun objToExtras(lessonQuestion: LessonQuestion): Extras {
+        return Extras(mapOf(DOWNLOAD_OBJECT to jsonMapper.toJson(lessonQuestion)))
     }
 
 
@@ -279,8 +338,10 @@ class DownloadMediaService : Service(), FetchListener {
     private fun updateDownloadStatus(filePath: String, extras: Extras, tag: String?) {
         downloadService.execute {
             var type = BASE_MESSAGE_TYPE.PD
+            var lessonMaterialType = LessonMaterialType.PD
+            var chatModel: ChatModel? = null
             try {
-                val chatModel = jsonMapper.fromJson<ChatModel>(
+                chatModel = jsonMapper.fromJson<ChatModel>(
                     extras.map[DOWNLOAD_OBJECT],
                     DownloadUtils.CHAT_MODEL_TYPE_TOKEN
                 )
@@ -316,18 +377,69 @@ class DownloadMediaService : Service(), FetchListener {
                     duration = duration
                 )
             } catch (ex: Exception) {
-                ex.printStackTrace()
+                Timber.d(ex)
+            }
+            try {
+                if (chatModel == null) {
+                    val lessonQuestion = jsonMapper.fromJson<LessonQuestion>(
+                        extras.map[DOWNLOAD_OBJECT],
+                        DownloadUtils.LESSON_QUESTION_TYPE_TOKEN
+                    )
+                    lessonQuestion.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
+                    when (lessonQuestion.materialType) {
+                        LessonMaterialType.AU -> {
+                            lessonMaterialType = LessonMaterialType.AU
+                            lessonQuestion?.audioList?.getOrNull(0)?.let { audioType ->
+                                chatDao.updateAudioPath(audioType.id, filePath)
+                            }
+                        }
+                        LessonMaterialType.PD -> {
+                            lessonMaterialType = LessonMaterialType.PD
+                            lessonQuestion?.pdfList?.getOrNull(0)?.let { pdfType ->
+                                chatDao.updatePdfPath(pdfType.id, filePath)
+                            }
+                        }
+                        LessonMaterialType.VI -> {
+                            lessonMaterialType = LessonMaterialType.VI
+                            lessonQuestion?.videoList?.getOrNull(0)?.let { videoType ->
+                                chatDao.updateVideoDownloadStatus(videoType.id, filePath)
+                            }
+                        }
+                    }
+
+                    var duration = 0
+                    if (filePath.contains(".pdf").not()) {
+                        duration = Utils.getDurationOfMedia(this, filePath)?.toInt() ?: 0
+                    }
+
+                    lessonQuestionDao.updateDownloadStatus(
+                        lessonQuestion.id,
+                        DOWNLOAD_STATUS.DOWNLOADED,
+                        path = filePath,
+                        // duration = duration
+                    )
+                }
+            } catch (ex: Exception) {
+                Timber.d(ex)
             }
             tag?.let {
-                RxBus2.publish(DownloadMediaEventBus(DOWNLOAD_STATUS.DOWNLOADED, it, type))
+                if (chatModel == null) {
+                    RxBus2.publish(
+                        DownloadMediaEventBusForLessonQuestion(
+                            DOWNLOAD_STATUS.DOWNLOADED,
+                            it,
+                            lessonMaterialType
+                        )
+                    )
+                } else {
+                    RxBus2.publish(DownloadMediaEventBus(DOWNLOAD_STATUS.DOWNLOADED, it, type))
+                }
             }
             if (downloadCount == 0) {
                 removeNotifications()
             }
         }
     }
-
-
 }
 
 interface DownloadServiceCallback {

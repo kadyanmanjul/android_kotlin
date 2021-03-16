@@ -4,7 +4,12 @@ import android.content.Context
 import android.net.Uri
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.RenderersFactory
-import com.google.android.exoplayer2.offline.*
+import com.google.android.exoplayer2.offline.Download
+import com.google.android.exoplayer2.offline.DownloadHelper
+import com.google.android.exoplayer2.offline.DownloadIndex
+import com.google.android.exoplayer2.offline.DownloadManager
+import com.google.android.exoplayer2.offline.DownloadRequest
+import com.google.android.exoplayer2.offline.DownloadService
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.SelectionOverride
@@ -20,9 +25,12 @@ import com.joshtalks.joshskills.core.SELECTED_QUALITY
 import com.joshtalks.joshskills.core.videoplayer.VideoQualityTrack
 import com.joshtalks.joshskills.messaging.RxBus2.publish
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import java.io.IOException
-import java.util.*
+import java.util.ArrayList
+import java.util.Arrays
+import java.util.HashMap
 import java.util.concurrent.CopyOnWriteArraySet
 
 /**
@@ -75,14 +83,19 @@ class DownloadTracker internal constructor(
     fun download(
         chatObj: ChatModel?,
         uri: Uri,
-        renderersFactory: RenderersFactory
+        renderersFactory: RenderersFactory,
+        lessonQuestion: LessonQuestion? = null
     ) {
         val download = downloads[uri]
         if (startDownloadDialogHelper != null) {
             startDownloadDialogHelper!!.release()
         }
         startDownloadDialogHelper =
-            StartDownloadDialogHelper(getDownloadHelper(context, uri, renderersFactory), chatObj)
+            StartDownloadDialogHelper(
+                getDownloadHelper(context, uri, renderersFactory),
+                chatObj,
+                lessonQuestion
+            )
     }
 
     private fun getDownloadHelper(
@@ -157,7 +170,8 @@ class DownloadTracker internal constructor(
 
     private inner class StartDownloadDialogHelper(
         private val downloadHelper: DownloadHelper,
-        private val chatObj: ChatModel?
+        private val chatObj: ChatModel?,
+        private val lessonQuestion: LessonQuestion?
     ) : DownloadHelper.Callback {
         fun release() {
             downloadHelper.release()
@@ -264,14 +278,26 @@ class DownloadTracker internal constructor(
         override fun onPrepareError(helper: DownloadHelper, e: IOException) {
             Log.e("error", "err")
             for (listener in listeners) {
-                listener.onError(gsonMapper.toJson(chatObj), e)
+                if (lessonQuestion != null) {
+                    listener.onError(gsonMapper.toJson(lessonQuestion), e)
+                } else {
+                    listener.onError(gsonMapper.toJson(chatObj), e)
+                }
             }
             publish(
-                MediaProgressEventBus(
-                    Download.STATE_STOPPED, gsonMapper.toJson(
-                        chatObj
-                    ), 0f
-                )
+                if (lessonQuestion != null) {
+                    MediaProgressEventBus(
+                        Download.STATE_STOPPED,
+                        gsonMapper.toJson(lessonQuestion),
+                        0f
+                    )
+                } else {
+                    MediaProgressEventBus(
+                        Download.STATE_STOPPED,
+                        gsonMapper.toJson(chatObj),
+                        0f
+                    )
+                }
             )
             e.printStackTrace()
         }
@@ -297,11 +323,12 @@ class DownloadTracker internal constructor(
 
         private fun buildDownloadRequest(): DownloadRequest {
             return downloadHelper.getDownloadRequest(
-                Util.getUtf8Bytes(
-                    gsonMapper.toJson(
-                        chatObj
-                    )
-                )
+                if (lessonQuestion != null) {
+                    Util.getUtf8Bytes(gsonMapper.toJson(lessonQuestion))
+                } else {
+                    Util.getUtf8Bytes(gsonMapper.toJson(chatObj))
+                }
+
             )
         }
 

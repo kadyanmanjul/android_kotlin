@@ -15,6 +15,7 @@ import androidx.room.Update
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.ConverterForLessonMaterialType
 import com.joshtalks.joshskills.repository.local.ConvertorForEngagement
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
@@ -219,5 +220,12 @@ interface LessonQuestionDao {
         }
         return question
     }
+
+    @Query("UPDATE lesson_question SET downloadStatus = :status , downloadedLocalPath = :path where id=:lessonQuestionId")
+    fun updateDownloadStatus(
+        lessonQuestionId: String,
+        status: DOWNLOAD_STATUS,
+        path: String = EMPTY,
+    )
 
 }

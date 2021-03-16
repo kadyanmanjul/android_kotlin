@@ -39,6 +39,7 @@ const val DOWNLOAD_OBJECT = "DownloadObject"
 object DownloadUtils {
 
     val CHAT_MODEL_TYPE_TOKEN: Type = object : TypeToken<ChatModel>() {}.type
+    val LESSON_QUESTION_TYPE_TOKEN: Type = object : TypeToken<LessonQuestion>() {}.type
     val objectFetchListener = HashMap<String, FetchListener>()
     private val executor: ExecutorService =
         JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-Download Media")
@@ -151,7 +152,7 @@ object DownloadUtils {
                     val lessonQuestion =
                         AppObjectController.gsonMapperForLocal.fromJson<LessonQuestion>(
                             extras.map[DOWNLOAD_OBJECT],
-                            CHAT_MODEL_TYPE_TOKEN
+                            LESSON_QUESTION_TYPE_TOKEN
                         )
                     lessonQuestion.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
                     if (lessonQuestion.type == LessonQuestionType.Q) {

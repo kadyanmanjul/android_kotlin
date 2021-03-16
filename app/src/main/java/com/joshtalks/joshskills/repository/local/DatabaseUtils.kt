@@ -6,13 +6,15 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CertificationExamDetailModel
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
+import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBusForLessonQuestion
+import java.util.*
+import java.util.concurrent.ExecutorService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.util.*
-import java.util.concurrent.ExecutorService
 
 object DatabaseUtils {
     private val executor: ExecutorService =
@@ -57,6 +59,21 @@ object DatabaseUtils {
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
+            try {
+                val lessonQuestion =
+                    AppObjectController.gsonMapperForLocal.fromJson(
+                        objs,
+                        LessonQuestion::class.java
+                    )
+                AppObjectController.appDatabase.lessonQuestionDao()
+                    .updateDownloadStatus(lessonQuestion.id, downloadStatus)
+                if (downloadStatus == DOWNLOAD_STATUS.FAILED || downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
+                    RxBus2.publish(VideoDownloadedBusForLessonQuestion(lessonQuestion))
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+
         }
 
     }

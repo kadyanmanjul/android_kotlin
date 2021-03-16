@@ -59,7 +59,7 @@ interface ChatDao {
     fun updateAudioPath(audioId: String, path: String)
 
 
-    @Query("UPDATE AudioTable SET downloadedLocalPath = :path  where audioId=:videoId")
+    @Query("UPDATE VideoTable SET downloadedLocalPath = :path  where id=:videoId")
     fun updateVideoDownloadStatus(videoId: String, path: String)
 
 
