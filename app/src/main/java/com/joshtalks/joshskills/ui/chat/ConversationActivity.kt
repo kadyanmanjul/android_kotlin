@@ -66,6 +66,7 @@ import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.video_player.*
 import com.joshtalks.joshskills.ui.view_holders.*
+import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.StickyHeaderDecoration
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
@@ -260,6 +261,9 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     }
                     R.id.leaderboard_setting -> {
                         openLeaderBoard()
+                    }
+                    R.id.menu_favorite_list -> {
+                        FavoriteListActivity.openFavoriteCallerActivity(this)
                     }
                 }
                 return@setOnMenuItemClickListener true
