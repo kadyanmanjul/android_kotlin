@@ -531,4 +531,36 @@
     <style name="CollapsedAppBar" parent="@android:style/TextAppearance.Medium">
         <item name="android:textColor">@color/white</item>
     </style>
+
+    <style name="AppThemeNoAction" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeBackground">@color/action_bar_bg</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="actionMenuTextColor">@color/white</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_arrow_back</item>
+        <item name="actionModeCutDrawable">@drawable/abc_ic_menu_cut_mtrl_alpha</item>
+        <item name="actionModeCopyDrawable">@drawable/abc_ic_menu_copy_mtrl_am_alpha</item>
+        <item name="actionModePasteDrawable">@drawable/abc_ic_menu_paste_mtrl_am_alpha</item>
+        <item name="actionModeSelectAllDrawable">@drawable/abc_ic_menu_selectall_mtrl_alpha</item>
+        <item name="actionModeShareDrawable">@drawable/abc_ic_menu_share_mtrl_alpha</item>
+
+    </style>
+
+    <style name="FullScreenTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
+
 </resources>
