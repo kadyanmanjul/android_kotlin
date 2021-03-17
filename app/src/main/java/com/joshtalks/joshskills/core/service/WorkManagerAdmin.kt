@@ -139,6 +139,11 @@ object WorkManagerAdmin {
             workRequest
         )
     }
+    fun forceRefreshFcmToken() {
+        val workRequest = OneTimeWorkRequestBuilder<RefreshFCMTokenWorker>()
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+    }
 
     fun getQuestionNPA(eventName: String): UUID {
         val data = workDataOf("event" to eventName)

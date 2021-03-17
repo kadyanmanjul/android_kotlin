@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.playSnackbarSound
+import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.setRoundImage
 import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
@@ -192,6 +193,7 @@ class VoipCallFeedbackView : DialogFragment() {
     }
 
     private fun exitDialog() {
+        WorkManagerAdmin.syncFavoriteCaller()
         FullScreenProgressDialog.hideProgressBar(requireActivity())
         //dismissAllowingStateLoss()
         val intent = Intent()

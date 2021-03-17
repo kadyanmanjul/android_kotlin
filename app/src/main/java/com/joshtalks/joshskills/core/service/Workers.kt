@@ -262,6 +262,7 @@ class UploadFCMTokenOnServer(context: Context, workerParams: WorkerParameters) :
         try {
             val token = PrefManager.getStringValue(FCM_TOKEN)
             if (token.isEmpty()) {
+                WorkManagerAdmin.forceRefreshFcmToken()
                 return Result.success()
             }
             val fcmResponse = FCMResponse.getInstance()
