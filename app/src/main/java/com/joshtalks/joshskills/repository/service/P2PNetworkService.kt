@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.repository.service
 
+import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.repository.server.voip.RequestUserLocation
 import java.util.HashMap
 import retrofit2.Response
@@ -14,7 +15,7 @@ interface P2PNetworkService {
     suspend fun getAgoraClientToken(@Body params: Map<String, String>): Response<HashMap<String, String>>
 
     @POST("$DIR/voicecall/agora_call_response/")
-    suspend fun getAgoraCallResponse(@Body params: Map<String, String?>)
+    suspend fun getAgoraCallResponse(@Body params: Map<String, String?>):Response<Void>
 
     @POST("$DIR/voicecall/agora_start_recording/")
     suspend fun startP2PCallRecording(@Body params: Map<String, String?>): HashMap<String, String>
@@ -30,5 +31,17 @@ interface P2PNetworkService {
 
     @POST("$DIR/voicecall/agora_call_feedback/")
     suspend fun p2pCallFeedbackV2(@Body params: Map<String, String?>): Response<Void>//FeedbackVoipResponse
+
+    @GET("$DIR/voicecall/favourites/{mentorId}/")
+    suspend fun getFavoriteCallerList(@Path("mentorId") mentorId: String): List<FavoriteCaller>
+
+    @POST("$DIR/voicecall/favourites/{mentorId}/")
+    suspend fun removeFavoriteCallerList(
+        @Path("mentorId") mentorId: String,
+        @Body requestObj: HashMap<String, List<Int>>
+    ): Response<Void>
+
+    @POST("$DIR/voicecall/agora_favourite_token/")
+    suspend fun getFavoriteUserAgoraToken(@Body params: Map<String, String>): Response<HashMap<String, String>>
 
 }
