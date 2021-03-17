@@ -109,7 +109,7 @@
                     android:backgroundTint="#ECF4FD"
                     android:paddingHorizontal="@dimen/_8sdp"
                     android:paddingVertical="@dimen/_12sdp"
-                    app:layout_constraintBottom_toTopOf="@+id/btn_start"
+                    app:layout_constraintBottom_toTopOf="@+id/btn_favorite"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
@@ -141,6 +141,41 @@
                         app:layout_constraintTop_toTopOf="@+id/image_view" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <androidx.constraintlayout.helper.widget.Layer
+                    android:id="@+id/layer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="btn_start,btn_continue,btn_favorite"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/info_container"
+                    app:layout_constraintVertical_bias="0.63" />
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_favorite"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="@dimen/_16sdp"
+                    android:backgroundTint="@color/colorAccent"
+                    android:gravity="center"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingVertical="@dimen/_10sdp"
+                    android:text="@string/call_favorite_practice_partner"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12ssp"
+                    app:cornerRadius="@dimen/_36sdp"
+                    app:layout_constraintBottom_toTopOf="@+id/btn_start"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.7"
+                    app:rippleColor="@color/white" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_start"
@@ -194,16 +229,6 @@
                     app:rippleColor="@color/white"
                     tools:visibility="visible" />
 
-                <androidx.constraintlayout.helper.widget.Layer
-                    android:id="@+id/layer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:constraint_referenced_ids="btn_start,btn_continue"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/info_container"
-                    app:layout_constraintVertical_bias="0.63" />
 
                 <com.pnikosis.materialishprogress.ProgressWheel
                     android:id="@+id/progress_view"
@@ -224,7 +249,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    app:constraint_referenced_ids="text_view_2,tv_today_topic,tv_practise_time,progress_bar,info_container,btn_start,text_view_1"
+                    app:constraint_referenced_ids="text_view_2,tv_today_topic,tv_practise_time,progress_bar,info_container,text_view_1"
                     tools:visibility="visible" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>

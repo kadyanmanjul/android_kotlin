@@ -75,5 +75,10 @@ interface FavoriteCallerDao {
     @Query(value = "SELECT id from favorite_caller WHERE is_deleted=1 ")
     fun getRemoveFromFavoriteCallers(): List<Int>
 
+    @Query(value = "SELECT COUNT(id) FROM favorite_caller  ")
+    suspend fun getCountOfFavoriteCaller(): Long
+
+
+
 
 }

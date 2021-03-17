@@ -97,7 +97,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
         viewLifecycleOwner.lifecycle.addObserver(this)
 
         binding.btnStart.setOnClickListener {
-            startPractise()
+            startPractise(true)
         }
         binding.btnContinue.setOnClickListener {
             lessonActivityListener?.onNextTabCall(3)
@@ -143,7 +143,20 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
                 }
             }
         })
+        binding.btnFavorite.setOnClickListener {
+            viewModel.grammarAssessmentLiveData
+            viewModel.isFavoriteCallerExist(::callback)
+        }
     }
+
+    private fun callback(exist: Boolean) {
+        if (exist) {
+            startPractise(favoriteUserCall = true)
+        } else {
+            showToast(getString(R.string.empty_favorite_list_message))
+        }
+    }
+
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onFragmentResume() {
@@ -152,7 +165,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
         }
     }
 
-    private fun startPractise() {
+    private fun startPractise(favoriteUserCall: Boolean = false) {
         if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
             startPractiseSearchScreen()
             return
@@ -174,7 +187,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
                             return
                         } else {
                             MaterialDialog(requireActivity()).show {
-                                message(R.string.call_start_permission_message_rational)
+                                message(R.string.call_start_permission_message)
                                 positiveButton(R.string.ok)
                             }
                         }
@@ -190,14 +203,15 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
             })
     }
 
-    private fun startPractiseSearchScreen() {
+    private fun startPractiseSearchScreen(favoriteUserCall: Boolean = false) {
         viewModel.speakingTopicLiveData.value?.run {
             openCallActivity.launch(
                 SearchingUserActivity.startUserForPractiseOnPhoneActivity(
                     requireActivity(),
                     courseId = courseId,
                     topicId = id,
-                    topicName = topicName
+                    topicName = topicName,
+                    favoriteUserCall = favoriteUserCall
                 )
             )
         }
