@@ -121,6 +121,9 @@
     <color name="ucrop_color_toolbar">@color/colorPrimary</color>
     <color name="ucrop_color_statusbar">@color/colorPrimaryDark</color>
     <color name="ucrop_color_widget_active">@color/colorPrimary</color>
+    <color name="dis_color_10f">#10FFFFFF</color>
+    <color name="select_bg_color">#F3F3F3</color>
+    <color name="action_bar_bg">#107BE5</color>
 
 
 </resources>
