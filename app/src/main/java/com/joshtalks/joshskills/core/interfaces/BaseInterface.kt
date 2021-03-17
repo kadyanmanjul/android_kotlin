@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.core.interfaces
 
 import android.net.Uri
+import android.view.View
 import com.joshtalks.joshskills.core.VerificationVia
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.CertificateDetail
@@ -46,3 +47,9 @@ interface CertificationExamListener {
 interface OnOpenCourseListener{
     fun onClick(inboxEntity: InboxEntity)
 }
+
+interface RecyclerViewItemClickListener {
+    fun onItemClick(view: View?, position: Int)
+    fun onItemLongClick(view: View?, position: Int)
+}
+
