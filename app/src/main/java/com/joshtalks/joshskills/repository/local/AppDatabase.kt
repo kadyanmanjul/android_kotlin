@@ -61,6 +61,8 @@ import com.joshtalks.joshskills.repository.local.entity.VideoEngageDao
 import com.joshtalks.joshskills.repository.local.entity.VideoType
 import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearch
 import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearchDao
+import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
+import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCallerDao
 import com.joshtalks.joshskills.repository.local.entity.practise.Phonetic
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementDao
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
@@ -94,7 +96,8 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         FeedbackEngageModel::class, NPSEventModel::class, Assessment::class, AssessmentQuestion::class,
         Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class,
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class,
-        PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class , RecentSearch::class
+        PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class ,
+        RecentSearch::class, FavoriteCaller::class
     ],
     version = 30,
     exportSchema = true
@@ -485,6 +488,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun practiceEngagementDao(): PracticeEngagementDao
     abstract fun speakingTopicDao(): SpeakingTopicDao
     abstract fun recentSearch(): RecentSearchDao
+    abstract fun favoriteCallerDao(): FavoriteCallerDao
 
 }
 
