@@ -71,6 +71,7 @@
                 android:gravity="start"
                 android:inputType="none"
                 android:maxLines="1"
+                android:textStyle="bold"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                 android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"

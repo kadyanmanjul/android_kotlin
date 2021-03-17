@@ -1,13 +1,10 @@
 package com.joshtalks.joshskills.ui.voip.favorite.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.FavoriteItemLayoutBinding
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
@@ -88,7 +85,7 @@ class FavoriteAdapter(
                 obj=favoriteCaller
 
                 tvName.text = favoriteCaller.name
-                tvSpokenTime.text = "Total time Spoken: 282 Minutes "
+                tvSpokenTime.text = "Total time Spoken: ${favoriteCaller.minutesSpoken} Minutes "
                 if (favoriteCaller.selected) {
                     rootView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.select_bg_color))
                     ivTick.visibility= View.VISIBLE
