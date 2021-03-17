@@ -55,7 +55,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestListener
@@ -628,18 +630,6 @@ object Utils {
     fun updateTextView(textView: TextView, text: String) {
         textView.post { textView.text = text }
     }
-
-    /*fun printAllIntent(intent: Intent) {
-        val bundle = intent.extras
-        if (bundle != null) {
-            for (key in bundle.keySet()) {
-                Log.e(
-                    "all intent",
-                    key + " : " + (bundle.get(key) != null ?: bundle.get(key) ?: "NULL")
-                )
-            }
-        }
-    }*/
 
     fun openFile(activity: Activity, url: String) {
         try {
@@ -1264,3 +1254,46 @@ fun playSnackbarSound(context: Context) {
         Timber.d(ex)
     }
 }
+
+fun String.urlToBitmap( width: Int = 80,
+                        height: Int = 80,context: Context = AppObjectController.joshApplication
+): Bitmap? {
+
+    val requestOptions =
+        RequestOptions()
+            .circleCrop()
+            .format(DecodeFormat.PREFER_RGB_565)
+            .disallowHardwareConfig().dontAnimate().encodeQuality(75)
+
+    return Glide.with(context)
+        .asBitmap()
+        .load(this)
+          .override(Utils.dpToPx(width),Utils.dpToPx(height))
+        .apply(
+            requestOptions
+        )
+       //.override(Target.SIZE_ORIGINAL)
+        .diskCacheStrategy(DiskCacheStrategy.ALL)
+        .optionalTransform(
+            WebpDrawable::class.java,
+            WebpDrawableTransformation(CircleCrop())
+        ).submit().get(1500, TimeUnit.MILLISECONDS)
+}
+
+fun Int.toBoolean() = this == 1
+
+
+fun Intent.printAllIntent() {
+    val bundle = extras
+    if (bundle != null) {
+        for (key in bundle.keySet()) {
+            Log.e(
+                "all intent",
+                key + " : " + (bundle.get(key) != null ?: bundle.get(key) ?: "NULL")
+            )
+        }
+    }
+}
+
+
+
