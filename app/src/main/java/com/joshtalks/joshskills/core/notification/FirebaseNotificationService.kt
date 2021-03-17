@@ -55,8 +55,11 @@ import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
+import com.joshtalks.joshskills.ui.voip.RTC_CALLER_PHOTO
 import com.joshtalks.joshskills.ui.voip.RTC_CALLER_UID_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_CHANNEL_KEY
+import com.joshtalks.joshskills.ui.voip.RTC_IS_FAVORITE
+import com.joshtalks.joshskills.ui.voip.RTC_NAME
 import com.joshtalks.joshskills.ui.voip.RTC_TOKEN_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
 import com.joshtalks.joshskills.ui.voip.WebRtcService
@@ -476,11 +479,20 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         actionData?.let {
             try {
                 val obj = JSONObject(it)
-                val data = HashMap<String, String>()
+                val data = HashMap<String, String?>()
                 data[RTC_TOKEN_KEY] = obj.getString("token")
                 data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
                 data[RTC_UID_KEY] = obj.getString("uid")
                 data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
+
+                if (obj.has("f")) {
+                    data[RTC_IS_FAVORITE] = "true"
+                    val id = obj.getInt("caller_uid")
+                    val caller = AppObjectController.appDatabase.favoriteCallerDao().getFavoriteCaller(id)
+                    Thread.sleep(50)
+                    data[RTC_NAME] = caller?.name
+                    data[RTC_CALLER_PHOTO] = caller?.image
+                }
                 WebRtcService.startOnNotificationIncomingCall(data)
             } catch (t: Throwable) {
                 t.printStackTrace()
