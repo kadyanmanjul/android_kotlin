@@ -441,14 +441,14 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     fun switchAudioMode() {
+        updateStatus(binding.btnSpeaker, mBoundService!!.getSpeaker())
         mBoundService?.switchAudioSpeaker()
         volumeControlStream = AudioManager.STREAM_VOICE_CALL
-        updateStatus(binding.btnSpeaker, mBoundService!!.getSpeaker())
     }
 
     fun switchTalkMode() {
-        mBoundService?.switchSpeck()
         updateStatus(binding.btnMute, mBoundService!!.getMic().not())
+        mBoundService?.switchSpeck()
     }
 
     fun onDeclineCall() {

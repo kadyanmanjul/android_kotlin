@@ -73,6 +73,7 @@ class WebRtcService : BaseWebRtcService() {
     private var isEngineInit = false
     private var isCallerJoin: Boolean = false
     private var isMicEnable = true
+    private var isSpeakerEnable = false
 
     companion object {
         private val TAG = WebRtcService::class.java.simpleName
@@ -85,10 +86,6 @@ class WebRtcService : BaseWebRtcService() {
         @JvmStatic
         private val callDisconnectTime = AppObjectController.getFirebaseRemoteConfig()
             .getLong(FirebaseRemoteConfigKey.VOIP_CALL_DISCONNECT_TIME)
-
-        @Volatile
-        private var isSpeakerEnable = false
-
 
         @Volatile
         @JvmStatic
@@ -944,24 +941,29 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     fun switchAudioSpeaker() {
-        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
-        isSpeakerEnable = !isSpeakerEnable
-        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-        mRtcEngine?.setEnableSpeakerphone(isSpeakerEnable)
-        mRtcEngine?.setDefaultAudioRoutetoSpeakerphone(isSpeakerEnable)
-        audioManager.isSpeakerphoneOn = isSpeakerEnable
+        executor.submit {
+            val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+            isSpeakerEnable = !isSpeakerEnable
+            audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+            mRtcEngine?.setEnableSpeakerphone(isSpeakerEnable)
+            mRtcEngine?.setDefaultAudioRoutetoSpeakerphone(isSpeakerEnable)
+            audioManager.isSpeakerphoneOn = isSpeakerEnable
+        }
     }
 
     fun switchSpeck() {
-        try {
-            isMicEnable = !isMicEnable
-            if (isMicEnable) {
-                unMuteCall()
-            } else {
-                muteCall()
+        executor.submit {
+
+            try {
+                isMicEnable = !isMicEnable
+                if (isMicEnable) {
+                    unMuteCall()
+                } else {
+                    muteCall()
+                }
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
             }
-        } catch (ex: Throwable) {
-            ex.printStackTrace()
         }
     }
 
