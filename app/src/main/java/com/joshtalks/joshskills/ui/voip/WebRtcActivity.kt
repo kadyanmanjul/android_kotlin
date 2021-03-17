@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.ui.voip
 
 import android.app.Activity
+import android.app.NotificationManager
+import android.app.Service
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
@@ -14,10 +16,12 @@ import android.os.SystemClock
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -56,16 +60,19 @@ class WebRtcActivity : AppCompatActivity() {
     private var mServiceBound = false
     private val compositeDisposable = CompositeDisposable()
     private val userDetailLiveData: MutableLiveData<HashMap<String, String>> = MutableLiveData()
-
+    private val viewModel: WebrtcViewModel by lazy {
+        ViewModelProvider(this).get(WebrtcViewModel::class.java)
+    }
 
     companion object {
         fun startOutgoingCallActivity(
             activity: Activity,
-            mapForOutgoing: HashMap<String, String?>
+            mapForOutgoing: HashMap<String, String?>,
+            callType: CallType = CallType.OUTGOING
         ) {
             Intent(activity, WebRtcActivity::class.java).apply {
                 putExtra(CALL_USER_OBJ, mapForOutgoing)
-                putExtra(CALL_TYPE, CallType.OUTGOING)
+                putExtra(CALL_TYPE, callType)
             }.run {
                 activity.startActivityForResult(this, 9999)
             }
@@ -79,6 +86,7 @@ class WebRtcActivity : AppCompatActivity() {
             mServiceBound = true
             mBoundService?.addListener(callback)
             initCall()
+
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -90,6 +98,7 @@ class WebRtcActivity : AppCompatActivity() {
 
         override fun onConnect(callId: String) {
             Timber.tag(TAG).e("onConnect")
+            AppObjectController.uiHandler.removeCallbacksAndMessages(null)
             AppObjectController.uiHandler.postDelayed({
                 binding.callStatus.text = getText(R.string.practice)
                 startCallTimer()
@@ -157,43 +166,6 @@ class WebRtcActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkAndShowRating(id: String?, channelName: String? = null, callTime: Long = 0) {
-        Timber.tag(TAG)
-            .e("checkAndShowRating   %s %s %s", id, mBoundService?.getTimeOfTalk(), callTime)
-        showCallRatingScreen(callTime)
-    }
-
-    private fun showCallRatingScreen(callTime: Long) {
-        var time = mBoundService?.getTimeOfTalk() ?: 0
-        if (time <= 0) {
-            time = callTime
-        }
-        val channelName = mBoundService?.channelName
-        if (time > 0 && channelName.isNullOrEmpty().not()) {
-            runOnUiThread {
-                binding.placeholderBg.visibility = View.VISIBLE
-            }
-            VoipCallFeedbackView.showCallRatingDialog(
-                supportFragmentManager,
-                channelName = channelName,
-                callTime = time,
-                callerName = userDetailLiveData.value?.get("name"),
-                callerImage = userDetailLiveData.value?.get("profile_pic"),
-                yourName = User.getInstance().firstName,
-                yourAgoraId = mBoundService?.getUserAgoraId()
-            )
-            return
-        }
-        this@WebRtcActivity.finishAndRemoveTask()
-    }
-
-    fun onStopCall() {
-        //     SoundPoolManager.getInstance(this).release()
-        AppAnalytics.create(AnalyticsEvent.DISCONNECT_CALL_VOIP.NAME)
-            .addBasicParam()
-            .addUserDetails()
-            .push()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
@@ -201,21 +173,30 @@ class WebRtcActivity : AppCompatActivity() {
         } else {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-        )
+        window.apply {
+            setFlags(
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+            )
+            clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            statusBarColor = Color.TRANSPARENT
+        }
+
         volumeControlStream = AudioManager.STREAM_VOICE_CALL
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_calling)
         binding.lifecycleOwner = this
         binding.handler = this
+        intent.printAllIntent()
+        addObserver()
         setCallerInfoOnAppCreate()
         AppAnalytics.create(AnalyticsEvent.OPEN_CALL_SCREEN_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()
             .push()
-        addObserver()
+        callMissedCallUser()
     }
 
     private fun setCallerInfoOnAppCreate() {
@@ -227,13 +208,43 @@ class WebRtcActivity : AppCompatActivity() {
         }
     }
 
-    private fun addObserver() {
-        userDetailLiveData.observe(this, {
-            binding.topic.text = it["topic_name"]
-            binding.userDetail.text =
-                it["name"]?.plus(" \n")?.plus(it["locality"])
-            setImageInIV(it["profile_pic"])
-        })
+    private fun callMissedCallUser() {
+        val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
+        if (callType == null) {
+            this@WebRtcActivity.finishAndRemoveTask()
+        }
+        callType?.run {
+            if (CallType.FAVORITE_MISSED_CALL == this) {
+                val pId = intent.getIntExtra(RTC_PARTNER_ID, -1)
+                if (pId == -1) {
+                    this@WebRtcActivity.finishAndRemoveTask()
+                }
+                binding.callStatus.text = getString(R.string.pp_calling)
+                binding.groupForOutgoing.visibility = View.VISIBLE
+                binding.connectionLost.text = getString(R.string.ringing)
+                binding.connectionLost.visibility = View.VISIBLE
+                setUserInfo(pId.toString())
+                viewModel.initMissedCall(pId.toString(), ::callback)
+                (getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager?)?.cancel(pId.hashCode())
+            }
+        }
+    }
+
+    private fun addTimeOutUserDidNotPickCall() {
+        AppObjectController.uiHandler.postDelayed({
+            onDisconnectCall()
+        }, 40000)
+    }
+
+    private fun callback(token: String, channelName: String, uid: Int) {
+        val data: HashMap<String, String?> = HashMap()
+        data.apply {
+            put(RTC_TOKEN_KEY, token)
+            put(RTC_CHANNEL_KEY, channelName)
+            put(RTC_UID_KEY, uid.toString())
+        }
+        WebRtcService.startOutgoingCall(data)
+        addTimeOutUserDidNotPickCall()
     }
 
     override fun onNewIntent(nIntent: Intent) {
@@ -261,33 +272,66 @@ class WebRtcActivity : AppCompatActivity() {
         }
     }
 
-    private fun removeRatingDialog() {
-        try {
-            val prev =
-                supportFragmentManager.findFragmentByTag(VoipCallFeedbackView::class.java.name)
-            if (prev != null) {
-                val df = prev as DialogFragment
-                df.dismiss()
-                supportFragmentManager.beginTransaction().run {
-                    remove(prev)
-                    addToBackStack(null)
-                }
-                supportFragmentManager.executePendingTransactions()
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
+    override fun onStart() {
+        super.onStart()
+        bindService(
+            Intent(this, WebRtcService::class.java),
+            myConnection,
+            BIND_AUTO_CREATE
+        )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        subscribeRXBus()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        compositeDisposable.clear()
+        AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.callTime.stop()
+        unbindService(myConnection)
+        AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+    }
+
+    override fun onDestroy() {
+        volumeControlStream = AudioManager.STREAM_MUSIC
+        super.onDestroy()
+    }
+
+    override fun onBackPressed() {
+    }
+
+    private fun addObserver() {
+        userDetailLiveData.observe(this, {
+            binding.topicName.text = it["topic_name"]
+            binding.callerName.text = it["name"]
+            setImageInIV(it["profile_pic"])
+        })
+
     }
 
     private fun initCall() {
         val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
         callType?.run {
-            if (CallType.OUTGOING == this) {
-                binding.callStatus.text = getText(R.string.practice)
+            if (CallType.FAVORITE_OUTGOING == this) {
+                binding.callStatus.text = "Favorite Practice Partner Calling"
+                binding.groupForOutgoing.visibility = View.VISIBLE
+                val data = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
+                data?.let {
+                    mBoundService?.joinOutgoingCall(it)
+                }
+            } else if (CallType.OUTGOING == this) {
+                binding.callStatus.text = getText(R.string.pp_calling)
                 startCallTimer()
                 binding.groupForIncoming.visibility = View.GONE
                 binding.groupForOutgoing.visibility = View.VISIBLE
-            } else {
+            } else if (CallType.INCOMING == this) {
                 val autoPickUp = intent.getBooleanExtra(AUTO_PICKUP_CALL, false)
                 if (autoPickUp) {
                     acceptCall()
@@ -310,6 +354,24 @@ class WebRtcActivity : AppCompatActivity() {
                 binding.callTime.start()
             }
         } catch (ex: Throwable) {
+            ex.printStackTrace()
+        }
+    }
+
+    private fun removeRatingDialog() {
+        try {
+            val prev =
+                supportFragmentManager.findFragmentByTag(VoipCallFeedbackView::class.java.name)
+            if (prev != null) {
+                val df = prev as DialogFragment
+                df.dismiss()
+                supportFragmentManager.beginTransaction().run {
+                    remove(prev)
+                    addToBackStack(null)
+                }
+                supportFragmentManager.executePendingTransactions()
+            }
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
@@ -357,7 +419,7 @@ class WebRtcActivity : AppCompatActivity() {
 
     private fun getName(): String {
         return try {
-            binding.userDetail.text.toString().substring(0, 2)
+            binding.callerName.text.toString().substring(0, 2)
         } catch (ex: Exception) {
             "US"
         }
@@ -380,8 +442,8 @@ class WebRtcActivity : AppCompatActivity() {
 
     fun switchAudioMode() {
         mBoundService?.switchAudioSpeaker()
-        updateStatus(binding.btnSpeaker, mBoundService!!.getSpeaker())
         volumeControlStream = AudioManager.STREAM_VOICE_CALL
+        updateStatus(binding.btnSpeaker, mBoundService!!.getSpeaker())
     }
 
     fun switchTalkMode() {
@@ -426,7 +488,6 @@ class WebRtcActivity : AppCompatActivity() {
             })
     }
 
-
     fun onDisconnectCall() {
         WebRtcService.disconnectCall()
         AppObjectController.uiHandler.postDelayed({
@@ -450,52 +511,52 @@ class WebRtcActivity : AppCompatActivity() {
             .push()
     }
 
-    private fun updateStatus(view: View, enable: Boolean) {
+    private fun updateStatus(view: AppCompatImageButton, enable: Boolean) {
         if (enable) {
             view.backgroundTintList =
-                ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.blue49)
+                ContextCompat.getColorStateList(applicationContext, R.color.dis_color_10f)
+            view.imageTintList = ContextCompat.getColorStateList(applicationContext, R.color.white)
         } else {
-            view.backgroundTintList = ContextCompat.getColorStateList(
-                AppObjectController.joshApplication,
-                R.color.transparent
-            )
+            view.backgroundTintList =
+                ContextCompat.getColorStateList(applicationContext, R.color.white)
+            view.imageTintList =
+                ContextCompat.getColorStateList(applicationContext, R.color.grey_61)
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        bindService(
-            Intent(this, WebRtcService::class.java),
-            myConnection,
-            BIND_AUTO_CREATE
-        )
+    private fun checkAndShowRating(id: String?, channelName: String? = null, callTime: Long = 0) {
+        Timber.tag(TAG)
+            .e("checkAndShowRating   %s %s %s", id, mBoundService?.getTimeOfTalk(), callTime)
+        showCallRatingScreen(callTime)
     }
 
-    override fun onResume() {
-        super.onResume()
-        subscribeRXBus()
+    private fun showCallRatingScreen(callTime: Long) {
+        var time = mBoundService?.getTimeOfTalk() ?: 0
+        if (time <= 0) {
+            time = callTime
+        }
+        val channelName = mBoundService?.channelName
+        if (time > 0 && channelName.isNullOrEmpty().not()) {
+            VoipCallFeedbackView.showCallRatingDialog(
+                supportFragmentManager,
+                channelName = channelName,
+                callTime = time,
+                callerName = userDetailLiveData.value?.get("name"),
+                callerImage = userDetailLiveData.value?.get("profile_pic"),
+                yourName = User.getInstance().firstName,
+                yourAgoraId = mBoundService?.getUserAgoraId()
+            )
+            return
+        }
+        this@WebRtcActivity.finishAndRemoveTask()
     }
 
-    override fun onPause() {
-        super.onPause()
-        compositeDisposable.clear()
-        AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        binding.callTime.stop()
-        unbindService(myConnection)
-    }
-
-
-    override fun onDestroy() {
-
-        volumeControlStream = AudioManager.STREAM_MUSIC
-        super.onDestroy()
-    }
-
-    override fun onBackPressed() {
+    fun onStopCall() {
+        //     SoundPoolManager.getInstance(this).release()
+        AppAnalytics.create(AnalyticsEvent.DISCONNECT_CALL_VOIP.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
     }
 
     private fun subscribeRXBus() {
@@ -516,7 +577,6 @@ class WebRtcActivity : AppCompatActivity() {
                     it.printStackTrace()
                 })
         )
-
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(SnackBarEvent::class.java)
                 .subscribeOn(Schedulers.computation())
@@ -535,4 +595,5 @@ class WebRtcActivity : AppCompatActivity() {
             playSnackbarSound(this)
         }
     }
+
 }
