@@ -667,7 +667,9 @@ class HeaderInterceptor : Interceptor {
         if (Utils.isInternetAvailable()) {
             newRequest.cacheControl(CacheControl.FORCE_NETWORK)
         } else {
-            newRequest.cacheControl(CacheControl.FORCE_CACHE)
+            if (original.headers.none().not()) {
+                newRequest.cacheControl(CacheControl.FORCE_CACHE)
+            }
         }
         return chain.proceed(newRequest.build())
     }
