@@ -627,4 +627,17 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+
+    fun isFavoriteCallerExist( aFunction: (Boolean) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val count = appDatabase.favoriteCallerDao().getCountOfFavoriteCaller()
+            if (count > 0) {
+                aFunction.invoke(true)
+            } else {
+                aFunction.invoke(false)
+            }
+        }
+    }
+
+
 }

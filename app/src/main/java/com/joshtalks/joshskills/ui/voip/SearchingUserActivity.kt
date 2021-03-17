@@ -29,15 +29,16 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.LinkedHashMap
 import kotlin.collections.set
+import timber.log.Timber
 
 const val COURSE_ID = "course_id"
 const val TOPIC_ID = "topic_id"
 const val TOPIC_NAME = "topic_name"
+const val FAVORITE_USER_CALL = "favorite_user_call"
 
 class SearchingUserActivity : BaseActivity() {
     companion object {
@@ -45,12 +46,14 @@ class SearchingUserActivity : BaseActivity() {
             activity: Activity,
             courseId: String,
             topicId: Int,
-            topicName: String
+            topicName: String,
+            favoriteUserCall:Boolean
         ): Intent {
             return Intent(activity, SearchingUserActivity::class.java).apply {
                 putExtra(COURSE_ID, courseId)
                 putExtra(TOPIC_ID, topicId)
                 putExtra(TOPIC_NAME, topicName)
+                putExtra(FAVORITE_USER_CALL, favoriteUserCall)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
         }
@@ -64,6 +67,8 @@ class SearchingUserActivity : BaseActivity() {
     private var mBoundService: WebRtcService? = null
     private var appAnalytics: AppAnalytics? = null
     private var mServiceBound = false
+    private var isFavorite = false
+
     private val viewModel: VoipCallingViewModel by lazy {
         ViewModelProvider(this).get(VoipCallingViewModel::class.java)
     }
@@ -155,6 +160,7 @@ class SearchingUserActivity : BaseActivity() {
         courseId = intent.getStringExtra(COURSE_ID)
         topicId = intent.getIntExtra(TOPIC_ID, -1)
         topicName = intent.getStringExtra(TOPIC_NAME)
+        isFavorite=intent.getBooleanExtra(FAVORITE_USER_CALL,false)
         appAnalytics = AppAnalytics.create(AnalyticsEvent.OPEN_CALL_SEARCH_SCREEN_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -265,7 +271,11 @@ class SearchingUserActivity : BaseActivity() {
 
     private fun initApiForSearchUser(location: Location) {
         courseId?.let {
-            viewModel.getUserForTalk(it, topicId, location, ::callback)
+            if(isFavorite){
+                viewModel.initCallForFavoriteCaller(it, topicId, location, ::callback)
+            }else{
+                viewModel.getUserForTalk(it, topicId, location, ::callback)
+            }
         }
     }
 
@@ -282,6 +292,15 @@ class SearchingUserActivity : BaseActivity() {
             .push()
         timer?.cancel()
         finishAndRemoveTask()
+    }
+     fun stopSearching(){
+         mBoundService?.endCall(apiCall = true)
+         AppAnalytics.create(AnalyticsEvent.STOP_USER_FOR_VOIP.NAME)
+             .addBasicParam()
+             .addUserDetails()
+             .push()
+         timer?.cancel()
+         finishAndRemoveTask()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
