@@ -1,10 +1,13 @@
 package com.joshtalks.joshskills.ui.voip.favorite.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.FavoriteItemLayoutBinding
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
@@ -12,7 +15,8 @@ import com.joshtalks.joshskills.ui.inbox.adapter.FavoriteCallerDiffCallback
 import java.util.ArrayList
 
 class FavoriteAdapter(
-    private var lifecycleProvider: LifecycleOwner) :
+    private var lifecycleProvider: LifecycleOwner
+) :
     RecyclerView.Adapter<FavoriteAdapter.FavoriteItemViewHolder>() {
     private var items: ArrayList<FavoriteCaller> = arrayListOf()
     private val context = AppObjectController.joshApplication
@@ -43,7 +47,7 @@ class FavoriteAdapter(
     }
 
     fun removeAndUpdated() {
-        val list =items.filter { it.selected.not() }
+        val list = items.filter { it.selected.not() }
         items.clear()
         items.addAll(list)
         notifyDataSetChanged()
@@ -82,18 +86,35 @@ class FavoriteAdapter(
 
         fun bind(favoriteCaller: FavoriteCaller) {
             with(binding) {
-                obj=favoriteCaller
+                obj = favoriteCaller
 
                 tvName.text = favoriteCaller.name
-                tvSpokenTime.text = "Total time Spoken: ${favoriteCaller.minutesSpoken} Minutes "
+                tvSpokenTime.text = spokenTimeText(favoriteCaller.minutesSpoken)
                 if (favoriteCaller.selected) {
-                    rootView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.select_bg_color))
-                    ivTick.visibility= View.VISIBLE
-                }else{
+                    rootView.setCardBackgroundColor(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.select_bg_color
+                        )
+                    )
+                    ivTick.visibility = View.VISIBLE
+                } else {
                     rootView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white))
-                    ivTick.visibility= View.GONE
+                    ivTick.visibility = View.GONE
                 }
             }
         }
+
+        private fun spokenTimeText(minute: Int): String {
+            val string = StringBuilder()
+            string.append("Total time Spoken: $minute ")
+            if (minute > 1) {
+                string.append("minutes")
+            } else {
+                string.append("minute")
+            }
+            return string.toString()
+        }
     }
+
 }
