@@ -74,7 +74,7 @@
             android:layout_marginBottom="@dimen/_16sdp"
             android:backgroundTint="@color/e1_red"
             android:gravity="center"
-            android:onClick="@{()->handler.stopCalling()}"
+            android:onClick="@{()->handler.stopSearching()}"
             android:paddingTop="@dimen/_12sdp"
             android:paddingBottom="@dimen/_12sdp"
             android:text="@string/stop"
