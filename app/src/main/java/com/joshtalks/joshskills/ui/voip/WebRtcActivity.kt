@@ -233,7 +233,7 @@ class WebRtcActivity : AppCompatActivity() {
     private fun addTimeOutUserDidNotPickCall() {
         AppObjectController.uiHandler.postDelayed({
             onDisconnectCall()
-        }, 40000)
+        }, 20000)
     }
 
     private fun callback(token: String, channelName: String, uid: Int) {
