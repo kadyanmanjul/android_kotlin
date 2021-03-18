@@ -12,9 +12,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
@@ -26,10 +23,8 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SPEAKING_POINTS
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
-import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
-import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
@@ -38,9 +33,8 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 
-class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
+class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private lateinit var binding: SpeakingPractiseFragmentBinding
     var lessonActivityListener: LessonActivityListener? = null
@@ -81,8 +75,18 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
         return binding.rootView
     }
 
-    private fun addObservers() {
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.isFavoriteCallerExist(::callback)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        compositeDisposable.clear()
+    }
+
+    private fun addObservers() {
         viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner, {
             val spQuestion = it.filter { it.chatType == CHAT_TYPE.SP }.getOrNull(0)
             questionId = spQuestion?.id
@@ -97,8 +101,6 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
         viewModel.courseId.observe(viewLifecycleOwner, {
             courseId = it
         })
-        viewLifecycleOwner.lifecycle.addObserver(this)
-
         binding.btnStart.setOnClickListener {
             startPractise(favoriteUserCall = false)
         }
@@ -225,28 +227,6 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
             )
         }
 
-    }
-
-    private fun subscribeRXBus() {
-        compositeDisposable.add(
-            RxBus2.listenWithoutDelay(SnackBarEvent::class.java)
-                .subscribeOn(Schedulers.computation())
-                .subscribe({
-                    // showSnackBar(root_view, Snackbar.LENGTH_LONG, it.pointsSnackBarText)
-                }, {
-                    it.printStackTrace()
-                })
-        )
-    }
-
-    override fun onResume() {
-        super.onResume()
-        subscribeRXBus()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        compositeDisposable.clear()
     }
 
 
