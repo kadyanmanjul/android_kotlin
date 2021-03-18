@@ -57,7 +57,7 @@ class NotificationUtil(val context: Context) {
                 val notificationChannel = NotificationChannel(
                     "$channelIdPre$id",
                     notificationChannelName,
-                    NotificationManager.IMPORTANCE_HIGH
+                    NotificationManager.IMPORTANCE_LOW
                 )
                 notificationChannel.enableLights(true)
                 notificationChannel.enableVibration(true)
@@ -100,7 +100,7 @@ class NotificationUtil(val context: Context) {
                 true
             )
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
+                notificationBuilder.priority = NotificationManager.IMPORTANCE_LOW
             }
             notificationBuilder.setShowWhen(true)
             notificationBuilder.setAutoCancel(true)

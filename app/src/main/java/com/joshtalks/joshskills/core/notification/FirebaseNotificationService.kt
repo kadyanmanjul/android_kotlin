@@ -486,12 +486,17 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
 
                 if (obj.has("f")) {
-                    data[RTC_IS_FAVORITE] = "true"
                     val id = obj.getInt("caller_uid")
-                    val caller = AppObjectController.appDatabase.favoriteCallerDao().getFavoriteCaller(id)
-                    Thread.sleep(50)
-                    data[RTC_NAME] = caller?.name
-                    data[RTC_CALLER_PHOTO] = caller?.image
+                    val caller =
+                        AppObjectController.appDatabase.favoriteCallerDao().getFavoriteCaller(id)
+                    Thread.sleep(25)
+                    if (caller != null) {
+                        data[RTC_IS_FAVORITE] = "true"
+                        data[RTC_NAME] = caller.name
+                        data[RTC_CALLER_PHOTO] = caller.image
+                    }else{
+                        data[RTC_IS_FAVORITE] = "false"
+                    }
                 }
                 WebRtcService.startOnNotificationIncomingCall(data)
             } catch (t: Throwable) {
