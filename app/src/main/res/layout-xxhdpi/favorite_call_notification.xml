@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="2dip"
+        android:layout_marginTop="4dip"
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
         android:gravity="center"
@@ -22,7 +22,7 @@
         android:text="XXHADPI"
         android:textColor="#FFF"
 
-        android:textSize="14sp"
+        android:textSize="13sp"
         tools:text="Wow Such Doge" />
 
     <ImageView
@@ -32,7 +32,7 @@
         android:layout_below="@+id/name"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_marginTop="2dip"
+        android:layout_marginTop="4dip"
         tools:src="@drawable/circle_for_progress" />
 
     <TextView
@@ -41,31 +41,37 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/photo"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="2dip"
+        android:layout_marginTop="4dip"
         android:ellipsize="end"
         android:gravity="center"
-        android:paddingVertical="2dip"
         android:singleLine="true"
         android:text="JoshSkills Call"
         android:textColor="#FFF"
-        android:textSize="13sp" />
+        android:textSize="12sp" />
+
+    <FrameLayout
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:layout_below="@+id/title"
+        android:layout_marginHorizontal="32dip"
+        android:layout_marginTop="4dip"
+        android:background="@color/white" />
 
     <LinearLayout
         android:id="@+id/buttons"
         android:layout_width="match_parent"
-        android:layout_height="38dip"
-        android:layout_below="@+id/title"
+        android:layout_height="40dip"
+        android:layout_below="@+id/line"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="4dip"
         android:orientation="horizontal">
 
         <FrameLayout
             android:id="@+id/decline_btn"
             android:layout_width="0dip"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/bar_selector_white">
+            android:layout_weight="1">
 
             <TextView
                 android:id="@+id/decline_text"
@@ -78,7 +84,7 @@
                 android:gravity="center"
                 android:textAllCaps="true"
                 android:textColor="@color/call_decline_color"
-                android:textSize="14dip"
+                android:textSize="13dip"
                 app:drawableStartCompat="@drawable/ic_call_end"
                 app:drawableTint="@color/call_decline_color"
                 tools:text="@string/decline" />
@@ -89,8 +95,7 @@
             android:id="@+id/answer_btn"
             android:layout_width="0dip"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/bar_selector_white">
+            android:layout_weight="1">
 
             <TextView
                 android:id="@+id/answer_text"
@@ -98,7 +103,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:drawableStart="@drawable/ic_pick_call"
-                android:drawablePadding="12dip"
+                android:drawablePadding="13dip"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:textAllCaps="true"
