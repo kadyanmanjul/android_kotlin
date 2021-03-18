@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.interfaces.RecyclerViewItemClickListener
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FavoriteListActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.ui.voip.favorite.adapter.FavoriteAdapter
@@ -30,7 +31,6 @@ class FavoriteListActivity : AppCompatActivity(), RecyclerViewItemClickListener 
         ViewModelProvider(this).get(FavoriteCallerViewModel::class.java)
     }
     private val favoriteAdapter: FavoriteAdapter by lazy { FavoriteAdapter(this) }
-
 
     private var actionModeCallback = object : ActionMode.Callback {
         override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
@@ -96,6 +96,15 @@ class FavoriteListActivity : AppCompatActivity(), RecyclerViewItemClickListener 
                 binding.progressBar.visibility = View.GONE
             }
         }
+        lifecycleScope.launchWhenStarted {
+            viewModel.apiCallStatus.collect {
+                binding.progressBar.visibility = View.GONE
+                if (favoriteAdapter.itemCount == 0) {
+                    showToast("You can add partners to this list by doing calls and pressing yes")
+                }
+            }
+        }
+
     }
 
     override fun onItemClick(view: View?, position: Int) {
@@ -140,6 +149,7 @@ class FavoriteListActivity : AppCompatActivity(), RecyclerViewItemClickListener 
     }
 
     private fun deleteFavoriteUserFromList() {
+        showToast("${deleteRecords.size} practice partners removed")
         favoriteAdapter.removeAndUpdated()
         viewModel.deleteUsersFromFavoriteList(deleteRecords.toMutableList())
     }

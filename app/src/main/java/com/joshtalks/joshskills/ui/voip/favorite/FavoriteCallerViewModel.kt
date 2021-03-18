@@ -33,15 +33,19 @@ class FavoriteCallerViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-     private fun fetchFavoriteCallersFromApi() {
+    private fun fetchFavoriteCallersFromApi() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = p2pNetworkService.getFavoriteCallerList(Mentor.getInstance().getId())
-                if (response.isNotEmpty()) {
-                    favoriteCallerDao.insertFavoriteCallers(response)
-                    getFavoriteUsersDB()
+                if (response.isEmpty()) {
+                    favoriteCallerDao.removeAllFavorite()
+                    apiCallStatus.emit(ApiCallStatus.SUCCESS)
+                    return@launch
                 }
+                favoriteCallerDao.insertFavoriteCallers(response)
+                getFavoriteUsersDB()
             } catch (ex: Throwable) {
+                apiCallStatus.emit(ApiCallStatus.SUCCESS)
                 ex.printStackTrace()
             }
         }
@@ -61,7 +65,10 @@ class FavoriteCallerViewModel(application: Application) : AndroidViewModel(appli
                 val requestParams: HashMap<String, List<Int>> = HashMap()
                 requestParams["mentor_ids"] = list
                 val response =
-                    p2pNetworkService.removeFavoriteCallerList(Mentor.getInstance().getId(), requestParams)
+                    p2pNetworkService.removeFavoriteCallerList(
+                        Mentor.getInstance().getId(),
+                        requestParams
+                    )
                 if (response.isSuccessful) {
                     favoriteCallerDao.removeFromFavorite(list)
                 }
