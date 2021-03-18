@@ -341,7 +341,11 @@ class WebRtcService : BaseWebRtcService() {
                 val id = getUID(it)
                 Timber.tag(TAG).e("onUserOffline =  $id")
                 if (id != uid && reason == Constants.USER_OFFLINE_QUIT) {
-                    endCall(apiCall = true, action = CallAction.AUTO_DISCONNECT)
+                    if (isCallerJoin) {
+                        endCall(apiCall = true, action = CallAction.DISCONNECT)
+                    } else {
+                        endCall(apiCall = true, action = CallAction.AUTO_DISCONNECT)
+                    }
                     isCallWasOnGoing = false
                 } else if (id != uid && reason == Constants.USER_OFFLINE_DROPPED) {
                     lostNetwork()
@@ -747,7 +751,26 @@ class WebRtcService : BaseWebRtcService() {
         executeEvent(AnalyticsEvent.INIT_CALL.NAME)
         addNotification(IncomingCall().action, callData)
         addTimeObservable()
+        callData?.let {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q && JoshApplication.isAppVisible.not()) {
+                showIncomingCallScreen(it)
+            }
+        }
     }
+
+    private fun showIncomingCallScreen(
+        data: HashMap<String, String?>,
+        autoPickupCall: Boolean = false
+    ) {
+        val callActivityIntent = Intent(this, WebRtcActivity::class.java).apply {
+            putExtra(CALL_TYPE, CallType.INCOMING)
+            putExtra(AUTO_PICKUP_CALL, autoPickupCall)
+            putExtra(CALL_USER_OBJ, data)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        startActivity(callActivityIntent)
+    }
+
 
     private fun addTimeObservable() {
         compositeDisposable.add(
