@@ -266,17 +266,7 @@ object WorkManagerAdmin {
     }
 
     fun syncFavoriteCaller() {
-        val constraints =
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                Constraints.Builder()
-                    .setRequiresDeviceIdle(false)
-                    .build()
-            } else {
-                Constraints.Builder()
-                    .build()
-            }
         val workRequest = OneTimeWorkRequestBuilder<SyncFavoriteCaller>()
-            .setConstraints(constraints)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniqueWork(
             "SyncFavoriteCaller_Api",

@@ -173,7 +173,9 @@ class VoipCallFeedbackView : DialogFragment() {
                 requestParams["channel_name"] = channelName
                 requestParams["agora_mentor_id"] = yourAgoraId.toString()
                 requestParams["response"] = response
-                val res = AppObjectController.p2pNetworkService.p2pCallFeedbackV2(requestParams)
+                AppObjectController.p2pNetworkService.p2pCallFeedbackV2(requestParams)
+                WorkManagerAdmin.syncFavoriteCaller()
+
                 /*
                    if (res.pointsList.isNullOrEmpty().not()) {
                     PrefManager.put(SPEAKING_POINTS, res.pointsList?.get(0).toString())
@@ -193,7 +195,6 @@ class VoipCallFeedbackView : DialogFragment() {
     }
 
     private fun exitDialog() {
-        WorkManagerAdmin.syncFavoriteCaller()
         FullScreenProgressDialog.hideProgressBar(requireActivity())
         //dismissAllowingStateLoss()
         val intent = Intent()
