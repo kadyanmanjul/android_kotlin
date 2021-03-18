@@ -132,6 +132,7 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/topic_name"
             android:layout_width="0dp"
+            android:layout_marginTop="@dimen/_2sdp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_16sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
