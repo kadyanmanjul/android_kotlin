@@ -100,7 +100,7 @@ class WebRtcActivity : AppCompatActivity() {
             Timber.tag(TAG).e("onConnect")
             AppObjectController.uiHandler.removeCallbacksAndMessages(null)
             AppObjectController.uiHandler.postDelayed({
-                binding.callStatus.text = getText(R.string.practice)
+                updateStatusLabel()
                 startCallTimer()
                 binding.connectionLost.visibility = View.GONE
             }, 500)
@@ -189,9 +189,9 @@ class WebRtcActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_calling)
         binding.lifecycleOwner = this
         binding.handler = this
+        setCallerInfoOnAppCreate()
         intent.printAllIntent()
         addObserver()
-        setCallerInfoOnAppCreate()
         AppAnalytics.create(AnalyticsEvent.OPEN_CALL_SCREEN_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -204,6 +204,11 @@ class WebRtcActivity : AppCompatActivity() {
         map?.let {
             if (it.containsKey(RTC_CALLER_UID_KEY)) {
                 setUserInfo(it[RTC_CALLER_UID_KEY])
+            }
+            if (it.containsKey(RTC_IS_FAVORITE)) {
+                binding.container.setBackgroundColor(Color.parseColor("#0D5CB8"))
+            } else {
+                binding.container.setBackgroundResource(R.drawable.voip_bg)
             }
         }
     }
@@ -320,13 +325,14 @@ class WebRtcActivity : AppCompatActivity() {
         val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
         callType?.run {
             if (CallType.FAVORITE_OUTGOING == this) {
-                binding.callStatus.text = "Favorite Practice Partner Calling"
+                binding.callStatus.text = getString(R.string.pp_calling)
                 binding.groupForOutgoing.visibility = View.VISIBLE
                 val data = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
                 data?.let {
                     mBoundService?.joinOutgoingCall(it)
                 }
             } else if (CallType.OUTGOING == this) {
+                updateStatusLabel()
                 binding.callStatus.text = getText(R.string.pp_calling)
                 startCallTimer()
                 binding.groupForIncoming.visibility = View.GONE
@@ -355,6 +361,17 @@ class WebRtcActivity : AppCompatActivity() {
             }
         } catch (ex: Throwable) {
             ex.printStackTrace()
+        }
+    }
+
+    private fun updateStatusLabel() {
+        val data = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
+        data?.let {
+            if (data.containsKey(RTC_IS_FAVORITE)) {
+                binding.callStatus.text = getText(R.string.pp_calling)
+            } else {
+                binding.callStatus.text = getText(R.string.practice)
+            }
         }
     }
 
@@ -441,13 +458,13 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     fun switchAudioMode() {
-        updateStatus(binding.btnSpeaker, mBoundService!!.getSpeaker())
+        updateStatusLabel(binding.btnSpeaker, mBoundService!!.getSpeaker())
         mBoundService?.switchAudioSpeaker()
         volumeControlStream = AudioManager.STREAM_VOICE_CALL
     }
 
     fun switchTalkMode() {
-        updateStatus(binding.btnMute, mBoundService!!.getMic().not())
+        updateStatusLabel(binding.btnMute, mBoundService!!.getMic().not())
         mBoundService?.switchSpeck()
     }
 
@@ -511,7 +528,7 @@ class WebRtcActivity : AppCompatActivity() {
             .push()
     }
 
-    private fun updateStatus(view: AppCompatImageButton, enable: Boolean) {
+    private fun updateStatusLabel(view: AppCompatImageButton, enable: Boolean) {
         if (enable) {
             view.backgroundTintList =
                 ContextCompat.getColorStateList(applicationContext, R.color.dis_color_10f)
