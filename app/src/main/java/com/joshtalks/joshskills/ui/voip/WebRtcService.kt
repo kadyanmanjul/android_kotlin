@@ -1258,7 +1258,11 @@ class WebRtcService : BaseWebRtcService() {
 
     private fun getRemoteViews(isFavorite: Boolean): RemoteViews {
         val layout = if (isFavorite) {
-            R.layout.favorite_call_notification
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                R.layout.favorite_call_notification_patch
+            }else{
+                R.layout.favorite_call_notification
+            }
         } else {
             R.layout.call_notification
         }
