@@ -3,12 +3,14 @@ package com.joshtalks.joshskills.ui.lesson.speaking
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -46,6 +48,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
     private var courseId: String = EMPTY
     private var topicId: String? = EMPTY
     private var questionId: String? = null
+    private var favoriteCallerExist = false
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -97,7 +100,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
         viewLifecycleOwner.lifecycle.addObserver(this)
 
         binding.btnStart.setOnClickListener {
-            startPractise(true)
+            startPractise(favoriteUserCall = false)
         }
         binding.btnContinue.setOnClickListener {
             lessonActivityListener?.onNextTabCall(3)
@@ -144,30 +147,36 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
             }
         })
         binding.btnFavorite.setOnClickListener {
-            viewModel.grammarAssessmentLiveData
-            viewModel.isFavoriteCallerExist(::callback)
+            if (favoriteCallerExist) {
+                startPractise(favoriteUserCall = true)
+            } else {
+                showToast(getString(R.string.empty_favorite_list_message))
+            }
         }
     }
 
     private fun callback(exist: Boolean) {
-        if (exist) {
-            startPractise(favoriteUserCall = true)
-        } else {
-            showToast(getString(R.string.empty_favorite_list_message))
-        }
+        favoriteCallerExist = exist
+        binding.btnFavorite.backgroundTintList =
+            ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    requireContext(),
+                    if (favoriteCallerExist) R.color.colorAccent else R.color.disable_color
+                )
+            )
     }
-
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onFragmentResume() {
         if (topicId.isNullOrBlank().not()) {
             viewModel.getTopicDetail(topicId!!)
         }
+        viewModel.isFavoriteCallerExist(::callback)
     }
 
     private fun startPractise(favoriteUserCall: Boolean = false) {
         if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
-            startPractiseSearchScreen()
+            startPractiseSearchScreen(favoriteUserCall = favoriteUserCall)
             return
         }
         PermissionUtils.callingFeaturePermission(
@@ -183,7 +192,7 @@ class SpeakingPractiseFragment : CoreJoshFragment(), LifecycleObserver {
                             return
                         }
                         if (flag) {
-                            startPractiseSearchScreen()
+                            startPractiseSearchScreen(favoriteUserCall = favoriteUserCall)
                             return
                         } else {
                             MaterialDialog(requireActivity()).show {
