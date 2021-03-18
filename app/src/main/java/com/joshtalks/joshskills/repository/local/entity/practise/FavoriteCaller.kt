@@ -79,6 +79,9 @@ interface FavoriteCallerDao {
     suspend fun getCountOfFavoriteCaller(): Long
 
 
+    @Query("DELETE FROM  favorite_caller")
+    suspend fun removeAllFavorite()
+
 
 
 }
