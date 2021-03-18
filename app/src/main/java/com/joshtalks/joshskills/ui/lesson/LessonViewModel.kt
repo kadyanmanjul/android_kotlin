@@ -628,8 +628,9 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     }
 
 
-    fun isFavoriteCallerExist( aFunction: (Boolean) -> Unit) {
+    fun isFavoriteCallerExist(aFunction: (Boolean) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
+            delay(150)
             val count = appDatabase.favoriteCallerDao().getCountOfFavoriteCaller()
             if (count > 0) {
                 aFunction.invoke(true)

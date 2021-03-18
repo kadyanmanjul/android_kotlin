@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="190dip"
+    android:layout_height="wrap_content"
     android:background="@drawable/call_notification_bg"
     android:orientation="vertical"
     tools:ignore="RtlHardcoded">
@@ -14,13 +14,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="4dip"
+        android:layout_marginTop="8dip"
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
         android:gravity="center"
         android:singleLine="true"
-
-        android:text="XXXHADPI"
         android:textColor="#FFF"
         android:textSize="14sp"
         tools:text="Wow Such Doge" />
@@ -32,7 +30,7 @@
         android:layout_below="@+id/name"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_marginTop="6dip"
+        android:layout_marginTop="10dip"
         android:scaleType="centerCrop"
         android:layerType="hardware"
         tools:src="@drawable/circle_for_progress" />
@@ -43,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/photo"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="6dip"
+        android:layout_marginTop="8dip"
         android:ellipsize="end"
         android:gravity="center"
         android:singleLine="true"
@@ -64,7 +62,7 @@
         android:layout_alignParentBottom="true"
         android:id="@+id/buttons"
         android:layout_width="match_parent"
-        android:layout_height="32dip"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/line"
         android:layout_centerHorizontal="true"
         android:orientation="horizontal">
