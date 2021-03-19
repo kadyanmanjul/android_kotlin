@@ -101,8 +101,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/c_image"
-            android:layout_width="@dimen/_96sdp"
-            android:layout_height="@dimen/_96sdp"
+            android:layout_width="@dimen/_108sdp"
+            android:layout_height="@dimen/_108sdp"
             android:background="@drawable/circle"
             android:backgroundTint="@color/colorPrimaryDark"
             android:src="@drawable/ic_call_placeholder"
@@ -110,13 +110,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.4" />
+            app:layout_constraintVertical_bias="0.37" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/topic_header"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_24sdp"
+            android:layout_marginTop="@dimen/_28sdp"
             android:gravity="center"
             android:layout_marginHorizontal="@dimen/_16sdp"
             android:text="@string/topic"
@@ -158,7 +158,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.85"
+            app:layout_constraintVertical_bias="0.9"
             app:srcCompat="@drawable/ic_baseline_call" />
 
 
