@@ -156,7 +156,7 @@ class FavoriteListActivity : AppCompatActivity(), RecyclerViewItemClickListener 
 
     private fun getDeleteMessage(): String {
         if (deleteRecords.size > 1) {
-            "${deleteRecords.size} practice partners removed"
+            return "${deleteRecords.size} practice partners removed"
         }
         return "${deleteRecords.size} practice partner removed"
 

@@ -576,6 +576,9 @@ class WebRtcActivity : AppCompatActivity() {
         }
         val channelName = mBoundService?.channelName
         if (time > 0 && channelName.isNullOrEmpty().not()) {
+            runOnUiThread {
+                binding.placeholderBg.visibility = View.VISIBLE
+            }
             VoipCallFeedbackView.showCallRatingDialog(
                 supportFragmentManager,
                 channelName = channelName,
