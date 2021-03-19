@@ -27,14 +27,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.32"
+            app:layout_constraintVertical_bias="0.37"
             app:srcCompat="@drawable/josh_skill_logo" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_tv"
-            android:layout_width="@dimen/_240sdp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_20sdp"
             android:gravity="center"
             android:text="भारत का नम्बर 1 \nइंग्लिश स्पीकिंग कोर्स"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
@@ -42,7 +41,9 @@
             app:layout_constraintEnd_toEndOf="@id/imageView"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@id/imageView"
-            app:layout_constraintTop_toBottomOf="@id/imageView" />
+            app:layout_constraintVertical_bias="0.55"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/retry"

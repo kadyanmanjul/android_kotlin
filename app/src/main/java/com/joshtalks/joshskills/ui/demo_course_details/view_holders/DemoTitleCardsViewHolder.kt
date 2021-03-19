@@ -71,8 +71,6 @@ class DemoTitleCardsViewHolder(
                         sBuilder.clear()
                         ratingCard.visibility = View.VISIBLE
                         facts.imageUrl?.let { image.setImage(it, context) }
-                        facts.text?.replace("<b>","")
-                        facts.text?.replace("</b>","")
                         sBuilder.append(facts.text)
                         val words = sBuilder.split(" ")
                         sBuilder.setSpan(
@@ -83,10 +81,10 @@ class DemoTitleCardsViewHolder(
                                 )
                             ),
                             0,
-                            words.size,
+                            words.size.minus(1),
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                         )
-                        sBuilder.setSpan(typefaceSpan, 0, words.size, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        sBuilder.setSpan(typefaceSpan, 0, words.size.minus(1), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                         text.setText(sBuilder, TextView.BufferType.SPANNABLE)
                     } else {
                         ratingCard.visibility = View.GONE

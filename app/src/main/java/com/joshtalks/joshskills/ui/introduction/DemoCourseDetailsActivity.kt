@@ -149,7 +149,8 @@ class DemoCourseDetailsActivity : BaseActivity() {
 
     private fun subscribeLiveData() {
         viewModel.demoCourseDetailsLiveData.observe(this, { data ->
-            PrefManager.put(INTRODUCTION_START_NOW_CLICKED,true)
+            PrefManager.put(INTRODUCTION_START_NOW_CLICKED, true)
+            binding.placeHolderView.removeAllViews()
             data.cards.sortedBy { it.sequenceNumber }.forEach { card ->
                 getViewHolder(card)?.run {
                     binding.placeHolderView.addView(this)
@@ -185,7 +186,6 @@ class DemoCourseDetailsActivity : BaseActivity() {
                         gravity = Gravity.CENTER
                     }
                 }
-
                 binding.coordinator.addView(imageView)
                 Glide.with(this)
                     .load(imageUrl)
@@ -194,6 +194,8 @@ class DemoCourseDetailsActivity : BaseActivity() {
                         WebpDrawable::class.java,
                         WebpDrawableTransformation(CircleCrop())
                     ).into(imageView)
+            } else if (it == ApiCallStatus.SUCCESS) {
+                binding.placeHolderView.visibility = View.VISIBLE
             }
         })
 
