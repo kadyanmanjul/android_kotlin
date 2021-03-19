@@ -6,16 +6,15 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
-import android.location.Location
 import android.os.*
 import android.util.Log
 import android.view.KeyEvent
 import android.view.Window
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -48,7 +47,7 @@ import kotlin.collections.LinkedHashMap
 import kotlin.collections.set
 import timber.log.Timber
 
-class DemoSearchingUserActivity : BaseActivity() {
+class DemoSearchingUserActivity : AppCompatActivity() {
     companion object {
         fun startUserForPractiseOnPhoneActivity(
             activity: Activity,
@@ -195,12 +194,12 @@ class DemoSearchingUserActivity : BaseActivity() {
     }
 
     private fun addRequesting() {
-        if (PermissionUtils.isCallingPermissionEnabled(this)) {
+        if (PermissionUtils.isDemoCallingPermissionEnabled(this)) {
             requestForSearchUser()
             return
         }
 
-        PermissionUtils.callingFeaturePermission(
+        PermissionUtils.demoCallingFeaturePermission(
             this,
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
@@ -258,28 +257,17 @@ class DemoSearchingUserActivity : BaseActivity() {
         animation.start()
     }
 
-    override fun onUpdateLocation(location: Location) {
-        appAnalytics?.addParam(AnalyticsEvent.SEARCH_USER_FOR_VOIP.NAME, courseId)
-        startProgressBarCountDown()
-        initApiForSearchUser(location)
-    }
 
-    override fun onDenyLocation() {
-        MaterialDialog(this).show {
-            message(R.string.call_start_permission_message_rational)
-            positiveButton(R.string.exit) {
-                finish()
-            }
-        }
-    }
 
     private fun requestForSearchUser() {
-        fetchUserLocation()
+            appAnalytics?.addParam(AnalyticsEvent.SEARCH_USER_FOR_VOIP.NAME, courseId)
+            startProgressBarCountDown()
+            initApiForSearchUser()
     }
 
-    private fun initApiForSearchUser(location: Location) {
+    private fun initApiForSearchUser() {
         Log.d("Manjul", "initApiForSearchUser() called with: topicId = $topicId")
-            viewModel.getUserForTalk(courseId, topicId, location, ::callback,true)
+            viewModel.getUserForTalk(courseId, topicId, null, ::callback,true)
     }
 
     private fun callback(token: String, channelName: String, uid: Int) {

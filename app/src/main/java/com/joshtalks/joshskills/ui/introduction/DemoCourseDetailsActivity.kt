@@ -110,6 +110,8 @@ class DemoCourseDetailsActivity : BaseActivity() {
     private fun initView() {
         linearLayoutManager = SmoothLinearLayoutManager(this)
         linearLayoutManager.isSmoothScrollbarEnabled = true
+        linearLayoutManager.isItemPrefetchEnabled=true
+        linearLayoutManager.initialPrefetchItemCount=10
         binding.placeHolderView.builder.setHasFixedSize(true)
             .setLayoutManager(linearLayoutManager)
         binding.placeHolderView.addOnScrollListener(object :

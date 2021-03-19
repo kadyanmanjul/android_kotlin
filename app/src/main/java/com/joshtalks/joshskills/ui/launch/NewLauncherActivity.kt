@@ -157,7 +157,7 @@ class NewLauncherActivity : CoreJoshActivity() {
             val intent = getIntentForState()
             startActivity(intent)
             this@NewLauncherActivity.finishAndRemoveTask()
-        }, 5000)
+        }, 3000)
     }
 
     private fun logInstallByReferralEvent(

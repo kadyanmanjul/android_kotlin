@@ -82,7 +82,7 @@ class DemoSpeakingPractiseActivity : BaseActivity() {
                     } else {
                         binding.spokeWith.visibility = View.VISIBLE
                         binding.spokeWith.text =
-                            getString(R.string.spoke_with, response.duration.toString(), name)
+                            getString(R.string.spoke_with, response.alreadyTalked.toString(), name)
                     }
                     binding.progressBar.progress = response.alreadyTalked.toFloat()
                     binding.progressBar.progressMax = response.duration.toFloat()

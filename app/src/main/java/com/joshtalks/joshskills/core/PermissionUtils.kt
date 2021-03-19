@@ -232,14 +232,6 @@ object PermissionUtils {
             context,
             Manifest.permission.ACCESS_NETWORK_STATE
 
-        ) + ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-
-        ) + ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-
         ) == PackageManager.PERMISSION_GRANTED
     }
 
@@ -253,9 +245,7 @@ object PermissionUtils {
                 Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.ACCESS_NETWORK_STATE,
                 Manifest.permission.MODIFY_AUDIO_SETTINGS,
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_PHONE_STATE
             )
             .withListener(multiplePermissionsListener).check()
     }
