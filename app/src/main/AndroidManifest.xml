@@ -507,12 +507,13 @@
             </intent-filter>
         </receiver>
 
+        <service android:name=".core.notification.AutoStartService" android:enabled="true"/>
+
         <receiver
             android:name=".core.notification.StartUpBootReceiver"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            android:enabled="true">
             <intent-filter>
+                <action android:name="com.joshtalks.joshskills.start" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
