@@ -51,7 +51,7 @@ import com.joshtalks.joshskills.ui.conversation_practice.PRACTISE_ID
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
-import com.joshtalks.joshskills.ui.launch.LauncherActivity
+import com.joshtalks.joshskills.ui.launch.NewLauncherActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
@@ -489,7 +489,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     }
 
     private fun returnDefaultIntent(): Intent {
-        return Intent(applicationContext, LauncherActivity::class.java).apply {
+        return Intent(applicationContext, NewLauncherActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             putExtra(HAS_NOTIFICATION, true)
         }

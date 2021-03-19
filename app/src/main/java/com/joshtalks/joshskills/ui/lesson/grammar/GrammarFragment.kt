@@ -446,16 +446,21 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
 
     private fun setVideoThumbnail(thumbnailUrl: String?) {
         lifecycleScope.launch(Dispatchers.IO) {
-            val thumbnailDrawable: Drawable? =
-                Utils.getDrawableFromUrl(thumbnailUrl)
-            if (thumbnailDrawable != null) {
-                AppObjectController.uiHandler.post {
-                    binding.videoPlayer.useArtwork = true
-                    binding.videoPlayer.defaultArtwork = thumbnailDrawable
+            try {
+                val thumbnailDrawable: Drawable? =
+                    Utils.getDrawableFromUrl(thumbnailUrl)
+                if (thumbnailDrawable != null) {
+                    AppObjectController.uiHandler.post {
+                        binding.videoPlayer.useArtwork = true
+                        binding.videoPlayer.defaultArtwork = thumbnailDrawable
 //                    val imgArtwork: ImageView = binding.videoPlayer.findViewById(R.id.exo_artwork) as ImageView
 //                    imgArtwork.setImageDrawable(thumbnailDrawable)
 //                    imgArtwork.visibility = View.VISIBLE
+                    }
                 }
+            }
+            catch (e:java.lang.Exception){
+
             }
         }
     }

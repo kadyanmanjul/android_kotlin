@@ -29,11 +29,11 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.LinkedHashMap
 import kotlin.collections.set
+import timber.log.Timber
 
 const val COURSE_ID = "course_id"
 const val TOPIC_ID = "topic_id"
