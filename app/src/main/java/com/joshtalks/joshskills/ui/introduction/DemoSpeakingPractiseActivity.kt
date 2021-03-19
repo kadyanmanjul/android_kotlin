@@ -73,9 +73,7 @@ class DemoSpeakingPractiseActivity : BaseActivity() {
                 showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
             } else {
                 try {
-                    binding.tvPractiseTime.text =
-                        response.alreadyTalked.toString().plus(" / ")
-                            .plus(response.duration.toString())
+                    binding.tvPractiseTime.text = response.alreadyTalked.toString().plus(" / ").plus(response.duration.toString())
                     val name = PrefManager.getStringValue(DEMO_P2P_CALLEE_NAME)
                     if (name.isBlank()) {
                         binding.spokeWith.visibility = View.INVISIBLE

@@ -176,7 +176,6 @@ class WebRtcActivity : AppCompatActivity() {
         }
         val channelName = mBoundService?.channelName
         if (time > 0 && channelName.isNullOrEmpty().not()) {
-            binding.placeholderBg.visibility = View.VISIBLE
             runOnUiThread {
                 binding.placeholderBg.visibility = View.VISIBLE
             }
@@ -401,6 +400,46 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     fun acceptCall() {
+        if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
+            acceptCallForDemo()
+        } else {
+            acceptCallForNormal()
+        }
+    }
+
+    private fun acceptCallForDemo() {
+        if (PermissionUtils.isDemoCallingPermissionEnabled(this)) {
+            answerCall()
+            return
+        }
+
+        PermissionUtils.demoCallingFeaturePermission(
+            this,
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (flag) {
+                            answerCall()
+                            return
+                        }
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            onDisconnectCall()
+                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(this@WebRtcActivity)
+                            return
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            })
+    }
+
+    private fun acceptCallForNormal() {
         if (PermissionUtils.isCallingPermissionEnabled(this)) {
             answerCall()
             return
