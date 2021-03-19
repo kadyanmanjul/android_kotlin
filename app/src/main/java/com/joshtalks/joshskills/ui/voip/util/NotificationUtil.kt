@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.core.urlToBitmap
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.ui.voip.CALL_TYPE
+import com.joshtalks.joshskills.ui.voip.RTC_IS_FAVORITE
 import com.joshtalks.joshskills.ui.voip.RTC_PARTNER_ID
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 import com.joshtalks.joshskills.ui.voip.extra.FullScreenActivity
@@ -33,10 +34,10 @@ class NotificationUtil(val context: Context) {
     private val mNotificationManager: NotificationManager? =
         context.getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager?
 
-    fun addMissCallPPNotification(callData: HashMap<String, String?>?, id: Int) {
+    fun addMissCallPPNotification(id: Int) {
         JoshSkillExecutors.BOUNDED.submit {
             try {
-                Thread.sleep(200)
+                Thread.sleep(100)
             } catch (ex: Exception) {
             }
             val favoriteCaller =
@@ -44,20 +45,17 @@ class NotificationUtil(val context: Context) {
                     ?: return@submit
             removeNotification(id.hashCode())
 
-            val data: HashMap<String, String?>? = callData
-            data?.apply {
-                put(RTC_PARTNER_ID, id.toString())
-            }
             val intent = Intent(context, WebRtcActivity::class.java).apply {
                 putExtra(RTC_PARTNER_ID, id)
                 putExtra(CALL_TYPE, CallType.FAVORITE_MISSED_CALL)
+                putExtra(RTC_IS_FAVORITE, "true")
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val notificationChannel = NotificationChannel(
                     "$channelIdPre$id",
                     notificationChannelName,
-                    NotificationManager.IMPORTANCE_LOW
+                    NotificationManager.IMPORTANCE_DEFAULT
                 )
                 notificationChannel.enableLights(true)
                 notificationChannel.enableVibration(true)
@@ -100,7 +98,7 @@ class NotificationUtil(val context: Context) {
                 true
             )
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                notificationBuilder.priority = NotificationManager.IMPORTANCE_LOW
+                notificationBuilder.priority = NotificationManager.IMPORTANCE_DEFAULT
             }
             notificationBuilder.setShowWhen(true)
             notificationBuilder.setAutoCancel(true)

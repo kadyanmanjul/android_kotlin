@@ -491,11 +491,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         AppObjectController.appDatabase.favoriteCallerDao().getFavoriteCaller(id)
                     Thread.sleep(25)
                     if (caller != null) {
-                        data[RTC_IS_FAVORITE] = "true"
                         data[RTC_NAME] = caller.name
                         data[RTC_CALLER_PHOTO] = caller.image
-                    }else{
-                        data[RTC_IS_FAVORITE] = "false"
+                        data[RTC_IS_FAVORITE] = "true"
                     }
                 }
                 WebRtcService.startOnNotificationIncomingCall(data)
