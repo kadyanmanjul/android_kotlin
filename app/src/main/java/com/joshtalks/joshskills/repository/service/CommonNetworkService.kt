@@ -30,6 +30,7 @@ import com.joshtalks.joshskills.repository.server.conversation_practice.Conversa
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmitConversationPractiseRequest
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmittedConversationPractiseModel
 import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponseV2
+import com.joshtalks.joshskills.repository.server.course_detail.demoCourseDetails.DemoCourseDetailsResponse
 import com.joshtalks.joshskills.repository.server.feedback.FeedbackStatusResponse
 import com.joshtalks.joshskills.repository.server.feedback.RatingDetails
 import com.joshtalks.joshskills.repository.server.feedback.UserFeedbackRequest
@@ -131,6 +132,9 @@ interface CommonNetworkService {
     suspend fun getCourseDetails(
         @QueryMap params: Map<String, String>
     ): Response<CourseDetailsResponseV2>
+
+    @GET("$DIR/course/course_details_v2/")
+    suspend fun getDemoCourseDetails(): Response<DemoCourseDetailsResponse>
 
     @POST("$DIR/course/course_heading/")
     suspend fun getCourseEnrolledDetails(

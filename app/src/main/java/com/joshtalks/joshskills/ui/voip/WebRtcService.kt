@@ -1293,7 +1293,10 @@ class WebRtcService : BaseWebRtcService() {
                 data["call_response"] = callAction.action
                 data["duration"] = TimeUnit.MILLISECONDS.toSeconds(time).toString()
                 data["has_disconnected"] = hasDisconnected.toString()
-
+                if (PrefManager.getBoolValue(IS_DEMO_P2P,defValue = false)) {
+                    data["is_demo"] =
+                        PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false).toString()
+                }
                 AppObjectController.p2pNetworkService.getAgoraCallResponse(data)
                 if (CallAction.ACCEPT == callAction) {
                     callCallback?.get()?.onServerConnect()

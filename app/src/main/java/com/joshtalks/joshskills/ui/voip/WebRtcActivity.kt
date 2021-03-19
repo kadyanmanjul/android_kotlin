@@ -48,6 +48,7 @@ import timber.log.Timber
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
 const val CALL_USER_OBJ = "call_user_obj"
 const val CALL_TYPE = "call_type"
+const val IS_DEMO_P2P = "is_demo_p2p"
 
 class WebRtcActivity : AppCompatActivity() {
 
@@ -61,11 +62,13 @@ class WebRtcActivity : AppCompatActivity() {
     companion object {
         fun startOutgoingCallActivity(
             activity: Activity,
-            mapForOutgoing: HashMap<String, String?>
+            mapForOutgoing: HashMap<String, String?>,
+            isDemoClass: Boolean = false
         ) {
             Intent(activity, WebRtcActivity::class.java).apply {
                 putExtra(CALL_USER_OBJ, mapForOutgoing)
                 putExtra(CALL_TYPE, CallType.OUTGOING)
+                putExtra(IS_DEMO_P2P, isDemoClass)
             }.run {
                 activity.startActivityForResult(this, 9999)
             }
@@ -161,6 +164,9 @@ class WebRtcActivity : AppCompatActivity() {
         Timber.tag(TAG)
             .e("checkAndShowRating   %s %s %s", id, mBoundService?.getTimeOfTalk(), callTime)
         showCallRatingScreen(callTime)
+        if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
+            PrefManager.put(DEMO_P2P_CALLEE_NAME, userDetailLiveData.value?.get("name").toString())
+        }
     }
 
     private fun showCallRatingScreen(callTime: Long) {
@@ -170,6 +176,7 @@ class WebRtcActivity : AppCompatActivity() {
         }
         val channelName = mBoundService?.channelName
         if (time > 0 && channelName.isNullOrEmpty().not()) {
+            binding.placeholderBg.visibility = View.VISIBLE
             runOnUiThread {
                 binding.placeholderBg.visibility = View.VISIBLE
             }
