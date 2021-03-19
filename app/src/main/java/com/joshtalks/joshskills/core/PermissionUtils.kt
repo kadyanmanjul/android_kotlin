@@ -215,6 +215,51 @@ object PermissionUtils {
             .withListener(multiplePermissionsListener).check()
     }
 
+
+    fun isDemoCallingPermissionEnabled(context: Context): Boolean {
+        return ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.READ_PHONE_STATE
+        ) +
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.MODIFY_AUDIO_SETTINGS
+                ) +
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.RECORD_AUDIO
+                ) + ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_NETWORK_STATE
+
+        ) + ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+
+        ) + ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+
+    fun demoCallingFeaturePermission(
+        activity: Activity,
+        multiplePermissionsListener: MultiplePermissionsListener
+    ) {
+        Dexter.withContext(activity)
+            .withPermissions(
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            )
+            .withListener(multiplePermissionsListener).check()
+    }
+
     fun callingPermissionPermanentlyDeniedDialog(
         activity: Activity,
         message: Int = R.string.call_start_permission_message
