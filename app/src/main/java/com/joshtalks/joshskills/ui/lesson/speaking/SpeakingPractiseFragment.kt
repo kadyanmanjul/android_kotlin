@@ -79,6 +79,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     override fun onResume() {
         super.onResume()
         viewModel.isFavoriteCallerExist(::callback)
+        if (topicId.isNullOrBlank().not()) {
+            viewModel.getTopicDetail(topicId!!)
+        }
     }
 
     override fun onStop() {
@@ -166,14 +169,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     if (favoriteCallerExist) R.color.colorAccent else R.color.disable_color
                 )
             )
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun onFragmentResume() {
-        if (topicId.isNullOrBlank().not()) {
-            viewModel.getTopicDetail(topicId!!)
-        }
-        viewModel.isFavoriteCallerExist(::callback)
     }
 
     private fun startPractise(favoriteUserCall: Boolean = false) {

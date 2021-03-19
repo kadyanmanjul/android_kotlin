@@ -12,8 +12,6 @@ import com.joshtalks.joshskills.repository.server.voip.RequestUserLocation
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import java.net.ProtocolException
 import java.util.HashMap
-import java.net.ProtocolException
-import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
