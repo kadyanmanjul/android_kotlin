@@ -57,9 +57,9 @@ class VoipCallFeedbackView : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.apply {
-            val width = AppObjectController.screenWidth * .85
-            val height = ViewGroup.LayoutParams.WRAP_CONTENT
-            window?.setLayout(width.toInt(), height)
+            val width = ViewGroup.LayoutParams.MATCH_PARENT
+            val height = ViewGroup.LayoutParams.MATCH_PARENT
+            window?.setLayout(width, height)
             setCanceledOnTouchOutside(false)
             setCancelable(false)
            // val lp: WindowManager.LayoutParams? = window?.attributes
@@ -102,7 +102,7 @@ class VoipCallFeedbackView : DialogFragment() {
                             it.pointsList!!.get(0),null
                         )
                     )*/
-                    showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
+                    showSnackBar(binding.rootContainer, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
                 }
             })
     }

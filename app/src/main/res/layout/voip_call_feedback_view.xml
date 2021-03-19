@@ -10,153 +10,174 @@
             type="com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackView" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/root_view"
+    <FrameLayout
+        android:id="@+id/root_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/grey_rounded_bg"
-        android:backgroundTint="@color/white"
-        android:paddingHorizontal="@dimen/_8sdp"
-        android:paddingVertical="@dimen/_12sdp">
+        android:layout_height="match_parent"
+        android:background="@color/transparent_black_alfa_70">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/txt_header"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawablePadding="@dimen/_6sdp"
-            android:gravity="center"
-            android:text="@string/practice_with_partner"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-            android:textColor="@color/black"
-            app:drawableStartCompat="@drawable/ic_pp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ic_close"
-            android:layout_width="@dimen/_16sdp"
-            android:layout_height="@dimen/_16sdp"
-            android:onClick='@{()->handler.submitFeedback("CLOSED")}'
-            app:layout_constraintBottom_toBottomOf="@id/txt_header"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/txt_header"
-            app:srcCompat="@drawable/ic_cross"
-            app:tint="@color/black" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/c_image"
-            android:layout_width="@dimen/_96sdp"
-            android:layout_height="@dimen/_96sdp"
-            android:layout_marginTop="@dimen/_24sdp"
-            android:background="@drawable/circle"
-            android:backgroundTint="@color/colorPrimaryDark"
-            android:src="@drawable/ic_call_placeholder"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_header" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/txt_spoke"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_14sdp"
-            android:text="@string/spoke_for_minute"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-            android:textColor="@color/grey_68"
-            android:textSize="@dimen/_13ssp"
-            app:layout_constraintEnd_toEndOf="@id/c_image"
-            app:layout_constraintStart_toStartOf="@id/c_image"
-            app:layout_constraintTop_toBottomOf="@+id/c_image" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/txt_message"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:gravity="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_14ssp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_spoke"
-            app:layout_constraintWidth_percent="0.85"
-            tools:text="Utsav, do you want to speak with Harsh again?" />
-
-
-        <LinearLayout
-            android:id="@+id/toggle_button_group"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/root_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:gravity="center"
-            app:layout_constraintTop_toBottomOf="@+id/txt_message">
+            android:layout_gravity="center"
+            android:backgroundTint="@color/white"
+            android:paddingHorizontal="@dimen/_8sdp"
+            android:paddingVertical="@dimen/_12sdp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_yes"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_10sdp"
-                android:onClick='@{()->handler.submitFeedback("YES")}'
-                android:text="@string/yes"
-                android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                android:textColor="@color/button_color"
-                app:cornerRadius="@dimen/_16sdp"
-                app:rippleColor="@color/white"
-                app:strokeColor="@color/button_color"
-                app:strokeWidth="@dimen/_1sdp" />
+                app:layout_constraintWidth_percent="0.85"
+                android:layout_gravity="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@drawable/grey_rounded_bg"
+                android:backgroundTint="@color/white"
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:paddingVertical="@dimen/_12sdp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_maybe"
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/_6sdp"
+                    android:gravity="center"
+                    android:text="@string/practice_with_partner"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/black"
+                    app:drawableStartCompat="@drawable/ic_pp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick='@{()->handler.submitFeedback("MAYBE")}'
-                android:text="@string/maybe"
-                android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                android:textColor="@color/button_color"
-                app:cornerRadius="@dimen/_16sdp"
-                app:rippleColor="@color/white"
-                app:strokeColor="@color/button_color"
-                app:strokeWidth="@dimen/_1sdp" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ic_close"
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="@dimen/_16sdp"
+                    android:onClick='@{()->handler.submitFeedback("CLOSED")}'
+                    app:layout_constraintBottom_toBottomOf="@id/txt_header"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/txt_header"
+                    app:srcCompat="@drawable/ic_cross"
+                    app:tint="@color/black" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_no"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_10sdp"
-                android:onClick='@{()->handler.submitFeedback("NO")}'
-                android:text="@string/no"
-                android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                android:textColor="@color/button_color"
-                app:cornerRadius="@dimen/_16sdp"
-                app:rippleColor="@color/white"
-                app:strokeColor="@color/button_color"
-                app:strokeWidth="@dimen/_1sdp" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/c_image"
+                    android:layout_width="@dimen/_96sdp"
+                    android:layout_height="@dimen/_96sdp"
+                    android:layout_marginTop="@dimen/_24sdp"
+                    android:background="@drawable/circle"
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:src="@drawable/ic_call_placeholder"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_header" />
 
-        </LinearLayout>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_spoke"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_14sdp"
+                    android:text="@string/spoke_for_minute"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/grey_68"
+                    android:textSize="@dimen/_13ssp"
+                    app:layout_constraintEnd_toEndOf="@id/c_image"
+                    app:layout_constraintStart_toStartOf="@id/c_image"
+                    app:layout_constraintTop_toBottomOf="@+id/c_image" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/txt_bottom"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_12sdp"
-            android:gravity="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-            android:textColor="@color/grey_68"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toggle_button_group"
-            app:layout_constraintWidth_percent="0.85"
-            tools:text="By clicking no you are blocking Harsh" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_message"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_14ssp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_spoke"
+                    app:layout_constraintWidth_percent="0.85"
+                    tools:text="Utsav, do you want to speak with Harsh again?" />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <LinearLayout
+                    android:id="@+id/toggle_button_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:gravity="center"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_message">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_yes"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:onClick='@{()->handler.submitFeedback("YES")}'
+                        android:text="@string/yes"
+                        android:textAllCaps="false"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                        android:textColor="@color/button_color"
+                        app:cornerRadius="@dimen/_16sdp"
+                        app:rippleColor="@color/white"
+                        app:strokeColor="@color/button_color"
+                        app:strokeWidth="@dimen/_1sdp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_maybe"
+
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick='@{()->handler.submitFeedback("MAYBE")}'
+                        android:text="@string/maybe"
+                        android:textAllCaps="false"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                        android:textColor="@color/button_color"
+                        app:cornerRadius="@dimen/_16sdp"
+                        app:rippleColor="@color/white"
+                        app:strokeColor="@color/button_color"
+                        app:strokeWidth="@dimen/_1sdp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_no"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:onClick='@{()->handler.submitFeedback("NO")}'
+                        android:text="@string/no"
+                        android:textAllCaps="false"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                        android:textColor="@color/button_color"
+                        app:cornerRadius="@dimen/_16sdp"
+                        app:rippleColor="@color/white"
+                        app:strokeColor="@color/button_color"
+                        app:strokeWidth="@dimen/_1sdp" />
+
+                </LinearLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_bottom"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/grey_68"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/toggle_button_group"
+                    app:layout_constraintWidth_percent="0.85"
+                    tools:text="By clicking no you are blocking Harsh" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+
 </layout>
