@@ -47,7 +47,7 @@ class SearchingUserActivity : BaseActivity() {
             courseId: String,
             topicId: Int,
             topicName: String,
-            favoriteUserCall:Boolean
+            favoriteUserCall: Boolean
         ): Intent {
             return Intent(activity, SearchingUserActivity::class.java).apply {
                 putExtra(COURSE_ID, courseId)
@@ -113,6 +113,9 @@ class SearchingUserActivity : BaseActivity() {
                     putExtra(CALL_TYPE, CallType.INCOMING)
                     putExtra(AUTO_PICKUP_CALL, true)
                     putExtra(CALL_USER_OBJ, data)
+                    if (isFavorite) {
+                        putExtra(RTC_IS_FAVORITE, "true")
+                    }
                 }
             startActivity(callActivityIntent)
             this@SearchingUserActivity.finish()
@@ -160,7 +163,7 @@ class SearchingUserActivity : BaseActivity() {
         courseId = intent.getStringExtra(COURSE_ID)
         topicId = intent.getIntExtra(TOPIC_ID, -1)
         topicName = intent.getStringExtra(TOPIC_NAME)
-        isFavorite=intent.getBooleanExtra(FAVORITE_USER_CALL,false)
+        isFavorite = intent.getBooleanExtra(FAVORITE_USER_CALL, false)
         appAnalytics = AppAnalytics.create(AnalyticsEvent.OPEN_CALL_SEARCH_SCREEN_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -271,9 +274,9 @@ class SearchingUserActivity : BaseActivity() {
 
     private fun initApiForSearchUser(location: Location) {
         courseId?.let {
-            if(isFavorite){
+            if (isFavorite) {
                 viewModel.initCallForFavoriteCaller(it, topicId, location, ::callback)
-            }else{
+            } else {
                 viewModel.getUserForTalk(it, topicId, location, ::callback)
             }
         }
@@ -293,14 +296,15 @@ class SearchingUserActivity : BaseActivity() {
         timer?.cancel()
         finishAndRemoveTask()
     }
-     fun stopSearching(){
-         mBoundService?.endCall(apiCall = true)
-         AppAnalytics.create(AnalyticsEvent.STOP_USER_FOR_VOIP.NAME)
-             .addBasicParam()
-             .addUserDetails()
-             .push()
-         timer?.cancel()
-         finishAndRemoveTask()
+
+    fun stopSearching() {
+        mBoundService?.endCall(apiCall = true)
+        AppAnalytics.create(AnalyticsEvent.STOP_USER_FOR_VOIP.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
+        timer?.cancel()
+        finishAndRemoveTask()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -355,6 +359,9 @@ class SearchingUserActivity : BaseActivity() {
                 put(RTC_TOKEN_KEY, token)
                 put(RTC_CHANNEL_KEY, channelName)
                 put(RTC_UID_KEY, uid.toString())
+            }
+            if (isFavorite) {
+                outgoingCallData[RTC_IS_FAVORITE] = "true"
             }
         }
         return outgoingCallData

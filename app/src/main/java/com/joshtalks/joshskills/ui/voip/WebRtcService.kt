@@ -71,7 +71,7 @@ class WebRtcService : BaseWebRtcService() {
     private var userAgoraId: Int? = null
     var channelName: String? = null
     private var isEngineInit = false
-    private var isCallerJoin: Boolean = false
+    var isCallerJoin: Boolean = false
     private var isMicEnable = true
     private var isSpeakerEnable = false
 
@@ -658,6 +658,7 @@ class WebRtcService : BaseWebRtcService() {
                                 callStopWithoutIssue()
                             }
                             this == CallForceDisconnect().action -> {
+                                stopRing()
                                 callForceDisconnect = true
                                 if (JoshApplication.isAppVisible.not()) {
                                     addNotification(CallDisconnect().action, null)
@@ -666,6 +667,7 @@ class WebRtcService : BaseWebRtcService() {
                                 RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
                             }
                             this == CallForceConnect().action -> {
+                                stopRing()
                                 callStartTime = 0L
                                 compositeDisposable.clear()
                                 switchChannel = true
@@ -736,9 +738,14 @@ class WebRtcService : BaseWebRtcService() {
     private fun startAutoPickCallActivity(autoPick: Boolean) {
         val callActivityIntent =
             Intent(
-                AppObjectController.joshApplication,
+                this,
                 WebRtcActivity::class.java
             ).apply {
+                callData?.apply {
+                    if (isFavorite()) {
+                        put(RTC_IS_FAVORITE, "true")
+                    }
+                }
                 putExtra(CALL_TYPE, CallType.INCOMING)
                 putExtra(AUTO_PICKUP_CALL, autoPick)
                 putExtra(CALL_USER_OBJ, callData)
@@ -763,9 +770,14 @@ class WebRtcService : BaseWebRtcService() {
         autoPickupCall: Boolean = false
     ) {
         val callActivityIntent = Intent(this, WebRtcActivity::class.java).apply {
+            data.apply {
+                if (isFavorite()) {
+                    put(RTC_IS_FAVORITE, "true")
+                }
+            }
+            putExtra(CALL_USER_OBJ, data)
             putExtra(CALL_TYPE, CallType.INCOMING)
             putExtra(AUTO_PICKUP_CALL, autoPickupCall)
-            putExtra(CALL_USER_OBJ, data)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         startActivity(callActivityIntent)
@@ -849,24 +861,6 @@ class WebRtcService : BaseWebRtcService() {
         }
     }
 
-    fun joinOutgoingCall(data: HashMap<String, String?>) {
-        executor.execute {
-            try {
-                isTimeOutToPickCall = false
-                callStartTime = 0L
-                data.let {
-                    callData = it
-                }
-                callType = CallType.FAVORITE_OUTGOING
-                joinCall(data)
-                executeEvent(AnalyticsEvent.OUTGOING_CALL.NAME)
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
-            }
-        }
-    }
-
-
     private fun joinCall(data: HashMap<String, String?>) {
         if (isTimeOutToPickCall) {
             isTimeOutToPickCall = false
@@ -925,12 +919,15 @@ class WebRtcService : BaseWebRtcService() {
         return callData?.get(RTC_CALLER_PHOTO)
     }
 
-    private fun isFavorite(): Boolean {
-        return callData?.containsKey(RTC_IS_FAVORITE) == true
+     fun isFavorite(): Boolean {
+        if (callData != null && callData!!.containsKey(RTC_IS_FAVORITE)) {
+            return true
+        }
+        return false
     }
 
     private fun getCallerName(): String {
-        return callData?.get(RTC_NAME) ?: getString(R.string.favorite_p2p_title)
+        return callData?.get(RTC_NAME) ?: EMPTY
     }
 
     fun getSpeaker() = isSpeakerEnable
@@ -1020,10 +1017,7 @@ class WebRtcService : BaseWebRtcService() {
 
     private fun addMissCallNotification() {
         if (isFavorite() && isTimeOutToPickCall) {
-            NotificationUtil(this).addMissCallPPNotification(
-                callData,
-                getCallerUID()
-            )
+            NotificationUtil(this).addMissCallPPNotification(getCallerUID())
         }
     }
 
@@ -1108,10 +1102,9 @@ class WebRtcService : BaseWebRtcService() {
 
     private fun incomingCallNotification(incomingData: HashMap<String, String?>?): Notification {
         Timber.tag(TAG).e("incomingCallNotification   ")
-
         val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
         val pendingIntent = PendingIntent.getActivity(
-            applicationContext,
+            this,
             uniqueInt, getWebRtcActivityIntent(CallType.INCOMING),
             PendingIntent.FLAG_UPDATE_CURRENT
         )
@@ -1190,7 +1183,7 @@ class WebRtcService : BaseWebRtcService() {
         )
 
         val answerActionIntent =
-            Intent(AppObjectController.joshApplication, WebRtcService::class.java)
+            Intent(this, WebRtcService::class.java)
                 .apply {
                     action = CallConnect().action
                     putExtra(CALL_USER_OBJ, incomingData)
@@ -1258,9 +1251,9 @@ class WebRtcService : BaseWebRtcService() {
 
     private fun getRemoteViews(isFavorite: Boolean): RemoteViews {
         val layout = if (isFavorite) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 R.layout.favorite_call_notification_patch
-            }else{
+            } else {
                 R.layout.favorite_call_notification
             }
         } else {
@@ -1309,7 +1302,7 @@ class WebRtcService : BaseWebRtcService() {
 
         val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
         val pendingIntent = PendingIntent.getActivity(
-            applicationContext,
+            this,
             uniqueInt, getWebRtcActivityIntent(CallType.INCOMING),
             PendingIntent.FLAG_UPDATE_CURRENT
         )
@@ -1386,7 +1379,13 @@ class WebRtcService : BaseWebRtcService() {
             this,
             WebRtcActivity::class.java
         ).apply {
+            putExtra(CALL_USER_OBJ, callData)
             putExtra(CALL_TYPE, callType)
+            callData?.apply {
+                if (isFavorite()) {
+                    put(RTC_IS_FAVORITE, "true")
+                }
+            }
             putExtra(CALL_USER_OBJ, callData)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }

@@ -86,7 +86,6 @@ class WebRtcActivity : AppCompatActivity() {
             mServiceBound = true
             mBoundService?.addListener(callback)
             initCall()
-
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -197,6 +196,7 @@ class WebRtcActivity : AppCompatActivity() {
             .addUserDetails()
             .push()
         callMissedCallUser()
+
     }
 
     private fun setCallerInfoOnAppCreate() {
@@ -205,13 +205,27 @@ class WebRtcActivity : AppCompatActivity() {
             if (it.containsKey(RTC_CALLER_UID_KEY)) {
                 setUserInfo(it[RTC_CALLER_UID_KEY])
             }
-            if (it.containsKey(RTC_IS_FAVORITE)) {
-                binding.container.setBackgroundColor(Color.parseColor("#0D5CB8"))
-            } else {
-                binding.container.setBackgroundResource(R.drawable.voip_bg)
-            }
         }
     }
+
+    private fun setFavoriteUIScreen() {
+        if (isCallFavoritePP()) {
+            binding.container.setBackgroundResource(R.drawable.voip_bg)
+            return
+        }
+        binding.container.setBackgroundColor(Color.parseColor("#0D5CB8"))
+    }
+
+    private fun isCallFavoritePP(): Boolean {
+        val f = mBoundService?.isFavorite()
+        val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
+        val c = map != null && map.containsKey(RTC_IS_FAVORITE)
+        if (c) {
+            return c
+        }
+        return f ?: c
+    }
+
 
     private fun callMissedCallUser() {
         val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
@@ -224,7 +238,7 @@ class WebRtcActivity : AppCompatActivity() {
                 if (pId == -1) {
                     this@WebRtcActivity.finishAndRemoveTask()
                 }
-                binding.callStatus.text = getString(R.string.pp_calling)
+                updateStatusLabel()
                 binding.groupForOutgoing.visibility = View.VISIBLE
                 binding.connectionLost.text = getString(R.string.ringing)
                 binding.connectionLost.visibility = View.VISIBLE
@@ -322,18 +336,11 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun initCall() {
+        setFavoriteUIScreen()
         val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
         callType?.run {
-            if (CallType.FAVORITE_OUTGOING == this) {
-                binding.callStatus.text = getString(R.string.pp_calling)
-                binding.groupForOutgoing.visibility = View.VISIBLE
-                val data = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
-                data?.let {
-                    mBoundService?.joinOutgoingCall(it)
-                }
-            } else if (CallType.OUTGOING == this) {
-                updateStatusLabel()
-                binding.callStatus.text = getText(R.string.pp_calling)
+            updateStatusLabel()
+            if (CallType.OUTGOING == this) {
                 startCallTimer()
                 binding.groupForIncoming.visibility = View.GONE
                 binding.groupForOutgoing.visibility = View.VISIBLE
@@ -365,13 +372,27 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun updateStatusLabel() {
-        val data = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
-        data?.let {
-            if (data.containsKey(RTC_IS_FAVORITE)) {
-                binding.callStatus.text = getText(R.string.pp_calling)
+        val callConnected = mBoundService?.isCallerJoin ?: false
+        val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
+        callType?.run {
+            if ((CallType.FAVORITE_MISSED_CALL == this || CallType.OUTGOING == this)) {
+                if (callConnected && isCallFavoritePP()) {
+                    binding.callStatus.text = getText(R.string.pp_connected)
+                    return@run
+                } else if (callConnected.not() && isCallFavoritePP()) {
+                    binding.callStatus.text = getText(R.string.pp_calling)
+                    return@run
+                }
             } else {
-                binding.callStatus.text = getText(R.string.practice)
+                if (callConnected && isCallFavoritePP()) {
+                    binding.callStatus.text = getText(R.string.pp_connected)
+                    return@run
+                } else if (callConnected.not() && isCallFavoritePP()) {
+                    binding.callStatus.text = getText(R.string.pp_favorite_incoming)
+                    return@run
+                }
             }
+            binding.callStatus.text = getText(R.string.practice)
         }
     }
 
@@ -420,6 +441,8 @@ class WebRtcActivity : AppCompatActivity() {
         if (imageUrl.isNullOrEmpty()) {
             val image = TextDrawable.builder()
                 .beginConfig()
+                .height(binding.cImage.height)
+                .width(binding.cImage.width)
                 .textColor(Color.WHITE)
                 .fontSize(Utils.dpToPx(24))
                 .toUpperCase()
@@ -519,7 +542,6 @@ class WebRtcActivity : AppCompatActivity() {
             return
         }
         mBoundService?.answerCall(data)
-        binding.callStatus.text = getText(R.string.practice)
         binding.groupForIncoming.visibility = View.GONE
         binding.groupForOutgoing.visibility = View.VISIBLE
         AppAnalytics.create(AnalyticsEvent.ANSWER_CALL_VOIP.NAME)
