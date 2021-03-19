@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.assessment.AssessmentActivity">
+
+    <data>
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.introduction.DemoSearchingUserActivity" />
+
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_55sdp"
+            android:gravity="center"
+            android:text="ज़बरदस्त!\n \nअपनी पहली प्रैक्टिस कॉल के लिए तयार\n हो जाइए"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0" />
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/image_view_ph"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_view"
+            app:layout_constraintVertical_bias="0.15"
+            app:srcCompat="@drawable/have_a_referral" />
+
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_6sdp"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="@dimen/_24sdp"
+            android:progressDrawable="@drawable/progress_background"
+            android:progressTint="@color/button_color"
+            android:secondaryProgress="0"
+            app:layout_constraintEnd_toEndOf="@+id/image_view_ph"
+            app:layout_constraintStart_toStartOf="@+id/image_view_ph"
+            app:layout_constraintTop_toBottomOf="@+id/image_view_ph"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.6"
+            tools:max="100"
+            tools:progress="40" />
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/text_view2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_50sdp"
+            android:gravity="center"
+            android:text="आपको connect करा जा रहा है आपके Practice Partner से"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/progress_bar"
+            app:layout_constraintVertical_bias="0.1" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_action"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/_16sdp"
+            android:backgroundTint="@color/e1_red"
+            android:gravity="center"
+            android:onClick="@{()->handler.stopCalling()}"
+            android:paddingTop="@dimen/_12sdp"
+            android:paddingBottom="@dimen/_12sdp"
+            android:text="@string/stop"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
+            android:textColor="@color/white"
+            android:visibility="invisible"
+            app:cornerRadius="@dimen/_36sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.9"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.6"
+            app:rippleColor="@color/white"
+            tools:visibility="gone" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
