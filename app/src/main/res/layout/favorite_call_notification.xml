@@ -16,7 +16,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="2dip"
         android:ellipsize="end"
-        android:fontFamily="sans-serif-medium"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
         android:gravity="center"
         android:singleLine="true"
         android:text="ORIGINAL"
@@ -46,6 +46,7 @@
         android:gravity="center"
         android:singleLine="true"
         android:text="JoshSkills Call"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
         android:textColor="#FFF"
         android:textSize="13sp" />
 

@@ -20,6 +20,7 @@
         android:gravity="center"
         android:singleLine="true"
         android:textColor="#FFF"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
         android:textSize="14sp"
         tools:text="Wow Such Doge" />
 
@@ -41,6 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/photo"
         android:layout_centerHorizontal="true"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
         android:layout_marginTop="8dip"
         android:ellipsize="end"
         android:gravity="center"
@@ -52,7 +54,7 @@
     <FrameLayout
         android:id="@+id/line"
         android:layout_width="match_parent"
-        android:layout_height="1dip"
+        android:layout_height="0.6dip"
         android:layout_below="@+id/title"
         android:layout_marginHorizontal="36dip"
         android:layout_marginTop="8dip"
@@ -61,7 +63,7 @@
     <LinearLayout
         android:id="@+id/buttons"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_below="@+id/line"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
@@ -96,6 +98,7 @@
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="1">
+
 
             <TextView
                 android:id="@+id/answer_text"
