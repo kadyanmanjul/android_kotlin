@@ -57,6 +57,13 @@ const val LESSON_TWO_OPENED = "lesson_two_opened"
 const val GROUP_CHAT_LAST_READ_MESSAGE_ID = "GROUP_CHAT_LAST_READ_MESSAGE_ID"
 const val CALL_RINGTONE_NOT_MUTE = "call_ringtone_not_mute"
 const val IS_GROUP_NOTIFICATION_MUTED = "is_group_notification_muted"
+const val DEMO_P2P_CALLEE_NAME = "demo_p2p_callee_name"
+const val INTRODUCTION_LAST_POSITION = "introduction_page_last_position"
+const val INTRODUCTION_IS_CONTINUE_CLICKED = "introduction_is_continue_clicked"
+const val INTRODUCTION_YES_EXCITED_CLICKED = "introduction_yes_excited_clicked"
+const val INTRODUCTION_START_NOW_CLICKED = "introduction_start_now_clicked"
+const val DEMO_LESSON_TOPIC_ID = "demo_lesson_topic_id"
+const val DEMO_LESSON_NUMBER = "demo_lesson_number"
 
 
 object PrefManager {
