@@ -37,13 +37,13 @@ class FavoriteCallerViewModel(application: Application) : AndroidViewModel(appli
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = p2pNetworkService.getFavoriteCallerList(Mentor.getInstance().getId())
-                if (response.isEmpty()) {
-                    favoriteCallerDao.removeAllFavorite()
-                    apiCallStatus.emit(ApiCallStatus.SUCCESS)
+                favoriteCallerDao.removeAllFavorite()
+                if (response.isNotEmpty()) {
+                    favoriteCallerDao.insertFavoriteCallers(response)
+                    getFavoriteUsersDB()
                     return@launch
                 }
-                favoriteCallerDao.insertFavoriteCallers(response)
-                getFavoriteUsersDB()
+                apiCallStatus.emit(ApiCallStatus.SUCCESS)
             } catch (ex: Throwable) {
                 apiCallStatus.emit(ApiCallStatus.SUCCESS)
                 ex.printStackTrace()

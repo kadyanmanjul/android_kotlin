@@ -722,10 +722,9 @@ class SyncFavoriteCaller(context: Context, workerParams: WorkerParameters) :
             val response = AppObjectController.p2pNetworkService.getFavoriteCallerList(
                 Mentor.getInstance().getId()
             )
-            if (response.isEmpty()) {
-                AppObjectController.appDatabase.favoriteCallerDao().removeAllFavorite()
-            } else {
-                AppObjectController.appDatabase.favoriteCallerDao().insertFavoriteCallers(response)
+            AppObjectController.appDatabase.favoriteCallerDao().also {
+                it.removeAllFavorite()
+                it.insertFavoriteCallers(response)
             }
         } catch (ex: Throwable) {
             LogException.catchException(ex)

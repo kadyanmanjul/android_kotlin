@@ -149,9 +149,17 @@ class FavoriteListActivity : AppCompatActivity(), RecyclerViewItemClickListener 
     }
 
     private fun deleteFavoriteUserFromList() {
-        showToast("${deleteRecords.size} practice partners removed")
+        showToast(getDeleteMessage())
         favoriteAdapter.removeAndUpdated()
         viewModel.deleteUsersFromFavoriteList(deleteRecords.toMutableList())
+    }
+
+    private fun getDeleteMessage(): String {
+        if (deleteRecords.size > 1) {
+            "${deleteRecords.size} practice partners removed"
+        }
+        return "${deleteRecords.size} practice partner removed"
+
     }
 
     companion object {
