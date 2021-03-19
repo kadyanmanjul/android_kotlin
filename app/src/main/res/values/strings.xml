@@ -37,6 +37,7 @@
     <string name="track_number">Track</string>
     <string name="play_button_description">Play button</string>
     <string name="continue_label">Continue</string>
+    <string name="continue_label_with_arrow">Continue          -></string>
     <string name="message_size_limit">Message size limit exceeded</string>
 
     <string name="media_not_found_message">Sorry, this media file doesn\'t exist on your internal storage. can you download it?</string>
@@ -54,6 +55,7 @@
     <string name="explorer_courses">Explore Courses</string>
     <string name="select_courses">Select Courses</string>
     <string name="start_course">Start Course</string>
+    <string name="buy_course">Buy Course</string>
     <string name="start_learning">Start Learning</string>
     <string name="paid">Paid</string>
     <string name="upgrade">Upgrade</string>
@@ -524,6 +526,7 @@
     <string name="pp_messages">In this practice you have to speak to a practice partner for %s minutes</string>
     <string name="pp_calling">Practice Partner Calling</string>
     <string name="speaking_time_msz">Speaking time\n %s minutes</string>
+    <string name="spoke_with">Spoke for %s minutes with  %s</string>
 
     <string name="today_reading_practise">Today\'s Reading Practice</string>
 
@@ -845,6 +848,8 @@
     <string name="rank">Rank</string>
     <string name="aapki_new_class">Aapki Nayi Classes </string>
     <string name="student">Student</string>
+    <string name="yes_excited">Yes, I am excited</string>
+    <string name="existing_user">Existing User?</string>
 
 
 </resources>
