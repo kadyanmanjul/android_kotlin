@@ -36,6 +36,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.INTRODUCTION_START_NOW_CLICKED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.STARTED_FROM
 import com.joshtalks.joshskills.databinding.ActivityDemoCourseDetailsBinding
@@ -148,7 +149,7 @@ class DemoCourseDetailsActivity : BaseActivity() {
 
     private fun subscribeLiveData() {
         viewModel.demoCourseDetailsLiveData.observe(this, { data ->
-            //PrefManager.put(INTRODUCTION_START_NOW_CLICKED,true)
+            PrefManager.put(INTRODUCTION_START_NOW_CLICKED,true)
             data.cards.sortedBy { it.sequenceNumber }.forEach { card ->
                 getViewHolder(card)?.run {
                     binding.placeHolderView.addView(this)
