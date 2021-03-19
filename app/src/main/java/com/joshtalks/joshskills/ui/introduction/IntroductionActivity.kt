@@ -86,6 +86,9 @@ class IntroductionActivity : AppCompatActivity() {
         val adapter = IntroAdapter(
             supportFragmentManager, this.lifecycle
         )
+        binding.fragmentContainer.systemUiVisibility = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                or View.SYSTEM_UI_FLAG_FULLSCREEN)
         binding.lessonViewpager.adapter = adapter
         binding.lessonViewpager.requestTransparentRegion(binding.lessonViewpager)
         binding.wormDotsIndicator.attachToPager(binding.lessonViewpager)
