@@ -10,6 +10,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.MultiDexApplication
 import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.core.notification.AutoStartService
 import com.joshtalks.joshskills.core.service.NetworkChangeReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
@@ -39,6 +40,13 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         AppObjectController.init(this)
         registerBroadcastReceiver()
+        AppObjectController.uiHandler.post {
+            try {
+               this.startService(Intent(this, AutoStartService::class.java))
+            } catch (ignore: Throwable) {
+            }
+        }
+
     }
 
     override fun onTerminate() {
