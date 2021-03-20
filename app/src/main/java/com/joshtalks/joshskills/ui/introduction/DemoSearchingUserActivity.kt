@@ -6,6 +6,7 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
+import android.location.Location
 import android.os.*
 import android.util.Log
 import android.view.KeyEvent
@@ -107,7 +108,7 @@ class DemoSearchingUserActivity : AppCompatActivity() {
             outgoingCallData[RTC_CALLER_UID_KEY] = connectId
             WebRtcActivity.startOutgoingCallActivity(
                 this@DemoSearchingUserActivity,
-                outgoingCallData,true
+                outgoingCallData,isDemoClass = true
             )
             this@DemoSearchingUserActivity.finish()
         }

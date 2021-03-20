@@ -52,6 +52,7 @@ import timber.log.Timber
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
 const val CALL_USER_OBJ = "call_user_obj"
 const val CALL_TYPE = "call_type"
+const val IS_DEMO_P2P = "is_demo_p2p"
 
 class WebRtcActivity : AppCompatActivity() {
 
@@ -68,11 +69,13 @@ class WebRtcActivity : AppCompatActivity() {
         fun startOutgoingCallActivity(
             activity: Activity,
             mapForOutgoing: HashMap<String, String?>,
-            callType: CallType = CallType.OUTGOING
+            callType: CallType = CallType.OUTGOING,
+            isDemoClass: Boolean = false
         ) {
             Intent(activity, WebRtcActivity::class.java).apply {
                 putExtra(CALL_USER_OBJ, mapForOutgoing)
                 putExtra(CALL_TYPE, callType)
+                putExtra(IS_DEMO_P2P, isDemoClass)
             }.run {
                 activity.startActivityForResult(this, 9999)
             }
@@ -496,6 +499,46 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     fun acceptCall() {
+        if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
+            acceptCallForDemo()
+        } else {
+            acceptCallForNormal()
+        }
+    }
+
+    private fun acceptCallForDemo() {
+        if (PermissionUtils.isDemoCallingPermissionEnabled(this)) {
+            answerCall()
+            return
+        }
+
+        PermissionUtils.demoCallingFeaturePermission(
+            this,
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (flag) {
+                            answerCall()
+                            return
+                        }
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            onDisconnectCall()
+                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(this@WebRtcActivity)
+                            return
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            })
+    }
+
+    private fun acceptCallForNormal() {
         if (PermissionUtils.isCallingPermissionEnabled(this)) {
             answerCall()
             return
@@ -566,6 +609,9 @@ class WebRtcActivity : AppCompatActivity() {
     private fun checkAndShowRating(id: String?, channelName: String? = null, callTime: Long = 0) {
         Timber.tag(TAG)
             .e("checkAndShowRating   %s %s %s", id, mBoundService?.getTimeOfTalk(), callTime)
+        if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
+            PrefManager.put(DEMO_P2P_CALLEE_NAME, userDetailLiveData.value?.get("name").toString())
+        }
         showCallRatingScreen(callTime)
     }
 
@@ -585,7 +631,7 @@ class WebRtcActivity : AppCompatActivity() {
                 callTime = time,
                 callerName = userDetailLiveData.value?.get("name"),
                 callerImage = userDetailLiveData.value?.get("profile_pic"),
-                yourName = User.getInstance().firstName,
+                yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
                 yourAgoraId = mBoundService?.getUserAgoraId()
             )
             return
