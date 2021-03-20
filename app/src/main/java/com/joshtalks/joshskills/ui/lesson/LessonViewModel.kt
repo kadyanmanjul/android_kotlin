@@ -67,6 +67,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val courseId: MutableLiveData<String> = MutableLiveData()
     val speakingTopicLiveData: MutableLiveData<SpeakingTopic?> = MutableLiveData()
     val updatedLessonResponseLiveData: MutableLiveData<UpdateLessonResponse> = MutableLiveData()
+    val demoLessonNoLiveData: MutableLiveData<Int> = MutableLiveData()
 
     fun getLesson(lessonId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -86,7 +87,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun getQuestions(lessonId: Int) {
+    fun getQuestions(lessonId: Int, isDemo: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO) {
             val questionsFromDB = getQuestionsFromDB(lessonId)
             if (questionsFromDB.isNotEmpty()) {
@@ -95,7 +96,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
             var questionsFromAPI = emptyList<LessonQuestion>()
             if (Utils.isInternetAvailable()) {
-                questionsFromAPI = getQuestionsFromAPI(lessonId)
+                questionsFromAPI = getQuestionsFromAPI(lessonId, false)
                 if (questionsFromAPI.isNotEmpty()) {
                     lessonQuestionsLiveData.postValue(questionsFromAPI)
                 }
@@ -139,11 +140,17 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private suspend fun getQuestionsFromAPI(lessonId: Int): List<LessonQuestion> {
+    private suspend fun getQuestionsFromAPI(
+        lessonId: Int,
+        isDemo: Boolean = false
+    ): List<LessonQuestion> {
         return withContext(viewModelScope.coroutineContext + Dispatchers.IO) {
 
             var lastSyncTime = LastSyncPrefManager.getStringValue(lessonId.toString())
             if (lastSyncTime.isBlank()) {
+                lastSyncTime = "0"
+            }
+            if (isDemo) {
                 lastSyncTime = "0"
             }
             val response = AppObjectController.chatNetworkService.getQuestionsForLesson(
@@ -640,5 +647,25 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+
+    fun getDemoLesson() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = AppObjectController.chatNetworkService.getDemoLessonModel()
+                if (response != null) {
+                    response.chatId = ""
+                    demoLessonNoLiveData.postValue(response.lessonNo)
+                    val lesson=appDatabase.lessonDao().getLesson(response.id)
+                    if (lesson==null){
+                        appDatabase.lessonDao().insertSingleItem(response)
+                        //demoLessonIdLiveData.postValue(response.id)
+                    }
+                    getQuestions(response.id,false)
+                }
+            } catch (ex: Throwable) {
+                Timber.e(ex)
+            }
+        }
+    }
 
 }

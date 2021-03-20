@@ -28,15 +28,15 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintWidth_percent="0.85"
                 android:layout_gravity="center"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 android:background="@drawable/grey_rounded_bg"
                 android:backgroundTint="@color/white"
                 android:paddingHorizontal="@dimen/_8sdp"
-                android:paddingVertical="@dimen/_12sdp">
+                android:paddingVertical="@dimen/_12sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.88">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txt_header"
@@ -110,6 +110,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:gravity="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txt_message">
 
                     <com.google.android.material.button.MaterialButton
@@ -117,12 +119,13 @@
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:layout_marginHorizontal="@dimen/_8sdp"
                         android:onClick='@{()->handler.submitFeedback("YES")}'
                         android:text="@string/yes"
                         android:textAllCaps="false"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/button_color"
+                        android:textSize="@dimen/_11ssp"
                         app:cornerRadius="@dimen/_16sdp"
                         app:rippleColor="@color/white"
                         app:strokeColor="@color/button_color"
@@ -130,7 +133,6 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_maybe"
-
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -139,6 +141,7 @@
                         android:textAllCaps="false"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/button_color"
+                        android:textSize="@dimen/_11ssp"
                         app:cornerRadius="@dimen/_16sdp"
                         app:rippleColor="@color/white"
                         app:strokeColor="@color/button_color"
@@ -149,12 +152,13 @@
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:layout_marginHorizontal="@dimen/_8sdp"
                         android:onClick='@{()->handler.submitFeedback("NO")}'
                         android:text="@string/no"
                         android:textAllCaps="false"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/button_color"
+                        android:textSize="@dimen/_11ssp"
                         app:cornerRadius="@dimen/_16sdp"
                         app:rippleColor="@color/white"
                         app:strokeColor="@color/button_color"

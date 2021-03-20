@@ -53,6 +53,7 @@ import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
 import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
+import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
 import com.sinch.verification.PhoneNumberUtils
@@ -747,6 +748,9 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
+        if (PrefManager.getBoolValue(IS_DEMO_P2P,defValue = false)){
+            PrefManager.put(IS_DEMO_P2P,false)
+        }
         appAnalytics.addParam(AnalyticsEvent.PAYMENT_COMPLETED.NAME, true)
         logPaymentStatusAnalyticsEvents(AnalyticsEvent.SUCCESS_PARAM.NAME)
         isBackPressDisabled = true

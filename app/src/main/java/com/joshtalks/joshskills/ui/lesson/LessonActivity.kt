@@ -40,6 +40,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
     }
 
     lateinit var titleView: TextView
+    private var isDemo=false
 
     var lesson: LessonModel? = null  // Do not use this var
     private lateinit var tabs: ViewGroup
@@ -59,19 +60,19 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = DataBindingUtil.setContentView(
             this,
             R.layout.lesson_activity
         )
 
         val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
+        isDemo = if (intent.hasExtra(IS_DEMO)) intent.getBooleanExtra(IS_DEMO, false) else false
 
         titleView = findViewById(R.id.text_message_title)
 
         setObservers()
         viewModel.getLesson(lessonId)
-        viewModel.getQuestions(lessonId)
+        viewModel.getQuestions(lessonId,isDemo)
 
         val helpIv: ImageView = findViewById(R.id.iv_help)
         helpIv.visibility = View.GONE
@@ -398,7 +399,7 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
             val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
 
             viewModel.getLesson(lessonId)
-            viewModel.getQuestions(lessonId)
+            viewModel.getQuestions(lessonId,isDemo)
         }
     }
 
@@ -416,13 +417,16 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
 
     companion object {
         private const val LESSON_ID = "lesson_id"
+        private const val IS_DEMO = "is_demo"
         const val LAST_LESSON_STATUS = "last_lesson_status"
 
         fun getActivityIntent(
             context: Context,
             lessonId: Int,
+            isDemo: Boolean=false
         ) = Intent(context, LessonActivity::class.java).apply {
             putExtra(LESSON_ID, lessonId)
+            putExtra(IS_DEMO, isDemo)
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         }
 

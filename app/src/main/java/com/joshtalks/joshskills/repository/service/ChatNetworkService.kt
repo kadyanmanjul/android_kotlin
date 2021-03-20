@@ -164,4 +164,7 @@ interface ChatNetworkService {
         @Query("channel_name") channelName: String?=null,
     ): PointsListResponse
 
+    @GET("$DIR/course/get_demo_lesson/")
+    suspend fun getDemoLessonModel(): LessonModel
+
 }

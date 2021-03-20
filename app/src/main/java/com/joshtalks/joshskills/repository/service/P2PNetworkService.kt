@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.repository.service
 
+import com.joshtalks.joshskills.repository.server.voip.AgoraTokenRequest
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.repository.server.voip.RequestUserLocation
 import java.util.HashMap
@@ -12,7 +13,7 @@ import retrofit2.http.Path
 interface P2PNetworkService {
 
     @POST("$DIR/voicecall/agora_token/")
-    suspend fun getAgoraClientToken(@Body params: Map<String, String>): Response<HashMap<String, String>>
+    suspend fun getAgoraClientToken(@Body params: AgoraTokenRequest): Response<HashMap<String, String>>
 
     @POST("$DIR/voicecall/agora_call_response/")
     suspend fun getAgoraCallResponse(@Body params: Map<String, String?>):Response<Void>

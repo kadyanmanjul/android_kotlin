@@ -55,9 +55,7 @@
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" /> <!-- Permission for reminder -->
     <uses-permission android:name="android.permission.SET_ALARM" />
-    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
-
-    <!-- For devices running Android 10.0 or later, you also need to add the following permission: -->
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" /> <!-- For devices running Android 10.0 or later, you also need to add the following permission: -->
     <uses-permission
         android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
         tools:ignore="ProtectedPermissions" />
@@ -79,14 +77,21 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
-        <activity android:name=".ui.points_history.PointsInfoActivity"></activity>
+        <activity
+            android:name=".ui.introduction.IntroductionActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppNoBarTheme"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity android:name=".ui.points_history.PointsInfoActivity" />
+        <activity android:name=".ui.introduction.DemoSpeakingPractiseActivity" />
         <activity android:name=".ui.points_history.PointsHistoryActivity" />
         <activity android:name=".ui.userprofile.UserProfileActivity" />
         <activity android:name=".ui.leaderboard.PreviousLeaderboardActivity" />
         <activity android:name=".ui.userprofile.SeeAllAwardActivity" />
         <activity android:name=".ui.leaderboard.LeaderBoardViewPagerActivity" />
         <activity android:name=".ui.gif.GIFActivity" />
-
 
         <meta-data
             android:name="CLEVERTAP_ACCOUNT_ID"
@@ -170,6 +175,11 @@
             android:theme="@style/AppNoBarTheme" />
         <activity
             android:name=".ui.launch.LauncherActivity"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
+            android:theme="@style/AppNoBarTheme" />
+        <activity
+            android:name=".ui.launch.NewLauncherActivity"
             android:alwaysRetainTaskState="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -304,7 +314,6 @@
             android:launchMode="singleTop"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateAlwaysVisible" />
-
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
@@ -339,6 +348,17 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.explore.CourseExploreActivity" />
+        </activity>
+        <activity
+            android:name=".ui.introduction.DemoCourseDetailsActivity"
+            android:alwaysRetainTaskState="true"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.introduction.DemoCourseDetailsActivity"
+            android:theme="@style/AppNoBarTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.introduction.DemoCourseDetailsActivity" />
         </activity>
         <activity
             android:name=".ui.conversation_practice.ConversationPracticeActivity"
@@ -393,6 +413,12 @@
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".ui.voip.SearchingUserActivity"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppNoBarTheme" />
+        <activity
+            android:name=".ui.introduction.DemoSearchingUserActivity"
             android:alwaysRetainTaskState="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -645,8 +671,8 @@
             android:enabled="true"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-
-        <!--<meta-data
+        <!--
+<meta-data
             android:name="com.cometchat.pro.uikit"
             android:value="${file_provider}" />
 
@@ -659,8 +685,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.groupchat.messagelist.CometChatMessageListActivity"
-            android:screenOrientation="portrait" />-->
-
+            android:screenOrientation="portrait" />
+        -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${file_provider}.provider"

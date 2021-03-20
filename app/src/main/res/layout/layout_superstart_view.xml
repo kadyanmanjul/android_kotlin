@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="@dimen/_10sdp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/course_padding_dimen"
+        android:gravity="start"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+        android:textColor="@color/demo_app_black_color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Miliye Josh ke Superstars se" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/student_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_12sdp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        tools:itemCount="1"
+        tools:listitem="@layout/superstar_feedback_item_view" />
+
+    <ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator
+        android:id="@+id/worm_dots_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_12sdp"
+        app:spi_dotSelectedColor="@color/colorPrimary"
+        app:spi_dotColor="@color/light_blue"
+        app:spi_dotSize="@dimen/_6sdp"
+        app:spi_dotSelectedSize="@dimen/_10sdp"
+        app:spi_dotSpacing="@dimen/_4sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/student_rv"
+        app:selectedDotColor="@color/lightest_blue" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

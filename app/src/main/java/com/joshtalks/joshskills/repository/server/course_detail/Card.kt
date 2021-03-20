@@ -51,5 +51,17 @@ enum class CardType(val type: String) {
     ABOUT_JOSH("AboutJosh"),
 
     @SerializedName("OtherInfo")
-    OTHER_INFO("OtherInfo")
+    OTHER_INFO("OtherInfo"),
+
+    @SerializedName("Facts")
+    FACTS("Facts"),
+
+    @SerializedName("Superstar")
+    SUPER_STAR("Superstar"),
+
+    @SerializedName("DemoLesson2")
+    DEMO_LESSON_2("DemoLesson2"),
+
+    @SerializedName("CourseAToZ")
+    COURSE_A_TO_Z("CourseAToZ")
 }

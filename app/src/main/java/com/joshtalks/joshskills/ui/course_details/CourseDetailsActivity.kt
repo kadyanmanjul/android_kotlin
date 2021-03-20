@@ -459,6 +459,9 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                     this
                 )
             }
+            else -> {
+                return null
+            }
         }
     }
 

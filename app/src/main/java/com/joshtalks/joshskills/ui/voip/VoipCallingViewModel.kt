@@ -7,11 +7,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.voip.AgoraTokenRequest
 import com.joshtalks.joshskills.repository.server.voip.RequestUserLocation
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import java.net.ProtocolException
-import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -20,22 +21,22 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
 
     fun getUserForTalk(
-        courseId: String,
+        courseId: String?,
         topicId: Int?,
-        location: Location,
-        aFunction: (String, String, Int) -> Unit
+        location: Location?,
+        aFunction: (String, String, Int) -> Unit,
+        is_demo: Boolean = PrefManager.getBoolValue(IS_DEMO_P2P,defValue = false)
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val requestParams: HashMap<String, String> = HashMap()
-                requestParams["mentor_id"] = Mentor.getInstance().getId()
-                requestParams["course_id"] = courseId
-                requestParams["topic_id"] = topicId?.toString() ?: ""
+                val request= AgoraTokenRequest( Mentor.getInstance().getId(),courseId,is_demo,topicId.toString())
                 val response =
-                    AppObjectController.p2pNetworkService.getAgoraClientToken(requestParams)
+                    AppObjectController.p2pNetworkService.getAgoraClientToken(request)
                 if (response.isSuccessful && response.code() in 200..203) {
                     response.body()?.let {
-                        uploadUserCurrentLocation(it["channel_name"]!!, location)
+                        location?.let { location ->
+                            uploadUserCurrentLocation(it["channel_name"]!!, location)
+                        }
                         aFunction.invoke(
                             it["token"]!!,
                             it["channel_name"]!!,
