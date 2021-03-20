@@ -185,7 +185,7 @@ class WebRtcActivity : AppCompatActivity() {
                 callTime = time,
                 callerName = userDetailLiveData.value?.get("name"),
                 callerImage = userDetailLiveData.value?.get("profile_pic"),
-                yourName = User.getInstance().firstName,
+                yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
                 yourAgoraId = mBoundService?.getUserAgoraId()
             )
             return

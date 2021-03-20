@@ -65,20 +65,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/_6sdp"
+            android:visibility="gone"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:itemCount="1"
-            android:visibility="gone"
-            tools:visibility="visible"
-            tools:listitem="@layout/layout_demo_lesson_course_detail_title_card_view" />
+            tools:listitem="@layout/layout_demo_lesson_course_detail_title_card_view"
+            tools:visibility="visible" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/buy_course_ll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            app:cardElevation="@dimen/_6sdp"
             android:orientation="vertical"
             android:visibility="gone"
+            app:cardElevation="@dimen/_6sdp"
             app:layout_anchor="@id/placeHolderView"
             app:layout_anchorGravity="bottom"
             tools:visibility="visible">
@@ -87,36 +87,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
-                android:paddingHorizontal="@dimen/_8sdp"
                 android:paddingVertical="@dimen/_4sdp">
 
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/talk_to_c"
-                    android:layout_width="0dp"
+                    android:layout_width="144dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rectangle_with_blue_bound_stroke_corner_8dp"
                     android:backgroundTint="#C1C1C1"
                     android:gravity="center"
+                    android:minLines="2"
                     android:onClick="@{()->handler.openWhatsapp()}"
                     android:paddingVertical="@dimen/_4sdp"
-                    android:minLines="2"
                     android:text="Talk to Counsellor"
                     android:textAllCaps="false"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                    android:textSize="@dimen/_12ssp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
                     android:textColor="#636363"
+                    android:textSize="@dimen/_12ssp"
                     app:cornerRadius="@dimen/_76sdp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/txt_discounted_price"
+                    app:layout_constraintBottom_toBottomOf="@+id/btn_start_course"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_start_course"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_chainStyle="spread"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.4" />
+                    app:layout_constraintTop_toTopOf="@+id/btn_start_course"
+                    app:layout_constraintWidth_percent="0.35" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/btn_start_course"
-                    android:layout_width="0dp"
+                    android:layout_width="230dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rectangle_with_blue_bound_stroke_corner_8dp"
                     android:backgroundTint="@color/button_color"
@@ -130,10 +130,9 @@
                     app:cornerRadius="@dimen/_32sdp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1"
-                    app:layout_constraintStart_toEndOf="@+id/txt_discounted_price"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/talk_to_c"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_default="percent"
                     app:layout_constraintWidth_percent="0.56" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
