@@ -258,19 +258,19 @@ class IntroductionActivity : AppCompatActivity() {
 
     enum class Content(val text: String, val drawable: Int) {
         FIRST(
-            "रोज़ाना इंग्लिश बोलो और \n" +
+            "रोज़ाना इंग्लिश बोलो और " +
                     "अपना माहौल खुद बनाओ", R.drawable.intro_page1
         ),
         SECOND(
-            "नए शब्द सीखो और उनका एस्टमाल करके\n तरक़्क़ी करो",
+            "नए शब्द सीखो और उनका एस्टमाल करके तरक़्क़ी करो",
             R.drawable.intro_page2
         ),
         THIRD(
-            "सही कान्सेप्ट्स समझो अपने बड़े भैया\n Vedant Sir से",
+            "सही कान्सेप्ट्स समझो अपने बड़े भैया Vedant Sir से",
             R.drawable.intro_page3
         ),
         FOURTH(
-            "प्रैक्टिस करके अपने माता पिता का नाम\n रोशन करो और बनो \n" +
+            "प्रैक्टिस करके अपने माता पिता का नाम रोशन करो और बनो \n" +
                     "Student of the Month",
             R.drawable.intro_page4
         )

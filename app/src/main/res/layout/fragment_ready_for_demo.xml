@@ -22,6 +22,7 @@
             android:text="तो क्या आप अंग्रेजी बोलने\n के मास्टर बनने के लिए\n तैयार है?"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
             android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
