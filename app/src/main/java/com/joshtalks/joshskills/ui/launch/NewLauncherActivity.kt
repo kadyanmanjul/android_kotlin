@@ -41,13 +41,13 @@ class NewLauncherActivity : CoreJoshActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        initApp()
         super.onCreate(savedInstanceState)
         binding =
             DataBindingUtil.setContentView(this, R.layout.activity_new_launcher)
         binding.lifecycleOwner = this
         binding.handler = this
         animatedLogo()
+        initApp()
         initAppInFirstTime()
         handleIntent()
         AppObjectController.uiHandler.postDelayed({

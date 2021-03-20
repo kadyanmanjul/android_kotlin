@@ -749,7 +749,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
         if (PrefManager.getBoolValue(IS_DEMO_P2P,defValue = false)){
-            PrefManager.put(IS_DEMO_P2P,true)
+            PrefManager.put(IS_DEMO_P2P,false)
         }
         appAnalytics.addParam(AnalyticsEvent.PAYMENT_COMPLETED.NAME, true)
         logPaymentStatusAnalyticsEvents(AnalyticsEvent.SUCCESS_PARAM.NAME)

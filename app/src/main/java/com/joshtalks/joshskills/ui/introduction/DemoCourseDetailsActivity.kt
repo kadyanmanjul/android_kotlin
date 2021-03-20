@@ -99,7 +99,7 @@ class DemoCourseDetailsActivity : BaseActivity() {
         }
         super.onCreate(savedInstanceState)
         window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.white)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_demo_course_details)
+            binding = DataBindingUtil.setContentView(this, R.layout.activity_demo_course_details)
         binding.lifecycleOwner = this
         binding.handler = this
         subscribeLiveData()
@@ -207,13 +207,15 @@ class DemoCourseDetailsActivity : BaseActivity() {
             } else {
                 isLessonCompleted = false
             }
-            binding.placeHolderView.allViewResolvers.let {
-                it.forEachIndexed { index, view ->
-                    if (view is DemoLesson2ViewHolder) {
-                        view.changeTextToCompleted(isLessonCompleted)
-                        AppObjectController.uiHandler.postDelayed({
-                            binding.placeHolderView.refreshView(index)
-                        }, 250)
+            if (isLessonCompleted) {
+                binding.placeHolderView.allViewResolvers.let {
+                    it.forEachIndexed { index, view ->
+                        if (view is DemoLesson2ViewHolder) {
+                            view.changeTextToCompleted(isLessonCompleted)
+                            AppObjectController.uiHandler.postDelayed({
+                                binding.placeHolderView.refreshView(index)
+                            }, 250)
+                        }
                     }
                 }
             }
