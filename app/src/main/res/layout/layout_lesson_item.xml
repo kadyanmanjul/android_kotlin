@@ -1,28 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/root_view_fl"
+    android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/_2sdp"
-    android:layout_marginBottom="@dimen/_2sdp"
     android:paddingStart="@dimen/cell_left_start_padding"
-    android:paddingEnd="@dimen/cell_left_end_padding">
+    android:paddingEnd="@dimen/_48sdp">
 
-    <ViewStub
-        android:id="@+id/lesson_complete_stub"
-        android:layout_width="match_parent"
+    <FrameLayout
+        android:id="@+id/root_sub_view"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout="@layout/lesson_complete_stub" />
+        android:layout_gravity="start">
 
-    <ViewStub
-        android:id="@+id/lesson_progress_stub"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout="@layout/lesson_progress_stub" />
+        <ViewStub
+            android:id="@+id/lesson_complete_stub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout="@layout/lesson_complete_stub" />
 
+        <ViewStub
+            android:id="@+id/lesson_progress_stub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout="@layout/lesson_progress_stub" />
+
+
+    </FrameLayout>
 
 </FrameLayout>
-
 

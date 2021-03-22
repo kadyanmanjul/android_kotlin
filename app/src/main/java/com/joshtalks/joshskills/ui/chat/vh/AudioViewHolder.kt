@@ -23,7 +23,11 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.PlayerUtil
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.AudioType
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.eventbus.AudioPlayEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.InternalSeekBarProgressEventBus
@@ -34,7 +38,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
 import java.lang.ref.WeakReference
-import java.util.*
+import java.util.Locale
 
 class AudioViewHolder(
     view: View,
@@ -101,11 +105,11 @@ class AudioViewHolder(
     }
 
 
-    override fun bind(message: ChatModel, previousChat: ChatModel?) {
+    override fun bind(message: ChatModel, previousMessage: ChatModel?) {
         this.message = message
         setDefaultState()
         if (null != message.sender) {
-            setViewHolderBG(previousChat?.sender, message.sender!!, rootSubView)
+            setViewHolderBG(message, previousMessage, rootSubView)
         }
         animBlink = AnimationUtils.loadAnimation(getAppContext(), R.anim.blink)
         message.sender?.let {

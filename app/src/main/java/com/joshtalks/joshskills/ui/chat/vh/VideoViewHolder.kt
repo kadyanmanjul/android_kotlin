@@ -94,7 +94,7 @@ class VideoViewHolder(
     override fun bind(message: ChatModel, previousMessage: ChatModel?) {
         compositeDisposable.clear()
         if (null != message.sender) {
-            setViewHolderBG(previousMessage?.sender, message.sender!!, rootSubView)
+            setViewHolderBG(message, previousMessage, rootSubView)
         }
         this.message = message
         appAnalytics.addParam(AnalyticsEvent.VIDEO_ID.NAME, message.chatId)

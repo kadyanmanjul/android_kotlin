@@ -12,6 +12,8 @@ import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
 import com.joshtalks.joshskills.repository.local.entity.Sender
+import java.util.Date
+import java.util.concurrent.TimeUnit
 
 abstract class BaseViewHolder(
     view: android.view.View, val userId: String
@@ -83,30 +85,50 @@ abstract class BaseViewHolder(
 
 
     fun setViewHolderBG(
-        lSender: Sender?,
-        cSender: Sender, rootSubView: FrameLayout
+        cMessage: ChatModel, lMessage: ChatModel?, root: FrameLayout
     ) {
-        if (lSender == null) {
-            if (cSender.id.equals(userId, ignoreCase = true)) {
-                rootSubView.setBackgroundResource(R.drawable.outgoing_message_normal_bg)
-            } else {
-                rootSubView.setBackgroundResource(R.drawable.incoming_message_normal_bg)
 
-            }
+        if (lMessage?.sender == null) {
+            setViewBgNewMessage(root, cMessage.sender!!, lMessage?.sender)
         } else {
+            if (isDateChange(cMessage.created, lMessage.created)) {
+                setViewBgNewMessage(root, cMessage.sender!!, lMessage.sender)
+            }else{
+                setViewBgMessageStack(root, cMessage.sender!!, lMessage.sender!!)
+            }
+        }
+    }
+
+    private fun isDateChange(cDate: Date, lDate: Date): Boolean {
+        val days = TimeUnit.DAYS.convert(cDate.time - lDate.time, TimeUnit.MILLISECONDS)
+        if (days > 0) {
+            return true
+        }
+        return false
+    }
+
+    private fun setViewBgNewMessage(root: FrameLayout, cSender: Sender, lSender: Sender?) {
+            if (cSender.id.equals(userId, ignoreCase = true)) {
+                root.setBackgroundResource(R.drawable.outgoing_message_normal_bg)
+            } else {
+                root.setBackgroundResource(R.drawable.incoming_message_normal_bg)
+            }
+        }
+
+
+    private fun setViewBgMessageStack(root: FrameLayout, cSender: Sender, lSender: Sender) {
             if (lSender.id == cSender.id || lSender.id == userId) { // no balloon bg
                 if (cSender.id.equals(userId, ignoreCase = true)) {
-                    rootSubView.setBackgroundResource(R.drawable.outgoing_message_same_bg)
+                    root.setBackgroundResource(R.drawable.outgoing_message_same_bg)
                 } else {
-                    rootSubView.setBackgroundResource(R.drawable.incoming_message_same_bg)
+                    root.setBackgroundResource(R.drawable.incoming_message_same_bg)
                 }
             } else { // balloon bg
                 if (cSender.id.equals(userId, ignoreCase = true)) {
-                    rootSubView.setBackgroundResource(R.drawable.outgoing_message_normal_bg)
+                    root.setBackgroundResource(R.drawable.outgoing_message_normal_bg)
                 } else {
-                    rootSubView.setBackgroundResource(R.drawable.incoming_message_normal_bg)
+                    root.setBackgroundResource(R.drawable.incoming_message_normal_bg)
                 }
-            }
         }
     }
 

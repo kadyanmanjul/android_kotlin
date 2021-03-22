@@ -10,7 +10,8 @@ import com.joshtalks.joshskills.ui.assessment.view.Stub
 
 class LessonViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) {
 
-    private val rootView: FrameLayout = view.findViewById(R.id.root_view_fl)
+    val rootSubView: FrameLayout = view.findViewById(R.id.root_sub_view)
+
     private var lessonCompleteStub: Stub<LessonCompleteView> =
         Stub(view.findViewById(R.id.lesson_complete_stub))
     private var lessonInProgressStub: Stub<LessonInProgressView> =
@@ -18,7 +19,7 @@ class LessonViewHolder(view: View, userId: String) : BaseViewHolder(view, userId
 
     override fun bind(message: ChatModel, previousMessage: ChatModel?) {
         if (null != message.sender) {
-            setViewHolderBG(previousMessage?.sender, message.sender!!, rootView)
+            setViewHolderBG(message, previousMessage, rootSubView)
         }
         message.lesson?.let {
             setupUI(it)

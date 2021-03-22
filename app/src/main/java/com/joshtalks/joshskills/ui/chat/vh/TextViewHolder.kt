@@ -22,7 +22,7 @@ class TextViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) 
 
     override fun bind(message: ChatModel, previousMessage: ChatModel?) {
         if (null != message.sender) {
-            setViewHolderBG(previousMessage?.sender, message.sender!!, rootSubView)
+            setViewHolderBG(message, previousMessage, rootSubView)
         }
         titleView.text = EMPTY
         titleView.visibility = GONE

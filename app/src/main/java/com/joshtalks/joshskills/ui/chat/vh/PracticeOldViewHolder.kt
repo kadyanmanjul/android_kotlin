@@ -55,10 +55,10 @@ class PracticeOldViewHolder(view: View, userId: String) : BaseViewHolder(view, u
     }
 
 
-    override fun bind(message: ChatModel, previousChatModel: ChatModel?) {
+    override fun bind(message: ChatModel, previousMessage: ChatModel?) {
         this.message = message
         if (null != message.sender) {
-            setViewHolderBG(previousChatModel?.sender, message.sender!!, subRootView)
+            setViewHolderBG(message, previousMessage, subRootView)
         }
         receivedMessageTime.text = Utils.messageTimeConversion(message.created)
         val sBuilder = SpannableStringBuilder().append("Status: ")
