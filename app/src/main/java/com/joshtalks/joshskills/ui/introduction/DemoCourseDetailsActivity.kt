@@ -97,7 +97,7 @@ class DemoCourseDetailsActivity : BaseActivity() {
         }
         super.onCreate(savedInstanceState)
         window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.white)
-            binding = DataBindingUtil.setContentView(this, R.layout.activity_demo_course_details)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_demo_course_details)
         binding.lifecycleOwner = this
         binding.handler = this
         subscribeLiveData()
@@ -108,8 +108,8 @@ class DemoCourseDetailsActivity : BaseActivity() {
     private fun initView() {
         linearLayoutManager = SmoothLinearLayoutManager(this)
         linearLayoutManager.isSmoothScrollbarEnabled = true
-        linearLayoutManager.isItemPrefetchEnabled=true
-        linearLayoutManager.initialPrefetchItemCount=10
+        linearLayoutManager.isItemPrefetchEnabled = true
+        linearLayoutManager.initialPrefetchItemCount = 10
         binding.placeHolderView.builder.setHasFixedSize(true)
             .setLayoutManager(linearLayoutManager)
         binding.placeHolderView.addOnScrollListener(object :

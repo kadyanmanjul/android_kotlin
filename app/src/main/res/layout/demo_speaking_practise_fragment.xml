@@ -203,7 +203,7 @@
                         android:text="Start Now"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/_20ssp"
+                        android:textSize="@dimen/_18ssp"
                         android:visibility="visible"
                         app:cornerRadius="@dimen/_8sdp"
                         app:layout_constraintBottom_toBottomOf="parent"

@@ -92,12 +92,12 @@
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/talk_to_c"
-                    android:layout_width="144dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rectangle_with_blue_bound_stroke_corner_8dp"
                     android:backgroundTint="#C1C1C1"
                     android:gravity="center"
-                    android:minLines="2"
+                    android:lines="2"
                     android:onClick="@{()->handler.openWhatsapp()}"
                     android:paddingVertical="@dimen/_4sdp"
                     android:text="Talk to Counsellor"
@@ -112,11 +112,11 @@
                     app:layout_constraintHorizontal_chainStyle="spread"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/btn_start_course"
-                    app:layout_constraintWidth_percent="0.35" />
+                    app:layout_constraintWidth_percent="0.39" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/btn_start_course"
-                    android:layout_width="230dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rectangle_with_blue_bound_stroke_corner_8dp"
                     android:backgroundTint="@color/button_color"
@@ -127,6 +127,7 @@
                     android:textAllCaps="false"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                     android:textColor="@color/white"
+                    android:textSize="@dimen/_16ssp"
                     app:cornerRadius="@dimen/_32sdp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
