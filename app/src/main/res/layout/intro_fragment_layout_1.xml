@@ -18,46 +18,48 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/_72sdp"
             android:layout_marginHorizontal="@dimen/_12sdp"
-            android:layout_marginTop="@dimen/_28sdp"
-            android:layout_marginBottom="@dimen/_18sdp"
+            android:layout_marginTop="@dimen/_22sdp"
             android:gravity="center_horizontal"
             android:text="@string/vocabulary_completed"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
             android:textColor="@color/colorPrimary"
-            android:textSize="@dimen/_18ssp"
-            app:layout_constraintBottom_toTopOf="@id/image"
+            android:textSize="@dimen/_16ssp"
+            app:autoSizeMaxTextSize="@dimen/_18ssp"
+            app:autoSizeMinTextSize="@dimen/_15ssp"
+            app:autoSizeStepGranularity="2sp"
+            app:autoSizeTextType="uniform"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/image"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginHorizontal="@dimen/_12sdp"
-            android:scaleType="fitXY"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:adjustViewBounds="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_percent="0.72"
             app:layout_constraintStart_toStartOf="parent"
-            tools:srcCompat="@drawable/josh_skill_logo_hindi" />
+            app:layout_constraintTop_toBottomOf="@+id/text"
+            tools:src="@drawable/ic_pick_call" />
 
         <FrameLayout
             android:id="@+id/playBtnContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_12sdp"
+            android:background="@drawable/circle2"
+            android:backgroundTint="#80FFFFFF"
+            android:padding="@dimen/_12sdp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/image"
             app:layout_constraintEnd_toEndOf="@id/image"
             app:layout_constraintStart_toStartOf="@id/image"
-            android:padding="@dimen/_12sdp"
-            android:background="@drawable/circle2"
-            android:visibility="gone"
-            tools:visibility="visible"
-            android:backgroundTint="#80FFFFFF"
-            app:layout_constraintTop_toTopOf="@id/image">
+            app:layout_constraintTop_toTopOf="@id/image"
+            tools:visibility="visible">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/playIcon"

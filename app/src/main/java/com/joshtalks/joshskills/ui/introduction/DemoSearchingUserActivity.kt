@@ -78,7 +78,6 @@ class DemoSearchingUserActivity : AppCompatActivity() {
     private var uiHandler: Handler? = null
     private var compositeDisposable = CompositeDisposable()
 
-
     private var myConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             val myBinder = service as WebRtcService.MyBinder
@@ -106,7 +105,7 @@ class DemoSearchingUserActivity : AppCompatActivity() {
             outgoingCallData[RTC_CALLER_UID_KEY] = connectId
             WebRtcActivity.startOutgoingCallActivity(
                 this@DemoSearchingUserActivity,
-                outgoingCallData,isDemoClass = true
+                outgoingCallData, isDemoClass = true
             )
             this@DemoSearchingUserActivity.finish()
         }
@@ -133,13 +132,16 @@ class DemoSearchingUserActivity : AppCompatActivity() {
             super.onChannelJoin()
             Timber.tag("SearchingUserActivity").e("onChannelJoin")
             addReceiverTimeout()
-            uiHandler?.postDelayed({
-                try {
-                    //binding.btnAction.visibility = View.VISIBLE
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-            }, 500)
+            uiHandler?.postDelayed(
+                {
+                    try {
+                        // binding.btnAction.visibility = View.VISIBLE
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                },
+                500
+            )
         }
     }
 
@@ -163,7 +165,7 @@ class DemoSearchingUserActivity : AppCompatActivity() {
         binding.lifecycleOwner = this
         binding.handler = this
         courseId = intent.getStringExtra(COURSE_ID)
-        topicId = intent.getIntExtra(TOPIC_ID,-1)
+        topicId = intent.getIntExtra(TOPIC_ID, -1)
         topicName = intent.getStringExtra(TOPIC_NAME)
         appAnalytics = AppAnalytics.create(AnalyticsEvent.OPEN_CALL_SEARCH_SCREEN_VOIP.NAME)
             .addBasicParam()
@@ -180,14 +182,17 @@ class DemoSearchingUserActivity : AppCompatActivity() {
     }
 
     private fun addObserver() {
-        viewModel.apiCallStatusLiveData.observe(this, {
-            if (ApiCallStatus.FAILED == it || ApiCallStatus.FAILED_PERMANENT == it) {
-                showToast(getString(R.string.did_not_answer_message))
-                finishAndRemoveTask()
-            } else if (ApiCallStatus.INVALIDED == it) {
-                this@DemoSearchingUserActivity.finishAndRemoveTask()
+        viewModel.apiCallStatusLiveData.observe(
+            this,
+            {
+                if (ApiCallStatus.FAILED == it || ApiCallStatus.FAILED_PERMANENT == it) {
+                    showToast(getString(R.string.did_not_answer_message))
+                    finishAndRemoveTask()
+                } else if (ApiCallStatus.INVALIDED == it) {
+                    this@DemoSearchingUserActivity.finishAndRemoveTask()
+                }
             }
-        })
+        )
     }
 
     private fun addRequesting() {
@@ -218,9 +223,9 @@ class DemoSearchingUserActivity : AppCompatActivity() {
                 ) {
                     token?.continuePermissionRequest()
                 }
-            })
+            }
+        )
     }
-
 
     private fun startProgressBarCountDown() {
         runOnUiThread {
@@ -254,16 +259,14 @@ class DemoSearchingUserActivity : AppCompatActivity() {
         animation.start()
     }
 
-
-
     private fun requestForSearchUser() {
-            appAnalytics?.addParam(AnalyticsEvent.SEARCH_USER_FOR_VOIP.NAME, courseId)
-            startProgressBarCountDown()
-            initApiForSearchUser()
+        appAnalytics?.addParam(AnalyticsEvent.SEARCH_USER_FOR_VOIP.NAME, courseId)
+        startProgressBarCountDown()
+        initApiForSearchUser()
     }
 
     private fun initApiForSearchUser() {
-            viewModel.getUserForTalk(courseId, topicId, null, ::callback,true)
+        viewModel.getUserForTalk(courseId, topicId, null, ::callback, true)
     }
 
     private fun callback(token: String, channelName: String, uid: Int) {
@@ -272,7 +275,8 @@ class DemoSearchingUserActivity : AppCompatActivity() {
     }
 
     fun stopCalling() {
-        mBoundService?.endCall(apiCall = false)
+        val userId = mBoundService?.getUserAgoraId()
+        mBoundService?.endCall(apiCall = userId != null)
         AppAnalytics.create(AnalyticsEvent.STOP_USER_FOR_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -349,22 +353,26 @@ class DemoSearchingUserActivity : AppCompatActivity() {
                         }
                     }
                 }
-                .subscribe())
+                .subscribe()
+        )
     }
 
     private fun addReceiverTimeout() {
         compositeDisposable.add(
             Observable.interval(11, TimeUnit.SECONDS, Schedulers.computation())
                 .timeInterval()
-                .subscribe({
-                    mBoundService?.isCallNotConnected()?.let { flag ->
-                        if (flag.not()) {
-                            mBoundService?.timeoutCaller()
+                .subscribe(
+                    {
+                        mBoundService?.isCallNotConnected()?.let { flag ->
+                            if (flag.not()) {
+                                mBoundService?.timeoutCaller()
+                            }
                         }
+                    },
+                    {
+                        it.printStackTrace()
                     }
-                }, {
-                    it.printStackTrace()
-                })
+                )
         )
     }
 }
