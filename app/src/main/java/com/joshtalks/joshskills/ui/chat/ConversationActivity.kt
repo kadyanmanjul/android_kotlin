@@ -66,6 +66,7 @@ import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.video_player.*
 import com.joshtalks.joshskills.ui.view_holders.*
+import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.StickyHeaderDecoration
@@ -222,6 +223,9 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
 
     private fun initToolbar() {
         try {
+            if (inboxEntity.isCapsuleCourse){
+                PrefManager.put(IS_DEMO_P2P,false)
+            }
             conversationBinding.textMessageTitle.text = inboxEntity.course_name
             conversationBinding.imageViewLogo.setImageWithPlaceholder(inboxEntity.course_icon)
             conversationBinding.imageViewLogo.visibility = VISIBLE
