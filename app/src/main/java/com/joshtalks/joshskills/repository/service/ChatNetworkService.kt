@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewBaseResponse
 import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
+import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
@@ -134,7 +135,6 @@ interface ChatNetworkService {
         @Body questionStatus: UpdateQuestionStatus
     ): Response<UpdateLessonResponse>
 
-
     @GET("$DIR/course/course_overview/")
     suspend fun getCourseOverview(
         @Query("mentor_id") mentorId: String,
@@ -166,5 +166,8 @@ interface ChatNetworkService {
 
     @GET("$DIR/course/get_demo_lesson/")
     suspend fun getDemoLessonModel(): LessonModel
+
+    @GET("$DIR/course/demo_onboarding_data/")
+    suspend fun getDemoOnBoardingData(): Response<DemoOnboardingData>
 
 }

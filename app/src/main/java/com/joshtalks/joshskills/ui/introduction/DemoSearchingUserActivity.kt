@@ -6,9 +6,7 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
-import android.location.Location
 import android.os.*
-import android.util.Log
 import android.view.KeyEvent
 import android.view.Window
 import android.view.WindowManager
@@ -126,7 +124,6 @@ class DemoSearchingUserActivity : AppCompatActivity() {
         }
 
         override fun onNoUserFound() {
-            Log.d("Manjul", "onNoUserFound() called")
             showToast(getString(R.string.did_not_answer_message))
             timer?.cancel()
             this@DemoSearchingUserActivity.finishAndRemoveTask()
@@ -184,7 +181,6 @@ class DemoSearchingUserActivity : AppCompatActivity() {
 
     private fun addObserver() {
         viewModel.apiCallStatusLiveData.observe(this, {
-            Log.e("Manjul", "addObserver: $it", )
             if (ApiCallStatus.FAILED == it || ApiCallStatus.FAILED_PERMANENT == it) {
                 showToast(getString(R.string.did_not_answer_message))
                 finishAndRemoveTask()
@@ -267,7 +263,6 @@ class DemoSearchingUserActivity : AppCompatActivity() {
     }
 
     private fun initApiForSearchUser() {
-        Log.d("Manjul", "initApiForSearchUser() called with: topicId = $topicId")
             viewModel.getUserForTalk(courseId, topicId, null, ::callback,true)
     }
 

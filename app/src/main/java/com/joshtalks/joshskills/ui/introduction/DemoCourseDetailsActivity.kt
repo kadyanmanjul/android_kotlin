@@ -48,14 +48,12 @@ import com.joshtalks.joshskills.repository.server.course_detail.AboutJosh
 import com.joshtalks.joshskills.repository.server.course_detail.Card
 import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.repository.server.course_detail.demoCourseDetails.CourseAToZResponse
-import com.joshtalks.joshskills.repository.server.course_detail.demoCourseDetails.DemoLesson2Response
 import com.joshtalks.joshskills.repository.server.course_detail.demoCourseDetails.FactsResponse
 import com.joshtalks.joshskills.repository.server.course_detail.demoCourseDetails.SuperStarResponse
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsViewModel
 import com.joshtalks.joshskills.ui.course_details.viewholder.AboutJoshViewHolder
 import com.joshtalks.joshskills.ui.course_details.viewholder.CourseDetailsBaseCell
 import com.joshtalks.joshskills.ui.demo_course_details.view_holders.CourseA2ZViewHolder
-import com.joshtalks.joshskills.ui.demo_course_details.view_holders.DemoLesson2ViewHolder
 import com.joshtalks.joshskills.ui.demo_course_details.view_holders.DemoTitleCardsViewHolder
 import com.joshtalks.joshskills.ui.demo_course_details.view_holders.SuperStarViewHolder
 import com.joshtalks.joshskills.ui.leaderboard.EmptyItemViewHolder
@@ -210,7 +208,7 @@ class DemoCourseDetailsActivity : BaseActivity() {
             if (isLessonCompleted) {
                 binding.placeHolderView.allViewResolvers.let {
                     it.forEachIndexed { index, view ->
-                        if (view is DemoLesson2ViewHolder) {
+                        if (view is CourseA2ZViewHolder) {
                             view.changeTextToCompleted(isLessonCompleted)
                             AppObjectController.uiHandler.postDelayed({
                                 binding.placeHolderView.refreshView(index)
@@ -259,21 +257,10 @@ class DemoCourseDetailsActivity : BaseActivity() {
                     card.data.toString(),
                     CourseAToZResponse::class.java
                 )
-                return CourseA2ZViewHolder(
-                    card.cardType,
-                    card.sequenceNumber,
-                    data,
-                    this
-                )
-            }
-            CardType.DEMO_LESSON_2 -> {
-                val data = AppObjectController.gsonMapperForLocal.fromJson(
-                    card.data.toString(),
-                    DemoLesson2Response::class.java
-                )
+
                 lessonId = data.lessonId ?: 0
                 lessonViewModel.getLesson(lessonId)
-                return DemoLesson2ViewHolder(
+                return CourseA2ZViewHolder(
                     card.cardType,
                     card.sequenceNumber,
                     data,

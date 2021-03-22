@@ -7,13 +7,13 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.DEMO_LESSON_NUMBER
 import com.joshtalks.joshskills.core.DEMO_LESSON_TOPIC_ID
 import com.joshtalks.joshskills.core.EMPTY
@@ -28,6 +28,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.eventbus.StartDemoSpeakingLessonEventBus
+import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -40,7 +41,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class IntroductionActivity : AppCompatActivity() {
+class IntroductionActivity : BaseActivity() {
 
     private lateinit var binding: IntroLayoutBinding
     private val compositeDisposable = CompositeDisposable()
@@ -83,7 +84,51 @@ class IntroductionActivity : AppCompatActivity() {
             DataBindingUtil.setContentView(this, R.layout.intro_layout)
         binding.lifecycleOwner = this
         binding.handler = this
+        showProgressBar()
+        lastPosition = PrefManager.getIntValue(INTRODUCTION_LAST_POSITION)
+        binding.continueBtn.setOnClickListener {
+            PrefManager.put(INTRODUCTION_IS_CONTINUE_CLICKED, true)
+            showPaymentProcessingFragment()
+        }
+        binding.nextBtn.setOnClickListener {
+            binding.lessonViewpager.currentItem = binding.lessonViewpager.currentItem.plus(1)
+        }
+        addObservers()
+        if (PrefManager.getBoolValue(
+                INTRODUCTION_IS_CONTINUE_CLICKED,
+                defValue = false
+            ) || PrefManager.getBoolValue(INTRODUCTION_START_NOW_CLICKED)
+        ) {
+            showPaymentProcessingFragment()
+            hideProgressBar()
+
+        } else {
+            viewModel.getDemoOnBoardingData()
+        }
+    }
+
+    private fun addObservers() {
+        viewModel.lessonQuestionsLiveData.observe(this, {
+            it.get(0).title
+            val spQuestion = it.filter { it.chatType == CHAT_TYPE.SP }.getOrNull(0)
+            spQuestion?.topicId?.let {
+                PrefManager.put(DEMO_LESSON_TOPIC_ID, it)
+                PrefManager.put(DEMO_LESSON_NUMBER, viewModel.demoLessonNoLiveData.value ?: 0)
+                addRequesting(it)
+            }
+        })
+
+        viewModel.demoOnboardingData.observe(this, {
+            it?.let { data ->
+                hideProgressBar()
+                initViewPager(data)
+            }
+        })
+    }
+
+    private fun initViewPager(data: DemoOnboardingData) {
         val adapter = IntroAdapter(
+            data,
             supportFragmentManager, this.lifecycle
         )
         binding.fragmentContainer.systemUiVisibility = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
@@ -92,7 +137,6 @@ class IntroductionActivity : AppCompatActivity() {
         binding.lessonViewpager.adapter = adapter
         binding.lessonViewpager.requestTransparentRegion(binding.lessonViewpager)
         binding.wormDotsIndicator.attachToPager(binding.lessonViewpager)
-        lastPosition = PrefManager.getIntValue(INTRODUCTION_LAST_POSITION)
         binding.lessonViewpager.currentItem = lastPosition
         binding.lessonViewpager.setPageTransformer(MarginPageTransformer(Utils.dpToPx(40)))
 
@@ -108,32 +152,6 @@ class IntroductionActivity : AppCompatActivity() {
                     binding.continueBtn.visibility = View.GONE
                     binding.nextBtn.visibility = View.VISIBLE
                 }
-            }
-        })
-        binding.continueBtn.setOnClickListener {
-            PrefManager.put(INTRODUCTION_IS_CONTINUE_CLICKED, true)
-            showPaymentProcessingFragment()
-        }
-        binding.nextBtn.setOnClickListener {
-            binding.lessonViewpager.currentItem = binding.lessonViewpager.currentItem.plus(1)
-        }
-        addObservers()
-        if (PrefManager.getBoolValue(
-                INTRODUCTION_IS_CONTINUE_CLICKED,
-                defValue = false
-            ) || PrefManager.getBoolValue(INTRODUCTION_START_NOW_CLICKED)
-        )
-            showPaymentProcessingFragment()
-    }
-
-    private fun addObservers() {
-        viewModel.lessonQuestionsLiveData.observe(this, {
-            it.get(0).title
-            val spQuestion = it.filter { it.chatType == CHAT_TYPE.SP }.getOrNull(0)
-            spQuestion?.topicId?.let {
-                PrefManager.put(DEMO_LESSON_TOPIC_ID, it)
-                PrefManager.put(DEMO_LESSON_NUMBER, viewModel.demoLessonNoLiveData.value ?: 0)
-                addRequesting(it)
             }
         })
     }
@@ -253,26 +271,6 @@ class IntroductionActivity : AppCompatActivity() {
             courseId = EMPTY,
             topicId = topicId.toInt(),
             topicName = EMPTY
-        )
-    }
-
-    enum class Content(val text: String, val drawable: Int) {
-        FIRST(
-            "रोज़ाना इंग्लिश बोलो और " +
-                    "अपना माहौल खुद बनाओ", R.drawable.intro_page1
-        ),
-        SECOND(
-            "नए शब्द सीखो और उनका एस्टमाल करके तरक़्क़ी करो",
-            R.drawable.intro_page2
-        ),
-        THIRD(
-            "सही कान्सेप्ट्स समझो अपने बड़े भैया Vedant Sir से",
-            R.drawable.intro_page3
-        ),
-        FOURTH(
-            "प्रैक्टिस करके अपने माता पिता का नाम रोशन करो और बनो \n" +
-                    "Student of the Month",
-            R.drawable.intro_page4
         )
     }
 }

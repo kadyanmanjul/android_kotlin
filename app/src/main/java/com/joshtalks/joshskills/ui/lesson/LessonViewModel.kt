@@ -35,6 +35,7 @@ import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
 import com.joshtalks.joshskills.repository.server.engage.Graph
+import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.util.AudioRecording
@@ -68,6 +69,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val speakingTopicLiveData: MutableLiveData<SpeakingTopic?> = MutableLiveData()
     val updatedLessonResponseLiveData: MutableLiveData<UpdateLessonResponse> = MutableLiveData()
     val demoLessonNoLiveData: MutableLiveData<Int> = MutableLiveData()
+    val demoOnboardingData: MutableLiveData<DemoOnboardingData> = MutableLiveData()
 
     fun getLesson(lessonId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -645,21 +647,38 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+
     fun getDemoLesson() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = AppObjectController.chatNetworkService.getDemoLessonModel()
+                if (response != null) {
                     response.chatId = ""
                     demoLessonNoLiveData.postValue(response.lessonNo)
                     val lesson = appDatabase.lessonDao().getLesson(response.id)
                     if (lesson == null) {
                         appDatabase.lessonDao().insertSingleItem(response)
-                        // demoLessonIdLiveData.postValue(response.id)
+                        //demoLessonIdLiveData.postValue(response.id)
                     }
                     getQuestions(response.id, false)
+                }
             } catch (ex: Throwable) {
                 Timber.e(ex)
             }
         }
     }
+
+    fun getDemoOnBoardingData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = AppObjectController.chatNetworkService.getDemoOnBoardingData()
+                if (response.isSuccessful && response.body() != null) {
+                    demoOnboardingData.postValue(response.body())
+                }
+            } catch (ex: Throwable) {
+                Timber.e(ex)
+            }
+        }
+    }
+
 }

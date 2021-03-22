@@ -25,8 +25,8 @@
             android:gravity="center_horizontal"
             android:text="@string/vocabulary_completed"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-            android:textSize="@dimen/_19ssp"
             android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/_18ssp"
             app:layout_constraintBottom_toTopOf="@id/image"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -43,6 +43,31 @@
             app:layout_constraintHeight_percent="0.72"
             app:layout_constraintStart_toStartOf="parent"
             tools:srcCompat="@drawable/josh_skill_logo_hindi" />
+
+        <FrameLayout
+            android:id="@+id/playBtnContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            app:layout_constraintBottom_toBottomOf="@id/image"
+            app:layout_constraintEnd_toEndOf="@id/image"
+            app:layout_constraintStart_toStartOf="@id/image"
+            android:padding="@dimen/_12sdp"
+            android:background="@drawable/circle2"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:backgroundTint="#80FFFFFF"
+            app:layout_constraintTop_toTopOf="@id/image">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/playIcon"
+                android:layout_width="@dimen/_11sdp"
+                android:layout_height="@dimen/_14sdp"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/ic_play_24dp"
+                app:tint="@color/white"
+                tools:visibility="visible" />
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
