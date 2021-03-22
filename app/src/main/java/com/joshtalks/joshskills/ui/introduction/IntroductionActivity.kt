@@ -84,7 +84,6 @@ class IntroductionActivity : BaseActivity() {
             DataBindingUtil.setContentView(this, R.layout.intro_layout)
         binding.lifecycleOwner = this
         binding.handler = this
-        showProgressBar()
         lastPosition = PrefManager.getIntValue(INTRODUCTION_LAST_POSITION)
         binding.continueBtn.setOnClickListener {
             PrefManager.put(INTRODUCTION_IS_CONTINUE_CLICKED, true)
@@ -100,9 +99,8 @@ class IntroductionActivity : BaseActivity() {
             ) || PrefManager.getBoolValue(INTRODUCTION_START_NOW_CLICKED)
         ) {
             showPaymentProcessingFragment()
-            hideProgressBar()
-
         } else {
+            showProgressBar()
             viewModel.getDemoOnBoardingData()
         }
     }
@@ -120,9 +118,12 @@ class IntroductionActivity : BaseActivity() {
 
         viewModel.demoOnboardingData.observe(this, {
             it?.let { data ->
-                hideProgressBar()
                 initViewPager(data)
             }
+        })
+
+        viewModel.apiStatus.observe(this, {
+            hideProgressBar()
         })
     }
 

@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.AppObjectController.Companion.appDatabase
 import com.joshtalks.joshskills.core.EMPTY
@@ -70,6 +71,8 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val updatedLessonResponseLiveData: MutableLiveData<UpdateLessonResponse> = MutableLiveData()
     val demoLessonNoLiveData: MutableLiveData<Int> = MutableLiveData()
     val demoOnboardingData: MutableLiveData<DemoOnboardingData> = MutableLiveData()
+    val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
+
 
     fun getLesson(lessonId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -673,9 +676,11 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val response = AppObjectController.chatNetworkService.getDemoOnBoardingData()
                 if (response.isSuccessful && response.body() != null) {
+                    apiStatus.postValue(ApiCallStatus.SUCCESS)
                     demoOnboardingData.postValue(response.body())
                 }
             } catch (ex: Throwable) {
+                apiStatus.postValue(ApiCallStatus.FAILED)
                 Timber.e(ex)
             }
         }
