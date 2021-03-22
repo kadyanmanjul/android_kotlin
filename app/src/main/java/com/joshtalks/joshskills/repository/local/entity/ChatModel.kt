@@ -105,8 +105,11 @@ data class ChatModel(
     var lastUseTime: Date? = null,
 
     @ColumnInfo(name = "award_mentor_id")
-    @SerializedName("award_mentor_id")
     var awardMentorId: Int = 0,
+
+    @ColumnInfo(name = "award_user_id")
+    @SerializedName("award_user_id")
+    var awardUserId: Int? = null,
 
     @Ignore
     @SerializedName("award_mentor")

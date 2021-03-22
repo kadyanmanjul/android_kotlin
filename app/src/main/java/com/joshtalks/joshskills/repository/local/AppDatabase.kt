@@ -96,10 +96,10 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         FeedbackEngageModel::class, NPSEventModel::class, Assessment::class, AssessmentQuestion::class,
         Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class,
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class,
-        PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class ,
+        PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class
     ],
-    version = 30,
+    version = 31,
     exportSchema = true
 )
 @TypeConverters(
@@ -174,9 +174,10 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_25_26,
                                 MIGRATION_26_27,
                                 MIGRATION_27_28,
-                                MIGRATION_28_29
+                                MIGRATION_28_29,
+                                MIGRATION_30_31
                             )
-                              .fallbackToDestructiveMigration()
+                            .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
                             .setJournalMode(JournalMode.WRITE_AHEAD_LOGGING)
                             .build()
@@ -447,9 +448,15 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("UPDATE chat_table SET is_seen =1")
                 //Db migration for course id
                 database.execSQL("CREATE TABLE IF NOT EXISTS `RecentSearch` (`keyword` TEXT PRIMARY KEY NOT NULL)")
-
             }
         }
+        private val MIGRATION_30_31: Migration = object : Migration(30, 31) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE chat_table ADD COLUMN `award_user_id` INTEGER")
+                database.execSQL("UPDATE chat_table SET award_user_id= award_mentor_id ")
+            }
+        }
+
 
         fun clearDatabase() {
             INSTANCE?.clearAllTables()

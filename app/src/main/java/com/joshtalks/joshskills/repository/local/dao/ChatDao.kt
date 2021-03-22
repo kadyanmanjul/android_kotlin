@@ -399,11 +399,9 @@ interface ChatDao {
 
     private fun getAwardMentor(chatModel: ChatModel): AwardMentorModel? {
         //Add Award
-        if (chatModel.awardMentorId > 0) {
-            return AppObjectController.appDatabase.awardMentorModelDao()
-                .getAwardMentorModel(chatModel.awardMentorId)
+        return chatModel.awardUserId?.let {
+            AppObjectController.appDatabase.awardMentorModelDao().getAwardMentorModel(it)
         }
-        return null
     }
 
     private fun getLesson(chatModel: ChatModel): LessonModel? {
