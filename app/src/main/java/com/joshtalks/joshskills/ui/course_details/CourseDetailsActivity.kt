@@ -243,6 +243,8 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                         AnalyticsEvent.SHOWN_COURSE_PRICE.NAME,
                         data.paymentData.discountedAmount
                     )
+            } else {
+                binding.txtExtraHint.visibility=View.GONE
             }
             if (data.version.isNotBlank()) {
                 appAnalytics.addParam(VERSION, PrefManager.getStringValue(VERSION))
