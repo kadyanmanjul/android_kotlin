@@ -454,9 +454,9 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE chat_table ADD COLUMN `award_user_id` INTEGER")
                 database.execSQL("UPDATE chat_table SET award_user_id= award_mentor_id ")
+                database.execSQL("UPDATE chat_table SET award_mentor_id= 0 ")
             }
         }
-
 
         fun clearDatabase() {
             INSTANCE?.clearAllTables()
