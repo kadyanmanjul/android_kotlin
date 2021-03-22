@@ -140,6 +140,11 @@ class WebRtcActivity : AppCompatActivity() {
         override fun onNetworkReconnect() {
             super.onNetworkReconnect()
             Timber.tag(TAG).e("onNetworkReconnect")
+            val isCallerJoin = mBoundService?.isCallerJoin ?: false
+            if (isCallerJoin.not()){
+                return
+            }
+
             AppObjectController.uiHandler.postDelayed({
                 // binding.connectionLost.text = EMPTY
                 binding.connectionLost.visibility = View.GONE
@@ -378,7 +383,7 @@ class WebRtcActivity : AppCompatActivity() {
         val callConnected = mBoundService?.isCallerJoin ?: false
         val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
         callType?.run {
-            if ((CallType.FAVORITE_MISSED_CALL == this || CallType.OUTGOING == this)) {
+            if (CallType.FAVORITE_MISSED_CALL == this || CallType.OUTGOING == this) {
                 if (callConnected && isCallFavoritePP()) {
                     binding.callStatus.text = getText(R.string.pp_connected)
                     return@run

@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.*
@@ -55,11 +54,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private var popupMenu: PopupMenu? = null
     private var compositeDisposable = CompositeDisposable()
     private lateinit var findMoreLayout: View
-    lateinit var countdown_timer: CountDownTimer
-    var isRunning: Boolean = false
     var isPermissionRequired: Boolean = true
-    var time_in_milli_seconds = 0L
-    var expiryToolText: String = EMPTY
     private val courseListSet: MutableSet<InboxEntity> = hashSetOf()
     private val inboxAdapter: InboxAdapter by lazy { InboxAdapter(this,this) }
 

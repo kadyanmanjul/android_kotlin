@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.core.urlToBitmap
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.ui.voip.CALL_TYPE
+import com.joshtalks.joshskills.ui.voip.CALL_USER_OBJ
 import com.joshtalks.joshskills.ui.voip.RTC_IS_FAVORITE
 import com.joshtalks.joshskills.ui.voip.RTC_PARTNER_ID
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
@@ -45,10 +46,14 @@ class NotificationUtil(val context: Context) {
                     ?: return@submit
             removeNotification(id.hashCode())
 
+            val data = HashMap<String, String?>().apply {
+                put(RTC_IS_FAVORITE, "true")
+            }
+
             val intent = Intent(context, WebRtcActivity::class.java).apply {
                 putExtra(RTC_PARTNER_ID, id)
                 putExtra(CALL_TYPE, CallType.FAVORITE_MISSED_CALL)
-                putExtra(RTC_IS_FAVORITE, "true")
+                putExtra(CALL_USER_OBJ, data)
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
