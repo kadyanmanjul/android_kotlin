@@ -304,7 +304,11 @@ class DemoCourseDetailsActivity : BaseActivity() {
                     dayWiseActivityListener.launch(
                         LessonActivity.getActivityIntent(
                             this,
-                            it.lessonId
+                            it.lessonId,
+                            isDemo = true,
+                            viewModel.demoCourseDetailsLiveData.value?.paymentData?.whatsappUrl,
+                            viewModel.demoCourseDetailsLiveData.value?.paymentData?.testId
+
                         )
                     )
                 }
@@ -314,7 +318,6 @@ class DemoCourseDetailsActivity : BaseActivity() {
     fun buyCourse() {
         viewModel.demoCourseDetailsLiveData.value?.paymentData?.let {
             PaymentSummaryActivity.startPaymentSummaryActivity(this, it.testId.toString())
-
         }
     }
 

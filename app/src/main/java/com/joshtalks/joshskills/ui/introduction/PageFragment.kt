@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.extension.setRoundImageInOnbaordingView
+import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.IntroFragmentLayout1Binding
 import com.joshtalks.joshskills.repository.server.introduction.Screen
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
@@ -39,7 +39,8 @@ class PageFragment : Fragment() {
         screen?.let { screen ->
             binding.text.text = screen.text
             screen.imageUrl?.let {
-                binding.image.setRoundImageInOnbaordingView(it)
+                //binding.image.setRoundImageInOnbaordingView(it)
+                binding.image.setImage(it)
             }
             if (screen.videoUrl.isNullOrBlank()) {
                 binding.playBtnContainer.visibility = View.GONE

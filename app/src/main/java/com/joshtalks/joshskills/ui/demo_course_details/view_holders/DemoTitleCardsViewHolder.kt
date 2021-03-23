@@ -43,6 +43,9 @@ class DemoTitleCardsViewHolder(
     @com.mindorks.placeholderview.annotations.View(R.id.image)
     lateinit var image: AppCompatImageView
 
+    @com.mindorks.placeholderview.annotations.View(R.id.image2)
+    lateinit var image2: AppCompatImageView
+
     @com.mindorks.placeholderview.annotations.View(R.id.text)
     lateinit var text: JoshTextView
 
@@ -84,7 +87,12 @@ class DemoTitleCardsViewHolder(
                             words.size.minus(1),
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                         )
-                        sBuilder.setSpan(typefaceSpan, 0, words.size.minus(1), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        sBuilder.setSpan(
+                            typefaceSpan,
+                            0,
+                            words.size.minus(1),
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
                         text.setText(sBuilder, TextView.BufferType.SPANNABLE)
                     } else {
                         ratingCard.visibility = View.GONE
@@ -95,7 +103,7 @@ class DemoTitleCardsViewHolder(
                         sBuilder2.clear()
                         countCard.visibility = View.VISIBLE
                         sBuilder2.append(facts.text)
-
+                        facts.imageUrl?.let { image2.setImage(it, context) }
                         val words = sBuilder2.split(" ")
                         sBuilder2.setSpan(
                             ForegroundColorSpan(
@@ -109,10 +117,15 @@ class DemoTitleCardsViewHolder(
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                         )
 
-                        sBuilder2.setSpan(typefaceSpan, 0, words.size, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        sBuilder2.setSpan(
+                            typefaceSpan,
+                            0,
+                            words.size,
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
                         text2.setText(sBuilder2, TextView.BufferType.SPANNABLE)
 
-                       // text2.text = HtmlCompat.fromHtml(facts.text.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
+                        // text2.text = HtmlCompat.fromHtml(facts.text.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
                     } else {
                         countCard.visibility = View.GONE
                     }

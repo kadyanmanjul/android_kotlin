@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -49,10 +50,82 @@
             android:id="@+id/lesson_viewpager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/buy_course_ll"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lesson_tab_layout" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/buy_course_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:cardElevation="@dimen/_6sdp"
+            app:layout_anchorGravity="bottom"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="visible">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:paddingVertical="@dimen/_4sdp">
+
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/talk_to_c"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rectangle_with_blue_bound_stroke_corner_8dp"
+                    android:backgroundTint="#C1C1C1"
+                    android:gravity="center"
+                    android:lines="2"
+                    android:onClick="@{()->viewbinding.openWhatsapp()}"
+                    android:paddingVertical="@dimen/_4sdp"
+                    android:text="Talk to Counsellor"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                    android:textColor="#636363"
+                    android:textSize="@dimen/_12ssp"
+                    app:cornerRadius="@dimen/_76sdp"
+                    app:layout_constraintBottom_toBottomOf="@+id/btn_start_course"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_start_course"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_chainStyle="spread"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/btn_start_course"
+                    app:layout_constraintWidth_percent="0.39" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/btn_start_course"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rectangle_with_blue_bound_stroke_corner_8dp"
+                    android:backgroundTint="@color/button_color"
+                    android:gravity="center"
+                    android:onClick="@{()->viewbinding.buyCourse()}"
+                    android:paddingVertical="@dimen/_10sdp"
+                    android:text="@string/buy_course"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_16ssp"
+                    app:cornerRadius="@dimen/_32sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/talk_to_c"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.56" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
 
         <com.pnikosis.materialishprogress.ProgressWheel
             android:id="@+id/progress_view"

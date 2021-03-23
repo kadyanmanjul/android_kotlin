@@ -31,7 +31,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title"
-        app:layout_constraintWidth_percent="0.48">
+        app:layout_constraintWidth_percent="0.45">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -57,7 +57,6 @@
                 android:layout_marginEnd="@dimen/_6sdp"
                 android:gravity="start"
                 android:minLines="2"
-                android:padding="@dimen/_1sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                 android:textColor="#969696"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -84,24 +83,21 @@
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toEndOf="@id/rating_card"
         app:layout_constraintTop_toBottomOf="@id/title"
-        app:layout_constraintWidth_percent="0.48">
+        app:layout_constraintWidth_percent="0.47">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <androidx.appcompat.widget.AppCompatImageView
-
                 android:id="@+id/image2"
-                android:layout_width="@dimen/_6sdp"
-                android:layout_height="@dimen/_10sdp"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
                 android:layout_marginVertical="@dimen/_10sdp"
                 android:layout_marginStart="@dimen/_6sdp"
-                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_start_eye_emoji"
                 tools:srcCompat="@drawable/ic_start_eye_emoji" />
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
@@ -113,7 +109,6 @@
                 android:layout_marginEnd="@dimen/_6sdp"
                 android:gravity="start"
                 android:minLines="2"
-                android:padding="@dimen/_1sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                 android:textColor="#969696"
                 app:layout_constraintBottom_toBottomOf="parent"

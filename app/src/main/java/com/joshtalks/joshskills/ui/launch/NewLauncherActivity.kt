@@ -63,9 +63,9 @@ class NewLauncherActivity : CoreJoshActivity() {
     }
 
     private fun animatedLogo() {
-        ObjectAnimator.ofFloat(binding.imageView, View.ALPHA, 1f, 0f).setDuration(5000).start();
-        ObjectAnimator.ofFloat(binding.retry, View.ALPHA, 1f, 0f).setDuration(5000).start();
-        ObjectAnimator.ofFloat(binding.textTv, View.ALPHA, 1f, 0f).setDuration(5000).start();
+        ObjectAnimator.ofFloat(binding.imageView, View.ALPHA, 1f, 0f).setDuration(2000).start();
+        ObjectAnimator.ofFloat(binding.retry, View.ALPHA, 1f, 0f).setDuration(2000).start();
+        ObjectAnimator.ofFloat(binding.textTv, View.ALPHA, 1f, 0f).setDuration(2000).start();
     }
 
     private fun analyzeAppRequirement() {
@@ -157,7 +157,7 @@ class NewLauncherActivity : CoreJoshActivity() {
             val intent = getIntentForState()
             startActivity(intent)
             this@NewLauncherActivity.finishAndRemoveTask()
-        }, 3000)
+        }, 2000)
     }
 
     private fun logInstallByReferralEvent(
