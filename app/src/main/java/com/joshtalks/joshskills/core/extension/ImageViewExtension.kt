@@ -174,6 +174,17 @@ fun AppCompatImageView.setImageInLessonView(
         setShimmer(shimmer)
     }*/
 
+    val multi = MultiTransformation(RoundedCornersTransformation(Utils.dpToPx(16), 0))
+    Glide.with(context)
+        .load(url)
+        .override(Target.SIZE_ORIGINAL)
+        .optionalTransform(
+            WebpDrawable::class.java,
+            WebpDrawableTransformation(CircleCrop())
+        )
+        .apply(RequestOptions.bitmapTransform(multi))
+        .into(this)
+
     val requestOptions = RequestOptions().placeholder(placeholderImage)
             .format(DecodeFormat.PREFER_RGB_565)
             .disallowHardwareConfig().dontAnimate().encodeQuality(75)
@@ -187,6 +198,34 @@ fun AppCompatImageView.setImageInLessonView(
         .apply(
             requestOptions
         )
+        //.fitCenter()
+        .diskCacheStrategy(DiskCacheStrategy.ALL)
+        .into(this)
+}
+
+
+fun AppCompatImageView.setRoundImageInOnbaordingView(
+    url: String,
+    callback: Runnable? = null,
+    placeholderImage: Int = R.drawable.lesson_placeholder,
+    context: Context = AppObjectController.joshApplication
+) {
+
+    val multi = MultiTransformation(RoundedCornersTransformation(Utils.dpToPx(16), 0))
+    val requestOptions = RequestOptions().placeholder(placeholderImage)
+            .format(DecodeFormat.PREFER_RGB_565)
+            .disallowHardwareConfig().dontAnimate().encodeQuality(75)
+    Glide.with(context)
+        .load(url)
+        .override(Target.SIZE_ORIGINAL)
+        .optionalTransform(
+            WebpDrawable::class.java,
+            WebpDrawableTransformation(CircleCrop())
+        )
+        .apply(
+            requestOptions
+        )
+        .apply(RequestOptions.bitmapTransform(multi))
         //.fitCenter()
         .diskCacheStrategy(DiskCacheStrategy.ALL)
         .into(this)

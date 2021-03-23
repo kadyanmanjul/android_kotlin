@@ -7,14 +7,14 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.setImage
+import com.joshtalks.joshskills.core.extension.setRoundImageInOnbaordingView
 import com.joshtalks.joshskills.databinding.IntroFragmentLayout1Binding
 import com.joshtalks.joshskills.repository.server.introduction.Screen
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 
 class PageFragment : Fragment() {
     private lateinit var binding: IntroFragmentLayout1Binding
-    private var screen :Screen?=null
+    private var screen: Screen? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,15 +36,15 @@ class PageFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        screen?.let { screen->
+        screen?.let { screen ->
             binding.text.text = screen.text
             screen.imageUrl?.let {
-                binding.image.setImage(it)
+                binding.image.setRoundImageInOnbaordingView(it)
             }
-            if (screen.videoUrl.isNullOrBlank()){
-                binding.playBtnContainer.visibility=View.GONE
+            if (screen.videoUrl.isNullOrBlank()) {
+                binding.playBtnContainer.visibility = View.GONE
             } else {
-                binding.playBtnContainer.visibility=View.VISIBLE
+                binding.playBtnContainer.visibility = View.VISIBLE
                 binding.playBtnContainer.setOnClickListener {
                     VideoPlayerActivity.startVideoActivity(
                         requireActivity(),
