@@ -1,6 +1,6 @@
 package com.joshtalks.joshskills.repository.local
 
-//import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementDao
+// import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementDao
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
@@ -85,7 +85,6 @@ import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopicDao
 import java.util.Collections
 import java.util.Date
-
 
 const val DATABASE_NAME = "JoshEnglishDB.db"
 
@@ -188,7 +187,6 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         private val sRoomDatabaseCallback = object : RoomDatabase.Callback() {
-
         }
 
         private val MIGRATION_1_2: Migration = object : Migration(1, 2) {
@@ -260,7 +258,6 @@ abstract class AppDatabase : RoomDatabase() {
                         PrefManager.removeKey(key)
                     }
                     cursor.close()
-
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                 }
@@ -330,17 +327,14 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("CREATE INDEX IF NOT EXISTS `index_assessment_choice_questionId` ON `assessment_choice` (`questionId`)")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_choice_remoteId` ON `assessment_choice` (`remoteId`)")
 
-
                 database.execSQL("CREATE TABLE IF NOT EXISTS `assessment_revise_concept` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `questionId` INTEGER NOT NULL, `heading` TEXT NOT NULL, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `mediaUrl` TEXT NOT NULL, `mediaType` TEXT NOT NULL, `videoThumbnailUrl` TEXT, FOREIGN KEY(`questionId`) REFERENCES `assessment_questions`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE )")
                 database.execSQL("CREATE INDEX IF NOT EXISTS `index_assessment_revise_concept_questionId` ON `assessment_revise_concept` (`questionId`)")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_revise_concept_localId` ON `assessment_revise_concept` (`localId`)")
-
 
                 database.execSQL("CREATE TABLE IF NOT EXISTS `assessment_intro` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `type` TEXT NOT NULL, `assessmentId` INTEGER NOT NULL, `title` TEXT, `description` TEXT, `imageUrl` TEXT, FOREIGN KEY(`assessmentId`) REFERENCES `assessments`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE )")
                 database.execSQL("CREATE INDEX IF NOT EXISTS `index_assessment_intro_assessmentId` ON `assessment_intro` (`assessmentId`)")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_intro_localId` ON `assessment_intro` (`localId`)")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_intro_type` ON `assessment_intro` (`type`)")
-
             }
         }
 
@@ -384,7 +378,6 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE question_table ADD COLUMN certificate_exam_id INTEGER")
                 database.execSQL("ALTER TABLE question_table ADD COLUMN topic_id TEXT ")
 
-
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN cexam_attemptLeft INTEGER")
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN cexam_attemptOn TEXT")
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN cexam_attempted INTEGER")
@@ -410,13 +403,11 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `speakingStatus` TEXT")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `pending_task_table` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `request_object` TEXT NOT NULL, `type` TEXT NOT NULL, `retry_count` INTEGER NOT NULL)")
             }
-
         }
         private val MIGRATION_24_25: Migration = object : Migration(24, 25) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE `question_table` ADD COLUMN `vp_sort_order` INTEGER NOT NULL DEFAULT -1")
             }
-
         }
         private val MIGRATION_25_26: Migration = object : Migration(25, 26) {
             override fun migrate(database: SupportSQLiteDatabase) {
@@ -433,20 +424,18 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("DROP TABLE app_usage")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `app_usage` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `created` INTEGER NOT NULL, `usage_time` INTEGER NOT NULL)")
                 database.execSQL("ALTER TABLE `awardmentormodel` ADD COLUMN mentor_id TEXT")
-
             }
         }
         private val MIGRATION_27_28: Migration = object : Migration(27, 28) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE `awardmentormodel` ADD COLUMN award_type TEXT NOT NULL DEFAULT 'SOTD'")
                 database.execSQL("ALTER TABLE `awardmentormodel` ADD COLUMN date_text TEXT")
-
             }
         }
         private val MIGRATION_28_29: Migration = object : Migration(28, 29) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("UPDATE chat_table SET is_seen =1")
-                //Db migration for course id
+                // Db migration for course id
                 database.execSQL("CREATE TABLE IF NOT EXISTS `RecentSearch` (`keyword` TEXT PRIMARY KEY NOT NULL)")
             }
         }
@@ -455,6 +444,7 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE chat_table ADD COLUMN `award_user_id` INTEGER")
                 database.execSQL("UPDATE chat_table SET award_user_id= award_mentor_id ")
                 database.execSQL("UPDATE chat_table SET award_mentor_id= 0 ")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `favorite_caller` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `photo_url` TEXT, `minutes_spoken` INTEGER NOT NULL, `total_calls` INTEGER NOT NULL, `last_called_at` INTEGER NOT NULL, `is_deleted` INTEGER NOT NULL, PRIMARY KEY(`id`))")
             }
         }
 
@@ -473,10 +463,7 @@ abstract class AppDatabase : RoomDatabase() {
                 ex.printStackTrace()
             }
             return false
-
-
         }
-
     }
 
     abstract fun courseDao(): CourseDao
@@ -496,7 +483,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun speakingTopicDao(): SpeakingTopicDao
     abstract fun recentSearch(): RecentSearchDao
     abstract fun favoriteCallerDao(): FavoriteCallerDao
-
 }
 
 class MessageTypeConverters {
@@ -522,7 +508,6 @@ class MessageTypeConverters {
     }
 }
 
-
 class ConvertersForDownloadStatus {
 
     @TypeConverter
@@ -536,7 +521,6 @@ class ConvertersForDownloadStatus {
         return AppObjectController.gsonMapper.toJson(enumVal)
     }
 }
-
 
 class ConvertersForUser {
 
@@ -568,7 +552,6 @@ class DateConverter {
     }
 }
 
-
 class MessageDeliveryTypeConverter {
     @TypeConverter
     fun fromString(value: String?): MESSAGE_DELIVER_STATUS {
@@ -584,7 +567,6 @@ class MessageDeliveryTypeConverter {
     }
 }
 
-
 class MessageStatusTypeConverters {
     @TypeConverter
     fun fromString(value: String?): MESSAGE_STATUS? {
@@ -599,7 +581,6 @@ class MessageStatusTypeConverters {
         return AppObjectController.gsonMapper.toJson(enumVal)
     }
 }
-
 
 class ExpectedEngageTypeConverter {
     @TypeConverter
@@ -622,7 +603,6 @@ class ExpectedEngageTypeConverter {
     }
 }
 
-
 class ConvertorForEngagement {
     @TypeConverter
     fun fromEngagement(value: List<PracticeEngagement>?): String {
@@ -639,7 +619,6 @@ class ConvertorForEngagement {
         return AppObjectController.gsonMapper.fromJson(value, type)
     }
 }
-
 
 class ConvectorForGraph {
     @TypeConverter
@@ -658,7 +637,6 @@ class ConvectorForGraph {
     }
 }
 
-
 class ConvectorForNPSEvent {
     @TypeConverter
     fun fromNPSEvent(value: NPSEvent): String {
@@ -672,7 +650,6 @@ class ConvectorForNPSEvent {
         return AppObjectController.gsonMapper.fromJson(value, type)
     }
 }
-
 
 class ChatTypeConverters {
     @TypeConverter
@@ -696,7 +673,6 @@ class ChatTypeConverters {
         return AppObjectController.gsonMapper.toJson(CHAT_TYPE.OTHER)
     }
 }
-
 
 class LessonStatus {
     @TypeConverter
@@ -783,7 +759,6 @@ class PendingTaskRequestTypeConverter {
     }
 }
 
-
 class ListConverters {
     @TypeConverter
     fun fromString(value: List<String>?): String {
@@ -800,7 +775,6 @@ class ListConverters {
         return AppObjectController.gsonMapper.fromJson(value, type)
     }
 }
-
 
 class ConvectorForWrongWord {
     @TypeConverter
@@ -826,7 +800,6 @@ class ConvectorForWrongWord {
         }
     }
 }
-
 
 class ConvectorForPhoneticClass {
     @TypeConverter
@@ -886,4 +859,3 @@ class AwardTypeConverter {
         return AppObjectController.gsonMapper.toJson(enumVal)
     }
 }
-

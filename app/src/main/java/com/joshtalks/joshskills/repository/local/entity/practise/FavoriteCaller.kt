@@ -36,7 +36,7 @@ data class FavoriteCaller(
     @SerializedName("total_calls")
     val totalCalls: Int = 0,
 
-   @ColumnInfo(name = "last_called_at")
+    @ColumnInfo(name = "last_called_at")
     @SerializedName("last_called_at")
     val lastCalledAt: Date = Date(),
 
@@ -44,11 +44,10 @@ data class FavoriteCaller(
     @ColumnInfo(name = "is_deleted")
     val isDeleted: Boolean = false,
 
-    ): Parcelable {
+) : Parcelable {
     @Ignore
     @Expose
     var selected: Boolean = false
-
 }
 
 @Dao
@@ -78,10 +77,6 @@ interface FavoriteCallerDao {
     @Query(value = "SELECT COUNT(id) FROM favorite_caller  ")
     suspend fun getCountOfFavoriteCaller(): Long
 
-
     @Query("DELETE FROM  favorite_caller")
     suspend fun removeAllFavorite()
-
-
-
 }
