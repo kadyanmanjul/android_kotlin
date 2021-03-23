@@ -145,75 +145,78 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         isDemo: Boolean = false
     ): List<LessonQuestion> {
         return withContext(viewModelScope.coroutineContext + Dispatchers.IO) {
+            try {
+                var lastSyncTime = LastSyncPrefManager.getStringValue(lessonId.toString())
+                if (lastSyncTime.isBlank()) {
+                    lastSyncTime = "0"
+                }
+                if (isDemo) {
+                    lastSyncTime = "0"
+                }
+                val response = AppObjectController.chatNetworkService.getQuestionsForLesson(
+                    lastSyncTime,
+                    lessonId
+                )
 
-            var lastSyncTime = LastSyncPrefManager.getStringValue(lessonId.toString())
-            if (lastSyncTime.isBlank()) {
-                lastSyncTime = "0"
-            }
-            if (isDemo) {
-                lastSyncTime = "0"
-            }
-            val response = AppObjectController.chatNetworkService.getQuestionsForLesson(
-                lastSyncTime,
-                lessonId
-            )
+                if (response.data.isNullOrEmpty().not()) {
+                    response.data.forEach {
+                        it.questionId = it.id
+                        it.lessonId = lessonId
+                        saveQuestionToDB(it)
+                    }
+                    response.data.maxByOrNull { it.modified }?.let {
+                        LastSyncPrefManager.put(
+                            it.lessonId.toString(),
+                            it.modified.time.div(1000).toString()
+                        )
+                    }
 
-            if (response.data.isNullOrEmpty().not()) {
-                response.data.forEach {
-                    it.questionId = it.id
-                    it.lessonId = lessonId
-                    saveQuestionToDB(it)
-                }
-                response.data.maxByOrNull { it.modified }?.let {
-                    LastSyncPrefManager.put(
-                        it.lessonId.toString(),
-                        it.modified.time.div(1000).toString()
-                    )
-                }
-
-                // Update status in case of newly added questions to an existing lesson
-                val updatedQuestions = getQuestionsFromDB(lessonId)
-                val lesson = getLessonFromDB(lessonId)
-                if (lesson?.grammarStatus == LESSON_STATUS.CO) {
-                    updatedQuestions.filter { it.chatType == CHAT_TYPE.GR }.forEach {
-                        if (it.status == QUESTION_STATUS.NA) {
-                            lesson.grammarStatus = LESSON_STATUS.AT
+                    // Update status in case of newly added questions to an existing lesson
+                    val updatedQuestions = getQuestionsFromDB(lessonId)
+                    val lesson = getLessonFromDB(lessonId)
+                    if (lesson?.grammarStatus == LESSON_STATUS.CO) {
+                        updatedQuestions.filter { it.chatType == CHAT_TYPE.GR }.forEach {
+                            if (it.status == QUESTION_STATUS.NA) {
+                                lesson.grammarStatus = LESSON_STATUS.AT
+                            }
                         }
                     }
-                }
-                if (lesson?.vocabStatus == LESSON_STATUS.CO) {
-                    updatedQuestions.filter { it.chatType == CHAT_TYPE.VP }.forEach {
-                        if (it.status == QUESTION_STATUS.NA) {
-                            lesson.vocabStatus = LESSON_STATUS.AT
+                    if (lesson?.vocabStatus == LESSON_STATUS.CO) {
+                        updatedQuestions.filter { it.chatType == CHAT_TYPE.VP }.forEach {
+                            if (it.status == QUESTION_STATUS.NA) {
+                                lesson.vocabStatus = LESSON_STATUS.AT
+                            }
                         }
                     }
-                }
-                if (lesson?.readingStatus == LESSON_STATUS.CO) {
-                    updatedQuestions.filter { it.chatType == CHAT_TYPE.RP }.forEach {
-                        if (it.status == QUESTION_STATUS.NA) {
-                            lesson.readingStatus = LESSON_STATUS.AT
+                    if (lesson?.readingStatus == LESSON_STATUS.CO) {
+                        updatedQuestions.filter { it.chatType == CHAT_TYPE.RP }.forEach {
+                            if (it.status == QUESTION_STATUS.NA) {
+                                lesson.readingStatus = LESSON_STATUS.AT
+                            }
                         }
                     }
-                }
-                if (lesson?.speakingStatus == LESSON_STATUS.CO) {
-                    updatedQuestions.filter { it.chatType == CHAT_TYPE.SP }.forEach {
-                        if (it.status == QUESTION_STATUS.NA) {
-                            lesson.speakingStatus = LESSON_STATUS.AT
+                    if (lesson?.speakingStatus == LESSON_STATUS.CO) {
+                        updatedQuestions.filter { it.chatType == CHAT_TYPE.SP }.forEach {
+                            if (it.status == QUESTION_STATUS.NA) {
+                                lesson.speakingStatus = LESSON_STATUS.AT
+                            }
                         }
                     }
+                    if (
+                        lesson?.grammarStatus == LESSON_STATUS.AT ||
+                        lesson?.vocabStatus == LESSON_STATUS.AT ||
+                        lesson?.readingStatus == LESSON_STATUS.AT ||
+                        lesson?.speakingStatus == LESSON_STATUS.AT
+                    ) {
+                        lesson.status = LESSON_STATUS.AT
+                    }
+                    lesson?.let {
+                        updateLesson(it)
+                    }
+                    return@withContext updatedQuestions
                 }
-                if (
-                    lesson?.grammarStatus == LESSON_STATUS.AT ||
-                    lesson?.vocabStatus == LESSON_STATUS.AT ||
-                    lesson?.readingStatus == LESSON_STATUS.AT ||
-                    lesson?.speakingStatus == LESSON_STATUS.AT
-                ) {
-                    lesson.status = LESSON_STATUS.AT
-                }
-                lesson?.let {
-                    updateLesson(it)
-                }
-                return@withContext updatedQuestions
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
             }
             return@withContext emptyList<LessonQuestion>()
         }
@@ -250,7 +253,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     pdfType.questionId = question.id
                 }
                 appDatabase.chatDao().insertPdfMessageList(it)
-
             }
             question.videoList?.let {
                 it.listIterator().forEach { videoType ->
@@ -274,10 +276,9 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                             .insertPractise(practiceEngagementV2)
                     }
                 }
-            } catch (ex: Exception) {
+            } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
-
         }
     }
 
@@ -329,14 +330,14 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                //val isFirstAttempt = appDatabase.lessonDao().getAttemptNumber(lessonId) <= 1
+                // val isFirstAttempt = appDatabase.lessonDao().getAttemptNumber(lessonId) <= 1
                 if (isVideoPercentComplete) {
                     val resp = AppObjectController.chatNetworkService.updateQuestionStatus(
                         UpdateQuestionStatus(
                             status = status.name,
                             questionId = questionId,
                             video = isVideoPercentComplete,
-                            //show_leaderboard_animation = isFirstAttempt
+                            // show_leaderboard_animation = isFirstAttempt
                         )
                     )
                     if (resp.isSuccessful && resp.body() != null) {
@@ -357,7 +358,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                                 questionId = questionId,
                                 video = isVideoPercentComplete,
                                 correctQuestions = quizCorrectQuestionIds,
-                                //show_leaderboard_animation = isFirstAttempt
+                                // show_leaderboard_animation = isFirstAttempt
                             )
                         )
                         if (resp.isSuccessful && resp.body() != null) {
@@ -369,8 +370,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         }
                     }
                 }
-
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 e.printStackTrace()
                 return@launch
             }
@@ -482,7 +482,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val response = AppObjectController.chatNetworkService.getSnackBarText(questionId)
                 pointsSnackBarText.postValue(response)
-            }catch (ex:Exception){
+            } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
         }
@@ -498,7 +498,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 AppObjectController.joshApplication,
                 insertedId
             )
-
         }
     }
 
@@ -600,7 +599,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val response = AppObjectController.commonNetworkService.getTopicDetail(topicId)
                 appDatabase.speakingTopicDao().updateTopic(response)
-            } catch (ex: Exception) {
+            } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
             getTopicFromDB(topicId)
@@ -634,7 +633,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-
     fun isFavoriteCallerExist(aFunction: (Boolean) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             delay(150)
@@ -647,25 +645,21 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-
     fun getDemoLesson() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = AppObjectController.chatNetworkService.getDemoLessonModel()
-                if (response != null) {
                     response.chatId = ""
                     demoLessonNoLiveData.postValue(response.lessonNo)
-                    val lesson=appDatabase.lessonDao().getLesson(response.id)
-                    if (lesson==null){
+                    val lesson = appDatabase.lessonDao().getLesson(response.id)
+                    if (lesson == null) {
                         appDatabase.lessonDao().insertSingleItem(response)
-                        //demoLessonIdLiveData.postValue(response.id)
+                        // demoLessonIdLiveData.postValue(response.id)
                     }
-                    getQuestions(response.id,false)
-                }
+                    getQuestions(response.id, false)
             } catch (ex: Throwable) {
                 Timber.e(ex)
             }
         }
     }
-
 }
