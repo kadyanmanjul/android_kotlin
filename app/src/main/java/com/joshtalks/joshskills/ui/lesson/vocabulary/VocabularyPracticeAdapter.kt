@@ -694,6 +694,12 @@ class VocabularyPracticeAdapter(
                         //clickListener.onSeekChange(userSelectedPosition.toLong())
                     }
                 })
+
+            binding.imgPronounce.setOnClickListener {
+                lessonQuestion?.let {
+                    playPronunciationAudio(it, layoutPosition)
+                }
+            }
         }
 
         fun bind(position: Int) {
@@ -787,8 +793,6 @@ class VocabularyPracticeAdapter(
             currentPlayingPosition = position
 
             currentQuestion = lessonQuestion
-            val audioList = java.util.ArrayList<AudioType>()
-            audioList.add(audioObject)
             audioManager?.playerListener = this
             audioManager?.play(audioObject.audio_url)
             audioManager?.setProgressUpdateListener(this)
@@ -893,6 +897,28 @@ class VocabularyPracticeAdapter(
 
         }
 
+        fun playPronunciationAudio(lessonQuestion: LessonQuestion, position: Int) {
+            if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
+                StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
+                    .text(AppObjectController.joshApplication.getString(R.string.volume_up_message))
+                    .cornerRadius(16)
+                    .length(Toast.LENGTH_LONG)
+                    .solidBackground().show()
+            }
+
+            lessonQuestion.sampleAudioUrl?.let { url ->
+                val audioType = AudioType()
+                audioType.audio_url = url
+                audioType.downloadedLocalPath = url
+                audioType.duration =
+                    Utils.getDurationOfMedia(context, url)?.toInt() ?: 0
+                audioType.id = nextInt().toString()
+
+
+                onPlayAudio(lessonQuestion, audioType, position)
+            }
+        }
+
         fun pauseAudio() {
             audioManager?.onPause()
             lessonQuestion?.let {
@@ -907,6 +933,13 @@ class VocabularyPracticeAdapter(
         //============================================================================
         private fun setPracticeInfoView(lessonQuestion: LessonQuestion) {
             val wordNumber = itemList.filter { it.assessmentId == null }.indexOf(lessonQuestion) + 1
+
+            if (lessonQuestion.sampleAudioUrl != null) {
+                binding.layoutPronounce.visibility = VISIBLE
+            } else {
+                binding.layoutPronounce.visibility = GONE
+            }
+
             lessonQuestion.run {
                 binding.practiceTitleTv.text =
                     AppObjectController.joshApplication.getString(

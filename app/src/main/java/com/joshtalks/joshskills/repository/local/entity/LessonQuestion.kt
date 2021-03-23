@@ -123,6 +123,10 @@ data class LessonQuestion(
     @SerializedName("vp_sort_order")
     var vpSortOrder: Int = -1,
 
+    @ColumnInfo(name = "sample_audio_url")
+    @SerializedName("sample_audio_url")
+    var sampleAudioUrl: String? = null,
+
     @ColumnInfo(name = "created")
     @SerializedName("created") var created: Date = Date(),
 

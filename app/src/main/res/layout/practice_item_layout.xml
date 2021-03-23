@@ -166,6 +166,39 @@
 
             </FrameLayout>
 
+            <LinearLayout
+                android:id="@+id/layoutPronounce"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="@dimen/_6sdp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txtPronounce"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="How to pronounce : "
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imgPronounce"
+                    android:layout_width="@dimen/_28sdp"
+                    android:layout_height="@dimen/_28sdp"
+                    android:background="@drawable/recv_bg_mic"
+                    android:backgroundTint="@color/button_color"
+                    android:padding="@dimen/_6sdp"
+                    android:scaleType="fitCenter"
+                    android:tint="@color/white"
+                    app:srcCompat="@drawable/ic_speaker" />
+
+            </LinearLayout>
+
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/info_tv_2"
