@@ -211,7 +211,7 @@ class DemoSearchingUserActivity : AppCompatActivity() {
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(this@DemoSearchingUserActivity)
+                            PermissionUtils.demoCallingPermissionPermanentlyDeniedDialog(this@DemoSearchingUserActivity)
                             return
                         }
                     }

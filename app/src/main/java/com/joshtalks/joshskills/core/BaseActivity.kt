@@ -71,9 +71,7 @@ import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.inbox.IS_FROM_NEW_ONBOARDING
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
-import com.joshtalks.joshskills.ui.introduction.DemoSpeakingPractiseActivity
 import com.joshtalks.joshskills.ui.introduction.IntroductionActivity
-import com.joshtalks.joshskills.ui.introduction.ReadyForDemoClassActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
@@ -286,32 +284,6 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
                     }
                     PrefManager.getBoolValue(IS_PAYMENT_DONE, false) -> {
                         Intent(this, SignUpActivity::class.java)
-                    }
-                    (PrefManager.getBoolValue(
-                        INTRODUCTION_YES_EXCITED_CLICKED,
-                        false
-                    ) && PrefManager.getBoolValue(
-                        INTRODUCTION_START_NOW_CLICKED, defValue = false
-                    ).not()) -> {
-                        DemoSpeakingPractiseActivity.getIntent(
-                            this,
-                            PrefManager.getStringValue(DEMO_LESSON_TOPIC_ID),
-                            PrefManager.getIntValue(DEMO_LESSON_NUMBER),
-                            flags = arrayOf(
-                                Intent.FLAG_ACTIVITY_CLEAR_TASK,
-                                Intent.FLAG_ACTIVITY_NEW_TASK
-                            )
-                        )
-                    }
-                    (PrefManager.getBoolValue(
-                        INTRODUCTION_IS_CONTINUE_CLICKED,
-                        defValue = false
-                    ) || PrefManager.getBoolValue(INTRODUCTION_START_NOW_CLICKED)) ->{
-                        Intent(this, ReadyForDemoClassActivity::class.java).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
-                        }
                     }
                     else -> {
                         Intent(this, IntroductionActivity::class.java).apply {

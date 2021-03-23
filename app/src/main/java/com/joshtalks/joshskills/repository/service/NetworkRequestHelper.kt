@@ -357,7 +357,7 @@ object NetworkRequestHelper {
 
     private fun downloadImageGlide(url: String) {
         val requestOptions = RequestOptions()
-            .diskCacheStrategy(DiskCacheStrategy.DATA)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
             .priority(Priority.IMMEDIATE)
             .skipMemoryCache(true)
 

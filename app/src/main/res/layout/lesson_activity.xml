@@ -79,7 +79,7 @@
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/talk_to_c"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:background="@drawable/rectangle_with_blue_bound_stroke_corner_8dp"
                     android:backgroundTint="#C1C1C1"
                     android:gravity="center"

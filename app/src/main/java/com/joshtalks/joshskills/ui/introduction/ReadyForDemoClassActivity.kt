@@ -6,11 +6,13 @@ import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.DEMO_LESSON_NUMBER
@@ -36,6 +38,7 @@ class ReadyForDemoClassActivity : AppCompatActivity() {
     private val viewModel: LessonViewModel by lazy {
         ViewModelProvider(this).get(LessonViewModel::class.java)
     }
+    private var isPermissionsGiven = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
@@ -96,6 +99,7 @@ class ReadyForDemoClassActivity : AppCompatActivity() {
 
     private fun addRequesting(topicId: String) {
         if (PermissionUtils.isDemoCallingPermissionEnabled(this)) {
+            Log.d("Manjul", "addRequesting() called with: permission true topicId = $topicId")
             requestForSearchUser(topicId)
             return
         }
@@ -105,12 +109,28 @@ class ReadyForDemoClassActivity : AppCompatActivity() {
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
-                        if (flag) {
-                            requestForSearchUser(topicId)
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            Log.d(
+                                "Manjul",
+                                "onPermissionsChecked() called with: isAnyPermissionPermanentlyDenied flag = $flag"
+                            )
+
+                            PermissionUtils.demoCallingPermissionPermanentlyDeniedDialog(
+                                this@ReadyForDemoClassActivity,
+                                message = R.string.call_start_permission_message
+                            )
                             return
                         }
-                        if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(this@ReadyForDemoClassActivity)
+                        if (flag) {
+                            Log.d("Manjul", "onPermissionsChecked() called with: true flag = $flag")
+                            requestForSearchUser(topicId)
+                            return
+                        } else {
+                            Log.d("Manjul", "onPermissionsChecked() called with: else flag = $flag")
+                            MaterialDialog(this@ReadyForDemoClassActivity).show {
+                                message(R.string.demo_call_start_permission_message)
+                                positiveButton(R.string.ok)
+                            }
                             return
                         }
                     }
@@ -120,12 +140,18 @@ class ReadyForDemoClassActivity : AppCompatActivity() {
                     permissions: MutableList<PermissionRequest>?,
                     token: PermissionToken?
                 ) {
+                    Log.d(
+                        "Manjul",
+                        "onPermissionRationaleShouldBeShown() called with: permissions = $permissions, token = $token"
+                    )
                     token?.continuePermissionRequest()
                 }
             })
     }
 
     private fun requestForSearchUser(it: String) {
+        Log.d("Manjul", "requestForSearchUser() called with: it = $it")
+        isPermissionsGiven = true
         startDemoSpeakingActivity(it)
         startActivity(
             DemoSearchingUserActivity.startUserForPractiseOnPhoneActivity(
@@ -173,8 +199,12 @@ class ReadyForDemoClassActivity : AppCompatActivity() {
                 flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             )
         } else {
-            if (PrefManager.getStringValue(DEMO_LESSON_TOPIC_ID).isBlank()) {
+            val topicId = PrefManager.getStringValue(DEMO_LESSON_TOPIC_ID)
+            Log.d("Manjul", "startDemoSpeakingClass() called")
+            if (topicId.isBlank()) {
                 viewModel.getDemoLesson()
+            } else if (PermissionUtils.isDemoCallingPermissionEnabled(this).not()) {
+                addRequesting(topicId)
             } else {
                 startDemoSpeakingActivity(
                     PrefManager.getStringValue(

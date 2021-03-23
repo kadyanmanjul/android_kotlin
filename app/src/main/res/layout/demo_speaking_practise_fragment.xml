@@ -113,7 +113,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_40sdp"
                         android:gravity="center"
-                        android:text="क्या आपको कॉल में मज़ा आया?"
+                        android:text="क्या आपको Call में मज़ा आया?"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                         android:textSize="@dimen/_18ssp"
                         android:textStyle="bold"

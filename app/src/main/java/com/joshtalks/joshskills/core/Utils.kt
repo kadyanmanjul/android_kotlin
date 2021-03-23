@@ -244,6 +244,10 @@ object Utils {
         val audio = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         return audio.getStreamVolume(STREAM_MUSIC)
     }
+    fun getCurrentMediaMaxVolume(context: Context): Int {
+        val audio = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        return audio.getStreamMaxVolume(STREAM_MUSIC)
+    }
 
     fun getRoundedDrawable(context: Context, iconResource: Int): RoundedBitmapDrawable {
         val res = context.resources

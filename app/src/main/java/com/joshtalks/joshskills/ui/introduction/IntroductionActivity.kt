@@ -101,7 +101,7 @@ class IntroductionActivity : BaseActivity() {
         binding.lessonViewpager.adapter = adapter
         binding.lessonViewpager.requestTransparentRegion(binding.lessonViewpager)
         binding.wormDotsIndicator.attachToPager(binding.lessonViewpager)
-        binding.lessonViewpager.currentItem = lastPosition
+        //binding.lessonViewpager.currentItem = lastPosition
         binding.lessonViewpager.setPageTransformer(MarginPageTransformer(Utils.dpToPx(40)))
 
         binding.lessonViewpager.registerOnPageChangeCallback(object :
