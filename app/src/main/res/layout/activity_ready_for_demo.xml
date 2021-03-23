@@ -6,11 +6,12 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.introduction.ReadyForDemoClassFragment" />
+            type="com.joshtalks.joshskills.ui.introduction.ReadyForDemoClassActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-
+        android:id="@+id/root_view"
+        android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
