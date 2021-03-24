@@ -49,7 +49,8 @@ class VocabularyPracticeAdapter(
     val itemList: List<LessonQuestion>,
     val assessmentQuizList: ArrayList<AssessmentWithRelations>,
     val clickListener: PracticeClickListeners,
-    private var lifecycleProvider: LifecycleOwner
+    private var lifecycleProvider: LifecycleOwner,
+    private val conversationId: String?
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var audioManager = ExoAudioPlayer.getInstance()
@@ -662,7 +663,8 @@ class VocabularyPracticeAdapter(
                         "",
                         videoId,
                         videoUrl,
-                        currentVideoProgressPosition
+                        currentVideoProgressPosition,
+                        conversationId = conversationId
                     )
                 }
             }

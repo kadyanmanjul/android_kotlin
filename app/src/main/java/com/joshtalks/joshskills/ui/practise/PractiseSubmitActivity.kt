@@ -573,7 +573,8 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                                     this@PractiseSubmitActivity,
                                     null,
                                     null,
-                                    filePath
+                                    filePath,
+                                    conversationId = chatModel.conversationId
                                 )
                                 /* FullScreenVideoFragment.newInstance(filePath!!)
                                      .show(supportFragmentManager, "VideoPlay")*/

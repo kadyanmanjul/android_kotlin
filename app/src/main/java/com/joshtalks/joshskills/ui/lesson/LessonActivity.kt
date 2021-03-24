@@ -468,7 +468,6 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
             whatsappUrl: String? = null,
             testId: Int? = null,
             conversationId: String? = null,
-            isDemo: Boolean = false
         ) = Intent(context, LessonActivity::class.java).apply {
             putExtra(LESSON_ID, lessonId)
             putExtra(IS_DEMO, isDemo)

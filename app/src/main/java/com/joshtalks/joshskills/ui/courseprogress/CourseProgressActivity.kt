@@ -487,7 +487,8 @@ class CourseProgressActivity :
                                     VideoPlayerActivity.startConversionActivity(
                                         this@CourseProgressActivity,
                                         obj,
-                                        inboxEntity.course_name
+                                        inboxEntity.course_name,
+                                        conversationId = inboxEntity.conversation_id
                                     )
                                 }
                             }

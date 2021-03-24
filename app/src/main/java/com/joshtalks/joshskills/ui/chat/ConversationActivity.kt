@@ -902,7 +902,8 @@ class ConversationActivity :
                             this,
                             it.chatModel,
                             inboxEntity.course_name,
-                            inboxEntity.duration
+                            inboxEntity.duration,
+                            conversationId = inboxEntity.conversation_id
                         )
                     },
                     {

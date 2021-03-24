@@ -127,7 +127,8 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                     lessonQuestions.sortedBy { it.vpSortOrder },
                     assessmentList,
                     this,
-                    this
+                    this,
+                    getConversationId()
                 )
             }
 

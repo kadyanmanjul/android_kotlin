@@ -24,8 +24,6 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
-import com.joshtalks.joshskills.track.CONVERSATION_ID
-import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
@@ -234,11 +232,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
     }
 
-    private fun getConversationId(): String? {
-        return if (requireActivity() is LessonActivity) (requireActivity() as LessonActivity).intent.getStringExtra(
-            CONVERSATION_ID
-        ) else null
-    }
+
 
     companion object {
         @JvmStatic

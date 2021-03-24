@@ -2,8 +2,10 @@ package com.joshtalks.joshskills.core
 
 import android.content.Context
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 
 open class CoreJoshFragment : Fragment() {
 
@@ -19,10 +21,13 @@ open class CoreJoshFragment : Fragment() {
 
     fun showSnackBar(view: View, duration: Int, action_lable: String?) {
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
-            //SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
+            // SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
             PointSnackbar.make(view, duration, action_lable)?.show()
             playSnackbarSound(requireActivity())
-
         }
+    }
+
+    protected fun getConversationId(): String? {
+        return (requireActivity() as AppCompatActivity).intent.getStringExtra(CONVERSATION_ID)
     }
 }

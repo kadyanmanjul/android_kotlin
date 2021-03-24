@@ -44,6 +44,7 @@ import com.joshtalks.joshskills.repository.server.assessment.ChoiceColumn
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.repository.server.assessment.ReviseConcept
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.assessment.adapter.AssessmentQuestionAdapter
 import com.joshtalks.joshskills.ui.assessment.extra.AssessmentQuestionViewType
 import com.joshtalks.joshskills.ui.assessment.fragment.QuizSuccessFragment
@@ -98,6 +99,10 @@ class AssessmentActivity : CoreJoshActivity() {
         } else {
             finish()
         }
+    }
+
+    override fun getConversationId(): String? {
+        return intent.getStringExtra(CONVERSATION_ID)
     }
 
     private fun showTestSummaryFragment(
@@ -501,6 +506,7 @@ class AssessmentActivity : CoreJoshActivity() {
             activity: Activity,
             requestCode: Int,
             assessmentId: Int,
+            conversationId: String? = null,
             chatRoomId: String? = null,
             startedFrom: String = EMPTY,
             flags: Array<Int> = arrayOf()
@@ -508,6 +514,7 @@ class AssessmentActivity : CoreJoshActivity() {
             Intent(activity, AssessmentActivity::class.java).apply {
                 putExtra(KEY_ASSESSMENT_ID, assessmentId)
                 putExtra(CHAT_ROOM_ID, chatRoomId)
+                putExtra(CONVERSATION_ID, conversationId)
                 if (startedFrom.isNotBlank())
                     putExtra(STARTED_FROM, startedFrom)
                 flags.forEach { flag ->

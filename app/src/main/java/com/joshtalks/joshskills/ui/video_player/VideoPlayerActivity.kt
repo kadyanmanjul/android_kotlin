@@ -34,13 +34,13 @@ import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper.isVideoPresentInUpdatedChat
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.VIDEO_OPEN_REQUEST_CODE
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
 
 const val VIDEO_OBJECT = "video_"
 const val VIDEO_WATCH_TIME = "video_watch_time"
@@ -60,13 +60,15 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             activity: Activity,
             chatModel: ChatModel,
             videoTitle: String,
-            duration: Int? = 0
+            duration: Int? = 0,
+            conversationId: String? = null,
         ) {
             val intent = Intent(activity, VideoPlayerActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             intent.putExtra(VIDEO_OBJECT, chatModel)
             intent.putExtra(COURSE_NAME, videoTitle)
             intent.putExtra(DURATION, duration)
+            intent.putExtra(CONVERSATION_ID, conversationId)
             activity.startActivityForResult(intent, VIDEO_OPEN_REQUEST_CODE)
         }
 
@@ -75,7 +77,8 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             videoTitle: String?,
             videoId: String?,
             videoUrl: String?,
-            currentVideoProgressPosition: Long = 0
+            currentVideoProgressPosition: Long = 0,
+            conversationId: String? = null,
         ) {
             val intent = Intent(context, VideoPlayerActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -83,6 +86,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             intent.putExtra(VIDEO_ID, videoId)
             intent.putExtra(COURSE_NAME, videoTitle)
             intent.putExtra(CURRENT_VIDEO_PROGRESS_POSITION, currentVideoProgressPosition)
+            intent.putExtra(CONVERSATION_ID, conversationId)
             context.startActivity(intent)
         }
 
@@ -91,13 +95,15 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             videoTitle: String?,
             videoId: String?,
             videoUrl: String?,
-            currentVideoProgressPosition: Long = 0
+            currentVideoProgressPosition: Long = 0,
+            conversationId: String? = null,
         ): Intent {
             return Intent(context, VideoPlayerActivity::class.java).apply {
-                this.putExtra(VIDEO_URL, videoUrl)
-                this.putExtra(VIDEO_ID, videoId)
-                this.putExtra(COURSE_NAME, videoTitle)
-                this.putExtra(CURRENT_VIDEO_PROGRESS_POSITION, currentVideoProgressPosition)
+                putExtra(VIDEO_URL, videoUrl)
+                putExtra(VIDEO_ID, videoId)
+                putExtra(COURSE_NAME, videoTitle)
+                putExtra(CURRENT_VIDEO_PROGRESS_POSITION, currentVideoProgressPosition)
+                putExtra(CONVERSATION_ID, conversationId)
             }
         }
     }
@@ -129,7 +135,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     private var maxInterval: Int = -1
     private var interval = -1
     private var courseId: Int = -1
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -176,7 +181,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                 }
 
                 interval = chatObject!!.question?.interval ?: -1
-
             }
         }
         if (intent.hasExtra(VIDEO_URL)) {
@@ -224,7 +228,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     }
 
     override fun getConversationId(): String? {
-        return chatObject?.conversationId
+        return intent.getStringExtra(CONVERSATION_ID)
     }
 
     private fun setToolbar() {
@@ -250,7 +254,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         pushAnalyticsEvents(true)
     }
 
-
     override fun onBackPressed() {
         backPressed = true
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -274,7 +277,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         } else {
             countUpTimer.pause()
             appAnalytics.addParam(AnalyticsEvent.VIDEO_PAUSE.NAME, true)
-
         }
         if (playbackState == Player.STATE_ENDED) {
             if (nextButtonVisible.not()) {
@@ -308,9 +310,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         openHelpActivity()
     }
 
-
     override fun onClickFullScreenView(cOrientation: Int) {
-
     }
 
     override fun onCurrentTimeUpdated(time: Long) {
@@ -319,18 +319,17 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                 Download.STATE_DOWNLOADING, "0", time.toFloat()
             )
         )
-        if (searchingNextUrl.not()
-            && videoDuration?.compareTo(0L)!! > 0
-            && (videoDuration?.minus(time))!! < 2500
-            && chatObject?.conversationId.isNullOrBlank().not()
-            && chatObject?.sender?.user?.id.isNullOrBlank().not()
+        if (searchingNextUrl.not() &&
+            videoDuration?.compareTo(0L)!! > 0 &&
+            (videoDuration?.minus(time))!! < 2500 &&
+            chatObject?.conversationId.isNullOrBlank().not() &&
+            chatObject?.sender?.user?.id.isNullOrBlank().not()
         ) {
             getNextClassUrl()
         }
 
         graph?.endTime = time
     }
-
 
     private fun getNextClassUrl() {
         searchingNextUrl = true
@@ -376,7 +375,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                 }
-
             }
         }
     }
@@ -483,7 +481,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             graph = null
         }
         graph = Graph(binding.videoPlayer.player!!.currentPosition)
-
     }
 
     private fun pushAnalyticsEvents(flowFromOnStop: Boolean) {
@@ -544,7 +541,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         setResult(Activity.RESULT_OK, resultIntent)
     }
 
-
     private fun setBroadcastReceivers() {
         usbEventReceiver = UsbEventReceiver()
         usbEventReceiver.listener = this
@@ -573,5 +569,4 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     override fun onUsbDisconnect() {
         usbConnected = false
     }
-
 }

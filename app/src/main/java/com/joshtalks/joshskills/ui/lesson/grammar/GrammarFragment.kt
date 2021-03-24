@@ -18,13 +18,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
@@ -72,7 +72,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
+class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedListener {
 
     lateinit var binding: FragmentGrammarLayoutBinding
     private var lessonActivityListener: LessonActivityListener? = null
@@ -342,7 +342,8 @@ class GrammarFragment : Fragment(), ViewTreeObserver.OnScrollChangedListener {
                                         "",
                                         video.id,
                                         it,
-                                        currentVideoProgressPosition
+                                        currentVideoProgressPosition,
+                                        conversationId = getConversationId()
                                     )
                                 )
                             }
