@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.AwardCategory
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -74,9 +75,13 @@ class UserProfileActivity : BaseActivity() {
         setOnClickListeners()
     }
 
+    override fun getConversationId(): String? {
+        return intent.getStringExtra(CONVERSATION_ID)
+    }
+
     private fun setOnClickListeners() {
         binding.pointLayout.setOnClickListener {
-            openPointHistory(mentorId)
+            openPointHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
         }
 
         binding.userPic.setOnClickListener {
@@ -116,7 +121,7 @@ class UserProfileActivity : BaseActivity() {
         }
         text_message_title.text = getString(R.string.profile)
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE) && mentorId == Mentor.getInstance()
-                .getId()
+            .getId()
         ) {
             with(iv_setting) {
                 visibility = View.VISIBLE
@@ -136,7 +141,7 @@ class UserProfileActivity : BaseActivity() {
         popupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_points_history -> {
-                    openPointHistory(mentorId)
+                    openPointHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
                 }
                 R.id.how_to_get_points -> {
                     startActivity(Intent(this, PointsInfoActivity::class.java))
@@ -165,13 +170,16 @@ class UserProfileActivity : BaseActivity() {
      }*/
 
     private fun addObserver() {
-        viewModel.userData.observe(this, {
-            it?.let {
-                impressionId = it.userProfileImpressionId ?: EMPTY
-                hideProgressBar()
-                initView(it)
+        viewModel.userData.observe(
+            this,
+            {
+                it?.let {
+                    impressionId = it.userProfileImpressionId ?: EMPTY
+                    hideProgressBar()
+                    initView(it)
+                }
             }
-        })
+        )
 
         viewModel.apiCallStatusLiveData.observe(this) {
             if (it == ApiCallStatus.SUCCESS) {
@@ -202,8 +210,7 @@ class UserProfileActivity : BaseActivity() {
             }
         }
 
-        viewModel.apiCallStatus.observe(this)
-        {
+        viewModel.apiCallStatus.observe(this) {
             if (it == ApiCallStatus.SUCCESS) {
                 hideProgressBar()
             } else if (it == ApiCallStatus.FAILED) {
@@ -212,7 +219,6 @@ class UserProfileActivity : BaseActivity() {
                 showProgressBar()
             }
         }
-
     }
 
     private fun initView(userData: UserProfileResponse) {
@@ -245,7 +251,7 @@ class UserProfileActivity : BaseActivity() {
                 }
             }
         }
-        //binding.points.text = DecimalFormat("#,##,##,###").format(userData.points)
+        // binding.points.text = DecimalFormat("#,##,##,###").format(userData.points)
         binding.streaksText.text = getString(R.string.user_streak_text, userData.streak)
 
         if (userData.awardCategory.isNullOrEmpty()) {
@@ -296,7 +302,6 @@ class UserProfileActivity : BaseActivity() {
             viewModel.getUserProfileUrl().isNullOrBlank()
         )
     }
-
 
     @SuppressLint("WrongViewCast")
     private fun addLinerLayout(awardCategory: AwardCategory): View? {
@@ -362,7 +367,6 @@ class UserProfileActivity : BaseActivity() {
                 )
             }
             else -> {
-
             }
         }
         v?.setOnClickListener {
@@ -405,25 +409,31 @@ class UserProfileActivity : BaseActivity() {
             RxBus2.listen(AwardItemClickedEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    openAwardPopUp(it.award)
-                }, {
-                    it.printStackTrace()
-                })
+                .subscribe(
+                    {
+                        openAwardPopUp(it.award)
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
         )
 
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(DeleteProfilePicEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    viewModel.userData.value?.photoUrl = it.url
-                    if (it.url.isBlank()) {
-                        viewModel.completingProfile("")
+                .subscribe(
+                    {
+                        viewModel.userData.value?.photoUrl = it.url
+                        if (it.url.isBlank()) {
+                            viewModel.completingProfile("")
+                        }
+                    },
+                    {
+                        it.printStackTrace()
                     }
-                }, {
-                    it.printStackTrace()
-                })
+                )
         )
     }
 
@@ -444,7 +454,7 @@ class UserProfileActivity : BaseActivity() {
                 viewModel.engageUserProfileTime(impressionId, startTime)
             }
             super.onBackPressed()
-            //additional code
+            // additional code
         } else {
             supportFragmentManager.popBackStack()
         }
@@ -469,6 +479,8 @@ class UserProfileActivity : BaseActivity() {
             intervalType: String? = null,
             previousPage: String,
             isUserOnline: Boolean = false,
+            conversationId: String? = null,
+
         ) {
             Intent(activity, UserProfileActivity::class.java).apply {
                 putExtra(KEY_MENTOR_ID, mentorId)
@@ -477,6 +489,7 @@ class UserProfileActivity : BaseActivity() {
                 }
                 putExtra(PREVIOUS_PAGE, previousPage)
                 putExtra(IS_USER_ONLINE, isUserOnline)
+                putExtra(CONVERSATION_ID, conversationId)
                 flags.forEach { flag ->
                     this.addFlags(flag)
                 }
@@ -502,10 +515,10 @@ class UserProfileActivity : BaseActivity() {
             }
         } else if (resultCode == ImagePicker.RESULT_ERROR) {
             Timber.e(ImagePicker.getError(data))
-            //Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+            // Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
         } else {
             Timber.e("Task Cancelled")
-            //Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show()
+            // Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show()
         }
     }
 }

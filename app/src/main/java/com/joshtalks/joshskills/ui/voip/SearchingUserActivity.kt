@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivitySearchingUserBinding
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -47,13 +48,15 @@ class SearchingUserActivity : BaseActivity() {
             courseId: String,
             topicId: Int,
             topicName: String,
-            favoriteUserCall: Boolean
+            favoriteUserCall: Boolean,
+            conversationId: String? = null,
         ): Intent {
             return Intent(activity, SearchingUserActivity::class.java).apply {
                 putExtra(COURSE_ID, courseId)
                 putExtra(TOPIC_ID, topicId)
                 putExtra(TOPIC_NAME, topicName)
                 putExtra(FAVORITE_USER_CALL, favoriteUserCall)
+                putExtra(CONVERSATION_ID, conversationId)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
         }
@@ -75,7 +78,6 @@ class SearchingUserActivity : BaseActivity() {
     private var outgoingCallData: HashMap<String, String?> = HashMap()
     private var uiHandler: Handler? = null
     private var compositeDisposable = CompositeDisposable()
-
 
     private var myConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -131,13 +133,16 @@ class SearchingUserActivity : BaseActivity() {
             super.onChannelJoin()
             Timber.tag("SearchingUserActivity").e("onChannelJoin")
             addReceiverTimeout()
-            uiHandler?.postDelayed({
-                try {
-                    binding.btnAction.visibility = View.VISIBLE
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-            }, 500)
+            uiHandler?.postDelayed(
+                {
+                    try {
+                        binding.btnAction.visibility = View.VISIBLE
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                },
+                500
+            )
         }
     }
 
@@ -173,20 +178,27 @@ class SearchingUserActivity : BaseActivity() {
         addObserver()
     }
 
+    override fun getConversationId(): String? {
+        return intent.getStringExtra(CONVERSATION_ID)
+    }
+
     private fun initView() {
         binding.progressBar.max = 100
         binding.progressBar.progress = 0
     }
 
     private fun addObserver() {
-        viewModel.apiCallStatusLiveData.observe(this, {
-            if (ApiCallStatus.FAILED == it || ApiCallStatus.FAILED_PERMANENT == it) {
-                showToast(getString(R.string.did_not_answer_message))
-                finishAndRemoveTask()
-            } else if (ApiCallStatus.INVALIDED == it) {
-                this@SearchingUserActivity.finishAndRemoveTask()
+        viewModel.apiCallStatusLiveData.observe(
+            this,
+            {
+                if (ApiCallStatus.FAILED == it || ApiCallStatus.FAILED_PERMANENT == it) {
+                    showToast(getString(R.string.did_not_answer_message))
+                    finishAndRemoveTask()
+                } else if (ApiCallStatus.INVALIDED == it) {
+                    this@SearchingUserActivity.finishAndRemoveTask()
+                }
             }
-        })
+        )
     }
 
     private fun addRequesting() {
@@ -217,9 +229,9 @@ class SearchingUserActivity : BaseActivity() {
                 ) {
                     token?.continuePermissionRequest()
                 }
-            })
+            }
+        )
     }
-
 
     private fun startProgressBarCountDown() {
         runOnUiThread {
@@ -378,22 +390,26 @@ class SearchingUserActivity : BaseActivity() {
                         }
                     }
                 }
-                .subscribe())
+                .subscribe()
+        )
     }
 
     private fun addReceiverTimeout() {
         compositeDisposable.add(
             Observable.interval(11, TimeUnit.SECONDS, Schedulers.computation())
                 .timeInterval()
-                .subscribe({
-                    mBoundService?.isCallNotConnected()?.let { flag ->
-                        if (flag.not()) {
-                            mBoundService?.timeoutCaller()
+                .subscribe(
+                    {
+                        mBoundService?.isCallNotConnected()?.let { flag ->
+                            if (flag.not()) {
+                                mBoundService?.timeoutCaller()
+                            }
                         }
+                    },
+                    {
+                        it.printStackTrace()
                     }
-                }, {
-                    it.printStackTrace()
-                })
+                )
         )
     }
 }

@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.lesson.speaking
 
-
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -25,6 +24,8 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
@@ -61,7 +62,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding =
@@ -74,7 +76,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
         return binding.rootView
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -90,20 +91,25 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     private fun addObservers() {
-        viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner, {
-            val spQuestion = it.filter { it.chatType == CHAT_TYPE.SP }.getOrNull(0)
-            questionId = spQuestion?.id
+        viewModel.lessonQuestionsLiveData.observe(
+            viewLifecycleOwner,
+            {
+                val spQuestion = it.filter { it.chatType == CHAT_TYPE.SP }.getOrNull(0)
+                questionId = spQuestion?.id
 
-            spQuestion?.topicId?.let {
-                this.topicId = it
-                viewModel.getTopicDetail(it)
+                spQuestion?.topicId?.let {
+                    this.topicId = it
+                    viewModel.getTopicDetail(it)
+                }
+                spQuestion?.lessonId?.let { viewModel.getCourseIdByLessonId(it) }
             }
-            spQuestion?.lessonId?.let { viewModel.getCourseIdByLessonId(it) }
-
-        })
-        viewModel.courseId.observe(viewLifecycleOwner, {
-            courseId = it
-        })
+        )
+        viewModel.courseId.observe(
+            viewLifecycleOwner,
+            {
+                courseId = it
+            }
+        )
         binding.btnStart.setOnClickListener {
             startPractise(favoriteUserCall = false)
         }
@@ -111,46 +117,49 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             lessonActivityListener?.onNextTabCall(3)
         }
 
-        viewModel.speakingTopicLiveData.observe(viewLifecycleOwner, { response ->
-            binding.progressView.visibility = View.GONE
-            if (response == null) {
-                showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
-            } else {
-                try {
-                    binding.tvTodayTopic.text = response.topicName
-                    binding.tvPractiseTime.text =
-                        response.alreadyTalked.toString().plus(" / ")
-                            .plus(response.duration.toString())
-                            .plus("\n Minutes")
-                    binding.progressBar.progress = response.alreadyTalked.toFloat()
-                    binding.progressBar.progressMax = response.duration.toFloat()
+        viewModel.speakingTopicLiveData.observe(
+            viewLifecycleOwner,
+            { response ->
+                binding.progressView.visibility = View.GONE
+                if (response == null) {
+                    showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
+                } else {
+                    try {
+                        binding.tvTodayTopic.text = response.topicName
+                        binding.tvPractiseTime.text =
+                            response.alreadyTalked.toString().plus(" / ")
+                                .plus(response.duration.toString())
+                                .plus("\n Minutes")
+                        binding.progressBar.progress = response.alreadyTalked.toFloat()
+                        binding.progressBar.progressMax = response.duration.toFloat()
 
-                    binding.textView.text = if (response.duration >= 10) {
-                        getString(R.string.pp_messages, response.duration.toString())
-                    } else {
-                        getString(R.string.pp_message, response.duration.toString())
+                        binding.textView.text = if (response.duration >= 10) {
+                            getString(R.string.pp_messages, response.duration.toString())
+                        } else {
+                            getString(R.string.pp_message, response.duration.toString())
+                        }
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
                     }
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-                binding.groupTwo.visibility = View.VISIBLE
+                    binding.groupTwo.visibility = View.VISIBLE
 
-                val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
-                if (points.isNullOrEmpty().not()) {
-                    //showSnackBar(root_view, Snackbar.LENGTH_LONG, points)
-                    PrefManager.put(SPEAKING_POINTS, EMPTY)
-                }
+                    val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
+                    if (points.isNullOrEmpty().not()) {
+                        // showSnackBar(root_view, Snackbar.LENGTH_LONG, points)
+                        PrefManager.put(SPEAKING_POINTS, EMPTY)
+                    }
 
-                if (response.alreadyTalked >= response.duration && response.isFromDb.not()) {
-                    binding.btnContinue.visibility = View.VISIBLE
-                    lessonActivityListener?.onQuestionStatusUpdate(
-                        QUESTION_STATUS.AT,
-                        questionId
-                    )
-                    lessonActivityListener?.onSectionStatusUpdate(3, true)
+                    if (response.alreadyTalked >= response.duration && response.isFromDb.not()) {
+                        binding.btnContinue.visibility = View.VISIBLE
+                        lessonActivityListener?.onQuestionStatusUpdate(
+                            QUESTION_STATUS.AT,
+                            questionId
+                        )
+                        lessonActivityListener?.onSectionStatusUpdate(3, true)
+                    }
                 }
             }
-        })
+        )
         binding.btnFavorite.setOnClickListener {
             if (favoriteCallerExist) {
                 startPractise(favoriteUserCall = true)
@@ -206,7 +215,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 ) {
                     token?.continuePermissionRequest()
                 }
-            })
+            }
+        )
     }
 
     private fun startPractiseSearchScreen(favoriteUserCall: Boolean = false) {
@@ -217,13 +227,18 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     courseId = courseId,
                     topicId = id,
                     topicName = topicName,
-                    favoriteUserCall = favoriteUserCall
+                    favoriteUserCall = favoriteUserCall,
+                    conversationId = getConversationId()
                 )
             )
         }
-
     }
 
+    private fun getConversationId(): String? {
+        return if (requireActivity() is LessonActivity) (requireActivity() as LessonActivity).intent.getStringExtra(
+            CONVERSATION_ID
+        ) else null
+    }
 
     companion object {
         @JvmStatic

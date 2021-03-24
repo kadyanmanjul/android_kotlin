@@ -41,7 +41,6 @@ class CertificationBaseActivity : BaseActivity() {
             return Intent(activity, CertificationBaseActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, conversationId)
                 putExtra(CHAT_ROOM_ID, chatMessageId)
-                putExtra(CONVERSATION_ID, conversationId)
                 putExtra(CERTIFICATION_EXAM_ID, certificationId)
                 putExtra(EXAM_STATUS, cExamStatus)
                 putExtra(EXAM_LESSON_INTERVAL, lessonInterval)
@@ -72,9 +71,7 @@ class CertificationBaseActivity : BaseActivity() {
         registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
-
         }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
@@ -97,6 +94,10 @@ class CertificationBaseActivity : BaseActivity() {
         viewModel.getQuestions(certificateExamId)
     }
 
+    override fun getConversationId(): String? {
+        return intent.getStringExtra(CONVERSATION_ID)
+    }
+
     private fun initView() {
         with(iv_back) {
             visibility = View.VISIBLE
@@ -108,45 +109,59 @@ class CertificationBaseActivity : BaseActivity() {
     }
 
     private fun addObserver() {
-        viewModel.certificationQuestionLiveData.observe(this, {
-            progress_bar.visibility = View.GONE
-            openExamInstructionScreen()
-            if (isSubmittedExamTest) {
-                isSubmittedExamTest = false
-                viewModel.showPreviousResult()
-            }
-            if (CExamStatus.REATTEMPTED == cExamStatus) {
-                viewModel.startExam()
-                cExamStatus = CExamStatus.NIL
-            } else if (CExamStatus.CHECK_RESULT == cExamStatus) {
-                viewModel.showPreviousResult()
-            }
-        })
-        viewModel.startExamLiveData.observe(this, {
-            viewModel.certificationQuestionLiveData.value?.let {
-                if (it.attemptCount == it.max_attempt) {
-                    return@observe
+        viewModel.certificationQuestionLiveData.observe(
+            this,
+            {
+                progress_bar.visibility = View.GONE
+                openExamInstructionScreen()
+                if (isSubmittedExamTest) {
+                    isSubmittedExamTest = false
+                    viewModel.showPreviousResult()
                 }
-                openExamActivityResult.launch(CExamMainActivity.startExamActivity(this, it))
-            }
-        })
-        viewModel.previousExamsResultLiveData.observe(this, {
-            viewModel.certificationQuestionLiveData.value?.let {
-                examReportActivityResult.launch(
-                    CExamReportActivity.getExamResultActivityIntent(
-                        this,
-                        certificateExamId,
-                        it
-                    )
-                )
-                if (CExamStatus.CHECK_RESULT == cExamStatus) {
+                if (CExamStatus.REATTEMPTED == cExamStatus) {
+                    viewModel.startExam()
                     cExamStatus = CExamStatus.NIL
-                    //   this.finish()
+                } else if (CExamStatus.CHECK_RESULT == cExamStatus) {
+                    viewModel.showPreviousResult()
                 }
             }
-        })
+        )
+        viewModel.startExamLiveData.observe(
+            this,
+            {
+                viewModel.certificationQuestionLiveData.value?.let {
+                    if (it.attemptCount == it.max_attempt) {
+                        return@observe
+                    }
+                    openExamActivityResult.launch(
+                        CExamMainActivity.startExamActivity(
+                            this, it,
+                            conversationId = getConversationId(),
+                        )
+                    )
+                }
+            }
+        )
+        viewModel.previousExamsResultLiveData.observe(
+            this,
+            {
+                viewModel.certificationQuestionLiveData.value?.let {
+                    examReportActivityResult.launch(
+                        CExamReportActivity.getExamResultActivityIntent(
+                            this,
+                            certificateExamId,
+                            it,
+                            conversationId = getConversationId()
+                        )
+                    )
+                    if (CExamStatus.CHECK_RESULT == cExamStatus) {
+                        cExamStatus = CExamStatus.NIL
+                        //   this.finish()
+                    }
+                }
+            }
+        )
     }
-
 
     private fun openExamInstructionScreen() {
         val prev = supportFragmentManager.findFragmentByTag(InstructionFragment::class.java.name)

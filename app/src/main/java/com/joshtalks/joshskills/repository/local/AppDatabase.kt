@@ -83,6 +83,8 @@ import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopicDao
+import com.joshtalks.joshskills.track.CourseUsageDao
+import com.joshtalks.joshskills.track.CourseUsageModel
 import java.util.Collections
 import java.util.Date
 
@@ -96,7 +98,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class,
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class,
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
-        RecentSearch::class, FavoriteCaller::class
+        RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class
     ],
     version = 31,
     exportSchema = true
@@ -483,6 +485,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun speakingTopicDao(): SpeakingTopicDao
     abstract fun recentSearch(): RecentSearchDao
     abstract fun favoriteCallerDao(): FavoriteCallerDao
+    abstract fun courseUsageDao(): CourseUsageDao
+
 }
 
 class MessageTypeConverters {

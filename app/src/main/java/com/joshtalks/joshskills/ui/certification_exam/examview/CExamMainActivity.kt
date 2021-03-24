@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.interfaces.CertificationExamListener
+import com.joshtalks.joshskills.core.service.CONVERSATION_ID
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationExamView
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestion
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
@@ -31,7 +32,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-
 const val ARG_EXAM_VIEW = "exam_view"
 const val ARG_OPEN_QUESTION_ID = "open_question_id"
 const val ARG_ATTEMPT_SEQUENCE = "attempt_sequence"
@@ -43,6 +43,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
             context: Context,
             certificationQuestionModel: CertificationQuestionModel,
             examView: CertificationExamView = CertificationExamView.EXAM_VIEW,
+            conversationId: String? = null,
             openQuestionId: Int = -1,
             attemptSequence: Int = -1
         ): Intent {
@@ -51,6 +52,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
                 putExtra(ARG_EXAM_VIEW, examView)
                 putExtra(ARG_OPEN_QUESTION_ID, openQuestionId)
                 putExtra(ARG_ATTEMPT_SEQUENCE, attemptSequence)
+                putExtra(CONVERSATION_ID, conversationId)
             }
         }
     }
@@ -73,7 +75,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
             intent.getParcelableExtra(CERTIFICATION_EXAM_QUESTION) as CertificationQuestionModel?
         examView =
             (intent.getSerializableExtra(ARG_EXAM_VIEW) as CertificationExamView?)
-                ?: CertificationExamView.EXAM_VIEW
+            ?: CertificationExamView.EXAM_VIEW
         openQuestionId = intent.getIntExtra(ARG_OPEN_QUESTION_ID, 0)
         attemptSequence = intent.getIntExtra(ARG_ATTEMPT_SEQUENCE, -1)
 
@@ -92,19 +94,25 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
         setupViewPager(questionsList)
     }
 
-    private fun addObserver() {
-        viewModel.apiStatus.observe(this, {
-            hideProgressBar()
-            if (ApiCallStatus.SUCCESS == it) {
-                certificationQuestionModel?.certificateExamId?.let {
-                    CertificationQuestionModel.removeResumeExam(it)
-                    val intent = Intent()
-                    setResult(Activity.RESULT_OK, intent)
-                }
-                this.finish()
-            }
-        })
+    override fun getConversationId(): String? {
+        return intent.getStringExtra(CONVERSATION_ID)
+    }
 
+    private fun addObserver() {
+        viewModel.apiStatus.observe(
+            this,
+            {
+                hideProgressBar()
+                if (ApiCallStatus.SUCCESS == it) {
+                    certificationQuestionModel?.certificateExamId?.let {
+                        CertificationQuestionModel.removeResumeExam(it)
+                        val intent = Intent()
+                        setResult(Activity.RESULT_OK, intent)
+                    }
+                    this.finish()
+                }
+            }
+        )
     }
 
     private fun setupUI() {
@@ -135,51 +143,54 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
     }
 
     private fun setupViewPager(questions: List<CertificationQuestion>) {
-        //This logic for  reduce complexity result screen
+        // This logic for  reduce complexity result screen
         if (CertificationExamView.RESULT_VIEW == examView) {
             questions.forEach { cq ->
                 cq.correctOptionId = cq.answers.find { it.isCorrect }?.id ?: -1
                 cq.userSelectedOption =
                     cq.userSubmittedAnswer?.find { it.attemptSeq == attemptSequence }?.answerId
-                        ?: -1
+                    ?: -1
             }
         }
         CoroutineScope(Dispatchers.Main).launch {
             delay(50)
 
-            val adapter = CExamQuestionAdapter(questions, examView, object : Callback {
-                override fun onGoToQuestion(position: Int) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        delay(350)
-                        if (position == question_view_pager.adapter?.itemCount) {
-                            if (CertificationExamView.EXAM_VIEW == examView) {
-                                openQuestionListBottomSheet()
+            val adapter = CExamQuestionAdapter(
+                questions, examView,
+                object : Callback {
+                    override fun onGoToQuestion(position: Int) {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            delay(350)
+                            if (position == question_view_pager.adapter?.itemCount) {
+                                if (CertificationExamView.EXAM_VIEW == examView) {
+                                    openQuestionListBottomSheet()
+                                }
+                            } else {
+                                question_view_pager.currentItem = position
                             }
-                        } else {
-                            question_view_pager.currentItem = position
                         }
                     }
                 }
-            })
+            )
             question_view_pager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
             question_view_pager.offscreenPageLimit = questions.size
             question_view_pager.setPageTransformer(MarginPageTransformer(Utils.dpToPx(40)))
             question_view_pager.registerOnPageChangeCallback(object :
-                ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    updateBookmarkIV(questions, position)
-                    val cPage = position + 1
-                    tv_question.text = "$cPage/${questions.size}"
+                    ViewPager2.OnPageChangeCallback() {
+                    override fun onPageSelected(position: Int) {
+                        super.onPageSelected(position)
+                        updateBookmarkIV(questions, position)
+                        val cPage = position + 1
+                        tv_question.text = "$cPage/${questions.size}"
 
-                    if (CertificationExamView.EXAM_VIEW == examView) {
-                        val obj = questions.findLast { it.isAttempted.not() }
-                        if (obj == null && cPage == question_view_pager.adapter?.itemCount) {
-                            openQuestionListBottomSheet()
+                        if (CertificationExamView.EXAM_VIEW == examView) {
+                            val obj = questions.findLast { it.isAttempted.not() }
+                            if (obj == null && cPage == question_view_pager.adapter?.itemCount) {
+                                openQuestionListBottomSheet()
+                            }
                         }
                     }
-                }
-            })
+                })
             question_view_pager.adapter = adapter
             setupUIAsExamView()
         }
@@ -215,7 +226,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
                         "%02d:%02d",
                         TimeUnit.MILLISECONDS.toMinutes(millis),
                         TimeUnit.MILLISECONDS.toSeconds(millis) -
-                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
                     )
                 }
             }
@@ -281,6 +292,4 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
         }
         this.finish()
     }
-
-
 }

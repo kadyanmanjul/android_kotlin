@@ -223,6 +223,10 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         )
     }
 
+    override fun getConversationId(): String? {
+        return chatObject?.conversationId
+    }
+
     private fun setToolbar() {
         setSupportActionBar(binding.toolbar)
         binding.videoPlayer.setToolbar(binding.toolbar)

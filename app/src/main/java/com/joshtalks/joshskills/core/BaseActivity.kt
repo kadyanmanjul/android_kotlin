@@ -59,6 +59,7 @@ import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
 import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
+import com.joshtalks.joshskills.track.TrackActivity
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
@@ -108,8 +109,11 @@ const val HELP_ACTIVITY_REQUEST_CODE = 9010
 const val COURSE_EXPLORER_NEW = 2008
 const val REQUEST_SHOW_SETTINGS = 123
 
-abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
-    FirebaseInAppMessagingImpressionListener, FirebaseInAppMessagingClickListener {
+abstract class BaseActivity :
+    TrackActivity(),
+    LifecycleObserver,
+    FirebaseInAppMessagingImpressionListener,
+    FirebaseInAppMessagingClickListener {
 
     private lateinit var referrerClient: InstallReferrerClient
     private val versionResponseTypeToken: Type = object : TypeToken<VersionResponse>() {}.type
@@ -136,7 +140,6 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         if (AppObjectController.isSettingUpdate) {
             reCreateActivity()
         }
-
     }
 
     protected var onDownloadComplete = object : BroadcastReceiver() {
@@ -171,12 +174,12 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
     private fun addScreenRecording() {
         if (BuildConfig.DEBUG.not()) {
             if (AppObjectController.getFirebaseRemoteConfig()
-                    .getBoolean(FirebaseRemoteConfigKey.UX_CAM_FEATURE_ENABLE)
+                .getBoolean(FirebaseRemoteConfigKey.UX_CAM_FEATURE_ENABLE)
             ) {
                 UXCam.startWithKey(BuildConfig.WX_CAM_KEY)
             }
             if (AppObjectController.getFirebaseRemoteConfig()
-                    .getBoolean(FirebaseRemoteConfigKey.SMART_LOOK_FEATURE_ENABLE)
+                .getBoolean(FirebaseRemoteConfigKey.SMART_LOOK_FEATURE_ENABLE)
             ) {
                 Smartlook.registerIntegrationListener(object : IntegrationListener {
                     override fun onSessionReady(dashboardSessionUrl: String) {
@@ -204,7 +207,6 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
                 Smartlook.enableIntegration(FirebaseCrashlyticsIntegration())
             }
         }
-
     }
 
     private fun initIdentifierForTools() {
@@ -255,8 +257,8 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         startActivity(i)
     }
 
-    fun openPointHistory(mentorId: String? = null) {
-        PointsHistoryActivity.startPointHistory(this, mentorId)
+    fun openPointHistory(mentorId: String? = null, conversationId: String? = null) {
+        PointsHistoryActivity.startPointHistory(this, mentorId,conversationId)
     }
 
     fun getActivityType(act: Activity): BaseActivity.ActivityEnum {
@@ -316,7 +318,6 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         }
         return false
     }
-
 
     fun getInboxActivityIntent(isFromOnBoardingFlow: Boolean = false): Intent {
         return Intent(this, InboxActivity::class.java).apply {
@@ -399,7 +400,6 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         AppAnalytics.create(AnalyticsEvent.CLICK_HELPLINE_SELECTED.NAME).push()
         Utils.call(this, AppObjectController.getFirebaseRemoteConfig().getString("helpline_number"))
     }
-
 
     protected fun isUserHaveNotPersonalDetails(): Boolean {
         return User.getInstance().dateOfBirth.isNullOrEmpty()
@@ -493,7 +493,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
 
     fun showSignUpDialog() {
         if (AppObjectController.getFirebaseRemoteConfig()
-                .getBoolean(FirebaseRemoteConfigKey.FORCE_SIGN_IN_FEATURE_ENABLE)
+            .getBoolean(FirebaseRemoteConfigKey.FORCE_SIGN_IN_FEATURE_ENABLE)
         )
             SignUpPermissionDialogFragment.showDialog(supportFragmentManager)
     }
@@ -503,7 +503,8 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
             var oemIntent = PowerManagers.getIntentForOEM(this)
             if (oemIntent == null) {
                 oemIntent = Intent(
-                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse(
+                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.parse(
                         "package:$packageName"
                     )
                 )
@@ -559,7 +560,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         if (User.getInstance().isVerified && PrefManager.getBoolValue(IS_GUEST_ENROLLED)) {
             return true
         } else if (User.getInstance().isVerified && PrefManager.getBoolValue(IS_GUEST_ENROLLED)
-                .not()
+            .not()
         ) {
             return false
         }
@@ -623,7 +624,6 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
                         startActivity(Intent(this@BaseActivity, ReminderActivity::class.java))
                     }
                     this == getString(R.string.video_open_dlink) -> {
-
                     }
                     this == getString(R.string.assessment_dlink) -> {
                         val id = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY
@@ -761,7 +761,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
 
     fun showSnackBar(view: View, duration: Int, action_lable: String?) {
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
-            //SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
+            // SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
             PointSnackbar.make(view, duration, action_lable)?.show()
             playSnackbarSound(this)
         }
@@ -769,8 +769,8 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
 
     fun showAward(awarList: List<Award>, isFromUserProfile: Boolean = false) {
         if (true) {
-            //TODO add when awards functionality is over
-            //if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+            // TODO add when awards functionality is over
+            // if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             ShowAwardFragment.showDialog(
                 supportFragmentManager,
                 awarList,
@@ -786,7 +786,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         lessonNo: Int
     ) {
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
-            //if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+            // if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             ShowAnimatedLeaderBoardFragment.showDialog(
                 supportFragmentManager,
                 outrankData, lessonInterval, chatId, lessonNo
@@ -822,7 +822,6 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
             .setInterval(5000)
     }
-
 
     @SuppressLint("MissingPermission")
     protected fun fetchUserLocation() {
@@ -881,6 +880,4 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
 
     open fun onUpdateLocation(location: Location) {}
     open fun onDenyLocation() {}
-
-
 }

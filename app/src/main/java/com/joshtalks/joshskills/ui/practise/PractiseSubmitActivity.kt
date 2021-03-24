@@ -169,6 +169,9 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
 
     }
 
+    override fun getConversationId(): String? {
+        return chatModel.conversationId
+    }
 
     override fun onResume() {
         super.onResume()

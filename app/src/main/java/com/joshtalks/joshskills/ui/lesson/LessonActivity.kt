@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.databinding.LessonActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
@@ -46,18 +47,22 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
     private var testId = -1
     private var whatsappUrl = EMPTY
 
-    var lesson: LessonModel? = null  // Do not use this var
+
+    var lesson: LessonModel? = null // Do not use this var
     private lateinit var tabs: ViewGroup
     var openLessonCompletedActivity: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK && result.data!!.hasExtra(IS_BATCH_CHANGED)) {
-                setResult(RESULT_OK, Intent().apply {
-                    putExtra(IS_BATCH_CHANGED, false)
-                    putExtra(LAST_LESSON_INTERVAL, lesson?.interval)
-                    putExtra(LAST_LESSON_STATUS, true)
-                    putExtra(LESSON__CHAT_ID, lesson?.chatId)
-                    putExtra(CHAT_ROOM_ID, lesson?.chatId)
-                })
+                setResult(
+                    RESULT_OK,
+                    Intent().apply {
+                        putExtra(IS_BATCH_CHANGED, false)
+                        putExtra(LAST_LESSON_INTERVAL, lesson?.interval)
+                        putExtra(LAST_LESSON_STATUS, true)
+                        putExtra(LESSON__CHAT_ID, lesson?.chatId)
+                        putExtra(CHAT_ROOM_ID, lesson?.chatId)
+                    }
+                )
                 finish()
             }
         }
@@ -93,6 +98,10 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
         if (isDemo) {
             binding.buyCourseLl.visibility = View.VISIBLE
         }
+    }
+
+    override fun getConversationId(): String? {
+        return intent.getStringExtra(CONVERSATION_ID)
     }
 
     private fun setObservers() {
@@ -223,8 +232,8 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
             val tab = tabs.getChildAt(i)
             val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
             layoutParams.weight = 0f
-            //     layoutParams.marginEnd = Utils.dpToPx(2)
-            //  layoutParams.marginStart = Utils.dpToPx(2)
+       //     layoutParams.marginEnd = Utils.dpToPx(2)
+          //  layoutParams.marginStart = Utils.dpToPx(2)
         }
         binding.lessonTabLayout.requestLayout()
 
@@ -457,10 +466,13 @@ class LessonActivity : CoreJoshActivity(), LessonActivityListener {
             lessonId: Int,
             isDemo: Boolean = false,
             whatsappUrl: String? = null,
-            testId: Int? = null
+            testId: Int? = null,
+            conversationId: String? = null,
+            isDemo: Boolean = false
         ) = Intent(context, LessonActivity::class.java).apply {
             putExtra(LESSON_ID, lessonId)
             putExtra(IS_DEMO, isDemo)
+            putExtra(CONVERSATION_ID, conversationId)
             if (isDemo) {
                 putExtra(WHATSAPP_URL, whatsappUrl)
                 putExtra(TEST_ID, testId)

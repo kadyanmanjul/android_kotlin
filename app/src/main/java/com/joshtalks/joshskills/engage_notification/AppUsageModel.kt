@@ -1,6 +1,13 @@
 package com.joshtalks.joshskills.engage_notification
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Dao
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.PrimaryKey
+import androidx.room.Query
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import java.time.Instant
@@ -27,7 +34,6 @@ data class AppUsageModel(
     @Ignore
     @SerializedName("gaid_id")
     var gaidId: String? = null
-
 }
 
 @Dao
@@ -40,6 +46,4 @@ interface AppUsageDao {
 
     @Query("DELETE FROM app_usage")
     suspend fun deleteAllSyncSession()
-
-
 }

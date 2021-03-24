@@ -74,7 +74,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
-class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
+class CourseProgressActivity :
+    CoreJoshActivity(),
+    OnDismissDialog,
     OnDismissClaimCertificateDialog {
 
     private lateinit var inboxEntity: InboxEntity
@@ -127,8 +129,10 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
             .addParam(AnalyticsEvent.PERFORMANCE_CLICKED.NAME, false)
         initView()
         getProgressOfCourse()
+    }
 
-
+    override fun getConversationId(): String? {
+        return inboxEntity.conversation_id
     }
 
     @SuppressLint("DefaultLocale")
@@ -184,7 +188,6 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
                         isFirstResource: Boolean
                     ): Boolean {
                         return false
-
                     }
 
                     override fun onResourceReady(
@@ -269,7 +272,8 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
                                     applicationContext,
                                     R.color.black
                                 )
-                            ), 19, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                            ),
+                            19, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                         )
                         binding.tvCourseCompleteStatus.text = sb2
 
@@ -349,39 +353,40 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
             val layoutManager = LinearLayoutManager(applicationContext)
             binding.recyclerView.layoutManager = layoutManager
             binding.recyclerView.setHasFixedSize(false)
-            viewModel.userContentViewModel.observe(this@CourseProgressActivity, Observer { list ->
-                val contentTimelineAdapter =
-                    ContentTimelineAdapter(list.filter { it.title.isNullOrEmpty().not() })
-                binding.recyclerView.adapter = contentTimelineAdapter
-                val transition: Transition = Fade()
-                transition.duration = 250
-                transition.addTarget(binding.subRootView2.id)
-                TransitionManager.beginDelayedTransition(binding.rootView, transition)
-                binding.rootView.setBackgroundColor(
-                    ContextCompat.getColor(
-                        applicationContext,
-                        R.color.wh_f4
+            viewModel.userContentViewModel.observe(
+                this@CourseProgressActivity,
+                Observer { list ->
+                    val contentTimelineAdapter =
+                        ContentTimelineAdapter(list.filter { it.title.isNullOrEmpty().not() })
+                    binding.recyclerView.adapter = contentTimelineAdapter
+                    val transition: Transition = Fade()
+                    transition.duration = 250
+                    transition.addTarget(binding.subRootView2.id)
+                    TransitionManager.beginDelayedTransition(binding.rootView, transition)
+                    binding.rootView.setBackgroundColor(
+                        ContextCompat.getColor(
+                            applicationContext,
+                            R.color.wh_f4
+                        )
                     )
-                )
-                binding.mainView.setBackgroundColor(
-                    ContextCompat.getColor(
-                        applicationContext,
-                        R.color.wh_f4
+                    binding.mainView.setBackgroundColor(
+                        ContextCompat.getColor(
+                            applicationContext,
+                            R.color.wh_f4
+                        )
                     )
-                )
-                binding.subRootView2.visibility = View.VISIBLE
-            })
+                    binding.subRootView2.visibility = View.VISIBLE
+                }
+            )
             viewModel.getReceivedCourseContent(inboxEntity.conversation_id)
         }
     }
-
 
     private fun hideProgressBar2() {
         CoroutineScope(Dispatchers.Main).launch {
             binding.progressBar.visibility = View.GONE
         }
     }
-
 
     private fun addViewInRV() {
         val linearLayoutManager = LinearLayoutManager(this)
@@ -416,7 +421,6 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
             AnimationView.collapse(binding.performanceContainer)
             binding.performanceLl.setBackgroundResource(R.drawable.round_rect_default)
             binding.ivPv.setImageResource(R.drawable.ic_baseline_expand_more)
-
         } else {
             binding.performanceLl.setBackgroundResource(R.drawable.upper_round_rect)
             AnimationView.expand(binding.performanceContainer)
@@ -442,7 +446,6 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
             ClaimCertificateFragment.newInstance(inboxEntity.conversation_id, certificateDetail!!)
                 .show(supportFragmentManager, "claim_certificate_dialog")
         } else appAnalytics.addParam(AnalyticsEvent.CLAIM_CERTIFICATE.NAME, "Locked")
-
     }
 
     private fun setImageInProgressView(url: String) {
@@ -456,59 +459,62 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
             .into(binding.imageView)
     }
 
-
     private fun subscribeBus() {
         compositeDisposable.add(
             RxBus2.listen(OpenClickProgressEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .debounce(2L, TimeUnit.SECONDS)
-                .subscribe({
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val obj: ChatModel? = AppObjectController.appDatabase.chatDao()
-                            .getPractiseFromQuestionId(it.id.toString())
-                        if (obj != null) {
-                            id = it.id
-                            updateIndex = it.postion
-                            if (it.practiseOpen) {
-                                AppAnalytics.create(AnalyticsEvent.PRACTICE_CLICKED_COURSE_OVERVIEW.NAME)
-                                    .addParam("Question Id ", it.id).push()
-                                updatePractiseId = obj.chatId
-                                PractiseSubmitActivity.startPractiseSubmissionActivity(
-                                    this@CourseProgressActivity,
-                                    PRACTISE_SUBMIT_REQUEST_CODE,
-                                    obj
-                                )
-                            } else {
-                                AppAnalytics.create(AnalyticsEvent.VIDEO_CLICKED_COURSE_OVERVIEW.NAME)
-                                    .addParam("Question Id ", it.id).push()
-                                VideoPlayerActivity.startConversionActivity(
-                                    this@CourseProgressActivity,
-                                    obj,
-                                    inboxEntity.course_name
-                                )
+                .subscribe(
+                    {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val obj: ChatModel? = AppObjectController.appDatabase.chatDao()
+                                .getPractiseFromQuestionId(it.id.toString())
+                            if (obj != null) {
+                                id = it.id
+                                updateIndex = it.postion
+                                if (it.practiseOpen) {
+                                    AppAnalytics.create(AnalyticsEvent.PRACTICE_CLICKED_COURSE_OVERVIEW.NAME)
+                                        .addParam("Question Id ", it.id).push()
+                                    updatePractiseId = obj.chatId
+                                    PractiseSubmitActivity.startPractiseSubmissionActivity(
+                                        this@CourseProgressActivity,
+                                        PRACTISE_SUBMIT_REQUEST_CODE,
+                                        obj
+                                    )
+                                } else {
+                                    AppAnalytics.create(AnalyticsEvent.VIDEO_CLICKED_COURSE_OVERVIEW.NAME)
+                                        .addParam("Question Id ", it.id).push()
+                                    VideoPlayerActivity.startConversionActivity(
+                                        this@CourseProgressActivity,
+                                        obj,
+                                        inboxEntity.course_name
+                                    )
+                                }
                             }
                         }
+                    },
+                    {
+                        it.printStackTrace()
                     }
-                }, {
-                    it.printStackTrace()
-                })
+                )
         )
 
         compositeDisposable.add(
             RxBus2.listen(ContentClickEventBus::class.java)
                 .subscribeOn(Schedulers.io())
-                .subscribe({
-                    val resultIntent = Intent().apply {
-                        putExtra(FOCUS_ON_CHAT_ID, it.courseContentEntity.chat_id)
+                .subscribe(
+                    {
+                        val resultIntent = Intent().apply {
+                            putExtra(FOCUS_ON_CHAT_ID, it.courseContentEntity.chat_id)
+                        }
+                        setResult(RESULT_OK, resultIntent)
+                        finish()
+                    },
+                    {
+                        it.printStackTrace()
                     }
-                    setResult(RESULT_OK, resultIntent)
-                    finish()
-                }, {
-                    it.printStackTrace()
-                })
+                )
         )
-
-
     }
 
     override fun onResume() {
@@ -550,11 +556,13 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
             obj.moduleData.practiceIncomplete.remove(id)
             obj.moduleData.practiceComplete.add(id)
         }
-        AppObjectController.uiHandler.postDelayed({
-            binding.progressDetailRv.refreshView(obj)
-        }, 250)
+        AppObjectController.uiHandler.postDelayed(
+            {
+                binding.progressDetailRv.refreshView(obj)
+            },
+            250
+        )
     }
-
 
     override fun onBackPressed() {
         super.onBackPressed()
@@ -574,5 +582,4 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
             this.certificateDetail = certificateDetail
         }
     }
-
 }

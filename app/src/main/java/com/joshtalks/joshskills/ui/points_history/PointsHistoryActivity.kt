@@ -10,11 +10,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.databinding.ActivityPointsHistoryBinding
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.points_history.viewholder.PointsSummaryDescViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewholder.PointsSummaryTitleViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewmodel.PointsViewModel
-import kotlinx.android.synthetic.main.base_toolbar.*
 import java.text.DecimalFormat
+import kotlinx.android.synthetic.main.base_toolbar.iv_back
+import kotlinx.android.synthetic.main.base_toolbar.iv_help
+import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 
 const val MENTOR_ID = "mentor_id"
 
@@ -56,33 +59,35 @@ class PointsHistoryActivity : BaseActivity() {
     }
 
     private fun addObserver() {
-        viewModel.pointsHistoryLiveData.observe(this, Observer {
-            binding.userScore.text = DecimalFormat("#,##,##,###").format(it.totalPoints)
-            binding.userScoreText.text = it.totalPointsText
+        viewModel.pointsHistoryLiveData.observe(
+            this,
+            Observer {
+                binding.userScore.text = DecimalFormat("#,##,##,###").format(it.totalPoints)
+                binding.userScoreText.text = it.totalPointsText
 
-            it.pointsHistoryDateList?.forEachIndexed { index, list ->
-                if (list.pointsSum != null) {
-                    binding.recyclerView.addView(
-                        PointsSummaryTitleViewHolder(
-                            list.date!!,
-                            list.pointsSum,
-                            list.awardIconList,
-                            index
-                        )
-                    )
-                    list.pointsHistoryList?.forEachIndexed { index, pointsHistory ->
+                it.pointsHistoryDateList?.forEachIndexed { index, list ->
+                    if (list.pointsSum != null) {
                         binding.recyclerView.addView(
-                            PointsSummaryDescViewHolder(
-                                pointsHistory,
-                                index,
-                                list.pointsHistoryList.size
+                            PointsSummaryTitleViewHolder(
+                                list.date!!,
+                                list.pointsSum,
+                                list.awardIconList,
+                                index
                             )
                         )
+                        list.pointsHistoryList?.forEachIndexed { index, pointsHistory ->
+                            binding.recyclerView.addView(
+                                PointsSummaryDescViewHolder(
+                                    pointsHistory,
+                                    index,
+                                    list.pointsHistoryList.size
+                                )
+                            )
+                        }
                     }
                 }
             }
-        })
-
+        )
     }
 
     fun openPointsInfoTable() {
@@ -92,9 +97,11 @@ class PointsHistoryActivity : BaseActivity() {
     companion object {
         fun startPointHistory(
             context: Activity,
-            mentorId: String? = null
+            mentorId: String? = null,
+            conversationId: String? = null
         ) {
             val intent = Intent(context, PointsHistoryActivity::class.java)
+            intent.putExtra(CONVERSATION_ID, conversationId)
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             mentorId?.run {
                 intent.putExtra(MENTOR_ID, mentorId.toString())

@@ -705,6 +705,12 @@
                 android:resource="@xml/provider_paths"
                 tools:replace="android:resource" />
         </provider>
+
+        <service
+            android:name=".track.CourseUsageService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            tools:ignore="ExportedService" />
     </application>
 
 </manifest>

@@ -213,6 +213,9 @@ android {
             enableSplit = true
         }
     }
+    kapt {
+        generateStubs = true
+    }
 }
 
 dependencies {

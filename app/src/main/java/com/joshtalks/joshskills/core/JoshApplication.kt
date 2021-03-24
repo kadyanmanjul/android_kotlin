@@ -1,6 +1,10 @@
 package com.joshtalks.joshskills.core
 
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.ComponentCallbacks2
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.StrictMode
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -21,7 +25,9 @@ import timber.log.Timber
 
 const val TAG = "JoshSkill"
 
-class JoshApplication : MultiDexApplication(), LifecycleObserver,
+class JoshApplication :
+    MultiDexApplication(),
+    LifecycleObserver,
     ComponentCallbacks2/*, Configuration.Provider*/ {
 
     companion object {
@@ -42,11 +48,11 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
         registerBroadcastReceiver()
         AppObjectController.uiHandler.post {
             try {
-               this.startService(Intent(this, AutoStartService::class.java))
+                this.startService(Intent(this, AutoStartService::class.java))
             } catch (ignore: Throwable) {
+                ignore.printStackTrace()
             }
         }
-
     }
 
     override fun onTerminate() {

@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewItem
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewResponse
 import com.joshtalks.joshskills.repository.server.course_overview.PdfInfo
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.pdfviewer.MESSAGE_ID
@@ -38,10 +39,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
 const val COURSE_ID = "course_id"
 
-class CourseProgressActivityNew : BaseActivity(),
+class CourseProgressActivityNew :
+    BaseActivity(),
     CourseProgressAdapter.ProgressItemClickListener {
 
     private var courseOverviewResponse: List<CourseOverviewResponse>? = null
@@ -73,17 +74,14 @@ class CourseProgressActivityNew : BaseActivity(),
             }
         }
 
-
     private var downloadListener = object : FetchListener {
         override fun onAdded(download: Download) {
-
         }
 
         override fun onCancelled(download: Download) {
             DownloadUtils.removeCallbackListener(download.tag)
 //            message?.downloadStatus = DOWNLOAD_STATUS.FAILED
             fileNotDownloadView()
-
         }
 
         override fun onCompleted(download: Download) {
@@ -93,7 +91,6 @@ class CourseProgressActivityNew : BaseActivity(),
         }
 
         override fun onDeleted(download: Download) {
-
         }
 
         override fun onDownloadBlockUpdated(
@@ -101,18 +98,15 @@ class CourseProgressActivityNew : BaseActivity(),
             downloadBlock: DownloadBlock,
             totalBlocks: Int
         ) {
-
         }
 
         override fun onError(download: Download, error: Error, throwable: Throwable?) {
             DownloadUtils.removeCallbackListener(download.tag)
 //            message?.downloadStatus = DOWNLOAD_STATUS.FAILED
             fileNotDownloadView()
-
         }
 
         override fun onPaused(download: Download) {
-
         }
 
         override fun onProgress(
@@ -120,19 +114,15 @@ class CourseProgressActivityNew : BaseActivity(),
             etaInMilliSeconds: Long,
             downloadedBytesPerSecond: Long
         ) {
-
         }
 
         override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
-
         }
 
         override fun onRemoved(download: Download) {
-
         }
 
         override fun onResumed(download: Download) {
-
         }
 
         override fun onStarted(
@@ -141,15 +131,11 @@ class CourseProgressActivityNew : BaseActivity(),
             totalBlocks: Int
         ) {
             fileDownloadingInProgressView()
-
         }
 
         override fun onWaitingNetwork(download: Download) {
-
         }
-
     }
-
 
     private val viewModel: CourseOverviewViewModel by lazy {
         ViewModelProvider(this).get(CourseOverviewViewModel::class.java)
@@ -158,14 +144,14 @@ class CourseProgressActivityNew : BaseActivity(),
     companion object {
         fun getCourseProgressActivityNew(
             context: Context,
+            conversationId: String,
             courseId: Int
         ) = Intent(context, CourseProgressActivityNew::class.java).apply {
+            putExtra(CONVERSATION_ID, conversationId)
             putExtra(COURSE_ID, courseId)
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         }
-
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -179,61 +165,65 @@ class CourseProgressActivityNew : BaseActivity(),
 
         CoroutineScope(Dispatchers.IO).launch {
             lastAvailableLessonNo = viewModel.getLastLessonForCourse(courseId)
-
         }
 
         viewModel.getCourseOverview(courseId)
 
         binding.progressLayout.visibility = View.VISIBLE
-        viewModel.progressLiveData.observe(this, {
+        viewModel.progressLiveData.observe(
+            this,
+            {
 
-            courseOverviewResponse = it.responseData
-            pdfInfo = it.pdfInfo
+                courseOverviewResponse = it.responseData
+                pdfInfo = it.pdfInfo
 
-            pdfInfo?.let {
-                binding.pdfNameTv.text = it.coursePdfName
-                binding.sizeTv.text = "${it.coursePdfSize} kB"
-                binding.pageCountTv.text = "${it.coursePdfPageCount} pages"
-                binding.pdfView.visibility = View.GONE
-                binding.progressLayout.visibility = View.GONE
-                if (PermissionUtils.isStoragePermissionEnabled(this) && AppDirectory.getFileSize(
-                        File(
-                            AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath
-                        )
-                    ) > 0
-                ) {
-                    fileDownloadSuccess()
-                } else {
-                    fileNotDownloadView()
+                pdfInfo?.let {
+                    binding.pdfNameTv.text = it.coursePdfName
+                    binding.sizeTv.text = "${it.coursePdfSize} kB"
+                    binding.pageCountTv.text = "${it.coursePdfPageCount} pages"
+                    binding.pdfView.visibility = View.GONE
+                    binding.progressLayout.visibility = View.GONE
+                    if (PermissionUtils.isStoragePermissionEnabled(this) && AppDirectory.getFileSize(
+                            File(
+                                    AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath
+                                )
+                        ) > 0
+                    ) {
+                        fileDownloadSuccess()
+                    } else {
+                        fileNotDownloadView()
+                    }
+                }
+                val data = ArrayList<CourseOverviewResponse>()
+                it.responseData?.forEach {
+                    val courseOverviewResponse = CourseOverviewResponse()
+                    courseOverviewResponse.title = it.title
+                    courseOverviewResponse.unLockCount = it.unLockCount
+                    courseOverviewResponse.type = 10
+                    data.add(courseOverviewResponse)
+                    data.add(it)
                 }
 
+                adapter =
+                    ProgressActivityAdapter(
+                        this,
+                        data,
+                        this,
+                        it.conversationId ?: "0",
+                        lastAvailableLessonNo
+                    )
+                binding.progressRv.adapter = adapter
+
+                val stickHeaderDecoration = StickHeaderItemDecoration(adapter.getListner())
+                binding.progressRv.addItemDecoration(stickHeaderDecoration)
             }
-            val data = ArrayList<CourseOverviewResponse>()
-            it.responseData?.forEach {
-                val courseOverviewResponse = CourseOverviewResponse()
-                courseOverviewResponse.title = it.title
-                courseOverviewResponse.unLockCount = it.unLockCount
-                courseOverviewResponse.type = 10
-                data.add(courseOverviewResponse)
-                data.add(it)
-            }
-
-            adapter =
-                ProgressActivityAdapter(
-                    this,
-                    data,
-                    this,
-                    it.conversationId ?: "0",
-                    lastAvailableLessonNo
-                )
-            binding.progressRv.adapter = adapter
-
-            val stickHeaderDecoration = StickHeaderItemDecoration(adapter.getListner())
-            binding.progressRv.addItemDecoration(stickHeaderDecoration)
-
-        })
+        )
 
         setupUi()
+    }
+
+    override fun getConversationId(): String? {
+        return intent.getStringExtra(CONVERSATION_ID)
     }
 
     private fun setupUi() {
@@ -259,7 +249,8 @@ class CourseProgressActivityNew : BaseActivity(),
                     dayWiseActivityListener.launch(
                         LessonActivity.getActivityIntent(
                             this@CourseProgressActivityNew,
-                            item.lessonId
+                            item.lessonId,
+                            conversationId = intent.getStringExtra(CONVERSATION_ID)
                         )
                     )
                 } else {
@@ -272,11 +263,11 @@ class CourseProgressActivityNew : BaseActivity(),
                 }
             }
         }
-
     }
 
     override fun onCertificateExamClick(
-        previousLesson: CourseOverviewItem, conversationId: String,
+        previousLesson: CourseOverviewItem,
+        conversationId: String,
         chatMessageId: String,
         certificationId: Int,
         cExamStatus: CExamStatus,
@@ -315,7 +306,6 @@ class CourseProgressActivityNew : BaseActivity(),
                 }
             }
         }
-
     }
 
     private fun showAlertMessage(title: String, message: String) {
@@ -350,7 +340,8 @@ class CourseProgressActivityNew : BaseActivity(),
                 ) {
                     token?.continuePermissionRequest()
                 }
-            })
+            }
+        )
     }
 
     fun onClickPdfContainer() {
@@ -363,7 +354,6 @@ class CourseProgressActivityNew : BaseActivity(),
                             if (flag) {
                                 openPdf()
                                 return
-
                             }
                             if (report.isAnyPermissionPermanentlyDenied) {
                                 PermissionUtils.permissionPermanentlyDeniedDialog(
@@ -380,7 +370,8 @@ class CourseProgressActivityNew : BaseActivity(),
                     ) {
                         token?.continuePermissionRequest()
                     }
-                })
+                }
+            )
             return
         }
         openPdf()
@@ -392,13 +383,11 @@ class CourseProgressActivityNew : BaseActivity(),
             return
         }
 
-
-
         pdfInfo?.let {
             if (PermissionUtils.isStoragePermissionEnabled(this) && AppDirectory.getFileSize(
                     File(
-                        AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath
-                    )
+                            AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath
+                        )
                 ) > 0
             ) {
                 PdfViewerActivity.startPdfActivity(
@@ -412,7 +401,6 @@ class CourseProgressActivityNew : BaseActivity(),
                 download()
             }
         }
-
     }
 
     private fun fileDownloadSuccess() {
@@ -443,11 +431,9 @@ class CourseProgressActivityNew : BaseActivity(),
         binding.ivDownloadCompleted.visibility = View.GONE
     }
 
-
     fun downloadCancel() {
         fileNotDownloadView()
 //        message?.downloadStatus = DOWNLOAD_STATUS.NOT_START
-
     }
 
     fun downloadStart() {
@@ -466,10 +452,8 @@ class CourseProgressActivityNew : BaseActivity(),
                 "$courseId",
                 downloadListener
             )
-
         }
     }
-
 
     override fun onBackPressed() {
         val resultIntent = Intent()
@@ -477,5 +461,4 @@ class CourseProgressActivityNew : BaseActivity(),
         setResult(RESULT_OK, resultIntent)
         this.finish()
     }
-
 }

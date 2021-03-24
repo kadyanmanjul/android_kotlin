@@ -16,6 +16,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.service.CONVERSATION_ID
 import com.joshtalks.joshskills.databinding.ActivityCexamReportBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadFileEventBus
@@ -39,10 +40,12 @@ class CExamReportActivity : BaseActivity() {
             context: Context,
             certificateExamId: Int,
             certificationQuestionModel: CertificationQuestionModel,
+            conversationId: String? = null,
         ): Intent {
             return Intent(context, CExamReportActivity::class.java).apply {
                 putExtra(CERTIFICATION_EXAM_ID, certificateExamId)
                 putExtra(CERTIFICATION_EXAM_QUESTION, certificationQuestionModel)
+                putExtra(CONVERSATION_ID, conversationId)
             }
         }
     }
@@ -78,25 +81,31 @@ class CExamReportActivity : BaseActivity() {
     }
 
     private fun addObserver() {
-        viewModel.apiStatus.observe(this, {
-            binding.progressBar.visibility = View.GONE
-        })
-        viewModel.examReportLiveData.observe(this, { certificateList ->
-            certificateList?.run {
-                setUpExamViewPager(this)
-                certificateList.last().awardMentor?.let {
-                    //showAward(mutableListOf(it))
-                }
+        viewModel.apiStatus.observe(
+            this,
+            {
+                binding.progressBar.visibility = View.GONE
+            }
+        )
+        viewModel.examReportLiveData.observe(
+            this,
+            { certificateList ->
+                certificateList?.run {
+                    setUpExamViewPager(this)
+                    certificateList.last().awardMentor?.let {
+                        // showAward(mutableListOf(it))
+                    }
 
-                if (certificateList.last().points.isNullOrBlank().not()) {
-                    showSnackBar(
-                        binding.rootView,
-                        Snackbar.LENGTH_LONG,
-                        certificateList.last().points
-                    )
+                    if (certificateList.last().points.isNullOrBlank().not()) {
+                        showSnackBar(
+                            binding.rootView,
+                            Snackbar.LENGTH_LONG,
+                            certificateList.last().points
+                        )
+                    }
                 }
             }
-        })
+        )
     }
 
     private fun setUpExamViewPager(list: List<CertificateExamReportModel>) {
@@ -116,14 +125,13 @@ class CExamReportActivity : BaseActivity() {
             tabStrip.getChildAt(i).setOnTouchListener { _, _ -> true }
         }
         binding.examReportList.registerOnPageChangeCallback(object :
-            ViewPager2.OnPageChangeCallback() {
-        })
+                ViewPager2.OnPageChangeCallback() {
+            })
         TabLayoutMediator(binding.tabLayout, binding.examReportList) { tab, position ->
             tab.text = "Attempt " + (position + 1)
         }.attach()
         binding.examReportList.currentItem = list.size - 1
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -139,31 +147,38 @@ class CExamReportActivity : BaseActivity() {
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(GotoCEQuestionEventBus::class.java)
                 .subscribeOn(Schedulers.io())
-                .subscribe({
-                    certificationQuestionModel?.run {
-                        startActivity(
-                            CExamMainActivity.startExamActivity(
-                                this@CExamReportActivity,
-                                this,
-                                examView = CertificationExamView.RESULT_VIEW,
-                                openQuestionId = it.questionId,
-                                attemptSequence = (binding.examReportList.currentItem + 1)
+                .subscribe(
+                    {
+                        certificationQuestionModel?.run {
+                            startActivity(
+                                CExamMainActivity.startExamActivity(
+                                    this@CExamReportActivity,
+                                    this,
+                                    examView = CertificationExamView.RESULT_VIEW,
+                                    openQuestionId = it.questionId,
+                                    attemptSequence = (binding.examReportList.currentItem + 1),
+                                    conversationId = getConversationId()
+                                )
                             )
-                        )
+                        }
+                    },
+                    {
+                        it.printStackTrace()
                     }
-                }, {
-                    it.printStackTrace()
-                })
+                )
         )
 
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(DownloadFileEventBus::class.java)
                 .subscribeOn(Schedulers.io())
-                .subscribe({
-                    downloadFile(it.url, message = "Certificate download complete")
-                }, {
-                    it.printStackTrace()
-                })
+                .subscribe(
+                    {
+                        downloadFile(it.url, message = "Certificate download complete")
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
         )
     }
 
@@ -183,6 +198,4 @@ class CExamReportActivity : BaseActivity() {
         } catch (ex: Exception) {
         }
     }
-
-
 }

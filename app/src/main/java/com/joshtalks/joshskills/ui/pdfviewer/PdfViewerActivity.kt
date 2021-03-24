@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.PdfType
 import com.joshtalks.joshskills.repository.server.engage.PdfEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,6 +47,10 @@ class PdfViewerActivity : BaseActivity() {
         showPdf()
     }
 
+    override fun getConversationId(): String? {
+        return intent.getStringExtra(CONVERSATION_ID)
+    }
+
     private fun setToolbar() {
         intent.getStringExtra(COURSE_NAME)?.let {
             conversationBinding.titleTv.text = it
@@ -56,7 +61,6 @@ class PdfViewerActivity : BaseActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 var path: String = EMPTY
-
 
                 path = if (intent.hasExtra(PDF_PATH)) {
                     intent.getStringExtra(PDF_PATH)!!
@@ -101,19 +105,19 @@ class PdfViewerActivity : BaseActivity() {
             pdfId: String,
             courseName: String,
             messageId: String? = null,
-            pdfPath: String = EMPTY
-
+            pdfPath: String = EMPTY,
+            conversationId: String? = null,
         ) {
             Intent(context, PdfViewerActivity::class.java).apply {
                 putExtra(PDF_ID, pdfId)
                 putExtra(COURSE_NAME, courseName)
                 putExtra(MESSAGE_ID, messageId)
+                putExtra(CONVERSATION_ID, conversationId)
                 if (pdfPath.isNotEmpty())
                     putExtra(PDF_PATH, pdfPath)
             }.run {
                 context.startActivity(this)
             }
         }
-
     }
 }

@@ -18,7 +18,11 @@ import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.messaging.MessageBuilderFactory
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.server.chat_message.*
+import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TUnlockClassMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -59,7 +63,6 @@ abstract class BaseConversationActivity : CoreJoshActivity() {
             .build()
     }
 
-
     private fun internetNotAvailable() {
         if (::internetAvailableStatus.isInitialized) {
             internetAvailableStatus.show()
@@ -70,11 +73,11 @@ abstract class BaseConversationActivity : CoreJoshActivity() {
         if (::internetAvailableStatus.isInitialized) {
             internetAvailableStatus.dismiss()
         }
-
     }
 
     protected fun clearMediaFromInternal(conversationId: String) {
-        PermissionUtils.storageReadAndWritePermission(this,
+        PermissionUtils.storageReadAndWritePermission(
+            this,
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
@@ -105,7 +108,8 @@ abstract class BaseConversationActivity : CoreJoshActivity() {
                 ) {
                     token?.continuePermissionRequest()
                 }
-            })
+            }
+        )
     }
 
     private fun mediaClearWorker(conversationId: String) {
@@ -116,12 +120,14 @@ abstract class BaseConversationActivity : CoreJoshActivity() {
                         showProgressBar()
                     } else if (state == WorkInfo.State.SUCCEEDED) {
                         refreshForceList()
-                        uiHandler.postDelayed({
-                            hideProgressBar()
-                        }, 2000)
+                        uiHandler.postDelayed(
+                            {
+                                hideProgressBar()
+                            },
+                            2000
+                        )
                     }
                 }
-
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -132,7 +138,6 @@ abstract class BaseConversationActivity : CoreJoshActivity() {
     }
 
     fun refreshForceList() {}
-
 
     private fun observeNetwork() {
         compositeDisposable.add(
@@ -146,7 +151,8 @@ abstract class BaseConversationActivity : CoreJoshActivity() {
                     } else {
                         internetNotAvailable()
                     }
-                })
+                }
+        )
     }
 
     protected fun getNewMessageObj(lastMessageTime: Date): ChatModel {
@@ -160,28 +166,28 @@ abstract class BaseConversationActivity : CoreJoshActivity() {
 
     protected fun getTextMessage(text: String, lastMessage: ChatModel): ChatModel {
         return MessageBuilderFactory.getMessage(BASE_MESSAGE_TYPE.TX, TChatMessage(text)).apply {
-            messageTime = lastMessage.messageTime+10
+            messageTime = lastMessage.messageTime + 10
             created = lastMessage.created
         }
     }
 
-    protected fun getAudioMessage(tAudioMessage: TAudioMessage,lastMessage: ChatModel): ChatModel {
+    protected fun getAudioMessage(tAudioMessage: TAudioMessage, lastMessage: ChatModel): ChatModel {
         return MessageBuilderFactory.getMessage(BASE_MESSAGE_TYPE.AU, tAudioMessage).apply {
-            messageTime = lastMessage.messageTime+10
+            messageTime = lastMessage.messageTime + 10
             created = lastMessage.created
         }
     }
 
-    protected fun getImageMessage(tImageMessage: TImageMessage,lastMessage: ChatModel): ChatModel {
+    protected fun getImageMessage(tImageMessage: TImageMessage, lastMessage: ChatModel): ChatModel {
         return MessageBuilderFactory.getMessage(BASE_MESSAGE_TYPE.IM, tImageMessage).apply {
-            messageTime = lastMessage.messageTime+10
+            messageTime = lastMessage.messageTime + 10
             created = lastMessage.created
         }
     }
 
-    protected fun getVideoMessage(tVideoMessage: TVideoMessage,lastMessage: ChatModel): ChatModel {
+    protected fun getVideoMessage(tVideoMessage: TVideoMessage, lastMessage: ChatModel): ChatModel {
         return MessageBuilderFactory.getMessage(BASE_MESSAGE_TYPE.VI, tVideoMessage).apply {
-            messageTime = lastMessage.messageTime+10
+            messageTime = lastMessage.messageTime + 10
             created = lastMessage.created
         }
     }
@@ -191,7 +197,7 @@ abstract class BaseConversationActivity : CoreJoshActivity() {
             BASE_MESSAGE_TYPE.UNLOCK,
             TUnlockClassMessage(getString(R.string.unlock_class_demo))
         ).apply {
-            messageTime = lastMessage.messageTime+10
+            messageTime = lastMessage.messageTime + 10
             created = lastMessage.created
         }
     }
@@ -292,6 +298,4 @@ abstract class BaseConversationActivity : CoreJoshActivity() {
         }
     }
 */
-
-
 }

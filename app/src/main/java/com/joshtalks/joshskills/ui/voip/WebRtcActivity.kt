@@ -24,16 +24,27 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CallType
+import com.joshtalks.joshskills.core.DEMO_P2P_CALLEE_NAME
+import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.TAG
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
+import com.joshtalks.joshskills.core.playSnackbarSound
+import com.joshtalks.joshskills.core.printAllIntent
+import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.ActivityCallingBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackView
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -42,7 +53,6 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -70,11 +80,13 @@ class WebRtcActivity : AppCompatActivity() {
             activity: Activity,
             mapForOutgoing: HashMap<String, String?>,
             callType: CallType = CallType.OUTGOING,
+            conversationId: String? = null,
             isDemoClass: Boolean = false
         ) {
             Intent(activity, WebRtcActivity::class.java).apply {
                 putExtra(CALL_USER_OBJ, mapForOutgoing)
                 putExtra(CALL_TYPE, callType)
+                putExtra(CONVERSATION_ID, conversationId)
                 putExtra(IS_DEMO_P2P, isDemoClass)
             }.run {
                 activity.startActivityForResult(this, 9999)
@@ -101,11 +113,14 @@ class WebRtcActivity : AppCompatActivity() {
         override fun onConnect(callId: String) {
             Timber.tag(TAG).e("onConnect")
             AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-            AppObjectController.uiHandler.postDelayed({
-                updateStatusLabel()
-                startCallTimer()
-                binding.connectionLost.visibility = View.GONE
-            }, 500)
+            AppObjectController.uiHandler.postDelayed(
+                {
+                    updateStatusLabel()
+                    startCallTimer()
+                    binding.connectionLost.visibility = View.GONE
+                },
+                500
+            )
         }
 
         override fun onDisconnect(callId: String?, channelName: String?, time: Long) {
@@ -130,26 +145,32 @@ class WebRtcActivity : AppCompatActivity() {
         override fun onNetworkLost() {
             super.onNetworkLost()
             Timber.tag(TAG).e("onNetworkLost")
-            AppObjectController.uiHandler.postDelayed({
-                binding.connectionLost.text = getString(R.string.reconnecting)
-                binding.connectionLost.visibility = View.VISIBLE
-                binding.callTime.visibility = View.INVISIBLE
-            }, 250)
+            AppObjectController.uiHandler.postDelayed(
+                {
+                    binding.connectionLost.text = getString(R.string.reconnecting)
+                    binding.connectionLost.visibility = View.VISIBLE
+                    binding.callTime.visibility = View.INVISIBLE
+                },
+                250
+            )
         }
 
         override fun onNetworkReconnect() {
             super.onNetworkReconnect()
             Timber.tag(TAG).e("onNetworkReconnect")
             val isCallerJoin = mBoundService?.isCallerJoin ?: false
-            if (isCallerJoin.not()){
+            if (isCallerJoin.not()) {
                 return
             }
 
-            AppObjectController.uiHandler.postDelayed({
-                // binding.connectionLost.text = EMPTY
-                binding.connectionLost.visibility = View.GONE
-                binding.callTime.visibility = View.VISIBLE
-            }, 250)
+            AppObjectController.uiHandler.postDelayed(
+                {
+                    // binding.connectionLost.text = EMPTY
+                    binding.connectionLost.visibility = View.GONE
+                    binding.callTime.visibility = View.VISIBLE
+                },
+                250
+            )
         }
 
         override fun onHoldCall() {
@@ -172,7 +193,6 @@ class WebRtcActivity : AppCompatActivity() {
             }
         }
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
@@ -204,7 +224,6 @@ class WebRtcActivity : AppCompatActivity() {
             .addUserDetails()
             .push()
         callMissedCallUser()
-
     }
 
     private fun setCallerInfoOnAppCreate() {
@@ -234,7 +253,6 @@ class WebRtcActivity : AppCompatActivity() {
         return f ?: c
     }
 
-
     private fun callMissedCallUser() {
         val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
         if (callType == null) {
@@ -258,9 +276,12 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun addTimeOutUserDidNotPickCall() {
-        AppObjectController.uiHandler.postDelayed({
-            onDisconnectCall()
-        }, 20000)
+        AppObjectController.uiHandler.postDelayed(
+            {
+                onDisconnectCall()
+            },
+            20000
+        )
     }
 
     private fun callback(token: String, channelName: String, uid: Int) {
@@ -335,12 +356,14 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun addObserver() {
-        userDetailLiveData.observe(this, {
-            binding.topicName.text = it["topic_name"]
-            binding.callerName.text = it["name"]
-            setImageInIV(it["profile_pic"])
-        })
-
+        userDetailLiveData.observe(
+            this,
+            {
+                binding.topicName.text = it["topic_name"]
+                binding.callerName.text = it["name"]
+                setImageInIV(it["profile_pic"])
+            }
+        )
     }
 
     private fun initCall() {
@@ -444,7 +467,6 @@ class WebRtcActivity : AppCompatActivity() {
         }
     }
 
-
     private fun setImageInIV(imageUrl: String?) {
         if (imageUrl.isNullOrEmpty()) {
             val image = TextDrawable.builder()
@@ -540,7 +562,8 @@ class WebRtcActivity : AppCompatActivity() {
                 ) {
                     token?.continuePermissionRequest()
                 }
-            })
+            }
+        )
     }
 
     private fun acceptCallForNormal() {
@@ -573,14 +596,18 @@ class WebRtcActivity : AppCompatActivity() {
                 ) {
                     token?.continuePermissionRequest()
                 }
-            })
+            }
+        )
     }
 
     fun onDisconnectCall() {
         WebRtcService.disconnectCall()
-        AppObjectController.uiHandler.postDelayed({
-            RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
-        }, 1000)
+        AppObjectController.uiHandler.postDelayed(
+            {
+                RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
+            },
+            1000
+        )
     }
 
     private fun answerCall() {
@@ -658,35 +685,40 @@ class WebRtcActivity : AppCompatActivity() {
                 .delay(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    val prev =
-                        supportFragmentManager.findFragmentByTag(VoipCallFeedbackView::class.java.name)
-                    if (prev != null) {
-                        return@subscribe
+                .subscribe(
+                    {
+                        val prev =
+                            supportFragmentManager.findFragmentByTag(VoipCallFeedbackView::class.java.name)
+                        if (prev != null) {
+                            return@subscribe
+                        }
+                        onStopCall()
+                        checkAndShowRating(mBoundService?.getCallId())
+                    },
+                    {
+                        it.printStackTrace()
                     }
-                    onStopCall()
-                    checkAndShowRating(mBoundService?.getCallId())
-                }, {
-                    it.printStackTrace()
-                })
+                )
         )
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(SnackBarEvent::class.java)
                 .subscribeOn(Schedulers.computation())
-                .subscribe({
-                    showSnackBar(binding.container, Snackbar.LENGTH_LONG, it.pointsSnackBarText)
-                }, {
-                    it.printStackTrace()
-                })
+                .subscribe(
+                    {
+                        showSnackBar(binding.container, Snackbar.LENGTH_LONG, it.pointsSnackBarText)
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
         )
     }
 
     fun showSnackBar(view: View, duration: Int, action_lable: String?) {
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
-            //SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
+            // SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
             PointSnackbar.make(view, duration, action_lable)?.show()
             playSnackbarSound(this)
         }
     }
-
 }

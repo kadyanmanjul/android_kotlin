@@ -106,13 +106,15 @@ const val LESSON_REQUEST_CODE = 1107
 const val CERTIFICATION_REQUEST_CODE = 1108
 const val COURSE_PROGRESS_NEW_REQUEST_CODE = 1109
 
-
 const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
 const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
 
-
-class ConversationActivity : BaseConversationActivity(), Player.EventListener,
-    ExoAudioPlayer.ProgressUpdateListener, AudioPlayerEventListener, OnDismissWithSuccess,
+class ConversationActivity :
+    BaseConversationActivity(),
+    Player.EventListener,
+    ExoAudioPlayer.ProgressUpdateListener,
+    AudioPlayerEventListener,
+    OnDismissWithSuccess,
     CourseProgressTooltip.OnDismissClick {
 
     companion object {
@@ -155,7 +157,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     private var reachEndOfData = false
     private var refreshMessageByUser = false
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
@@ -163,6 +164,10 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         activityRef = WeakReference(this)
         initIntentObject()
         init()
+    }
+
+    override fun getConversationId(): String {
+        return inboxEntity.conversation_id
     }
 
     private fun initIntentObject() {
@@ -211,20 +216,19 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     private fun init() {
         initToolbar()
         //  groupChatHintLogic()    //Group chat hint UI
-        //initCourseProgressTooltip()    // course progress tooltip
+        // initCourseProgressTooltip()    // course progress tooltip
         initRV()
         initView()
         initFuture()
         addObservable()
         fetchMessage()
         readMessageDatabaseUpdate()
-
     }
 
     private fun initToolbar() {
         try {
-            if (inboxEntity.isCapsuleCourse){
-                PrefManager.put(IS_DEMO_P2P,false)
+            if (inboxEntity.isCapsuleCourse) {
+                PrefManager.put(IS_DEMO_P2P, false)
             }
             conversationBinding.textMessageTitle.text = inboxEntity.course_name
             conversationBinding.imageViewLogo.setImageWithPlaceholder(inboxEntity.course_icon)
@@ -272,7 +276,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 }
                 return@setOnMenuItemClickListener true
             }
-
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -297,42 +300,42 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         conversationBinding.chatRv.layoutManager?.isMeasurementCacheEnabled = false
 
         conversationBinding.chatRv.addOnScrollListener(object :
-            EndlessRecyclerViewScrollListener(linearLayoutManager, LoadOnScrollDirection.TOP) {
-            override fun onLoadMore(page: Int, totalItemsCount: Int) {
-                if (conversationAdapter.itemCount == 0) {
-                    return
+                EndlessRecyclerViewScrollListener(linearLayoutManager, LoadOnScrollDirection.TOP) {
+                override fun onLoadMore(page: Int, totalItemsCount: Int) {
+                    if (conversationAdapter.itemCount == 0) {
+                        return
+                    }
                 }
-            }
-        })
+            })
         conversationBinding.chatRv.addOnScrollListener(object :
-            EndlessRecyclerViewScrollListener(linearLayoutManager, LoadOnScrollDirection.BOTTOM) {
-            override fun onLoadMore(page: Int, totalItemsCount: Int) {
-                if (conversationAdapter.itemCount == 0) {
-                    return
+                EndlessRecyclerViewScrollListener(linearLayoutManager, LoadOnScrollDirection.BOTTOM) {
+                override fun onLoadMore(page: Int, totalItemsCount: Int) {
+                    if (conversationAdapter.itemCount == 0) {
+                        return
+                    }
+                    //   getPreviousRecord()
                 }
-                //   getPreviousRecord()
-            }
-        })
+            })
 
         conversationBinding.chatRv.addOnScrollListener(object :
-            RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    conversationBinding.scrollToEndButton.visibility = GONE
-                } else if (recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    conversationBinding.scrollToEndButton.visibility = VISIBLE
+                RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        conversationBinding.scrollToEndButton.visibility = GONE
+                    } else if (recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        conversationBinding.scrollToEndButton.visibility = VISIBLE
+                    }
+                    visibleItem()
                 }
-                visibleItem()
-            }
 
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if (recyclerView.canScrollVertically(-1)) {
-                    getPreviousRecord()
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    if (recyclerView.canScrollVertically(-1)) {
+                        getPreviousRecord()
+                    }
                 }
-            }
-        })
+            })
     }
 
     private fun getPreviousRecord() {
@@ -389,14 +392,14 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         findViewById<View>(R.id.ll_audio).setOnClickListener {
             AppAnalytics.create(AnalyticsEvent.AUDIO_SELECTED.NAME).push()
             addAttachmentUIUpdate()
-            PermissionUtils.storageReadAndWritePermission(activityRef.get()!!,
+            PermissionUtils.storageReadAndWritePermission(
+                activityRef.get()!!,
                 object : MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
                             if (flag) {
                                 bottomAudioAttachment()
                                 return
-
                             }
                             if (report.isAnyPermissionPermanentlyDenied) {
                                 PermissionUtils.permissionPermanentlyDeniedDialog(
@@ -413,8 +416,8 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     ) {
                         token?.continuePermissionRequest()
                     }
-                })
-
+                }
+            )
         }
 
         findViewById<View>(R.id.ll_camera).setOnClickListener {
@@ -422,7 +425,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
             addAttachmentUIUpdate()
             uploadImageByUser()
         }
-
     }
 
     private fun initFuture() {
@@ -464,7 +466,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         }
     }
 
-
     private fun onlyChatView() {
         inboxEntity.chat_type?.let {
             when {
@@ -486,7 +487,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     initRecordUI()
                     initInputUI()
                 }
-
             }
         }
     }
@@ -541,47 +541,50 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
 
-        conversationBinding.recordButton.setOnTouchListener(OnRecordTouchListener {
-            if (conversationBinding.chatEdit.text.toString()
+        conversationBinding.recordButton.setOnTouchListener(
+            OnRecordTouchListener {
+                if (conversationBinding.chatEdit.text.toString()
                     .isEmpty() && it == MotionEvent.ACTION_DOWN
-            ) {
-                if (PermissionUtils.isAudioAndStoragePermissionEnable(this).not()) {
-                    PermissionUtils.audioRecordStorageReadAndWritePermission(activityRef.get()!!,
-                        object : MultiplePermissionsListener {
-                            override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                                report?.areAllPermissionsGranted()?.let { flag ->
-                                    if (flag) {
-                                        conversationBinding.recordButton.isListenForRecord =
-                                            true
-                                        return@let
-                                    }
-                                    if (report.isAnyPermissionPermanentlyDenied) {
-                                        PermissionUtils.permissionPermanentlyDeniedDialog(
-                                            this@ConversationActivity,
-                                            R.string.record_permission_message
-                                        )
-                                        return
+                ) {
+                    if (PermissionUtils.isAudioAndStoragePermissionEnable(this).not()) {
+                        PermissionUtils.audioRecordStorageReadAndWritePermission(
+                            activityRef.get()!!,
+                            object : MultiplePermissionsListener {
+                                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                                    report?.areAllPermissionsGranted()?.let { flag ->
+                                        if (flag) {
+                                            conversationBinding.recordButton.isListenForRecord =
+                                                true
+                                            return@let
+                                        }
+                                        if (report.isAnyPermissionPermanentlyDenied) {
+                                            PermissionUtils.permissionPermanentlyDeniedDialog(
+                                                this@ConversationActivity,
+                                                R.string.record_permission_message
+                                            )
+                                            return
+                                        }
                                     }
                                 }
-                            }
 
-                            override fun onPermissionRationaleShouldBeShown(
-                                permissions: MutableList<PermissionRequest>?,
-                                token: PermissionToken?
-                            ) {
-                                token?.continuePermissionRequest()
+                                override fun onPermissionRationaleShouldBeShown(
+                                    permissions: MutableList<PermissionRequest>?,
+                                    token: PermissionToken?
+                                ) {
+                                    token?.continuePermissionRequest()
+                                }
                             }
-                        })
-                } else {
-                    conversationBinding.recordButton.isListenForRecord = true
+                        )
+                    } else {
+                        conversationBinding.recordButton.isListenForRecord = true
+                    }
                 }
             }
-        })
+        )
 
         conversationBinding.recordButton.setOnRecordClickListener {
             sendTextMessage()
         }
-
     }
 
     private fun initInputUI() {
@@ -594,13 +597,11 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     if (isOnlyChat.not()) {
                         conversationBinding.quickToggle.show()
                     }
-
                 } else {
                     conversationBinding.recordButton.goToState(SECOND_STATE)
                     conversationBinding.recordButton.isListenForRecord = false
                     conversationBinding.quickToggle.hide()
                 }
-
             }
 
             override fun beforeTextChanged(
@@ -618,7 +619,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 count: Int
             ) {
             }
-
         })
         conversationBinding.messageButton.setOnClickListener {
             sendTextMessage()
@@ -664,7 +664,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     conversationBinding.imgGroupChat.visibility = GONE
                     conversationBinding.txtUnreadCount.visibility = GONE
                 }
-
             }
         }
 
@@ -702,7 +701,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                         isNewMessageShowing = true
                     }
                 }
-                //End Logic
+                // End Logic
                 conversationAdapter.addMessagesList(items)
             }
         }
@@ -774,8 +773,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 hideProgressBar()
             }
         }
-
-
     }
 
     private fun addRVPatch(count: Int) {
@@ -794,17 +791,19 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
             .setConfig(pickerConfig)
             .onResult()
             .subscribeOn(Schedulers.io())
-            .subscribe({
-                it?.getOrNull(0)?.path?.let { path ->
-                    if (path.isNotBlank()) {
-                        AppAnalytics.create(AnalyticsEvent.AUDIO_SENT.NAME).push()
-                        addAudioFromBottomBar(Utils.getPathFromUri(path))
+            .subscribe(
+                {
+                    it?.getOrNull(0)?.path?.let { path ->
+                        if (path.isNotBlank()) {
+                            AppAnalytics.create(AnalyticsEvent.AUDIO_SENT.NAME).push()
+                            addAudioFromBottomBar(Utils.getPathFromUri(path))
+                        }
                     }
+                },
+                {
                 }
-            }, {
-            })
+            )
     }
-
 
     private fun profileFeatureActiveView() {
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
@@ -826,7 +825,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
                 conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
                 conversationBinding.userPointContainer.slideInAnimation()
-
             } else {
                 conversationBinding.userPointContainer.visibility = GONE
                 conversationBinding.imgGroupChat.shiftGroupChatIconUp(conversationBinding.txtUnreadCount)
@@ -844,7 +842,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
 
     private fun showCourseProgressTooltip() {
         if (AppObjectController.getFirebaseRemoteConfig()
-                .getBoolean(FirebaseRemoteConfigKey.COURSE_PROGRESS_TOOLTIP_VISIBILITY)
+            .getBoolean(FirebaseRemoteConfigKey.COURSE_PROGRESS_TOOLTIP_VISIBILITY)
         ) {
             conversationBinding.courseProgressTooltip.setDismissListener(this)
             conversationBinding.courseProgressTooltip.visibility = VISIBLE
@@ -873,39 +871,44 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         }
     }
 
-
     private fun subscribeRXBus() {
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(DBInsertion::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    val time = try {
-                        conversationAdapter.getLastItem().messageTime
-                    } catch (ex: Exception) {
-                        0.0
+                .subscribe(
+                    {
+                        val time = try {
+                            conversationAdapter.getLastItem().messageTime
+                        } catch (ex: Exception) {
+                            0.0
+                        }
+                        conversationViewModel.addNewMessages(time)
+                        refreshMessageByUser = it.refreshMessageUser
+                    },
+                    {
+                        it.printStackTrace()
                     }
-                    conversationViewModel.addNewMessages(time)
-                    refreshMessageByUser = it.refreshMessageUser
-                }, {
-                    it.printStackTrace()
-                })
+                )
         )
         compositeDisposable.add(
             RxBus2.listen(PlayVideoEvent::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    conversationViewModel.setMRefreshControl(false)
-                    VideoPlayerActivity.startConversionActivity(
-                        this,
-                        it.chatModel,
-                        inboxEntity.course_name,
-                        inboxEntity.duration
-                    )
-                }, {
-                    it.printStackTrace()
-                })
+                .subscribe(
+                    {
+                        conversationViewModel.setMRefreshControl(false)
+                        VideoPlayerActivity.startConversionActivity(
+                            this,
+                            it.chatModel,
+                            inboxEntity.course_name,
+                            inboxEntity.duration
+                        )
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
         )
         compositeDisposable.add(
             RxBus2.listen(ImageShowEvent::class.java)
@@ -920,40 +923,47 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     },
                     {
                         it.printStackTrace()
-                    })
+                    }
+                )
         )
         compositeDisposable.add(
             RxBus2.listen(PdfOpenEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    PdfViewerActivity.startPdfActivity(
-                        activityRef.get()!!,
-                        it.pdfObject.id,
-                        inboxEntity.course_name,
-                        it.chatId
-                    )
-                }, {
-                    it.printStackTrace()
-                })
+                .subscribe(
+                    {
+                        PdfViewerActivity.startPdfActivity(
+                            activityRef.get()!!,
+                            it.pdfObject.id,
+                            inboxEntity.course_name,
+                            it.chatId,
+                            conversationId = inboxEntity.conversation_id
+                        )
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
         )
         compositeDisposable.add(
             RxBus2.listen(MediaProgressEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    if (it.state == com.google.android.exoplayer2.offline.Download.STATE_COMPLETED) {
-                        refreshViewAtPos(
-                            AppObjectController.gsonMapperForLocal.fromJson(
-                                it.id,
-                                ChatModel::class.java
+                .subscribe(
+                    {
+                        if (it.state == com.google.android.exoplayer2.offline.Download.STATE_COMPLETED) {
+                            refreshViewAtPos(
+                                AppObjectController.gsonMapperForLocal.fromJson(
+                                    it.id,
+                                    ChatModel::class.java
+                                )
                             )
-                        )
+                        }
+                    },
+                    {
+                        it.printStackTrace()
                     }
-
-                }, {
-                    it.printStackTrace()
-                })
+                )
         )
 
         compositeDisposable.add(
@@ -1012,40 +1022,44 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                                     ) {
                                         token?.continuePermissionRequest()
                                     }
-                                })
+                                }
+                            )
                         }
                         else -> {
-
                         }
                     }
-                })
-
-        compositeDisposable.add(RxBus2.listen(DownloadCompletedEventBus::class.java)
-            .subscribeOn(Schedulers.computation())
-            .subscribe {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val obj = AppObjectController.appDatabase.chatDao()
-                        .getUpdatedChatObjectViaId(it.chatModel.chatId)
-                    refreshViewAtPos(obj)
                 }
+        )
 
-            })
-        compositeDisposable.add(RxBus2.listen(VideoDownloadedBus::class.java)
-            .subscribeOn(Schedulers.computation())
-            .subscribe {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val chatObj = AppObjectController.appDatabase.chatDao()
-                        .getUpdatedChatObjectViaId(it.messageObject.chatId)
-                    refreshViewAtPos(chatObj)
+        compositeDisposable.add(
+            RxBus2.listen(DownloadCompletedEventBus::class.java)
+                .subscribeOn(Schedulers.computation())
+                .subscribe {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val obj = AppObjectController.appDatabase.chatDao()
+                            .getUpdatedChatObjectViaId(it.chatModel.chatId)
+                        refreshViewAtPos(obj)
+                    }
                 }
-            })
+        )
+        compositeDisposable.add(
+            RxBus2.listen(VideoDownloadedBus::class.java)
+                .subscribeOn(Schedulers.computation())
+                .subscribe {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val chatObj = AppObjectController.appDatabase.chatDao()
+                            .getUpdatedChatObjectViaId(it.messageObject.chatId)
+                        refreshViewAtPos(chatObj)
+                    }
+                }
+        )
         compositeDisposable.add(
             RxBus2.listen(ChatModel::class.java)
                 .subscribeOn(Schedulers.computation())
                 .subscribe {
                     visibleItem()
-                })
-
+                }
+        )
 
         //  Start Block for swipe to refresh and get chat
         compositeDisposable.add(
@@ -1067,48 +1081,50 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                         hideProgressBar()
                     }
                     conversationBinding.refreshLayout.isRefreshing = false
-                })
-        //End
+                }
+        )
+        // End
 
         compositeDisposable.add(
             RxBus2.listen(AudioPlayEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    if (getCurrentMediaVolume(applicationContext) <= 0) {
-                        StyleableToast.Builder(applicationContext).gravity(Gravity.BOTTOM)
-                            .text(getString(R.string.volume_up_message)).cornerRadius(16)
-                            .length(Toast.LENGTH_LONG)
-                            .solidBackground().show()
-                    }
-                    if (it.state == PAUSED) {
-                        audioPlayerManager?.onPause()
-                        return@subscribe
-                    }
-                    AppObjectController.currentPlayingAudioObject?.let { chatModel ->
-                        refreshViewAtPos(chatModel)
-                    }
-                    analyticsAudioPlayed(it.audioType)
-                    currentAudioPosition =
-                        conversationAdapter.getMessagePositionById(it.chatModel.chatId)
-                    if (AppObjectController.currentPlayingAudioObject != null && ExoAudioPlayer.LAST_ID == it?.chatModel?.chatId) {
-                        audioPlayerManager?.resumeOrPause()
-                    } else {
-                        AppObjectController.currentPlayingAudioObject = it.chatModel
-                        audioPlayerManager?.onPause()
-                        setPlayProgress(it.chatModel.playProgress)
-                        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                        audioPlayerManager?.play(
-                            it.audioType!!.audio_url,
-                            it.chatModel.chatId
-                        )
-
-                    }
-                    DatabaseUtils.updateLastUsedModification(it.chatModel.chatId)
-                },
+                .subscribe(
+                    {
+                        if (getCurrentMediaVolume(applicationContext) <= 0) {
+                            StyleableToast.Builder(applicationContext).gravity(Gravity.BOTTOM)
+                                .text(getString(R.string.volume_up_message)).cornerRadius(16)
+                                .length(Toast.LENGTH_LONG)
+                                .solidBackground().show()
+                        }
+                        if (it.state == PAUSED) {
+                            audioPlayerManager?.onPause()
+                            return@subscribe
+                        }
+                        AppObjectController.currentPlayingAudioObject?.let { chatModel ->
+                            refreshViewAtPos(chatModel)
+                        }
+                        analyticsAudioPlayed(it.audioType)
+                        currentAudioPosition =
+                            conversationAdapter.getMessagePositionById(it.chatModel.chatId)
+                        if (AppObjectController.currentPlayingAudioObject != null && ExoAudioPlayer.LAST_ID == it?.chatModel?.chatId) {
+                            audioPlayerManager?.resumeOrPause()
+                        } else {
+                            AppObjectController.currentPlayingAudioObject = it.chatModel
+                            audioPlayerManager?.onPause()
+                            setPlayProgress(it.chatModel.playProgress)
+                            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                            audioPlayerManager?.play(
+                                it.audioType!!.audio_url,
+                                it.chatModel.chatId
+                            )
+                        }
+                        DatabaseUtils.updateLastUsedModification(it.chatModel.chatId)
+                    },
                     {
                         it.printStackTrace()
-                    })
+                    }
+                )
         )
         compositeDisposable.add(
             RxBus2.listen(InternalSeekBarProgressEventBus::class.java)
@@ -1122,142 +1138,170 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
             RxBus2.listen(PractiseSubmitEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    AppAnalytics.create(AnalyticsEvent.PRACTICE_OPENED.NAME)
-                        .addBasicParam()
-                        .addUserDetails()
-                        .addParam(AnalyticsEvent.COURSE_NAME.NAME, inboxEntity.course_name)
-                        .addParam(
-                            AnalyticsEvent.PRACTICE_SOLVED.NAME,
-                            (it.chatModel.question != null) && (it.chatModel.question!!.practiceEngagement.isNullOrEmpty()
-                                .not())
+                .subscribe(
+                    {
+                        AppAnalytics.create(AnalyticsEvent.PRACTICE_OPENED.NAME)
+                            .addBasicParam()
+                            .addUserDetails()
+                            .addParam(AnalyticsEvent.COURSE_NAME.NAME, inboxEntity.course_name)
+                            .addParam(
+                                AnalyticsEvent.PRACTICE_SOLVED.NAME,
+                                (it.chatModel.question != null) && (
+                                    it.chatModel.question!!.practiceEngagement.isNullOrEmpty()
+                                        .not()
+                                    )
+                            )
+                            .addParam("chatId", it.chatModel.chatId)
+                            .push()
+                        PractiseSubmitActivity.startPractiseSubmissionActivity(
+                            activityRef.get()!!,
+                            PRACTISE_SUBMIT_REQUEST_CODE,
+                            it.chatModel
                         )
-                        .addParam("chatId", it.chatModel.chatId)
-                        .push()
-                    PractiseSubmitActivity.startPractiseSubmissionActivity(
-                        activityRef.get()!!,
-                        PRACTISE_SUBMIT_REQUEST_CODE,
-                        it.chatModel
-                    )
-                }, {
-                    it.printStackTrace()
-                })
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
         )
         compositeDisposable.add(
             RxBus2.listen(GotoChatEventBus::class.java)
                 .subscribeOn(Schedulers.io())
-                .subscribe({
-                    scrollToPosition(it.chatId)
-                }, {
-                    it.printStackTrace()
-                })
+                .subscribe(
+                    {
+                        scrollToPosition(it.chatId)
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
         )
 
         compositeDisposable.add(
             RxBus2.listen(AssessmentStartEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    logAssessmentEvent(it.assessmentId)
-                    AssessmentActivity.startAssessmentActivity(
-                        this,
-                        requestCode = ASSESSMENT_REQUEST_CODE,
-                        assessmentId = it.assessmentId
-                    )
-                }, {
-                    it.printStackTrace()
-                })
+                .subscribe(
+                    {
+                        logAssessmentEvent(it.assessmentId)
+                        AssessmentActivity.startAssessmentActivity(
+                            this,
+                            requestCode = ASSESSMENT_REQUEST_CODE,
+                            assessmentId = it.assessmentId
+                        )
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
         )
 
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(UnlockNextClassEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    isNewMessageShowing = false
-                    conversationBinding.refreshLayout.isRefreshing = true
-                    //conversationBinding.chatRv.removeView(it.viewHolder)
-                    conversationAdapter.removeNewClassCard()
-                    conversationAdapter.removeUnlockMessage()
-                    unlockClassViewModel.updateBatchChangeRequest()
-                    logUnlockCardEvent()
-                }, {
-                    it.printStackTrace()
-                })
+                .subscribe(
+                    {
+                        isNewMessageShowing = false
+                        conversationBinding.refreshLayout.isRefreshing = true
+                        // conversationBinding.chatRv.removeView(it.viewHolder)
+                        conversationAdapter.removeNewClassCard()
+                        conversationAdapter.removeUnlockMessage()
+                        unlockClassViewModel.updateBatchChangeRequest()
+                        logUnlockCardEvent()
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
         )
 
         compositeDisposable.add(
             RxBus2.listen(ConversationPractiseEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    ConversationPracticeActivity.startConversationPracticeActivity(
-                        this,
-                        CONVERSATION_PRACTISE_REQUEST_CODE,
-                        it.id,
-                        it.pImage
-                    )
-                }, {
-                    it.printStackTrace()
-                })
+                .subscribe(
+                    {
+                        ConversationPracticeActivity.startConversationPracticeActivity(
+                            this,
+                            CONVERSATION_PRACTISE_REQUEST_CODE,
+                            it.id,
+                            it.pImage
+                        )
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
         )
 
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(StartCertificationExamEventBus::class.java)
                 .subscribeOn(Schedulers.io())
-                .subscribe({
-                    startActivityForResult(
-                        CertificationBaseActivity.certificationExamIntent(
-                            this,
-                            conversationId = it.conversationId,
-                            chatMessageId = it.messageId,
-                            certificationId = it.certificationExamId,
-                            cExamStatus = it.examStatus,
-                            lessonInterval = it.lessonInterval
-                        ), CERTIFICATION_REQUEST_CODE
-                    )
-                }, {
-                    it.printStackTrace()
-                })
+                .subscribe(
+                    {
+                        startActivityForResult(
+                            CertificationBaseActivity.certificationExamIntent(
+                                this,
+                                conversationId = it.conversationId,
+                                chatMessageId = it.messageId,
+                                certificationId = it.certificationExamId,
+                                cExamStatus = it.examStatus,
+                                lessonInterval = it.lessonInterval
+                            ),
+                            CERTIFICATION_REQUEST_CODE
+                        )
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
         )
 
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(OpenUserProfile::class.java)
                 .subscribeOn(Schedulers.computation())
-                .subscribe({
-                    it.id?.let { id ->
-                        openUserProfileActivity(id, USER_PROFILE_FLOW_FROM.BEST_PERFORMER.value)
+                .subscribe(
+                    {
+                        it.id?.let { id ->
+                            openUserProfileActivity(id, USER_PROFILE_FLOW_FROM.BEST_PERFORMER.value)
+                        }
+                    },
+                    {
+                        it.printStackTrace()
                     }
-                }, {
-                    it.printStackTrace()
-                })
+                )
         )
 
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(LessonItemClickEventBus::class.java)
                 .subscribeOn(Schedulers.computation())
-                .subscribe({
-                    startActivityForResult(
-                        LessonActivity.getActivityIntent(this, it.lessonId),
-                        LESSON_REQUEST_CODE
-                    )
-                }, {
-                    it.printStackTrace()
-                })
+                .subscribe(
+                    {
+                        startActivityForResult(
+                            LessonActivity.getActivityIntent(this, it.lessonId, conversationId = inboxEntity.conversation_id),
+                            LESSON_REQUEST_CODE
+                        )
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
         )
 
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(OpenUserProfile::class.java)
                 .subscribeOn(Schedulers.computation())
-                .subscribe({
-                    //showAward(Award(),false)
-                }, {
-                    it.printStackTrace()
-                })
+                .subscribe(
+                    {
+                        // showAward(Award(),false)
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
         )
-
     }
-
 
     private fun logAssessmentEvent(assessmentId: Int) {
         AppAnalytics.create(AnalyticsEvent.QUIZ_TEST_OPENED.NAME)
@@ -1292,7 +1336,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 this@ConversationActivity.javaClass.simpleName
             ).push()
     }
-
 
     override fun onActivityResult(
         requestCode: Int,
@@ -1342,7 +1385,7 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                             conversationViewModel.refreshMessageObject(it)
                         }
                         if (requestCode == LESSON_REQUEST_CODE && courseProgressUIVisible.not()) {
-                            initCourseProgressTooltip()//Progress Tooltip
+                            initCourseProgressTooltip() // Progress Tooltip
                         }
                     }
                     COURSE_PROGRESS_NEW_REQUEST_CODE -> {
@@ -1352,7 +1395,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                     }
                 }
             }
-
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -1365,7 +1407,8 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     }
 
     private fun uploadImageByUser() {
-        PermissionUtils.cameraRecordStorageReadAndWritePermission(this,
+        PermissionUtils.cameraRecordStorageReadAndWritePermission(
+            this,
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
@@ -1383,7 +1426,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                                 options
                             )
                             return
-
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
                             PermissionUtils.cameraStoragePermissionPermanentlyDeniedDialog(
@@ -1400,8 +1442,8 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
                 ) {
                     token?.continuePermissionRequest()
                 }
-            })
-
+            }
+        )
     }
 
     override fun onResume() {
@@ -1420,7 +1462,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         audioPlayerManager?.onPause()
         compositeDisposable.clear()
     }
-
 
     override fun onStop() {
         super.onStop()
@@ -1454,8 +1495,10 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
             startActivityForResult(
                 CourseProgressActivityNew.getCourseProgressActivityNew(
                     this,
+                    inboxEntity.conversation_id,
                     inboxEntity.courseId.toInt()
-                ), COURSE_PROGRESS_NEW_REQUEST_CODE
+                ),
+                COURSE_PROGRESS_NEW_REQUEST_CODE
             )
             hideCourseProgressTooltip()
             PrefManager.put(COURSE_PROGRESS_OPENED, true)
@@ -1508,7 +1551,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         }
     }
 
-
     private fun readMessageDatabaseUpdate() {
         readMessageTimerTask = Timer("VisibleMessage", false).scheduleAtFixedRate(5000, 1500) {
             utilConversationViewModel.updateInDatabaseReadMessage(readChatList)
@@ -1526,7 +1568,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         }
     }
 
-
     private fun refreshView(chatId: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -1538,7 +1579,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
             }
         }
     }
-
 
     private fun refreshViewAtPos(chatObj: ChatModel) {
         CoroutineScope(Dispatchers.Main).launch {
@@ -1571,11 +1611,9 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     }
 
     override fun onPositionDiscontinuity(lastPos: Long, reason: Int) {
-
     }
 
     override fun onPositionDiscontinuity(reason: Int) {
-
     }
 
     override fun onPlayerReleased() {
@@ -1596,11 +1634,8 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
     override fun onDismiss() {
     }
 
-
     override fun onDurationUpdate(duration: Long?) {
-
     }
-
 
     private fun scrollToEnd() {
         CoroutineScope(Dispatchers.Main).launch {
@@ -1680,7 +1715,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
         conversationViewModel.sendMediaMessage(recordUpdatedPath, tAudioMessage, message)
     }
 
-
     private fun addImageMessage(imagePath: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val imageUpdatedPath = AppDirectory.getImageSentFilePath()
@@ -1693,7 +1727,6 @@ class ConversationActivity : BaseConversationActivity(), Player.EventListener,
             scrollToEnd()
             conversationViewModel.sendMediaMessage(imageUpdatedPath, tImageMessage, message)
         }
-
     }
 
     private fun addVideoMessage(videoPath: String) {
