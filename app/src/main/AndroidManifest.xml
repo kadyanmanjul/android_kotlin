@@ -180,13 +180,13 @@
             android:alwaysRetainTaskState="true"
             android:launchMode="singleTop"
             android:theme="@style/AppNoBarTheme" />
-        <activity
+        <!--<activity
             android:name=".ui.launch.LauncherActivity"
             android:alwaysRetainTaskState="true"
             android:launchMode="singleTop"
-            android:theme="@style/AppNoBarTheme" />
+            android:theme="@style/AppNoBarTheme" />-->
         <activity
-            android:name=".ui.launch.NewLauncherActivity"
+            android:name=".ui.launch.LauncherActivity"
             android:alwaysRetainTaskState="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"

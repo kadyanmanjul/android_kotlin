@@ -71,7 +71,6 @@ import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.inbox.IS_FROM_NEW_ONBOARDING
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
-import com.joshtalks.joshskills.ui.introduction.IntroductionActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
@@ -276,33 +275,32 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
     }
 
     fun getIntentForState(): Intent {
-        val intent: Intent = when {
-            User.getInstance().isVerified.not() -> {
-                when {
-                    PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) -> {
-                        getInboxActivityIntent()
-                    }
-                    PrefManager.getBoolValue(IS_PAYMENT_DONE, false) -> {
-                        Intent(this, SignUpActivity::class.java)
-                    }
-                    else -> {
-                        Intent(this, IntroductionActivity::class.java).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            val intent: Intent = when {
+                User.getInstance().isVerified.not() -> {
+                    when {
+                        PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) -> {
+                            getInboxActivityIntent()
+                        }
+                        PrefManager.getBoolValue(IS_PAYMENT_DONE, false) -> {
+                            Intent(this, SignUpActivity::class.java)
+                        }
+                        else -> {
+                            Intent(this, OnBoardActivity::class.java)
                         }
                     }
                 }
+                isUserProfileNotComplete() -> {
+                    Intent(this, SignUpActivity::class.java)
+                }
+                else -> getInboxActivityIntent()
             }
-            isUserProfileNotComplete() -> {
-                Intent(this, SignUpActivity::class.java)
+            return intent.apply {
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
-            else -> getInboxActivityIntent()
-        }
-        return intent.apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
     }
+
+
 
     fun isUserProfileNotComplete(): Boolean {
         try {

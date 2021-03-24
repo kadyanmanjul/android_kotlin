@@ -504,7 +504,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     }
 
     private fun returnDefaultIntent(): Intent {
-        return Intent(applicationContext, NewLauncherActivity::class.java).apply {
+        return Intent(applicationContext, LauncherActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             putExtra(HAS_NOTIFICATION, true)
         }
