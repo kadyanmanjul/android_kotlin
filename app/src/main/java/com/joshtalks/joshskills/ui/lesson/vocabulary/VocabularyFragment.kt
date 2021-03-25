@@ -329,18 +329,6 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
-
-    override fun onPause() {
-        super.onPause()
-//        adapter.itemList.forEachIndexed { index, lessonQuestion ->
-//            if (lessonQuestion.type != LessonQuestionType.QUIZ)
-//                binding.practiceRv.findViewHolderForAdapterPosition(index)?.let {
-//                    (it as VocabularyPracticeAdapter.VocabularyViewHolder?)?.pauseAudio()
-//                }
-//        }
-//        aPosition = -1
-    }
-
     override fun askRecordPermission() {
 
         PermissionUtils.audioRecordStorageReadAndWritePermission(
@@ -397,6 +385,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         subscribeRXBus()
         try {
             if (isVisible.not()) {
+                adapter.audioManager?.onPause()
                 adapter.itemList.forEachIndexed { index, lessonQuestion ->
                     if (lessonQuestion.type != LessonQuestionType.QUIZ)
                         (binding.practiceRv.findViewHolderForAdapterPosition(index)
@@ -408,9 +397,39 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        adapter.audioManager?.onPause()
+//        adapter.itemList.forEachIndexed { index, lessonQuestion ->
+//            if (lessonQuestion.type != LessonQuestionType.QUIZ)
+//                binding.practiceRv.findViewHolderForAdapterPosition(index)?.let {
+//                    (it as VocabularyPracticeAdapter.VocabularyViewHolder?)?.pauseAudio()
+//                }
+//        }
+//        aPosition = -1
+    }
+
     override fun onStop() {
         super.onStop()
         compositeDisposable.clear()
+        try {
+            adapter.audioManager?.onPause()
+
+        } catch (ex: Exception) {
+        }
+    }
+
+    override fun onDestroy() {
+        try {
+            super.onDestroy()
+            try {
+                adapter.audioManager?.release()
+
+            } catch (ex: Exception) {
+            }
+        } catch (ex: Exception) {
+
+        }
     }
 
     companion object {
