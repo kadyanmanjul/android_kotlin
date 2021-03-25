@@ -906,7 +906,7 @@ class VocabularyPracticeAdapter(
                     .solidBackground().show()
             }
 
-            lessonQuestion.sampleAudioUrl?.let { url ->
+            lessonQuestion.audioList?.get(0)?.audio_url?.let { url ->
                 val audioType = AudioType()
                 audioType.audio_url = url
                 audioType.downloadedLocalPath = url
@@ -934,10 +934,10 @@ class VocabularyPracticeAdapter(
         private fun setPracticeInfoView(lessonQuestion: LessonQuestion) {
             val wordNumber = itemList.filter { it.assessmentId == null }.indexOf(lessonQuestion) + 1
 
-            if (lessonQuestion.sampleAudioUrl != null) {
-                binding.layoutPronounce.visibility = VISIBLE
-            } else {
+            if (lessonQuestion.audioList.isNullOrEmpty()) {
                 binding.layoutPronounce.visibility = GONE
+            } else {
+                binding.layoutPronounce.visibility = VISIBLE
             }
 
             lessonQuestion.run {

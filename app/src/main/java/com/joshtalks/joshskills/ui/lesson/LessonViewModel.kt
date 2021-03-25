@@ -119,6 +119,13 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 val lessonQuestions =
                     appDatabase.lessonQuestionDao().getQuestionsForLesson(lessonId)
                 lessonQuestions.forEach { lessonQuestion ->
+
+                    val audioList =
+                        appDatabase.chatDao().getAudiosOfQuestion(lessonQuestion.id)
+                    if (audioList.isNullOrEmpty().not()) {
+                        lessonQuestion.audioList = audioList
+                    }
+
                     when (lessonQuestion.materialType) {
 
                         LessonMaterialType.IM ->
