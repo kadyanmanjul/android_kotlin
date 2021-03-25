@@ -471,7 +471,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
         binding.submitAnswerBtn.visibility = GONE
         binding.progressLayout.visibility = GONE
         //binding.feedbackResultProgressLl.visibility = VISIBLE
-        binding.rootView.postDelayed(Runnable {
+        binding.rootView.postDelayed({
             binding.rootView.smoothScrollTo(
                 0,
                 binding.rootView.height
@@ -935,11 +935,11 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
 */
 
     override fun onPlayerPause() {
-        //binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+        binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
     }
 
     override fun onPlayerResume() {
-        //binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
+        binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
     }
 
     override fun onCurrentTimeUpdated(lastPosition: Long) {
@@ -961,19 +961,19 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
     }
 
     override fun complete() {
-        // binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
-        //binding.submitPractiseSeekbar.progress = 0
+        binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+        binding.practiseSeekbar.progress = 0
         audioManager?.seekTo(0)
         audioManager?.onPause()
         audioManager?.setProgressUpdateListener(null)
     }
 
     override fun onProgressUpdate(progress: Long) {
-        // binding.submitPractiseSeekbar.progress = progress.toInt()
+        binding.practiseSeekbar.progress = progress.toInt()
     }
 
     override fun onDurationUpdate(duration: Long?) {
-        //  duration?.toInt()?.let { binding.submitPractiseSeekbar.max = it }
+        duration?.toInt()?.let { binding.practiseSeekbar.max = it }
     }
 
     companion object {
