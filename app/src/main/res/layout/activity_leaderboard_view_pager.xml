@@ -37,9 +37,9 @@
                 app:tabIndicatorColor="@color/button_color"
                 app:tabIndicatorFullWidth="false"
                 app:tabIndicatorHeight="@dimen/_2sdp"
-                app:tabMode="fixed"
-                app:tabPaddingEnd="0dp"
-                app:tabPaddingStart="0dp"
+                app:tabMode="scrollable"
+                app:tabPaddingEnd="@dimen/_22sdp"
+                app:tabPaddingStart="@dimen/_22sdp"
                 app:tabSelectedTextColor="@color/button_color"
                 app:tabTextAppearance="@style/LeaderBoardTabLayoutStyle"/>
 
