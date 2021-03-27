@@ -206,11 +206,13 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
 
     fun hidePracticeInputLayout() {
         binding.practiseInputHeader.visibility = GONE
+        binding.practiseInputLabel.visibility = GONE
         binding.practiseInputLayout.visibility = GONE
     }
 
     fun showPracticeInputLayout() {
         binding.practiseInputHeader.visibility = VISIBLE
+        binding.practiseInputLabel.visibility = VISIBLE
         binding.practiseInputLayout.visibility = VISIBLE
     }
 
@@ -286,17 +288,10 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                 AnalyticsEvent.PRACTICE_TYPE_PRESENT.NAME,
                 "${this.materialType} Practice present"
             )
+            initializeAudioViewForDemoAudio(this)
             when (this.materialType) {
                 LessonMaterialType.AU -> {
-                    binding.audioViewContainer.visibility = VISIBLE
-                    this.audioList?.getOrNull(0)?.audio_url?.let {
-                        binding.btnPlayInfo.tag = it
-                        binding.practiseSeekbar.max = this.audioList?.getOrNull(0)?.duration!!
-                        if (binding.practiseSeekbar.max == 0) {
-                            binding.practiseSeekbar.max = 2_00_000
-                        }
-                    }
-                    initializePractiseSeekBar()
+                    // initializeAudioViewForDemoAudio(this)
                 }
 
                 LessonMaterialType.IM -> {
@@ -369,6 +364,18 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                 }
             }
         }
+    }
+
+    private fun initializeAudioViewForDemoAudio(lessonQuestion: LessonQuestion) {
+        lessonQuestion.audioList?.getOrNull(0)?.audio_url?.let {
+            binding.audioViewContainer.visibility = VISIBLE
+            binding.btnPlayInfo.tag = it
+            binding.practiseSeekbar.max = lessonQuestion.audioList?.getOrNull(0)?.duration!!
+            if (binding.practiseSeekbar.max == 0) {
+                binding.practiseSeekbar.max = 2_00_000
+            }
+        }
+        initializePractiseSeekBar()
     }
 
     private fun setVideoThumbnail(thumbnailUrl: String?) {

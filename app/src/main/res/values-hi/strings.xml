@@ -86,6 +86,8 @@
     <string name="hold_to_record_msz">उत्तर रिकॉर्ड करने के लिए दबाकर रखें</string>
     <string name="upload_file_msz">एक फाइल अपलोड करें</string>
     <string name="your_answer">आपका जवाब</string>
+    <string name="record_your_answer">अपना उत्तर रिकॉर्ड करें</string>
+    <string name="attempt_reading_practice">यह आज की रीडिंग प्रैक्टिस है, इसे ज़ोर से पढ़ें और वॉयस रिकॉर्डिंग भेजें</string>
     <string name="your_feedback">आपकी प्रतिक्रिया</string>
     <string name="your_submitted_answer">आपका सबमिट किया गया जवाब</string>
     <string name="type_your_answer_hint">अपना जवाब यहाँ टाइप करें</string>
