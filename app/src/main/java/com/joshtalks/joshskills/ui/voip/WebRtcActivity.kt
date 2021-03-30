@@ -24,21 +24,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CallType
-import com.joshtalks.joshskills.core.DEMO_P2P_CALLEE_NAME
-import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.TAG
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
-import com.joshtalks.joshskills.core.playSnackbarSound
-import com.joshtalks.joshskills.core.printAllIntent
-import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.ActivityCallingBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
@@ -53,16 +43,17 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
 const val CALL_USER_OBJ = "call_user_obj"
 const val CALL_TYPE = "call_type"
 const val IS_DEMO_P2P = "is_demo_p2p"
+const val IS_CALL_CONNECTED = "is_call_connected"
 
 class WebRtcActivity : AppCompatActivity() {
 
@@ -138,8 +129,7 @@ class WebRtcActivity : AppCompatActivity() {
         override fun onServerConnect() {
             super.onServerConnect()
             Timber.tag(TAG).e("onServerConnect")
-            val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
-            setUserInfo(map?.get(RTC_CALLER_UID_KEY))
+            updateCallInfo()
         }
 
         override fun onNetworkLost() {
@@ -351,9 +341,11 @@ class WebRtcActivity : AppCompatActivity() {
         volumeControlStream = AudioManager.STREAM_MUSIC
         super.onDestroy()
     }
+/*
 
     override fun onBackPressed() {
     }
+*/
 
     private fun addObserver() {
         userDetailLiveData.observe(
@@ -368,6 +360,8 @@ class WebRtcActivity : AppCompatActivity() {
 
     private fun initCall() {
         setFavoriteUIScreen()
+        updateCallInfo()
+        updateButtonStatus()
         val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
         callType?.run {
             updateStatusLabel()
@@ -384,8 +378,21 @@ class WebRtcActivity : AppCompatActivity() {
                 } else {
                     binding.groupForIncoming.visibility = View.VISIBLE
                 }
+            } else {
             }
             phoneConnectedStatus()
+        }
+        if (intent.hasExtra(IS_CALL_CONNECTED)) {
+            startCallTimer()
+        }
+    }
+
+    private fun updateCallInfo() {
+        val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
+        if (map?.get(RTC_CALLER_UID_KEY) != null) {
+            setUserInfo(map[RTC_CALLER_UID_KEY])
+        } else {
+            setUserInfo(mBoundService?.getOppositeCallerId()?.toString())
         }
     }
 
@@ -427,6 +434,17 @@ class WebRtcActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateButtonStatus() {
+        mBoundService?.getSpeaker()?.let {
+            updateStatusLabel(binding.btnSpeaker, it.not())
+        }
+        mBoundService?.getMic()?.let {
+            if (it.not()) {
+                updateStatusLabel(binding.btnMute, false)
+            }
+        }
+    }
+
     private fun removeRatingDialog() {
         try {
             val prev =
@@ -457,10 +475,15 @@ class WebRtcActivity : AppCompatActivity() {
         if (userDetailLiveData.value != null) {
             return
         }
+        if (mBoundService?.getOppositeUserInfo() != null) {
+            userDetailLiveData.postValue(mBoundService?.getOppositeUserInfo())
+            return
+        }
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = AppObjectController.p2pNetworkService.getUserDetailOnCall(uuid)
                 userDetailLiveData.postValue(response)
+                mBoundService?.setOppositeUserInfo(response)
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }

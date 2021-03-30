@@ -11,18 +11,14 @@ import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.core.custom_ui.JoshSnackBar
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.messaging.MessageBuilderFactory
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TUnlockClassMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
+import com.joshtalks.joshskills.repository.server.chat_message.*
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -30,9 +26,9 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.Date
+import java.util.*
 
-abstract class BaseConversationActivity : CoreJoshActivity() {
+abstract class BaseConversationActivity : WebRtcMiddlewareActivity() {
     private lateinit var internetAvailableStatus: Snackbar
     protected val uiHandler = AppObjectController.uiHandler
     protected val compositeDisposable = CompositeDisposable()

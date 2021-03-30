@@ -14,13 +14,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshFragment
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SPEAKING_POINTS
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
@@ -219,20 +213,20 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private fun startPractiseSearchScreen(favoriteUserCall: Boolean = false) {
         viewModel.speakingTopicLiveData.value?.run {
-            openCallActivity.launch(
-                SearchingUserActivity.startUserForPractiseOnPhoneActivity(
-                    requireActivity(),
-                    courseId = courseId,
-                    topicId = id,
-                    topicName = topicName,
-                    favoriteUserCall = favoriteUserCall,
-                    conversationId = getConversationId()
+            if (isCallOngoing().not()) {
+                openCallActivity.launch(
+                    SearchingUserActivity.startUserForPractiseOnPhoneActivity(
+                        requireActivity(),
+                        courseId = courseId,
+                        topicId = id,
+                        topicName = topicName,
+                        favoriteUserCall = favoriteUserCall,
+                        conversationId = getConversationId()
+                    )
                 )
-            )
+            }
         }
     }
-
-
 
     companion object {
         @JvmStatic

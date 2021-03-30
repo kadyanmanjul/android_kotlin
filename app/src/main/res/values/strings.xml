@@ -866,6 +866,6 @@
     <string name="student">Student</string>
     <string name="yes_excited">Yes, I am excited</string>
     <string name="existing_user">Existing User?</string>
-
-
+    <string name="call_engage_message">Can\'t record practice while on a call</string>
+    <string name="tap_to_return_to_call">Tap to return to call</string>
 </resources>

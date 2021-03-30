@@ -34,7 +34,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class LessonActivity : CoreJoshActivity(), LessonActivityListener {
+class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
     private lateinit var binding: LessonActivityBinding
 

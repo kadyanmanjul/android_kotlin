@@ -1,12 +1,6 @@
 package com.joshtalks.joshskills.track
 
-import androidx.room.ColumnInfo
-import androidx.room.Dao
-import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.PrimaryKey
-import androidx.room.Query
+import androidx.room.* // ktlint-disable no-wildcard-imports
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import java.time.Instant
@@ -23,13 +17,11 @@ data class CourseUsageModel(
     @ColumnInfo(name = "end_time")
     var endTime: Long? = null,
 
-    @SerializedName("created")
+    @ColumnInfo(name = "conversation_id")
+    var conversationId: String,
+
     @ColumnInfo(name = "created")
     var usageDate: Long = Instant.now().epochSecond,
-
-    @ColumnInfo(name = "conversation_id")
-    @SerializedName("conversationId")
-    var conversationId: String? = null,
 
     @ColumnInfo(name = "screen_name")
     var screenName: String? = null
@@ -44,9 +36,18 @@ interface CourseUsageDao {
     @Query("UPDATE course_usage SET end_time =:endTime  WHERE id= (SELECT MAX(id) FROM course_usage) AND end_time IS  NULL")
     fun updateLastCourseUsage(endTime: Long = Instant.now().epochSecond)
 
-    @Query(value = "SELECT * FROM course_usage ")
-    fun getAllSession(): List<CourseUsageModel>
-
     @Query("DELETE FROM course_usage")
     suspend fun deleteAllSyncSession()
+
+    @Query(value = "SELECT * FROM course_usage where start_time IS NOT NULL AND end_time IS NOT NULL")
+    suspend fun getAllSession(): List<CourseUsageModel>
 }
+
+data class CourseUsageSync(
+    @SerializedName("conversation_id")
+    var conversationId: String,
+    @SerializedName("start_time")
+    var startTime: Long,
+    @SerializedName("end_time")
+    var endTime: Long
+)

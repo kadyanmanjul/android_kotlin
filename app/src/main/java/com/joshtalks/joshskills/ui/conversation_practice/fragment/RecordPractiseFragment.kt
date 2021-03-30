@@ -12,14 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.exoplayer2.Player
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ALPHA_MAX
-import com.joshtalks.joshskills.core.ALPHA_MIN
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PractiseUser
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.ViewTypeForPractiseUser
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
@@ -29,9 +22,6 @@ import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEvent
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.interfaces.OnConversationPractiseSubmit
-import com.joshtalks.joshskills.core.setImage
-import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.core.textColorSet
 import com.joshtalks.joshskills.databinding.FragmentRecordPractiseBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ConversationPractiseSubmitEventBus
@@ -46,11 +36,12 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import java.util.ArrayList
-import java.util.LinkedList
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
+import java.util.*
 
-class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEventListener,
+class RecordPractiseFragment private constructor() :
+    Fragment(),
+    AudioPlayerEventListener,
     OnConversationPractiseSubmit {
     private lateinit var conversationPractiseModel: ConversationPractiseModel
     private lateinit var binding: FragmentRecordPractiseBinding
@@ -69,12 +60,12 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
                 it.getParcelable<ConversationPractiseModel>(ARG_PRACTISE_OBJ) as ConversationPractiseModel
             recordListenList =
                 (ArrayList(conversationPractiseModel.listen.sortedBy { sort -> sort.sortOrder }))
-
         }
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding =
@@ -199,12 +190,12 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
                     ) {
                         token?.continuePermissionRequest()
                     }
-                })
+                }
+            )
         } else {
             startRecording()
         }
     }
-
 
     private fun initAudioPlayer(practiseWho: PractiseUser?) {
         practiseWho?.run {
@@ -272,7 +263,6 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
         logPatnerSelectedEvent("second")
     }
 
-
     private fun resetAllState() {
         RxBus2.publish(ViewPagerDisableEventBus(false))
         binding.ivTickFirstUser.visibility = View.GONE
@@ -313,7 +303,6 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
         filterProperty(null)
         nameStateViewChange()
         changeStatusOfButton(false)
-
     }
 
     private fun enableView(view: View) {
@@ -337,7 +326,6 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
                     AppObjectController.joshApplication,
                     R.color.button_color
                 )
-
         } else {
             binding.btnRecord.backgroundTintList =
                 ContextCompat.getColorStateList(
@@ -363,6 +351,9 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
     }
 
     private fun startRecording() {
+        if (isCallOngoing()) {
+            return
+        }
         if (viewModel.practiseWho == null) {
             showToast(getString(R.string.select_your_character))
             return
@@ -382,33 +373,32 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
                 R.color.wrong_answer
             )
             viewModel.startRecord(object :
-                OnAudioRecordListener {
-                override fun onRecordingStarted() {
-                    AppObjectController.uiHandler.post {
-                        RxBus2.publish(ViewPagerDisableEventBus(true))
-                        viewModel.isRecordingRunning = true
-                        binding.audioPlayer.onPlay()
+                    OnAudioRecordListener {
+                    override fun onRecordingStarted() {
+                        AppObjectController.uiHandler.post {
+                            RxBus2.publish(ViewPagerDisableEventBus(true))
+                            viewModel.isRecordingRunning = true
+                            binding.audioPlayer.onPlay()
+                        }
+                        logRecordStartedEvent()
                     }
-                    logRecordStartedEvent()
-                }
 
-                override fun onRecordFinished(recordingItem: RecordingItem?) {
-                    AppObjectController.uiHandler.post {
-                        resetAllState()
-                        binding.audioPlayer.onPause()
-                        completePractise()
+                    override fun onRecordFinished(recordingItem: RecordingItem?) {
+                        AppObjectController.uiHandler.post {
+                            resetAllState()
+                            binding.audioPlayer.onPause()
+                            completePractise()
+                        }
                     }
-                }
 
-                override fun onError(errorCode: Int) {
-                    AppObjectController.uiHandler.post {
-                        resetAllState()
-                        binding.audioPlayer.onPause()
-                        completePractise()
+                    override fun onError(errorCode: Int) {
+                        AppObjectController.uiHandler.post {
+                            resetAllState()
+                            binding.audioPlayer.onPause()
+                            completePractise()
+                        }
                     }
-                }
-
-            })
+                })
         }
     }
 
@@ -434,7 +424,6 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
                 "Talk With ".plus(conversationPractiseModel.characterNameB)
             }
         }
-
     }
 
     override fun onPause() {
@@ -453,7 +442,6 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
     }
 
     override fun onCurrentTimeUpdated(lastPosition: Long) {
-
     }
 
     override fun onTrackChange(tag: String?) {
@@ -499,7 +487,6 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
     }
 
     override fun onPlayerReleased() {
-
     }
 
     override fun onPlayerEmptyTrack() {
@@ -512,7 +499,6 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
             completePractise()
             resetAllState()
         }
-
     }
 
     companion object {

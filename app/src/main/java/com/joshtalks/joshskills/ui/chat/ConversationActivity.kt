@@ -81,16 +81,16 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import java.lang.ref.WeakReference
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.concurrent.scheduleAtFixedRate
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.lang.ref.WeakReference
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.concurrent.scheduleAtFixedRate
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -502,6 +502,9 @@ class ConversationActivity :
             PermissionUtils.checkPermissionForAudioRecord(this@ConversationActivity)
         conversationBinding.recordView.setOnRecordListener(object : OnRecordListener {
             override fun onStart() {
+                if (isCallOngoing()) {
+                    return
+                }
                 window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 AppAnalytics.create(AnalyticsEvent.AUDIO_BUTTON_CLICKED.NAME).push()
                 conversationBinding.recordView.visibility = VISIBLE
@@ -543,6 +546,9 @@ class ConversationActivity :
 
         conversationBinding.recordButton.setOnTouchListener(
             OnRecordTouchListener {
+                if (isCallOngoing()) {
+                    return@OnRecordTouchListener
+                }
                 if (conversationBinding.chatEdit.text.toString()
                     .isEmpty() && it == MotionEvent.ACTION_DOWN
                 ) {
@@ -1280,7 +1286,11 @@ class ConversationActivity :
                 .subscribe(
                     {
                         startActivityForResult(
-                            LessonActivity.getActivityIntent(this, it.lessonId, conversationId = inboxEntity.conversation_id),
+                            LessonActivity.getActivityIntent(
+                                this,
+                                it.lessonId,
+                                conversationId = inboxEntity.conversation_id
+                            ),
                             LESSON_REQUEST_CODE
                         )
                     },

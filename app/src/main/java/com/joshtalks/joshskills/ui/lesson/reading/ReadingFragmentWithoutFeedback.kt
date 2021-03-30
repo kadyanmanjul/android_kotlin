@@ -70,6 +70,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
     AudioPlayerEventListener,
@@ -477,13 +479,16 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
         hidePracticeInputLayout()
         binding.submitAnswerBtn.visibility = GONE
         binding.progressLayout.visibility = GONE
-        //binding.feedbackResultProgressLl.visibility = VISIBLE
-        binding.rootView.postDelayed({
-            binding.rootView.smoothScrollTo(
-                0,
-                binding.rootView.height
-            )
-        }, 100)
+        // binding.feedbackResultProgressLl.visibility = VISIBLE
+        binding.rootView.postDelayed(
+            Runnable {
+                binding.rootView.smoothScrollTo(
+                    0,
+                    binding.rootView.height
+                )
+            },
+            100
+        )
 
         binding.feedbackResultLinearLl.visibility = GONE
         hideCancelButtonInRV()
@@ -499,7 +504,6 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
         binding.submitAnswerBtn.visibility = GONE
         //binding.improveAnswerBtn.visibility = VISIBLE
         binding.continueBtn.visibility = VISIBLE
-
 
         CoroutineScope(Dispatchers.IO).launch {
             lessonActivityListener?.onQuestionStatusUpdate(
@@ -685,12 +689,16 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                 ) {
                     token?.continuePermissionRequest()
                 }
-            })
+            }
+        )
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun audioRecordTouchListener() {
         binding.uploadPractiseView.setOnTouchListener { _, event ->
+            if (isCallOngoing()) {
+                return@setOnTouchListener true
+            }
             if (PermissionUtils.isAudioAndStoragePermissionEnable(requireContext()).not()) {
                 recordPermission()
                 return@setOnTouchListener true
@@ -736,12 +744,15 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                             filePath = AppDirectory.getAudioSentFile(null).absolutePath
                             AppDirectory.copy(it.absolutePath, filePath!!)
                             audioAttachmentInit()
-                            AppObjectController.uiHandler.postDelayed({
-                                binding.submitAnswerBtn.parent.requestChildFocus(
-                                    binding.submitAnswerBtn,
-                                    binding.submitAnswerBtn
-                                )
-                            }, 200)
+                            AppObjectController.uiHandler.postDelayed(
+                                {
+                                    binding.submitAnswerBtn.parent.requestChildFocus(
+                                        binding.submitAnswerBtn,
+                                        binding.submitAnswerBtn
+                                    )
+                                },
+                                200
+                            )
                         }
                     }
                 }
@@ -782,7 +793,6 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                 )
             }
         }
-
     }
 
     fun removeAudioPractise() {
@@ -799,7 +809,6 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
         }
         disableSubmitButton()
         appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio practise removed")*/
-
     }
 
     private fun checkIsPlayer(): Boolean {

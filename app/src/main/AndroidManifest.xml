@@ -175,6 +175,11 @@
             android:name="CLEVERTAP_BACKGROUND_SYNC"
             android:value="1" />
 
+        <!-- replace below value with your FCM project number.-->
+        <meta-data
+            android:name="FCM_SENDER_ID"
+            android:value="id:359106841538"/>
+
         <activity
             android:name=".ui.help.HelpActivity"
             android:alwaysRetainTaskState="true"
@@ -493,17 +498,6 @@
             android:name=".core.chrome.KeepAliveService"
             android:exported="true"
             tools:ignore="ExportedService" />
-        <service
-            android:name="com.clevertap.android.sdk.CTBackgroundIntentService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.clevertap.BG_EVENT" />
-            </intent-filter>
-        </service>
-        <service
-            android:name="com.clevertap.android.sdk.CTBackgroundJobService"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <receiver
             android:name=".core.chrome.BrowserActionsReceiver"
@@ -539,8 +533,6 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
-        <service android:name=".core.notification.AutoStartService" android:enabled="true"/>
 
         <receiver
             android:name=".core.notification.StartUpBootReceiver"
@@ -711,6 +703,14 @@
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE"
             tools:ignore="ExportedService" />
+
+        <service
+            android:name="com.clevertap.android.sdk.pushnotification.fcm.FcmMessageListenerService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

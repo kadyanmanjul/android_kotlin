@@ -1,42 +1,18 @@
 package com.joshtalks.joshskills.repository.local.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.RoomWarnings
-import androidx.room.Transaction
-import androidx.room.Update
+import androidx.room.*
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.repository.local.entity.AudioType
-import com.joshtalks.joshskills.repository.local.entity.AwardMentorModel
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.CertificationExamDetailModel
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.ImageType
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
-import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
-import com.joshtalks.joshskills.repository.local.entity.OptionType
-import com.joshtalks.joshskills.repository.local.entity.PdfType
-import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
-import com.joshtalks.joshskills.repository.local.entity.Question
-import com.joshtalks.joshskills.repository.local.entity.VideoType
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
-import java.util.Date
+import java.util.*
 
 @Dao
 interface ChatDao {
 
     @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND is_delete_message=0 ORDER BY created ASC,question_id   ")
     suspend fun getLastChats(conversationId: String): List<ChatModel>
-
 
     @Query(value = "SELECT * FROM chat_table  where chat_id=:chatId")
     suspend fun getChatObject(chatId: String): ChatModel
@@ -58,18 +34,14 @@ interface ChatDao {
     @Query("UPDATE AudioTable SET downloadedLocalPath = :path  where audioId=:audioId")
     fun updateAudioPath(audioId: String, path: String)
 
-
     @Query("UPDATE VideoTable SET downloadedLocalPath = :path  where id=:videoId")
     fun updateVideoDownloadStatus(videoId: String, path: String)
-
 
     @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND created > :compareTime AND is_delete_message=0  ORDER BY created ASC,question_id ASC")
     suspend fun getRecentChatAfterTime(conversationId: String, compareTime: Date?): List<ChatModel>
 
-
     @Query(value = "SELECT COUNT(chat_id) FROM chat_table where conversation_id= :conversationId ")
     suspend fun getTotalCountOfRows(conversationId: String): Long
-
 
     @Query("UPDATE chat_table SET message_deliver_status = :messageDeliverStatus where created <= :compareTime ")
     fun updateSeenMessages(
@@ -82,7 +54,6 @@ interface ChatDao {
 
     @Query(value = "SELECT * FROM chat_table where  is_sync= 0")
     suspend fun getUnSyncMessage(): List<ChatModel>
-
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAMessage(chat: ChatModel): Long
@@ -152,7 +123,6 @@ interface ChatDao {
 
     @Update
     fun updatePdfObject(vararg pdfObj: PdfType)
-
 
     @Query("UPDATE chat_table SET downloadStatus = :status where downloadStatus == :whereStatus")
     suspend fun updateDownloadVideoStatusFailed(
@@ -246,7 +216,6 @@ interface ChatDao {
         questionId: String
     ): String?
 
-
     @Query(value = "SELECT * FROM (SELECT *,qt.type AS 'question_type' FROM chat_table ct LEFT JOIN question_table qt ON ct.chat_id = qt.chatId where qt.type= :typeO AND  title IS NOT NULL ) inbox  where type= :typeO AND conversation_id= :conversationId  ORDER BY created ASC;")
     suspend fun getRegisterCourseMinimal22(
         conversationId: String,
@@ -258,7 +227,6 @@ interface ChatDao {
 
     @Query("SELECT * FROM  question_table  WHERE questionId= :questionId")
     fun getQuestionOnIdV2(questionId: String): Question?
-
 
     @Transaction
     suspend fun getPractiseFromQuestionId(id: String): ChatModel? {
@@ -283,10 +251,8 @@ interface ChatDao {
     @Query(value = "SELECT * FROM chat_table where last_use_time ORDER BY last_use_time ASC")
     suspend fun getAllRecentDownloadMedia(): List<ChatModel>
 
-
     @Query("SELECT * FROM  question_table  WHERE certificate_exam_id= :certificateExamId")
     suspend fun getQuestionUsingCExamId(certificateExamId: Int): Question?
-
 
     @Transaction
     suspend fun insertCertificateExamDetail(
@@ -304,7 +270,6 @@ interface ChatDao {
     @Query("SELECT  * FROM chat_table LEFT JOIN question_table ON chat_id = chatId")
     fun testApi(): List<ChatModel>
 
-
     @Query(value = "SELECT COUNT(chat_id) FROM chat_table where conversation_id= :conversationId AND is_delete_message=0 AND is_seen= 0")
     suspend fun unreadMessageCount(conversationId: String): Long
 
@@ -317,7 +282,6 @@ interface ChatDao {
 
     @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND is_delete_message=0  ORDER BY message_time DESC,question_id DESC  LIMIT 15")
     suspend fun getOneShotMessage(conversationId: String): List<ChatModel>
-
 
     @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND message_time < :messageTime AND is_delete_message=0  ORDER BY message_time DESC,question_id ASC  LIMIT :limit")
     suspend fun getOldPagingMessage(
@@ -339,7 +303,6 @@ interface ChatDao {
             )
         }
     }
-
 
     @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND  message_time >= :messageTime AND  is_delete_message=0 AND is_seen= 0  ORDER BY message_time ASC,question_id ASC ")
     suspend fun getUnreadReadMessages(conversationId: String, messageTime: Double): List<ChatModel>
@@ -365,7 +328,6 @@ interface ChatDao {
         }
     }
 
-
     @Transaction
     suspend fun getLastChatsV2(callback: suspend () -> List<ChatModel>): List<ChatModel> {
         val listOfChat: List<ChatModel> = callback.invoke()
@@ -376,10 +338,9 @@ interface ChatDao {
         listOfChat.forEach { chatModel ->
             chatModel.awardMentorModel = getAwardMentor(chatModel)
 
-            chatModel.lesson = getLesson(chatModel)  //Add Lesson
+            chatModel.lesson = getLesson(chatModel) // Add Lesson
 
-            chatModel.question = getQuestion(chatModel)  //Add Question
-
+            chatModel.question = getQuestion(chatModel) // Add Question
         }
         return listOfChat
     }
@@ -387,18 +348,21 @@ interface ChatDao {
     @Transaction
     suspend fun getUpdatedChatObjectViaId(id: String): ChatModel {
         val chatModel: ChatModel = getChatObject(chatId = id)
+        try {
+            chatModel.awardMentorModel = getAwardMentor(chatModel)
 
-        chatModel.awardMentorModel = getAwardMentor(chatModel)
+            chatModel.lesson = getLesson(chatModel) // Add Lesson
 
-        chatModel.lesson = getLesson(chatModel)  //Add Lesson
-
-        chatModel.question = getQuestion(chatModel)  //Add Question
+            chatModel.question = getQuestion(chatModel) // Add Question
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
+        }
 
         return chatModel
     }
 
     private fun getAwardMentor(chatModel: ChatModel): AwardMentorModel? {
-        //Add Award
+        // Add Award
         return chatModel.awardUserId?.let {
             AppObjectController.appDatabase.awardMentorModelDao().getAwardMentorModel(it)
         }
@@ -416,7 +380,6 @@ interface ChatDao {
     private fun getCourseId(conversationId: String): String {
         return AppObjectController.appDatabase.courseDao()
             .getCourseIdFromConversationId(conversationId)
-
     }
 
     private suspend fun getQuestion(chatModel: ChatModel): Question? {
@@ -427,15 +390,18 @@ interface ChatDao {
                     BASE_MESSAGE_TYPE.IM ->
                         question.imageList =
                             getImagesOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.VI -> question.videoList =
-                        getVideosOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.AU -> question.audioList =
-                        getAudiosOfQuestion(questionId = question.questionId)
-                    BASE_MESSAGE_TYPE.PD -> question.pdfList =
-                        getPdfOfQuestion(questionId = question.questionId)
+                    BASE_MESSAGE_TYPE.VI ->
+                        question.videoList =
+                            getVideosOfQuestion(questionId = question.questionId)
+                    BASE_MESSAGE_TYPE.AU ->
+                        question.audioList =
+                            getAudiosOfQuestion(questionId = question.questionId)
+                    BASE_MESSAGE_TYPE.PD ->
+                        question.pdfList =
+                            getPdfOfQuestion(questionId = question.questionId)
                 }
 
-                //Add Pr V2
+                // Add Pr V2
                 /*  if (question.type == BASE_MESSAGE_TYPE.PR) {
                       question.practiseEngagementV2 =
                           AppObjectController.appDatabase.practiceEngagementDao()
@@ -453,5 +419,4 @@ interface ChatDao {
         }
         return null
     }
-
 }

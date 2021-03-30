@@ -1,10 +1,6 @@
 package com.joshtalks.joshskills.core
 
-import android.content.BroadcastReceiver
-import android.content.ComponentCallbacks2
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.StrictMode
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -14,7 +10,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.MultiDexApplication
 import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.BuildConfig
-import com.joshtalks.joshskills.core.notification.AutoStartService
 import com.joshtalks.joshskills.core.service.NetworkChangeReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
@@ -46,13 +41,6 @@ class JoshApplication :
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         AppObjectController.init(this)
         registerBroadcastReceiver()
-        AppObjectController.uiHandler.post {
-            try {
-                this.startService(Intent(this, AutoStartService::class.java))
-            } catch (ignore: Throwable) {
-                ignore.printStackTrace()
-            }
-        }
     }
 
     override fun onTerminate() {

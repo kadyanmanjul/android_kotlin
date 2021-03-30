@@ -19,7 +19,6 @@ import android.util.DisplayMetrics
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -93,17 +92,12 @@ import com.uxcam.OnVerificationListener
 import com.uxcam.UXCam
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
+import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.*
 import kotlin.random.Random
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import timber.log.Timber
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 const val COURSE_EXPLORER_NEW = 2008

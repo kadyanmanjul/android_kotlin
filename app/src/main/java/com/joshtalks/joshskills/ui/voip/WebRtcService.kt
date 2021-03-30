@@ -1,13 +1,18 @@
 package com.joshtalks.joshskills.ui.voip
 
 import android.annotation.SuppressLint
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_HIGH
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.graphics.Bitmap
-import android.media.*
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
 import android.os.*
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
@@ -40,13 +45,12 @@ import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
-import java.lang.ref.WeakReference
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-
+import java.lang.ref.WeakReference
+import java.util.concurrent.TimeUnit
 
 const val RTC_TOKEN_KEY = "token"
 const val RTC_CHANNEL_KEY = "channel_name"
@@ -56,7 +60,6 @@ const val RTC_NAME = "caller_name"
 const val RTC_CALLER_PHOTO = "caller_photo"
 const val RTC_IS_FAVORITE = "is_favorite"
 const val RTC_PARTNER_ID = "partner_id"
-
 
 class WebRtcService : BaseWebRtcService() {
 
@@ -74,6 +77,8 @@ class WebRtcService : BaseWebRtcService() {
     var isCallerJoin: Boolean = false
     private var isMicEnable = true
     private var isSpeakerEnable = false
+    private var oppositeCallerId: Int? = null
+    private var userDetailMap: HashMap<String, String>? = null
 
     companion object {
         private val TAG = WebRtcService::class.java.simpleName
@@ -102,7 +107,6 @@ class WebRtcService : BaseWebRtcService() {
 
         @Volatile
         var isCallWasOnGoing: Boolean = false
-
 
         @Volatile
         var holdCall: Boolean = false
@@ -239,7 +243,6 @@ class WebRtcService : BaseWebRtcService() {
             }
             serviceIntent.startServiceForWebrtc()
         }
-
     }
 
     @Volatile
@@ -310,11 +313,13 @@ class WebRtcService : BaseWebRtcService() {
             }
 
             callData = null
+            userDetailMap = null
         }
 
         override fun onUserJoined(uid: Int, elapsed: Int) {
             Timber.tag(TAG).e("onUserJoined=  $uid  $elapsed" + "   " + mRtcEngine?.connectionState)
             super.onUserJoined(uid, elapsed)
+            oppositeCallerId = uid
             compositeDisposable.clear()
             isCallWasOnGoing = true
             isCallerJoin = true
@@ -322,16 +327,17 @@ class WebRtcService : BaseWebRtcService() {
                 startCallTimer()
             }
             callCallback?.get()?.onConnect(uid.toString())
-            mHandler?.postDelayed({
-                callCallback?.get()?.onServerConnect()
-            }, 500)
-
+            mHandler?.postDelayed(
+                {
+                    callCallback?.get()?.onServerConnect()
+                },
+                500
+            )
             addNotification(CallConnect().action, callData)
             addSensor()
             joshAudioManager?.startCommunication()
             joshAudioManager?.stopConnectTone()
             audioFocus()
-
         }
 
         override fun onUserOffline(uid: Int, reason: Int) {
@@ -384,11 +390,13 @@ class WebRtcService : BaseWebRtcService() {
             val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val af = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).run {
-                    setAudioAttributes(AudioAttributes.Builder().run {
-                        setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
-                        setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        build()
-                    })
+                    setAudioAttributes(
+                        AudioAttributes.Builder().run {
+                            setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
+                            setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                            build()
+                        }
+                    )
                     setAcceptsDelayedFocusGain(true)
                     build()
                 }
@@ -418,7 +426,8 @@ class WebRtcService : BaseWebRtcService() {
                             if (isCallerJoin) {
                                 lostNetwork()
                             }
-                        })
+                        }
+                )
             } else {
                 compositeDisposable.clear()
                 gainNetwork()
@@ -478,8 +487,6 @@ class WebRtcService : BaseWebRtcService() {
                         compositeDisposable.clear()
                         callCallback?.get()?.onUnHoldCall()
                     }
-
-
                 }
                 true
             }
@@ -572,7 +579,6 @@ class WebRtcService : BaseWebRtcService() {
 
                 // Configuration for the subscriber. Try to receive low stream under poor network conditions. When the current network conditions are not sufficient for video streams, receive audio stream only.
                 setRemoteSubscribeFallbackOption(Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY)
-
             }
             if (mRtcEngine != null) {
                 isEngineInit = true
@@ -679,18 +685,21 @@ class WebRtcService : BaseWebRtcService() {
                                 callData?.let {
                                     callStatusNetworkApi(it, CallAction.DECLINE)
                                 }
-                                AppObjectController.uiHandler.postDelayed({
-                                    val data =
-                                        intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
-                                    data.let {
-                                        callData = it
-                                    }
-                                    if (callCallback != null && callCallback?.get() != null) {
-                                        callCallback?.get()?.switchChannel(data)
-                                    } else {
-                                        startAutoPickCallActivity(false)
-                                    }
-                                }, 750)
+                                AppObjectController.uiHandler.postDelayed(
+                                    {
+                                        val data =
+                                            intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
+                                        data.let {
+                                            callData = it
+                                        }
+                                        if (callCallback != null && callCallback?.get() != null) {
+                                            callCallback?.get()?.switchChannel(data)
+                                        } else {
+                                            startAutoPickCallActivity(false)
+                                        }
+                                    },
+                                    750
+                                )
                             }
                             this == HoldCall().action -> {
                                 val message = Message()
@@ -716,7 +725,6 @@ class WebRtcService : BaseWebRtcService() {
     fun addListener(callback: WebRtcCallback?) {
         callCallback = WeakReference(callback)
     }
-
 
     private fun callStopWithoutIssue() {
         callCallback?.get()?.onDisconnect(callId, callData?.let { getChannelName(it) })
@@ -754,6 +762,20 @@ class WebRtcService : BaseWebRtcService() {
         startActivity(callActivityIntent)
     }
 
+    fun openConnectedCallActivity() {
+        val callActivityIntent = Intent(this, WebRtcActivity::class.java).apply {
+            callData?.apply {
+                if (isFavorite()) {
+                    put(RTC_IS_FAVORITE, "true")
+                }
+            }
+            putExtra(CALL_TYPE, callType)
+            putExtra(IS_CALL_CONNECTED, true)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        startActivity(callActivityIntent)
+    }
+
     private fun handleIncomingCall() {
         executeEvent(AnalyticsEvent.INIT_CALL.NAME)
         addNotification(IncomingCall().action, callData)
@@ -783,7 +805,6 @@ class WebRtcService : BaseWebRtcService() {
         startActivity(callActivityIntent)
     }
 
-
     private fun addTimeObservable() {
         compositeDisposable.add(
             Completable.complete()
@@ -794,7 +815,8 @@ class WebRtcService : BaseWebRtcService() {
                         disconnectCallFromCallie()
                     }
                 }
-                .subscribe())
+                .subscribe()
+        )
     }
 
     private fun addTimerReconnect(callDisconnectTime: Long) {
@@ -808,8 +830,8 @@ class WebRtcService : BaseWebRtcService() {
                 .subscribe {
                     Timber.tag("WebRtcService").e("Complete")
                     endCall(apiCall = true)
-                })
-
+                }
+        )
     }
 
     fun isCallNotConnected(): Boolean {
@@ -919,7 +941,7 @@ class WebRtcService : BaseWebRtcService() {
         return callData?.get(RTC_CALLER_PHOTO)
     }
 
-     fun isFavorite(): Boolean {
+    fun isFavorite(): Boolean {
         if (callData != null && callData!!.containsKey(RTC_IS_FAVORITE)) {
             return true
         }
@@ -937,6 +959,18 @@ class WebRtcService : BaseWebRtcService() {
     fun getUserAgoraId() = userAgoraId
 
     fun getCallId() = callId
+
+    fun getOppositeCallerId() = oppositeCallerId
+
+    fun getOppositeCallerName() = userDetailMap?.get("name")
+
+    fun getOppositeCallerProfilePic() = userDetailMap?.get("profile_pic")
+
+    fun setOppositeUserInfo(obj: HashMap<String, String>) {
+        userDetailMap = obj
+    }
+
+    fun getOppositeUserInfo() = userDetailMap
 
     private fun muteCall() {
         mRtcEngine?.muteLocalAudioStream(true)
@@ -996,6 +1030,7 @@ class WebRtcService : BaseWebRtcService() {
         isCallRecordOngoing = false
         isSpeakerEnable = false
         isMicEnable = true
+        oppositeCallerId = null
         phoneCallState = CallState.CALL_STATE_IDLE
         compositeDisposable.clear()
     }
@@ -1020,7 +1055,6 @@ class WebRtcService : BaseWebRtcService() {
             NotificationUtil(this).addMissCallPPNotification(getCallerUID())
         }
     }
-
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         RtcEngine.destroy()
@@ -1062,7 +1096,7 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     private fun addNotification(action: String, data: HashMap<String, String?>?) {
-        //mNotificationManager?.cancelAll()
+        // mNotificationManager?.cancelAll()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             when (action) {
                 IncomingCall().action, FavoriteIncomingCall().action -> {
@@ -1228,7 +1262,6 @@ class WebRtcService : BaseWebRtcService() {
         return builder.build()
     }
 
-
     private fun getNameForImage(): String {
         return try {
             callData?.get(RTC_NAME)?.substring(0, 2) ?: getRandomName()
@@ -1261,14 +1294,16 @@ class WebRtcService : BaseWebRtcService() {
         }
         val customView = RemoteViews(packageName, layout)
         customView.setTextViewText(
-            R.id.name, if (isFavorite) {
+            R.id.name,
+            if (isFavorite) {
                 getString(R.string.favorite_p2p_title)
             } else {
                 getString(R.string.p2p_title)
             }
         )
         customView.setTextViewText(
-            R.id.title, if (isFavorite) {
+            R.id.title,
+            if (isFavorite) {
                 getCallerName()
             } else {
                 getString(R.string.p2p_subtitle)
@@ -1276,13 +1311,15 @@ class WebRtcService : BaseWebRtcService() {
         )
 
         customView.setTextViewText(
-            R.id.answer_text, getActionText(
+            R.id.answer_text,
+            getActionText(
                 R.string.answer,
                 R.color.action_color
             )
         )
         customView.setTextViewText(
-            R.id.decline_text, getActionText(
+            R.id.decline_text,
+            getActionText(
                 R.string.hang_up,
                 R.color.error_color
             )
@@ -1301,9 +1338,12 @@ class WebRtcService : BaseWebRtcService() {
         }
 
         val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
+        val intent =getWebRtcActivityIntent(CallType.INCOMING).apply {
+            putExtra(IS_CALL_CONNECTED, true)
+        }
         val pendingIntent = PendingIntent.getActivity(
             this,
-            uniqueInt, getWebRtcActivityIntent(CallType.INCOMING),
+            uniqueInt, intent,
             PendingIntent.FLAG_UPDATE_CURRENT
         )
 
@@ -1418,11 +1458,11 @@ class WebRtcService : BaseWebRtcService() {
                 data["call_response"] = callAction.action
                 data["duration"] = TimeUnit.MILLISECONDS.toSeconds(time).toString()
                 data["has_disconnected"] = hasDisconnected.toString()
-                if (PrefManager.getBoolValue(IS_DEMO_P2P,defValue = false)) {
+                if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
                     data["is_demo"] =
                         PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false).toString()
                 }
-                var resp = AppObjectController.p2pNetworkService.getAgoraCallResponse(data)
+                val resp = AppObjectController.p2pNetworkService.getAgoraCallResponse(data)
                 if (resp.code() == 500) {
                     callCallback?.get()?.onNoUserFound()
                 }
@@ -1434,8 +1474,6 @@ class WebRtcService : BaseWebRtcService() {
             }
         }
     }
-
-
 }
 
 sealed class WebRtcCalling
@@ -1459,7 +1497,6 @@ data class ResumeCall(val action: String = "calling.action.resume_call") : WebRt
 
 data class FavoriteIncomingCall(val action: String = "calling.action.favorite_incoming_call") :
     WebRtcCalling()
-
 
 enum class CallState(val state: Int) {
     CALL_STATE_CONNECTED(0), CALL_STATE_IDLE(1), CALL_STATE_BUSY(2),

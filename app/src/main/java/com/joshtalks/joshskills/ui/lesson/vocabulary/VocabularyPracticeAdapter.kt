@@ -33,14 +33,14 @@ import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.muddzdev.styleabletoast.StyleableToast
-import java.util.concurrent.TimeUnit
-import kotlin.random.Random.Default.nextInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
+import kotlin.random.Random.Default.nextInt
 
 const val PAUSE_AUDIO = "PAUSE_AUDIO"
 
@@ -282,7 +282,7 @@ class VocabularyPracticeAdapter(
             lessonQuestion: LessonQuestion,
             assessmentQuestion: AssessmentQuestionWithRelations
         ) {
-            //binding.quizRadioGroup.tag is id of Radio button with correct answer.
+            // binding.quizRadioGroup.tag is id of Radio button with correct answer.
             if (binding.quizRadioGroup.tag is Int) {
                 assessmentQuestion.question.isAttempted = true
                 assessmentQuestion.question.status =
@@ -290,13 +290,15 @@ class VocabularyPracticeAdapter(
                 isCorrect = assessmentQuestion.question.status == QuestionStatus.CORRECT
 
                 val selectedChoice =
-                    assessmentQuestion.choiceList[binding.quizRadioGroup.indexOfChild(
-                        binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
-                    )]
+                    assessmentQuestion.choiceList[
+                        binding.quizRadioGroup.indexOfChild(
+                            binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
+                        )
+                    ]
                 selectedChoice.isSelectedByUser = true
                 selectedChoice.userSelectedOrder = 1
 
-                //This will get Radio button of correct answer and set its background.
+                // This will get Radio button of correct answer and set its background.
                 binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.tag as Int)
                     .setBackgroundResource(R.drawable.rb_correct_rect_bg)
 
@@ -382,7 +384,6 @@ class VocabularyPracticeAdapter(
         private fun evaluateQuestionStatus(status: Boolean): QuestionStatus {
             return if (status) QuestionStatus.CORRECT
             else QuestionStatus.WRONG
-
         }
 
         private fun updateRadioGroupUI(question: AssessmentQuestionWithRelations) {
@@ -395,9 +396,9 @@ class VocabularyPracticeAdapter(
             question.choiceList.forEachIndexed { index, choice ->
                 when (index) {
                     0 -> {
-                        //setupOption returns true if this option is correct answer of the question else false
+                        // setupOption returns true if this option is correct answer of the question else false
                         setUpAnswerKey = setupRadioButtonOption(binding.option1, choice, question)
-                        //correctAns.not() means correct answer is not found yet.
+                        // correctAns.not() means correct answer is not found yet.
                         if (correctAns.not()) {
                             correctAns = setUpAnswerKey
                         }
@@ -455,7 +456,6 @@ class VocabularyPracticeAdapter(
                     0
                 )
             }
-
         }
 
         private fun resetRadioBackground(radioButton: RadioButton) {
@@ -478,7 +478,7 @@ class VocabularyPracticeAdapter(
             }
         }
 
-        //Sets up the view of radiobutton.
+        // Sets up the view of radiobutton.
         private fun setupRadioButtonOption(
             radioButton: RadioButton,
             choice: Choice,
@@ -691,7 +691,7 @@ class VocabularyPracticeAdapter(
                     override fun onStopTrackingTouch(seekBar: SeekBar) {
                         mUserIsSeeking = false
                         audioManager?.seekTo(userSelectedPosition.toLong())
-                        //clickListener.onSeekChange(userSelectedPosition.toLong())
+                        // clickListener.onSeekChange(userSelectedPosition.toLong())
                     }
                 })
 
@@ -717,7 +717,7 @@ class VocabularyPracticeAdapter(
             }
         }
 
-        //===============================
+        // ===============================
         override fun onPlayerPause() {
         }
 
@@ -888,13 +888,11 @@ class VocabularyPracticeAdapter(
                         }
                     } else {
                         onPlayAudio(lessonQuestion, audioType, position)
-
                     }
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
-
         }
 
         fun playPronunciationAudio(lessonQuestion: LessonQuestion, position: Int) {
@@ -930,7 +928,7 @@ class VocabularyPracticeAdapter(
             }
         }
 
-        //============================================================================
+        // ============================================================================
         private fun setPracticeInfoView(lessonQuestion: LessonQuestion) {
             val wordNumber = itemList.filter { it.assessmentId == null }.indexOf(lessonQuestion) + 1
 
@@ -974,7 +972,6 @@ class VocabularyPracticeAdapter(
                             }
                         }
                         initializePractiseSeekBar(lessonQuestion)
-
                     }
                     LessonMaterialType.IM -> {
                         binding.imageView.visibility = VISIBLE
@@ -1014,7 +1011,6 @@ class VocabularyPracticeAdapter(
                         }
                     }
                     else -> {
-
                     }
                 }
 
@@ -1034,7 +1030,6 @@ class VocabularyPracticeAdapter(
                     binding.submitAnswerBtn.visibility = GONE
                     setViewUserSubmitAnswer(lessonQuestion)
                 }
-
             }
         }
 
@@ -1068,7 +1063,7 @@ class VocabularyPracticeAdapter(
                     filePath = lessonQuestion.filePath
                     binding.submitPractiseSeekbar.max =
                         Utils.getDurationOfMedia(context, filePath!!)
-                            ?.toInt() ?: 1_00_000
+                        ?.toInt() ?: 1_00_000
                 } else {
                     val practiseEngagement = lessonQuestion.practiceEngagement?.getOrNull(0)
                     if (EXPECTED_ENGAGE_TYPE.AU == it) {
@@ -1081,7 +1076,7 @@ class VocabularyPracticeAdapter(
                         filePath = practiseEngagement?.localPath
                         binding.submitPractiseSeekbar.max =
                             Utils.getDurationOfMedia(context, filePath!!)
-                                ?.toInt() ?: 0
+                            ?.toInt() ?: 0
                     } else {
                         filePath = practiseEngagement?.answerUrl
                         if (practiseEngagement?.duration != null || practiseEngagement?.duration == 0) {
@@ -1100,6 +1095,9 @@ class VocabularyPracticeAdapter(
         @SuppressLint("ClickableViewAccessibility")
         private fun setAudioRecordTouchListener() {
             binding.uploadPractiseView.setOnTouchListener { _, event ->
+                if (isCallOngoing()) {
+                    return@setOnTouchListener true
+                }
                 if (PermissionUtils.isAudioAndStoragePermissionEnable(context).not()) {
                     clickListener.askRecordPermission()
                     return@setOnTouchListener true
@@ -1148,11 +1146,9 @@ class VocabularyPracticeAdapter(
                             if (timeDifference > 1) {
                                 audioAttachmentInit(it)
                             } else {
-
                             }
                         }
                         else -> {
-
                         }
                     }
                 }
@@ -1240,12 +1236,15 @@ class VocabularyPracticeAdapter(
         }
 
         private fun requestFocus(view: View) {
-            Handler().postDelayed({
-                view.parent.requestChildFocus(
-                    view,
-                    view
-                )
-            }, 200)
+            Handler().postDelayed(
+                {
+                    view.parent.requestChildFocus(
+                        view,
+                        view
+                    )
+                },
+                200
+            )
         }
 
         private fun hidePracticeInputLayout() {

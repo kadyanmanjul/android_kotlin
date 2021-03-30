@@ -9,32 +9,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
-import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.core.setRoundImage
-import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
-import java.util.HashMap
+import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
 
 const val ARG_CALLER_IMAGE = "caller_image_url"
 const val ARG_CALLER_NAME = "caller_name"
@@ -42,7 +37,7 @@ const val ARG_CHANNEL_NAME = "channel_name"
 const val ARG_CALL_TIME = "call_time"
 const val ARG_YOUR_NAME = "your_name"
 const val ARG_YOUR_AGORA_ID = "your_agora_id"
-
+const val ARG_DIM_BACKGROUND = "dim_bg"
 
 class VoipCallFeedbackView : DialogFragment() {
 
@@ -50,9 +45,15 @@ class VoipCallFeedbackView : DialogFragment() {
     private var channelName: String = EMPTY
     private var yourAgoraId: Int = -1
     private var pointsString: String = EMPTY
+    private var dimBg = false
 
     private val practiceViewModel: PracticeViewModel by lazy {
         ViewModelProvider(this).get(PracticeViewModel::class.java)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        dimBg = savedInstanceState?.getBoolean(ARG_DIM_BACKGROUND) ?: false
     }
 
     override fun onStart() {
@@ -63,9 +64,11 @@ class VoipCallFeedbackView : DialogFragment() {
             window?.setLayout(width, height)
             setCanceledOnTouchOutside(false)
             setCancelable(false)
-           // val lp: WindowManager.LayoutParams? = window?.attributes
-        //    lp?.dimAmount = 0.85f
-            //window?.attributes = lp
+            if (dimBg) {
+                val lp: WindowManager.LayoutParams? = window?.attributes
+                lp?.dimAmount = 0.9f
+                window?.attributes = lp
+            }
         }
     }
 
@@ -77,9 +80,9 @@ class VoipCallFeedbackView : DialogFragment() {
         }
     }
 
-
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding =
@@ -88,7 +91,7 @@ class VoipCallFeedbackView : DialogFragment() {
         binding.handler = this
         dialog?.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            //attributes.windowAnimations = R.style.DialogAnimation
+            // attributes.windowAnimations = R.style.DialogAnimation
         }
         return binding.root
     }
@@ -103,9 +106,14 @@ class VoipCallFeedbackView : DialogFragment() {
                             it.pointsList!!.get(0),null
                         )
                     )*/
-                    showSnackBar(binding.rootContainer, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
+                    showSnackBar(
+                        binding.rootContainer,
+                        Snackbar.LENGTH_LONG,
+                        it.pointsList!!.get(0)
+                    )
                 }
-            })
+            }
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -196,16 +204,19 @@ class VoipCallFeedbackView : DialogFragment() {
 
     private fun exitDialog() {
         FullScreenProgressDialog.hideProgressBar(requireActivity())
-        //dismissAllowingStateLoss()
-        val intent = Intent()
-        intent.putExtra("points_list", pointsString)
-        requireActivity().setResult(Activity.RESULT_OK, intent)
-        requireActivity().finishAndRemoveTask()
+        if (requireActivity() is WebRtcActivity) {
+            val intent = Intent()
+            intent.putExtra("points_list", pointsString)
+            requireActivity().setResult(Activity.RESULT_OK, intent)
+            requireActivity().finishAndRemoveTask()
+        } else {
+            dismissAllowingStateLoss()
+        }
     }
 
     fun showSnackBar(view: View, duration: Int, action_lable: String?) {
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
-            //SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
+            // SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
             PointSnackbar.make(view, duration, action_lable)?.show()
             playSnackbarSound(requireActivity())
         }
@@ -225,7 +236,8 @@ class VoipCallFeedbackView : DialogFragment() {
             callerName: String?,
             callerImage: String?,
             yourName: String?,
-            yourAgoraId: Int?
+            yourAgoraId: Int?,
+            dimBg: Boolean
         ) =
             VoipCallFeedbackView().apply {
                 arguments = Bundle().apply {
@@ -235,6 +247,7 @@ class VoipCallFeedbackView : DialogFragment() {
                     putString(ARG_CALLER_IMAGE, callerImage)
                     putString(ARG_YOUR_NAME, yourName)
                     putInt(ARG_YOUR_AGORA_ID, yourAgoraId ?: -1)
+                    putBoolean(ARG_DIM_BACKGROUND, dimBg)
                 }
             }
 
@@ -246,18 +259,26 @@ class VoipCallFeedbackView : DialogFragment() {
             callerName: String?,
             callerImage: String?,
             yourName: String?,
-            yourAgoraId: Int?
+            yourAgoraId: Int?,
+            dimBg: Boolean = false
         ) {
             val prev =
                 fragmentManager.findFragmentByTag(VoipCallFeedbackView::class.java.name)
             if (prev != null) {
                 return
             }
-            newInstance(channelName, callTime, callerName, callerImage, yourName, yourAgoraId).show(
+            newInstance(
+                channelName,
+                callTime,
+                callerName,
+                callerImage,
+                yourName,
+                yourAgoraId,
+                dimBg
+            ).show(
                 fragmentManager,
                 VoipCallFeedbackView::class.java.name
             )
         }
     }
-
 }

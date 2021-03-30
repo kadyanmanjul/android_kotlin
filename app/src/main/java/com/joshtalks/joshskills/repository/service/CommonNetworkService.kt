@@ -6,23 +6,7 @@ import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
-import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
-import com.joshtalks.joshskills.repository.server.BaseResponse
-import com.joshtalks.joshskills.repository.server.CertificateDetail
-import com.joshtalks.joshskills.repository.server.ComplaintResponse
-import com.joshtalks.joshskills.repository.server.FAQ
-import com.joshtalks.joshskills.repository.server.FAQCategory
-import com.joshtalks.joshskills.repository.server.FeedbackVoipResponse
-import com.joshtalks.joshskills.repository.server.FreshChatRestoreIDResponse
-import com.joshtalks.joshskills.repository.server.LeaderboardMentor
-import com.joshtalks.joshskills.repository.server.LeaderboardResponse
-import com.joshtalks.joshskills.repository.server.LeaderboardType
-import com.joshtalks.joshskills.repository.server.NPSByUserRequest
-import com.joshtalks.joshskills.repository.server.PreviousLeaderboardResponse
-import com.joshtalks.joshskills.repository.server.RequestCertificateGenerate
-import com.joshtalks.joshskills.repository.server.RequestComplaint
-import com.joshtalks.joshskills.repository.server.SuccessResponse
-import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
 import com.joshtalks.joshskills.repository.server.certification_exam.RequestSubmitCertificateExam
@@ -46,21 +30,11 @@ import com.joshtalks.joshskills.repository.server.translation.WordDetailsRespons
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
-import java.util.HashMap
+import com.joshtalks.joshskills.track.CourseUsageSync
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.Field
-import retrofit2.http.FieldMap
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.PATCH
-import retrofit2.http.POST
-import retrofit2.http.PUT
-import retrofit2.http.Path
-import retrofit2.http.Query
-import retrofit2.http.QueryMap
+import retrofit2.http.*
+import java.util.*
 
 @JvmSuppressWildcards
 interface CommonNetworkService {
@@ -96,7 +70,6 @@ interface CommonNetworkService {
     @FormUrlEncoded
     @PATCH("$DIR/mentor/gaid/{id}/")
     suspend fun mergeMentorWithGAId(@Path("id") id: String, @FieldMap params: Map<String, String>)
-
 
     @POST("$DIR/payment/verify_v2/")
     suspend fun verifyPayment(@Body params: Map<String, String>): Any
@@ -140,7 +113,6 @@ interface CommonNetworkService {
     suspend fun getCourseEnrolledDetails(
         @Body params: CourseEnrolledRequest
     ): Response<CourseEnrolledResponse>
-
 
     @GET("$DIR/conversation-practice/{id}/")
     suspend fun getConversationPractise(
@@ -200,7 +172,6 @@ interface CommonNetworkService {
     @GET("$DIR/voicecall/mentor_topicinfo")
     suspend fun callMentorInfo(@Query("mobileuuid") id: String): HashMap<String, String?>
 
-
     @GET("$DIR/certificateexam/{id}/")
     suspend fun getCertificateExamDetails(@Path("id") id: Int): CertificationQuestionModel
 
@@ -222,7 +193,6 @@ interface CommonNetworkService {
         @Query("mentor_id") id: String
     ): Response<PointsHistoryResponse>
 
-
     @Headers(
         "Accept: application/json",
         "Content-type:application/json",
@@ -230,7 +200,6 @@ interface CommonNetworkService {
     )
     @GET("$DIR/reputation/get_points_working/")
     suspend fun getPointsInfo(): Response<PointsInfoResponse>
-
 
     @FormUrlEncoded
     @PATCH("$DIR/voicecall/recipient_mentor")
@@ -248,7 +217,6 @@ interface CommonNetworkService {
     suspend fun patchAwardDetails(
         @Body params: HashMap<String, List<Int>>
     ): Response<PointsInfoResponse>
-
 
     @Headers(
         "Accept: application/json",
@@ -286,10 +254,13 @@ interface CommonNetworkService {
         @Body params: HashMap<String, List<AppUsageModel>>
     ): Response<Void>
 
+    @POST("$DIR/engage/course-user-activity/")
+    suspend fun engageCourseUsageSession(
+        @Body params: HashMap<String, List<CourseUsageSync>>
+    ): Response<Void>
 
     @POST("$DIR/mentor/gaid/")
     suspend fun registerGAIdDetailsV2Async(@Body body: RequestRegisterGAId): GaIDMentorModel
-
 
     @POST("$DIR/group/updatelastmessage/")
     suspend fun updateLastReadMessage(@Body params: Map<String, Any>): Response<JsonObject>
@@ -316,5 +287,4 @@ interface CommonNetworkService {
         @Query("mentor_id") mentorId: String,
         @Query("interval_type") intervalType: String
     ): Response<PreviousLeaderboardResponse>
-
 }

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 31,
-    "identityHash": "5d9e6e168494c568c03db1e9b76a2c79",
+    "identityHash": "1b6fd93277a925359ee388d8a40576fa",
     "entities": [
       {
         "tableName": "course",
@@ -2372,7 +2372,7 @@
       },
       {
         "tableName": "course_usage",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `start_time` INTEGER NOT NULL, `end_time` INTEGER, `created` INTEGER NOT NULL, `conversation_id` TEXT, `screen_name` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `start_time` INTEGER NOT NULL, `end_time` INTEGER, `conversation_id` TEXT NOT NULL, `created` INTEGER NOT NULL, `screen_name` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -2393,16 +2393,16 @@
             "notNull": false
           },
           {
+            "fieldPath": "conversationId",
+            "columnName": "conversation_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "usageDate",
             "columnName": "created",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "conversationId",
-            "columnName": "conversation_id",
-            "affinity": "TEXT",
-            "notNull": false
           },
           {
             "fieldPath": "screenName",
@@ -2424,7 +2424,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5d9e6e168494c568c03db1e9b76a2c79')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1b6fd93277a925359ee388d8a40576fa')"
     ]
   }
 }

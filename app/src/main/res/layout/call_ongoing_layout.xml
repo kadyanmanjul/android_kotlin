@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:gravity="center"
+    tools:parentTag="android.widget.LinearLayout">
+
+    <FrameLayout
+        android:id="@+id/ongoing_call_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#59ADFF"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingHorizontal="@dimen/_14sdp"
+        android:paddingVertical="@dimen/_8sdp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center"
+            android:text="@string/tap_to_return_to_call"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+            android:textColor="@color/white" />
+
+        <Chronometer
+            android:id="@+id/call_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textColor="@color/white" />
+    </FrameLayout>
+</merge>

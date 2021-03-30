@@ -15,13 +15,12 @@ enum class ApiRespStatus {
     POST, PATCH, EMPTY
 }
 
-
 const val TIMEOUT_TIME = 60_000L
 const val MESSAGE_CHAT_SIZE_LIMIT = 2048
 const val EMPTY = ""
 const val SINGLE_SPACE = " "
 const val IMAGE_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp)|WEBP|webp|JPEG|PNG|Jpeg)$)"
-//const val VIDEO_PATTERN = "([^\\s]+(\\.(?i)(mp4|MP4)$)"
+// const val VIDEO_PATTERN = "([^\\s]+(\\.(?i)(mp4|MP4)$)"
 
 const val STARTED_FROM = "started_from"
 const val COURSE_ID = "course_ID"
@@ -35,7 +34,6 @@ const val RC_HINT = 2
 const val MAX_YEAR = 6
 const val ALPHA_MAX = 1F
 const val ALPHA_MIN = 0.45F
-
 
 val IMAGE_REGEX = Regex(pattern = IMAGE_PATTERN)
 const val MINIMUM_VIDEO_DOWNLOAD_PROGRESS = 20
@@ -52,7 +50,7 @@ enum class GENDER(val gValue: String) {
 enum class USER_PROFILE_FLOW_FROM(val value: String) {
     CONVERSATION("CONVERSATION"), FLOATING_BAR("FLOATING_BAR"),
     LEADERBOARD("LEADERBOARD"), INBOX_SCREEN("INBOX_SCREEN"),
-    GROUP_CHAT("GROUP_CHAT"),BEST_PERFORMER("BEST_PERFORMER"),
+    GROUP_CHAT("GROUP_CHAT"), BEST_PERFORMER("BEST_PERFORMER"),
     NONE("NONE"), MENU("MENU"), AWARD("AWARD")
 }
 
@@ -98,7 +96,6 @@ class FirebaseRemoteConfigKey {
         const val INBOX_SCREEN_COURSE_PROGRESS = "INBOX_SCREEN_COURSE_PROGRESS_ENABLE"
         const val SUBSCRIPTION_COURSE_IDS = "SUBSCRIPTION_COURSE_IDS"
 
-
         // Trial End Screen
         const val TRAIL_END_SCREEN_MESSAGE = "TRAIL_END_SCREEN_MESSAGE"
         const val TRAIL_END_SCREEN_CTA_LABEL = "TRAIL_END_SCREEN_CTA_LABEL"
@@ -121,7 +118,7 @@ class FirebaseRemoteConfigKey {
         const val START_SUBSCRIPTION_FEATURE2 = "START_SUBSCRIPTION_FEATURE2"
         const val START_SUBSCRIPTION_FEATURE3 = "START_SUBSCRIPTION_FEATURE3"
 
-        //subscription bb tip
+        // subscription bb tip
         const val SUBSCRIPTION_BB_TIP = "SUBSCRIPTION_BB_TIP"
         const val SUBSCRIPTION_BB_TEXT = "SUBSCRIPTION_BB_TEXT"
 
@@ -144,14 +141,13 @@ class FirebaseRemoteConfigKey {
         const val APPLY_COUPON_TEXT = "APPLY_COUPON_TEXT"
         const val NEW_ONBOARD_FLOW_TEXT_ON_ENROLLED = "NEW_ONBOARD_FLOW_TEXT_ON_ENROLLED"
 
-        //Course Detail Screen
+        // Course Detail Screen
         const val COURSE_MAX_OFFER_PER = "COURSE_MAX_OFFER_PER"
         const val BUY_COURSE_OFFER_HINT = "BUY_COURSE_OFFER_HINT"
         const val BUY_COURSE_LAST_DAY_OFFER_HINT = "BUY_COURSE_LAST_DAY_OFFER_HINT"
         const val SHOW_DETAILS_LABEL = "show_details_label"
 
-
-        //bb tool tip
+        // bb tool tip
         const val BB_TOOL_TIP_EXPIRY_TEXT = "BB_TOOL_TIP_EXPIRY_TEXT"
         const val BB_TOOL_TIP_BELOW_FIND_COURSE_TEXT = "BB_TOOL_TIP_BELOW_FIND_COURSE_TEXT"
         const val BB_TOOL_TIP_BELOW_FIND_COURSE_TEXT_FREE =
@@ -160,7 +156,7 @@ class FirebaseRemoteConfigKey {
         const val INBOX_OVERLAY_TOOLTIP_D2_3 = "INBOX_OVERLAY_TOOLTIP_D2_3"
         const val BUY_COURSE_LABEL = "buy_course_label"
 
-        //Settings
+        // Settings
         const val SETTINGS_LOGOUT_CONFIRMATION = "SETTINGS_LOGOUT_CONFIRMATION"
         const val SETTINGS_SIGN_IN_PROMPT = "SETTINGS_SIGN_IN_PROMPT"
         const val SETTINGS_CLEAR_DATA_CONFIRMATION = "SETTINGS_CLEAR_DATA_CONFIRMATION"
@@ -169,33 +165,31 @@ class FirebaseRemoteConfigKey {
         const val NOTIFICATION_SETTING_DESCRIPTION = "NOTIFICATION_SETTING_DESCRIPTION"
         const val LANGUAGES_SUPPORTED = "LANGUAGES_SUPPORTED"
 
-
         const val BB_TOOL_TIP_FIRST_TIME_TEXT = "BB_TOOL_TIP_FIRST_TIME_TEXT"
         const val BB_TOOL_TIP_FIRST_TIME_BTN_TEXT = "BB_TOOL_TIP_FIRST_TIME_BTN_TEXT"
         const val SHOW_BB_TOOL_TIP_FIRST_TIME = "SHOW_BB_TOOL_TIP_FIRST_TIME"
 
-        //signin dialod desccriptiom
+        // signin dialod desccriptiom
         const val SIGNIN_DIALOG_DESCRIPTION = "SIGNIN_DIALOG_DESCRIPTION"
 
-        //Ux cam feature
+        // Ux cam feature
         const val UX_CAM_FEATURE_ENABLE = "UX_CAM_FEATURE_ENABLE"
 
         const val FORCE_SIGN_IN_FEATURE_ENABLE = "FORCE_SIGN_IN_FEATURE_ENABLE"
 
-        //In app review
+        // In app review
         const val MINIMUM_TIME_TO_SHOW_REVIEW = "MINIMUM_TIME_TO_SHOW_REVIEW"
 
-        //Free trial ids
+        // Free trial ids
         const val FREE_TRIAL_COURSE_IDS = "FREE_TRIAL_COURSE_ID"
 
-        //Reading Practise Record title
+        // Reading Practise Record title
         const val READING_PRACTICE_TITLE = "READING_PRACTICE_TITLE"
 
-        //Active api fire
+        // Active api fire
         const val INTERVAL_TO_FIRE_ACTIVE_API = "INTERVAL_TO_FIRE_ACTIVE_API"
 
-
-        //Capsule
+        // Capsule
         const val GRAMMAR_TITLE = "GRAMMAR_TITLE"
         const val VOCABULARY_TITLE = "VOCABULARY_TITLE"
         const val READING_TITLE = "READING_TITLE"
@@ -213,7 +207,7 @@ class FirebaseRemoteConfigKey {
         val COURSE_PROGRESS_TOOLTIP_TEXT = "COURSE_PROGRESS_TOOLTIP_TEXT"
         val COURSE_PROGRESS_TOOLTIP_VISIBILITY = "COURSE_PROGRESS_TOOLTIP_VISIBILITY"
 
-        //SMARTLOOK FEATURE
+        // SMARTLOOK FEATURE
         const val SMART_LOOK_FEATURE_ENABLE = "SMART_LOOK_FEATURE_ENABLE"
 
         // GroupChat
@@ -223,11 +217,8 @@ class FirebaseRemoteConfigKey {
         const val VOIP_CALL_DISCONNECT_TIME = "VOIP_CALL_DISCONNECT_TIME"
         const val VOIP_CALL_RECONNECT_TIME = "VOIP_CALL_RECONNECT_TIME"
         const val VOIP_FEEDBACK_MESSAGE = "VOIP_FEEDBACK_MESSAGE"
-
-
     }
 }
-
 
 sealed class AchievementLevel
 
@@ -273,7 +264,6 @@ data class Level7(
     val levelPosition: Int = 7
 ) : AchievementLevel()
 
-
 enum class CallType {
-    INCOMING, OUTGOING,FAVORITE_INCOMING,FAVORITE_MISSED_CALL
+    INCOMING, OUTGOING, FAVORITE_INCOMING, FAVORITE_MISSED_CALL, CONNECTED
 }

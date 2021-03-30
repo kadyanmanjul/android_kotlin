@@ -1,21 +1,12 @@
 package com.joshtalks.joshskills.core.service
 
-import androidx.work.BackoffPolicy
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.ExistingWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.PeriodicWorkRequest
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
+import androidx.work.*
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 object WorkManagerAdmin {
@@ -58,7 +49,6 @@ object WorkManagerAdmin {
             .enqueue()
     }
 
-
     fun requiredTaskAfterLoginComplete() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .beginWith(OneTimeWorkRequestBuilder<WorkerAfterLoginInApp>().build())
@@ -74,7 +64,6 @@ object WorkManagerAdmin {
             .enqueue()
     }
 
-
     fun requiredTaskInLandingPage() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .beginWith(OneTimeWorkRequestBuilder<WorkerInLandingScreen>().build())
@@ -89,6 +78,7 @@ object WorkManagerAdmin {
             )
             .then(OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build())
             .then(OneTimeWorkRequestBuilder<SyncFavoriteCaller>().build())
+            .then(OneTimeWorkRequestBuilder<CourseUsageSyncWorker>().build())
             .enqueue()
     }
 
@@ -129,6 +119,30 @@ object WorkManagerAdmin {
             )
     }
 
+    fun syncAppCourseUsage() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+        val workRequest = PeriodicWorkRequest.Builder(
+            CourseUsageSyncWorker::class.java,
+            1,
+            TimeUnit.HOURS,
+            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
+            TimeUnit.MILLISECONDS
+        )
+            .setConstraints(constraints)
+            .setInitialDelay(10, TimeUnit.MINUTES)
+            .addTag(CourseUsageSyncWorker::class.java.simpleName)
+            .build()
+
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .enqueueUniquePeriodicWork(
+                CourseUsageSyncWorker::class.java.simpleName,
+                ExistingPeriodicWorkPolicy.KEEP,
+                workRequest
+            )
+    }
+
     fun refreshFcmToken() {
         val workRequest = PeriodicWorkRequestBuilder<RefreshFCMTokenWorker>(2, TimeUnit.DAYS)
             .setInitialDelay(20, TimeUnit.MINUTES)
@@ -139,6 +153,7 @@ object WorkManagerAdmin {
             workRequest
         )
     }
+
     fun forceRefreshFcmToken() {
         val workRequest = OneTimeWorkRequestBuilder<RefreshFCMTokenWorker>()
             .build()
@@ -167,7 +182,6 @@ object WorkManagerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
         return workRequest.id
     }
-
 
     fun determineNPAEvent(
         event: NPSEvent = NPSEvent.STANDARD_TIME_EVENT,
@@ -205,7 +219,6 @@ object WorkManagerAdmin {
             workRequest
         )
     }
-
 
     fun deleteUnlockTypeQuestions() {
         val workRequest = OneTimeWorkRequestBuilder<DeleteUnlockTypeQuestion>()
@@ -274,5 +287,4 @@ object WorkManagerAdmin {
             workRequest
         )
     }
-
 }

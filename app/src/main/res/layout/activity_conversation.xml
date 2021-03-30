@@ -28,93 +28,102 @@
             android:tintMode="multiply"
             app:srcCompat="@drawable/chat_bg" />
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
+        <LinearLayout
+            android:id="@+id/toolbar_container"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
-            android:contentInsetStart="0dp"
-            android:contentInsetLeft="0dp"
-            android:contentInsetEnd="0dp"
-            android:contentInsetRight="0dp"
-            android:elevation="@dimen/_4sdp"
-            android:minHeight="?attr/actionBarSize"
-            app:contentInsetEnd="0dp"
-            app:contentInsetEndWithActions="0dp"
-            app:contentInsetLeft="0dp"
-            app:contentInsetRight="0dp"
-            app:contentInsetStart="0dp"
-            app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <RelativeLayout
+            <include layout="@layout/call_ongoing_layout" />
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="@dimen/_6sdp">
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorPrimary"
+                android:contentInsetStart="0dp"
+                android:contentInsetLeft="0dp"
+                android:contentInsetEnd="0dp"
+                android:contentInsetRight="0dp"
+                android:elevation="@dimen/_4sdp"
+                android:minHeight="?attr/actionBarSize"
+                app:contentInsetEnd="0dp"
+                app:contentInsetEndWithActions="0dp"
+                app:contentInsetLeft="0dp"
+                app:contentInsetRight="0dp"
+                app:contentInsetStart="0dp"
+                app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_back"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/_4sdp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center_vertical|start"
-                    android:paddingTop="@dimen/_6sdp"
-                    android:paddingBottom="@dimen/_6sdp"
-                    app:srcCompat="@drawable/ic_arrow_back"
-                    tools:visibility="visible" />
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/image_view_logo"
-                    android:layout_width="@dimen/_26sdp"
-                    android:layout_height="@dimen/_26sdp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/_4sdp"
-                    android:layout_toEndOf="@id/iv_back"
-                    android:background="@drawable/white_button_round_enabled"
-                    android:gravity="center_vertical|start"
-                    android:src="@drawable/ic_josh_course"
-                    tools:visibility="visible" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/text_message_title"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerVertical="true"
-                    android:layout_marginHorizontal="@dimen/_8sdp"
-                    android:layout_marginVertical="@dimen/_4sdp"
-                    android:layout_toEndOf="@id/image_view_logo"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:gravity="start|center"
-                    android:singleLine="true"
-                    android:textColor="@color/white"
-                    tools:text="Spoken English Course" />
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/_6sdp">
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/ic_notification_dot"
-                    android:layout_width="@dimen/_8sdp"
-                    android:layout_height="@dimen/_8sdp"
-                    android:layout_alignEnd="@id/text_message_title"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:background="@drawable/timer_drawable"
-                    android:backgroundTint="@color/wa_color"
-                    android:gravity="start"
-                    android:tint="@color/wh_fc"
-                    android:visibility="invisible"
-                    tools:visibility="visible" />
-            </RelativeLayout>
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical|start"
+                        android:paddingTop="@dimen/_6sdp"
+                        android:paddingBottom="@dimen/_6sdp"
+                        app:srcCompat="@drawable/ic_arrow_back"
+                        tools:visibility="visible" />
 
-        </com.google.android.material.appbar.MaterialToolbar>
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/image_view_logo"
+                        android:layout_width="@dimen/_26sdp"
+                        android:layout_height="@dimen/_26sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_toEndOf="@id/iv_back"
+                        android:background="@drawable/white_button_round_enabled"
+                        android:gravity="center_vertical|start"
+                        android:src="@drawable/ic_josh_course"
+                        tools:visibility="visible" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_message_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerVertical="true"
+                        android:layout_marginHorizontal="@dimen/_8sdp"
+                        android:layout_marginVertical="@dimen/_4sdp"
+                        android:layout_toEndOf="@id/image_view_logo"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="start|center"
+                        android:singleLine="true"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+                        android:textColor="@color/white"
+                        tools:text="Spoken English Course" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/ic_notification_dot"
+                        android:layout_width="@dimen/_8sdp"
+                        android:layout_height="@dimen/_8sdp"
+                        android:layout_alignEnd="@id/text_message_title"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:background="@drawable/timer_drawable"
+                        android:backgroundTint="@color/wa_color"
+                        android:gravity="start"
+                        android:tint="@color/wh_fc"
+                        android:visibility="invisible"
+                        tools:visibility="visible" />
+                </RelativeLayout>
+
+            </com.google.android.material.appbar.MaterialToolbar>
+        </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_below="@id/toolbar"
             android:id="@+id/user_point_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/toolbar_container"
             android:layout_marginHorizontal="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:background="@drawable/rounded_rectangle_with_border"
@@ -189,7 +198,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/bottom_bar"
-            android:layout_below="@+id/toolbar">
+            android:layout_below="@+id/toolbar_container">
 
 
             <com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout
@@ -199,12 +208,12 @@
                 app:srl_direction="bottom">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    tools:itemCount="5"
                     android:id="@+id/chatRv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="@dimen/_6sdp"
                     android:paddingBottom="@dimen/_4sdp"
+                    tools:itemCount="5"
                     tools:listitem="@layout/inbox_row_layout" />
             </com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout>
 
@@ -277,8 +286,8 @@
             android:clickable="true"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            tools:visibility="visible"
-            android:visibility="gone" />
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bottom_bar"
@@ -443,7 +452,7 @@
             android:id="@+id/shader"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/toolbar"
+            android:layout_below="@id/toolbar_container"
             android:alpha="0.85"
             android:background="@color/transparent_black_alfa_80"
             android:clickable="true"
@@ -454,10 +463,10 @@
             android:id="@+id/course_progress_tooltip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/toolbar"
+            android:layout_below="@id/toolbar_container"
             android:layout_marginHorizontal="@dimen/_16sdp"
-            tools:visibility="visible"
-            android:visibility="gone" />
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/overlay_layout"
@@ -467,7 +476,7 @@
             android:elevation="@dimen/_4sdp"
             android:paddingVertical="@dimen/_8sdp"
             android:visibility="gone"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgGroupChatOverlay"
@@ -489,7 +498,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_chat"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
             <RelativeLayout
                 android:layout_width="@dimen/_220sdp"

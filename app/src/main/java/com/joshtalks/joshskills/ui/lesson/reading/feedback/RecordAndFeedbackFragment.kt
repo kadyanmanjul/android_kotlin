@@ -37,8 +37,8 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.*
+import java.util.concurrent.TimeUnit
 
 class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
 
@@ -214,6 +214,9 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
 
     private fun setUpAudioRecordTouchListener() {
         binding.imgRecordButton.setOnClickListener {
+            if (isCallOngoing()) {
+                return@setOnClickListener
+            }
             if (practiceViewModel.isRecordingStarted()) {
                 stopAudioRecording()
             } else {

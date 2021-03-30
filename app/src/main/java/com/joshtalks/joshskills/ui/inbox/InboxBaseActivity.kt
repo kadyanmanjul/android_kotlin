@@ -26,7 +26,6 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import java.lang.ref.WeakReference
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.coroutines.CoroutineScope
@@ -34,8 +33,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.lang.ref.WeakReference
 
-abstract class InboxBaseActivity : CoreJoshActivity(),
+abstract class InboxBaseActivity :
+    WebRtcMiddlewareActivity(),
     InAppUpdateManager.InAppUpdateHandler {
     private var isFromOnBoarding: Boolean = true
     private var newUserLayoutStub: Stub<NewUserLayout>? = null
@@ -47,7 +48,6 @@ abstract class InboxBaseActivity : CoreJoshActivity(),
     }
     private var isSubscriptionStarted: Boolean = false
     private var isSubscriptionEnd: Boolean = false
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -222,28 +222,28 @@ abstract class InboxBaseActivity : CoreJoshActivity(),
 
     protected fun locationFetch() {
         AppObjectController.uiHandler.post {
-               if (Mentor.getInstance().getLocality() == null) {
-                   PermissionUtils.locationPermission(
-                       this,
-                       object : MultiplePermissionsListener {
-                           override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                               report?.areAllPermissionsGranted()?.let { flag ->
-                                   if (flag) {
-                                       fetchUserLocation()
-                                       return
-                                   }
-                               }
-                           }
+            if (Mentor.getInstance().getLocality() == null) {
+                PermissionUtils.locationPermission(
+                    this,
+                    object : MultiplePermissionsListener {
+                        override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                            report?.areAllPermissionsGranted()?.let { flag ->
+                                if (flag) {
+                                    fetchUserLocation()
+                                    return
+                                }
+                            }
+                        }
 
-                           override fun onPermissionRationaleShouldBeShown(
-                               permissions: MutableList<PermissionRequest>?,
-                               token: PermissionToken?
-                           ) {
-                               token?.continuePermissionRequest()
-                           }
-
-                       })
-               }
+                        override fun onPermissionRationaleShouldBeShown(
+                            permissions: MutableList<PermissionRequest>?,
+                            token: PermissionToken?
+                        ) {
+                            token?.continuePermissionRequest()
+                        }
+                    }
+                )
+            }
         }
     }
 

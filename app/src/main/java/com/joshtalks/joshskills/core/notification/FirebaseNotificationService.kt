@@ -19,6 +19,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.clevertap.android.sdk.CleverTapAPI
 import com.facebook.share.internal.ShareConstants.ACTION_TYPE
 import com.freshchat.consumer.sdk.Freshchat
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -27,15 +28,9 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.API_TOKEN
-import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
-import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.COURSE_ID
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.JoshSkillExecutors
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
-import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -51,7 +46,6 @@ import com.joshtalks.joshskills.ui.conversation_practice.PRACTISE_ID
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
-import com.joshtalks.joshskills.ui.launch.NewLauncherActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
@@ -63,6 +57,8 @@ import com.joshtalks.joshskills.ui.voip.RTC_NAME
 import com.joshtalks.joshskills.ui.voip.RTC_TOKEN_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
 import com.joshtalks.joshskills.ui.voip.WebRtcService
+import org.json.JSONObject
+import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
 import java.lang.reflect.Type
@@ -72,8 +68,6 @@ import java.util.*
 import java.util.concurrent.ExecutorService
 import kotlin.collections.HashMap
 import kotlin.collections.set
-import org.json.JSONObject
-import timber.log.Timber
 
 
 const val FCM_TOKEN = "fcmToken"
@@ -101,6 +95,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         super.onNewToken(token)
         Timber.tag(FirebaseNotificationService::class.java.name).e(token)
         PrefManager.put(FCM_TOKEN, token)
+        CleverTapAPI.getDefaultInstance(this)?.pushFcmRegistrationId(token,true)
         if (AppObjectController.freshChat != null) {
             AppObjectController.freshChat?.setPushRegistrationToken(token)
         }

@@ -1,24 +1,18 @@
 package com.joshtalks.joshskills.ui.points_history
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.databinding.ActivityPointsHistoryBinding
+import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.databinding.ActivityPointsInfoBinding
 import com.joshtalks.joshskills.ui.points_history.viewholder.PointsInfoViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewmodel.PointsViewModel
-import kotlinx.android.synthetic.main.base_toolbar.iv_back
-import kotlinx.android.synthetic.main.base_toolbar.iv_help
-import kotlinx.android.synthetic.main.base_toolbar.iv_setting
-import kotlinx.android.synthetic.main.base_toolbar.text_message_title
+import kotlinx.android.synthetic.main.base_toolbar.*
 
-class PointsInfoActivity : BaseActivity() {
+class PointsInfoActivity : WebRtcMiddlewareActivity() {
     private val viewModel: PointsViewModel by lazy {
         ViewModelProvider(this).get(PointsViewModel::class.java)
     }

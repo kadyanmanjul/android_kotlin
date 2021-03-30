@@ -306,6 +306,9 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         position: Int,
         startTimeUnit: Long
     ) {
+        if (isCallOngoing()) {
+            return
+        }
         this.startTime = startTimeUnit
         if (isAdded && activity != null)
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)

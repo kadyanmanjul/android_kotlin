@@ -72,6 +72,7 @@ import com.joshtalks.joshskills.core.custom_ui.custom_textview.TouchableSpan
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeStyle
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.muddzdev.styleabletoast.StyleableToast
 import com.sinch.verification.PhoneNumberUtils
 import github.nisrulz.easydeviceinfo.base.EasyConfigMod
@@ -80,6 +81,10 @@ import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation
+import kotlinx.coroutines.*
+import okhttp3.RequestBody.Companion.toRequestBody
+import timber.log.Timber
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.InetSocketAddress
@@ -92,21 +97,15 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.math.roundToInt
-import kotlinx.coroutines.*
-import okhttp3.RequestBody.Companion.toRequestBody
-import timber.log.Timber
-
 
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
 private val DD_MMM = SimpleDateFormat("dd-MMM hh:mm aa")
 private val MMM_DD_YYYY = SimpleDateFormat("MMM DD, yyyy")
 val YYYY_MM_DD = SimpleDateFormat("yyyy-MM-dd")
 val DD_MM_YYYY = SimpleDateFormat("dd/MM/yyyy")
-
 
 object Utils {
 
@@ -130,9 +129,7 @@ object Utils {
             ) else formattedNumber
 
             return output.trim { it <= ' ' }
-
         } catch (e: Exception) {
-
         }
 
         return "0"
@@ -160,18 +157,14 @@ object Utils {
         return Build.MODEL + " - " + Build.MANUFACTURER + " - " + Build.BRAND
     }
 
-
     fun messageTimeConversion(old: Date): String {
         return CHAT_TIME_FORMATTER.format(old.time).toLowerCase(Locale.getDefault())
             .replace("AM", "am").replace("PM", "pm")
-
     }
-
 
     fun createPartFromString(descriptionString: String): okhttp3.RequestBody {
         return descriptionString.toRequestBody(okhttp3.MultipartBody.FORM)
     }
-
 
     fun getMessageTime(epoch: Long): String {
         val date = Date(epoch)
@@ -186,14 +179,11 @@ object Utils {
                 DateTimeUtils.formatWithStyle(date, DateTimeStyle.SHORT)
             }
         }
-
-
     }
 
     fun getMessageTimeInHours(date: Date): String {
         return CHAT_TIME_FORMATTER.format(date.time).toLowerCase(Locale.getDefault())
     }
-
 
     private fun isYesterday(d: Date): Boolean {
         return DateUtils.isToday(d.time + DateUtils.DAY_IN_MILLIS)
@@ -233,17 +223,16 @@ object Utils {
         return String.format("%02d:%02d", m, s)
     }
 
-
     fun getPathFromUri(path: String): String {
         return Environment.getExternalStorageDirectory().toString().plus("/")
             .plus(path.split(Regex("/"), 3)[2])
-
     }
 
     fun getCurrentMediaVolume(context: Context): Int {
         val audio = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         return audio.getStreamVolume(STREAM_MUSIC)
     }
+
     fun getCurrentMediaMaxVolume(context: Context): Int {
         val audio = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         return audio.getStreamMaxVolume(STREAM_MUSIC)
@@ -283,7 +272,6 @@ object Utils {
         return output
     }
 
-
     fun writeBitmapIntoFile(bitmap: Bitmap, filePath: String): String {
         var fOut: OutputStream? = null
         val file = File(filePath)
@@ -309,10 +297,12 @@ object Utils {
     }
 
     fun dpToPx(context: Context, dp: Float): Int {
-        return (TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, dp,
-            context.resources.displayMetrics
-        ) + 0.5f).roundToInt()
+        return (
+            TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, dp,
+                context.resources.displayMetrics
+            ) + 0.5f
+            ).roundToInt()
     }
 
     fun call(context: Context, phoneNumber: String) {
@@ -322,7 +312,6 @@ object Utils {
         intent.data = Uri.parse("tel:$phoneNumber")
         context.startActivity(intent)
     }
-
 
     fun openUrl(url: String, context: Context) {
         try {
@@ -398,7 +387,6 @@ object Utils {
             customTabsIntent.intent.setPackage(packageName)
             customTabsIntent.launchUrl(activity, Uri.parse(updateUrl))
         }
-
     }
 
     fun isInternetAvailable(): Boolean {
@@ -411,7 +399,7 @@ object Utils {
                 actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
                 actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
                 actNw.hasTransport(NetworkCapabilities.TRANSPORT_VPN) -> true
-                //for other device how are able to connect with Ethernet
+                // for other device how are able to connect with Ethernet
                 actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
                 else -> false
             }
@@ -419,7 +407,6 @@ object Utils {
             val nwInfo = connectivityManager.activeNetworkInfo ?: return false
             return nwInfo.isConnected
         }
-
     }
 
     private fun hasInternetConnection(): Single<Boolean> {
@@ -441,7 +428,6 @@ object Utils {
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-
     private fun getBitmapFromDrawable(context: Context, drawableId: Int): Bitmap {
         val drawable = AppCompatResources.getDrawable(context, drawableId)
 
@@ -459,7 +445,7 @@ object Utils {
 
             return bitmap
         } else {
-            throw  IllegalArgumentException("unsupported drawable type")
+            throw IllegalArgumentException("unsupported drawable type")
         }
     }
 
@@ -528,7 +514,6 @@ object Utils {
         } catch (ex: Exception) {
         }
         return email
-
     }
 
     private fun getAccount(accountManager: AccountManager): Account? {
@@ -559,7 +544,6 @@ object Utils {
         }
         return false
     }
-
 
     fun getFileNameFromURL(url: String?): String {
         if (url.isNullOrEmpty()) {
@@ -604,7 +588,6 @@ object Utils {
         } else {
             serverFile
         }
-
     }
 
     private fun checkFileStorage(context: Context): Boolean {
@@ -617,17 +600,16 @@ object Utils {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-
     fun formatDuration(duration: Int): String {
         return String.format(
             Locale.getDefault(), "%02d:%02d",
             TimeUnit.MILLISECONDS.toMinutes(duration.toLong()),
             TimeUnit.MILLISECONDS.toSeconds(duration.toLong()) -
-                    TimeUnit.MINUTES.toSeconds(
-                        TimeUnit.MILLISECONDS.toMinutes(
-                            duration.toLong()
-                        )
+                TimeUnit.MINUTES.toSeconds(
+                    TimeUnit.MILLISECONDS.toMinutes(
+                        duration.toLong()
                     )
+                )
         )
     }
 
@@ -646,7 +628,6 @@ object Utils {
             e.printStackTrace()
         }
     }
-
 
     fun getRequireFileOpeningIntent(url: String): Intent {
         val uri = Uri.parse(url)
@@ -675,9 +656,7 @@ object Utils {
 
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         return intent
-
     }
-
 
     fun getDeviceInfo() {
         var easyConfigMod = EasyConfigMod(AppObjectController.joshApplication)
@@ -689,9 +668,7 @@ object Utils {
         paint.textSize = textSize
         paint.getTextBounds(value, 0, value.length, bounds)
         return ceil((bounds.width().toFloat() / textSize).toDouble()).toInt()
-
     }
-
 
     fun isUserInDaysOld(courseCreatedDate: Date?): Pair<Boolean, Int> {
         if (courseCreatedDate == null) {
@@ -707,7 +684,6 @@ object Utils {
             return Pair(true, daysDiff.toInt())
         }
         return Pair(false, daysDiff.toInt())
-
     }
 
     fun diffFromToday(compareDay: Date): Int {
@@ -716,14 +692,13 @@ object Utils {
         return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toInt()
     }
 
-
     fun isSameDate(startDate: Date, endDate: Date): Boolean {
         val cal1 = Calendar.getInstance()
         val cal2 = Calendar.getInstance()
         cal1.time = startDate
         cal2.time = endDate
         return cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR) &&
-                cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)
+            cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)
     }
 
     fun dateHeaderDateFormat(date: Date): String {
@@ -817,7 +792,6 @@ object Utils {
             null
         }
     }
-
 }
 
 fun milliSecondsToSeconds(time: Long): Long {
@@ -843,7 +817,6 @@ fun showToast(message: String, length: Int = Toast.LENGTH_SHORT) {
             .solidBackground()
             .show()
     }
-
 }
 
 fun getUserNameInShort(
@@ -888,7 +861,6 @@ fun getFBProfilePicture(id: String): String {
     return "http://graph.facebook.com/$id/picture?height=800&width=800&type=normal"
 }
 
-
 fun isValidFullNumber(countryCode: String, number: String? = EMPTY): Boolean {
     return try {
         val phoneUtil = PhoneNumberUtil.createInstance(AppObjectController.joshApplication)
@@ -928,6 +900,14 @@ fun getCountryIsoCode(number: String, countryRegion: String): String {
             countryRegion
         }
     }
+}
+
+fun isCallOngoing(): Boolean {
+    if (WebRtcService.isCallWasOnGoing) {
+        showToast(message = AppObjectController.joshApplication.getString(R.string.call_engage_message))
+        return true
+    }
+    return false
 }
 
 fun loadJSONFromAsset(fileName: String): String? {
@@ -976,7 +956,6 @@ fun ImageView.setUserInitial(userName: String, dpToPx: Int = 16) {
     this.background = drawable
     this.setImageDrawable(drawable)
 }
-
 
 fun ImageView.setUserImageOrInitials(url: String?, userName: String, dpToPx: Int = 16) {
     if (url.isNullOrEmpty()) {
@@ -1048,11 +1027,9 @@ fun ImageView.setVectorImage(
                 this@setVectorImage.visibility = View.VISIBLE
                 return false
             }
-
         })
         .into(this)
 }
-
 
 fun Context.changeLocale(language: String) {
     val config: Configuration = resources.configuration
@@ -1128,7 +1105,6 @@ fun Intent.startServiceForWebrtc() {
     }
 }
 
-
 fun getTouchableSpannable(
     string: String,
     currentColor: Int,
@@ -1176,7 +1152,8 @@ suspend fun String.getSpannableString(
                     defaultSelectedColor,
                     isUnderLineEnable,
                     clickListener
-                ), index, index + word.length,
+                ),
+                index, index + word.length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             lastIndex = (index + word.length)
@@ -1237,13 +1214,13 @@ fun playSnackbarSound(context: Context) {
     try {
         val mediaplayer: MediaPlayer = MediaPlayer.create(
             context,
-            //R.raw.ting
-            //R.raw.accept_confirm
-            //R.raw.tinder_one
-            //R.raw.tinder_two
-            //R.raw.tinder_new
-            //R.raw.moneybag
-            //R.raw.si_montok_sound_effect,
+            // R.raw.ting
+            // R.raw.accept_confirm
+            // R.raw.tinder_one
+            // R.raw.tinder_two
+            // R.raw.tinder_new
+            // R.raw.moneybag
+            // R.raw.si_montok_sound_effect,
             R.raw.right_answer
         )
 
@@ -1259,8 +1236,10 @@ fun playSnackbarSound(context: Context) {
     }
 }
 
-fun String.urlToBitmap( width: Int = 80,
-                        height: Int = 80,context: Context = AppObjectController.joshApplication
+fun String.urlToBitmap(
+    width: Int = 80,
+    height: Int = 80,
+    context: Context = AppObjectController.joshApplication
 ): Bitmap? {
 
     val requestOptions =
@@ -1272,11 +1251,11 @@ fun String.urlToBitmap( width: Int = 80,
     return Glide.with(context)
         .asBitmap()
         .load(this)
-          .override(Utils.dpToPx(width),Utils.dpToPx(height))
+        .override(Utils.dpToPx(width), Utils.dpToPx(height))
         .apply(
             requestOptions
         )
-       //.override(Target.SIZE_ORIGINAL)
+        // .override(Target.SIZE_ORIGINAL)
         .diskCacheStrategy(DiskCacheStrategy.ALL)
         .optionalTransform(
             WebpDrawable::class.java,
@@ -1285,7 +1264,6 @@ fun String.urlToBitmap( width: Int = 80,
 }
 
 fun Int.toBoolean() = this == 1
-
 
 fun Intent.printAllIntent() {
     val bundle = extras
@@ -1298,6 +1276,3 @@ fun Intent.printAllIntent() {
         }
     }
 }
-
-
-

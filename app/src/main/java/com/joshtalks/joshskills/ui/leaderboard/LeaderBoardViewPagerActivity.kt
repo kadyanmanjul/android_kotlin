@@ -13,8 +13,8 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.databinding.ActivityLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenPreviousLeaderboard
@@ -23,14 +23,10 @@ import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.ui.leaderboard.search.LeaderBoardSearchActivity
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.HashMap
-import java.util.Locale
-import kotlinx.android.synthetic.main.base_toolbar.iv_back
-import kotlinx.android.synthetic.main.base_toolbar.iv_earn
-import kotlinx.android.synthetic.main.base_toolbar.iv_help
-import kotlinx.android.synthetic.main.base_toolbar.text_message_title
+import kotlinx.android.synthetic.main.base_toolbar.*
+import java.util.*
 
-class LeaderBoardViewPagerActivity : BaseActivity() {
+class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
     lateinit var binding: ActivityLeaderboardViewPagerBinding
     private val viewModel by lazy { ViewModelProvider(this).get(LeaderBoardViewModel::class.java) }
     var mapOfVisitedPage = HashMap<Int, Int>()

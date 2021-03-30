@@ -25,14 +25,15 @@ import com.joshtalks.joshskills.repository.server.ActiveUserRequest
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
+import com.joshtalks.joshskills.track.CourseUsageSync
 import com.sinch.verification.PhoneNumberUtils
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
+import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.streams.toList
 import kotlin.system.exitProcess
-import timber.log.Timber
-
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
 const val CONVERSATION_ID = "conversation_id"
@@ -83,7 +84,6 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
                     exitProcess(0)
                 }
             }
-
         }.addOnFailureListener { exception ->
             exception.printStackTrace()
         }
@@ -137,7 +137,6 @@ class InstanceIdGenerationWorker(var context: Context, workerParams: WorkerParam
                     PrefManager.put(INSTANCE_ID, res.instanceId, true)
                 }
             }
-
         } catch (ex: Throwable) {
             LogException.catchException(ex)
         }
@@ -209,7 +208,6 @@ private fun updateFromLoginResponse(loginResponse: LoginResponse) {
 }
 */
 
-
 class MessageReadPeriodicWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
@@ -223,35 +221,33 @@ class MessageReadPeriodicWorker(context: Context, workerParams: WorkerParameters
                 AppObjectController.chatNetworkService.updateMessagesStatus(messageStatusRequestList)
             }
             return Result.success()
-
-
         } catch (ex: Throwable) {
             LogException.catchException(ex)
             return Result.retry()
         }
     }
-
 }
-
 
 class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                task.exception?.run {
-                    LogException.catchException(this)
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(
+            OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    task.exception?.run {
+                        LogException.catchException(this)
+                    }
+                    task.exception?.printStackTrace()
+                    return@OnCompleteListener
                 }
-                task.exception?.printStackTrace()
-                return@OnCompleteListener
+                task.result?.run {
+                    PrefManager.put(FCM_TOKEN, this)
+                    val fcmResponse = FCMResponse.getInstance()
+                    fcmResponse?.apiStatus = ApiRespStatus.POST
+                    fcmResponse?.update()
+                }
             }
-            task.result?.run {
-                PrefManager.put(FCM_TOKEN, this)
-                val fcmResponse = FCMResponse.getInstance()
-                fcmResponse?.apiStatus = ApiRespStatus.POST
-                fcmResponse?.update()
-            }
-        })
+        )
         return Result.success()
     }
 }
@@ -320,9 +316,10 @@ class WorkerInLandingScreen(context: Context, workerParams: WorkerParameters) :
     override suspend fun doWork(): Result {
         AppObjectController.clearDownloadMangerCallback()
         AppAnalytics.updateUser()
-        //SyncChatService.syncChatWithServer()
+        // SyncChatService.syncChatWithServer()
         WorkManagerAdmin.readMessageUpdating()
         WorkManagerAdmin.refreshFcmToken()
+        WorkManagerAdmin.syncAppCourseUsage()
         return Result.success()
     }
 }
@@ -362,7 +359,6 @@ class FeedbackRatingWorker(context: Context, workerParams: WorkerParameters) :
     }
 }
 
-
 class NPAQuestionViaEventWorker(
     context: Context,
     private var workerParams: WorkerParameters
@@ -383,7 +379,6 @@ class NPAQuestionViaEventWorker(
                     return Result.success(outputData)
                 }
             }
-
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -464,7 +459,6 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
     }
 }
 
-
 class GenerateRestoreIdWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
@@ -507,7 +501,7 @@ class MergeMentorWithGAIDWorker(context: Context, workerParams: WorkerParameters
             }
             val data = mapOf("mentor" to Mentor.getInstance().getId())
             AppObjectController.commonNetworkService.mergeMentorWithGAId(id.toString(), data)
-            //PrefManager.removeKey(SERVER_GID_ID)
+            // PrefManager.removeKey(SERVER_GID_ID)
         } catch (ex: Throwable) {
             LogException.catchException(ex)
         }
@@ -709,7 +703,7 @@ class PatchUserIdToGAIdV2(context: Context, private val workerParams: WorkerPara
                 }
             }
         } catch (ex: Throwable) {
-            //LogException.catchException(ex)
+            // LogException.catchException(ex)
         }
         return Result.success()
     }
@@ -733,6 +727,34 @@ class SyncFavoriteCaller(context: Context, workerParams: WorkerParameters) :
     }
 }
 
+class CourseUsageSyncWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val list = AppObjectController.appDatabase.courseUsageDao().getAllSession()
+                .parallelStream()
+                .map {
+                    CourseUsageSync(
+                        it.conversationId,
+                        it.startTime,
+                        it.endTime ?: 0
+                    )
+                }.toList()
+            if (list.isEmpty()) {
+                return Result.success()
+            }
+            val body: HashMap<String, List<CourseUsageSync>> = HashMap()
+            body["data"] = list
+            val resp = AppObjectController.commonNetworkService.engageCourseUsageSession(body)
+            if (resp.isSuccessful) {
+                AppObjectController.appDatabase.courseUsageDao().deleteAllSyncSession()
+            }
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
+        }
+        return Result.success()
+    }
+}
 
 fun getGoogleAdId(context: Context): String {
     MobileAds.initialize(context)

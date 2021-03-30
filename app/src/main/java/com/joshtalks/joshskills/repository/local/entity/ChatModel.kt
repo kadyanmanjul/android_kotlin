@@ -1,22 +1,16 @@
 package com.joshtalks.joshskills.repository.local.entity
 
 import android.os.Parcelable
-import androidx.room.ColumnInfo
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.Index
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
+import androidx.room.*
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.ConvertorForEngagement
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
 import com.joshtalks.joshskills.util.RandomString
-import java.util.Date
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
+import java.util.*
 
 @Parcelize
 @Entity(tableName = "chat_table", indices = [Index(value = ["chat_id", "conversation_id"])])
@@ -108,7 +102,7 @@ data class ChatModel(
     var awardMentorId: Int = 0,
 
     @ColumnInfo(name = "award_user_id")
-    @SerializedName("award_user_id")
+    @SerializedName("award_mentor_id")
     var awardUserId: Int? = null,
 
     @Ignore
@@ -118,7 +112,7 @@ data class ChatModel(
     @Ignore
     var playProgress: Int = 0,
 
-    ) : DataBaseClass(), Parcelable {
+) : DataBaseClass(), Parcelable {
 
     @IgnoredOnParcel
     @Ignore
@@ -147,7 +141,6 @@ data class ChatModel(
         question_id = null,
         contentDownloadDate = Date()
     )
-
 
     constructor() : this(
         chatId = "",
@@ -188,7 +181,6 @@ data class ChatModel(
     }
 }
 
-
 @Entity(tableName = "question_table")
 @Parcelize
 data class Question(
@@ -213,7 +205,6 @@ data class Question(
     @ColumnInfo
     @SerializedName("is_deleted") var isDeleted: Boolean = false,
 
-
     @ColumnInfo
     @SerializedName("material_type") var material_type: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.OTHER,
 
@@ -237,7 +228,6 @@ data class Question(
 
     @ColumnInfo(name = "type")
     @SerializedName("type") var type: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.OTHER,
-
 
     @Ignore
     @SerializedName("videos") var videoList: List<VideoType>? = emptyList(),
@@ -312,8 +302,7 @@ data class Question(
 //    @SerializedName("practice_engagements")
     var practiseEngagementV2: List<PracticeEngagementV2>? = emptyList(),
 
-    ) : Parcelable
-
+) : Parcelable
 
 data class User(
     @SerializedName("first_name") var first_name: String = "",
@@ -326,7 +315,6 @@ data class User(
 
     @SerializedName("user_type") var user_type: String = ""
 ) : java.io.Serializable
-
 
 @Entity(tableName = "VideoTable")
 @Parcelize
@@ -367,7 +355,6 @@ data class VideoType(
 
 ) : DataBaseClass(), Parcelable
 
-
 @Entity(tableName = "AudioTable")
 @Parcelize
 data class AudioType(
@@ -389,7 +376,6 @@ data class AudioType(
 
 ) : DataBaseClass(), Parcelable
 
-
 @Entity(tableName = "OptionTable")
 @Parcelize
 data class OptionType(
@@ -398,19 +384,16 @@ data class OptionType(
     @ColumnInfo
     @SerializedName("id") var id: String = "",
 
-
     @ColumnInfo
     @SerializedName("type") var type: String = "",
 
     @ColumnInfo
     @SerializedName("text") var text: String = "",
 
-
     @ColumnInfo
     @SerializedName("order") var order: Int = 0
 
 ) : DataBaseClass(), Parcelable
-
 
 @Entity(tableName = "PdfTable")
 @Parcelize
@@ -419,7 +402,6 @@ data class PdfType(
     @PrimaryKey
     @ColumnInfo
     @SerializedName("id") var id: String = "",
-
 
     @ColumnInfo
     @SerializedName("url") var url: String = "",
@@ -440,7 +422,6 @@ data class PdfType(
     var pages: String? = ""
 
 ) : DataBaseClass(), Parcelable
-
 
 @Entity(tableName = "ImageTable")
 @Parcelize
@@ -464,13 +445,11 @@ data class ImageType(
 
 ) : DataBaseClass(), Parcelable
 
-
 data class Sender(
     @SerializedName("id") var id: String = "",
     @SerializedName("user") var user: User? = User(),
     @SerializedName("user_type") var user_type: String = ""
 ) : java.io.Serializable
-
 
 data class PracticeEngagement(
     @SerializedName("answer_url") val answerUrl: String?,
@@ -526,7 +505,6 @@ data class PracticeFeedback2(
     )
 }
 
-
 open class DataBaseClass(
     @ColumnInfo
     @Expose
@@ -562,43 +540,40 @@ enum class OPTION_TYPE(val type: String) {
 }
 
 enum class BASE_MESSAGE_TYPE(val type: String) {
-    TX("TX"),           // Text
-    VI("VI"),           // Video
-    AU("AU"),           // Audio
-    IM("IM"),           // Image
-    PD("PD"),           // PDF
+    TX("TX"), // Text
+    VI("VI"), // Video
+    AU("AU"), // Audio
+    IM("IM"), // Image
+    PD("PD"), // PDF
     OTHER("OTHER"),
-    Q("Q"),             // Question
-    A("A"),             // Answer
-    AR("AR"),           // Answer in Reply
-    PR("PR"),           // Practice
-    CP("CP"),           // Conversation Practice
-    CE("CE"),           // Certification Exam
+    Q("Q"), // Question
+    A("A"), // Answer
+    AR("AR"), // Answer in Reply
+    PR("PR"), // Practice
+    CP("CP"), // Conversation Practice
+    CE("CE"), // Certification Exam
     QUIZ("QUIZ"),
     TEST("TEST"),
-    UNLOCK("UN"),       // Unlock Next Class
-    P2P("P2P"),         // Voice Calling
+    UNLOCK("UN"), // Unlock Next Class
+    P2P("P2P"), // Voice Calling
     LESSON("LESSON"),
     BEST_PERFORMER("BEST_PERFORMER"),
     NEW_CLASS("NEW_CLASS"),
 }
 
-
 enum class EXPECTED_ENGAGE_TYPE(val type: String) {
-    TX("TX"),       // Text
-    VI("VI"),       // Video
-    AU("AU"),       // Audio
-    IM("IM"),       // Image
-    DX("DX")        // Document
+    TX("TX"), // Text
+    VI("VI"), // Video
+    AU("AU"), // Audio
+    IM("IM"), // Image
+    DX("DX") // Document
 }
-
 
 enum class MESSAGE_DELIVER_STATUS(val type: Int) {
     SENT(0),
     SENT_RECEIVED(1),
     READ(2)
 }
-
 
 enum class DOWNLOAD_STATUS {
     DOWNLOADED,
@@ -618,25 +593,25 @@ enum class MESSAGE_STATUS(val type: String) {
 }
 
 enum class QUESTION_STATUS(val type: String) {
-    NA("NA"),       // Not Attempted
-    AT("AT"),       // Attempted
-    IP("IP")        // In Progress
+    NA("NA"), // Not Attempted
+    AT("AT"), // Attempted
+    IP("IP") // In Progress
 }
 
 enum class LESSON_STATUS(val type: String) {
-    NO("NO"),       // Not Opened
-    AT("AT"),       // Attempted (InProgress)
-    CO("CO")        // Completed
+    NO("NO"), // Not Opened
+    AT("AT"), // Attempted (InProgress)
+    CO("CO") // Completed
 }
 
 enum class CHAT_TYPE(val type: String) {
-    GR("GR"),           // Grammar Practice
-    VP("VP"),           // Vocabulary Practice
-    RP("RP"),           // Reading Practice
-    SP("SP"),           // Speaking Practice
+    GR("GR"), // Grammar Practice
+    VP("VP"), // Vocabulary Practice
+    RP("RP"), // Reading Practice
+    SP("SP"), // Speaking Practice
     OTHER("OTHER"),
-    SOTD("SOTD"),       // Student Of The Day
-    SOTW("SOTW"),       // Student Of The Week
-    SOTM("SOTM"),       // Student Of The Month
-    SOTY("SOTY")        // Student Of The Year
+    SOTD("SOTD"), // Student Of The Day
+    SOTW("SOTW"), // Student Of The Week
+    SOTM("SOTM"), // Student Of The Month
+    SOTY("SOTY") // Student Of The Year
 }

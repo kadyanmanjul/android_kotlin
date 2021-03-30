@@ -6,11 +6,11 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.ui.settings.fragments.SettingsFragment
 import kotlinx.android.synthetic.main.base_toolbar.*
 
-class SettingsActivity : BaseActivity() {
+class SettingsActivity : WebRtcMiddlewareActivity() {
 
     lateinit var titleView: TextView
     override fun onCreate(savedInstanceState: Bundle?) {

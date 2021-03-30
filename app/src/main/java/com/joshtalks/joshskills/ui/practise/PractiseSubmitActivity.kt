@@ -65,20 +65,20 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
-import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
+import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 
 const val PRACTISE_OBJECT = "practise_object"
 const val IMAGE_OR_VIDEO_SELECT_REQUEST_CODE = 1081
 const val TEXT_FILE_ATTACHMENT_REQUEST_CODE = 1082
 
 
-class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPlayerEventListener,
+class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener, AudioPlayerEventListener,
     ProgressUpdateListener {
     private var compositeDisposable = CompositeDisposable()
 
