@@ -198,7 +198,6 @@ class PreviousLeaderboardActivity : BaseActivity() {
             arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
             intervalType,
             USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
-            isOnline,
             conversationId = intent.getStringExtra(CONVERSATION_ID)
         )
     }
