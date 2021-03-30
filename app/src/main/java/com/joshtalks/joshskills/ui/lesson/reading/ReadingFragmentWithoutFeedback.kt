@@ -70,8 +70,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
-import java.util.*
-import java.util.concurrent.TimeUnit
 
 class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
     AudioPlayerEventListener,
@@ -290,10 +288,10 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                 AnalyticsEvent.PRACTICE_TYPE_PRESENT.NAME,
                 "${this.materialType} Practice present"
             )
-            initializeAudioViewForDemoAudio(this)
+            // initializeAudioViewForDemoAudio(this)
             when (this.materialType) {
                 LessonMaterialType.AU -> {
-                    // initializeAudioViewForDemoAudio(this)
+                    initializeAudioViewForDemoAudio(this)
                 }
 
                 LessonMaterialType.IM -> {
