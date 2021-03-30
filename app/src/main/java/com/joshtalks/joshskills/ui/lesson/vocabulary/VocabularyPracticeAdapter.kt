@@ -932,11 +932,11 @@ class VocabularyPracticeAdapter(
         private fun setPracticeInfoView(lessonQuestion: LessonQuestion) {
             val wordNumber = itemList.filter { it.assessmentId == null }.indexOf(lessonQuestion) + 1
 
-//            if (lessonQuestion.audioList.isNullOrEmpty()) {
-//                binding.layoutPronounce.visibility = GONE
-//            } else {
-//                binding.layoutPronounce.visibility = VISIBLE
-//            }
+            if (lessonQuestion.audioList.isNullOrEmpty()) {
+                binding.layoutPronounce.visibility = GONE
+            } else {
+                binding.layoutPronounce.visibility = VISIBLE
+            }
 
             lessonQuestion.run {
                 binding.practiceTitleTv.text =

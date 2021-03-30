@@ -287,10 +287,10 @@ class ReadingFragmentWithoutFeedback :
                 AnalyticsEvent.PRACTICE_TYPE_PRESENT.NAME,
                 "${this.materialType} Practice present"
             )
-            // initializeAudioViewForDemoAudio(this)
+            initializeAudioViewForDemoAudio(this)
             when (this.materialType) {
                 LessonMaterialType.AU -> {
-                    initializeAudioViewForDemoAudio(this)
+                    // initializeAudioViewForDemoAudio(this)
                 }
 
                 LessonMaterialType.IM -> {
