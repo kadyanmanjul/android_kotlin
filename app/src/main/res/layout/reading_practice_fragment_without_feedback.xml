@@ -69,7 +69,6 @@
                             android:visibility="gone"
                             tools:visibility="gone" />
 
-
                         <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
                             android:id="@+id/video_player"
                             android:layout_width="match_parent"
@@ -82,57 +81,6 @@
                             android:visibility="gone"
                             app:controller_layout_id="@layout/layout_live_player_controller"
                             tools:visibility="gone" />
-
-
-                        <RelativeLayout
-                            android:id="@+id/audio_view_container"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:visibility="gone"
-                            tools:visibility="visible">
-
-                            <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
-                                android:id="@+id/btn_play_info"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentStart="true"
-                                android:layout_centerInParent="true"
-                                android:layout_gravity="center"
-                                android:background="@drawable/play_pause_button_background"
-                                android:backgroundTint="@color/button_color"
-                                android:contentDescription="@string/play_button_description"
-                                android:elevation="4dp"
-                                android:onClick="@{()->handler.playPracticeAudio()}"
-                                android:padding="@dimen/_4sdp"
-                                android:theme="?actionBarTheme"
-                                android:tint="?colorControlNormal" />
-
-
-                            <SeekBar
-                                android:id="@+id/practise_seekbar"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_alignBaseline="@id/btn_play_info"
-                                android:layout_centerInParent="true"
-                                android:layout_toEndOf="@id/btn_play_info"
-                                android:paddingStart="@dimen/_6sdp"
-                                android:paddingEnd="@dimen/_6sdp"
-                                android:progressDrawable="@drawable/seek_bar_draw"
-                                android:thumb="@drawable/seek_thumb"
-                                android:thumbTint="@color/colorPrimary" />
-
-
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/txt_info_duration"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/practise_seekbar"
-                                android:layout_alignEnd="@id/practise_seekbar"
-                                android:layout_marginTop="@dimen/_20sdp"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                                android:textColor="@color/red_color"
-                                app:layout_goneMarginTop="@dimen/spacing_large" />
-                        </RelativeLayout>
 
                         <FrameLayout
                             android:layout_width="match_parent"
@@ -189,6 +137,74 @@
                         android:gravity="start|center"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/black" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/audio_view_container"
+                    style="@style/Widget.MaterialComponents.CardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_6sdp"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:layout_marginEnd="@dimen/_6sdp"
+                    android:visibility="gone"
+                    app:contentPadding="@dimen/_10sdp"
+                    card_view:cardCornerRadius="@dimen/_4sdp"
+                    card_view:cardElevation="0dp"
+                    card_view:cardUseCompatPadding="false"
+                    tools:visibility="visible">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
+                            android:id="@+id/btn_play_info"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerInParent="true"
+                            android:layout_gravity="center"
+                            android:background="@drawable/play_pause_button_background"
+                            android:backgroundTint="@color/button_color"
+                            android:contentDescription="@string/play_button_description"
+                            android:elevation="4dp"
+                            android:onClick="@{()->handler.playPracticeAudio()}"
+                            android:padding="@dimen/_4sdp"
+                            android:theme="?actionBarTheme"
+                            android:tint="?colorControlNormal" />
+
+
+                        <SeekBar
+                            android:id="@+id/practise_seekbar"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBaseline="@id/btn_play_info"
+                            android:layout_centerInParent="true"
+                            android:layout_marginHorizontal="@dimen/_8sdp"
+                            android:layout_toEndOf="@id/btn_play_info"
+                            android:paddingStart="@dimen/_6sdp"
+                            android:paddingEnd="@dimen/_6sdp"
+                            android:progressDrawable="@drawable/seek_bar_draw"
+                            android:thumb="@drawable/seek_thumb"
+                            android:thumbTint="@color/colorPrimary" />
+
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txt_info_duration"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/practise_seekbar"
+                            android:layout_alignEnd="@id/practise_seekbar"
+                            android:layout_marginTop="@dimen/_20sdp"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                            android:textColor="@color/red_color"
+                            app:layout_goneMarginTop="@dimen/spacing_large" />
+
+                    </RelativeLayout>
 
                 </com.google.android.material.card.MaterialCardView>
 
