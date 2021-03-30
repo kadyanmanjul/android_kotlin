@@ -71,7 +71,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
             }
         }
         with(iv_earn) {
-            visibility = View.GONE
+            visibility = View.VISIBLE
             setImageDrawable(
                 ContextCompat.getDrawable(
                     this@LeaderBoardViewPagerActivity,
@@ -144,6 +144,9 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
                 }
                 2 -> {
                     list = "MONTH"
+                }
+                3 -> {
+                    list = "LIFETIME"
                 }
             }
             if (map.get(list)?.intervalTabText.isNullOrBlank()) {

@@ -25,6 +25,7 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
     val leaderBoardDataOfToday: MutableLiveData<LeaderboardResponse> = MutableLiveData()
     val leaderBoardDataOfWeek: MutableLiveData<LeaderboardResponse> = MutableLiveData()
     val leaderBoardDataOfMonth: MutableLiveData<LeaderboardResponse> = MutableLiveData()
+    val leaderBoardDataOfLifeTime: MutableLiveData<LeaderboardResponse> = MutableLiveData()
 
     fun getFullLeaderBoardData(mentorId: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -49,7 +50,13 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
                         map.put("MONTH", it)
                     }
                 }
-                joinAll(call1, call2, call3)
+                val call4 = async(Dispatchers.IO) {
+                    getMentorData(mentorId, "LIFETIME")?.let {
+                        leaderBoardDataOfLifeTime.postValue(it)
+                        map.put("LIFETIME", it)
+                    }
+                }
+                joinAll(call1, call2, call3,call4)
                 leaderBoardData.postValue(map)
                 apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                 return@launch

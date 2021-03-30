@@ -38,6 +38,7 @@ data class LeaderboardResponse(
 enum class LeaderboardType {
     TODAY,
     WEEK,
-    MONTH
+    MONTH,
+    LIFETIME
 }
 
