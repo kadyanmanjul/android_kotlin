@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/circle2"
             android:backgroundTint="@color/white"
-            android:padding="@dimen/_1sdp"
+            android:padding="@dimen/_2sdp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/user_pic"
             app:layout_constraintEnd_toEndOf="@id/user_pic"
