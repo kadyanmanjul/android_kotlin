@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.core
 
-
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DownloadManager
@@ -243,11 +242,15 @@ abstract class BaseActivity :
         startActivityForResult(i, HELP_ACTIVITY_REQUEST_CODE)
     }
 
-    fun openGifActivity() {
-        startActivity(Intent(this, GIFActivity::class.java))
+    fun openGifActivity(conversationId: String?) {
+        startActivity(
+            Intent(this, GIFActivity::class.java).apply {
+                putExtra(CONVERSATION_ID, conversationId)
+            }
+        )
     }
 
-    fun openLeaderBoard(conversationId:String) {
+    fun openLeaderBoard(conversationId: String) {
         val i = Intent(this, LeaderBoardViewPagerActivity::class.java).apply {
             putExtra(CONVERSATION_ID, conversationId)
         }
@@ -255,7 +258,7 @@ abstract class BaseActivity :
     }
 
     fun openPointHistory(mentorId: String? = null, conversationId: String? = null) {
-        PointsHistoryActivity.startPointHistory(this, mentorId,conversationId)
+        PointsHistoryActivity.startPointHistory(this, mentorId, conversationId)
     }
 
     fun getActivityType(act: Activity): BaseActivity.ActivityEnum {
@@ -274,32 +277,30 @@ abstract class BaseActivity :
     }
 
     fun getIntentForState(): Intent {
-            val intent: Intent = when {
-                User.getInstance().isVerified.not() -> {
-                    when {
-                        PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) -> {
-                            getInboxActivityIntent()
-                        }
-                        PrefManager.getBoolValue(IS_PAYMENT_DONE, false) -> {
-                            Intent(this, SignUpActivity::class.java)
-                        }
-                        else -> {
-                            Intent(this, OnBoardActivity::class.java)
-                        }
+        val intent: Intent = when {
+            User.getInstance().isVerified.not() -> {
+                when {
+                    PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) -> {
+                        getInboxActivityIntent()
+                    }
+                    PrefManager.getBoolValue(IS_PAYMENT_DONE, false) -> {
+                        Intent(this, SignUpActivity::class.java)
+                    }
+                    else -> {
+                        Intent(this, OnBoardActivity::class.java)
                     }
                 }
-                isUserProfileNotComplete() -> {
-                    Intent(this, SignUpActivity::class.java)
-                }
-                else -> getInboxActivityIntent()
             }
-            return intent.apply {
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            isUserProfileNotComplete() -> {
+                Intent(this, SignUpActivity::class.java)
             }
+            else -> getInboxActivityIntent()
+        }
+        return intent.apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
     }
-
-
 
     fun isUserProfileNotComplete(): Boolean {
         try {

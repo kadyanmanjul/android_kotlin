@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
 import com.joshtalks.joshskills.databinding.ActivityGifBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,38 +49,42 @@ class GIFActivity : CoreJoshActivity() {
         }
     }
 
-    fun View.animationLeftToRight(){
+    override fun getConversationId(): String? {
+        return intent.getStringExtra(CONVERSATION_ID)
+    }
+
+    fun View.animationLeftToRight() {
         val animSet = AnimationSet(false)
         animSet.fillAfter = false
         animSet.duration = 700
         animSet.interpolator = LinearInterpolator()
         val translate = TranslateAnimation(
-            Animation.ABSOLUTE,  //from xType
+            Animation.ABSOLUTE, // from xType
             +500f,
-            Animation.ABSOLUTE,  //to xType
+            Animation.ABSOLUTE, // to xType
             0f,
-            Animation.ABSOLUTE,  //from yType
+            Animation.ABSOLUTE, // from yType
             0f,
-            Animation.ABSOLUTE,  //to yType
-           0f
+            Animation.ABSOLUTE, // to yType
+            0f
         )
         animSet.addAnimation(translate)
         this.startAnimation(animSet)
     }
 
-    fun View.animationBottomToTop(){
+    fun View.animationBottomToTop() {
         val animSet = AnimationSet(false)
         animSet.fillAfter = false
         animSet.duration = 700
         animSet.interpolator = LinearInterpolator()
         val translate = TranslateAnimation(
-            Animation.ABSOLUTE,  //from xType
+            Animation.ABSOLUTE, // from xType
             0f,
-            Animation.ABSOLUTE,  //to xType
+            Animation.ABSOLUTE, // to xType
             0f,
-            Animation.ABSOLUTE,  //from yType
+            Animation.ABSOLUTE, // from yType
             +200f,
-            Animation.ABSOLUTE,  //to yType
+            Animation.ABSOLUTE, // to yType
             0f
         )
         animSet.addAnimation(translate)
@@ -94,7 +99,8 @@ class GIFActivity : CoreJoshActivity() {
         UserProfileActivity.startUserProfileActivity(
             this, Mentor.getInstance().getId(),
             arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-            null, USER_PROFILE_FLOW_FROM.AWARD.value
+            null, USER_PROFILE_FLOW_FROM.AWARD.value,
+            conversationId = intent.getStringExtra(CONVERSATION_ID)
         )
     }
 }

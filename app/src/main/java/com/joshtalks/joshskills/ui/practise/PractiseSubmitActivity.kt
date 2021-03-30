@@ -77,8 +77,10 @@ const val PRACTISE_OBJECT = "practise_object"
 const val IMAGE_OR_VIDEO_SELECT_REQUEST_CODE = 1081
 const val TEXT_FILE_ATTACHMENT_REQUEST_CODE = 1082
 
-
-class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener, AudioPlayerEventListener,
+class PractiseSubmitActivity :
+    WebRtcMiddlewareActivity(),
+    Player.EventListener,
+    AudioPlayerEventListener,
     ProgressUpdateListener {
     private var compositeDisposable = CompositeDisposable()
 
@@ -96,7 +98,6 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
     private lateinit var appAnalytics: AppAnalytics
     private var audioManager: ExoAudioPlayer? = null
 
-
     private val DOCX_FILE_MIME_TYPE = arrayOf(
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "application/msword", "application/vnd.ms-excel",
@@ -107,7 +108,6 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
         "application/vnd.oasis.opendocument.text",
         "application/vnd.oasis.opendocument.spreadsheet"
     )
-
 
     private val practiceViewModel: PracticeViewModel by lazy {
         ViewModelProvider(this).get(PracticeViewModel::class.java)
@@ -166,7 +166,6 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                 setViewUserSubmitAnswer()
             }
         }
-
     }
 
     override fun getConversationId(): String? {
@@ -202,16 +201,13 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
 
         try {
             binding.videoPlayer.onPause()
-
         } catch (ex: Exception) {
-
         }
         try {
             if (filePath.isNullOrEmpty().not()) {
                 binding.videoPlayerSubmit.onPause()
             }
         } catch (ex: Exception) {
-
         }
     }
 
@@ -221,7 +217,6 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
         compositeDisposable.clear()
         try {
             binding.videoPlayer.onStop()
-
         } catch (ex: Exception) {
         }
         try {
@@ -238,7 +233,6 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
             super.onDestroy()
             audioManager?.release()
         } catch (ex: Exception) {
-
         }
     }
 
@@ -268,7 +262,7 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                 data?.data?.let {
                     contentResolver.query(it, null, null, null, null)?.use { cursor ->
                         val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                        //val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
+                        // val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
                         cursor.moveToFirst()
                         val fileName = cursor.getString(nameIndex)
                         val file = AppDirectory.copy2(
@@ -287,7 +281,6 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                     }
                 }
             }
-
         } catch (ex: Exception) {
             FirebaseCrashlytics.getInstance().recordException(ex)
             ex.printStackTrace()
@@ -300,25 +293,27 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
         compositeDisposable.add(
             RxBus2.listen(SeekBarProgressEventBus::class.java)
                 .subscribeOn(Schedulers.computation())
-                .subscribe({
-                    Handler(Looper.getMainLooper()).post {
-                        if (filePath.isNullOrEmpty().not() && currentAudio == filePath) {
-                            binding.submitPractiseSeekbar.progress = it.progress
-                        } else {
-                            if (chatModel.question?.practiceEngagement != null && chatModel.question?.practiceEngagement?.getOrNull(
-                                    0
-                                ) != null
-                            ) {
+                .subscribe(
+                    {
+                        Handler(Looper.getMainLooper()).post {
+                            if (filePath.isNullOrEmpty().not() && currentAudio == filePath) {
                                 binding.submitPractiseSeekbar.progress = it.progress
                             } else {
-                                binding.practiseSeekbar.progress = it.progress
-
+                                if (chatModel.question?.practiceEngagement != null && chatModel.question?.practiceEngagement?.getOrNull(
+                                        0
+                                    ) != null
+                                ) {
+                                    binding.submitPractiseSeekbar.progress = it.progress
+                                } else {
+                                    binding.practiseSeekbar.progress = it.progress
+                                }
                             }
                         }
+                    },
+                    {
+                        it.printStackTrace()
                     }
-                }, {
-                    it.printStackTrace()
-                })
+                )
         )
     }
 
@@ -389,13 +384,12 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                             PdfViewerActivity.startPdfActivity(
                                 this@PractiseSubmitActivity,
                                 pdfType.id,
-                                EMPTY
+                                EMPTY,
+                                conversationId = chatModel.conversationId
                             )
-
                         }
                     }
                 }
-
 
                 BASE_MESSAGE_TYPE.TX -> {
                     this.qText?.let {
@@ -405,7 +399,6 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                     }
                 }
                 else -> {
-
                 }
             }
             if ((this.material_type == BASE_MESSAGE_TYPE.TX).not()) {
@@ -455,9 +448,7 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                                 count: Int
                             ) {
                             }
-
                         })
-
                     }
                     EXPECTED_ENGAGE_TYPE.AU == it -> {
                         binding.practiseInputHeader.text =
@@ -467,7 +458,6 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                         audioRecordTouchListener()
                         binding.audioPractiseHint.visibility = VISIBLE
                         binding.uploadFileView.visibility = GONE
-
                     }
                     EXPECTED_ENGAGE_TYPE.VI == it -> {
                         binding.practiseInputHeader.text =
@@ -486,7 +476,6 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                         binding.uploadPractiseView.setImageResource(R.drawable.ic_file_upload)
                         setupFileUploadListener(it)
                         binding.uploadFileView.visibility = GONE
-
                     }
                 }
             }
@@ -494,24 +483,26 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
     }
 
     private fun addObserver() {
-        practiceViewModel.requestStatusLiveData.observe(this, Observer {
-            if (it) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    chatModel.question?.interval?.run {
-                        WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
+        practiceViewModel.requestStatusLiveData.observe(
+            this,
+            Observer {
+                if (it) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        chatModel.question?.interval?.run {
+                            WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
+                        }
+                        delay(250)
+                        val resultIntent = Intent().apply {
+                            putExtra(PRACTISE_OBJECT, chatModel)
+                        }
+                        setResult(RESULT_OK, resultIntent)
+                        finishAndRemoveTask()
                     }
-                    delay(250)
-                    val resultIntent = Intent().apply {
-                        putExtra(PRACTISE_OBJECT, chatModel)
-                    }
-                    setResult(RESULT_OK, resultIntent)
-                    finishAndRemoveTask()
+                } else {
+                    binding.progressLayout.visibility = GONE
                 }
-
-            } else {
-                binding.progressLayout.visibility = GONE
             }
-        })
+        )
     }
 
     private fun setViewUserSubmitAnswer() {
@@ -543,7 +534,7 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                             filePath = practiseEngagement?.localPath
                             binding.submitPractiseSeekbar.max =
                                 Utils.getDurationOfMedia(this@PractiseSubmitActivity, filePath!!)
-                                    ?.toInt() ?: 0
+                                ?.toInt() ?: 0
                         } else {
                             binding.submitPractiseSeekbar.max = practiseEngagement?.duration!!
                             if (binding.submitPractiseSeekbar.max == 0) {
@@ -580,11 +571,9 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                                      .show(supportFragmentManager, "VideoPlay")*/
                             }
                             binding.videoPlayerSubmit.downloadStreamButNotPlay()
-
                         }
                     }
                     EXPECTED_ENGAGE_TYPE.IM == it -> {
-
                     }
                     EXPECTED_ENGAGE_TYPE.DX == it -> {
                         filePath = practiseEngagement?.answerUrl
@@ -592,17 +581,14 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                         binding.fileInfoAttachmentTv.text = Utils.getFileNameFromURL(filePath)
                     }
                     else -> {
-
                     }
                 }
             }
         }
     }
 
-
     private fun setImageInImageView(url: String, imageView: ImageView) {
         binding.progressBarImageView.visibility = VISIBLE
-
 
         Glide.with(applicationContext)
             .load(url)
@@ -619,7 +605,6 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                     isFirstResource: Boolean
                 ): Boolean {
                     return false
-
                 }
 
                 override fun onResourceReady(
@@ -633,12 +618,10 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
 
                     return false
                 }
-
             })
 
             .into(imageView)
     }
-
 
     private fun initializePractiseSeekBar() {
         binding.practiseSeekbar.setOnSeekBarChangeListener(
@@ -679,7 +662,6 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
             })
     }
 
-
     private fun setupFileUploadListener(expectedEngageType: EXPECTED_ENGAGE_TYPE) {
         binding.uploadPractiseView.setOnClickListener {
             when {
@@ -698,7 +680,8 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
 
     fun chooseFile() {
         chatModel.question?.expectedEngageType?.let { expectedEngageType ->
-            PermissionUtils.cameraRecordStorageReadAndWritePermission(this,
+            PermissionUtils.cameraRecordStorageReadAndWritePermission(
+                this,
                 object : MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
@@ -723,13 +706,14 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                     ) {
                         token?.continuePermissionRequest()
                     }
-                })
+                }
+            )
         }
     }
 
-
     private fun uploadMedia() {
-        PermissionUtils.cameraRecordStorageReadAndWritePermission(this,
+        PermissionUtils.cameraRecordStorageReadAndWritePermission(
+            this,
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
@@ -747,7 +731,6 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                                 options
                             )
                             return
-
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
                             PermissionUtils.cameraStoragePermissionPermanentlyDeniedDialog(this@PractiseSubmitActivity)
@@ -762,9 +745,9 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                 ) {
                     token?.continuePermissionRequest()
                 }
-            })
+            }
+        )
     }
-
 
     @SuppressLint("CheckResult")
     private fun selectVideoFromStorage() {
@@ -776,21 +759,24 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
         MediaPicker.with(this, MediaPicker.MediaTypes.VIDEO)
             .setConfig(pickerConfig)
             .setFileMissingListener(object :
-                MediaPicker.MediaPickerImpl.OnMediaListener {
-                override fun onMissingFileWarning() {
-                }
-            })
+                    MediaPicker.MediaPickerImpl.OnMediaListener {
+                    override fun onMissingFileWarning() {
+                    }
+                })
             .onResult()
             .subscribeOn(Schedulers.io())
-            .subscribe({
-                it.let {
-                    it[0].path?.let { path ->
-                        initVideoPractise(path)
+            .subscribe(
+                {
+                    it.let {
+                        it[0].path?.let { path ->
+                            initVideoPractise(path)
+                        }
                     }
+                },
+                {
+                    it.printStackTrace()
                 }
-            }, {
-                it.printStackTrace()
-            })
+            )
     }
 
     @SuppressLint("CheckResult")
@@ -802,24 +788,26 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
         MediaPicker.with(this, MediaPicker.MediaTypes.AUDIO)
             .setConfig(pickerConfig)
             .setFileMissingListener(object :
-                MediaPicker.MediaPickerImpl.OnMediaListener {
-                override fun onMissingFileWarning() {
-                }
-            })
+                    MediaPicker.MediaPickerImpl.OnMediaListener {
+                    override fun onMissingFileWarning() {
+                    }
+                })
             .onResult()
-            .subscribe({
-                it?.getOrNull(0)?.path?.let { audioFilePath ->
-                    isAudioRecordDone = true
-                    val tempPath = Utils.getPathFromUri(audioFilePath)
-                    val recordUpdatedPath = AppDirectory.getAudioSentFile(tempPath).absolutePath
-                    AppDirectory.copy(tempPath, recordUpdatedPath)
-                    filePath = recordUpdatedPath
-                    audioAttachmentInit()
+            .subscribe(
+                {
+                    it?.getOrNull(0)?.path?.let { audioFilePath ->
+                        isAudioRecordDone = true
+                        val tempPath = Utils.getPathFromUri(audioFilePath)
+                        val recordUpdatedPath = AppDirectory.getAudioSentFile(tempPath).absolutePath
+                        AppDirectory.copy(tempPath, recordUpdatedPath)
+                        filePath = recordUpdatedPath
+                        audioAttachmentInit()
+                    }
+                },
+                {
+                    it.printStackTrace()
                 }
-            }, {
-                it.printStackTrace()
-
-            })
+            )
     }
 
     private fun audioAttachmentInit() {
@@ -841,7 +829,8 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
     }
 
     private fun recordPermission() {
-        PermissionUtils.audioRecordStorageReadAndWritePermission(this,
+        PermissionUtils.audioRecordStorageReadAndWritePermission(
+            this,
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
@@ -866,7 +855,8 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                 ) {
                     token?.continuePermissionRequest()
                 }
-            })
+            }
+        )
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -885,7 +875,7 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                     binding.uploadPractiseView.startAnimation(scaleAnimation)
                     window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     appAnalytics.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
-                    //AppAnalytics.create(AnalyticsEvent.AUDIO_RECORD.NAME).push()
+                    // AppAnalytics.create(AnalyticsEvent.AUDIO_RECORD.NAME).push()
                     binding.counterTv.base = SystemClock.elapsedRealtime()
                     startTime = System.currentTimeMillis()
                     binding.counterTv.start()
@@ -917,7 +907,6 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                             AppDirectory.copy(it.absolutePath, filePath!!)
                             audioAttachmentInit()
                         }
-
                     }
                 }
             }
@@ -934,7 +923,6 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
             binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
         }
     }
-
 
     fun playPracticeAudio() {
         if (Utils.getCurrentMediaVolume(applicationContext) <= 0) {
@@ -959,7 +947,6 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                 onPlayAudio(chatModel, chatModel.question?.audioList?.getOrNull(0)!!)
             }
         }
-
     }
 
     fun playSubmitPracticeAudio() {
@@ -1002,13 +989,11 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                     }
                 } else {
                     onPlayAudio(chatModel, audioType)
-
                 }
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
-
     }
 
     fun removeAudioPractise() {
@@ -1025,7 +1010,6 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
         }
         disableSubmitButton()
         appAnalytics.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio practise removed")
-
     }
 
     private fun initVideoPractise(path: String) {
@@ -1144,7 +1128,6 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
                     return
                 }
 
-
                 appAnalytics.addParam(
                     AnalyticsEvent.PRACTICE_SCREEN_TIME.NAME,
                     System.currentTimeMillis() - totalTimeSpend
@@ -1220,5 +1203,4 @@ class PractiseSubmitActivity : WebRtcMiddlewareActivity(), Player.EventListener,
     override fun onDurationUpdate(duration: Long?) {
         duration?.toInt()?.let { binding.submitPractiseSeekbar.max = it }
     }
-
 }

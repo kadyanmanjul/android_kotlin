@@ -6,23 +6,23 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.core.interfaces.RecyclerViewItemClickListener
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FavoriteListActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.voip.favorite.adapter.FavoriteAdapter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 
-
-class FavoriteListActivity : AppCompatActivity(), RecyclerViewItemClickListener {
+class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickListener {
     private lateinit var binding: FavoriteListActivityBinding
     private var actionMode: ActionMode? = null
     private val deleteRecords: MutableSet<FavoriteCaller> = mutableSetOf()
@@ -67,6 +67,10 @@ class FavoriteListActivity : AppCompatActivity(), RecyclerViewItemClickListener 
         viewModel.getFavorites()
     }
 
+    override fun getConversationId(): String? {
+        return intent.getStringExtra(CONVERSATION_ID)
+    }
+
     private fun initView() {
 
         binding.favoriteListRv.apply {
@@ -104,7 +108,6 @@ class FavoriteListActivity : AppCompatActivity(), RecyclerViewItemClickListener 
                 }
             }
         }
-
     }
 
     override fun onItemClick(view: View?, position: Int) {
@@ -159,12 +162,13 @@ class FavoriteListActivity : AppCompatActivity(), RecyclerViewItemClickListener 
             return "${deleteRecords.size} practice partners removed"
         }
         return "${deleteRecords.size} practice partner removed"
-
     }
 
     companion object {
-        fun openFavoriteCallerActivity(activity: Activity) {
-            Intent(activity, FavoriteListActivity::class.java).also {
+        fun openFavoriteCallerActivity(activity: Activity, conversationId: String) {
+            Intent(activity, FavoriteListActivity::class.java).apply {
+                putExtra(CONVERSATION_ID, conversationId)
+            }.also {
                 activity.startActivity(it)
             }
         }

@@ -18,13 +18,12 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.AwardCategory
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.mindorks.placeholderview.PlaceHolderView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.base_toolbar.iv_back
-import kotlinx.android.synthetic.main.base_toolbar.iv_help
-import kotlinx.android.synthetic.main.base_toolbar.text_message_title
+import kotlinx.android.synthetic.main.base_toolbar.*
 
 class SeeAllAwardActivity : BaseActivity() {
     private lateinit var binding: FragmentSeeAllAwardBinding
@@ -40,6 +39,10 @@ class SeeAllAwardActivity : BaseActivity() {
         binding.fragment = this
         initRecyclerView()
         initToolbar()
+    }
+
+    override fun getConversationId(): String? {
+        return intent.getStringExtra(CONVERSATION_ID)
     }
 
     private fun initToolbar() {
@@ -132,9 +135,11 @@ class SeeAllAwardActivity : BaseActivity() {
         fun startSeeAllAwardActivity(
             activity: Activity,
             awardCategory: List<AwardCategory>,
+            conversationId: String? = null,
             flags: Array<Int> = arrayOf(),
         ) {
             Intent(activity, SeeAllAwardActivity::class.java).apply {
+                putExtra(CONVERSATION_ID, conversationId)
                 putParcelableArrayListExtra(AWARD_CATEGORY, ArrayList(awardCategory))
                 flags.forEach { flag ->
                     this.addFlags(flag)

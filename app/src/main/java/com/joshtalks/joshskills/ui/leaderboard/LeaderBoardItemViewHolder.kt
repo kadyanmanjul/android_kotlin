@@ -2,9 +2,11 @@ package com.joshtalks.joshskills.ui.leaderboard
 
 import android.content.Context
 import android.widget.FrameLayout
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.getRandomName
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
@@ -15,8 +17,7 @@ import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
-import de.hdodenhof.circleimageview.CircleImageView
-import java.util.Locale
+import java.util.*
 
 @Layout(R.layout.list_item)
 class LeaderBoardItemViewHolder(
@@ -39,7 +40,7 @@ class LeaderBoardItemViewHolder(
     lateinit var points: AppCompatTextView
 
     @View(R.id.user_pic)
-    lateinit var user_pic: CircleImageView
+    lateinit var user_pic: AppCompatImageView
 
     @View(R.id.online_status_iv)
     lateinit var onlineStatusLayout: FrameLayout
@@ -56,7 +57,6 @@ class LeaderBoardItemViewHolder(
             container.isClickable = false
             container.isEnabled = false
             onlineStatusLayout.visibility = android.view.View.GONE
-
         } else {
             container.isClickable = true
             container.isEnabled = true
@@ -77,24 +77,21 @@ class LeaderBoardItemViewHolder(
             }
             name.text = resp
             points.text = response.points.toString()
-            user_pic.post {
-                user_pic.setUserImageOrInitials(response.photoUrl, response.name!!)
-                user_pic.visibility = android.view.View.VISIBLE
-            }
+            user_pic.setUserImageOrInitials(response.photoUrl, response.name ?: getRandomName(), isRound = true)
+            user_pic.visibility = android.view.View.VISIBLE
             if (response.isOnline != null && response.isOnline!!) {
                 onlineStatusLayout.visibility = android.view.View.VISIBLE
             } else {
                 onlineStatusLayout.visibility = android.view.View.GONE
             }
         }
-
     }
 
     @Click(R.id.user_pic)
     fun onClick() {
         if (isHeader.not())
             response.id?.let {
-                RxBus2.publish(OpenUserProfile(it,response.isOnline?:false))
+                RxBus2.publish(OpenUserProfile(it, response.isOnline ?: false))
             }
     }
 
@@ -102,7 +99,7 @@ class LeaderBoardItemViewHolder(
     fun onContainerClick() {
         if (isHeader.not())
             response.id?.let {
-                RxBus2.publish(OpenUserProfile(it,response.isOnline?:false))
+                RxBus2.publish(OpenUserProfile(it, response.isOnline ?: false))
             }
     }
 }

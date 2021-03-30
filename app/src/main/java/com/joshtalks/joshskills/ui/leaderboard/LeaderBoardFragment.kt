@@ -14,17 +14,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
+import com.joshtalks.joshskills.core.getRandomName
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.FragmentLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.Locale
+import java.util.*
 
 class LeaderBoardFragment : Fragment() {
 
@@ -36,7 +38,6 @@ class LeaderBoardFragment : Fragment() {
     private var userRank: Int = Int.MAX_VALUE
     private val viewModel by lazy { ViewModelProvider(requireActivity()).get(LeaderBoardViewModel::class.java) }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -45,7 +46,8 @@ class LeaderBoardFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding =
@@ -56,7 +58,6 @@ class LeaderBoardFragment : Fragment() {
                 false
             )
         binding.lifecycleOwner = this
-
 
         return binding.root
     }
@@ -78,7 +79,7 @@ class LeaderBoardFragment : Fragment() {
         initRV()
         addObserver()
         setListener()
-        //viewModel.getLeaderBoardData(Mentor.getInstance().getId(), type)
+        // viewModel.getLeaderBoardData(Mentor.getInstance().getId(), type)
     }
 
     private fun setListener() {
@@ -92,7 +93,6 @@ class LeaderBoardFragment : Fragment() {
         if (userPosition > 0)
             linearLayoutManager.scrollToPositionWithOffset(userPosition, 0)
         else linearLayoutManager.scrollToPositionWithOffset(0, 0)
-
     }
 
     private fun initRV() {
@@ -109,51 +109,67 @@ class LeaderBoardFragment : Fragment() {
         })*/
 
         binding.recyclerView.addOnScrollListener(object :
-            RecyclerView.OnScrollListener() {
+                RecyclerView.OnScrollListener() {
 
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() < userPosition.plus(
-                        4
-                    ) && linearLayoutManager.findLastCompletelyVisibleItemPosition() > userPosition.plus(
-                        2
-                    )
-                ) {
-                    binding.userLayout.visibility = View.GONE
-                } else {
-                    binding.userLayout.visibility = View.VISIBLE
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() < userPosition.plus(
+                            4
+                        ) && linearLayoutManager.findLastCompletelyVisibleItemPosition() > userPosition.plus(
+                                2
+                            )
+                    ) {
+                        binding.userLayout.visibility = View.GONE
+                    } else {
+                        binding.userLayout.visibility = View.VISIBLE
+                    }
                 }
-            }
-        })
+            })
     }
 
     private fun addObserver() {
         when (type) {
             "TODAY" -> {
-                viewModel.leaderBoardDataOfToday.observe(viewLifecycleOwner, Observer {
-                    setData(it)
-                })
+                viewModel.leaderBoardDataOfToday.observe(
+                    viewLifecycleOwner,
+                    Observer {
+                        setData(it)
+                    }
+                )
             }
             "WEEK" -> {
-                viewModel.leaderBoardDataOfWeek.observe(viewLifecycleOwner, Observer {
-                    setData(it)
-                })
+                viewModel.leaderBoardDataOfWeek.observe(
+                    viewLifecycleOwner,
+                    Observer {
+                        setData(it)
+                    }
+                )
             }
             "MONTH" -> {
-                viewModel.leaderBoardDataOfMonth.observe(viewLifecycleOwner, Observer {
-                    setData(it)
-                })
+                viewModel.leaderBoardDataOfMonth.observe(
+                    viewLifecycleOwner,
+                    Observer {
+                        setData(it)
+                    }
+                )
             }
         }
 
-        viewModel.leaderBoardDataOfPage.observe(this.viewLifecycleOwner, Observer { data ->
-            data?.let {
-                it.above_three_mentor_list?.forEach {
-                    binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
+        viewModel.leaderBoardDataOfPage.observe(
+            viewLifecycleOwner,
+            { data ->
+                data?.let {
+                    it.above_three_mentor_list?.forEach {
+                        binding.recyclerView.addView(
+                            LeaderBoardItemViewHolder(
+                                it,
+                                requireContext()
+                            )
+                        )
+                    }
                 }
             }
-
-        })
+        )
     }
 
     private fun setData(leaderboardResponse1: LeaderboardResponse) {
@@ -174,7 +190,8 @@ class LeaderBoardFragment : Fragment() {
             LeaderBoardItemViewHolder(
                 LeaderboardMentor(
                     null, null, null, null, null, 0, 0
-                ), requireContext(), isHeader = true
+                ),
+                requireContext(), isHeader = true
             )
         )
         leaderboardResponse1.top_50_mentor_list?.forEach {
@@ -236,9 +253,8 @@ class LeaderBoardFragment : Fragment() {
         }
         binding.name.text = resp
         binding.points.text = response.points.toString()
-        binding.userPic.setUserImageOrInitials(response.photoUrl, response.name!!)
+        binding.userPic.setUserImageOrInitials(response.photoUrl, response.name ?: getRandomName(),isRound = true)
         binding.userLayout.visibility = View.VISIBLE
-
         if (response.isOnline != null && response.isOnline) {
             binding.onlineStatusIv.visibility = View.VISIBLE
         } else {
@@ -246,28 +262,33 @@ class LeaderBoardFragment : Fragment() {
         }
     }
 
-
     override fun onResume() {
         super.onResume()
         subscribeRXBus()
     }
 
-
     private fun subscribeRXBus() {
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(OpenUserProfile::class.java)
                 .subscribeOn(Schedulers.computation())
-                .subscribe({
-                    it.id?.let { id ->
-                        openUserProfileActivity(id, type,it.isUserOnline)
+                .subscribe(
+                    {
+                        it.id?.let { id ->
+                            openUserProfileActivity(id, type, it.isUserOnline)
+                        }
+                    },
+                    {
+                        it.printStackTrace()
                     }
-                }, {
-                    it.printStackTrace()
-                })
+                )
         )
     }
 
-    private fun openUserProfileActivity(id: String, intervalType: String,isOnline:Boolean=false) {
+    private fun openUserProfileActivity(
+        id: String,
+        intervalType: String,
+        isOnline: Boolean = false
+    ) {
         context?.let {
             UserProfileActivity.startUserProfileActivity(
                 requireActivity(),
@@ -275,7 +296,8 @@ class LeaderBoardFragment : Fragment() {
                 arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
                 intervalType,
                 USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
-                isOnline
+                isOnline,
+                conversationId = requireActivity().intent.getStringExtra(CONVERSATION_ID)
             )
         }
     }

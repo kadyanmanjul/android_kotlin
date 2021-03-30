@@ -79,6 +79,9 @@ class CExamReportActivity : BaseActivity() {
         addObserver()
         viewModel.getUserAllExamReports(certificateExamId)
     }
+    override fun getConversationId(): String? {
+        return intent.getStringExtra(com.joshtalks.joshskills.track.CONVERSATION_ID)
+    }
 
     private fun addObserver() {
         viewModel.apiStatus.observe(

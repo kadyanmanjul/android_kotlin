@@ -271,7 +271,10 @@ class ConversationActivity :
                         openLeaderBoard(inboxEntity.conversation_id)
                     }
                     R.id.menu_favorite_list -> {
-                        FavoriteListActivity.openFavoriteCallerActivity(this)
+                        FavoriteListActivity.openFavoriteCallerActivity(
+                            this,
+                            inboxEntity.conversation_id
+                        )
                     }
                 }
                 return@setOnMenuItemClickListener true
@@ -1593,9 +1596,13 @@ class ConversationActivity :
     }
 
     private fun refreshViewAtPos(chatObj: ChatModel) {
-        CoroutineScope(Dispatchers.Main).launch {
-            delay(500)
-            conversationAdapter.updateItem(chatObj)
+        lifecycleScope.launch(Dispatchers.Main){
+            try {
+                delay(500)
+                conversationAdapter.updateItem(chatObj)
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
         }
     }
 

@@ -394,8 +394,8 @@ class CourseProgressActivityNew :
                     context = this,
                     pdfId = "$courseId",
                     courseName = it.coursePdfName,
-                    pdfPath = AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath
-
+                    pdfPath = AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath,
+                    conversationId = intent.getStringExtra(CONVERSATION_ID)
                 )
             } else {
                 download()

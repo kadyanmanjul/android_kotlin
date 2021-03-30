@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardType
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.leaderboard.EndlessRecyclerViewScrollListener
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
@@ -47,7 +48,8 @@ class LeaderboardSearchResultFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding =
@@ -75,35 +77,46 @@ class LeaderboardSearchResultFragment : Fragment() {
         adapter = LeaderboardSearchItemAdapter(requireContext(), itemList)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.addOnScrollListener(object :
-            EndlessRecyclerViewScrollListener(linearLayoutManager) {
-            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
-                viewModel.getMoreResults(type, page)
-            }
-
-        })
+                EndlessRecyclerViewScrollListener(linearLayoutManager) {
+                override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
+                    viewModel.getMoreResults(type, page)
+                }
+            })
     }
 
     private fun addObserver() {
-        viewModel.searchedKeyLiveData.observe(viewLifecycleOwner, {
-            itemList.clear()
-            adapter.notifyDataSetChanged()
-        })
+        viewModel.searchedKeyLiveData.observe(
+            viewLifecycleOwner,
+            {
+                itemList.clear()
+                adapter.notifyDataSetChanged()
+            }
+        )
 
         when (type) {
             LeaderboardType.TODAY -> {
-                viewModel.leaderBoardDataOfToday.observe(viewLifecycleOwner, Observer {
-                    setData(it)
-                })
+                viewModel.leaderBoardDataOfToday.observe(
+                    viewLifecycleOwner,
+                    Observer {
+                        setData(it)
+                    }
+                )
             }
             LeaderboardType.WEEK -> {
-                viewModel.leaderBoardDataOfWeek.observe(viewLifecycleOwner, Observer {
-                    setData(it)
-                })
+                viewModel.leaderBoardDataOfWeek.observe(
+                    viewLifecycleOwner,
+                    Observer {
+                        setData(it)
+                    }
+                )
             }
             LeaderboardType.MONTH -> {
-                viewModel.leaderBoardDataOfMonth.observe(viewLifecycleOwner, Observer {
-                    setData(it)
-                })
+                viewModel.leaderBoardDataOfMonth.observe(
+                    viewLifecycleOwner,
+                    Observer {
+                        setData(it)
+                    }
+                )
             }
         }
     }
@@ -127,17 +140,24 @@ class LeaderboardSearchResultFragment : Fragment() {
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(OpenUserProfile::class.java)
                 .subscribeOn(Schedulers.computation())
-                .subscribe({
-                    it.id?.let { id ->
-                        openUserProfileActivity(id, type.name,it.isUserOnline)
+                .subscribe(
+                    {
+                        it.id?.let { id ->
+                            openUserProfileActivity(id, type.name, it.isUserOnline)
+                        }
+                    },
+                    {
+                        it.printStackTrace()
                     }
-                }, {
-                    it.printStackTrace()
-                })
+                )
         )
     }
 
-    private fun openUserProfileActivity(id: String, intervalType: String,isOnline:Boolean=false) {
+    private fun openUserProfileActivity(
+        id: String,
+        intervalType: String,
+        isOnline: Boolean = false
+    ) {
         itemList.first { it.id == id }.name?.let {
             viewModel.insertRecentSearch(it)
         }
@@ -148,7 +168,8 @@ class LeaderboardSearchResultFragment : Fragment() {
                 arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
                 intervalType,
                 USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
-                isOnline
+                isOnline,
+                conversationId = requireActivity().intent.getStringExtra(CONVERSATION_ID)
             )
         }
     }

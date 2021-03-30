@@ -23,25 +23,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshFragment
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentGrammarLayoutBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonMaterialType
-import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
-import com.joshtalks.joshskills.repository.local.entity.LessonQuestionType
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBusForLessonQuestion
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEventForLessonQuestion
@@ -49,6 +39,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBusForL
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
@@ -66,11 +57,11 @@ import com.tonyodev.fetch2core.DownloadBlock
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.io.File
-import java.util.ArrayList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.File
+import java.util.*
 
 class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedListener {
 
@@ -218,38 +209,44 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                                     ) {
                                         token?.continuePermissionRequest()
                                     }
-                                })
+                                }
+                            )
                         }
                         else -> {
-
                         }
                     }
-                })
+                }
+        )
 
         compositeDisposable.add(
             RxBus2.listen(PlayVideoEventForLessonQuestion::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    // TODO - Check whether it loads the downloaded video automatically
-                    Timber.d(it.toString())
-                    binding.videoPlayer.onResume()
-                }, {
-                    it.printStackTrace()
-                })
+                .subscribe(
+                    {
+                        // TODO - Check whether it loads the downloaded video automatically
+                        Timber.d(it.toString())
+                        binding.videoPlayer.onResume()
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
         )
 
-        compositeDisposable.add(RxBus2.listen(VideoDownloadedBusForLessonQuestion::class.java)
-            .subscribeOn(Schedulers.computation())
-            .subscribe {
-                // TODO - Fetch updated lesson question from DB and update UI to show video is downloaded
+        compositeDisposable.add(
+            RxBus2.listen(VideoDownloadedBusForLessonQuestion::class.java)
+                .subscribeOn(Schedulers.computation())
+                .subscribe {
+                    // TODO - Fetch updated lesson question from DB and update UI to show video is downloaded
 //                CoroutineScope(Dispatchers.IO).launch {
 //                    val chatObj = AppObjectController.appDatabase.chatDao()
 //                        .getUpdatedChatObjectViaId(it.messageObject.chatId)
 //                    refreshViewAtPos(chatObj)
 //                }
-                Timber.d(it.toString())
-            })
+                    Timber.d(it.toString())
+                }
+        )
     }
 
     override fun onPause() {
@@ -263,19 +260,21 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
     }
 
     private fun setObservers() {
-        viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner, Observer { lessonQuestions ->
-            binding.practiceTitleTv.text =
-                getString(
-                    R.string.today_lesson,
-                    viewModel.lessonLiveData.value?.lessonName
-                )
+        viewModel.lessonQuestionsLiveData.observe(
+            viewLifecycleOwner,
+            Observer { lessonQuestions ->
+                binding.practiceTitleTv.text =
+                    getString(
+                        R.string.today_lesson,
+                        viewModel.lessonLiveData.value?.lessonName
+                    )
 
-            val grammarQuestions = lessonQuestions.filter { it.chatType == CHAT_TYPE.GR }
-            grammarQuestions.forEach {
-                setupUi(it)
+                val grammarQuestions = lessonQuestions.filter { it.chatType == CHAT_TYPE.GR }
+                grammarQuestions.forEach {
+                    setupUi(it)
+                }
             }
-
-        })
+        )
 
         viewModel.grammarAssessmentLiveData.observe(viewLifecycleOwner) { assessmentRelations ->
             assessmentQuestions.clear()
@@ -298,7 +297,6 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         viewModel.grammarVideoInterval.observe(this@GrammarFragment.viewLifecycleOwner) { graph ->
             binding.videoPlayer.setProgress(graph?.endTime ?: 0)
         }
-
     }
 
     private fun setQuizScore(assessmentQuestions: ArrayList<AssessmentQuestionWithRelations>) {
@@ -332,7 +330,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                             setVideoThumbnail(video.video_image_url)
                             binding.videoPlayer.setUrl(it)
                             binding.videoPlayer.setVideoId(video.id)
-                            //binding.videoPlayer.setCourseId(course_id)
+                            // binding.videoPlayer.setCourseId(course_id)
                             binding.videoPlayer.fitToScreen()
                             binding.videoPlayer.setPlayListener {
                                 val currentVideoProgressPosition = binding.videoPlayer.getProgress()
@@ -355,7 +353,6 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                             video.id.toIntOrNull()?.let { id ->
                                 viewModel.getMaxIntervalForVideo(id)
                             }
-
                         }
                     }
 
@@ -396,7 +393,6 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                             if (flag) {
                                 videoDownload()
                                 return
-
                             }
                             if (report.isAnyPermissionPermanentlyDenied) {
                                 PermissionUtils.permissionPermanentlyDeniedDialog(
@@ -413,7 +409,8 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                     ) {
                         token?.continuePermissionRequest()
                     }
-                })
+                }
+            )
             return
         }
     }
@@ -459,9 +456,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
 //                    imgArtwork.visibility = View.VISIBLE
                     }
                 }
-            }
-            catch (e:java.lang.Exception){
-
+            } catch (e: java.lang.Exception) {
             }
         }
     }
@@ -471,40 +466,40 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
             RxBus2.listenWithoutDelay(MediaProgressEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ mediaProgressEvent ->
-                    if (mediaProgressEvent.progress > 3000 && question.status != QUESTION_STATUS.AT) {
-                        question.status = QUESTION_STATUS.AT
-                        question.isVideoWatchTimeSend = true
-                        updateVideoQuestionStatus(question)
+                .subscribe(
+                    { mediaProgressEvent ->
+                        if (mediaProgressEvent.progress > 3000 && question.status != QUESTION_STATUS.AT) {
+                            question.status = QUESTION_STATUS.AT
+                            question.isVideoWatchTimeSend = true
+                            updateVideoQuestionStatus(question)
+                        }
+                        val videoPercent =
+                            binding.videoPlayer.player?.duration?.let {
+                                mediaProgressEvent.progress.div(
+                                    it
+                                ).times(100).toInt()
+                            } ?: -1
+                        val percentVideoWatched =
+                            mediaProgressEvent.watchTime.times(100).div(
+                                binding.videoPlayer.player?.duration!!
+                            ).toInt()
+
+                        if (percentVideoWatched != 0 && percentVideoWatched >= 70 && videoPercent != -1 && videoPercent >= 70 && question.isVideoWatchTimeSend) {
+                            updateVideoQuestionStatus(question, true)
+                            question.isVideoWatchTimeSend = false
+                        }
+
+                        if (mediaProgressEvent.progress + 1000 >= question.videoList?.get(0)?.duration ?: 0) {
+                            binding.quizShader.visibility = View.GONE
+                            compositeDisposable.clear()
+                            showScrollToBottomView()
+                        }
+                    },
+                    {
+                        it.printStackTrace()
                     }
-                    val videoPercent =
-                        binding.videoPlayer.player?.duration?.let {
-                            mediaProgressEvent.progress.div(
-                                it
-                            ).times(100).toInt()
-                        } ?: -1
-                    val percentVideoWatched =
-                        mediaProgressEvent.watchTime.times(100).div(
-                            binding.videoPlayer.player?.duration!!
-                        ).toInt()
-
-                    if (percentVideoWatched != 0 && percentVideoWatched >= 70 && videoPercent != -1 && videoPercent >= 70 && question.isVideoWatchTimeSend) {
-                        updateVideoQuestionStatus(question, true)
-                        question.isVideoWatchTimeSend = false
-                    }
-
-                    if (mediaProgressEvent.progress + 1000 >= question.videoList?.get(0)?.duration ?: 0) {
-                        binding.quizShader.visibility = View.GONE
-                        compositeDisposable.clear()
-                        showScrollToBottomView()
-                    }
-
-
-                }, {
-                    it.printStackTrace()
-                })
+                )
         )
-
     }
 
     private fun showScrollToBottomView() {
@@ -571,7 +566,6 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
             binding.showExplanationBtn.visibility = View.GONE
             binding.continueBtn.visibility = View.GONE
         }
-
     }
 
     private fun resetRadioBackground(radioButton: RadioButton) {
@@ -670,9 +664,11 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
             question.question.status =
                 evaluateQuestionStatus((binding.quizRadioGroup.tag as Int) == binding.quizRadioGroup.checkedRadioButtonId)
 
-            val selectedChoice = question.choiceList[binding.quizRadioGroup.indexOfChild(
-                binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
-            )]
+            val selectedChoice = question.choiceList[
+                binding.quizRadioGroup.indexOfChild(
+                    binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
+                )
+            ]
             selectedChoice.isSelectedByUser = true
             selectedChoice.userSelectedOrder = selectedChoice.sortOrder
 
@@ -712,7 +708,6 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
     private fun evaluateQuestionStatus(status: Boolean): QuestionStatus {
         return if (status) QuestionStatus.CORRECT
         else QuestionStatus.WRONG
-
     }
 
     fun onContinueClick() {
@@ -781,8 +776,8 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                         download()
                     } else if (PermissionUtils.isStoragePermissionEnabled(requireContext()) && AppDirectory.getFileSize(
                             File(
-                                AppDirectory.docsReceivedFile(pdfObj.url).absolutePath
-                            )
+                                    AppDirectory.docsReceivedFile(pdfObj.url).absolutePath
+                                )
                         ) > 0
                     ) {
                         pdfQuestion.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
@@ -820,7 +815,6 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         binding.ivDownloadCompleted.visibility = View.GONE
     }
 
-
     private fun requestFocus(view: View) {
         view.parent.requestChildFocus(
             view,
@@ -850,7 +844,6 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                                 )?.push()
                                 openPdf()
                                 return
-
                             }
                             if (report.isAnyPermissionPermanentlyDenied) {
                                 PermissionUtils.permissionPermanentlyDeniedDialog(
@@ -867,7 +860,8 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                     ) {
                         token?.continuePermissionRequest()
                     }
-                })
+                }
+            )
             return
         }
         openPdf()
@@ -884,7 +878,8 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                     context = requireContext(),
                     pdfId = pdfType.id,
                     courseName = pdfQuestion?.title ?: "Josh Skills",
-                    pdfPath = AppDirectory.docsReceivedFile(pdfType.url).absolutePath
+                    pdfPath = AppDirectory.docsReceivedFile(pdfType.url).absolutePath,
+                    conversationId = requireActivity().intent.getStringExtra(CONVERSATION_ID)
                 )
             }
         } else {
@@ -895,7 +890,6 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
     fun downloadCancel() {
         fileNotDownloadView()
         pdfQuestion?.downloadStatus = DOWNLOAD_STATUS.NOT_START
-
     }
 
     fun downloadStart() {
@@ -934,7 +928,8 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                 ) {
                     token?.continuePermissionRequest()
                 }
-            })
+            }
+        )
     }
 
     private fun download() {
@@ -988,14 +983,12 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
 
     private var downloadListener = object : FetchListener {
         override fun onAdded(download: Download) {
-
         }
 
         override fun onCancelled(download: Download) {
             DownloadUtils.removeCallbackListener(download.tag)
             pdfQuestion?.downloadStatus = DOWNLOAD_STATUS.FAILED
             fileNotDownloadView()
-
         }
 
         override fun onCompleted(download: Download) {
@@ -1005,7 +998,6 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         }
 
         override fun onDeleted(download: Download) {
-
         }
 
         override fun onDownloadBlockUpdated(
@@ -1013,18 +1005,15 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
             downloadBlock: DownloadBlock,
             totalBlocks: Int
         ) {
-
         }
 
         override fun onError(download: Download, error: Error, throwable: Throwable?) {
             DownloadUtils.removeCallbackListener(download.tag)
             pdfQuestion?.downloadStatus = DOWNLOAD_STATUS.FAILED
             fileNotDownloadView()
-
         }
 
         override fun onPaused(download: Download) {
-
         }
 
         override fun onProgress(
@@ -1035,15 +1024,12 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         }
 
         override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
-
         }
 
         override fun onRemoved(download: Download) {
-
         }
 
         override fun onResumed(download: Download) {
-
         }
 
         override fun onStarted(
@@ -1053,13 +1039,10 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         ) {
             pdfQuestion?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
             fileDownloadingInProgressView()
-
         }
 
         override fun onWaitingNetwork(download: Download) {
-
         }
-
     }
 
     companion object {
@@ -1071,5 +1054,4 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         @JvmStatic
         fun getInstance() = GrammarFragment()
     }
-
 }

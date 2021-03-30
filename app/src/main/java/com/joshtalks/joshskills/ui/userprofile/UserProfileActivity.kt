@@ -144,7 +144,11 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     openPointHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
                 }
                 R.id.how_to_get_points -> {
-                    startActivity(Intent(this, PointsInfoActivity::class.java))
+                    startActivity(
+                        Intent(this, PointsInfoActivity::class.java).apply {
+                            putExtra(CONVERSATION_ID, intent.getStringExtra(CONVERSATION_ID))
+                        }
+                    )
                 }
                 R.id.change_dp -> {
                     openChooser()
@@ -204,8 +208,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             binding.userPic.post {
                 binding.userPic.setUserImageOrInitials(
                     url = it,
-                    viewModel.userData.value?.name ?: "Name",
-                    28
+                    viewModel.userData.value?.name ?: getRandomName(),
+                    28,
+                    isRound = true
                 )
             }
         }

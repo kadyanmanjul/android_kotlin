@@ -5,8 +5,8 @@ import android.content.Intent
 import androidx.core.app.JobIntentService
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshSkillExecutors
-import java.util.concurrent.ExecutorService
 import timber.log.Timber
+import java.util.concurrent.ExecutorService
 
 const val CONVERSATION_ID = "conversation_id"
 const val SCREEN_NAME = "screen_name"
@@ -23,7 +23,7 @@ class CourseUsageService : JobIntentService() {
     }
 
     override fun onHandleWork(intent: Intent) {
-        Timber.tag(tag).e("Handle-Work")
+        Timber.tag(tag).e("Handle-Work  " + intent.getStringExtra(SCREEN_NAME))
         executor.submit {
             intent.action?.let {
                 when (it) {

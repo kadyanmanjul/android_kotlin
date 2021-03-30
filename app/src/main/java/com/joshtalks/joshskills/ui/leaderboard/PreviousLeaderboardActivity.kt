@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.leaderboard
 
-
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -17,6 +16,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventB
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.PreviousLeaderboardResponse
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -47,6 +47,10 @@ class PreviousLeaderboardActivity : BaseActivity() {
         setOnClickListeners()
     }
 
+    override fun getConversationId(): String? {
+        return intent.getStringExtra(CONVERSATION_ID)
+    }
+
     private fun initRV() {
         val linearLayoutManager = SmoothLinearLayoutManager(this)
         linearLayoutManager.isSmoothScrollbarEnabled = true
@@ -59,7 +63,6 @@ class PreviousLeaderboardActivity : BaseActivity() {
     }
 
     private fun setOnClickListeners() {
-
     }
 
     private fun initToolbar() {
@@ -72,13 +75,15 @@ class PreviousLeaderboardActivity : BaseActivity() {
     }
 
     private fun addObserver() {
-        viewModel.previousLeaderBoardData.observe(this, { response ->
-            response?.let {
-                initToolbarTitle(it.title)
-                setData(it)
+        viewModel.previousLeaderBoardData.observe(
+            this,
+            { response ->
+                response?.let {
+                    initToolbarTitle(it.title)
+                    setData(it)
+                }
             }
-        })
-
+        )
     }
 
     private fun initToolbarTitle(title: String?) {
@@ -94,12 +99,14 @@ class PreviousLeaderboardActivity : BaseActivity() {
 
         leaderboardResponse.top50MentorList?.forEachIndexed { index, data ->
             if (index == 0) {
-                binding.recyclerView.addView(leaderboardResponse.awardUrl?.let {
-                    LeaderBoardPreviousWinnerItemViewHolder(
-                        data, this,
-                        it
-                    )
-                })
+                binding.recyclerView.addView(
+                    leaderboardResponse.awardUrl?.let {
+                        LeaderBoardPreviousWinnerItemViewHolder(
+                            data, this,
+                            it
+                        )
+                    }
+                )
             } else binding.recyclerView.addView(LeaderBoardItemViewHolder(data, this))
         }
 
@@ -150,39 +157,49 @@ class PreviousLeaderboardActivity : BaseActivity() {
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(OpenUserProfile::class.java)
                 .subscribeOn(Schedulers.computation())
-                .subscribe({
-                    it.id?.let { id ->
-                        openUserProfileActivity(id, intervalType,it.isUserOnline)
+                .subscribe(
+                    {
+                        it.id?.let { id ->
+                            openUserProfileActivity(id, intervalType, it.isUserOnline)
+                        }
+                    },
+                    {
+                        it.printStackTrace()
                     }
-                }, {
-                    it.printStackTrace()
-                })
+                )
         )
 
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(DeleteProfilePicEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
+                .subscribe(
+                    {
                     /*viewModel.userData.value?.photoUrl = it.url
                     if (it.url.isBlank()) {
                         viewModel.completingProfile("")
                     }*/
-                }, {
-                    it.printStackTrace()
-                })
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
         )
     }
 
-
-    private fun openUserProfileActivity(id: String, intervalType: String,isOnline:Boolean=false) {
+    private fun openUserProfileActivity(
+        id: String,
+        intervalType: String,
+        isOnline: Boolean = false
+    ) {
         UserProfileActivity.startUserProfileActivity(
             this,
             id,
             arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
             intervalType,
             USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
-            isOnline
+            isOnline,
+            conversationId = intent.getStringExtra(CONVERSATION_ID)
         )
     }
 
@@ -198,8 +215,10 @@ class PreviousLeaderboardActivity : BaseActivity() {
             activity: Activity,
             flags: Array<Int> = arrayOf(),
             intervalType: String? = null,
+            conversationId: String? = null
         ) {
             Intent(activity, PreviousLeaderboardActivity::class.java).apply {
+                putExtra(CONVERSATION_ID, conversationId)
                 intervalType?.let {
                     putExtra(INTERVAL_TYPE, it)
                 }
@@ -211,5 +230,4 @@ class PreviousLeaderboardActivity : BaseActivity() {
             }
         }
     }
-
 }

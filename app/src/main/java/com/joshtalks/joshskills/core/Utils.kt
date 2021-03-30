@@ -957,11 +957,23 @@ fun ImageView.setUserInitial(userName: String, dpToPx: Int = 16) {
     this.setImageDrawable(drawable)
 }
 
-fun ImageView.setUserImageOrInitials(url: String?, userName: String, dpToPx: Int = 16) {
+fun ImageView.setUserImageOrInitials(
+    url: String?,
+    userName: String,
+    dpToPx: Int = 16,
+    isRound: Boolean = false
+) {
     if (url.isNullOrEmpty()) {
         setUserInitial(userName, dpToPx)
     } else {
-        this.setImage(url)
+        if (isRound) {
+            Glide.with(context)
+                .load(url)
+                .circleCrop()
+                .into(this)
+        } else {
+            this.setImage(url)
+        }
     }
 }
 

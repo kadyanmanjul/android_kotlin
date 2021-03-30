@@ -19,7 +19,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.* // ktlint-disable no-wildcard-imports
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
@@ -46,7 +46,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     private var isDemo = false
     private var testId = -1
     private var whatsappUrl = EMPTY
-
 
     var lesson: LessonModel? = null // Do not use this var
     private lateinit var tabs: ViewGroup
@@ -79,7 +78,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         isDemo = if (intent.hasExtra(IS_DEMO)) intent.getBooleanExtra(IS_DEMO, false) else false
         whatsappUrl =
             if (intent.hasExtra(WHATSAPP_URL) && intent.getStringExtra(WHATSAPP_URL).isNullOrBlank()
-                    .not()
+                .not()
             ) intent.getStringExtra(WHATSAPP_URL) else EMPTY
         testId = intent.getIntExtra(TEST_ID, -1)
 
@@ -111,23 +110,28 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 //            setTabCompletionStatus()
 //        })
 
-        viewModel.lessonQuestionsLiveData.observe(this, {
-            binding.progressView.visibility = View.GONE
-            viewModel.lessonLiveData.value?.let {
-                titleView.text =
-                    getString(R.string.lesson_no, it.lessonNo)
-            }
-            setUpTabLayout()
-            setTabCompletionStatus()
-        })
-
-        viewModel.updatedLessonResponseLiveData.observe(this, {
-            if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
-                if (it.pointsList.isNullOrEmpty().not()) {
-                    showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
-                    playSnackbarSound(this)
+        viewModel.lessonQuestionsLiveData.observe(
+            this,
+            {
+                binding.progressView.visibility = View.GONE
+                viewModel.lessonLiveData.value?.let {
+                    titleView.text =
+                        getString(R.string.lesson_no, it.lessonNo)
                 }
+                setUpTabLayout()
+                setTabCompletionStatus()
             }
+        )
+
+        viewModel.updatedLessonResponseLiveData.observe(
+            this,
+            {
+                if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+                    if (it.pointsList.isNullOrEmpty().not()) {
+                        showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
+                        playSnackbarSound(this)
+                    }
+                }
             /*if (it.awardMentorList.isNullOrEmpty().not()) {
                 //TODO add when awards functionality is over
                 //ShowAwardFragment.showDialog(supportFragmentManager,it.awardMentorList!!)
@@ -142,7 +146,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     )
                 }
             }*/
-        })
+            }
+        )
 
         viewModel.pointsSnackBarText.observe(
             this,
@@ -150,7 +155,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                 if (it.pointsList.isNullOrEmpty().not()) {
                     showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
                 }
-            })
+            }
+        )
     }
 
     override fun onNextTabCall(currentTabNumber: Int) {
@@ -158,9 +164,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             CoroutineScope(Dispatchers.IO).launch {
                 viewModel.lessonLiveData.value?.let { lesson ->
                     val lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
-                            lesson.vocabStatus == LESSON_STATUS.CO &&
-                            lesson.readingStatus == LESSON_STATUS.CO &&
-                            lesson.speakingStatus == LESSON_STATUS.CO
+                        lesson.vocabStatus == LESSON_STATUS.CO &&
+                        lesson.readingStatus == LESSON_STATUS.CO &&
+                        lesson.speakingStatus == LESSON_STATUS.CO
 
                     if (lessonCompleted) {
                         lesson.status = LESSON_STATUS.CO
@@ -217,7 +223,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         }
     }
 
-
     private fun setUpTabLayout() {
         val adapter = LessonPagerAdapter(
             supportFragmentManager,
@@ -232,8 +237,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             val tab = tabs.getChildAt(i)
             val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
             layoutParams.weight = 0f
-       //     layoutParams.marginEnd = Utils.dpToPx(2)
-          //  layoutParams.marginStart = Utils.dpToPx(2)
+            //     layoutParams.marginEnd = Utils.dpToPx(2)
+            //  layoutParams.marginStart = Utils.dpToPx(2)
         }
         binding.lessonTabLayout.requestLayout()
 
@@ -271,24 +276,27 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         }.attach()
 
         binding.lessonTabLayout.addOnTabSelectedListener(object :
-            TabLayout.OnTabSelectedListener {
+                TabLayout.OnTabSelectedListener {
 
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                setSelectedColor(tab)
-            }
+                override fun onTabSelected(tab: TabLayout.Tab?) {
+                    setSelectedColor(tab)
+                }
 
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-                setSelectedColor(tab)
-            }
+                override fun onTabReselected(tab: TabLayout.Tab?) {
+                    setSelectedColor(tab)
+                }
 
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-                setUnselectedColor(tab)
-            }
-        })
+                override fun onTabUnselected(tab: TabLayout.Tab?) {
+                    setUnselectedColor(tab)
+                }
+            })
 
-        Handler().postDelayed({
-            openIncompleteTab(3)
-        }, 50)
+        Handler().postDelayed(
+            {
+                openIncompleteTab(3)
+            },
+            50
+        )
     }
 
     private fun openIncompleteTab(currentTabNumber: Int) {
@@ -478,6 +486,5 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             }
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         }
-
     }
 }

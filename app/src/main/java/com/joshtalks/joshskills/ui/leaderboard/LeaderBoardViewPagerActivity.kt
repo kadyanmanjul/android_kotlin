@@ -41,7 +41,6 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
             }
         }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_leaderboard_view_pager)
@@ -88,42 +87,49 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
         searchActivityResult.launch(
             LeaderBoardSearchActivity.getSearchActivityIntent(
                 this,
-                viewModel.leaderBoardData.value
+                viewModel.leaderBoardData.value,
+                intent.getStringExtra(CONVERSATION_ID)
             )
         )
     }
 
     private fun addObserver() {
-        viewModel.leaderBoardData.observe(this, Observer {
-            mapOfVisitedPage.put(0, 0)
-            mapOfVisitedPage.put(1, 0)
-            mapOfVisitedPage.put(2, 0)
+        viewModel.leaderBoardData.observe(
+            this,
+            Observer {
+                mapOfVisitedPage.put(0, 0)
+                mapOfVisitedPage.put(1, 0)
+                mapOfVisitedPage.put(2, 0)
 
-            setTabText(it)
+                setTabText(it)
 
-            binding.viewPager.registerOnPageChangeCallback(object :
-                ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    tabPosition=position
-                    mapOfVisitedPage.put(position, mapOfVisitedPage.get(position)?.plus(1) ?: 1)
-                    viewModel.engageLeaderBoardimpression(mapOfVisitedPage, position)
-                }
-            })
-        })
+                binding.viewPager.registerOnPageChangeCallback(object :
+                        ViewPager2.OnPageChangeCallback() {
+                        override fun onPageSelected(position: Int) {
+                            super.onPageSelected(position)
+                            tabPosition = position
+                            mapOfVisitedPage.put(position, mapOfVisitedPage.get(position)?.plus(1) ?: 1)
+                            viewModel.engageLeaderBoardimpression(mapOfVisitedPage, position)
+                        }
+                    })
+            }
+        )
 
-        viewModel.apiCallStatusLiveData.observe(this, Observer {
-            it?.let {
-                when (it) {
-                    ApiCallStatus.FAILED, ApiCallStatus.SUCCESS -> {
-                        hideProgressBar()
-                    }
-                    ApiCallStatus.START -> {
-                        showProgressBar()
+        viewModel.apiCallStatusLiveData.observe(
+            this,
+            Observer {
+                it?.let {
+                    when (it) {
+                        ApiCallStatus.FAILED, ApiCallStatus.SUCCESS -> {
+                            hideProgressBar()
+                        }
+                        ApiCallStatus.START -> {
+                            showProgressBar()
+                        }
                     }
                 }
             }
-        })
+        )
     }
 
     private fun setTabText(map: HashMap<String, LeaderboardResponse>) {
@@ -149,7 +155,6 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
                         .plus('\n')
                         .plus(map.get(list)?.intervalTabText)
             }
-
         }.attach()
     }
 
@@ -158,7 +163,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
         binding.viewPager.isUserInputEnabled = true
         binding.viewPager.adapter =
             LeaderBoardViewPagerAdapter(this)
-        //binding.viewPager.offscreenPageLimit = 10
+        // binding.viewPager.offscreenPageLimit = 10
     }
 
     override fun onResume() {
@@ -166,30 +171,32 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
         subscribeRXBus()
     }
 
-
     private fun subscribeRXBus() {
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(OpenPreviousLeaderboard::class.java)
                 .subscribeOn(Schedulers.computation())
-                .subscribe({
-                    var type= EMPTY
-                    when (tabPosition) {
-                        0 -> {
-                            type = "TODAY"
+                .subscribe(
+                    {
+                        var type = EMPTY
+                        when (tabPosition) {
+                            0 -> {
+                                type = "TODAY"
+                            }
+                            1 -> {
+                                type = "WEEK"
+                            }
+                            2 -> {
+                                type = "MONTH"
+                            }
                         }
-                        1 -> {
-                            type = "WEEK"
+                        if (type.isNotBlank()) {
+                            openPreviousLeaderBoard(type)
                         }
-                        2 -> {
-                            type = "MONTH"
-                        }
+                    },
+                    {
+                        it.printStackTrace()
                     }
-                    if (type.isNotBlank()) {
-                        openPreviousLeaderBoard(type)
-                    }
-                }, {
-                    it.printStackTrace()
-                })
+                )
         )
     }
 
@@ -197,7 +204,8 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
         PreviousLeaderboardActivity.startPreviousLeaderboardActivity(
             this,
             arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-            intervalType
+            intervalType,
+            conversationId = intent.getStringExtra(CONVERSATION_ID)
         )
     }
 

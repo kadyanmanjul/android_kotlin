@@ -39,6 +39,9 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
         initToolbar()
         viewModel.getPointsSummary(mentorId)
     }
+    override fun getConversationId(): String? {
+        return intent.getStringExtra(CONVERSATION_ID)
+    }
 
     private fun initToolbar() {
         with(iv_back) {
@@ -89,7 +92,11 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
     }
 
     fun openPointsInfoTable() {
-        startActivity(Intent(this, PointsInfoActivity::class.java))
+        startActivity(
+            Intent(this, PointsInfoActivity::class.java).apply {
+                putExtra(CONVERSATION_ID, intent.getStringExtra(CONVERSATION_ID))
+            }
+        )
     }
 
     companion object {

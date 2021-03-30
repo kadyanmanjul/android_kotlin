@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.databinding.ActivityPointsInfoBinding
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.points_history.viewholder.PointsInfoViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewmodel.PointsViewModel
 import kotlinx.android.synthetic.main.base_toolbar.*
@@ -17,7 +18,6 @@ class PointsInfoActivity : WebRtcMiddlewareActivity() {
         ViewModelProvider(this).get(PointsViewModel::class.java)
     }
     private lateinit var binding: ActivityPointsInfoBinding
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +29,10 @@ class PointsInfoActivity : WebRtcMiddlewareActivity() {
         initToolbar()
         viewModel.getPointsInfo()
     }
+    override fun getConversationId(): String? {
+        return intent.getStringExtra(CONVERSATION_ID)
+    }
+
     private fun initToolbar() {
         with(iv_back) {
             visibility = View.VISIBLE
@@ -47,11 +51,14 @@ class PointsInfoActivity : WebRtcMiddlewareActivity() {
 
     private fun addObserver() {
 
-        viewModel.pointsInfoLiveData.observe(this, Observer {
-            binding.infoText.text=it.info
-            it.pointsWorkingList?.forEachIndexed() { index, pointsWorking ->
-                binding.recyclerView.addView(PointsInfoViewHolder(pointsWorking,index))
+        viewModel.pointsInfoLiveData.observe(
+            this,
+            Observer {
+                binding.infoText.text = it.info
+                it.pointsWorkingList?.forEachIndexed() { index, pointsWorking ->
+                    binding.recyclerView.addView(PointsInfoViewHolder(pointsWorking, index))
+                }
             }
-        })
+        )
     }
 }

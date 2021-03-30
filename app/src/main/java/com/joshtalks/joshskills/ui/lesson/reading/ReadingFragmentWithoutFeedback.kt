@@ -9,14 +9,9 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.SystemClock
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
-import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.SeekBar
@@ -48,6 +43,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.RemovePracticeAudioEve
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
@@ -63,15 +59,17 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
+import java.util.*
+import java.util.concurrent.TimeUnit
 
-class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
+class ReadingFragmentWithoutFeedback :
+    CoreJoshFragment(),
+    Player.EventListener,
     AudioPlayerEventListener,
     ProgressUpdateListener {
 
@@ -172,9 +170,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
         try {
             binding.videoPlayer.onPause()
             pauseAllViewHolderAudio()
-
         } catch (ex: Exception) {
-
         }
     }
 
@@ -184,7 +180,6 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
         compositeDisposable.clear()
         try {
             binding.videoPlayer.onPause()
-
         } catch (ex: Exception) {
         }
     }
@@ -194,13 +189,11 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
             super.onDestroy()
             try {
                 binding.videoPlayer.onStop()
-
             } catch (ex: Exception) {
             }
 
             audioManager?.release()
         } catch (ex: Exception) {
-
         }
     }
 
@@ -228,7 +221,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
 
     fun showImproveButton() {
         // binding.feedbackLayout.visibility = VISIBLE
-        //binding.improveAnswerBtn.visibility = VISIBLE
+        // binding.improveAnswerBtn.visibility = VISIBLE
         binding.continueBtn.visibility = VISIBLE
         binding.submitAnswerBtn.visibility = GONE
     }
@@ -251,34 +244,40 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
         compositeDisposable.add(
             RxBus2.listen(RemovePracticeAudioEventBus::class.java)
                 .subscribeOn(Schedulers.computation())
-                .subscribe({
-                    AppObjectController.uiHandler.post {
-                        binding.audioList.removeView(it.practiceAudioViewHolder)
-                        currentLessonQuestion?.run {
-                            if (this.practiceEngagement.isNullOrEmpty()) {
-                                showPracticeInputLayout()
-                                binding.feedbackLayout.visibility = GONE
-                                hidePracticeSubmitLayout()
-                                disableSubmitButton()
-                            } else {
-                                hidePracticeInputLayout()
-                                showImproveButton()
+                .subscribe(
+                    {
+                        AppObjectController.uiHandler.post {
+                            binding.audioList.removeView(it.practiceAudioViewHolder)
+                            currentLessonQuestion?.run {
+                                if (this.practiceEngagement.isNullOrEmpty()) {
+                                    showPracticeInputLayout()
+                                    binding.feedbackLayout.visibility = GONE
+                                    hidePracticeSubmitLayout()
+                                    disableSubmitButton()
+                                } else {
+                                    hidePracticeInputLayout()
+                                    showImproveButton()
+                                }
                             }
                         }
+                    },
+                    {
+                        it.printStackTrace()
                     }
-                }, {
-                    it.printStackTrace()
-                })
+                )
         )
 
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(SnackBarEvent::class.java)
                 .subscribeOn(Schedulers.computation())
-                .subscribe({
-                    showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsSnackBarText)
-                }, {
-                    it.printStackTrace()
-                })
+                .subscribe(
+                    {
+                        showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsSnackBarText)
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
         )
     }
 
@@ -338,9 +337,11 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                             PdfViewerActivity.startPdfActivity(
                                 requireActivity(),
                                 pdfType.id,
-                                EMPTY
+                                EMPTY,
+                                conversationId = requireActivity().intent.getStringExtra(
+                                    CONVERSATION_ID
+                                )
                             )
-
                         }
                     }
                 }
@@ -352,7 +353,6 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                     }
                 }
                 else -> {
-
                 }
             }
             if ((this.materialType == LessonMaterialType.TX).not()) {
@@ -409,68 +409,79 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
 
     private fun addObserver() {
 
-        viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner, {
-            currentLessonQuestion = it.filter { it.chatType == CHAT_TYPE.RP }.getOrNull(0)
+        viewModel.lessonQuestionsLiveData.observe(
+            viewLifecycleOwner,
+            {
+                currentLessonQuestion = it.filter { it.chatType == CHAT_TYPE.RP }.getOrNull(0)
 
-            currentLessonQuestion?.run {
+                currentLessonQuestion?.run {
 
-                appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTICE_SCREEN.NAME)
-                    .addBasicParam()
-                    .addUserDetails()
-                    .addParam("lesson_id", this.lessonId)
-                    .addParam("question_id", this.id)
+                    appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTICE_SCREEN.NAME)
+                        .addBasicParam()
+                        .addUserDetails()
+                        .addParam("lesson_id", this.lessonId)
+                        .addParam("question_id", this.id)
 
-                if (this.practiceEngagement.isNullOrEmpty()) {
-                    binding.submitAnswerBtn.visibility = VISIBLE
-                    appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, false)
-                    appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Not Submitted")
-                    setViewAccordingExpectedAnswer()
+                    if (this.practiceEngagement.isNullOrEmpty()) {
+                        binding.submitAnswerBtn.visibility = VISIBLE
+                        appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, false)
+                        appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Not Submitted")
+                        setViewAccordingExpectedAnswer()
+                    } else {
+                        binding.submitAnswerBtn.visibility = GONE
+                        // binding.improveAnswerBtn.visibility = VISIBLE
+                        binding.continueBtn.visibility = VISIBLE
+                        appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
+                        appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Already Submitted")
+                        setViewUserSubmitAnswer()
+                    }
+                }
+
+                setPracticeInfoView()
+            }
+        )
+
+        viewModel.requestStatusLiveData.observe(
+            viewLifecycleOwner,
+            Observer {
+                if (it) {
+                    showCompletedPractise()
                 } else {
-                    binding.submitAnswerBtn.visibility = GONE
-                    //binding.improveAnswerBtn.visibility = VISIBLE
-                    binding.continueBtn.visibility = VISIBLE
-                    appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
-                    appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Already Submitted")
-                    setViewUserSubmitAnswer()
+                    enableSubmitButton()
+                    binding.progressLayout.visibility = GONE
                 }
             }
+        )
 
-            setPracticeInfoView()
-        })
-
-        viewModel.requestStatusLiveData.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                showCompletedPractise()
-
-            } else {
-                enableSubmitButton()
-                binding.progressLayout.visibility = GONE
-            }
-        })
-
-        viewModel.practiceFeedback2LiveData.observe(viewLifecycleOwner, Observer {
-            setFeedBackLayout(it)
-            hideCancelButtonInRV()
-            binding.feedbackLayout.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.white
+        viewModel.practiceFeedback2LiveData.observe(
+            viewLifecycleOwner,
+            Observer {
+                setFeedBackLayout(it)
+                hideCancelButtonInRV()
+                binding.feedbackLayout.setCardBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    )
                 )
-            )
-            binding.feedbackResultProgressLl.visibility = GONE
-            binding.feedbackResultLinearLl.visibility = VISIBLE
-            binding.progressLayout.visibility = GONE
-            binding.submitAnswerBtn.visibility = GONE
-            //binding.improveAnswerBtn.visibility = VISIBLE
-            binding.continueBtn.visibility = VISIBLE
-        })
-
-        viewModel.practiceEngagementData.observe(viewLifecycleOwner, Observer {
-            updatePracticeFeedback(it)
-            if (it.pointsList.isNullOrEmpty().not()) {
-                showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
+                binding.feedbackResultProgressLl.visibility = GONE
+                binding.feedbackResultLinearLl.visibility = VISIBLE
+                binding.progressLayout.visibility = GONE
+                binding.submitAnswerBtn.visibility = GONE
+                // binding.improveAnswerBtn.visibility = VISIBLE
+                binding.continueBtn.visibility = VISIBLE
             }
-        })
+        )
+
+        viewModel.practiceEngagementData.observe(
+            viewLifecycleOwner,
+            Observer {
+                updatePracticeFeedback(it)
+                if (it.pointsList.isNullOrEmpty().not()) {
+                    showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
+                }
+            }
+        )
     }
 
     private fun showCompletedPractise() {
@@ -500,7 +511,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
         binding.feedbackResultLinearLl.visibility = VISIBLE
         binding.progressLayout.visibility = GONE
         binding.submitAnswerBtn.visibility = GONE
-        //binding.improveAnswerBtn.visibility = VISIBLE
+        // binding.improveAnswerBtn.visibility = VISIBLE
         binding.continueBtn.visibility = VISIBLE
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -542,7 +553,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
     }
 
     fun setFeedBackLayout(feedback2: PracticeFeedback2?, isProcessing: Boolean = false) {
-        //binding.feedbackLayout.visibility = VISIBLE
+        // binding.feedbackLayout.visibility = VISIBLE
         if (isProcessing) {
             binding.progressLayout.visibility = VISIBLE
             binding.feedbackGrade.visibility = GONE
@@ -571,7 +582,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
             addAudioListRV(this.practiceEngagement)
             filePath = practiseEngagement?.answerUrl
 
-            //initializePractiseSeekBar()
+            // initializePractiseSeekBar()
         }
     }
 
@@ -610,9 +621,9 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                         )
                     )
                     if (practice.practiceFeedback != null) {
-                        //binding.feedbackLayout.visibility = VISIBLE
-                        //binding.feedbackGrade.text = practice.practiceFeedback!!.grade
-                        //binding.feedbackDescription.text = practice.practiceFeedback!!.text
+                        // binding.feedbackLayout.visibility = VISIBLE
+                        // binding.feedbackGrade.text = practice.practiceFeedback!!.grade
+                        // binding.feedbackDescription.text = practice.practiceFeedback!!.text
                     }
                 }
             }
@@ -643,7 +654,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
             it?.let {
                 if (it is PracticeAudioViewHolder && it.isSeekBaarInitialized()) {
                     it.initializePractiseSeekBar()
-                    //it.setSeekToZero()
+                    // it.setSeekToZero()
                 }
             }
         }
@@ -712,7 +723,7 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                     binding.linearLayout.layoutTransition?.setAnimateParentHierarchy(false)
                     requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     appAnalytics?.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
-                    //appAnalytics?.create(AnalyticsEvent.AUDIO_RECORD.NAME).push()
+                    // appAnalytics?.create(AnalyticsEvent.AUDIO_RECORD.NAME).push()
                     binding.counterTv.base = SystemClock.elapsedRealtime()
                     startTime = System.currentTimeMillis()
                     binding.counterTv.start()
@@ -909,21 +920,21 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
                     requestEngage.localPath = filePath
                     requestEngage.duration =
                         Utils.getDurationOfMedia(requireActivity(), filePath)?.toInt()
-                    //requestEngage.feedbackRequire = currentLessonQuestion.feedback_require
+                    // requestEngage.feedbackRequire = currentLessonQuestion.feedback_require
                     requestEngage.questionId = currentLessonQuestion!!.id
                     requestEngage.mentor = Mentor.getInstance().getId()
                     if (it == EXPECTED_ENGAGE_TYPE.AU) {
                         requestEngage.answerUrl = filePath
                     }
                     AppObjectController.uiHandler.post {
-                        //binding.progressLayout.visibility = INVISIBLE
+                        // binding.progressLayout.visibility = INVISIBLE
                         binding.feedbackLayout.visibility = GONE
                         binding.progressLayout.visibility = VISIBLE
                         binding.feedbackGrade.visibility = GONE
                         binding.feedbackDescription.visibility = GONE
                         disableSubmitButton()
                     }
-                    //practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
+                    // practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
                     viewModel.getPointsForVocabAndReading(currentLessonQuestion!!.id)
                     viewModel.addTaskToService(requestEngage, PendingTask.READING_PRACTICE_OLD)
                     currentLessonQuestion!!.status = QUESTION_STATUS.IP
@@ -1007,5 +1018,4 @@ class ReadingFragmentWithoutFeedback : CoreJoshFragment(), Player.EventListener,
         @JvmStatic
         fun getInstance() = ReadingFragmentWithoutFeedback()
     }
-
 }
