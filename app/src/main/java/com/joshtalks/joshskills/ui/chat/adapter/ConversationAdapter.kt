@@ -21,7 +21,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.chat.vh.AssessmentViewHolder
 import com.joshtalks.joshskills.ui.chat.vh.AudioViewHolder
 import com.joshtalks.joshskills.ui.chat.vh.BaseViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.BestPerformerViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.BestStudentPerformerViewHolder
 import com.joshtalks.joshskills.ui.chat.vh.CertificationExamViewHolder
 import com.joshtalks.joshskills.ui.chat.vh.DateItemHolder
 import com.joshtalks.joshskills.ui.chat.vh.ImageViewHolder
@@ -281,9 +281,9 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
             }
             BEST_PERFORMER_EXAM_MESSAGE -> {
                 view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.cell_best_performer_message, parent, false)
+                    .inflate(R.layout.layout_best_performer_item, parent, false)
                 view.tag = BEST_PERFORMER_EXAM_MESSAGE
-                BestPerformerViewHolder(view, userId)
+                BestStudentPerformerViewHolder(view, userId)
             }
             NEW_CLASS_MESSAGE -> {
                 view = LayoutInflater.from(parent.context)
