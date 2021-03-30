@@ -779,28 +779,15 @@ class ReadingFragmentWithoutFeedback :
         }
         appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio Played")
 
-        if (coreJoshActivity?.currentAudio == null) {
+        if (audioManager?.currentPlayingUrl != null &&
+            audioManager?.currentPlayingUrl == currentLessonQuestion?.audioList?.getOrNull(0)?.audio_url
+        ) {
+            audioManager?.setProgressUpdateListener(this)
+            audioManager?.resumeOrPause()
+        } else {
             onPlayAudio(
                 currentLessonQuestion?.audioList?.getOrNull(0)!!
             )
-        } else {
-            if (coreJoshActivity?.currentAudio == currentLessonQuestion?.audioList?.getOrNull(
-                    0
-                )?.audio_url
-            ) {
-                if (checkIsPlayer()) {
-                    audioManager?.setProgressUpdateListener(this)
-                    audioManager?.resumeOrPause()
-                } else {
-                    onPlayAudio(
-                        currentLessonQuestion?.audioList?.getOrNull(0)!!
-                    )
-                }
-            } else {
-                onPlayAudio(
-                    currentLessonQuestion?.audioList?.getOrNull(0)!!
-                )
-            }
         }
     }
 
