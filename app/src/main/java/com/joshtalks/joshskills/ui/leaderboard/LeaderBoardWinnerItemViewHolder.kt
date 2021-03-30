@@ -60,7 +60,7 @@ class LeaderBoardWinnerItemViewHolder(
         name.text = resp
         points.text = (response.points.toString()).plus(" points")
         userPic.post {
-            userPic.setUserImageOrInitials(response.photoUrl, response.name!!)
+            userPic.setUserImageOrInitials(response.photoUrl, response.name?:"User")
         }
         response.award_url?.let {
             award.setImage(it)
