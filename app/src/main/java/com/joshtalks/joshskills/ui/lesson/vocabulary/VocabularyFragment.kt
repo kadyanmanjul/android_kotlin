@@ -11,23 +11,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshFragment
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentVocabularyBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
-import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
-import com.joshtalks.joshskills.repository.local.entity.LessonQuestionType
-import com.joshtalks.joshskills.repository.local.entity.PendingTask
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
@@ -63,7 +53,6 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     private var lessonActivityListener: LessonActivityListener? = null
     private var aPosition: Int = -1
 
-
     private val viewModel: LessonViewModel by lazy {
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
     }
@@ -88,7 +77,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
             DataBindingUtil.inflate(inflater, R.layout.fragment_vocabulary, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
-        //binding.rootView.layoutTransition.setAnimateParentHierarchy(false)
+        // binding.rootView.layoutTransition.setAnimateParentHierarchy(false)
         binding.vocabularyCompletedTv.text = AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.VOCABULARY_COMPLETED)
 
@@ -103,14 +92,20 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 
     private fun addObserver() {
 
-        viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner, {
-            initAdapter(ArrayList())
-            viewModel.getAssessmentData(it.filter { it.chatType == CHAT_TYPE.VP })
-        })
+        viewModel.lessonQuestionsLiveData.observe(
+            viewLifecycleOwner,
+            {
+                initAdapter(ArrayList())
+                viewModel.getAssessmentData(it.filter { it.chatType == CHAT_TYPE.VP })
+            }
+        )
 
-        viewModel.vocabAssessmentData.observe(viewLifecycleOwner, {
-            adapter.updateAssessmentQuizList(it)
-        })
+        viewModel.vocabAssessmentData.observe(
+            viewLifecycleOwner,
+            {
+                adapter.updateAssessmentQuizList(it)
+            }
+        )
 
         /*viewModel.pointsSnackBarText.observe(viewLifecycleOwner) {
             if (it.pointsList.isNullOrEmpty().not()) {
@@ -218,7 +213,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
             } else {
                 adapter.notifyItemChanged(positionInList)
             }
-            //adapter.notifyDataSetChanged()
+            // adapter.notifyDataSetChanged()
         }
     }
 
@@ -285,7 +280,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                     requestEngage.duration =
                         Utils.getDurationOfMedia(requireActivity(), lessonQuestion.filePath)
                             ?.toInt()
-                    //requestEngage.feedbackRequire = lessonQuestion.feedback_require
+                    // requestEngage.feedbackRequire = lessonQuestion.feedback_require
                     requestEngage.questionId = lessonQuestion.id
                     requestEngage.mentor = Mentor.getInstance().getId()
                     if (it == EXPECTED_ENGAGE_TYPE.AU || it == EXPECTED_ENGAGE_TYPE.VI || it == EXPECTED_ENGAGE_TYPE.DX) {
@@ -293,7 +288,6 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                     }
                     delay(1000)
                     viewModel.addTaskToService(requestEngage, PendingTask.VOCABULARY_PRACTICE)
-
                 }
                 return true
             }
@@ -355,7 +349,8 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                 ) {
                     token?.continuePermissionRequest()
                 }
-            })
+            }
+        )
     }
 
     override fun focusChild(position: Int) {
@@ -370,16 +365,19 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(SnackBarEvent::class.java)
                 .subscribeOn(Schedulers.computation())
-                .subscribe({
-                    //if (it.questionId in chatModelList.) check for question Id later
-                    showSnackBar(
-                        binding.rootView,
-                        Snackbar.LENGTH_LONG,
-                        it.pointsSnackBarText.toString()
-                    )
-                }, {
-                    it.printStackTrace()
-                })
+                .subscribe(
+                    {
+                        // if (it.questionId in chatModelList.) check for question Id later
+                        showSnackBar(
+                            binding.rootView,
+                            Snackbar.LENGTH_LONG,
+                            it.pointsSnackBarText.toString()
+                        )
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
         )
     }
 
@@ -391,8 +389,10 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                 adapter.audioManager?.onPause()
                 adapter.itemList.forEachIndexed { index, lessonQuestion ->
                     if (lessonQuestion.type != LessonQuestionType.QUIZ)
-                        (binding.practiceRv.findViewHolderForAdapterPosition(index)
-                                as VocabularyPracticeAdapter.VocabularyViewHolder).pauseAudio()
+                        (
+                            binding.practiceRv.findViewHolderForAdapterPosition(index)
+                                as VocabularyPracticeAdapter.VocabularyViewHolder
+                            ).pauseAudio()
                 }
             }
         } catch (ex: Exception) {
@@ -417,7 +417,6 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         compositeDisposable.clear()
         try {
             adapter.audioManager?.onPause()
-
         } catch (ex: Exception) {
         }
     }
@@ -427,11 +426,9 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
             super.onDestroy()
             try {
                 adapter.audioManager?.release()
-
             } catch (ex: Exception) {
             }
         } catch (ex: Exception) {
-
         }
     }
 
@@ -439,5 +436,4 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         @JvmStatic
         fun getInstance() = VocabularyFragment()
     }
-
 }

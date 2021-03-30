@@ -268,7 +268,7 @@ class ConversationActivity :
                         )
                     }
                     R.id.leaderboard_setting -> {
-                        openLeaderBoard()
+                        openLeaderBoard(inboxEntity.conversation_id)
                     }
                     R.id.menu_favorite_list -> {
                         FavoriteListActivity.openFavoriteCallerActivity(this)
@@ -361,7 +361,7 @@ class ConversationActivity :
         }
 
         conversationBinding.leaderboardTxt.setOnClickListener {
-            openLeaderBoard()
+            openLeaderBoard(inboxEntity.conversation_id)
         }
         conversationBinding.points.setOnClickListener {
             openUserProfileActivity(
@@ -638,7 +638,8 @@ class ConversationActivity :
                 id,
                 arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
                 null,
-                it
+                it,
+                conversationId = inboxEntity.conversation_id
             )
         }
     }

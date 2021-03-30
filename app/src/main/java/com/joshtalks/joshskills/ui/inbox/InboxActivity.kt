@@ -34,7 +34,6 @@ import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.android.synthetic.main.fragment_listen_practise.*
 import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -275,7 +274,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     override fun onUpdateLocation(location: Location) {
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             uploadUserLocation(location)
         }
     }

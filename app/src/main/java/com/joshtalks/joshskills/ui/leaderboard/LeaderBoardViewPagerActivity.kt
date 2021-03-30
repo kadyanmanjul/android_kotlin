@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenPreviousLeaderboard
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.leaderboard.search.LeaderBoardSearchActivity
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -51,6 +52,10 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
         addObserver()
         viewModel.getFullLeaderBoardData(Mentor.getInstance().getId())
         showProgressBar()
+    }
+
+    override fun getConversationId(): String? {
+        return intent.getStringExtra(CONVERSATION_ID)
     }
 
     private fun initToolbar() {

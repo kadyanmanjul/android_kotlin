@@ -97,7 +97,7 @@ abstract class BaseWebRtcService : Service(), SensorEventListener {
             if (proximity != null) {
                 sm.unregisterListener(this)
             }
-        } catch (ex: Exception) {
+        } catch (ex: Throwable) {
             ex.printStackTrace()
         }
     }

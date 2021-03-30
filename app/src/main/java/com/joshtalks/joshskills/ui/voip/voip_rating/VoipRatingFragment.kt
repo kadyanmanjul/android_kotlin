@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.voip.voip_rating
 
-
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
@@ -11,16 +10,12 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
-import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.databinding.VoipRatingFragmentBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.Award
@@ -28,7 +23,6 @@ import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -61,7 +55,8 @@ class VoipRatingFragment : DialogFragment() {
                 if (it.pointsList.isNullOrEmpty().not()) {
                     showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
                 }
-            })
+            }
+        )
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -72,7 +67,6 @@ class VoipRatingFragment : DialogFragment() {
         }
     }
 
-
     override fun onStart() {
         super.onStart()
         dialog?.run {
@@ -82,9 +76,9 @@ class VoipRatingFragment : DialogFragment() {
         }
     }
 
-
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding =
@@ -130,7 +124,7 @@ class VoipRatingFragment : DialogFragment() {
     }
 
     private fun requestForFeedback(request: RequestVoipRating) {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val res = AppObjectController.commonNetworkService.feedbackVoipCallAsync(request)
                 if (res.isSuccessful && res.body() != null) {
@@ -140,7 +134,7 @@ class VoipRatingFragment : DialogFragment() {
                         )
                     }
                     if (res.body()!!.pointsList.isNullOrEmpty().not()) {
-                        //PrefManager.put(SPEAKING_POINTS, res.body()!!.pointsList?.get(0).toString())
+                        // PrefManager.put(SPEAKING_POINTS, res.body()!!.pointsList?.get(0).toString())
                     }
                 }
                 FullScreenProgressDialog.hideProgressBar(requireActivity())
@@ -154,7 +148,7 @@ class VoipRatingFragment : DialogFragment() {
 
     fun showSnackBar(view: View, duration: Int, action_lable: String?) {
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
-            //SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
+            // SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
             PointSnackbar.make(view, duration, action_lable)?.show()
             playSnackbarSound(requireActivity())
         }
@@ -162,8 +156,8 @@ class VoipRatingFragment : DialogFragment() {
 
     fun showAward(awarList: List<Award>, isFromUserProfile: Boolean = false) {
         if (false) {
-            //TODO add when awards functionality is over
-            //if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+            // TODO add when awards functionality is over
+            // if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             ShowAwardFragment.showDialog(
                 childFragmentManager,
                 awarList,
@@ -174,7 +168,7 @@ class VoipRatingFragment : DialogFragment() {
 
     fun exitDialog() {
         val intent = Intent()
-        //intent.putExtra("points_list",pointsString)
+        // intent.putExtra("points_list",pointsString)
         intent.putExtra("points_list", pointsString)
         requireActivity().setResult(Activity.RESULT_OK, intent)
         requireActivity().finishAndRemoveTask()

@@ -58,6 +58,7 @@ import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
 import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.track.TrackActivity
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
@@ -246,8 +247,10 @@ abstract class BaseActivity :
         startActivity(Intent(this, GIFActivity::class.java))
     }
 
-    fun openLeaderBoard() {
-        val i = Intent(this, LeaderBoardViewPagerActivity::class.java)
+    fun openLeaderBoard(conversationId:String) {
+        val i = Intent(this, LeaderBoardViewPagerActivity::class.java).apply {
+            putExtra(CONVERSATION_ID, conversationId)
+        }
         startActivity(i)
     }
 

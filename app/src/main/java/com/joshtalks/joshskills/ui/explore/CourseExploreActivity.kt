@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
@@ -24,13 +25,13 @@ import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.subscription.StartSubscriptionActivity
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.set
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 const val COURSE_EXPLORER_SCREEN_NAME = "Course Explorer"
 const val USER_COURSES = "user_courses"
@@ -113,7 +114,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                 putExtra(FLOW_FROM, "CourseExploreActivity")
                             }
-                            CoroutineScope(Dispatchers.IO).launch {
+                            lifecycleScope.launch(Dispatchers.IO) {
                                 PrefManager.clearUser()
                                 AppObjectController.joshApplication.startActivity(intent)
                             }
