@@ -59,13 +59,13 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
-import java.util.*
-import java.util.concurrent.TimeUnit
 
 class ReadingFragmentWithoutFeedback :
     CoreJoshFragment(),
@@ -162,15 +162,19 @@ class ReadingFragmentWithoutFeedback :
 
     override fun onPause() {
         super.onPause()
+        binding.videoPlayer.onPause()
+        pauseAllAudioAndUpdateViews()
+    }
 
-        if (audioManager != null) {
-            audioManager?.onPause()
-        }
-
+    private fun pauseAllAudioAndUpdateViews() {
         try {
-            binding.videoPlayer.onPause()
-            pauseAllViewHolderAudio()
+            if (audioManager != null) {
+                audioManager?.onPause()
+                binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+                pauseAllViewHolderAudio()
+            }
         } catch (ex: Exception) {
+            Timber.d(ex)
         }
     }
 
@@ -715,7 +719,7 @@ class ReadingFragmentWithoutFeedback :
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     binding.videoPlayer.onPause()
-
+                    pauseAllAudioAndUpdateViews()
                     binding.rootView.requestDisallowInterceptTouchEvent(true)
                     binding.counterContainer.visibility = VISIBLE
                     binding.linearLayout.layoutTransition?.setAnimateParentHierarchy(false)
