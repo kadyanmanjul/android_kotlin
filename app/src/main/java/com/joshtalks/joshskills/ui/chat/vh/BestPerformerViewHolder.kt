@@ -13,13 +13,12 @@ import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
 import com.joshtalks.joshskills.repository.server.Award
-import de.hdodenhof.circleimageview.CircleImageView
-import java.util.Locale
+import java.util.*
 
 class BestPerformerViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) {
 
     private val studentOfDash: AppCompatTextView = view.findViewById(R.id.tv_student_of)
-    private val userPic: CircleImageView = view.findViewById(R.id.user_pic)
+    private val userPic: AppCompatImageView = view.findViewById(R.id.user_pic)
     private val awardImage: AppCompatImageView = view.findViewById(R.id.iv_award)
     private val studentName: AppCompatTextView = view.findViewById(R.id.student_name)
     private val totalPoints: AppCompatTextView = view.findViewById(R.id.total_points)
@@ -54,7 +53,8 @@ class BestPerformerViewHolder(view: View, userId: String) : BaseViewHolder(view,
                 userPic.setUserImageOrInitials(
                     awardMentorModel.performerPhotoUrl,
                     awardMentorModel.performerName?.capitalize(Locale.getDefault()).toString(),
-                    dpToPx = 28
+                    dpToPx = 28,
+                    isRound = true
                 )
             }
             awardMentorModel.awardImageUrl?.let {
