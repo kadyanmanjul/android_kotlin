@@ -1,16 +1,22 @@
 package com.joshtalks.joshskills.repository.local.entity
 
 import android.os.Parcelable
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.ConvertorForEngagement
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
 import com.joshtalks.joshskills.util.RandomString
+import java.util.Date
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
-import java.util.*
 
 @Parcelize
 @Entity(tableName = "chat_table", indices = [Index(value = ["chat_id", "conversation_id"])])
@@ -98,6 +104,7 @@ data class ChatModel(
     @Expose
     var lastUseTime: Date? = null,
 
+    @Expose
     @ColumnInfo(name = "award_mentor_id")
     var awardMentorId: Int = 0,
 
@@ -112,7 +119,7 @@ data class ChatModel(
     @Ignore
     var playProgress: Int = 0,
 
-) : DataBaseClass(), Parcelable {
+    ) : DataBaseClass(), Parcelable {
 
     @IgnoredOnParcel
     @Ignore
