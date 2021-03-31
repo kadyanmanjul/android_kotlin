@@ -10,15 +10,10 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class LeaderBoardViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val jobs = arrayListOf<Job>()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val leaderBoardData: MutableLiveData<HashMap<String, LeaderboardResponse>> = MutableLiveData()
     val leaderBoardDataOfPage: MutableLiveData<LeaderboardResponse> = MutableLiveData()
@@ -67,7 +62,6 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
                 leaderBoardData.postValue(map)
                 apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                 return@launch
-
             } catch (ex: Exception) {
                 apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
             }
@@ -82,7 +76,6 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
             if (response.isSuccessful && response.body() != null) {
                 return response.body()!!
             }
-
         } catch (ex: Throwable) {
             ex.showAppropriateMsg()
         }
@@ -90,7 +83,7 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun getMentorDataViaPage(mentorId: String, type: String, pageNumber: Int = 2) {
-        jobs == viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response =
                     AppObjectController.commonNetworkService.getLeaderBoardDataViaPage(
@@ -101,11 +94,10 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
                 if (response.isSuccessful && response.body() != null) {
                     leaderBoardDataOfPage.postValue(response.body())
                 }
-
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }
-            //return null
+            // return null
         }
     }
 
@@ -116,7 +108,7 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
         if (mapOfVisitedPage.get(position)!! > 1) {
             return
         }
-        jobs == viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 var intervalType = EMPTY
                 when (position) {
@@ -146,5 +138,16 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
                 ex.printStackTrace()
             }
         }
+    }
+
+    suspend fun isUserHad4And5Lesson(): Boolean {
+        return viewModelScope.async(Dispatchers.IO) {
+            val count =
+                AppObjectController.appDatabase.lessonDao().getLessonNumbers(arrayListOf(4, 5))
+            if (count > 0) {
+                return@async true
+            }
+            return@async false
+        }.await()
     }
 }

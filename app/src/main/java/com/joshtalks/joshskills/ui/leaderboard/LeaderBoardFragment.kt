@@ -5,17 +5,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
-import com.joshtalks.joshskills.core.getRandomName
-import com.joshtalks.joshskills.core.setUserImageOrInitials
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
@@ -24,8 +23,12 @@ import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
+import com.skydoves.balloon.*
+import com.skydoves.balloon.overlay.BalloonOverlayAnimation
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 class LeaderBoardFragment : Fragment() {
@@ -255,6 +258,7 @@ class LeaderBoardFragment : Fragment() {
         leaderboardResponse1.last_mentor_list?.forEach {
             binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
         }
+        addOnlineTooltip()
     }
 
     private fun setCurrentUserDetails(response: LeaderboardMentor) {
@@ -266,7 +270,11 @@ class LeaderBoardFragment : Fragment() {
         }
         binding.name.text = resp
         binding.points.text = response.points.toString()
-        binding.userPic.setUserImageOrInitials(response.photoUrl, response.name ?: getRandomName(),isRound = true)
+        binding.userPic.setUserImageOrInitials(
+            response.photoUrl,
+            response.name ?: getRandomName(),
+            isRound = true
+        )
         binding.userLayout.visibility = View.VISIBLE
         if (response.isOnline != null && response.isOnline) {
             binding.onlineStatusIv.visibility = View.VISIBLE
@@ -311,6 +319,46 @@ class LeaderBoardFragment : Fragment() {
                 USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
                 conversationId = requireActivity().intent.getStringExtra(CONVERSATION_ID)
             )
+        }
+    }
+
+    private fun addOnlineTooltip() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val flag = PrefManager.getBoolValue(ONLINE_HINT_SHOW)
+            if (flag) {
+                return@launch
+            }
+            val lbOpenCount = PrefManager.getIntValue(LEADER_BOARD_OPEN_COUNT)
+            val b = viewModel.isUserHad4And5Lesson()
+            if (lbOpenCount == 3 || b) {
+                delay(150)
+                val item =
+                    binding.recyclerView.getViewResolverAtPosition(2) as LeaderBoardItemViewHolder
+                val balloon = Balloon.Builder(requireContext())
+                    .setText(getString(R.string.online_tooltip))
+                    .setTextSize(15F)
+                    .setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                    .setArrowOrientation(ArrowOrientation.TOP)
+                    .setDismissWhenTouchOutside(true)
+                    .setCornerRadius(12f)
+                    .setWidth(BalloonSizeSpec.WRAP)
+                    .setArrowPosition(0.42f)
+                    .setPadding(8)
+                    .setMarginTop(12)
+                    .setIsVisibleOverlay(true) // sets the visibility of the overlay for highlighting an anchor.
+                    .setOverlayColorResource(R.color.pd_transparent_bg) // background color of the overlay using a color resource.
+                    .setOverlayPadding(10f) // sets a padding value of the overlay shape in
+                    .setBalloonOverlayAnimation(BalloonOverlayAnimation.FADE) // default is fade.
+                    .setDismissWhenOverlayClicked(false) // disable di
+                    .setBackgroundColorResource(R.color.white)
+                    .setBalloonAnimation(BalloonAnimation.FADE)
+                    .setLifecycleOwner(this@LeaderBoardFragment)
+                    .setDismissWhenClicked(true)
+                    .setArrowOrientation(ArrowOrientation.BOTTOM)
+                    .build()
+                balloon.showAlignBottom(item.user_pic)
+                PrefManager.put(ONLINE_HINT_SHOW, true)
+            }
         }
     }
 

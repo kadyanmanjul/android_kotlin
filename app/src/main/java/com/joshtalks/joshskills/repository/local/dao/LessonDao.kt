@@ -49,5 +49,6 @@ interface LessonDao {
     @Query(value = "SELECT COUNT(lesson_id) FROM lessonmodel where course= :courseId  AND interval>:interval")
     suspend fun nextLessonIntervalExist(courseId: String, interval: Int): Long
 
-
+    @Query(value = "SELECT COUNT(lesson_id) FROM lessonmodel  WHERE lesson_no IN (:ids)")
+    suspend fun getLessonNumbers(ids: ArrayList<Int>): Long
 }

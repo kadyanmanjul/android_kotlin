@@ -9,12 +9,11 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.ActivityLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenPreviousLeaderboard
@@ -22,10 +21,16 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.leaderboard.search.LeaderBoardSearchActivity
+import com.skydoves.balloon.ArrowOrientation
+import com.skydoves.balloon.Balloon
+import com.skydoves.balloon.BalloonAnimation
+import com.skydoves.balloon.overlay.BalloonOverlayAnimation
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.util.HashMap
 import java.util.Locale
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.android.synthetic.main.base_toolbar.iv_back
 import kotlinx.android.synthetic.main.base_toolbar.iv_earn
 import kotlinx.android.synthetic.main.base_toolbar.iv_help
@@ -85,6 +90,12 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
             setOnClickListener { openSearchActivity() }
         }
         text_message_title.text = getString(R.string.leaderboard)
+        lifecycleScope.launch(Dispatchers.Default) {
+            PrefManager.put(
+                LEADER_BOARD_OPEN_COUNT,
+                (PrefManager.getIntValue(LEADER_BOARD_OPEN_COUNT) + 1)
+            )
+        }
     }
 
     private fun openSearchActivity() {
@@ -126,6 +137,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
                     when (it) {
                         ApiCallStatus.FAILED, ApiCallStatus.SUCCESS -> {
                             hideProgressBar()
+                            addSearchTooltip()
                         }
                         ApiCallStatus.START -> {
                             showProgressBar()
@@ -134,6 +146,41 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
                 }
             }
         )
+    }
+
+    private fun addSearchTooltip() {
+        val flag = PrefManager.getBoolValue(SEARCH_HINT_SHOW)
+        if (flag) {
+            return
+        }
+        val lbOpenCount = PrefManager.getIntValue(LEADER_BOARD_OPEN_COUNT)
+        val isLastCall = PrefManager.getBoolValue(P2P_LAST_CALL)
+        if (lbOpenCount > 4 || isLastCall) {
+            val balloon = Balloon.Builder(this)
+                .setText(getString(R.string.search_tooltip))
+                .setTextSize(15F)
+                .setTextColor(ContextCompat.getColor(this, R.color.black))
+                .setArrowOrientation(ArrowOrientation.TOP)
+                .setDismissWhenTouchOutside(true)
+                .setCornerRadius(10f)
+                .setWidthRatio(0.85f)
+                .setArrowPosition(0.82f)
+                .setPadding(8)
+                .setMarginTop(12)
+                .setIsVisibleOverlay(true) // sets the visibility of the overlay for highlighting an anchor.
+                .setOverlayColorResource(R.color.pd_transparent_bg) // background color of the overlay using a color resource.
+                .setOverlayPadding(4f) // sets a padding value of the overlay shape in
+                .setBalloonOverlayAnimation(BalloonOverlayAnimation.FADE) // default is fade.
+                .setDismissWhenOverlayClicked(false) // disable di
+                .setBackgroundColorResource(R.color.white)
+                .setBalloonAnimation(BalloonAnimation.CIRCULAR)
+                .setLifecycleOwner(this)
+                .setDismissWhenClicked(true)
+                .setArrowOrientation(ArrowOrientation.BOTTOM)
+                .build()
+            balloon.showAlignBottom(iv_earn)
+            PrefManager.put(SEARCH_HINT_SHOW, true)
+        }
     }
 
     private fun setTabText(map: HashMap<String, LeaderboardResponse>) {
