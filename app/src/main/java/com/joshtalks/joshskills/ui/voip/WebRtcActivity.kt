@@ -112,6 +112,7 @@ class WebRtcActivity : AppCompatActivity() {
                 },
                 500
             )
+            PrefManager.put(P2P_LAST_CALL,true)
         }
 
         override fun onDisconnect(callId: String?, channelName: String?, time: Long) {
@@ -130,6 +131,7 @@ class WebRtcActivity : AppCompatActivity() {
             super.onServerConnect()
             Timber.tag(TAG).e("onServerConnect")
             updateCallInfo()
+            PrefManager.put(P2P_LAST_CALL,true)
         }
 
         override fun onNetworkLost() {

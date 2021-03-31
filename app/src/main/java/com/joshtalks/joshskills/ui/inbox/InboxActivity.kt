@@ -55,8 +55,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private lateinit var findMoreLayout: View
     var isPermissionRequired: Boolean = true
     private val courseListSet: MutableSet<InboxEntity> = hashSetOf()
-    private val inboxAdapter: InboxAdapter by lazy { InboxAdapter(this,this) }
-
+    private val inboxAdapter: InboxAdapter by lazy { InboxAdapter(this, this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
@@ -147,7 +146,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         }
     }
 
-
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         processIntent(intent)
@@ -171,7 +169,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 addCourseInRecyclerView(it)
             }
         }
-
     }
 
     private fun addCourseInRecyclerView(items: List<InboxEntity>) {
@@ -197,12 +194,11 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         if (findMoreLayout.visibility == View.INVISIBLE) {
             findMoreLayout.visibility = View.VISIBLE
         }
-        if(isPermissionRequired) {
-            isPermissionRequired=false
+        if (isPermissionRequired) {
+            isPermissionRequired = false
             locationFetch()
         }
     }
-
 
     override fun onResume() {
         super.onResume()

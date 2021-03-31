@@ -90,6 +90,7 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
         if (PrefManager.hasKey(CALL_RINGTONE_NOT_MUTE).not()) {
             PrefManager.put(CALL_RINGTONE_NOT_MUTE, true)
         }
+        PrefManager.put(P2P_LAST_CALL, false)
         AppObjectController.initialiseFreshChat()
         InstallReferralUtil.installReferrer(context)
         return Result.success()

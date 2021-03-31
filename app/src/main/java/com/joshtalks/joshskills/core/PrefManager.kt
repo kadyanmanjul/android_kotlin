@@ -64,6 +64,10 @@ const val INTRODUCTION_YES_EXCITED_CLICKED = "introduction_yes_excited_clicked"
 const val INTRODUCTION_START_NOW_CLICKED = "introduction_start_now_clicked"
 const val DEMO_LESSON_TOPIC_ID = "demo_lesson_topic_id"
 const val DEMO_LESSON_NUMBER = "demo_lesson_number"
+const val LEADER_BOARD_OPEN_COUNT = "leader_board_open_count"
+const val P2P_LAST_CALL = "has_p2p_last_call"
+const val SEARCH_HINT_SHOW = "search_hint_show"
+const val ONLINE_HINT_SHOW = "online_hint_show"
 
 
 object PrefManager {
