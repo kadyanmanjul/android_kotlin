@@ -26,7 +26,7 @@ class LeaderboardSearchPagerAdapter(
             2 -> {
                 LeaderboardSearchResultFragment.newInstance(LeaderboardType.MONTH)
             }
-            3 -> {
+            4 -> {
                 LeaderboardSearchResultFragment.newInstance(LeaderboardType.BATCH)
             }
             else -> {

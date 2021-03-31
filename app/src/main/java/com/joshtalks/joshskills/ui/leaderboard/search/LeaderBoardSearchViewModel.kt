@@ -8,7 +8,6 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearch
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardType
-import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -100,7 +99,7 @@ class LeaderBoardSearchViewModel : ViewModel() {
             }
 
         } catch (ex: Throwable) {
-            ex.showAppropriateMsg()
+            ex.printStackTrace()
         }
         return null
     }

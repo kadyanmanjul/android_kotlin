@@ -122,10 +122,11 @@ class LeaderBoardSearchActivity : BaseActivity() {
         binding.viewPager.isUserInputEnabled = true
         binding.viewPager.adapter =
             LeaderboardSearchPagerAdapter(this)
+        binding.viewPager.offscreenPageLimit = 4
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                if (position != 4) {
+                if (position != 3) {
                     isFirstTime = false
                 }
             }
@@ -145,10 +146,10 @@ class LeaderBoardSearchActivity : BaseActivity() {
                 2 -> {
                     list = "MONTH"
                 }
-                3 -> {
+                4 -> {
                     list = "BATCH"
                 }
-                4 -> {
+                3 -> {
                     list = "LIFETIME"
                 }
             }
@@ -197,7 +198,7 @@ class LeaderBoardSearchActivity : BaseActivity() {
         binding.divider.visibility = View.VISIBLE
         if (isFirstTime) {
             AppObjectController.uiHandler.post {
-                binding.viewPager.currentItem = 4
+                binding.viewPager.currentItem = 3
                 binding.viewPager.adapter?.notifyDataSetChanged()
             }
         }

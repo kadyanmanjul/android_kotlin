@@ -31,23 +31,21 @@ class BestStudentPerformerViewHolder(view: View, userId: String) : BaseViewHolde
 
     private fun setupUI(mentorModel: AwardMentorModel) {
         if (mentorModel.awardType == AwardTypes.SOTD) {
-            //studentOfMonthStub.get().visibility = View.GONE
-            //studentOfWeekStub.get().visibility = View.GONE
-
-            studentOfMonthStub.resolved().let {
-               // studentOfDayStub.get().visibility = View.VISIBLE
-                studentOfMonthStub.get().setup(mentorModel)
+            studentOfDayStub.resolved().let {
+                studentOfDayStub.get().visibility = View.VISIBLE
+                studentOfDayStub.get().setup(mentorModel)
             }
 
         } else if (mentorModel.awardType == AwardTypes.SOTW) {
-            //studentOfDayStub.get().visibility = View.GONE
-            //studentOfMonthStub.get().visibility = View.GONE
-
             studentOfWeekStub.resolved().let {
-                //studentOfWeekStub.get().visibility = View.VISIBLE
+                studentOfWeekStub.get().visibility = View.VISIBLE
                 studentOfWeekStub.get().setup(mentorModel)
             }
-
+        }else if (mentorModel.awardType == AwardTypes.SOTM) {
+            studentOfMonthStub.resolved().let {
+                studentOfMonthStub.get().visibility = View.VISIBLE
+                studentOfMonthStub.get().setup(mentorModel)
+            }
         }
     }
 

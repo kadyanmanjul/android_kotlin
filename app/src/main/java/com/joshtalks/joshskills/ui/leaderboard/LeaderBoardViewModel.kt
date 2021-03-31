@@ -129,10 +129,10 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
                     2 -> {
                         intervalType = "MONTH"
                     }
-                    3 -> {
+                    4 -> {
                         intervalType = "BATCH"
                     }
-                    4 -> {
+                    3 -> {
                         intervalType = "LIFETIME"
                     }
                 }

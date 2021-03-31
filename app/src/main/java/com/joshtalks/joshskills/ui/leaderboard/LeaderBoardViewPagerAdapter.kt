@@ -25,7 +25,7 @@ class LeaderBoardViewPagerAdapter(
             2 -> {
                 LeaderBoardFragment.newInstance("MONTH")
             }
-            3 -> {
+            4 -> {
                 LeaderBoardFragment.newInstance("BATCH")
             }
             else -> {
