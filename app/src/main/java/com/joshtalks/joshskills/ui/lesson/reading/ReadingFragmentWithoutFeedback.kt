@@ -30,12 +30,19 @@ import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.isCallOngoing
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ReadingPracticeFragmentWithoutFeedbackBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.*
@@ -59,13 +66,13 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
+import timber.log.Timber
 
 class ReadingFragmentWithoutFeedback :
     CoreJoshFragment(),
@@ -436,7 +443,10 @@ class ReadingFragmentWithoutFeedback :
                         // binding.improveAnswerBtn.visibility = VISIBLE
                         binding.continueBtn.visibility = VISIBLE
                         appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
-                        appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Already Submitted")
+                        appAnalytics?.addParam(
+                            AnalyticsEvent.PRACTICE_STATUS.NAME,
+                            "Already Submitted"
+                        )
                         setViewUserSubmitAnswer()
                     }
                 }
