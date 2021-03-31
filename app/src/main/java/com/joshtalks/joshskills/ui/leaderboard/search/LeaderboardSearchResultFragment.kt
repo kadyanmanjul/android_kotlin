@@ -118,6 +118,16 @@ class LeaderboardSearchResultFragment : Fragment() {
                     }
                 )
             }
+            LeaderboardType.BATCH -> {
+                viewModel.leaderBoardDataOfBatch.observe(viewLifecycleOwner, Observer {
+                    setData(it)
+                })
+            }
+            else -> {
+                viewModel.leaderBoardDataOfLifeTime.observe(viewLifecycleOwner, Observer {
+                    setData(it)
+                })
+            }
         }
     }
 
@@ -168,7 +178,6 @@ class LeaderboardSearchResultFragment : Fragment() {
                 arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
                 intervalType,
                 USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
-                isOnline,
                 conversationId = requireActivity().intent.getStringExtra(CONVERSATION_ID)
             )
         }

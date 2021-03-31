@@ -26,7 +26,7 @@ import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.*
+import java.util.Locale
 
 class LeaderBoardFragment : Fragment() {
 
@@ -153,6 +153,16 @@ class LeaderBoardFragment : Fragment() {
                     }
                 )
             }
+            "BATCH" -> {
+                viewModel.leaderBoardDataOfBatch.observe(viewLifecycleOwner, Observer {
+                    setData(it)
+                })
+            }
+            "LIFETIME" -> {
+                viewModel.leaderBoardDataOfLifeTime.observe(viewLifecycleOwner, Observer {
+                    setData(it)
+                })
+            }
         }
 
         viewModel.leaderBoardDataOfPage.observe(
@@ -178,13 +188,16 @@ class LeaderBoardFragment : Fragment() {
             setCurrentUserDetails(it)
         }
         leaderboardResponse1.lastWinner?.let {
-            binding.recyclerView.addView(
-                LeaderBoardWinnerItemViewHolder(
-                    it,
-                    requireContext(),
-                    type
+            if (it.id.isNullOrEmpty().not()){
+                binding.recyclerView.addView(
+                    LeaderBoardWinnerItemViewHolder(
+                        it,
+                        requireContext(),
+                        type
+                    )
                 )
-            )
+            }
+
         }
         binding.recyclerView.addView(
             LeaderBoardItemViewHolder(
@@ -296,7 +309,6 @@ class LeaderBoardFragment : Fragment() {
                 arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
                 intervalType,
                 USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
-                isOnline,
                 conversationId = requireActivity().intent.getStringExtra(CONVERSATION_ID)
             )
         }

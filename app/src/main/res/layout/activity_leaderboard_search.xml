@@ -18,10 +18,10 @@
             android:id="@+id/search_layout_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:cardCornerRadius="0dp"
             app:cardElevation="@dimen/_8sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -140,20 +140,21 @@
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:tabStripEnabled="true"
-            android:elevation="0dp"
             android:background="@color/white"
+            android:elevation="0dp"
+            android:tabStripEnabled="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/search_layout_card"
             app:tabGravity="fill"
             app:tabIndicatorColor="@color/button_color"
             app:tabIndicatorFullWidth="false"
             app:tabIndicatorHeight="@dimen/_2sdp"
-            app:tabMode="fixed"
-            app:tabPaddingEnd="0dp"
-            app:tabPaddingStart="0dp"
+            app:tabMode="scrollable"
+            app:tabPaddingEnd="@dimen/_22sdp"
+            app:tabPaddingStart="@dimen/_22sdp"
             app:tabSelectedTextColor="@color/button_color"
-            app:tabTextAppearance="@style/LeaderBoardTabLayoutStyle" />
+            app:tabTextAppearance="@style/LeaderBoardTabLayoutStyle"
+            app:tabTextColor="#666666" />
 
         <View
             android:id="@+id/divider"
@@ -161,7 +162,7 @@
             android:layout_height="@dimen/_1sdp"
             android:layout_marginHorizontal="@dimen/_4sdp"
             android:layout_marginTop="@dimen/_1sdp"
-            android:background="@color/dark_grey"
+            android:background="@color/gray_e6"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/rank" />
@@ -179,8 +180,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@+id/search_layout_card"
-            tools:visibility="gone"
-            tools:listitem="@layout/recent_search_item" />
+            tools:listitem="@layout/recent_search_item"
+            tools:visibility="gone" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

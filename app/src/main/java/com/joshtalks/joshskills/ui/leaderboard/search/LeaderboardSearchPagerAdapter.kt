@@ -12,7 +12,7 @@ class LeaderboardSearchPagerAdapter(
 
 
     override fun getItemCount(): Int {
-        return 3
+        return 5
     }
 
     override fun createFragment(position: Int): Fragment {
@@ -23,8 +23,14 @@ class LeaderboardSearchPagerAdapter(
             1 -> {
                 LeaderboardSearchResultFragment.newInstance(LeaderboardType.WEEK)
             }
-            else -> {
+            2 -> {
                 LeaderboardSearchResultFragment.newInstance(LeaderboardType.MONTH)
+            }
+            4 -> {
+                LeaderboardSearchResultFragment.newInstance(LeaderboardType.BATCH)
+            }
+            else -> {
+                LeaderboardSearchResultFragment.newInstance(LeaderboardType.LIFETIME)
             }
         }
 

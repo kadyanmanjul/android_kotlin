@@ -12,13 +12,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.ActivityLeaderboardSearchBinding
 import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearch
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
+import java.util.ArrayList
+import java.util.Locale
 import com.joshtalks.joshskills.track.CONVERSATION_ID
-import java.util.*
+
 
 class LeaderBoardSearchActivity : BaseActivity() {
     private lateinit var adapter: RecentSearchListAdapter
@@ -26,6 +29,7 @@ class LeaderBoardSearchActivity : BaseActivity() {
     lateinit var binding: ActivityLeaderboardSearchBinding
     private val searchViewModel by lazy { ViewModelProvider(this).get(LeaderBoardSearchViewModel::class.java) }
     private var map: HashMap<String, LeaderboardResponse> = hashMapOf()
+    private var isFirstTime = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,6 +122,15 @@ class LeaderBoardSearchActivity : BaseActivity() {
         binding.viewPager.isUserInputEnabled = true
         binding.viewPager.adapter =
             LeaderboardSearchPagerAdapter(this)
+        binding.viewPager.offscreenPageLimit = 4
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                if (position != 3) {
+                    isFirstTime = false
+                }
+            }
+        })
 
         hideViewpager()
 
@@ -133,6 +146,12 @@ class LeaderBoardSearchActivity : BaseActivity() {
                 2 -> {
                     list = "MONTH"
                 }
+                4 -> {
+                    list = "BATCH"
+                }
+                3 -> {
+                    list = "LIFETIME"
+                }
             }
             if (map.get(list)?.intervalTabText.isNullOrBlank()) {
                 tab.text =
@@ -144,6 +163,8 @@ class LeaderBoardSearchActivity : BaseActivity() {
                         .plus(map.get(list)?.intervalTabText)
             }
         }.attach()
+
+
     }
 
     fun hideViewpager() {
@@ -175,6 +196,12 @@ class LeaderBoardSearchActivity : BaseActivity() {
             ContextCompat.getDrawable(this, R.drawable.primary_dark_rounded_bg)
         binding.recentRv.visibility = View.GONE
         binding.divider.visibility = View.VISIBLE
+        if (isFirstTime) {
+            AppObjectController.uiHandler.post {
+                binding.viewPager.currentItem = 3
+                binding.viewPager.adapter?.notifyDataSetChanged()
+            }
+        }
     }
 
     fun clearSearchText() {

@@ -8,7 +8,6 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearch
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardType
-import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -25,6 +24,8 @@ class LeaderBoardSearchViewModel : ViewModel() {
     val leaderBoardDataOfToday: MutableLiveData<List<LeaderboardMentor>> = MutableLiveData()
     val leaderBoardDataOfWeek: MutableLiveData<List<LeaderboardMentor>> = MutableLiveData()
     val leaderBoardDataOfMonth: MutableLiveData<List<LeaderboardMentor>> = MutableLiveData()
+    val leaderBoardDataOfLifeTime: MutableLiveData<List<LeaderboardMentor>> = MutableLiveData()
+    val leaderBoardDataOfBatch: MutableLiveData<List<LeaderboardMentor>> = MutableLiveData()
     val recentSearchLiveData: MutableLiveData<List<RecentSearch>> = MutableLiveData()
 
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
@@ -45,6 +46,7 @@ class LeaderBoardSearchViewModel : ViewModel() {
             leaderBoardDataOfToday.postValue(ArrayList())
             leaderBoardDataOfWeek.postValue(ArrayList())
             leaderBoardDataOfMonth.postValue(ArrayList())
+            leaderBoardDataOfLifeTime.postValue(ArrayList())
             if (key.isEmpty())
                 return@launch
             delay(waitMs)
@@ -63,8 +65,19 @@ class LeaderBoardSearchViewModel : ViewModel() {
                     leaderBoardDataOfMonth.postValue(it)
                 }
             }
+            val call4 = async(Dispatchers.IO) {
+                searchQuery(key, LeaderboardType.BATCH, 0)?.let {
+                    leaderBoardDataOfBatch.postValue(it)
+                }
+            }
 
-            joinAll(call1, call2, call3)
+            val call5 = async(Dispatchers.IO) {
+                searchQuery(key, LeaderboardType.LIFETIME, 0)?.let {
+                    leaderBoardDataOfLifeTime.postValue(it)
+                }
+            }
+
+            joinAll(call1, call2, call3,call4,call5)
             apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
             return@launch
         }
@@ -86,7 +99,7 @@ class LeaderBoardSearchViewModel : ViewModel() {
             }
 
         } catch (ex: Throwable) {
-            ex.showAppropriateMsg()
+            ex.printStackTrace()
         }
         return null
     }
@@ -101,8 +114,13 @@ class LeaderBoardSearchViewModel : ViewModel() {
                 getWeekSearch(currentSearchedKey, pageNo)
             }
             LeaderboardType.MONTH -> {
-
                 getMonthSearch(currentSearchedKey, pageNo)
+            }
+            LeaderboardType.BATCH -> {
+                getBatchSearch(currentSearchedKey, pageNo)
+            }
+            LeaderboardType.LIFETIME -> {
+                getLifeTimeSearch(currentSearchedKey, pageNo)
             }
         }
     }
@@ -131,6 +149,24 @@ class LeaderBoardSearchViewModel : ViewModel() {
             val result = searchQuery(key, LeaderboardType.MONTH, pageNo)
             if (result != null)
                 leaderBoardDataOfMonth.postValue(result)
+        }
+    }
+
+    private fun getBatchSearch(key: String, pageNo: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            apiCallStatusLiveData.postValue(ApiCallStatus.START)
+            val result = searchQuery(key, LeaderboardType.BATCH, pageNo)
+            if (result != null)
+                leaderBoardDataOfBatch.postValue(result)
+        }
+    }
+
+    private fun getLifeTimeSearch(key: String, pageNo: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            apiCallStatusLiveData.postValue(ApiCallStatus.START)
+            val result = searchQuery(key, LeaderboardType.LIFETIME, pageNo)
+            if (result != null)
+                leaderBoardDataOfLifeTime.postValue(result)
         }
     }
 

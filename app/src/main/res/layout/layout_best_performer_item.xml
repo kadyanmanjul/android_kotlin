@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:id="@+id/root_sub_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start">
+
+        <ViewStub
+            android:id="@+id/student_of_day_stub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout="@layout/student_of_day_stub" />
+
+        <ViewStub
+            android:id="@+id/student_of_week_stub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout="@layout/student_of_week_stub" />
+
+        <ViewStub
+            android:id="@+id/student_of_month_stub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout="@layout/student_of_month_stub" />
+
+
+    </FrameLayout>
+
+</FrameLayout>
+

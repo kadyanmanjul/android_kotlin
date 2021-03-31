@@ -24,8 +24,12 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.leaderboard.search.LeaderBoardSearchActivity
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.base_toolbar.*
-import java.util.*
+import java.util.HashMap
+import java.util.Locale
+import kotlinx.android.synthetic.main.base_toolbar.iv_back
+import kotlinx.android.synthetic.main.base_toolbar.iv_earn
+import kotlinx.android.synthetic.main.base_toolbar.iv_help
+import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 
 class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
     lateinit var binding: ActivityLeaderboardViewPagerBinding
@@ -71,7 +75,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
             }
         }
         with(iv_earn) {
-            visibility = View.GONE
+            visibility = View.VISIBLE
             setImageDrawable(
                 ContextCompat.getDrawable(
                     this@LeaderBoardViewPagerActivity,
@@ -145,6 +149,12 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
                 2 -> {
                     list = "MONTH"
                 }
+                4 -> {
+                    list = "BATCH"
+                }
+                3 -> {
+                    list = "LIFETIME"
+                }
             }
             if (map.get(list)?.intervalTabText.isNullOrBlank()) {
                 tab.text =
@@ -163,7 +173,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
         binding.viewPager.isUserInputEnabled = true
         binding.viewPager.adapter =
             LeaderBoardViewPagerAdapter(this)
-        // binding.viewPager.offscreenPageLimit = 10
+        binding.viewPager.offscreenPageLimit = 4
     }
 
     override fun onResume() {

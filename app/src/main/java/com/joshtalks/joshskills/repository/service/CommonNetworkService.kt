@@ -6,7 +6,23 @@ import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
-import com.joshtalks.joshskills.repository.server.*
+import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
+import com.joshtalks.joshskills.repository.server.BaseResponse
+import com.joshtalks.joshskills.repository.server.CertificateDetail
+import com.joshtalks.joshskills.repository.server.ComplaintResponse
+import com.joshtalks.joshskills.repository.server.FAQ
+import com.joshtalks.joshskills.repository.server.FAQCategory
+import com.joshtalks.joshskills.repository.server.FeedbackVoipResponse
+import com.joshtalks.joshskills.repository.server.FreshChatRestoreIDResponse
+import com.joshtalks.joshskills.repository.server.LeaderboardMentor
+import com.joshtalks.joshskills.repository.server.LeaderboardResponse
+import com.joshtalks.joshskills.repository.server.LeaderboardType
+import com.joshtalks.joshskills.repository.server.NPSByUserRequest
+import com.joshtalks.joshskills.repository.server.PreviousLeaderboardResponse
+import com.joshtalks.joshskills.repository.server.RequestCertificateGenerate
+import com.joshtalks.joshskills.repository.server.RequestComplaint
+import com.joshtalks.joshskills.repository.server.SuccessResponse
+import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
 import com.joshtalks.joshskills.repository.server.certification_exam.RequestSubmitCertificateExam
@@ -23,6 +39,7 @@ import com.joshtalks.joshskills.repository.server.onboarding.CourseEnrolledRespo
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.server.points.PointsHistoryResponse
 import com.joshtalks.joshskills.repository.server.points.PointsInfoResponse
+import com.joshtalks.joshskills.repository.server.points.SpokenMinutesHistoryResponse
 import com.joshtalks.joshskills.repository.server.reminder.DeleteReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
@@ -33,8 +50,18 @@ import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
 import com.joshtalks.joshskills.track.CourseUsageSync
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
-import retrofit2.http.*
-import java.util.*
+import retrofit2.http.Body
+import retrofit2.http.Field
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
+import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 @JvmSuppressWildcards
 interface CommonNetworkService {
@@ -193,6 +220,11 @@ interface CommonNetworkService {
         @Query("mentor_id") id: String
     ): Response<PointsHistoryResponse>
 
+    @GET("$DIR/reputation/get_spoken_history/")
+    suspend fun getUserSpokenMinutesHistory(
+        @Query("mentor_id") id: String
+    ): Response<SpokenMinutesHistoryResponse>
+
     @Headers(
         "Accept: application/json",
         "Content-type:application/json",
@@ -277,11 +309,6 @@ interface CommonNetworkService {
         @Query("interval_type") intervalType: LeaderboardType
     ): Response<List<LeaderboardMentor>>
 
-    @Headers(
-        "Accept: application/json",
-        "Content-type:application/json",
-        "Cache-Control: public, only-if-cached,  max-stale=86400,  max-age=43200"
-    )
     @GET("$DIR/leaderboard/get_previous_leaderboard/")
     suspend fun getPreviousLeaderboardData(
         @Query("mentor_id") mentorId: String,

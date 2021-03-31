@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/_2sdp"
+    android:layout_marginBottom="@dimen/_2sdp">
+
+    <FrameLayout
+        android:id="@+id/root_view_fl"
+        android:layout_width="@dimen/_230sdp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:background="@drawable/bg_student_of_the_week"
+        android:padding="@dimen/_3sdp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_award"
+                android:layout_width="@dimen/_64sdp"
+                android:layout_height="@dimen/_72sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:gravity="center_vertical|start"
+                android:scaleType="fitXY"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/sample_award"
+                tools:visibility="visible" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_8ssp"
+                android:layout_marginBottom="@dimen/_12sdp"
+                android:background="@drawable/rect_round_4dp_yellow"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/iv_award">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/student_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_9sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:gravity="start"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                    android:textColor="#511615"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/user_pic"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Vedant Maheshwari" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/student_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_9sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                    android:textColor="#511615"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/student_name"
+                    tools:text="1  out of 7650 students" />
+
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/user_pic"
+                    android:layout_width="@dimen/_44sdp"
+                    android:layout_height="@dimen/_44sdp"
+                    android:layout_margin="@dimen/_11sdp"
+                    android:gravity="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@color/checkmark_blue"
+                    tools:visibility="visible" />
+
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/barrier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="student_text,user_pic" />
+
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:background="#571314"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/barrier" />
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/user_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/_9sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:gravity="start"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                    android:textColor="#511615"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/divider"
+                    tools:text="Vedant won this award by earning 47ww gew  weguh iuhew gig er giuigyuer  iyegr u ge 0 points through his hardwork yesterday" />
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/student_text_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/_9sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:layout_marginBottom="@dimen/_14sdp"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                    android:textColor="#511615"
+                    android:textStyle="italic"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/user_text"
+                    app:layout_constraintTop_toBottomOf="@id/user_text"
+                    tools:text="10th Jan 20 - 17th Jan 20" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+</FrameLayout>

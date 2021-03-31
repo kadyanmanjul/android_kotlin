@@ -140,7 +140,7 @@
                 app:layout_constraintTop_toTopOf="@id/user_pic_frame"
                 app:layout_constraintBottom_toBottomOf="@id/user_pic_frame"
                 android:visibility="gone"
-                android:padding="@dimen/_1sdp">
+                android:padding="@dimen/_2sdp">
 
                 <ImageView
                     android:layout_width="@dimen/_8sdp"

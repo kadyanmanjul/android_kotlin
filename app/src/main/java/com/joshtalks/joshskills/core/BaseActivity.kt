@@ -75,6 +75,7 @@ import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.points_history.PointsHistoryActivity
+import com.joshtalks.joshskills.ui.points_history.SpokenHistoryActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
@@ -259,6 +260,10 @@ abstract class BaseActivity :
 
     fun openPointHistory(mentorId: String? = null, conversationId: String? = null) {
         PointsHistoryActivity.startPointHistory(this, mentorId, conversationId)
+    }
+
+    fun openSpokenMinutesHistory(mentorId: String? = null, conversationId: String? = null) {
+        SpokenHistoryActivity.startSpokenMinutesHistory(this, mentorId,conversationId)
     }
 
     fun getActivityType(act: Activity): BaseActivity.ActivityEnum {
