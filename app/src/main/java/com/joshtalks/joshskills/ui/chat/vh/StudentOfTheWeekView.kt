@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.text.HtmlCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.setImage
@@ -73,7 +74,8 @@ class StudentOfTheWeekView : FrameLayout {
                 .append(" ")
         }
         studentName.text = resp
-        rankOutOfStudents.text = awardMentorModel.totalPointsText
+        rankOutOfStudents.text =
+            awardMentorModel.totalPointsText?.let { HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY) }
         userText.text = awardMentorModel.description
         userPic.post {
             userPic.setUserImageOrInitials(
@@ -82,6 +84,8 @@ class StudentOfTheWeekView : FrameLayout {
                 dpToPx = 28
             )
         }
+        awardDate.text = awardMentorModel.dateText
+
         awardMentorModel.awardImageUrl?.let {
             awardImage.setImage(it, AppObjectController.joshApplication)
         }

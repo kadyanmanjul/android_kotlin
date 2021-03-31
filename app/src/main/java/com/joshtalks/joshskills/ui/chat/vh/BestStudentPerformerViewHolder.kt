@@ -30,7 +30,7 @@ class BestStudentPerformerViewHolder(view: View, userId: String) : BaseViewHolde
     }
 
     private fun setupUI(mentorModel: AwardMentorModel) {
-        if (mentorModel.awardType == AwardTypes.SOTM) {
+        if (mentorModel.awardType == AwardTypes.SOTD) {
             studentOfMonthStub.get().visibility = View.GONE
             studentOfWeekStub.get().visibility = View.GONE
             studentOfDayStub.resolved().let {
@@ -44,7 +44,7 @@ class BestStudentPerformerViewHolder(view: View, userId: String) : BaseViewHolde
                 studentOfWeekStub.get().visibility = View.VISIBLE
                 studentOfWeekStub.get().setup(mentorModel)
             }
-        }else if (mentorModel.awardType == AwardTypes.SOTD) {
+        }else if (mentorModel.awardType == AwardTypes.SOTM) {
             studentOfWeekStub.get().visibility = View.GONE
             studentOfDayStub.get().visibility = View.GONE
             studentOfMonthStub.resolved().let {

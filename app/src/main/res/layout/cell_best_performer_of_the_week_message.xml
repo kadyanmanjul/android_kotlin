@@ -49,14 +49,16 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/student_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_9sdp"
                     android:layout_marginTop="@dimen/_16sdp"
-                    android:gravity="center"
+                    android:gravity="start"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                     android:textColor="#511615"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/user_pic"
+                    app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Vedant Maheshwari" />
 
@@ -82,7 +84,6 @@
                     android:gravity="center"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
-                    app:layout_constraintStart_toEndOf="@id/student_name"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:src="@color/checkmark_blue"
                     tools:visibility="visible" />
@@ -109,9 +110,9 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/user_text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_9sdp"
+                    android:paddingHorizontal="@dimen/_9sdp"
                     android:layout_marginTop="@dimen/_4sdp"
                     android:gravity="start"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
@@ -126,6 +127,7 @@
                     android:id="@+id/student_text_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/_9sdp"
                     android:layout_marginTop="@dimen/_2sdp"
                     android:layout_marginBottom="@dimen/_14sdp"
                     android:gravity="center"

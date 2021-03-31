@@ -104,9 +104,9 @@ data class ChatModel(
     @Expose
     var lastUseTime: Date? = null,
 
-    //@Expose
+    @Expose
     @ColumnInfo(name = "award_mentor_id")
-    //var awardMentorId: Int = 0,
+    var awardMentorId: Int = 0,
 
     @ColumnInfo(name = "award_user_id")
     @SerializedName("award_mentor_id")

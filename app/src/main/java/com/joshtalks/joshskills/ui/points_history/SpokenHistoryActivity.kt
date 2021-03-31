@@ -89,10 +89,6 @@ class SpokenHistoryActivity : BaseActivity() {
         )
     }
 
-    fun openPointsInfoTable() {
-        startActivity(Intent(this, PointsInfoActivity::class.java))
-    }
-
     companion object {
 
         const val MENTOR_ID = "mentor_id"

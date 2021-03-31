@@ -79,10 +79,10 @@ interface AwardMentorModelDao {
     @Query("SELECT * FROM awardmentormodel WHERE id=:id")
     fun getAwardMentorModel(id: Int): AwardMentorModel?
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertSingleItem(awardMentorModel: AwardMentorModel)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(awardMentorModelList: List<AwardMentorModel>)
 
 }
