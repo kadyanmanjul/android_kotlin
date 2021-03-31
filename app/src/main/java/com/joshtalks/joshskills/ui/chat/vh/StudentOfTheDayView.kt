@@ -56,7 +56,6 @@ class StudentOfTheDayView : FrameLayout {
         userText = findViewById(R.id.user_text)
         rootView = findViewById(R.id.root_view_fl)
 
-        rootView = findViewById(R.id.root_view_completed)
         rootView.setOnClickListener {
             awardMentorModel?.let {
                 RxBus2.publish(LessonItemClickEventBus(it.id))

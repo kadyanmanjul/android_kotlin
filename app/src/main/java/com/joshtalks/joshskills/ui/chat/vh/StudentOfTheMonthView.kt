@@ -13,17 +13,17 @@ import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.AwardMentorModel
 import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.LessonItemClickEventBus
 import com.joshtalks.joshskills.repository.server.Award
 import de.hdodenhof.circleimageview.CircleImageView
 import java.util.Locale
 
-class StudentOfTheWeekView : FrameLayout {
+class StudentOfTheMonthView : FrameLayout {
     private lateinit var userPic: CircleImageView
     private lateinit var awardImage: AppCompatImageView
     private lateinit var studentName: AppCompatTextView
-    private lateinit var rankOutOfStudents: AppCompatTextView
+    //private lateinit var totalPoints: AppCompatTextView
     private lateinit var userText: AppCompatTextView
-    private lateinit var awardDate: AppCompatTextView
     private lateinit var rootView: FrameLayout
     private var awardMentorModel: AwardMentorModel? = null
 
@@ -46,20 +46,19 @@ class StudentOfTheWeekView : FrameLayout {
     }
 
     private fun init() {
-        View.inflate(context, R.layout.cell_best_performer_of_the_week_message, this)
+        View.inflate(context, R.layout.cell_best_performer_of_the_month_message, this)
 
+        userPic = findViewById(R.id.user_pic)
         awardImage = findViewById(R.id.iv_award)
         studentName = findViewById(R.id.student_name)
-        userPic = findViewById(R.id.user_pic)
-        rankOutOfStudents = findViewById(R.id.student_text)
 
+        //totalPoints = findViewById(R.id.total_points)
         userText = findViewById(R.id.user_text)
-        awardDate = findViewById(R.id.student_text_date)
         rootView = findViewById(R.id.root_view_fl)
 
         rootView.setOnClickListener {
             awardMentorModel?.let {
-                //RxBus2.publish(LessonItemClickEventBus(it.id))
+                RxBus2.publish(LessonItemClickEventBus(it.id))
             }
         }
     }
@@ -73,7 +72,7 @@ class StudentOfTheWeekView : FrameLayout {
                 .append(" ")
         }
         studentName.text = resp
-        rankOutOfStudents.text = awardMentorModel.totalPointsText
+        //totalPoints.text = awardMentorModel.totalPointsText
         userText.text = awardMentorModel.description
         userPic.post {
             userPic.setUserImageOrInitials(
