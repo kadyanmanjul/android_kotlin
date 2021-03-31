@@ -34,7 +34,8 @@ import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 class PracticeAudioViewHolder(
     private var practiceEngagement: PracticeEngagement?,
     private var context: Context?,
-    private var filePath: String?
+    private var filePath: String?,
+    private var updateUIOnPlay: () -> Unit
 ) : AudioPlayerEventListener, ExoAudioPlayer.ProgressUpdateListener {
 
     @View(R.id.audio_view_container)
@@ -126,17 +127,17 @@ class PracticeAudioViewHolder(
         ivCancel.visibility = android.view.View.GONE
     }
 
-    fun isEmpty() :Boolean {
-        return practiceEngagement==null
+    fun isEmpty(): Boolean {
+        return practiceEngagement == null
     }
 
-    fun updatePracticeEngagement(practiceEngagement:PracticeEngagement) {
-        this.practiceEngagement=practiceEngagement
+    fun updatePracticeEngagement(practiceEngagement: PracticeEngagement) {
+        this.practiceEngagement = practiceEngagement
     }
 
     fun pauseAudio() {
         audioManager?.isPlaying()?.let {
-            if(it){
+            if (it) {
                 audioManager?.onPause()
                 playPauseBtn.state = MaterialPlayPauseDrawable.State.Play
             }
@@ -150,60 +151,63 @@ class PracticeAudioViewHolder(
         audioManager?.playerListener = this
         audioManager?.play(filePath!!)
         filePath?.let {
-            if(it!=audioManager?.currentPlayingUrl){
+            if (it != audioManager?.currentPlayingUrl) {
                 audioManager?.play(filePath!!)
             }
         }
         audioManager?.setProgressUpdateListener(this)
         if (filePath.isNullOrEmpty().not()) {
             playPauseBtn.state = MaterialPlayPauseDrawable.State.Pause
+            updateUIOnPlay()
         }
     }
 
     @Click(R.id.btn_play_info)
     fun playSubmitPracticeAudio() {
-        try {
-            val audioType = AudioType()
-            audioType.audio_url = filePath!!
-            audioType.downloadedLocalPath = filePath!!
-            audioType.duration =
-                Utils.getDurationOfMedia(context!!, filePath!!)?.toInt() ?: 0
-            audioType.id = Random.nextInt().toString()
+        if (ReadingFragmentWithoutFeedback.isAudioRecording.not()) {
+            try {
+                val audioType = AudioType()
+                audioType.audio_url = filePath!!
+                audioType.downloadedLocalPath = filePath!!
+                audioType.duration =
+                    Utils.getDurationOfMedia(context!!, filePath!!)?.toInt() ?: 0
+                audioType.id = Random.nextInt().toString()
 
-            val state =
-                if (playPauseBtn.state == MaterialPlayPauseDrawable.State.Pause && audioManager!!.isPlaying()) {
-                    audioManager?.setProgressUpdateListener(this)
-                    MaterialPlayPauseDrawable.State.Play
-                } else {
-                    MaterialPlayPauseDrawable.State.Pause
-                }
-            playPauseBtn.state = state
-
-            if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
-                StyleableToast.Builder(AppObjectController.joshApplication)
-                    .gravity(Gravity.BOTTOM)
-                    .text(context!!.getString(R.string.volume_up_message)).cornerRadius(16)
-                    .length(Toast.LENGTH_LONG)
-                    .solidBackground().show()
-            }
-            if (audioManager?.currentPlayingUrl?.isNotEmpty() == true && audioManager?.currentPlayingUrl == audioType.audio_url) {
-
-                if (checkIsPlayer()) {
-                    filePath?.let {
-                        if(it!=audioManager?.currentPlayingUrl){
-                            audioType.audio_url=filePath!!
-                        }
+                val state =
+                    if (playPauseBtn.state == MaterialPlayPauseDrawable.State.Pause && audioManager!!.isPlaying()) {
+                        audioManager?.setProgressUpdateListener(this)
+                        MaterialPlayPauseDrawable.State.Play
+                    } else {
+                        MaterialPlayPauseDrawable.State.Pause
                     }
-                    audioManager?.setProgressUpdateListener(this)
-                    audioManager?.resumeOrPause()
+                playPauseBtn.state = state
+
+                if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
+                    StyleableToast.Builder(AppObjectController.joshApplication)
+                        .gravity(Gravity.BOTTOM)
+                        .text(context!!.getString(R.string.volume_up_message)).cornerRadius(16)
+                        .length(Toast.LENGTH_LONG)
+                        .solidBackground().show()
+                }
+                if (audioManager?.currentPlayingUrl?.isNotEmpty() == true && audioManager?.currentPlayingUrl == audioType.audio_url) {
+
+                    if (checkIsPlayer()) {
+                        filePath?.let {
+                            if (it != audioManager?.currentPlayingUrl) {
+                                audioType.audio_url = filePath!!
+                            }
+                        }
+                        audioManager?.setProgressUpdateListener(this)
+                        audioManager?.resumeOrPause()
+                    } else {
+                        onPlayAudio(audioType)
+                    }
                 } else {
                     onPlayAudio(audioType)
                 }
-            } else {
-                onPlayAudio(audioType)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
         }
     }
 
