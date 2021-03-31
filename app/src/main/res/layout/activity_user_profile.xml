@@ -55,30 +55,30 @@
                     android:id="@+id/edit_pic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="@id/user_pic"
-                    app:layout_constraintEnd_toEndOf="@id/user_pic"
-                    app:layout_constraintBottom_toBottomOf="@id/user_pic"
-                    android:textColor="@color/black"
                     android:layout_marginBottom="@dimen/_6sdp"
+                    android:text="Edit"
+                    android:textColor="@color/black"
                     android:visibility="gone"
-                    android:text="Edit"/>
+                    app:layout_constraintBottom_toBottomOf="@id/user_pic"
+                    app:layout_constraintEnd_toEndOf="@id/user_pic"
+                    app:layout_constraintStart_toStartOf="@id/user_pic" />
 
                 <FrameLayout
                     android:id="@+id/online_status_iv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_6sdp"
                     android:background="@drawable/circle2"
                     android:backgroundTint="@color/white"
                     android:padding="@dimen/_2sdp"
-                    android:layout_margin="@dimen/_6sdp"
                     android:visibility="gone"
-                    tools:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="@id/user_pic"
                     app:layout_constraintEnd_toEndOf="@id/user_pic"
                     app:layout_constraintHorizontal_bias="1"
                     app:layout_constraintStart_toStartOf="@id/user_pic"
                     app:layout_constraintTop_toTopOf="@id/user_pic"
-                    app:layout_constraintVertical_bias="1">
+                    app:layout_constraintVertical_bias="1"
+                    tools:visibility="visible">
 
                     <ImageView
                         android:layout_width="@dimen/_12sdp"
@@ -92,14 +92,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_16sdp"
-                    android:layout_marginEnd="@dimen/_4sdp"
                     android:layout_marginTop="@dimen/_24sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-                    android:textColor="@color/black"
+                    android:layout_marginEnd="@dimen/_4sdp"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                    android:textColor="@color/black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toEndOf="@id/user_pic"
@@ -156,29 +156,30 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_1sdp"
                     android:layout_margin="@dimen/_8sdp"
-                    android:visibility="invisible"
                     android:background="@color/grey"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:visibility="invisible"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/user_pic" />
 
                 <LinearLayout
                     android:id="@+id/point_layout"
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/_70sdp"
+                    android:layout_height="@dimen/_50sdp"
                     android:layout_marginTop="@dimen/_4sdp"
                     android:background="@drawable/ic_points_bg"
-                    android:elevation="@dimen/_4sdp"
                     android:clickable="true"
+                    android:elevation="@dimen/_4sdp"
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:orientation="vertical"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintEnd_toStartOf="@id/minutes_layout"
+                    app:layout_constraintHorizontal_bias="1"
+                    app:layout_constraintHorizontal_chainStyle="spread"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/divider"
                     app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.45">
+                    app:layout_constraintWidth_percent="0.33">
 
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -189,6 +190,7 @@
                         android:gravity="center"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_bold"
                         android:textColor="@color/white"
+                        android:textSize="@dimen/_18ssp"
                         tools:text="22,234" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -197,7 +199,48 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="@string/points"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
+                        android:textColor="@color/white" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/minutes_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_50sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:background="@drawable/ic_minutes_spoken_bg"
+                    android:clickable="true"
+                    android:elevation="@dimen/_4sdp"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toEndOf="@id/point_layout"
+                    app:layout_constraintTop_toBottomOf="@id/divider"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.36">
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/minutes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_bold"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_18ssp"
+                        tools:text="8322" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/minutes_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/user_min_text"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
                         android:textColor="@color/white" />
 
                 </LinearLayout>
@@ -206,13 +249,13 @@
                     android:id="@+id/streaks_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginTop="@dimen/_4sdp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/point_layout"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                     android:textColor="@color/colorPrimary"
-                    tools:text="@string/user_streak_text"/>
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/point_layout"
+                    tools:text="@string/user_streak_text" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/awards_heading"
@@ -224,9 +267,9 @@
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                     android:textColor="@color/black"
                     android:visibility="gone"
-                    tools:visibility="visible"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/streaks_text" />
+                    app:layout_constraintTop_toBottomOf="@id/streaks_text"
+                    tools:visibility="visible" />
 
 
                 <View
@@ -236,34 +279,35 @@
                     android:layout_marginVertical="@dimen/_3sdp"
                     android:layout_marginStart="@dimen/_6sdp"
                     android:background="@color/light_shade_of_gray"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/awards_heading" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/no_award_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    tools:visibility="visible"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/award_divider"
                     android:layout_marginTop="@dimen/_32sdp"
-                    app:srcCompat="@drawable/ic_no_award" />
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/award_divider"
+                    app:srcCompat="@drawable/ic_no_award"
+                    tools:visibility="visible" />
+
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/no_award_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    tools:visibility="visible"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="@dimen/_6sdp"
                     android:text="No Awards won yet"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                     android:textColor="@color/black"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/no_award_icon"
-                    android:layout_marginTop="@dimen/_6sdp" />
+                    tools:visibility="visible" />
 
                 <LinearLayout
                     android:id="@+id/multi_line_ll"
@@ -273,10 +317,10 @@
                     android:orientation="vertical"
                     android:padding="@dimen/_2sdp"
                     android:visibility="visible"
-                    tools:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/award_divider" />
+                    app:layout_constraintTop_toBottomOf="@id/award_divider"
+                    tools:visibility="visible" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

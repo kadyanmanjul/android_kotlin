@@ -94,6 +94,7 @@
         <activity android:name=".ui.points_history.PointsInfoActivity" />
         <activity android:name=".ui.introduction.DemoSpeakingPractiseActivity" />
         <activity android:name=".ui.points_history.PointsHistoryActivity" />
+        <activity android:name=".ui.points_history.SpokenHistoryActivity" />
         <activity android:name=".ui.userprofile.UserProfileActivity" />
         <activity android:name=".ui.leaderboard.PreviousLeaderboardActivity" />
         <activity android:name=".ui.userprofile.SeeAllAwardActivity" />

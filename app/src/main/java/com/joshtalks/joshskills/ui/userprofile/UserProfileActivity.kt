@@ -82,6 +82,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             openPointHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
         }
 
+        binding.minutesLayout.setOnClickListener {
+            openSpokenMinutesHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
+        }
+
         binding.userPic.setOnClickListener {
             if (mentorId == Mentor.getInstance().getId()) {
                 if (viewModel.getUserProfileUrl().isNullOrBlank().not()) {
@@ -140,6 +144,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             when (it.itemId) {
                 R.id.menu_points_history -> {
                     openPointHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
+                }
+                R.id.minutes_points_history -> {
+                    openSpokenMinutesHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
                 }
                 R.id.how_to_get_points -> {
                     startActivity(
@@ -253,7 +260,27 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     }
                 }
                 AppObjectController.uiHandler.post {
-                    binding.points.text = DecimalFormat("#,##,##,###").format(userData.points)
+                    binding.points.text = DecimalFormat("#,##,##,###").format(it)
+                }
+            }
+        }
+
+        userData.minutesSpoken?.let {
+            var incrementalPoints = 0
+            val incrementalValue = it.div(50)
+            CoroutineScope(Dispatchers.IO).launch {
+                if (incrementalValue > 0) {
+                    while (incrementalPoints <= it) {
+                        AppObjectController.uiHandler.post {
+                            binding.minutes.text =
+                                DecimalFormat("#,##,##,###").format(incrementalPoints)
+                        }
+                        incrementalPoints = incrementalPoints.plus(incrementalValue)
+                        delay(25)
+                    }
+                }
+                AppObjectController.uiHandler.post {
+                    binding.minutes.text = DecimalFormat("#,##,##,###").format(it)
                 }
             }
         }
