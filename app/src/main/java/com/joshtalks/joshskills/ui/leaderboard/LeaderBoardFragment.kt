@@ -29,7 +29,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.Locale
+import java.util.*
 
 class LeaderBoardFragment : Fragment() {
 
@@ -157,14 +157,20 @@ class LeaderBoardFragment : Fragment() {
                 )
             }
             "BATCH" -> {
-                viewModel.leaderBoardDataOfBatch.observe(viewLifecycleOwner, Observer {
-                    setData(it)
-                })
+                viewModel.leaderBoardDataOfBatch.observe(
+                    viewLifecycleOwner,
+                    Observer {
+                        setData(it)
+                    }
+                )
             }
             "LIFETIME" -> {
-                viewModel.leaderBoardDataOfLifeTime.observe(viewLifecycleOwner, Observer {
-                    setData(it)
-                })
+                viewModel.leaderBoardDataOfLifeTime.observe(
+                    viewLifecycleOwner,
+                    Observer {
+                        setData(it)
+                    }
+                )
             }
         }
 
@@ -191,7 +197,7 @@ class LeaderBoardFragment : Fragment() {
             setCurrentUserDetails(it)
         }
         leaderboardResponse1.lastWinner?.let {
-            if (it.id.isNullOrEmpty().not()){
+            if (it.id.isNullOrEmpty().not()) {
                 binding.recyclerView.addView(
                     LeaderBoardWinnerItemViewHolder(
                         it,
@@ -200,7 +206,6 @@ class LeaderBoardFragment : Fragment() {
                     )
                 )
             }
-
         }
         binding.recyclerView.addView(
             LeaderBoardItemViewHolder(
@@ -210,6 +215,7 @@ class LeaderBoardFragment : Fragment() {
                 requireContext(), isHeader = true
             )
         )
+        leaderboardResponse1.top_50_mentor_list?.getOrNull(2)?.isOnline = true // Chutiya logic 
         leaderboardResponse1.top_50_mentor_list?.forEach {
             binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
         }
@@ -276,10 +282,10 @@ class LeaderBoardFragment : Fragment() {
             isRound = true
         )
         binding.userLayout.visibility = View.VISIBLE
-        if (response.isOnline != null && response.isOnline) {
-            binding.onlineStatusIv.visibility = View.VISIBLE
+        binding.onlineStatusIv.visibility = if (response.isOnline) {
+            View.VISIBLE
         } else {
-            binding.onlineStatusIv.visibility = View.GONE
+            View.GONE
         }
     }
 
@@ -330,7 +336,7 @@ class LeaderBoardFragment : Fragment() {
             }
             val lbOpenCount = PrefManager.getIntValue(LEADER_BOARD_OPEN_COUNT)
             val b = viewModel.isUserHad4And5Lesson()
-            if (lbOpenCount == 3 || b) {
+            if (lbOpenCount >= 3 || b) {
                 delay(150)
                 val item =
                     binding.recyclerView.getViewResolverAtPosition(2) as LeaderBoardItemViewHolder

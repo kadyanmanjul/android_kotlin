@@ -27,14 +27,10 @@ import com.skydoves.balloon.BalloonAnimation
 import com.skydoves.balloon.overlay.BalloonOverlayAnimation
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.HashMap
-import java.util.Locale
+import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.android.synthetic.main.base_toolbar.iv_back
-import kotlinx.android.synthetic.main.base_toolbar.iv_earn
-import kotlinx.android.synthetic.main.base_toolbar.iv_help
-import kotlinx.android.synthetic.main.base_toolbar.text_message_title
+import java.util.*
 
 class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
     lateinit var binding: ActivityLeaderboardViewPagerBinding
@@ -155,7 +151,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
         }
         val lbOpenCount = PrefManager.getIntValue(LEADER_BOARD_OPEN_COUNT)
         val isLastCall = PrefManager.getBoolValue(P2P_LAST_CALL)
-        if (lbOpenCount > 4 || isLastCall) {
+        if (lbOpenCount >= 4 || isLastCall) {
             val balloon = Balloon.Builder(this)
                 .setText(getString(R.string.search_tooltip))
                 .setTextSize(15F)
