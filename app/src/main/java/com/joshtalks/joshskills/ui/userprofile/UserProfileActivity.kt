@@ -259,6 +259,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
         // binding.points.text = DecimalFormat("#,##,##,###").format(userData.points)
         binding.streaksText.text = getString(R.string.user_streak_text, userData.streak)
+        binding.streaksText.visibility=View.GONE
 
         if (userData.awardCategory.isNullOrEmpty()) {
             binding.awardsHeading.visibility = View.GONE
