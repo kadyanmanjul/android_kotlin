@@ -118,6 +118,11 @@ class LeaderboardSearchResultFragment : Fragment() {
                     }
                 )
             }
+            LeaderboardType.BATCH -> {
+                viewModel.leaderBoardDataOfBatch.observe(viewLifecycleOwner, Observer {
+                    setData(it)
+                })
+            }
             else -> {
                 viewModel.leaderBoardDataOfLifeTime.observe(viewLifecycleOwner, Observer {
                     setData(it)

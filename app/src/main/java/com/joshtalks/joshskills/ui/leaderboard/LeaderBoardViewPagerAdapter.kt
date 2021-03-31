@@ -11,7 +11,7 @@ class LeaderBoardViewPagerAdapter(
 
 
     override fun getItemCount(): Int {
-        return 4
+        return 5
     }
 
     override fun createFragment(position: Int): Fragment {
@@ -24,6 +24,9 @@ class LeaderBoardViewPagerAdapter(
             }
             2 -> {
                 LeaderBoardFragment.newInstance("MONTH")
+            }
+            3 -> {
+                LeaderBoardFragment.newInstance("BATCH")
             }
             else -> {
                 LeaderBoardFragment.newInstance("LIFETIME")

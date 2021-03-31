@@ -25,6 +25,7 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
     val leaderBoardDataOfToday: MutableLiveData<LeaderboardResponse> = MutableLiveData()
     val leaderBoardDataOfWeek: MutableLiveData<LeaderboardResponse> = MutableLiveData()
     val leaderBoardDataOfMonth: MutableLiveData<LeaderboardResponse> = MutableLiveData()
+    val leaderBoardDataOfBatch: MutableLiveData<LeaderboardResponse> = MutableLiveData()
     val leaderBoardDataOfLifeTime: MutableLiveData<LeaderboardResponse> = MutableLiveData()
 
     fun getFullLeaderBoardData(mentorId: String) {
@@ -51,12 +52,18 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
                     }
                 }
                 val call4 = async(Dispatchers.IO) {
+                    getMentorData(mentorId, "BATCH")?.let {
+                        leaderBoardDataOfBatch.postValue(it)
+                        map.put("BATCH", it)
+                    }
+                }
+                val call5 = async(Dispatchers.IO) {
                     getMentorData(mentorId, "LIFETIME")?.let {
                         leaderBoardDataOfLifeTime.postValue(it)
                         map.put("LIFETIME", it)
                     }
                 }
-                joinAll(call1, call2, call3,call4)
+                joinAll(call1, call2, call3,call4,call5)
                 leaderBoardData.postValue(map)
                 apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                 return@launch
@@ -121,6 +128,12 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
                     }
                     2 -> {
                         intervalType = "MONTH"
+                    }
+                    3 -> {
+                        intervalType = "BATCH"
+                    }
+                    4 -> {
+                        intervalType = "LIFETIME"
                     }
                 }
 

@@ -26,6 +26,7 @@ class LeaderBoardSearchViewModel : ViewModel() {
     val leaderBoardDataOfWeek: MutableLiveData<List<LeaderboardMentor>> = MutableLiveData()
     val leaderBoardDataOfMonth: MutableLiveData<List<LeaderboardMentor>> = MutableLiveData()
     val leaderBoardDataOfLifeTime: MutableLiveData<List<LeaderboardMentor>> = MutableLiveData()
+    val leaderBoardDataOfBatch: MutableLiveData<List<LeaderboardMentor>> = MutableLiveData()
     val recentSearchLiveData: MutableLiveData<List<RecentSearch>> = MutableLiveData()
 
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
@@ -66,12 +67,18 @@ class LeaderBoardSearchViewModel : ViewModel() {
                 }
             }
             val call4 = async(Dispatchers.IO) {
+                searchQuery(key, LeaderboardType.BATCH, 0)?.let {
+                    leaderBoardDataOfBatch.postValue(it)
+                }
+            }
+
+            val call5 = async(Dispatchers.IO) {
                 searchQuery(key, LeaderboardType.LIFETIME, 0)?.let {
                     leaderBoardDataOfLifeTime.postValue(it)
                 }
             }
 
-            joinAll(call1, call2, call3,call4)
+            joinAll(call1, call2, call3,call4,call5)
             apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
             return@launch
         }
@@ -110,6 +117,9 @@ class LeaderBoardSearchViewModel : ViewModel() {
             LeaderboardType.MONTH -> {
                 getMonthSearch(currentSearchedKey, pageNo)
             }
+            LeaderboardType.BATCH -> {
+                getBatchSearch(currentSearchedKey, pageNo)
+            }
             LeaderboardType.LIFETIME -> {
                 getLifeTimeSearch(currentSearchedKey, pageNo)
             }
@@ -140,6 +150,15 @@ class LeaderBoardSearchViewModel : ViewModel() {
             val result = searchQuery(key, LeaderboardType.MONTH, pageNo)
             if (result != null)
                 leaderBoardDataOfMonth.postValue(result)
+        }
+    }
+
+    private fun getBatchSearch(key: String, pageNo: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            apiCallStatusLiveData.postValue(ApiCallStatus.START)
+            val result = searchQuery(key, LeaderboardType.BATCH, pageNo)
+            if (result != null)
+                leaderBoardDataOfBatch.postValue(result)
         }
     }
 

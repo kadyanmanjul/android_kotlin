@@ -39,6 +39,7 @@ enum class LeaderboardType {
     TODAY,
     WEEK,
     MONTH,
+    BATCH,
     LIFETIME
 }
 

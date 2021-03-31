@@ -153,6 +153,11 @@ class LeaderBoardFragment : Fragment() {
                     }
                 )
             }
+            "BATCH" -> {
+                viewModel.leaderBoardDataOfBatch.observe(viewLifecycleOwner, Observer {
+                    setData(it)
+                })
+            }
             "LIFETIME" -> {
                 viewModel.leaderBoardDataOfLifeTime.observe(viewLifecycleOwner, Observer {
                     setData(it)

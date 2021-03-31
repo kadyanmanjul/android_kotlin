@@ -146,6 +146,9 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
                     list = "MONTH"
                 }
                 3 -> {
+                    list = "BATCH"
+                }
+                4 -> {
                     list = "LIFETIME"
                 }
             }

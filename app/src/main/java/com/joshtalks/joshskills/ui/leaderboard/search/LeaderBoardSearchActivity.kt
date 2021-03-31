@@ -125,7 +125,7 @@ class LeaderBoardSearchActivity : BaseActivity() {
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                if (position != 3) {
+                if (position != 4) {
                     isFirstTime = false
                 }
             }
@@ -146,6 +146,9 @@ class LeaderBoardSearchActivity : BaseActivity() {
                     list = "MONTH"
                 }
                 3 -> {
+                    list = "BATCH"
+                }
+                4 -> {
                     list = "LIFETIME"
                 }
             }
@@ -194,7 +197,7 @@ class LeaderBoardSearchActivity : BaseActivity() {
         binding.divider.visibility = View.VISIBLE
         if (isFirstTime) {
             AppObjectController.uiHandler.post {
-                binding.viewPager.currentItem = 3
+                binding.viewPager.currentItem = 4
                 binding.viewPager.adapter?.notifyDataSetChanged()
             }
         }
