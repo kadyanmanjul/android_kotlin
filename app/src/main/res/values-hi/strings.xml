@@ -451,5 +451,6 @@
     <string name="did_not_answer_message">हमें कोई उपयोगकर्ता नहीं मिला, कृपया पुनः प्रयास करें.</string>
     <string name="last_seen">अंतिम सक्रिय %1$s</string>
     <string name="rank">पद</string>
+    <string name="how_to_pronounce">How to pronounce:</string>
 
 </resources>

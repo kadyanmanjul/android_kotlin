@@ -178,8 +178,8 @@ class ReadingFragmentWithoutFeedback :
             if (audioManager != null) {
                 audioManager?.onPause()
                 binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
-                pauseAllViewHolderAudio()
             }
+            pauseAllViewHolderAudio()
         } catch (ex: Exception) {
             Timber.d(ex)
         }
@@ -246,7 +246,7 @@ class ReadingFragmentWithoutFeedback :
 
     private fun pauseAllViewHolderAudio() {
         val viewHolders = binding.audioList.allViewResolvers as List<PracticeAudioViewHolder>
-        viewHolders.forEach { it ->
+        viewHolders.forEach {
             it.pauseAudio()
         }
     }
@@ -632,7 +632,9 @@ class ReadingFragmentWithoutFeedback :
                             practice,
                             context,
                             practice.answerUrl
-                        )
+                        ) {
+                            binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+                        }
                     )
                     if (practice.practiceFeedback != null) {
                         // binding.feedbackLayout.visibility = VISIBLE
@@ -680,7 +682,11 @@ class ReadingFragmentWithoutFeedback :
         binding.subPractiseSubmitLayout.visibility = VISIBLE
         binding.audioList.visibility = VISIBLE
         removePreviousAddedViewHolder()
-        binding.audioList.addView(PracticeAudioViewHolder(null, context, filePath))
+        binding.audioList.addView(
+            PracticeAudioViewHolder(null, context, filePath) {
+                binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+            }
+        )
         initializePractiseSeekBar()
         enableSubmitButton()
     }
@@ -728,6 +734,7 @@ class ReadingFragmentWithoutFeedback :
             }
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
+                    isAudioRecording = true
                     binding.videoPlayer.onPause()
                     pauseAllAudioAndUpdateViews()
                     binding.rootView.requestDisallowInterceptTouchEvent(true)
@@ -750,6 +757,7 @@ class ReadingFragmentWithoutFeedback :
                 MotionEvent.ACTION_MOVE -> {
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    isAudioRecording = false
                     binding.rootView.requestDisallowInterceptTouchEvent(false)
                     binding.counterTv.stop()
                     viewModel.stopRecording()
@@ -785,23 +793,25 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun playPracticeAudio() {
-        if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
-            StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
-                .text(getString(R.string.volume_up_message)).cornerRadius(16)
-                .length(Toast.LENGTH_LONG)
-                .solidBackground().show()
-        }
-        appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio Played")
+        if (isAudioRecording.not()) {
+            if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
+                StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
+                    .text(getString(R.string.volume_up_message)).cornerRadius(16)
+                    .length(Toast.LENGTH_LONG)
+                    .solidBackground().show()
+            }
+            appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio Played")
 
-        if (audioManager?.currentPlayingUrl != null &&
-            audioManager?.currentPlayingUrl == currentLessonQuestion?.audioList?.getOrNull(0)?.audio_url
-        ) {
-            audioManager?.setProgressUpdateListener(this)
-            audioManager?.resumeOrPause()
-        } else {
-            onPlayAudio(
-                currentLessonQuestion?.audioList?.getOrNull(0)!!
-            )
+            if (audioManager?.currentPlayingUrl != null &&
+                audioManager?.currentPlayingUrl == currentLessonQuestion?.audioList?.getOrNull(0)?.audio_url
+            ) {
+                audioManager?.setProgressUpdateListener(this)
+                audioManager?.resumeOrPause()
+            } else {
+                onPlayAudio(
+                    currentLessonQuestion?.audioList?.getOrNull(0)!!
+                )
+            }
         }
     }
 
@@ -843,9 +853,16 @@ class ReadingFragmentWithoutFeedback :
             viewHolders.forEach {
                 if (it is PracticeAudioViewHolder) {
                     it.playPauseBtn.state = MaterialPlayPauseDrawable.State.Pause
+                    binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
                 }
             }
         } else {
+            val viewHolders = binding.audioList.allViewResolvers as List<*>
+            viewHolders.forEach {
+                if (it is PracticeAudioViewHolder) {
+                    it.playPauseBtn.state = MaterialPlayPauseDrawable.State.Play
+                }
+            }
             binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
         }
     }
@@ -1003,6 +1020,7 @@ class ReadingFragmentWithoutFeedback :
     }
 
     companion object {
+        var isAudioRecording = false
         private const val IMAGE_OR_VIDEO_SELECT_REQUEST_CODE = 1081
         private const val TEXT_FILE_ATTACHMENT_REQUEST_CODE = 1082
         private val DOCX_FILE_MIME_TYPE = arrayOf(

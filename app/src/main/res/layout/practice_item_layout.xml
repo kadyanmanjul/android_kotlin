@@ -184,7 +184,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:text="How to pronounce: "
+                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:text="@string/how_to_pronounce"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular" />
 
                 <androidx.appcompat.widget.AppCompatImageView
