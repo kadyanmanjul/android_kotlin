@@ -22,6 +22,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -43,7 +44,6 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -354,6 +354,7 @@ class WebRtcActivity : AppCompatActivity() {
                 binding.topicName.text = it["topic_name"]
                 binding.callerName.text = it["name"]
                 setImageInIV(it["profile_pic"])
+                mBoundService?.setOppositeUserInfo(it)
             }
         )
     }
@@ -479,7 +480,7 @@ class WebRtcActivity : AppCompatActivity() {
             userDetailLiveData.postValue(mBoundService?.getOppositeUserInfo())
             return
         }
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val response = AppObjectController.p2pNetworkService.getUserDetailOnCall(uuid)
                 userDetailLiveData.postValue(response)

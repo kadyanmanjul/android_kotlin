@@ -10,12 +10,15 @@
             type="com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity" />
     </data>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <LinearLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:orientation="vertical">
 
+
+        <include layout="@layout/call_ongoing_layout" />
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar"
@@ -91,8 +94,7 @@
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="?attr/actionBarSize">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -143,7 +145,5 @@
             app:cpb_progressbar_color="@color/colorAccent"
             app:cpb_progressbar_width="@dimen/_4sdp"
             app:cpb_round_border="true" />
-
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </LinearLayout>
 </layout>
