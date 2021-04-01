@@ -15,12 +15,11 @@ import com.joshtalks.joshskills.repository.local.entity.AwardMentorModel
 import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LessonItemClickEventBus
 import com.joshtalks.joshskills.repository.server.Award
-import de.hdodenhof.circleimageview.CircleImageView
 import java.util.Locale
 
 class StudentOfTheDayView : FrameLayout {
     private lateinit var studentOfDash: AppCompatTextView
-    private lateinit var userPic: CircleImageView
+    private lateinit var userPic: AppCompatImageView
     private lateinit var awardImage: AppCompatImageView
     private lateinit var studentName: AppCompatTextView
     private lateinit var totalPoints: AppCompatTextView
@@ -79,7 +78,7 @@ class StudentOfTheDayView : FrameLayout {
             userPic.setUserImageOrInitials(
                 awardMentorModel.performerPhotoUrl,
                 awardMentorModel.performerName?.capitalize(Locale.getDefault()).toString(),
-                dpToPx = 28
+                dpToPx = 28,isRound = true
             )
         }
         awardMentorModel.awardImageUrl?.let {

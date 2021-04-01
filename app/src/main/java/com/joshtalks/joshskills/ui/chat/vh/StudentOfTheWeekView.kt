@@ -15,11 +15,10 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.AwardMentorModel
 import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
 import com.joshtalks.joshskills.repository.server.Award
-import de.hdodenhof.circleimageview.CircleImageView
 import java.util.Locale
 
 class StudentOfTheWeekView : FrameLayout {
-    private lateinit var userPic: CircleImageView
+    private lateinit var userPic: AppCompatImageView
     private lateinit var awardImage: AppCompatImageView
     private lateinit var studentName: AppCompatTextView
     private lateinit var rankOutOfStudents: AppCompatTextView
@@ -75,13 +74,18 @@ class StudentOfTheWeekView : FrameLayout {
         }
         studentName.text = resp
         rankOutOfStudents.text =
-            awardMentorModel.totalPointsText?.let { HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY) }
+            awardMentorModel.totalPointsText?.let {
+                HtmlCompat.fromHtml(
+                    it,
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
+            }
         userText.text = awardMentorModel.description
         userPic.post {
             userPic.setUserImageOrInitials(
                 awardMentorModel.performerPhotoUrl,
                 awardMentorModel.performerName?.capitalize(Locale.getDefault()).toString(),
-                dpToPx = 28
+                dpToPx = 28, isRound = true
             )
         }
         awardDate.text = awardMentorModel.dateText

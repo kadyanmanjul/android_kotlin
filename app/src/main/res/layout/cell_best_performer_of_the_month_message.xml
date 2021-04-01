@@ -34,7 +34,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.38">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/user_pic"
                         android:layout_width="@dimen/_46sdp"
                         android:layout_height="@dimen/_44sdp"
