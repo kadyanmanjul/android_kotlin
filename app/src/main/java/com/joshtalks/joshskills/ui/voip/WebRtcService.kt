@@ -313,7 +313,6 @@ class WebRtcService : BaseWebRtcService() {
             }
 
             callData = null
-            userDetailMap = null
         }
 
         override fun onUserJoined(uid: Int, elapsed: Int) {
@@ -1068,6 +1067,7 @@ class WebRtcService : BaseWebRtcService() {
         isCallerJoin = false
         callStartTime = 0L
         retryInitLibrary = 0
+        userDetailMap = null
         super.onTaskRemoved(rootIntent)
         Timber.tag(TAG).e("OnTaskRemoved")
     }
@@ -1075,6 +1075,7 @@ class WebRtcService : BaseWebRtcService() {
     override fun onDestroy() {
         RtcEngine.destroy()
         stopRing()
+        userDetailMap = null
         isEngineInit = false
         joshAudioManager?.quitEverything()
         AppObjectController.mRtcEngine = null

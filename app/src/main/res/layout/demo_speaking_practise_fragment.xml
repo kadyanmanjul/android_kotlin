@@ -21,7 +21,7 @@
             android:background="@color/white">
 
             <include
-                android:id="@+id/toolbar"
+                android:id="@+id/toolbar_container"
                 layout="@layout/base_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
@@ -86,7 +86,7 @@
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/reading"
-                app:layout_constraintTop_toBottomOf="@id/toolbar"
+                app:layout_constraintTop_toBottomOf="@id/toolbar_container"
                 app:layout_constraintWidth_percent="0.25" />
 
             <ScrollView

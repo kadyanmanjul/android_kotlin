@@ -26,18 +26,24 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
             mBoundService?.addListener(callback)
             AppObjectController.uiHandler.postDelayed(
                 {
-                    if (WebRtcService.isCallWasOnGoing) {
-                        findViewById<View>(R.id.ongoing_call_container).visibility = View.VISIBLE
-                        with(findViewById<Chronometer>(R.id.call_timer)) {
-                            base = SystemClock.elapsedRealtime() - mBoundService?.getTimeOfTalk()!!
-                            start()
-                        }
+                    try {
+                        if (WebRtcService.isCallWasOnGoing) {
+                            findViewById<View>(R.id.ongoing_call_container).visibility =
+                                View.VISIBLE
+                            with(findViewById<Chronometer>(R.id.call_timer)) {
+                                base =
+                                    SystemClock.elapsedRealtime() - mBoundService?.getTimeOfTalk()!!
+                                start()
+                            }
 
-                        findViewById<View>(R.id.ongoing_call_container).setOnClickListener {
-                            mBoundService?.openConnectedCallActivity()
+                            findViewById<View>(R.id.ongoing_call_container).setOnClickListener {
+                                mBoundService?.openConnectedCallActivity()
+                            }
+                        } else {
+                            findViewById<View>(R.id.ongoing_call_container).visibility = View.GONE
                         }
-                    } else {
-                        findViewById<View>(R.id.ongoing_call_container).visibility = View.GONE
+                    } catch (ex: Throwable) {
+                        ex.printStackTrace()
                     }
                 },
                 100
