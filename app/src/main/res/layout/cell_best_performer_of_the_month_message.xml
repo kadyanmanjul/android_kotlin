@@ -29,7 +29,7 @@
                 android:layout_marginStart="@dimen/_32sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
-                android:background="@drawable/crop_new"
+                android:background="@drawable/crop_new_"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.38">
@@ -52,11 +52,9 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_award"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_44sdp"
+                android:layout_width="@dimen/_48sdp"
+                android:layout_height="@dimen/_52sdp"
                 android:layout_marginEnd="@dimen/_32sdp"
-                android:gravity="center_vertical|start"
-                android:scaleType="fitXY"
                 app:layout_constraintBottom_toBottomOf="@id/image_container"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1"
@@ -116,7 +114,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_26sdp"
-                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginTop="@dimen/_8sdp"
                 android:gravity="center"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Salsa_SemiBold"
                 android:textSize="@dimen/_9ssp"
