@@ -17,7 +17,7 @@ import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
-import java.util.*
+import java.util.Locale
 
 @Layout(R.layout.list_item)
 class LeaderBoardItemViewHolder(

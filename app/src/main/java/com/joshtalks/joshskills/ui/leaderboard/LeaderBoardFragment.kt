@@ -217,6 +217,21 @@ class LeaderBoardFragment : Fragment() {
             )
         )
 
+
+        if (type == "TODAY") {
+            liveUserPosition =
+                leaderboardResponse1.top_50_mentor_list?.indexOfFirst { it.isOnline } ?: 0
+            if (liveUserPosition < 0 || liveUserPosition > 4) {
+                liveUserPosition = 2
+                leaderboardResponse1.top_50_mentor_list?.getOrNull(liveUserPosition)?.isOnline =
+                    true
+                liveUserPosition = liveUserPosition.plus(2)
+
+            } else {
+                liveUserPosition = liveUserPosition.plus(2)
+            }
+        }
+
         leaderboardResponse1.top_50_mentor_list?.forEach {
             binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
         }
@@ -262,15 +277,6 @@ class LeaderBoardFragment : Fragment() {
 
         binding.recyclerView.addView(EmptyItemViewHolder())
 
-        if (type == "TODAY") {
-            liveUserPosition =
-                leaderboardResponse1.top_50_mentor_list?.indexOfFirst { it.isOnline } ?: 0
-            if (liveUserPosition < 1 || liveUserPosition > 4) {
-                liveUserPosition = 2
-                leaderboardResponse1.top_50_mentor_list?.getOrNull(liveUserPosition)?.isOnline =
-                    true
-            }
-        }
         leaderboardResponse1.last_mentor_list?.forEach {
             binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
         }
