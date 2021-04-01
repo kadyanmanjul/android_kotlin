@@ -1,17 +1,7 @@
 package com.joshtalks.joshskills.repository.local.entity
 
 import android.os.Parcelable
-import androidx.room.ColumnInfo
-import androidx.room.Dao
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.PrimaryKey
-import androidx.room.Query
-import androidx.room.Transaction
-import androidx.room.TypeConverters
-import androidx.room.Update
+import androidx.room.*
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
@@ -19,9 +9,9 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.ConverterForLessonMaterialType
 import com.joshtalks.joshskills.repository.local.ConvertorForEngagement
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
-import java.util.Date
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
+import java.util.*
 
 @Entity(tableName = "lesson_question")
 @Parcelize
@@ -144,27 +134,27 @@ data class LessonQuestion(
     @Ignore
     var playProgress: Int = 0,
 
-    ) : DataBaseClass(), Parcelable {
+) : DataBaseClass(), Parcelable {
     init {
         questionId = id
     }
 }
 
 enum class LessonQuestionType(val type: String) {
-    Q("Q"),             // QUESTION
-    PR("PR"),           // PRACTICE
-    QUIZ("QUIZ"),       // QUIZ
-    P2P("P2P"),         // P2P
-    OTHER("OTHER")      // Default Value
+    Q("Q"), // QUESTION
+    PR("PR"), // PRACTICE
+    QUIZ("QUIZ"), // QUIZ
+    P2P("P2P"), // P2P
+    OTHER("OTHER") // Default Value
 }
 
 enum class LessonMaterialType(val type: String) {
-    TX("TX"),           // TEXT
-    VI("VI"),           // VIDEO
-    AU("AU"),           // AUDIO
-    IM("IM"),           // IMAGE
-    PD("PD"),           // PDF
-    OTHER("OTHER")      // Default Value
+    TX("TX"), // TEXT
+    VI("VI"), // VIDEO
+    AU("AU"), // AUDIO
+    IM("IM"), // IMAGE
+    PD("PD"), // PDF
+    OTHER("OTHER") // Default Value
 }
 
 @Dao
@@ -200,15 +190,18 @@ interface LessonQuestionDao {
                     question.imageList =
                         AppObjectController.appDatabase.chatDao()
                             .getImagesOfQuestion(questionId = question.id)
-                LessonMaterialType.VI -> question.videoList =
-                    AppObjectController.appDatabase.chatDao()
-                        .getVideosOfQuestion(questionId = question.id)
-                LessonMaterialType.AU -> question.audioList =
-                    AppObjectController.appDatabase.chatDao()
-                        .getAudiosOfQuestion(questionId = question.id)
-                LessonMaterialType.PD -> question.pdfList =
-                    AppObjectController.appDatabase.chatDao()
-                        .getPdfOfQuestion(questionId = question.id)
+                LessonMaterialType.VI ->
+                    question.videoList =
+                        AppObjectController.appDatabase.chatDao()
+                            .getVideosOfQuestion(questionId = question.id)
+                LessonMaterialType.AU ->
+                    question.audioList =
+                        AppObjectController.appDatabase.chatDao()
+                            .getAudiosOfQuestion(questionId = question.id)
+                LessonMaterialType.PD ->
+                    question.pdfList =
+                        AppObjectController.appDatabase.chatDao()
+                            .getPdfOfQuestion(questionId = question.id)
             }
             if (question.type == LessonQuestionType.PR) {
                 question.practiseEngagementV2 =
@@ -228,4 +221,6 @@ interface LessonQuestionDao {
         path: String = EMPTY,
     )
 
+    @Query("SELECT COUNT(id) FROM lesson_question WHERE lessonId= :lessonId")
+    suspend fun getLessonCount(lessonId: Int): Long
 }

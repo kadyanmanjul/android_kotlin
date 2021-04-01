@@ -38,6 +38,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
     var mapOfVisitedPage = HashMap<Int, Int>()
     private var compositeDisposable = CompositeDisposable()
     private var tabPosition = 0
+    var isTooltipShow = false
 
     val searchActivityResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -176,6 +177,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
                 .build()
             balloon.showAlignBottom(iv_earn)
             PrefManager.put(SEARCH_HINT_SHOW, true)
+            isTooltipShow = true
         }
     }
 

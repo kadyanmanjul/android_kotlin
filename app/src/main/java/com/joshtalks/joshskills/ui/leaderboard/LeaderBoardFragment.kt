@@ -40,6 +40,7 @@ class LeaderBoardFragment : Fragment() {
     private var userPosition: Int = 0
     private var userRank: Int = Int.MAX_VALUE
     private val viewModel by lazy { ViewModelProvider(requireActivity()).get(LeaderBoardViewModel::class.java) }
+    private var liveUserPosition = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -112,22 +113,22 @@ class LeaderBoardFragment : Fragment() {
         })*/
 
         binding.recyclerView.addOnScrollListener(object :
-                RecyclerView.OnScrollListener() {
+            RecyclerView.OnScrollListener() {
 
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() < userPosition.plus(
-                            4
-                        ) && linearLayoutManager.findLastCompletelyVisibleItemPosition() > userPosition.plus(
-                                2
-                            )
-                    ) {
-                        binding.userLayout.visibility = View.GONE
-                    } else {
-                        binding.userLayout.visibility = View.VISIBLE
-                    }
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() < userPosition.plus(
+                        4
+                    ) && linearLayoutManager.findLastCompletelyVisibleItemPosition() > userPosition.plus(
+                        2
+                    )
+                ) {
+                    binding.userLayout.visibility = View.GONE
+                } else {
+                    binding.userLayout.visibility = View.VISIBLE
                 }
-            })
+            }
+        })
     }
 
     private fun addObserver() {
@@ -215,7 +216,7 @@ class LeaderBoardFragment : Fragment() {
                 requireContext(), isHeader = true
             )
         )
-        leaderboardResponse1.top_50_mentor_list?.getOrNull(2)?.isOnline = true // Chutiya logic 
+
         leaderboardResponse1.top_50_mentor_list?.forEach {
             binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
         }
@@ -261,6 +262,15 @@ class LeaderBoardFragment : Fragment() {
 
         binding.recyclerView.addView(EmptyItemViewHolder())
 
+        if (type == "TODAY") {
+            liveUserPosition =
+                leaderboardResponse1.top_50_mentor_list?.indexOfFirst { it.isOnline } ?: 0
+            if (liveUserPosition < 1 || liveUserPosition > 4) {
+                liveUserPosition = 2
+                leaderboardResponse1.top_50_mentor_list?.getOrNull(liveUserPosition)?.isOnline =
+                    true
+            }
+        }
         leaderboardResponse1.last_mentor_list?.forEach {
             binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
         }
@@ -330,40 +340,46 @@ class LeaderBoardFragment : Fragment() {
 
     private fun addOnlineTooltip() {
         viewLifecycleOwner.lifecycleScope.launch {
-            val flag = PrefManager.getBoolValue(ONLINE_HINT_SHOW)
-            if (flag) {
-                return@launch
-            }
-            val lbOpenCount = PrefManager.getIntValue(LEADER_BOARD_OPEN_COUNT)
-            val b = viewModel.isUserHad4And5Lesson()
-            if (lbOpenCount >= 3 || b) {
-                delay(150)
-                val item =
-                    binding.recyclerView.getViewResolverAtPosition(2) as LeaderBoardItemViewHolder
-                val balloon = Balloon.Builder(requireContext())
-                    .setText(getString(R.string.online_tooltip))
-                    .setTextSize(15F)
-                    .setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                    .setArrowOrientation(ArrowOrientation.TOP)
-                    .setDismissWhenTouchOutside(true)
-                    .setCornerRadius(12f)
-                    .setWidth(BalloonSizeSpec.WRAP)
-                    .setArrowPosition(0.42f)
-                    .setPadding(8)
-                    .setMarginTop(12)
-                    .setIsVisibleOverlay(true) // sets the visibility of the overlay for highlighting an anchor.
-                    .setOverlayColorResource(R.color.pd_transparent_bg) // background color of the overlay using a color resource.
-                    .setOverlayPadding(10f) // sets a padding value of the overlay shape in
-                    .setBalloonOverlayAnimation(BalloonOverlayAnimation.FADE) // default is fade.
-                    .setDismissWhenOverlayClicked(false) // disable di
-                    .setBackgroundColorResource(R.color.white)
-                    .setBalloonAnimation(BalloonAnimation.FADE)
-                    .setLifecycleOwner(this@LeaderBoardFragment)
-                    .setDismissWhenClicked(true)
-                    .setArrowOrientation(ArrowOrientation.BOTTOM)
-                    .build()
-                balloon.showAlignBottom(item.user_pic)
-                PrefManager.put(ONLINE_HINT_SHOW, true)
+            if (type == "TODAY") {
+                val flag = PrefManager.getBoolValue(ONLINE_HINT_SHOW)
+                if (flag) {
+                    return@launch
+                }
+                if ((requireActivity() is LeaderBoardViewPagerActivity) && (requireActivity() as LeaderBoardViewPagerActivity).isTooltipShow) {
+                    return@launch
+                }
+
+                val lbOpenCount = PrefManager.getIntValue(LEADER_BOARD_OPEN_COUNT)
+                val b = viewModel.isUserHad4And5Lesson()
+                if (lbOpenCount >= 3 || b) {
+                    delay(500)
+                    val item =
+                        binding.recyclerView.getViewResolverAtPosition(liveUserPosition) as LeaderBoardItemViewHolder
+                    val balloon = Balloon.Builder(requireContext())
+                        .setText(getString(R.string.online_tooltip))
+                        .setTextSize(15F)
+                        .setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                        .setDismissWhenTouchOutside(true)
+                        .setCornerRadius(12f)
+                        .setWidth(BalloonSizeSpec.WRAP)
+                        .setArrowOrientation(ArrowOrientation.BOTTOM)
+                        // .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
+                        .setArrowPosition(0.4f)
+                        .setPadding(8)
+                        .setMarginTop(12)
+                        .setIsVisibleOverlay(true) // sets the visibility of the overlay for highlighting an anchor.
+                        .setOverlayColorResource(R.color.pd_transparent_bg) // background color of the overlay using a color resource.
+                        .setOverlayPadding(10f) // sets a padding value of the overlay shape in
+                        .setBalloonOverlayAnimation(BalloonOverlayAnimation.FADE) // default is fade.
+                        .setDismissWhenOverlayClicked(false) // disable di
+                        .setBackgroundColorResource(R.color.white)
+                        .setBalloonAnimation(BalloonAnimation.FADE)
+                        .setLifecycleOwner(this@LeaderBoardFragment)
+                        .setDismissWhenClicked(true)
+                        .build()
+                    balloon.showAlignBottom(item.user_pic)
+                    PrefManager.put(ONLINE_HINT_SHOW, true)
+                }
             }
         }
     }

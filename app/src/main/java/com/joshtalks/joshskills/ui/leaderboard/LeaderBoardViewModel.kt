@@ -58,7 +58,7 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
                         map.put("LIFETIME", it)
                     }
                 }
-                joinAll(call1, call2, call3,call4,call5)
+                joinAll(call1, call2, call3, call4, call5)
                 leaderBoardData.postValue(map)
                 apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                 return@launch
@@ -142,8 +142,22 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
 
     suspend fun isUserHad4And5Lesson(): Boolean {
         return viewModelScope.async(Dispatchers.IO) {
+            if (isUserOpen4Lesson()) {
+                return@async true
+            }
             val count =
-                AppObjectController.appDatabase.lessonDao().getLessonNumbers(arrayListOf(4, 5))
+                AppObjectController.appDatabase.lessonDao().getLessonNumbers(arrayListOf(5))
+            if (count > 0) {
+                return@async true
+            }
+            return@async false
+        }.await()
+    }
+
+    private suspend fun isUserOpen4Lesson(): Boolean {
+        return viewModelScope.async(Dispatchers.IO) {
+            val count =
+                AppObjectController.appDatabase.lessonQuestionDao().getLessonCount(4)
             if (count > 0) {
                 return@async true
             }
