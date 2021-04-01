@@ -134,7 +134,6 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
                     when (it) {
                         ApiCallStatus.FAILED, ApiCallStatus.SUCCESS -> {
                             hideProgressBar()
-                            addSearchTooltip()
                         }
                         ApiCallStatus.START -> {
                             showProgressBar()
@@ -145,7 +144,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
         )
     }
 
-    private fun addSearchTooltip() {
+    fun addSearchTooltip() {
         val flag = PrefManager.getBoolValue(SEARCH_HINT_SHOW)
         if (flag) {
             return
@@ -165,7 +164,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
                 .setPadding(8)
                 .setMarginTop(12)
                 .setIsVisibleOverlay(true) // sets the visibility of the overlay for highlighting an anchor.
-                .setOverlayColorResource(R.color.pd_transparent_bg) // background color of the overlay using a color resource.
+                .setOverlayColorResource(R.color.pd_transparent_bg_v2) // background color of the overlay using a color resource.
                 .setOverlayPadding(4f) // sets a padding value of the overlay shape in
                 .setBalloonOverlayAnimation(BalloonOverlayAnimation.FADE) // default is fade.
                 .setDismissWhenOverlayClicked(false) // disable di

@@ -14,10 +14,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
@@ -25,7 +25,6 @@ import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -174,8 +173,8 @@ class VoipCallFeedbackView : DialogFragment() {
     }
 
     fun submitFeedback(response: String) {
-        FullScreenProgressDialog.showProgressBar(requireActivity())
-        CoroutineScope(Dispatchers.IO).launch {
+        //FullScreenProgressDialog.showProgressBar(requireActivity())
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val requestParams: HashMap<String, String> = HashMap()
                 requestParams["channel_name"] = channelName
@@ -183,7 +182,6 @@ class VoipCallFeedbackView : DialogFragment() {
                 requestParams["response"] = response
                 AppObjectController.p2pNetworkService.p2pCallFeedbackV2(requestParams)
                 WorkManagerAdmin.syncFavoriteCaller()
-
                 /*
                    if (res.pointsList.isNullOrEmpty().not()) {
                     PrefManager.put(SPEAKING_POINTS, res.pointsList?.get(0).toString())
@@ -193,17 +191,14 @@ class VoipCallFeedbackView : DialogFragment() {
                 } else {
                     exitDialog()
                 }*/
-                delay(550)
-                exitDialog()
             } catch (ex: Throwable) {
-                delay(550)
-                exitDialog()
             }
+            delay(250)
+            exitDialog()
         }
     }
 
     private fun exitDialog() {
-        FullScreenProgressDialog.hideProgressBar(requireActivity())
         if (requireActivity() is WebRtcActivity) {
             val intent = Intent()
             intent.putExtra("points_list", pointsString)

@@ -59,8 +59,8 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
                     }
                 }
                 joinAll(call1, call2, call3, call4, call5)
-                leaderBoardData.postValue(map)
                 apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
+                leaderBoardData.postValue(map)
                 return@launch
             } catch (ex: Exception) {
                 apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
@@ -157,7 +157,7 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
     private suspend fun isUserOpen4Lesson(): Boolean {
         return viewModelScope.async(Dispatchers.IO) {
             val count =
-                AppObjectController.appDatabase.lessonQuestionDao().getLessonCount(4)
+                AppObjectController.appDatabase.lessonQuestionDao().getLessonCount(3)
             if (count > 0) {
                 return@async true
             }

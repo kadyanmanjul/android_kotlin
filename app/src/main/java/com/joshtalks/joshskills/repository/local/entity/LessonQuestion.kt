@@ -221,6 +221,6 @@ interface LessonQuestionDao {
         path: String = EMPTY,
     )
 
-    @Query("SELECT COUNT(id) FROM lesson_question WHERE lessonId= :lessonId")
-    suspend fun getLessonCount(lessonId: Int): Long
+    @Query("SELECT COUNT(id) FROM lesson_question WHERE interval= :interval")
+    suspend fun getLessonCount(interval: Int): Long
 }

@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.core
 
 import android.content.ComponentName
+import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import android.os.SystemClock
@@ -77,11 +78,11 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
 
     override fun onStart() {
         super.onStart()
-    //    bindService(Intent(this, WebRtcService::class.java), myConnection, BIND_AUTO_CREATE)
+        bindService(Intent(this, WebRtcService::class.java), myConnection, BIND_AUTO_CREATE)
     }
 
     override fun onStop() {
         super.onStop()
-       // unbindService(myConnection)
+        unbindService(myConnection)
     }
 }

@@ -222,7 +222,8 @@ class LeaderBoardFragment : Fragment() {
                 leaderboardResponse1.top_50_mentor_list?.indexOfFirst { it.isOnline } ?: 0
             if (liveUserPosition < 0 || liveUserPosition > 4) {
                 liveUserPosition = 2
-                leaderboardResponse1.top_50_mentor_list?.listIterator(liveUserPosition)?.next()?.isOnline = true
+                leaderboardResponse1.top_50_mentor_list?.listIterator(liveUserPosition)
+                    ?.next()?.isOnline = true
                 liveUserPosition = liveUserPosition.plus(2)
             } else {
                 liveUserPosition = liveUserPosition.plus(2)
@@ -346,12 +347,13 @@ class LeaderBoardFragment : Fragment() {
             if (type == "TODAY") {
                 val flag = PrefManager.getBoolValue(ONLINE_HINT_SHOW)
                 if (flag) {
+                    showAnotherTooltip()
                     return@launch
                 }
                 if ((requireActivity() is LeaderBoardViewPagerActivity) && (requireActivity() as LeaderBoardViewPagerActivity).isTooltipShow) {
+                    showAnotherTooltip()
                     return@launch
                 }
-
                 val lbOpenCount = PrefManager.getIntValue(LEADER_BOARD_OPEN_COUNT)
                 val b = viewModel.isUserHad4And5Lesson()
                 if (lbOpenCount >= 3 || b) {
@@ -366,13 +368,12 @@ class LeaderBoardFragment : Fragment() {
                         .setCornerRadius(12f)
                         .setWidth(BalloonSizeSpec.WRAP)
                         .setArrowOrientation(ArrowOrientation.BOTTOM)
-                        // .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
-                        .setArrowPosition(0.4f)
+                        .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
                         .setPadding(8)
-                        .setMarginTop(12)
+                        .setMarginTop(8)
                         .setIsVisibleOverlay(true) // sets the visibility of the overlay for highlighting an anchor.
-                        .setOverlayColorResource(R.color.pd_transparent_bg) // background color of the overlay using a color resource.
-                        .setOverlayPadding(10f) // sets a padding value of the overlay shape in
+                        .setOverlayColorResource(R.color.pd_transparent_bg_v2) // background color of the overlay using a color resource.
+                        //  .setOverlayPadding(2f) // sets a padding value of the overlay shape in
                         .setBalloonOverlayAnimation(BalloonOverlayAnimation.FADE) // default is fade.
                         .setDismissWhenOverlayClicked(false) // disable di
                         .setBackgroundColorResource(R.color.white)
@@ -380,11 +381,17 @@ class LeaderBoardFragment : Fragment() {
                         .setLifecycleOwner(this@LeaderBoardFragment)
                         .setDismissWhenClicked(true)
                         .build()
-                    balloon.showAlignBottom(item.user_pic)
+                    balloon.showAlignBottom(item.onlineStatusLayout)
                     PrefManager.put(ONLINE_HINT_SHOW, true)
+                } else {
+                    showAnotherTooltip()
                 }
             }
         }
+    }
+
+    private fun showAnotherTooltip() {
+        (requireActivity() as LeaderBoardViewPagerActivity).addSearchTooltip()
     }
 
     override fun onStop() {
