@@ -12,9 +12,7 @@ import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.AwardMentorModel
-import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.LessonItemClickEventBus
-import com.joshtalks.joshskills.repository.server.Award
+import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
 import java.util.Locale
 
 class StudentOfTheDayView : FrameLayout {
@@ -54,16 +52,16 @@ class StudentOfTheDayView : FrameLayout {
         totalPoints = findViewById(R.id.total_points)
         userText = findViewById(R.id.user_text)
         rootView = findViewById(R.id.root_view_fl)
-
-        rootView.setOnClickListener {
-            awardMentorModel?.let {
-                RxBus2.publish(LessonItemClickEventBus(it.id))
-            }
-        }
     }
 
     fun setup(awardMentorModel: AwardMentorModel) {
         this.awardMentorModel = awardMentorModel
+
+        rootView.setOnClickListener {
+            awardMentorModel.mentorId?.let {
+                RxBus2.publish(OpenUserProfile(it))
+            }
+        }
 
         val resp = StringBuilder()
         awardMentorModel.performerName?.split(" ")?.forEach {
@@ -85,7 +83,7 @@ class StudentOfTheDayView : FrameLayout {
             awardImage.setImage(it, AppObjectController.joshApplication)
         }
         awardImage.setOnClickListener {
-            RxBus2.publish(
+            /*RxBus2.publish(
                 AwardItemClickedEventBus(
                     Award(
                         awardMentorModel.id,
@@ -98,7 +96,10 @@ class StudentOfTheDayView : FrameLayout {
                         true
                     )
                 )
-            )
+            )*/
+            awardMentorModel.mentorId?.let {
+                RxBus2.publish(OpenUserProfile(it))
+            }
         }
 
     }
