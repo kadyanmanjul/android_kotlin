@@ -113,22 +113,22 @@ class LeaderBoardFragment : Fragment() {
         })*/
 
         binding.recyclerView.addOnScrollListener(object :
-            RecyclerView.OnScrollListener() {
+                RecyclerView.OnScrollListener() {
 
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() < userPosition.plus(
-                        4
-                    ) && linearLayoutManager.findLastCompletelyVisibleItemPosition() > userPosition.plus(
-                        2
-                    )
-                ) {
-                    binding.userLayout.visibility = View.GONE
-                } else {
-                    binding.userLayout.visibility = View.VISIBLE
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() < userPosition.plus(
+                            4
+                        ) && linearLayoutManager.findLastCompletelyVisibleItemPosition() > userPosition.plus(
+                                2
+                            )
+                    ) {
+                        binding.userLayout.visibility = View.GONE
+                    } else {
+                        binding.userLayout.visibility = View.VISIBLE
+                    }
                 }
-            }
-        })
+            })
     }
 
     private fun addObserver() {
@@ -217,16 +217,13 @@ class LeaderBoardFragment : Fragment() {
             )
         )
 
-
         if (type == "TODAY") {
             liveUserPosition =
                 leaderboardResponse1.top_50_mentor_list?.indexOfFirst { it.isOnline } ?: 0
             if (liveUserPosition < 0 || liveUserPosition > 4) {
                 liveUserPosition = 2
-                leaderboardResponse1.top_50_mentor_list?.getOrNull(liveUserPosition)?.isOnline =
-                    true
+                leaderboardResponse1.top_50_mentor_list?.listIterator(liveUserPosition)?.next()?.isOnline = true
                 liveUserPosition = liveUserPosition.plus(2)
-
             } else {
                 liveUserPosition = liveUserPosition.plus(2)
             }
@@ -358,7 +355,7 @@ class LeaderBoardFragment : Fragment() {
                 val lbOpenCount = PrefManager.getIntValue(LEADER_BOARD_OPEN_COUNT)
                 val b = viewModel.isUserHad4And5Lesson()
                 if (lbOpenCount >= 3 || b) {
-                    delay(500)
+                    delay(250)
                     val item =
                         binding.recyclerView.getViewResolverAtPosition(liveUserPosition) as LeaderBoardItemViewHolder
                     val balloon = Balloon.Builder(requireContext())
