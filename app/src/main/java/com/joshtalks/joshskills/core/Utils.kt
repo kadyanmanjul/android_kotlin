@@ -904,7 +904,7 @@ fun getCountryIsoCode(number: String, countryRegion: String): String {
 
 fun isCallOngoing(): Boolean {
     if (WebRtcService.isCallWasOnGoing) {
-        showToast(message = AppObjectController.joshApplication.getString(R.string.call_engage_message))
+        showToast(message = AppObjectController.joshApplication.getString(R.string.call_engage_message),length = Toast.LENGTH_SHORT)
         return true
     }
     return false
