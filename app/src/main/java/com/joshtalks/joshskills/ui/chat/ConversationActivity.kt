@@ -86,7 +86,7 @@ import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.* // ktlint-disable no-wildcard-imports
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 import java.util.*
@@ -195,7 +195,7 @@ class ConversationActivity :
         }
         if (intent.hasExtra(FOCUS_ON_CHAT_ID)) {
             intent.getParcelableExtra<ChatModel>(FOCUS_ON_CHAT_ID)?.chatId?.run {
-                scrollToPosition(this)
+                scrollToPosition(this, animation = true)
             }
         }
         conversationViewModel = ViewModelProvider(
@@ -708,11 +708,9 @@ class ConversationActivity :
                             conversationAdapter.itemCount + index,
                             25F
                         )
-                        linearLayoutManager.scrollToPositionWithOffset(
-                            conversationAdapter.itemCount + index,
-                            -10
-                        )
                         isNewMessageShowing = true
+                    } else {
+                        scrollToEnd()
                     }
                 }
                 // End Logic
@@ -1389,8 +1387,8 @@ class ConversationActivity :
                     conversationViewModel.refreshMessageObject(it.chatId)
                 }
             } else if (requestCode == COURSE_PROGRESS_REQUEST_CODE && data != null) {
-                if (data.hasExtra(FOCUS_ON_CHAT_ID)) {
-                    scrollToPosition(data.getStringExtra(FOCUS_ON_CHAT_ID)!!)
+                data.getStringExtra(FOCUS_ON_CHAT_ID)?.let {
+                    scrollToPosition(it, animation = true)
                 }
             } else if (requestCode == VIDEO_OPEN_REQUEST_CODE) {
                 (data?.getParcelableExtra(VIDEO_OBJECT) as ChatModel?)?.let {
@@ -1663,15 +1661,18 @@ class ConversationActivity :
 
     private fun scrollToEnd() {
         lifecycleScope.launch(Dispatchers.Main) {
-            linearLayoutManager.scrollToPosition(conversationAdapter.itemCount-1)
+            linearLayoutManager.scrollToPosition(conversationAdapter.itemCount - 1)
             conversationBinding.scrollToEndButton.visibility = GONE
         }
     }
 
-    private fun scrollToPosition(chatId: String) {
+    private fun scrollToPosition(chatId: String, animation: Boolean = false) {
         lifecycleScope.launch(Dispatchers.Main) {
             val index = conversationAdapter.getMessagePositionById(chatId)
             linearLayoutManager.scrollToPositionWithOffset(index, 40)
+            if (animation) {
+                conversationAdapter.focusPosition(index)
+            }
         }
     }
 

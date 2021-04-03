@@ -1,44 +1,29 @@
 package com.joshtalks.joshskills.ui.chat.adapter
 
-
-//import com.joshtalks.joshskills.ui.groupchat.utils.Utils
+// import com.joshtalks.joshskills.ui.groupchat.utils.Utils
+import android.animation.ArgbEvaluator
+import android.animation.ObjectAnimator
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.MainThread
 import androidx.annotation.NonNull
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils.dateHeaderDateFormat
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.repository.local.entity.Sender
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.chat.vh.AssessmentViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.AudioViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.BaseViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.BestStudentPerformerViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.CertificationExamViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.DateItemHolder
-import com.joshtalks.joshskills.ui.chat.vh.ImageViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.LessonViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.NewMessageViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.PdfViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.PracticeOldViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.TextViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.UnlockNextClassViewHolder
-import com.joshtalks.joshskills.ui.chat.vh.VideoViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.*
 import com.joshtalks.joshskills.util.StickyHeaderAdapter
 import com.joshtalks.joshskills.util.Utils
-import java.lang.ref.WeakReference
-import java.util.ArrayList
-import java.util.Locale
 import timber.log.Timber
-
+import java.lang.ref.WeakReference
+import java.util.*
 
 class ConversationAdapter(private val activityRef: WeakReference<FragmentActivity>) :
     RecyclerView.Adapter<BaseViewHolder>(),
@@ -47,6 +32,7 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
     private var messageList: ArrayList<ChatModel> = arrayListOf()
     private val slowList: MutableSet<ChatModel> = mutableSetOf()
     private val uiHandler = AppObjectController.uiHandler
+    private var animateUI = false
 
     init {
         setHasStableIds(true)
@@ -83,9 +69,7 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
             return true
         }
         return false
-
     }
-
 
     fun addMessage(message: ChatModel) {
         uiHandler.post {
@@ -133,7 +117,6 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
         notifyItemChanged(index)
     }
 
-
     fun addUnlockClassMessage(message: ChatModel): Boolean {
         val index = messageList.indexOfLast { it.type == BASE_MESSAGE_TYPE.UNLOCK }
         if (index == -1) {
@@ -142,7 +125,6 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
         }
         return false
     }
-
 
     fun removeUnlockMessage() {
         val index = messageList.indexOfLast { it.type == BASE_MESSAGE_TYPE.UNLOCK }
@@ -176,10 +158,37 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
         }
         return false
     }
+
     fun firstUnseenMessage(): Int {
         return messageList.indexOfFirst { it.isSeen.not() }
     }
 
+    fun focusPosition(position: Int) {
+        animateUI = true
+        notifyItemChanged(position)
+    }
+
+    private fun animateUI(view: View) {
+        view.background = ColorDrawable(
+            ContextCompat.getColor(
+                AppObjectController.joshApplication,
+                R.color.forground_bg
+            )
+        )
+        val colorFrom: Int = Color.parseColor("#AA34B7F1")
+        val colorTo: Int = Color.TRANSPARENT
+        val duration = 750L
+        val animate = ObjectAnimator.ofObject(
+            view,
+            "backgroundColor",
+            ArgbEvaluator(),
+            colorFrom,
+            colorTo
+        )
+        animate.startDelay = 250
+        animate.duration = duration
+        animate.start()
+    }
 
     @MainThread
     fun initializePool(@NonNull pool: RecyclerView.RecycledViewPool) {
@@ -298,7 +307,7 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
                 UnlockNextClassViewHolder(view, userId)
             }
 
-            //LessonViewHolder
+            // LessonViewHolder
 
             else -> {
                 view = LayoutInflater.from(parent.context)
@@ -314,6 +323,10 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
             holder.setIsRecyclable(false)
         }
         holder.bind(messageList[position], getPreviousMessage(position))
+        if (animateUI) {
+            animateUI(holder.itemView)
+            animateUI = false
+        }
     }
 
     override fun onViewDetachedFromWindow(holder: BaseViewHolder) {
@@ -327,7 +340,6 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
         val prevSender = getPreviousSender(position)
         val questionType = item.question?.type ?: BASE_MESSAGE_TYPE.TX
         val questionMaterialType = item.question?.type ?: BASE_MESSAGE_TYPE.TX
-
 
         if (item.type == BASE_MESSAGE_TYPE.Q) {
 
@@ -460,7 +472,6 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
     }
 }
 
-
 private const val LEFT_TEXT_MESSAGE = 1
 private const val RIGHT_TEXT_MESSAGE = 2
 
@@ -471,7 +482,7 @@ private const val LEFT_AUDIO_MESSAGE = 5
 private const val RIGHT_AUDIO_MESSAGE = 6
 
 private const val PDF_MESSAGE = 7
-//private const val RIGHT_PDF_MESSAGE = 8
+// private const val RIGHT_PDF_MESSAGE = 8
 
 private const val LEFT_VIDEO_MESSAGE = 9
 private const val RIGHT_VIDEO_MESSAGE = 10
@@ -482,20 +493,16 @@ private const val LEFT_QUIZ_TEST_MESSAGE = 13
 private const val RIGHT_QUIZ_TEST_MESSAGE = 14
 
 private const val CERTIFICATION_EXAM_MESSAGE = 15
-//private const val RIGHT_CERTIFICATION_EXAM_MESSAGE = 16
+// private const val RIGHT_CERTIFICATION_EXAM_MESSAGE = 16
 
 private const val ASSESSMENT_MESSAGE = 17
 
 private const val LESSON_MESSAGE = 19
 
-
 private const val BEST_PERFORMER_EXAM_MESSAGE = 21
-//private const val BEST_PERFORMER_EXAM_MESSAGE = 21
+// private const val BEST_PERFORMER_EXAM_MESSAGE = 21
 
 private const val NEW_CLASS_MESSAGE = 40
 private const val UNLOCK_CLASS_MESSAGE = 41
 
-
 private const val TEMP = 0
-
-
