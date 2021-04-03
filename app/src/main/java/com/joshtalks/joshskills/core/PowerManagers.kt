@@ -112,6 +112,18 @@ object PowerManagers {
                     "com.oneplus.security",
                     "com.oneplus.security.chainlaunch.view.ChainLaunchAppListAct‌​ivity"
                 )
+            ),
+            Intent().setComponent(
+                ComponentName(
+                    "com.asus.mobilemanager",
+                    "com.asus.mobilemanager.powersaver.PowerSaverSettings"
+                )
+            ),
+            Intent().setComponent(
+                ComponentName(
+                    "com.evenwell.powersaving.g3",
+                    "com.evenwell.powersaving.g3.exception.PowerSaverExceptionActivity"
+                )
             )
         )
 
