@@ -11,7 +11,7 @@
 
     </data>
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,6 +20,7 @@
         android:elevation="0dp"
         android:enabled="true"
         android:focusable="true"
+        android:clipToPadding="true"
         android:foreground="?android:attr/selectableItemBackground"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="0dp"
@@ -71,9 +72,9 @@
                 android:gravity="start"
                 android:inputType="none"
                 android:maxLines="1"
-                android:textStyle="bold"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                 android:textColor="@color/black"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/profile_image"
                 app:layout_constraintTop_toTopOf="@+id/profile_image"
@@ -116,5 +117,5 @@
             android:orientation="horizontal" />
 
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 </layout>

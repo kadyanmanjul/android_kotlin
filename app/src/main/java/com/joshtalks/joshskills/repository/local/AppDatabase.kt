@@ -49,7 +49,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class
     ],
-    version = 32,
+    version = 33,
     exportSchema = true
 )
 @TypeConverters(
@@ -126,7 +126,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_27_28,
                                 MIGRATION_28_29,
                                 MIGRATION_30_31,
-                                MIGRATION_31_32
+                                MIGRATION_31_32,
+                                MIGRATION_32_33
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -402,6 +403,12 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_31_32: Migration = object : Migration(31, 32) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `course_usage` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `start_time` INTEGER NOT NULL, `end_time` INTEGER, `conversation_id` TEXT NOT NULL, `created` INTEGER NOT NULL, `screen_name` TEXT)")
+            }
+        }
+        private val MIGRATION_32_33: Migration = object : Migration(32, 33) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.delete("favorite_caller", null, null)
+                database.execSQL("ALTER TABLE favorite_caller ADD COLUMN mentor_id TEXT NOT NULL DEFAULT ''")
             }
         }
 

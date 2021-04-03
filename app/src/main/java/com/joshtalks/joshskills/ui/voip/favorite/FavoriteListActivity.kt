@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FavoriteListActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.voip.favorite.adapter.FavoriteAdapter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
@@ -112,9 +113,14 @@ class FavoriteListActivity : WebRtcMiddlewareActivity(), RecyclerViewItemClickLi
 
     override fun onItemClick(view: View?, position: Int) {
         if (deleteRecords.isEmpty()) {
+            openProfileScreen(favoriteAdapter.getItemAtPosition(position))
             return
         }
         updateListRow(position)
+    }
+
+    private fun openProfileScreen(fc: FavoriteCaller) {
+        UserProfileActivity.startUserProfileActivity(this, mentorId = fc.mentorId, conversationId = intent.getStringExtra(CONVERSATION_ID))
     }
 
     override fun onItemLongClick(view: View?, position: Int) {

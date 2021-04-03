@@ -1,18 +1,12 @@
 package com.joshtalks.joshskills.repository.local.entity.practise
 
 import android.os.Parcelable
-import androidx.room.ColumnInfo
-import androidx.room.Dao
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.PrimaryKey
-import androidx.room.Query
+import androidx.room.*
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import java.util.Date
+import com.joshtalks.joshskills.core.EMPTY
 import kotlinx.android.parcel.Parcelize
+import java.util.*
 
 @Entity(tableName = "favorite_caller")
 @Parcelize
@@ -43,6 +37,10 @@ data class FavoriteCaller(
     @Expose
     @ColumnInfo(name = "is_deleted")
     val isDeleted: Boolean = false,
+
+    @ColumnInfo(name = "mentor_id")
+    @SerializedName("mentor_id")
+    val mentorId: String = EMPTY,
 
 ) : Parcelable {
     @Ignore
