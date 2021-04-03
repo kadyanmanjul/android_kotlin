@@ -23,7 +23,7 @@ data class SpokenHistoryDate(
 
 data class SpokenHistory(
     @SerializedName("spoken_duration")
-    val spokenDuration: Double?,
+    val spokenDuration: Int?,
     @SerializedName("sub_title")
     val subTitle: String?,
     @SerializedName("title")
