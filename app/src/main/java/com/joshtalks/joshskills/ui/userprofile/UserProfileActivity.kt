@@ -507,7 +507,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             mentorId: String,
             flags: Array<Int> = arrayOf(),
             intervalType: String? = null,
-            previousPage: String,
+            previousPage: String?=null,
             conversationId: String? = null,
 
         ) {

@@ -27,7 +27,6 @@ import com.skydoves.balloon.*
 import com.skydoves.balloon.overlay.BalloonOverlayAnimation
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -357,7 +356,7 @@ class LeaderBoardFragment : Fragment() {
                 val lbOpenCount = PrefManager.getIntValue(LEADER_BOARD_OPEN_COUNT)
                 val b = viewModel.isUserHad4And5Lesson()
                 if (lbOpenCount >= 3 || b) {
-                    delay(250)
+                //    delay(250)
                     val item =
                         binding.recyclerView.getViewResolverAtPosition(liveUserPosition) as LeaderBoardItemViewHolder
                     val balloon = Balloon.Builder(requireContext())
