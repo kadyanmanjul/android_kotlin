@@ -14,8 +14,10 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.points_history.viewholder.PointsSummaryDescViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewholder.PointsSummaryTitleViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewmodel.PointsViewModel
-import kotlinx.android.synthetic.main.base_toolbar.*
 import java.text.DecimalFormat
+import kotlinx.android.synthetic.main.base_toolbar.iv_back
+import kotlinx.android.synthetic.main.base_toolbar.iv_help
+import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 
 const val MENTOR_ID = "mentor_id"
 
@@ -38,6 +40,7 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
         addObserver()
         initToolbar()
         viewModel.getPointsSummary(mentorId)
+        showProgressBar()
     }
     override fun getConversationId(): String? {
         return intent.getStringExtra(CONVERSATION_ID)
@@ -87,6 +90,13 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
                         }
                     }
                 }
+            }
+        )
+
+        viewModel.apiCallStatusLiveData.observe(
+            this,
+            Observer {
+                hideProgressBar()
             }
         )
     }

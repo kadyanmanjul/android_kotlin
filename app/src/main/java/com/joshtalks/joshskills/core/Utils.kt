@@ -33,11 +33,14 @@ import android.provider.Settings
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.format.DateUtils
+import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
+import android.view.Display
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
@@ -81,10 +84,6 @@ import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation
-import kotlinx.coroutines.*
-import okhttp3.RequestBody.Companion.toRequestBody
-import timber.log.Timber
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.InetSocketAddress
@@ -97,9 +96,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlinx.coroutines.*
+import okhttp3.RequestBody.Companion.toRequestBody
+import timber.log.Timber
 
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
 private val DD_MMM = SimpleDateFormat("dd-MMM hh:mm aa")
@@ -605,11 +608,11 @@ object Utils {
             Locale.getDefault(), "%02d:%02d",
             TimeUnit.MILLISECONDS.toMinutes(duration.toLong()),
             TimeUnit.MILLISECONDS.toSeconds(duration.toLong()) -
-                TimeUnit.MINUTES.toSeconds(
-                    TimeUnit.MILLISECONDS.toMinutes(
-                        duration.toLong()
+                    TimeUnit.MINUTES.toSeconds(
+                        TimeUnit.MILLISECONDS.toMinutes(
+                            duration.toLong()
+                        )
                     )
-                )
         )
     }
 
@@ -904,7 +907,10 @@ fun getCountryIsoCode(number: String, countryRegion: String): String {
 
 fun isCallOngoing(): Boolean {
     if (WebRtcService.isCallWasOnGoing) {
-        showToast(message = AppObjectController.joshApplication.getString(R.string.call_engage_message),length = Toast.LENGTH_SHORT)
+        showToast(
+            message = AppObjectController.joshApplication.getString(R.string.call_engage_message),
+            length = Toast.LENGTH_SHORT
+        )
         return true
     }
     return false
@@ -1287,4 +1293,37 @@ fun Intent.printAllIntent() {
             )
         }
     }
+}
+
+private const val WIDTH_INDEX = 0
+private const val HEIGHT_INDEX = 1
+
+
+fun getScreenSize(context: Context): IntArray {
+    val widthHeight = IntArray(2)
+    widthHeight[WIDTH_INDEX] = 0
+    widthHeight[HEIGHT_INDEX] = 0
+    val windowManager: WindowManager =
+        context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    val display: Display = windowManager.getDefaultDisplay()
+    val size = Point()
+    display.getSize(size)
+    widthHeight[WIDTH_INDEX] = size.x
+    widthHeight[HEIGHT_INDEX] = size.y
+    if (!isScreenSizeRetrieved(widthHeight)) {
+        val metrics = DisplayMetrics()
+        display.getMetrics(metrics)
+        widthHeight[0] = metrics.widthPixels
+        widthHeight[1] = metrics.heightPixels
+    }
+    // Last defense. Use deprecated API that was introduced in lower than API 13
+    if (!isScreenSizeRetrieved(widthHeight)) {
+        widthHeight[0] = display.getWidth() // deprecated
+        widthHeight[1] = display.getHeight() // deprecated
+    }
+    return widthHeight
+}
+
+private fun isScreenSizeRetrieved(widthHeight: IntArray): Boolean {
+    return widthHeight[WIDTH_INDEX] != 0 && widthHeight[HEIGHT_INDEX] != 0
 }

@@ -39,6 +39,7 @@ class SpokenHistoryActivity : BaseActivity() {
         addObserver()
         initToolbar()
         viewModel.getSpokenMinutesSummary(mentorId)
+        showProgressBar()
     }
 
     private fun initToolbar() {
@@ -85,6 +86,13 @@ class SpokenHistoryActivity : BaseActivity() {
                         }
                     }
                 }
+            }
+        )
+
+        viewModel.apiCallStatusLiveData.observe(
+            this,
+            Observer {
+                hideProgressBar()
             }
         )
     }

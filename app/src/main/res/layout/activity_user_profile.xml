@@ -173,14 +173,13 @@
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:orientation="vertical"
+                    android:layout_marginEnd="@dimen/_8ssp"
                     app:layout_constraintEnd_toStartOf="@id/minutes_layout"
-                    app:layout_constraintHorizontal_bias="1"
-                    app:layout_constraintHorizontal_chainStyle="spread"
+                    app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/divider"
                     app:layout_constraintWidth_default="percent"
                     app:layout_constraintWidth_percent="0.33">
-
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/points"
@@ -209,6 +208,7 @@
                     android:layout_width="0dp"
                     android:layout_height="@dimen/_50sdp"
                     android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginStart="@dimen/_8ssp"
                     android:background="@drawable/ic_minutes_spoken_bg"
                     android:clickable="true"
                     android:elevation="@dimen/_4sdp"
@@ -216,7 +216,6 @@
                     android:foreground="?android:attr/selectableItemBackground"
                     android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toEndOf="@id/point_layout"
                     app:layout_constraintTop_toBottomOf="@id/divider"
                     app:layout_constraintWidth_default="percent"

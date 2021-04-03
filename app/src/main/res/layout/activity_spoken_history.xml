@@ -56,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginBottom="@dimen/_4sdp"
-                android:text="@string/user_point_text"
+                android:text="@string/user_minutes_text"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                 android:textColor="@color/grey_68"
                 app:layout_constraintBottom_toBottomOf="parent"
