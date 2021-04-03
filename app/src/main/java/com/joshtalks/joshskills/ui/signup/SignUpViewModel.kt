@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.truecaller.android.sdk.TrueProfile
 import java.util.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SignUpViewModel(application: Application) : AndroidViewModel(application) {
@@ -97,6 +98,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 if (response.isSuccessful) {
                     countryCode = cCode
                     phoneNumber = mNumber
+                    delay(500)
                     _signUpStatus.postValue(SignUpStepStatus.RequestForOTP)
                     registerSMSReceiver()
                     return@launch
