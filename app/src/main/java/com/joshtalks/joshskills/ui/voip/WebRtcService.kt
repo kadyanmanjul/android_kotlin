@@ -777,13 +777,13 @@ class WebRtcService : BaseWebRtcService() {
 
     private fun handleIncomingCall() {
         executeEvent(AnalyticsEvent.INIT_CALL.NAME)
-        addNotification(IncomingCall().action, callData)
-        addTimeObservable()
         callData?.let {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q && JoshApplication.isAppVisible.not()) {
+            if (canHeadsUpNotification().not()) {
                 showIncomingCallScreen(it)
             }
         }
+        addNotification(IncomingCall().action, callData)
+        addTimeObservable()
     }
 
     private fun showIncomingCallScreen(
@@ -1135,6 +1135,13 @@ class WebRtcService : BaseWebRtcService() {
         }
     }
 
+    private fun canHeadsUpNotification(): Boolean {
+        if (Build.VERSION.SDK_INT >= 29) { //  if (Build.VERSION.SDK_INT >= 29 && JoshApplication.isAppVisible.not()) {
+            return true
+        }
+        return false
+    }
+
     private fun incomingCallNotification(incomingData: HashMap<String, String?>?): Notification {
         Timber.tag(TAG).e("incomingCallNotification   ")
         val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
@@ -1159,40 +1166,37 @@ class WebRtcService : BaseWebRtcService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name: CharSequence = "Voip Incoming Call"
             var chanIndex: Int = PrefManager.getIntValue("calls_notification_channel")
-            val oldChannel =
-                mNotificationManager?.getNotificationChannel("incoming_calls$chanIndex")
-            if (oldChannel != null) {
-                mNotificationManager?.deleteNotificationChannel(oldChannel.id)
-            }
-            val existingChannel =
-                mNotificationManager?.getNotificationChannel("incoming_calls2$chanIndex")
-            var needCreate = true
-            if (existingChannel != null) {
-                if (existingChannel.importance < IMPORTANCE_HIGH || existingChannel.vibrationPattern != null || existingChannel.shouldVibrate()) {
-                    mNotificationManager?.deleteNotificationChannel("incoming_calls2$chanIndex")
-                    chanIndex++
-                    PrefManager.put("calls_notification_channel", chanIndex)
-                } else {
-                    needCreate = false
+            if (canHeadsUpNotification()) {
+                val oldChannel =
+                    mNotificationManager?.getNotificationChannel("incoming_calls$chanIndex")
+                if (oldChannel != null) {
+                    mNotificationManager?.deleteNotificationChannel(oldChannel.id)
+                }
+                val existingChannel =
+                    mNotificationManager?.getNotificationChannel("incoming_calls2$chanIndex")
+                if (existingChannel != null) {
+                    if (existingChannel.importance < IMPORTANCE_HIGH || existingChannel.vibrationPattern != null || existingChannel.shouldVibrate()) {
+                        mNotificationManager?.deleteNotificationChannel("incoming_calls2$chanIndex")
+                        chanIndex++
+                        PrefManager.put("calls_notification_channel", chanIndex)
+                    }
                 }
             }
-            if (needCreate) {
-                val chan = NotificationChannel(
-                    "incoming_calls2$chanIndex", name,
-                    IMPORTANCE_HIGH
-                ).apply {
-                    description = "Notifications for voice calling"
-                }
-                chan.setSound(null, null)
-                chan.enableVibration(false)
-                chan.enableLights(false)
-                chan.setBypassDnd(true)
-                chan.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-                try {
-                    mNotificationManager?.createNotificationChannel(chan)
-                } catch (e: java.lang.Exception) {
-                    this.stopSelf()
-                }
+            val chan = NotificationChannel(
+                "incoming_calls2$chanIndex", name,
+                IMPORTANCE_HIGH
+            ).apply {
+                description = "Notifications for voice calling"
+            }
+            chan.setSound(null, null)
+            chan.enableVibration(false)
+            chan.enableLights(false)
+            chan.setBypassDnd(true)
+            chan.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            try {
+                mNotificationManager?.createNotificationChannel(chan)
+            } catch (e: Throwable) {
+                e.printStackTrace()
             }
             builder.setChannelId("incoming_calls2$chanIndex")
         } else {
@@ -1247,10 +1251,6 @@ class WebRtcService : BaseWebRtcService() {
         customView.setOnClickPendingIntent(R.id.answer_btn, answerPendingIntent)
         customView.setOnClickPendingIntent(R.id.decline_btn, declinePendingIntent)
         builder.setLargeIcon(avatar)
-        builder.setCustomHeadsUpContentView(customView)
-        builder.setCustomBigContentView(customView)
-        builder.setCustomContentView(customView)
-        builder.setSound(null, AudioManager.STREAM_VOICE_CALL)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             builder.priority = IMPORTANCE_HIGH
         }
@@ -1258,7 +1258,11 @@ class WebRtcService : BaseWebRtcService() {
             builder.setVibrate(LongArray(0))
             builder.setCategory(Notification.CATEGORY_CALL)
         }
-
+        if (canHeadsUpNotification()) {
+            builder.setCustomHeadsUpContentView(customView)
+            builder.setCustomBigContentView(customView)
+        }
+        builder.setCustomContentView(customView)
         builder.setShowWhen(false)
         return builder.build()
     }
@@ -1339,7 +1343,7 @@ class WebRtcService : BaseWebRtcService() {
         }
 
         val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
-        val intent =getWebRtcActivityIntent(CallType.INCOMING).apply {
+        val intent = getWebRtcActivityIntent(CallType.INCOMING).apply {
             putExtra(IS_CALL_CONNECTED, true)
         }
         val pendingIntent = PendingIntent.getActivity(
