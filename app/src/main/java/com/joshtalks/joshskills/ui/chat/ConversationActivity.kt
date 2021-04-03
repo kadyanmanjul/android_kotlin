@@ -17,6 +17,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.exoplayer2.Player
 import com.greentoad.turtlebody.mediapicker.MediaPicker
@@ -81,16 +82,16 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import java.lang.ref.WeakReference
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.concurrent.scheduleAtFixedRate
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.* // ktlint-disable no-wildcard-imports
 import kotlinx.coroutines.launch
+import java.lang.ref.WeakReference
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.concurrent.scheduleAtFixedRate
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -144,7 +145,7 @@ class ConversationActivity :
     private lateinit var conversationBinding: ActivityConversationBinding
     private lateinit var inboxEntity: InboxEntity
     private lateinit var activityRef: WeakReference<FragmentActivity>
-    private lateinit var linearLayoutManager: SmoothScrollingLinearLayoutManager
+    private lateinit var linearLayoutManager: LinearLayoutManager
     private var revealAttachmentView: Boolean = false
     private val readChatList: MutableSet<ChatModel> = mutableSetOf()
     private var readMessageTimerTask: TimerTask? = null
@@ -339,6 +340,9 @@ class ConversationActivity :
                     }
                 }
             })
+    }
+    private fun getLayoutManager(): SmoothScrollingLinearLayoutManager {
+        return linearLayoutManager as SmoothScrollingLinearLayoutManager
     }
 
     private fun getPreviousRecord() {
@@ -699,7 +703,7 @@ class ConversationActivity :
                     val haveUserMessage = items.any { it.sender != null }
                     if (index > -1 && haveUserMessage.not()) {
                         conversationAdapter.addMessagesList(arrayListOf(getNewMessageObj(items.first().created)))
-                        linearLayoutManager.smoothScrollToPosition(
+                        getLayoutManager().smoothScrollToPosition(
                             this@ConversationActivity,
                             conversationAdapter.itemCount + index,
                             25F
@@ -739,7 +743,7 @@ class ConversationActivity :
         lifecycleScope.launchWhenCreated {
             conversationViewModel.newMessageAddFlow.collectLatest {
                 if (refreshMessageByUser) {
-                    linearLayoutManager.smoothScrollToPosition(
+                    getLayoutManager().smoothScrollToPosition(
                         this@ConversationActivity,
                         conversationAdapter.itemCount + 1,
                         25F
@@ -758,7 +762,7 @@ class ConversationActivity :
                     val lastVisiblePosition =
                         linearLayoutManager.findLastCompletelyVisibleItemPosition()
                     if (isAdded && (cPosition >= conversationAdapter.itemCount - 1 || lastVisiblePosition >= conversationAdapter.itemCount - 1)) {
-                        linearLayoutManager.smoothScrollToPosition(
+                        getLayoutManager().smoothScrollToPosition(
                             this@ConversationActivity,
                             conversationAdapter.itemCount,
                             25F
@@ -1046,7 +1050,7 @@ class ConversationActivity :
             RxBus2.listen(DownloadCompletedEventBus::class.java)
                 .subscribeOn(Schedulers.computation())
                 .subscribe {
-                    CoroutineScope(Dispatchers.IO).launch {
+                    lifecycleScope.launch(Dispatchers.IO) {
                         val obj = AppObjectController.appDatabase.chatDao()
                             .getUpdatedChatObjectViaId(it.chatModel.chatId)
                         refreshViewAtPos(obj)
@@ -1057,7 +1061,7 @@ class ConversationActivity :
             RxBus2.listen(VideoDownloadedBus::class.java)
                 .subscribeOn(Schedulers.computation())
                 .subscribe {
-                    CoroutineScope(Dispatchers.IO).launch {
+                    lifecycleScope.launch(Dispatchers.IO) {
                         val chatObj = AppObjectController.appDatabase.chatDao()
                             .getUpdatedChatObjectViaId(it.messageObject.chatId)
                         refreshViewAtPos(chatObj)
@@ -1308,11 +1312,14 @@ class ConversationActivity :
             RxBus2.listen(AwardItemClickedEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    showAward(listOf(it.award), true)
-                }, {
-                    it.printStackTrace()
-                })
+                .subscribe(
+                    {
+                        showAward(listOf(it.award), true)
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
         )
     }
 
@@ -1527,7 +1534,7 @@ class ConversationActivity :
     }
 
     fun visibleItem() {
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val firstPosition = linearLayoutManager.findFirstVisibleItemPosition()
                 val lastPosition = linearLayoutManager.findLastVisibleItemPosition()
@@ -1594,7 +1601,7 @@ class ConversationActivity :
     }
 
     private fun refreshViewAtPos(chatObj: ChatModel) {
-        lifecycleScope.launch(Dispatchers.Main){
+        lifecycleScope.launch(Dispatchers.Main) {
             try {
                 delay(500)
                 conversationAdapter.updateItem(chatObj)
@@ -1655,14 +1662,14 @@ class ConversationActivity :
     }
 
     private fun scrollToEnd() {
-        CoroutineScope(Dispatchers.Main).launch {
-            linearLayoutManager.scrollToPosition(conversationAdapter.itemCount)
+        lifecycleScope.launch(Dispatchers.Main) {
+            linearLayoutManager.scrollToPosition(conversationAdapter.itemCount-1)
             conversationBinding.scrollToEndButton.visibility = GONE
         }
     }
 
     private fun scrollToPosition(chatId: String) {
-        CoroutineScope(Dispatchers.Main).launch {
+        lifecycleScope.launch(Dispatchers.Main) {
             val index = conversationAdapter.getMessagePositionById(chatId)
             linearLayoutManager.scrollToPositionWithOffset(index, 40)
         }
@@ -1707,7 +1714,7 @@ class ConversationActivity :
     }
 
     private fun addAudioFromBottomBar(audioFilePath: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             val recordUpdatedPath = AppDirectory.getAudioSentFile(audioFilePath).absolutePath
             AppDirectory.copy(audioFilePath, recordUpdatedPath)
             addAudioAttachment(recordUpdatedPath)
@@ -1715,7 +1722,7 @@ class ConversationActivity :
     }
 
     private fun addRecordedAudioMessage(mediaPath: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             val recordUpdatedPath = AppDirectory.getAudioSentFile(null).absolutePath
             AppDirectory.copy(mediaPath, recordUpdatedPath)
             addAudioAttachment(recordUpdatedPath)
@@ -1733,7 +1740,7 @@ class ConversationActivity :
     }
 
     private fun addImageMessage(imagePath: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             val imageUpdatedPath = AppDirectory.getImageSentFilePath()
             AppDirectory.copy(imagePath, imageUpdatedPath)
             val tImageMessage = TImageMessage(imageUpdatedPath, imageUpdatedPath)
@@ -1747,7 +1754,7 @@ class ConversationActivity :
     }
 
     private fun addVideoMessage(videoPath: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             val videoSentFile = AppDirectory.videoSentFile()
             AppDirectory.copy(videoPath, videoSentFile.absolutePath)
             val tVideoMessage =
