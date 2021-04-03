@@ -21,12 +21,13 @@ import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.databinding.InboxItemLayoutBinding
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import java.util.ArrayList
-import java.util.Date
-import java.util.Locale
 import timber.log.Timber
+import java.util.*
 
-class InboxAdapter(private var lifecycleProvider: LifecycleOwner,private val openCourseListener: OnOpenCourseListener) :
+class InboxAdapter(
+    private var lifecycleProvider: LifecycleOwner,
+    private val openCourseListener: OnOpenCourseListener
+) :
     RecyclerView.Adapter<InboxAdapter.InboxViewHolder>() {
     private var items: ArrayList<InboxEntity> = arrayListOf()
     var drawablePadding: Float = 2f
@@ -36,7 +37,6 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner,private val ope
         progressBarStatus = AppObjectController.getFirebaseRemoteConfig()
             .getBoolean(FirebaseRemoteConfigKey.INBOX_SCREEN_COURSE_PROGRESS)
         setHasStableIds(true)
-
     }
 
     fun getAppContext() = AppObjectController.joshApplication
@@ -66,7 +66,6 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner,private val ope
 
     override fun getItemCount(): Int = items.size
 
-
     override fun onBindViewHolder(holder: InboxViewHolder, position: Int) {
         holder.bind(items[position], position)
     }
@@ -86,14 +85,14 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner,private val ope
                 courseProgressBar.progress = 0
                 horizontalLine.visibility = android.view.View.VISIBLE
                 //   profileImage.setInboxImageView(inboxEntity.course_icon)
-               /* if (inboxEntity.chat_id.isNullOrEmpty()) {
-                    tvLastMessageTime.setCompoundDrawablesWithIntrinsicBounds(
-                        R.drawable.ic_unread,
-                        0,
-                        0,
-                        0
-                    )
-                }*/
+                /* if (inboxEntity.chat_id.isNullOrEmpty()) {
+                     tvLastMessageTime.setCompoundDrawablesWithIntrinsicBounds(
+                         R.drawable.ic_unread,
+                         0,
+                         0,
+                         0
+                     )
+                 }*/
 
                 if (progressBarStatus) {
                     courseProgressBar.visibility = android.view.View.VISIBLE
@@ -121,7 +120,6 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner,private val ope
                                 ivTick.setBackgroundResource(R.drawable.ic_course_complete_bg)
                             }
                         }
-
                     } else {
                         Timber.d("Batch Created not found")
                     }
@@ -129,7 +127,7 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner,private val ope
                     courseProgressBar.visibility = android.view.View.GONE
                     tvLastMessage.visibility = android.view.View.VISIBLE
                     inboxEntity.type?.let {
-                        if (BASE_MESSAGE_TYPE.Q == it || BASE_MESSAGE_TYPE.AR == it) {
+                        if (BASE_MESSAGE_TYPE.Q == it) {
                             inboxEntity.material_type?.let { messageType ->
                                 showRecentAsPerView(inboxEntity, messageType)
                             }
@@ -175,7 +173,6 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner,private val ope
                         binding.tvLastMessage.text =
                             HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
                     }
-
                 }
                 BASE_MESSAGE_TYPE.IM == baseMessageType -> {
                     binding.tvLastMessage.setCompoundDrawablesWithIntrinsicBounds(
@@ -198,8 +195,6 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner,private val ope
                     binding.tvLastMessage.compoundDrawablePadding =
                         Utils.dpToPx(getAppContext(), drawablePadding)
                     binding.tvLastMessage.text = "Audio"
-
-
                 }
                 BASE_MESSAGE_TYPE.VI == baseMessageType -> {
                     binding.tvLastMessage.setCompoundDrawablesWithIntrinsicBounds(
@@ -211,7 +206,6 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner,private val ope
                     binding.tvLastMessage.compoundDrawablePadding =
                         Utils.dpToPx(getAppContext(), drawablePadding)
                     binding.tvLastMessage.text = "Video"
-
                 }
                 BASE_MESSAGE_TYPE.PD == baseMessageType -> {
                     binding.tvLastMessage.setCompoundDrawablesWithIntrinsicBounds(
@@ -228,6 +222,11 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner,private val ope
                     binding.tvLastMessage.compoundDrawablePadding =
                         Utils.dpToPx(getAppContext(), drawablePadding)
                     binding.tvLastMessage.text = "Lesson ${inboxEntity.lessonNo}"
+                }
+                BASE_MESSAGE_TYPE.BEST_PERFORMER == baseMessageType -> {
+                    binding.tvLastMessage.compoundDrawablePadding =
+                        Utils.dpToPx(getAppContext(), drawablePadding)
+                    binding.tvLastMessage.text = " Student of the Day"
                 }
             }
         }
@@ -248,13 +247,7 @@ class InboxAdapter(private var lifecycleProvider: LifecycleOwner,private val ope
                 )
                 .push()
             openCourseListener.onClick(inboxEntity)
-         //   RxBus2.publish(OpenCourseEventBus(inboxEntity))
+            //   RxBus2.publish(OpenCourseEventBus(inboxEntity))
         }
     }
 }
-
-
-
-
-
-
