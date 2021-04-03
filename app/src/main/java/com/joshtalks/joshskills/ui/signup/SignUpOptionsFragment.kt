@@ -109,6 +109,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
             when (it) {
                 SignUpStepStatus.ERROR -> {
                     hideProgress()
+                    showToast(requireContext().getString(R.string.generic_message_for_error))
                 }
                 else -> return@Observer
             }
