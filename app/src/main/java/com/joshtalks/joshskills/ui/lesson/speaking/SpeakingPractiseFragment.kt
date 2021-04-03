@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -26,6 +27,8 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SpeakingPractiseFragment : CoreJoshFragment() {
 
@@ -162,14 +165,16 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     private fun callback(exist: Boolean) {
-        favoriteCallerExist = exist
-        binding.btnFavorite.backgroundTintList =
-            ColorStateList.valueOf(
-                ContextCompat.getColor(
-                    requireContext(),
-                    if (favoriteCallerExist) R.color.colorAccent else R.color.disable_color
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main){
+            favoriteCallerExist = exist
+            binding.btnFavorite.backgroundTintList =
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        if (favoriteCallerExist) R.color.colorAccent else R.color.disable_color
+                    )
                 )
-            )
+        }
     }
 
     private fun startPractise(favoriteUserCall: Boolean = false) {
