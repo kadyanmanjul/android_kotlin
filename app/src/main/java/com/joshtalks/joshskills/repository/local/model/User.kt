@@ -75,6 +75,4 @@ open class User {
             Mentor.getInstance().updateUser(user).update()
         }
     }
-
-
 }

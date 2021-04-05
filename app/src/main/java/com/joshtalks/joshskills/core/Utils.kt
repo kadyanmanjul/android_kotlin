@@ -301,11 +301,11 @@ object Utils {
 
     fun dpToPx(context: Context, dp: Float): Int {
         return (
-            TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, dp,
-                context.resources.displayMetrics
-            ) + 0.5f
-            ).roundToInt()
+                TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, dp,
+                    context.resources.displayMetrics
+                ) + 0.5f
+                ).roundToInt()
     }
 
     fun call(context: Context, phoneNumber: String) {
@@ -701,7 +701,7 @@ object Utils {
         cal1.time = startDate
         cal2.time = endDate
         return cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR) &&
-            cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)
+                cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)
     }
 
     fun dateHeaderDateFormat(date: Date): String {
@@ -826,11 +826,12 @@ fun getUserNameInShort(
     name: String = User.getInstance().firstName?.trim()?.toUpperCase(Locale.ROOT) ?: EMPTY
 ): String {
     return try {
-        if (name.contains(" ")) {
-            val nameSplit = name.split(" ")
+        val nameSplit = name.split(" ")
+        if (nameSplit.size > 1) {
             nameSplit[0][0].plus(nameSplit[1][0].toString())
+        } else {
+            name.substring(0, 1)
         }
-        name.substring(0, 2)
     } catch (e: IndexOutOfBoundsException) {
         name.substring(0, name.length)
     }
@@ -933,13 +934,18 @@ fun loadJSONFromAsset(fileName: String): String? {
 }
 
 fun ImageView.setImage(url: String, context: Context = AppObjectController.joshApplication) {
+    val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)
+        .error(R.drawable.ic_call_placeholder)
+        .format(DecodeFormat.PREFER_RGB_565)
+        .disallowHardwareConfig().dontAnimate().encodeQuality(75)
     Glide.with(context)
         .load(url)
-        .override(Target.SIZE_ORIGINAL)
         .optionalTransform(
             WebpDrawable::class.java,
             WebpDrawableTransformation(CircleCrop())
         )
+        .apply(requestOptions)
+        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         .into(this)
 }
 
@@ -973,9 +979,19 @@ fun ImageView.setUserImageOrInitials(
         setUserInitial(userName, dpToPx)
     } else {
         if (isRound) {
+            val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)
+                .error(R.drawable.ic_call_placeholder)
+                .format(DecodeFormat.PREFER_RGB_565)
+                .disallowHardwareConfig().dontAnimate().encodeQuality(75)
             Glide.with(context)
                 .load(url)
+                .optionalTransform(
+                    WebpDrawable::class.java,
+                    WebpDrawableTransformation(CircleCrop())
+                )
                 .circleCrop()
+                .apply(requestOptions)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(this)
         } else {
             this.setImage(url)

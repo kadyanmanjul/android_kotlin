@@ -43,7 +43,7 @@
                 android:layout_height="@dimen/_48sdp"
                 android:layout_marginStart="@dimen/_16sdp"
                 android:layout_marginBottom="@dimen/_8sdp"
-                app:favoriteCallerImage="@{obj.image}"
+                app:favoriteCallerImage="@{obj}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
