@@ -14,11 +14,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.UserPicChooserDialogBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventBus
-import com.joshtalks.joshskills.ui.chat.IMAGE_SELECT_REQUEST_CODE
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 
 class UserPicChooserFragment : BottomSheetDialogFragment() {
 
@@ -88,7 +83,7 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
         ImagePicker.with(this)
             .crop()                    //Crop image(Optional), Check Customization for more option
             .galleryOnly()
-            .start()
+            .start(ImagePicker.REQUEST_CODE)
         dismiss()
     }
 
@@ -96,7 +91,7 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
         ImagePicker.with(this)
             .crop()                    //Crop image(Optional), Check Customization for more option
             .cameraOnly()
-            .start()
+            .start(ImagePicker.REQUEST_CODE)
         dismiss()
     }
 

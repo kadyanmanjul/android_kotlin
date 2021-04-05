@@ -344,7 +344,7 @@
                     android:onClick="@{()->handler.submitProfile()}"
                     android:paddingTop="@dimen/_12sdp"
                     android:paddingBottom="@dimen/_12sdp"
-                    android:text="@string/register"
+                    android:text="@string/next"
                     android:textAllCaps="false"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                     android:textColor="@color/white"

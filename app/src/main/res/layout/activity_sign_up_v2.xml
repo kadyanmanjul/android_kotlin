@@ -1,55 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
-                name="handler"
-                type="com.joshtalks.joshskills.ui.signup.SignUpActivity" />
+            name="handler"
+            type="com.joshtalks.joshskills.ui.signup.SignUpActivity" />
     </data>
 
     <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/top_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="@dimen/_8sdp"
-                android:paddingTop="@dimen/_12sdp"
-                android:paddingEnd="@dimen/_8sdp"
-                android:paddingBottom="@dimen/_12sdp">
+            android:id="@+id/top_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/_8sdp"
+            android:paddingTop="@dimen/_12sdp"
+            android:paddingEnd="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_12sdp">
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_back"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center_vertical|start"
-                    android:onClick="@{()->handler.onBackPressed()}"
-                    android:padding="@dimen/_4sdp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_arrow_back"
-                    app:tint="@color/black" />
+                android:id="@+id/iv_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical|start"
+                android:onClick="@{()->handler.onBackPressed()}"
+                android:padding="@dimen/_4sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_back"
+                app:tint="@color/black" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/text_message_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_8sdp"
-                    android:gravity="start"
-                    android:text="@string/registration"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
-                    android:textColor="@color/black"
-                    app:layout_constraintStart_toStartOf="@+id/iv_back"
-                    app:layout_constraintTop_toBottomOf="@+id/iv_back" />
+                android:id="@+id/text_message_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:gravity="start"
+                android:text="@string/registration"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="@+id/iv_back"
+                app:layout_constraintTop_toBottomOf="@+id/iv_back" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/skip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:text="@string/skip"
+                android:onClick="@{()->handler.onSkipPressed()}"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                android:textColor="#687C90"
+                android:visibility="gone"
+                android:textSize="@dimen/_14ssp"
+                app:layout_constraintEnd_toEndOf="@+id/iv_help"
+                app:layout_constraintTop_toBottomOf="@+id/iv_help" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_help"
@@ -58,18 +72,18 @@
                 android:onClick="@{()->handler.openHelpActivity()}"
                 android:padding="@dimen/_4sdp"
                 android:tint="@color/black"
-                app:srcCompat="@drawable/ic_help_outline"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_help_outline" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <FrameLayout
-                android:id="@+id/container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/top_view" />
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/top_view" />
     </RelativeLayout>
 
 </layout>
