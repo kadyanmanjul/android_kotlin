@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfilePicSuccessfullyUpdatedBinding
 
 class SignUpProfilePicSuccessfullyUpdatedFragment : BaseSignUpFragment() {
@@ -41,6 +43,9 @@ class SignUpProfilePicSuccessfullyUpdatedFragment : BaseSignUpFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.picUploadedText.text=
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.PROFILE_PIC_SUCCESSFUL_TEXT)
     }
 
     fun startCourse() {

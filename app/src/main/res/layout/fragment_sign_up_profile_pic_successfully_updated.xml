@@ -29,7 +29,7 @@
             app:layout_constraintVertical_bias="0.33"/>
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/addPhoto"
+            android:id="@+id/pic_uploaded_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
@@ -40,7 +40,7 @@
             android:layout_marginTop="@dimen/_24sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
             android:textColor="#687C90"
-            android:text="Profile picture successfully uploaded"/>
+            tools:text="Profile picture successfully uploaded"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_upload"

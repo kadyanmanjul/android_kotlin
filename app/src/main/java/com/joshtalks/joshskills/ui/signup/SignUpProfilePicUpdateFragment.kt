@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfilePicUpdateBinding
 import com.joshtalks.joshskills.ui.userprofile.UserPicChooserFragment
 
@@ -35,6 +37,12 @@ class SignUpProfilePicUpdateFragment : BaseSignUpFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.addPhoto.text=
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.ADD_PROFILE_PHOTO)
+        binding.addPhotoText.text=
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.ADD_PROFILE_PHOTO_TEXT)
 
     }
 

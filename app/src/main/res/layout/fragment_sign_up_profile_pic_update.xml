@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -28,33 +29,33 @@
             app:srcCompat="@drawable/ic_pic_upload" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/addPhoto"
+            android:id="@+id/add_photo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_62sdp"
             android:layout_marginTop="@dimen/_24sdp"
             android:gravity="center"
             android:onClick="@{()->handler.submitProfilePic()}"
-            android:text="Add your profile photo"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
             android:textColor="#687C90"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/image" />
+            app:layout_constraintTop_toBottomOf="@id/image"
+            tools:text="Add your profile photo" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/photoUrl"
+            android:id="@+id/add_photo_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_52sdp"
             android:layout_marginTop="@dimen/_12sdp"
             android:gravity="center"
-            android:text="आपके टीचर और कोर्स के बाकी स्टूडेंट्स आपको इस फोटो से पेहचानेंगे"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:textColor="#747474"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/addPhoto" />
+            app:layout_constraintTop_toBottomOf="@id/add_photo"
+            tools:text="आपके टीचर और कोर्स के बाकी स्टूडेंट्स आपको इस फोटो से पेहचानेंगे" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_upload"

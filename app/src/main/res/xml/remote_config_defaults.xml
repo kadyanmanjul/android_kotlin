@@ -618,5 +618,20 @@
         <value>#, do you want to speak with ## again?</value>
     </entry>
 
+    <entry>
+        <key>ADD_PROFILE_PHOTO</key>
+        <value>Add your profile photo</value>
+    </entry>
+
+    <entry>
+        <key>ADD_PROFILE_PHOTO_TEXT</key>
+        <value>आपके टीचर और कोर्स के बाकी स्टूडेंट्स आपको इस फोटो से पेहचानेंगे</value>
+    </entry>
+
+    <entry>
+        <key>PROFILE_PIC_SUCCESSFUL_TEXT</key>
+        <value>Profile picture successfully uploaded</value>
+    </entry>
+
 
 </defaultsMap>
