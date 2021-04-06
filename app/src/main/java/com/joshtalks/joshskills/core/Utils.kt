@@ -36,11 +36,7 @@ import android.text.format.DateUtils
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
-import android.view.Display
-import android.view.Gravity
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
@@ -84,6 +80,10 @@ import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation
+import kotlinx.coroutines.*
+import okhttp3.RequestBody.Companion.toRequestBody
+import timber.log.Timber
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.InetSocketAddress
@@ -96,13 +96,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.math.roundToInt
-import kotlinx.coroutines.*
-import okhttp3.RequestBody.Companion.toRequestBody
-import timber.log.Timber
 
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
 private val DD_MMM = SimpleDateFormat("dd-MMM hh:mm aa")
@@ -301,11 +297,11 @@ object Utils {
 
     fun dpToPx(context: Context, dp: Float): Int {
         return (
-                TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, dp,
-                    context.resources.displayMetrics
-                ) + 0.5f
-                ).roundToInt()
+            TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, dp,
+                context.resources.displayMetrics
+            ) + 0.5f
+            ).roundToInt()
     }
 
     fun call(context: Context, phoneNumber: String) {
@@ -608,11 +604,11 @@ object Utils {
             Locale.getDefault(), "%02d:%02d",
             TimeUnit.MILLISECONDS.toMinutes(duration.toLong()),
             TimeUnit.MILLISECONDS.toSeconds(duration.toLong()) -
-                    TimeUnit.MINUTES.toSeconds(
-                        TimeUnit.MILLISECONDS.toMinutes(
-                            duration.toLong()
-                        )
+                TimeUnit.MINUTES.toSeconds(
+                    TimeUnit.MILLISECONDS.toMinutes(
+                        duration.toLong()
                     )
+                )
         )
     }
 
@@ -701,7 +697,7 @@ object Utils {
         cal1.time = startDate
         cal2.time = endDate
         return cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR) &&
-                cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)
+            cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)
     }
 
     fun dateHeaderDateFormat(date: Date): String {
@@ -906,10 +902,10 @@ fun getCountryIsoCode(number: String, countryRegion: String): String {
     }
 }
 
-fun isCallOngoing(): Boolean {
+fun isCallOngoing(message: Int = R.string.call_engage_record_message): Boolean {
     if (WebRtcService.isCallWasOnGoing) {
         showToast(
-            message = AppObjectController.joshApplication.getString(R.string.call_engage_message),
+            message = AppObjectController.joshApplication.getString(message),
             length = Toast.LENGTH_SHORT
         )
         return true
@@ -1313,7 +1309,6 @@ fun Intent.printAllIntent() {
 
 private const val WIDTH_INDEX = 0
 private const val HEIGHT_INDEX = 1
-
 
 fun getScreenSize(context: Context): IntArray {
     val widthHeight = IntArray(2)

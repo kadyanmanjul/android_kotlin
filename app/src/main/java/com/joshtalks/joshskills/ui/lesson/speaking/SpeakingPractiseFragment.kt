@@ -17,8 +17,10 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
@@ -27,6 +29,7 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -74,15 +77,32 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.isFavoriteCallerExist(::callback)
         if (topicId.isNullOrBlank().not()) {
             viewModel.getTopicDetail(topicId!!)
         }
+        viewModel.isFavoriteCallerExist(::callback)
+        subscribeRXBus()
     }
 
     override fun onStop() {
         super.onStop()
         compositeDisposable.clear()
+    }
+
+    private fun subscribeRXBus() {
+        compositeDisposable.add(
+            RxBus2.listen(DBInsertion::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(
+                    {
+                        viewModel.isFavoriteCallerExist(::callback)
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
+        )
     }
 
     private fun addObservers() {
@@ -94,7 +114,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
                 spQuestion?.topicId?.let {
                     this.topicId = it
-                    viewModel.getTopicDetail(it)
+                    //    viewModel.getTopicDetail(it)
                 }
                 spQuestion?.lessonId?.let { viewModel.getCourseIdByLessonId(it) }
             }
@@ -165,7 +185,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     private fun callback(exist: Boolean) {
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main){
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             favoriteCallerExist = exist
             binding.btnFavorite.backgroundTintList =
                 ColorStateList.valueOf(
@@ -218,7 +238,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private fun startPractiseSearchScreen(favoriteUserCall: Boolean = false) {
         viewModel.speakingTopicLiveData.value?.run {
-            if (isCallOngoing().not()) {
+            if (isCallOngoing(message = R.string.call_engage_message).not()) {
                 openCallActivity.launch(
                     SearchingUserActivity.startUserForPractiseOnPhoneActivity(
                         requireActivity(),

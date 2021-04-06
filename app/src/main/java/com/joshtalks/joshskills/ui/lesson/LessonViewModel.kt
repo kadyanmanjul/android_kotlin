@@ -5,28 +5,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController.Companion.appDatabase
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.m4aRecorder.M4ABaseAudioRecording
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
-import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonMaterialType
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
-import com.joshtalks.joshskills.repository.local.entity.PendingTask
-import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
-import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
-import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.entity.practise.PointsListResponse
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
@@ -42,12 +28,12 @@ import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.io.File
 
 class LessonViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -72,7 +58,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val demoLessonNoLiveData: MutableLiveData<Int> = MutableLiveData()
     val demoOnboardingData: MutableLiveData<DemoOnboardingData> = MutableLiveData()
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
-
 
     fun getLesson(lessonId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -647,7 +632,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     fun isFavoriteCallerExist(aFunction: (Boolean) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            delay(150)
+            delay(250)
             val count = appDatabase.favoriteCallerDao().getCountOfFavoriteCaller()
             if (count > 0) {
                 aFunction.invoke(true)
@@ -656,7 +641,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
-
 
     fun getDemoLesson() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -668,7 +652,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     val lesson = appDatabase.lessonDao().getLesson(response.id)
                     if (lesson == null) {
                         appDatabase.lessonDao().insertSingleItem(response)
-                        //demoLessonIdLiveData.postValue(response.id)
+                        // demoLessonIdLiveData.postValue(response.id)
                     }
                     getQuestions(response.id, false)
                 }
@@ -692,5 +676,4 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
-
 }
