@@ -47,6 +47,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     var phoneNumber = String()
     var countryCode = String()
     var loginViaStatus: LoginViaStatus? = null
+    val service = AppObjectController.signUpNetworkService
 
     fun signUpUsingSocial(
         loginViaStatus: LoginViaStatus,
@@ -66,21 +67,13 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     .name(name)
                     .email(email)
                     .photoUrl(profilePicture)
-                val response =
-                    AppObjectController.signUpNetworkService.socialLogin(
-                        getPath(loginViaStatus),
-                        reqObj.build()
-                    )
-                if (response.isSuccessful) {
-                    response.body()?.run {
-                        MarketingAnalytics.completeRegistrationAnalytics(
-                            this.newUser,
-                            RegistrationMethods.FACEBOOK
-                        )
-                        updateFromLoginResponse(this)
-                    }
-                    return@launch
-                }
+                val response = service.socialLogin(getPath(loginViaStatus), reqObj.build())
+                MarketingAnalytics.completeRegistrationAnalytics(
+                    response.newUser,
+                    RegistrationMethods.FACEBOOK
+                )
+                updateFromLoginResponse(response)
+                return@launch
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }
@@ -94,15 +87,13 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 loginAnalyticsEvent(VerificationVia.SMS.name)
                 val reqObj = mapOf("country_code" to cCode, "mobile" to mNumber)
-                val response = AppObjectController.signUpNetworkService.getOtpForNumberAsync(reqObj)
-                if (response.isSuccessful) {
-                    countryCode = cCode
-                    phoneNumber = mNumber
-                    delay(500)
-                    _signUpStatus.postValue(SignUpStepStatus.RequestForOTP)
-                    registerSMSReceiver()
-                    return@launch
-                }
+                service.getOtpForNumberAsync(reqObj)
+                countryCode = cCode
+                phoneNumber = mNumber
+                delay(500)
+                _signUpStatus.postValue(SignUpStepStatus.RequestForOTP)
+                registerSMSReceiver()
+                return@launch
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }
@@ -115,11 +106,9 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val reqObj = mapOf("country_code" to countryCode, "mobile" to phoneNumber)
-                val response = AppObjectController.signUpNetworkService.getOtpForNumberAsync(reqObj)
-                if (response.isSuccessful) {
-                    _signUpStatus.postValue(SignUpStepStatus.ReGeneratedOTP)
-                    return@launch
-                }
+                service.getOtpForNumberAsync(reqObj)
+                _signUpStatus.postValue(SignUpStepStatus.ReGeneratedOTP)
+                return@launch
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }
@@ -137,10 +126,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     profile.signatureAlgorithm,
                     PrefManager.getStringValue(INSTANCE_ID, false)
                 )
-                val response =
-                    AppObjectController.signUpNetworkService.verifyViaTrueCaller(
-                        trueCallerLoginRequest
-                    )
+                val response = service.verifyViaTrueCaller(trueCallerLoginRequest)
                 if (response.isSuccessful) {
                     response.body()?.run {
                         MarketingAnalytics.completeRegistrationAnalytics(
@@ -168,7 +154,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     mNumber
                 )
 
-                val response = AppObjectController.signUpNetworkService.userVerification(reqObj)
+                val response = service.userVerification(reqObj)
                 if (response.isSuccessful) {
                     response.body()?.run {
                         MarketingAnalytics.completeRegistrationAnalytics(
@@ -195,7 +181,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     phoneNumber,
                     otp ?: otpField.get()!!
                 )
-                val response = AppObjectController.signUpNetworkService.verifyOTP(reqObj)
+                val response = service.verifyOTP(reqObj)
                 if (response.isSuccessful) {
                     response.body()?.run {
 
@@ -217,7 +203,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             }
             _signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
-
     }
 
     private fun updateFromLoginResponse(loginResponse: LoginResponse) {
@@ -241,7 +226,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         fetchMentor()
         WorkManagerAdmin.userActiveStatusWorker(true)
         WorkManagerAdmin.requiredTaskAfterLoginComplete()
-
     }
 
     private fun deleteMentor(mentorId: String, oldMentorId: String) {
@@ -263,22 +247,15 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     private fun fetchMentor() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response =
-                    AppObjectController.signUpNetworkService.getPersonalProfileAsync(
-                        Mentor.getInstance().getId()
-                    )
-                if (response.isSuccessful) {
-                    response.body()?.run {
-                        Mentor.getInstance().updateFromResponse(this)
-                        this.getUser()?.let {
-                            it.isVerified = true
-                            User.update(it)
-                        }
-                        AppAnalytics.updateUser()
-                        analyzeUserProfile()
-                    }
-                    return@launch
+                val response = service.getPersonalProfileAsync(Mentor.getInstance().getId())
+                Mentor.getInstance().updateFromResponse(response)
+                response.getUser()?.let {
+                    it.isVerified = true
+                    User.update(it)
                 }
+                AppAnalytics.updateUser()
+                analyzeUserProfile()
+                return@launch
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }
@@ -299,7 +276,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             fromVerificationScreen.postValue(true)
     }
 
-
     private fun getPath(loginViaStatus: LoginViaStatus): String {
         if (LoginViaStatus.FACEBOOK == loginViaStatus) {
             return "facebook"
@@ -313,10 +289,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         progressBarStatus.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response =
-                    AppObjectController.signUpNetworkService.updateUserProfile(
-                        Mentor.getInstance().getUserId(), map
-                    )
+                val response = service.updateUserProfile(Mentor.getInstance().getUserId(), map)
                 if (response.isSuccessful) {
                     response.body()?.let {
                         it.isVerified = true
@@ -332,18 +305,14 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-
     fun registerSMSReceiver() {
         val client = SmsRetriever.getClient(context)
         val task: Task<Void> = client.startSmsRetriever()
         task.addOnSuccessListener {
-
         }
         task.addOnFailureListener {
-
         }
         task.addOnCompleteListener {
-
         }
     }
 
@@ -399,7 +368,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                         PrefManager.put(IS_TRIAL_STARTED, this.freeTrialData.is7DFTBought)
                         PrefManager.put(REMAINING_TRIAL_DAYS, this.freeTrialData.remainingDays)
                         PrefManager.put(SHOW_COURSE_DETAIL_TOOLTIP, this.showTooltip5)
-
                     }
                 }
             } catch (ex: Throwable) {
@@ -407,5 +375,4 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
-
 }
