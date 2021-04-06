@@ -219,7 +219,7 @@ class LeaderBoardFragment : Fragment() {
         if (type == "TODAY") {
             liveUserPosition =
                 leaderboardResponse1.top_50_mentor_list?.indexOfFirst { it.isOnline } ?: 0
-            if (liveUserPosition < 0 || liveUserPosition > 4) {
+            if (liveUserPosition < 0 || liveUserPosition >= 3) {
                 liveUserPosition = 2
                 leaderboardResponse1.top_50_mentor_list?.listIterator(liveUserPosition)
                     ?.next()?.isOnline = true

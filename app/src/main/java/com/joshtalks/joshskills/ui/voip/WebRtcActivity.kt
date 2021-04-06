@@ -433,7 +433,7 @@ class WebRtcActivity : AppCompatActivity() {
                     return@run
                 }
             }
-            binding.callStatus.text = getText(R.string.practice)
+            binding.callStatus.text = "Practice with Partner "
         }
     }
 

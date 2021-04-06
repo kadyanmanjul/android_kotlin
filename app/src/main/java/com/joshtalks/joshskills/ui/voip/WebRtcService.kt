@@ -869,6 +869,9 @@ class WebRtcService : BaseWebRtcService() {
             callStopWithoutIssue()
         }
     }
+    fun setOngoingCall() {
+        isCallWasOnGoing = false
+    }
 
     fun answerCall(data: HashMap<String, String?>) {
         executor.execute {
