@@ -67,6 +67,7 @@ class VocabularyPracticeAdapter(
 
     init {
         setHasStableIds(true)
+        initExpandCardPosition()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -165,11 +166,23 @@ class VocabularyPracticeAdapter(
         }
     }
 
+    private fun initExpandCardPosition() {
+        if (expandCardPosition == -1) {
+            for (index in itemList.indices) {
+                if (itemList[index].status == QUESTION_STATUS.NA) {
+                    expandCardPosition = index
+                    break
+                }
+            }
+        }
+    }
+
     fun updateAssessmentQuizList(assessmentQuizList: ArrayList<AssessmentWithRelations>) {
         this.assessmentQuizList.clear()
         this.assessmentQuizList.addAll(assessmentQuizList)
         this.wordsItemSize = itemList.size.minus(assessmentQuizList.size)
         this.revisionItemSize = assessmentQuizList.size
+        initExpandCardPosition()
         notifyDataSetChanged()
     }
 
@@ -291,9 +304,9 @@ class VocabularyPracticeAdapter(
 
                 val selectedChoice =
                     assessmentQuestion.choiceList[
-                        binding.quizRadioGroup.indexOfChild(
-                            binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
-                        )
+                            binding.quizRadioGroup.indexOfChild(
+                                binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
+                            )
                     ]
                 selectedChoice.isSelectedByUser = true
                 selectedChoice.userSelectedOrder = 1
@@ -1063,7 +1076,7 @@ class VocabularyPracticeAdapter(
                     filePath = lessonQuestion.filePath
                     binding.submitPractiseSeekbar.max =
                         Utils.getDurationOfMedia(context, filePath!!)
-                        ?.toInt() ?: 1_00_000
+                            ?.toInt() ?: 1_00_000
                 } else {
                     val practiseEngagement = lessonQuestion.practiceEngagement?.getOrNull(0)
                     if (EXPECTED_ENGAGE_TYPE.AU == it) {
@@ -1076,7 +1089,7 @@ class VocabularyPracticeAdapter(
                         filePath = practiseEngagement?.localPath
                         binding.submitPractiseSeekbar.max =
                             Utils.getDurationOfMedia(context, filePath!!)
-                            ?.toInt() ?: 0
+                                ?.toInt() ?: 0
                     } else {
                         filePath = practiseEngagement?.answerUrl
                         if (practiseEngagement?.duration != null || practiseEngagement?.duration == 0) {
