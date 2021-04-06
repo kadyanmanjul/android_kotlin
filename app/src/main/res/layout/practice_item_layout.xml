@@ -183,7 +183,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
                     android:gravity="center"
                     android:text="@string/how_to_pronounce"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular" />
