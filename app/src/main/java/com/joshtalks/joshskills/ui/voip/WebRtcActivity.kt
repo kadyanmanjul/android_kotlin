@@ -364,12 +364,15 @@ class WebRtcActivity : AppCompatActivity() {
 
     private fun initCall() {
         setFavoriteUIScreen()
-        if (isCallFavoritePP() || WebRtcService.isCallWasOnGoing) {
-            updateCallInfo()
-        } else {
-        }
         updateButtonStatus()
         val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
+
+        if (isCallFavoritePP() || WebRtcService.isCallWasOnGoing) {
+            updateCallInfo()
+        } else if (callType == CallType.INCOMING && WebRtcService.isCallWasOnGoing) {
+            updateCallInfo()
+        }
+
         callType?.run {
             updateStatusLabel()
             if (CallType.OUTGOING == this) {
@@ -435,6 +438,13 @@ class WebRtcActivity : AppCompatActivity() {
                         return@run
                     } else if (callConnected.not() && isCallFavoritePP()) {
                         binding.callStatus.text = getText(R.string.pp_favorite_incoming)
+                        return@run
+                    } else if (callConnected.not() && isCallFavoritePP().not()) {
+                        binding.callStatus.text = "Incoming Call from"
+                        binding.callerName.text = "Practice Partner"
+                        return@run
+                    } else if (callConnected && isCallFavoritePP().not()) {
+                        binding.callStatus.text = "Practice with Partner"
                         return@run
                     }
                 }

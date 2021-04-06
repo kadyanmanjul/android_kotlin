@@ -164,6 +164,10 @@ class ConversationActivity :
         conversationBinding.handler = this
         activityRef = WeakReference(this)
         initIntentObject()
+        if (::inboxEntity.isInitialized.not()) {
+            this.finish()
+            return
+        }
         init()
     }
 
@@ -341,6 +345,7 @@ class ConversationActivity :
                 }
             })
     }
+
     private fun getLayoutManager(): SmoothScrollingLinearLayoutManager {
         return linearLayoutManager as SmoothScrollingLinearLayoutManager
     }

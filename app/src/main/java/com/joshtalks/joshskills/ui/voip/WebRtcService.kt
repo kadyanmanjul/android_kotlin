@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.voip
 import android.annotation.SuppressLint
 import android.app.*
 import android.app.NotificationManager.IMPORTANCE_HIGH
+import android.app.NotificationManager.IMPORTANCE_LOW
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
@@ -36,8 +37,7 @@ import com.joshtalks.joshskills.ui.voip.extra.FullScreenActivity
 import com.joshtalks.joshskills.ui.voip.util.NotificationUtil
 import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
 import io.agora.rtc.Constants
-import io.agora.rtc.Constants.CONNECTION_CHANGED_INTERRUPTED
-import io.agora.rtc.Constants.CONNECTION_STATE_RECONNECTING
+import io.agora.rtc.Constants.*
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.reactivex.Completable
@@ -553,14 +553,16 @@ class WebRtcService : BaseWebRtcService() {
                     //     setParameters("{\"rtc.log_filter\": 65535}")
                 }
                 setParameters("{\"rtc.peer.offline_period\":$callReconnectTime}")
+                setParameters("{\"che.audio.keep.audiosession\":true}")
                 disableVideo()
                 enableAudio()
                 enableAudioVolumeIndication(1000, 3, true)
                 setAudioProfile(
-                    Constants.AUDIO_PROFILE_SPEECH_STANDARD,
-                    Constants.AUDIO_SCENARIO_EDUCATION
+                    AUDIO_PROFILE_SPEECH_STANDARD,
+                    AUDIO_SCENARIO_EDUCATION
                 )
-                setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION)
+                setVoiceBeautifierPreset(CHAT_BEAUTIFIER_MAGNETIC)
+                setChannelProfile(CHANNEL_PROFILE_COMMUNICATION)
                 adjustRecordingSignalVolume(400)
                 adjustPlaybackSignalVolume(100)
                 enableInEarMonitoring(true)
@@ -676,6 +678,7 @@ class WebRtcService : BaseWebRtcService() {
                                 }
                                 resetConfig()
                                 addNotification(CallForceConnect().action, null)
+                                callData = null
                                 callData?.let {
                                     callStatusNetworkApi(it, CallAction.DECLINE)
                                 }
@@ -1251,7 +1254,11 @@ class WebRtcService : BaseWebRtcService() {
         customView.setOnClickPendingIntent(R.id.decline_btn, declinePendingIntent)
         builder.setLargeIcon(avatar)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            builder.priority = IMPORTANCE_HIGH
+            if (canHeadsUpNotification()) {
+                builder.priority = IMPORTANCE_HIGH
+            } else {
+                builder.priority = IMPORTANCE_LOW
+            }
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setVibrate(LongArray(0))
@@ -1260,8 +1267,8 @@ class WebRtcService : BaseWebRtcService() {
         if (canHeadsUpNotification()) {
             builder.setCustomHeadsUpContentView(customView)
             builder.setCustomBigContentView(customView)
+            builder.setCustomContentView(customView)
         }
-        builder.setCustomContentView(customView)
         builder.setShowWhen(false)
         return builder.build()
     }

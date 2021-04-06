@@ -105,6 +105,7 @@ class SearchingUserActivity : BaseActivity() {
             Timber.tag("SearchingUserActivity").e("onConnect")
             outgoingCallData[RTC_CALLER_UID_KEY] = connectId
             WebRtcActivity.startOutgoingCallActivity(this@SearchingUserActivity, outgoingCallData)
+            overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
             this@SearchingUserActivity.finish()
         }
 
@@ -120,6 +121,7 @@ class SearchingUserActivity : BaseActivity() {
                     }
                 }
             startActivity(callActivityIntent)
+            overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
             this@SearchingUserActivity.finish()
         }
 
