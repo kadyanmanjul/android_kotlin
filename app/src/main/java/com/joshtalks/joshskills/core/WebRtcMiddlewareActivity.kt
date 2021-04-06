@@ -31,7 +31,7 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
                 try {
                     if (WebRtcService.isCallWasOnGoing) {
                         findViewById<View>(R.id.ongoing_call_container).setOnClickListener {
-                            mBoundService?.openConnectedCallActivity()
+                            mBoundService?.openConnectedCallActivity(this@WebRtcMiddlewareActivity)
                         }
                         findViewById<View>(R.id.ongoing_call_container).visibility = View.VISIBLE
                         val callType = mBoundService?.getCallType()

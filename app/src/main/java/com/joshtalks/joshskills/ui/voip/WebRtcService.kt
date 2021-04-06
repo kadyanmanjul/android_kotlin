@@ -1,11 +1,8 @@
 package com.joshtalks.joshskills.ui.voip
 
 import android.annotation.SuppressLint
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.app.*
 import android.app.NotificationManager.IMPORTANCE_HIGH
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
@@ -759,8 +756,8 @@ class WebRtcService : BaseWebRtcService() {
         startActivity(callActivityIntent)
     }
 
-    fun openConnectedCallActivity() {
-        val callActivityIntent = Intent(this, WebRtcActivity::class.java).apply {
+    fun openConnectedCallActivity(context: Activity) {
+        val callActivityIntent = Intent(context, WebRtcActivity::class.java).apply {
             callData?.apply {
                 if (isFavorite()) {
                     put(RTC_IS_FAVORITE, "true")
@@ -771,6 +768,7 @@ class WebRtcService : BaseWebRtcService() {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         startActivity(callActivityIntent)
+        context.overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
     }
 
     private fun handleIncomingCall() {
@@ -990,6 +988,7 @@ class WebRtcService : BaseWebRtcService() {
             0
         } else SystemClock.elapsedRealtime() - callStartTime
     }
+
     fun getCallType() = callType
 
     override fun onBind(intent: Intent): IBinder {
