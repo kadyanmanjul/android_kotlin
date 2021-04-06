@@ -4,12 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
+import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.databinding.ActivityPreviousLeaderboardBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventBus
@@ -23,7 +24,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class PreviousLeaderboardActivity : BaseActivity() {
+class PreviousLeaderboardActivity : WebRtcMiddlewareActivity() {
 
     lateinit var binding: ActivityPreviousLeaderboardBinding
     private var intervalType: String = EMPTY
@@ -66,7 +67,7 @@ class PreviousLeaderboardActivity : BaseActivity() {
     }
 
     private fun initToolbar() {
-        with(binding.ivBack) {
+        with(findViewById<View>(R.id.iv_back)) {
             visibility = View.VISIBLE
             setOnClickListener {
                 onBackPressed()
@@ -88,7 +89,7 @@ class PreviousLeaderboardActivity : BaseActivity() {
 
     private fun initToolbarTitle(title: String?) {
         if (title.isNullOrBlank().not()) {
-            binding.textMessageTitle.text = title
+            findViewById<AppCompatTextView>(R.id.text_message_title).text = title
         }
     }
 
@@ -175,10 +176,10 @@ class PreviousLeaderboardActivity : BaseActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
-                    /*viewModel.userData.value?.photoUrl = it.url
-                    if (it.url.isBlank()) {
-                        viewModel.completingProfile("")
-                    }*/
+                        /*viewModel.userData.value?.photoUrl = it.url
+                        if (it.url.isBlank()) {
+                            viewModel.completingProfile("")
+                        }*/
                     },
                     {
                         it.printStackTrace()
