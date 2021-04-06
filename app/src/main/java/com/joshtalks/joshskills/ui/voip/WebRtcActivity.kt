@@ -208,7 +208,7 @@ class WebRtcActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_calling)
         binding.lifecycleOwner = this
         binding.handler = this
-        setCallerInfoOnAppCreate()
+       // setCallerInfoOnAppCreate()
         intent.printAllIntent()
         addObserver()
         AppAnalytics.create(AnalyticsEvent.OPEN_CALL_SCREEN_VOIP.NAME)
@@ -413,27 +413,29 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun updateStatusLabel() {
-        val callConnected = mBoundService?.isCallerJoin ?: false
-        val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
-        callType?.run {
-            if (CallType.FAVORITE_MISSED_CALL == this || CallType.OUTGOING == this) {
-                if (callConnected && isCallFavoritePP()) {
-                    binding.callStatus.text = getText(R.string.pp_connected)
-                    return@run
-                } else if (callConnected.not() && isCallFavoritePP()) {
-                    binding.callStatus.text = getText(R.string.pp_calling)
-                    return@run
+        lifecycleScope.launchWhenCreated {
+            val callConnected = mBoundService?.isCallerJoin ?: false
+            val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
+            callType?.run {
+                if (CallType.FAVORITE_MISSED_CALL == this || CallType.OUTGOING == this) {
+                    if (callConnected && isCallFavoritePP()) {
+                        binding.callStatus.text = getText(R.string.pp_connected)
+                        return@run
+                    } else if (callConnected.not() && isCallFavoritePP()) {
+                        binding.callStatus.text = getText(R.string.pp_calling)
+                        return@run
+                    }
+                } else {
+                    if (callConnected && isCallFavoritePP()) {
+                        binding.callStatus.text = getText(R.string.pp_connected)
+                        return@run
+                    } else if (callConnected.not() && isCallFavoritePP()) {
+                        binding.callStatus.text = getText(R.string.pp_favorite_incoming)
+                        return@run
+                    }
                 }
-            } else {
-                if (callConnected && isCallFavoritePP()) {
-                    binding.callStatus.text = getText(R.string.pp_connected)
-                    return@run
-                } else if (callConnected.not() && isCallFavoritePP()) {
-                    binding.callStatus.text = getText(R.string.pp_favorite_incoming)
-                    return@run
-                }
+                binding.callStatus.text = "Practice with Partner "
             }
-            binding.callStatus.text = "Practice with Partner "
         }
     }
 
@@ -692,6 +694,7 @@ class WebRtcActivity : AppCompatActivity() {
                 yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
                 yourAgoraId = mBoundService?.getUserAgoraId()
             )
+            mBoundService?.setOppositeUserInfo(null)
             return
         }
         this@WebRtcActivity.finishAndRemoveTask()

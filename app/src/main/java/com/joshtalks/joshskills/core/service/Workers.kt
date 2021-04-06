@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
+import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
 import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.ActiveUserRequest
@@ -720,6 +721,7 @@ class SyncFavoriteCaller(context: Context, workerParams: WorkerParameters) :
             AppObjectController.appDatabase.favoriteCallerDao().also {
                 it.removeAllFavorite()
                 it.insertFavoriteCallers(response)
+                RxBus2.publish(DBInsertion("Favorite_caller"))
             }
         } catch (ex: Throwable) {
             LogException.catchException(ex)

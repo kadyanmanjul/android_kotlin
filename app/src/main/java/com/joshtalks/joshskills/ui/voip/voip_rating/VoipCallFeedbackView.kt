@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import java.util.*
@@ -174,7 +175,7 @@ class VoipCallFeedbackView : DialogFragment() {
 
     fun submitFeedback(response: String) {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            withTimeout(250) {
+            withTimeout(550) {
                 try {
                     val requestParams: HashMap<String, String> = HashMap()
                     requestParams["channel_name"] = channelName
@@ -182,6 +183,7 @@ class VoipCallFeedbackView : DialogFragment() {
                     requestParams["response"] = response
                     AppObjectController.p2pNetworkService.p2pCallFeedbackV2(requestParams)
                     WorkManagerAdmin.syncFavoriteCaller()
+                    delay(250)
                 } catch (ex: Throwable) {
                     ex.printStackTrace()
                 }

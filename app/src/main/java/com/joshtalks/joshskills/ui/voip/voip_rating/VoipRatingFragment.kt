@@ -51,7 +51,7 @@ class VoipRatingFragment : DialogFragment() {
     private fun addObserver() {
         practiceViewModel.pointsSnackBarText.observe(
             this.viewLifecycleOwner,
-            androidx.lifecycle.Observer {
+            {
                 if (it.pointsList.isNullOrEmpty().not()) {
                     showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
                 }

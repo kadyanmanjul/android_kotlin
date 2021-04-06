@@ -116,10 +116,6 @@ class WebRtcService : BaseWebRtcService() {
 
         @JvmStatic
         @Volatile
-        var isCallRecordOngoing: Boolean = false
-
-        @JvmStatic
-        @Volatile
         var switchChannel: Boolean = false
 
         @Volatile
@@ -609,12 +605,14 @@ class WebRtcService : BaseWebRtcService() {
                                 data.let {
                                     callData = it
                                 }
+                                setOppositeUserInfo(null)
                                 callType = CallType.INCOMING
                                 isTimeOutToPickCall = false
                                 callStartTime = 0L
                                 handleIncomingCall()
                             }
                             this == OutgoingCall().action -> {
+                                setOppositeUserInfo(null)
                                 callStartTime = 0L
                                 isTimeOutToPickCall = false
                                 val data: HashMap<String, String?> =
@@ -648,7 +646,6 @@ class WebRtcService : BaseWebRtcService() {
                                     )
                                 }
                                 endCall()
-                                isCallRecordOngoing = false
                             }
                             this == NoUserFound().action -> {
                                 callData?.let {
@@ -676,6 +673,7 @@ class WebRtcService : BaseWebRtcService() {
                                 callStartTime = 0L
                                 compositeDisposable.clear()
                                 switchChannel = true
+                                setOppositeUserInfo(null)
                                 if (isCallWasOnGoing) {
                                     mRtcEngine?.leaveChannel()
                                 }
@@ -869,6 +867,7 @@ class WebRtcService : BaseWebRtcService() {
             callStopWithoutIssue()
         }
     }
+
     fun setOngoingCall() {
         isCallWasOnGoing = false
     }
@@ -968,7 +967,7 @@ class WebRtcService : BaseWebRtcService() {
 
     fun getOppositeCallerProfilePic() = userDetailMap?.get("profile_pic")
 
-    fun setOppositeUserInfo(obj: HashMap<String, String>) {
+    fun setOppositeUserInfo(obj: HashMap<String, String>?) {
         userDetailMap = obj
     }
 
@@ -991,6 +990,7 @@ class WebRtcService : BaseWebRtcService() {
             0
         } else SystemClock.elapsedRealtime() - callStartTime
     }
+    fun getCallType() = callType
 
     override fun onBind(intent: Intent): IBinder {
         return mBinder
@@ -1029,7 +1029,6 @@ class WebRtcService : BaseWebRtcService() {
         removeSensor()
         isCallerJoin = false
         eventListener = null
-        isCallRecordOngoing = false
         isSpeakerEnable = false
         isMicEnable = true
         oppositeCallerId = null
@@ -1065,7 +1064,6 @@ class WebRtcService : BaseWebRtcService() {
         handlerThread?.quitSafely()
         isEngineInit = false
         isTimeOutToPickCall = false
-        isCallRecordOngoing = false
         switchChannel = false
         isCallerJoin = false
         callStartTime = 0L
@@ -1086,7 +1084,6 @@ class WebRtcService : BaseWebRtcService() {
         isTimeOutToPickCall = false
         isCallerJoin = false
         callStartTime = 0L
-        isCallRecordOngoing = false
         retryInitLibrary = 0
         isCallWasOnGoing = false
         switchChannel = false

@@ -7,11 +7,14 @@ import android.os.IBinder
 import android.os.SystemClock
 import android.view.View
 import android.widget.Chronometer
+import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.voip.WebRtcCallback
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 open class WebRtcMiddlewareActivity : CoreJoshActivity() {
     private var mBoundService: WebRtcService? = null
@@ -24,30 +27,32 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
             mBoundService = myBinder.getService()
             mServiceBound = true
             mBoundService?.addListener(callback)
-            AppObjectController.uiHandler.postDelayed(
-                {
-                    try {
-                        if (WebRtcService.isCallWasOnGoing) {
-                            findViewById<View>(R.id.ongoing_call_container).visibility =
-                                View.VISIBLE
-                            with(findViewById<Chronometer>(R.id.call_timer)) {
-                                base =
-                                    SystemClock.elapsedRealtime() - mBoundService?.getTimeOfTalk()!!
-                                start()
-                            }
+            lifecycleScope.launch(Dispatchers.Main) {
+                try {
+                    if (WebRtcService.isCallWasOnGoing) {
+                        findViewById<View>(R.id.ongoing_call_container).setOnClickListener {
+                            mBoundService?.openConnectedCallActivity()
+                        }
+                        findViewById<View>(R.id.ongoing_call_container).visibility = View.VISIBLE
+                        val callType = mBoundService?.getCallType()
+                        val callConnected = mBoundService?.isCallerJoin ?: false
 
-                            findViewById<View>(R.id.ongoing_call_container).setOnClickListener {
-                                mBoundService?.openConnectedCallActivity()
+                        if (callType == CallType.OUTGOING) {
+                            if (callConnected) {
+                                callTimerUi()
+                            } else {
+                                findViewById<Chronometer>(R.id.call_timer).visibility = View.GONE
                             }
                         } else {
-                            findViewById<View>(R.id.ongoing_call_container).visibility = View.GONE
+                            callTimerUi()
                         }
-                    } catch (ex: Throwable) {
-                        ex.printStackTrace()
+                    } else {
+                        findViewById<View>(R.id.ongoing_call_container).visibility = View.GONE
                     }
-                },
-                100
-            )
+                } catch (ex: Throwable) {
+                    ex.printStackTrace()
+                }
+            }
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -56,29 +61,41 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
     }
 
     private var callback: WebRtcCallback = object : WebRtcCallback {
+        override fun onConnect(callId: String) {
+            super.onConnect(callId)
+            lifecycleScope.launch(Dispatchers.Main) {
+                findViewById<Chronometer>(R.id.call_timer).visibility = View.GONE
+                callTimerUi()
+            }
+        }
 
         override fun onDisconnect(callId: String?, channelName: String?, time: Long) {
             super.onDisconnect(callId, channelName, time)
-            AppObjectController.uiHandler.postDelayed(
-                {
-                    findViewById<View>(R.id.ongoing_call_container).visibility = View.GONE
-                    findViewById<View>(R.id.ongoing_call_container).setOnClickListener(null)
+            lifecycleScope.launch(Dispatchers.Main) {
+                findViewById<View>(R.id.ongoing_call_container).visibility = View.GONE
+                findViewById<View>(R.id.ongoing_call_container).setOnClickListener(null)
+                if (time > 0 && channelName.isNullOrEmpty().not()) {
+                    VoipCallFeedbackView.showCallRatingDialog(
+                        supportFragmentManager,
+                        channelName = channelName,
+                        callTime = time,
+                        callerName = mBoundService?.getOppositeCallerName(),
+                        callerImage = mBoundService?.getOppositeCallerProfilePic(),
+                        yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
+                        yourAgoraId = mBoundService?.getUserAgoraId(),
+                        dimBg = true
+                    )
+                }
+                mBoundService?.setOppositeUserInfo(null)
+            }
+        }
+    }
 
-                    if (time > 0 && channelName.isNullOrEmpty().not()) {
-                        VoipCallFeedbackView.showCallRatingDialog(
-                            supportFragmentManager,
-                            channelName = channelName,
-                            callTime = time,
-                            callerName = mBoundService?.getOppositeCallerName(),
-                            callerImage = mBoundService?.getOppositeCallerProfilePic(),
-                            yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
-                            yourAgoraId = mBoundService?.getUserAgoraId(),
-                            dimBg = true
-                        )
-                    }
-                },
-                100
-            )
+    private fun callTimerUi() {
+        with(findViewById<Chronometer>(R.id.call_timer)) {
+            base =
+                SystemClock.elapsedRealtime() - mBoundService?.getTimeOfTalk()!!
+            start()
         }
     }
 
