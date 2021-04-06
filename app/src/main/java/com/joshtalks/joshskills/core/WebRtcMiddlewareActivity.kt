@@ -64,7 +64,6 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
         override fun onConnect(callId: String) {
             super.onConnect(callId)
             lifecycleScope.launch(Dispatchers.Main) {
-                findViewById<Chronometer>(R.id.call_timer).visibility = View.GONE
                 callTimerUi()
             }
         }
@@ -93,9 +92,9 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
 
     private fun callTimerUi() {
         with(findViewById<Chronometer>(R.id.call_timer)) {
-            base =
-                SystemClock.elapsedRealtime() - mBoundService?.getTimeOfTalk()!!
+            base = SystemClock.elapsedRealtime() - mBoundService?.getTimeOfTalk()!!
             start()
+            visibility = View.VISIBLE
         }
     }
 
