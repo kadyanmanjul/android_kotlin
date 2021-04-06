@@ -30,6 +30,7 @@ import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -58,6 +59,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val demoLessonNoLiveData: MutableLiveData<Int> = MutableLiveData()
     val demoOnboardingData: MutableLiveData<DemoOnboardingData> = MutableLiveData()
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
+    val favoriteCaller = MutableSharedFlow<Boolean>(replay = 0)
 
     fun getLesson(lessonId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -630,15 +632,11 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun isFavoriteCallerExist(aFunction: (Boolean) -> Unit) {
+    fun isFavoriteCallerExist() {
         viewModelScope.launch(Dispatchers.IO) {
             delay(250)
             val count = appDatabase.favoriteCallerDao().getCountOfFavoriteCaller()
-            if (count > 0) {
-                aFunction.invoke(true)
-            } else {
-                aFunction.invoke(false)
-            }
+            favoriteCaller.emit(count > 0)
         }
     }
 

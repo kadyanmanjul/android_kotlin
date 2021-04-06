@@ -30,8 +30,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collect
 
 class SpeakingPractiseFragment : CoreJoshFragment() {
 
@@ -80,7 +79,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         if (topicId.isNullOrBlank().not()) {
             viewModel.getTopicDetail(topicId!!)
         }
-        viewModel.isFavoriteCallerExist(::callback)
+        viewModel.isFavoriteCallerExist()
         subscribeRXBus()
     }
 
@@ -96,7 +95,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .observeOn(Schedulers.io())
                 .subscribe(
                     {
-                        viewModel.isFavoriteCallerExist(::callback)
+                        viewModel.isFavoriteCallerExist()
                     },
                     {
                         it.printStackTrace()
@@ -182,18 +181,17 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 showToast(getString(R.string.empty_favorite_list_message))
             }
         }
-    }
-
-    private fun callback(exist: Boolean) {
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-            favoriteCallerExist = exist
-            binding.btnFavorite.backgroundTintList =
-                ColorStateList.valueOf(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        if (favoriteCallerExist) R.color.colorAccent else R.color.disable_color
+        lifecycleScope.launchWhenStarted {
+            viewModel.favoriteCaller.collect {
+                favoriteCallerExist = it
+                binding.btnFavorite.backgroundTintList =
+                    ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            if (favoriteCallerExist) R.color.colorAccent else R.color.disable_color
+                        )
                     )
-                )
+            }
         }
     }
 

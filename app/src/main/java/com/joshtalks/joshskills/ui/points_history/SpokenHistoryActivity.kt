@@ -8,19 +8,16 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.databinding.ActivitySpokenHistoryBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.points_history.viewholder.PointsSummaryTitleViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewholder.SpokenSummaryDescViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewmodel.PointsViewModel
+import kotlinx.android.synthetic.main.base_toolbar.*
 import java.text.DecimalFormat
-import kotlinx.android.synthetic.main.base_toolbar.iv_back
-import kotlinx.android.synthetic.main.base_toolbar.iv_help
-import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 
-
-class SpokenHistoryActivity : BaseActivity() {
+class SpokenHistoryActivity : WebRtcMiddlewareActivity() {
     private val viewModel: PointsViewModel by lazy {
         ViewModelProvider(this).get(PointsViewModel::class.java)
     }
@@ -40,6 +37,10 @@ class SpokenHistoryActivity : BaseActivity() {
         initToolbar()
         viewModel.getSpokenMinutesSummary(mentorId)
         showProgressBar()
+    }
+
+    override fun getConversationId(): String? {
+        return intent.getStringExtra(CONVERSATION_ID)
     }
 
     private fun initToolbar() {

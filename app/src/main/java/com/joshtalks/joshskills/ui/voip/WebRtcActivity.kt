@@ -203,12 +203,12 @@ class WebRtcActivity : AppCompatActivity() {
             statusBarColor = Color.TRANSPARENT
         }
 
-        volumeControlStream = AudioManager.STREAM_VOICE_CALL
+        //  volumeControlStream = AudioManager.STREAM_VOICE_CALL
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_calling)
         binding.lifecycleOwner = this
         binding.handler = this
-       // setCallerInfoOnAppCreate()
+        // setCallerInfoOnAppCreate()
         intent.printAllIntent()
         addObserver()
         AppAnalytics.create(AnalyticsEvent.OPEN_CALL_SCREEN_VOIP.NAME)
@@ -353,6 +353,7 @@ class WebRtcActivity : AppCompatActivity() {
         userDetailLiveData.observe(
             this,
             {
+                binding.topicHeader.visibility = View.VISIBLE
                 binding.topicName.text = it["topic_name"]
                 binding.callerName.text = it["name"]
                 setImageInIV(it["profile_pic"])
@@ -363,7 +364,10 @@ class WebRtcActivity : AppCompatActivity() {
 
     private fun initCall() {
         setFavoriteUIScreen()
-        updateCallInfo()
+        if (isCallFavoritePP() || WebRtcService.isCallWasOnGoing) {
+            updateCallInfo()
+        } else {
+        }
         updateButtonStatus()
         val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
         callType?.run {

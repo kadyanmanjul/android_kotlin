@@ -263,7 +263,7 @@ abstract class BaseActivity :
     }
 
     fun openSpokenMinutesHistory(mentorId: String? = null, conversationId: String? = null) {
-        SpokenHistoryActivity.startSpokenMinutesHistory(this, mentorId,conversationId)
+        SpokenHistoryActivity.startSpokenMinutesHistory(this, mentorId, conversationId)
     }
 
     fun getActivityType(act: Activity): BaseActivity.ActivityEnum {
