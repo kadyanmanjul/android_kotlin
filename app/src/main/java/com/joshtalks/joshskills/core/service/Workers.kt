@@ -467,6 +467,7 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
                         deviceId,
                         UpdateDeviceRequest()
                     )
+                    //TODO no need to send UpdateDeviceRequest object in patch request 
                     details.apiStatus = ApiRespStatus.PATCH
                     details.update()
                 }
