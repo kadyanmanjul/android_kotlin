@@ -2,7 +2,7 @@
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android"
     android:oneshot="true">
     <item
-        android:drawable="@drawable/ic_baseline_speaker_on"
+        android:drawable="@drawable/ic_speaker_on"
         android:duration="200" />
     <item
         android:drawable="@drawable/ic_baseline_speaker_mute"
@@ -11,6 +11,6 @@
         android:drawable="@drawable/ic_baseline_speaker_down"
         android:duration="200" />
     <item
-        android:drawable="@drawable/ic_baseline_speaker_on"
+        android:drawable="@drawable/ic_speaker_on"
         android:duration="200" />
 </animation-list>
