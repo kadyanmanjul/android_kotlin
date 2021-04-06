@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.airbnb.lottie.RenderMode
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
@@ -45,9 +46,14 @@ class SignUpProfilePicSuccessfullyUpdatedFragment : BaseSignUpFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.picUploadedText.text=
+        binding.picUploadedText.text =
             AppObjectController.getFirebaseRemoteConfig()
                 .getString(FirebaseRemoteConfigKey.PROFILE_PIC_SUCCESSFUL_TEXT)
+        AppObjectController.uiHandler.postDelayed(kotlinx.coroutines.Runnable {
+            binding.image.playAnimation()
+            binding.image.setSafeMode(true)
+            binding.image.setRenderMode(RenderMode.HARDWARE)
+        }, 500)
     }
 
     fun startCourse() {

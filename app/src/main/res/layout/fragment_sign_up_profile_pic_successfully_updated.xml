@@ -18,29 +18,31 @@
             android:id="@+id/image"
             android:layout_width="@dimen/_160sdp"
             android:layout_height="@dimen/_160sdp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:lottie_autoPlay="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.33"
+            app:lottie_autoPlay="false"
+            app:lottie_fileName="lottie/tick_animation.json"
+            app:lottie_imageAssetsFolder="lottie"
             app:lottie_loop="false"
-            app:lottie_speed="0.5"
-            app:lottie_rawRes="@raw/tick_animation"
-            app:layout_constraintVertical_bias="0.33"/>
+            app:lottie_scale="1"
+            app:lottie_speed="0.75" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/pic_uploaded_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:gravity="center"
-            app:layout_constraintTop_toBottomOf="@id/image"
             android:layout_marginHorizontal="@dimen/_62sdp"
             android:layout_marginTop="@dimen/_24sdp"
+            android:gravity="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
             android:textColor="#687C90"
-            tools:text="Profile picture successfully uploaded"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image"
+            tools:text="Profile picture successfully uploaded" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_upload"
