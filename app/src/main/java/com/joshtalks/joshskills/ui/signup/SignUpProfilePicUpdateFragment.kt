@@ -8,6 +8,8 @@ import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfilePicUpdateBinding
 import com.joshtalks.joshskills.ui.userprofile.UserPicChooserFragment
 
@@ -49,10 +51,20 @@ class SignUpProfilePicUpdateFragment : BaseSignUpFragment() {
     fun submitProfilePic() {
         //val requestMap = mutableMapOf<String, String?>()
         //viewModel.completingProfile(requestMap)
+        logAnalyticsEvent(AnalyticsEvent.UPLOAD_PROFILE_PIC.NAME)
         UserPicChooserFragment.showDialog(
             childFragmentManager,
-            true
+            true,
+            isFromRegistration = true
         )
+    }
+
+
+    private fun logAnalyticsEvent(eventName:String) {
+        AppAnalytics.create(eventName)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
     }
 
 }

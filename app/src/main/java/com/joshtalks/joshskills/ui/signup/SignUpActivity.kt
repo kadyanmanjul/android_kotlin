@@ -138,7 +138,7 @@ class SignUpActivity : BaseActivity() {
         initLoginFeatures()
         setupTrueCaller()
         if (User.getInstance().isVerified && isUserProfileComplete()) {
-            openProfileDetailFragment()
+            openProfileDetailFragment(false)
         } else {
             openSignUpOptionsFragment()
         }
@@ -153,7 +153,7 @@ class SignUpActivity : BaseActivity() {
                     openNumberVerificationFragment()
                 }
                 SignUpStepStatus.ProfileInCompleted -> {
-                    openProfileDetailFragment()
+                    openProfileDetailFragment(true)
                 }
                 SignUpStepStatus.ProfileCompleted -> {
                     openProfilePicUpdateFragment()
@@ -305,13 +305,13 @@ class SignUpActivity : BaseActivity() {
         }
     }
 
-    private fun openProfileDetailFragment() {
+    private fun openProfileDetailFragment(isRegistrationScreenFirstTime:Boolean) {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
             addToBackStack(null)
             replace(
                 R.id.container,
-                SignUpProfileFragment.newInstance(),
+                SignUpProfileFragment.newInstance(isRegistrationScreenFirstTime),
                 SignUpProfileFragment::class.java.name
             )
         }
@@ -408,7 +408,15 @@ class SignUpActivity : BaseActivity() {
     }
 
     fun onSkipPressed() {
+        logSkipEvent()
         viewModel.changeSignupStatusToProfilePicSkipped()
+    }
+
+    private fun logSkipEvent() {
+        AppAnalytics.create(AnalyticsEvent.SKIP_PROFILE_PIC.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
     }
 
     fun getUserDetailsFromFB(accessToken: AccessToken) {

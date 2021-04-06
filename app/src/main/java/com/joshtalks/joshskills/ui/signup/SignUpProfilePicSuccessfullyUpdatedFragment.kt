@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfilePicSuccessfullyUpdatedBinding
 
 class SignUpProfilePicSuccessfullyUpdatedFragment : BaseSignUpFragment() {
@@ -49,7 +51,15 @@ class SignUpProfilePicSuccessfullyUpdatedFragment : BaseSignUpFragment() {
     }
 
     fun startCourse() {
+        logStartCourseEvent()
         viewModel.changeSignupStatusToStartAfterPicUploaded()
+    }
+
+    private fun logStartCourseEvent() {
+        AppAnalytics.create(AnalyticsEvent.START_COURSE_CLICKED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
     }
 
 }
