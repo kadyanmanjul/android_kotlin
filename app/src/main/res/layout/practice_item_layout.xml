@@ -183,8 +183,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:gravity="center"
                     android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:gravity="center"
                     android:text="@string/how_to_pronounce"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular" />
 
@@ -192,12 +192,10 @@
                     android:id="@+id/imgPronounce"
                     android:layout_width="@dimen/_28sdp"
                     android:layout_height="@dimen/_28sdp"
-                    android:background="@drawable/recv_bg_mic"
-                    android:backgroundTint="@color/button_color"
+                    android:background="@drawable/pronounce_animation"
                     android:padding="@dimen/_7sdp"
                     android:scaleType="fitCenter"
-                    android:tint="@color/white"
-                    app:srcCompat="@drawable/ic_speaker" />
+                    android:tint="@color/white" />
 
             </LinearLayout>
 

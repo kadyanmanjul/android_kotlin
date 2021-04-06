@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.lesson.vocabulary
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.drawable.AnimationDrawable
 import android.os.Handler
 import android.os.SystemClock
 import android.util.Log
@@ -547,6 +548,7 @@ class VocabularyPracticeAdapter(
         private var mUserIsSeeking = false
         var lessonQuestion: LessonQuestion? = null
         var positionInList = -1
+        var pronounceAnimation: AnimationDrawable? = null
 
         init {
             initViewHolder()
@@ -765,6 +767,7 @@ class VocabularyPracticeAdapter(
             binding.submitPractiseSeekbar.progress = 0
             binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
             currentQuestion?.isPlaying = false
+            pronounceAnimation?.stop()
         }
 
         override fun onProgressUpdate(progress: Long) {
@@ -800,7 +803,8 @@ class VocabularyPracticeAdapter(
         private fun onPlayAudio(
             lessonQuestion: LessonQuestion,
             audioObject: AudioType,
-            position: Int
+            position: Int,
+            progressListener: ExoAudioPlayer.ProgressUpdateListener?
         ) {
 
             currentPlayingPosition = position
@@ -808,7 +812,7 @@ class VocabularyPracticeAdapter(
             currentQuestion = lessonQuestion
             audioManager?.playerListener = this
             audioManager?.play(audioObject.audio_url)
-            audioManager?.setProgressUpdateListener(this)
+            audioManager?.setProgressUpdateListener(progressListener)
 
             lessonQuestion.isPlaying = lessonQuestion.isPlaying.not()
             clickListener.playAudio(bindingAdapterPosition)
@@ -825,7 +829,7 @@ class VocabularyPracticeAdapter(
 
             if (currentQuestion == null) {
                 lessonQuestion.audioList?.getOrNull(0)?.let {
-                    onPlayAudio(lessonQuestion, it, position)
+                    onPlayAudio(lessonQuestion, it, position, this)
                 }
             } else {
                 if (currentQuestion == lessonQuestion) {
@@ -836,14 +840,16 @@ class VocabularyPracticeAdapter(
                         onPlayAudio(
                             lessonQuestion,
                             lessonQuestion.audioList?.getOrNull(0)!!,
-                            position
+                            position,
+                            this
                         )
                     }
                 } else {
                     onPlayAudio(
                         lessonQuestion,
                         lessonQuestion.audioList?.getOrNull(0)!!,
-                        position
+                        position,
+                        this
                     )
                 }
             }
@@ -887,7 +893,7 @@ class VocabularyPracticeAdapter(
                 }
 
                 if (currentQuestion == null) {
-                    onPlayAudio(lessonQuestion, audioType, position)
+                    onPlayAudio(lessonQuestion, audioType, position, this)
                 } else {
                     if (audioManager?.currentPlayingUrl?.isNotEmpty() == true && audioManager?.currentPlayingUrl == audioType.audio_url) {
                         if (checkIsPlayer()) {
@@ -897,10 +903,10 @@ class VocabularyPracticeAdapter(
                             audioManager?.resumeOrPause()
 //                            notifyItemChanged(layoutPosition)
                         } else {
-                            onPlayAudio(lessonQuestion, audioType, position)
+                            onPlayAudio(lessonQuestion, audioType, position, this)
                         }
                     } else {
-                        onPlayAudio(lessonQuestion, audioType, position)
+                        onPlayAudio(lessonQuestion, audioType, position, this)
                     }
                 }
             } catch (ex: Exception) {
@@ -925,9 +931,18 @@ class VocabularyPracticeAdapter(
                     Utils.getDurationOfMedia(context, url)?.toInt() ?: 0
                 audioType.id = nextInt().toString()
 
-
-                onPlayAudio(lessonQuestion, audioType, position)
+                showPronounceAnimation()
+                onPlayAudio(lessonQuestion, audioType, position, null)
             }
+        }
+
+        private fun showPronounceAnimation() {
+            if (pronounceAnimation == null) {
+                binding.imgPronounce.apply {
+                    pronounceAnimation = background as AnimationDrawable
+                }
+            }
+            pronounceAnimation?.start()
         }
 
         fun pauseAudio() {
