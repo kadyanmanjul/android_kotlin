@@ -6,23 +6,7 @@ import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
-import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
-import com.joshtalks.joshskills.repository.server.BaseResponse
-import com.joshtalks.joshskills.repository.server.CertificateDetail
-import com.joshtalks.joshskills.repository.server.ComplaintResponse
-import com.joshtalks.joshskills.repository.server.FAQ
-import com.joshtalks.joshskills.repository.server.FAQCategory
-import com.joshtalks.joshskills.repository.server.FeedbackVoipResponse
-import com.joshtalks.joshskills.repository.server.FreshChatRestoreIDResponse
-import com.joshtalks.joshskills.repository.server.LeaderboardMentor
-import com.joshtalks.joshskills.repository.server.LeaderboardResponse
-import com.joshtalks.joshskills.repository.server.LeaderboardType
-import com.joshtalks.joshskills.repository.server.NPSByUserRequest
-import com.joshtalks.joshskills.repository.server.PreviousLeaderboardResponse
-import com.joshtalks.joshskills.repository.server.RequestCertificateGenerate
-import com.joshtalks.joshskills.repository.server.RequestComplaint
-import com.joshtalks.joshskills.repository.server.SuccessResponse
-import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
 import com.joshtalks.joshskills.repository.server.certification_exam.RequestSubmitCertificateExam
@@ -50,18 +34,7 @@ import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
 import com.joshtalks.joshskills.track.CourseUsageSync
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.Field
-import retrofit2.http.FieldMap
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.PATCH
-import retrofit2.http.POST
-import retrofit2.http.PUT
-import retrofit2.http.Path
-import retrofit2.http.Query
-import retrofit2.http.QueryMap
+import retrofit2.http.*
 
 @JvmSuppressWildcards
 interface CommonNetworkService {
@@ -238,7 +211,7 @@ interface CommonNetworkService {
     suspend fun postCallInitAsync(@FieldMap params: Map<String, String?>): Any
 
     @POST("$DIR/mentor/delete_mentor/")
-    suspend fun deleteMentor(@Body params: Map<String, String>)
+    suspend fun deleteMentor(@Body params: Map<String, String>): Response<Void>
 
     @GET("$DIR/group/{group_id}/pinnedmessages/")
     suspend fun getPinnedMessages(

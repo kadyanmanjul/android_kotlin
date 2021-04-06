@@ -27,10 +27,10 @@ import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.truecaller.android.sdk.TrueProfile
-import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
 
 class SignUpViewModel(application: Application) : AndroidViewModel(application) {
     private val _signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()
@@ -252,6 +252,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 requestParams["verified_mentor_id"] = mentorId
 
                 AppObjectController.commonNetworkService.deleteMentor(requestParams)
+                return@launch
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }

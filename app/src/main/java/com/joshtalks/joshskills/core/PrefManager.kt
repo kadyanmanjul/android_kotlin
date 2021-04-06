@@ -178,11 +178,11 @@ object PrefManager {
 
     fun getClientToken(): String {
         return BuildConfig.CLIENT_TOKEN
-
     }
 
     fun logoutUser() {
         prefManagerCommon.edit().clear().apply()
+        WorkManagerAdmin.instanceIdGenerateWorker()
         WorkManagerAdmin.appInitWorker()
         WorkManagerAdmin.appStartWorker()
     }
@@ -190,6 +190,7 @@ object PrefManager {
     fun clearUser() {
         prefManagerCommon.edit().clear().apply()
         AppDatabase.clearDatabase()
+        WorkManagerAdmin.instanceIdGenerateWorker()
         WorkManagerAdmin.appInitWorker()
         WorkManagerAdmin.appStartWorker()
     }

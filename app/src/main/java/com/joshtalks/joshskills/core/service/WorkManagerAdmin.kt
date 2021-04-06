@@ -287,4 +287,15 @@ object WorkManagerAdmin {
             workRequest
         )
     }
+
+    fun instanceIdGenerateWorker() {
+        val workRequest = OneTimeWorkRequestBuilder<InstanceIdGenerationWorker>()
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniqueWork(
+            "Instance_id_Api",
+            ExistingWorkPolicy.REPLACE,
+            workRequest
+        )
+    }
+
 }
