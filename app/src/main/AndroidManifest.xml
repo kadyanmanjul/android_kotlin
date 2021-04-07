@@ -179,7 +179,7 @@
         <!-- replace below value with your FCM project number.-->
         <meta-data
             android:name="FCM_SENDER_ID"
-            android:value="id:359106841538"/>
+            android:value="id:359106841538" />
 
         <activity
             android:name=".ui.help.HelpActivity"
@@ -196,7 +196,7 @@
             android:alwaysRetainTaskState="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme">
+            android:theme="@style/AppTheme.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -705,10 +705,9 @@
             android:permission="android.permission.BIND_JOB_SERVICE"
             tools:ignore="ExportedService" />
 
-        <service
-            android:name="com.clevertap.android.sdk.pushnotification.fcm.FcmMessageListenerService">
+        <service android:name="com.clevertap.android.sdk.pushnotification.fcm.FcmMessageListenerService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 

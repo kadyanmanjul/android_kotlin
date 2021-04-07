@@ -45,6 +45,7 @@ class LauncherActivity : CoreJoshActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Timber.d("asd123  LauncherActivity.onCreate")
+        setTheme(R.style.AppNoBarTheme)
         initApp()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
