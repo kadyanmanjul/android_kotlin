@@ -244,6 +244,13 @@ class WebRtcService : BaseWebRtcService() {
         override fun onAudioRouteChanged(routing: Int) {
             super.onAudioRouteChanged(routing)
             Timber.tag(TAG).e("onAudioRouteChanged=  $routing")
+            executor.submit {
+                if (routing == AUDIO_ROUTE_HEADSET) {
+                    callCallback?.get()?.onSpeakerOff()
+                    isSpeakerEnable = false
+                    mRtcEngine?.setDefaultAudioRoutetoSpeakerphone(isSpeakerEnable)
+                }
+            }
         }
 
         override fun onError(errorCode: Int) {
@@ -520,6 +527,7 @@ class WebRtcService : BaseWebRtcService() {
     override fun onCreate() {
         super.onCreate()
         Timber.tag(TAG).e("onCreate")
+        initIncomingCallChannel()
         phoneCallState = CallState.CALL_STATE_IDLE
         handlerThread = CustomHandlerThread("WebrtcThread")
         handlerThread?.start()
@@ -528,6 +536,25 @@ class WebRtcService : BaseWebRtcService() {
         }
         TelephonyUtil.getManager(this)
             .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_CALL_STATE)
+    }
+
+    private fun initIncomingCallChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            executor.execute {
+                val chanIndex: Int = PrefManager.getIntValue("calls_notification_channel")
+                if (chanIndex == 0) {
+                    val importance =
+                        if (canHeadsUpNotification()) IMPORTANCE_HIGH else IMPORTANCE_LOW
+                    val name: CharSequence = "Voip Incoming Call"
+                    val chan = NotificationChannel("incoming_calls2$chanIndex", name, importance)
+                    try {
+                        mNotificationManager?.createNotificationChannel(chan)
+                    } catch (e: Throwable) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        }
     }
 
     private fun initEngine(callback: () -> Unit) {
@@ -550,7 +577,7 @@ class WebRtcService : BaseWebRtcService() {
             }
             mRtcEngine?.apply {
                 if (BuildConfig.DEBUG) {
-                    //     setParameters("{\"rtc.log_filter\": 65535}")
+                    setParameters("{\"rtc.log_filter\": 65535}")
                 }
                 setParameters("{\"rtc.peer.offline_period\":$callReconnectTime}")
                 setParameters("{\"che.audio.keep.audiosession\":true}")
@@ -566,13 +593,13 @@ class WebRtcService : BaseWebRtcService() {
                 adjustRecordingSignalVolume(400)
                 adjustPlaybackSignalVolume(100)
                 enableInEarMonitoring(true)
-                setInEarMonitoringVolume(75)
+                setInEarMonitoringVolume(0)
 
                 // Configuration for the publisher. When the network condition is poor, send audio only.
-                setLocalPublishFallbackOption(Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY)
+                setLocalPublishFallbackOption(STREAM_FALLBACK_OPTION_AUDIO_ONLY)
 
                 // Configuration for the subscriber. Try to receive low stream under poor network conditions. When the current network conditions are not sufficient for video streams, receive audio stream only.
-                setRemoteSubscribeFallbackOption(Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY)
+                setRemoteSubscribeFallbackOption(STREAM_FALLBACK_OPTION_AUDIO_ONLY)
             }
             if (mRtcEngine != null) {
                 isEngineInit = true
@@ -1004,7 +1031,7 @@ class WebRtcService : BaseWebRtcService() {
             isSpeakerEnable = !isSpeakerEnable
             audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
             mRtcEngine?.setEnableSpeakerphone(isSpeakerEnable)
-            mRtcEngine?.setDefaultAudioRoutetoSpeakerphone(isSpeakerEnable)
+//            mRtcEngine?.setDefaultAudioRoutetoSpeakerphone(isSpeakerEnable)
             audioManager.isSpeakerphoneOn = isSpeakerEnable
         }
     }
@@ -1152,6 +1179,7 @@ class WebRtcService : BaseWebRtcService() {
             uniqueInt, getWebRtcActivityIntent(CallType.INCOMING),
             PendingIntent.FLAG_UPDATE_CURRENT
         )
+        val importance = if (canHeadsUpNotification()) IMPORTANCE_HIGH else IMPORTANCE_LOW
 
         val builder = NotificationCompat.Builder(this, CALL_NOTIFICATION_CHANNEL)
             .setContentTitle(getString(R.string.p2p_title))
@@ -1168,6 +1196,7 @@ class WebRtcService : BaseWebRtcService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name: CharSequence = "Voip Incoming Call"
             var chanIndex: Int = PrefManager.getIntValue("calls_notification_channel")
+            var createChannel = false
             if (canHeadsUpNotification()) {
                 val oldChannel =
                     mNotificationManager?.getNotificationChannel("incoming_calls$chanIndex")
@@ -1177,16 +1206,19 @@ class WebRtcService : BaseWebRtcService() {
                 val existingChannel =
                     mNotificationManager?.getNotificationChannel("incoming_calls2$chanIndex")
                 if (existingChannel != null) {
-                    if (existingChannel.importance < IMPORTANCE_HIGH || existingChannel.vibrationPattern != null || existingChannel.shouldVibrate()) {
-                        mNotificationManager?.deleteNotificationChannel("incoming_calls2$chanIndex")
-                        chanIndex++
-                        PrefManager.put("calls_notification_channel", chanIndex)
-                    }
+                    mNotificationManager?.deleteNotificationChannel("incoming_calls2$chanIndex")
+                    chanIndex++
+                    PrefManager.put("calls_notification_channel", chanIndex)
+                }
+                createChannel = true
+            } else {
+                if (chanIndex == 0) {
+                    createChannel = true
                 }
             }
             val chan = NotificationChannel(
                 "incoming_calls2$chanIndex", name,
-                IMPORTANCE_HIGH
+                importance
             ).apply {
                 description = "Notifications for voice calling"
             }
@@ -1195,10 +1227,12 @@ class WebRtcService : BaseWebRtcService() {
             chan.enableLights(false)
             chan.setBypassDnd(true)
             chan.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-            try {
-                mNotificationManager?.createNotificationChannel(chan)
-            } catch (e: Throwable) {
-                e.printStackTrace()
+            if (createChannel) {
+                try {
+                    mNotificationManager?.createNotificationChannel(chan)
+                } catch (e: Throwable) {
+                    e.printStackTrace()
+                }
             }
             builder.setChannelId("incoming_calls2$chanIndex")
         } else {
@@ -1254,11 +1288,7 @@ class WebRtcService : BaseWebRtcService() {
         customView.setOnClickPendingIntent(R.id.decline_btn, declinePendingIntent)
         builder.setLargeIcon(avatar)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            if (canHeadsUpNotification()) {
-                builder.priority = IMPORTANCE_HIGH
-            } else {
-                builder.priority = IMPORTANCE_LOW
-            }
+            builder.priority = importance
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setVibrate(LongArray(0))
@@ -1543,4 +1573,5 @@ interface WebRtcCallback {
     fun onNetworkReconnect() {}
     fun onHoldCall() {}
     fun onUnHoldCall() {}
+    fun onSpeakerOff() {}
 }

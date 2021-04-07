@@ -184,6 +184,13 @@ class WebRtcActivity : AppCompatActivity() {
                 binding.callTime.visibility = View.VISIBLE
             }
         }
+
+        override fun onSpeakerOff() {
+            super.onSpeakerOff()
+            AppObjectController.uiHandler.post {
+                updateStatusLabel(binding.btnSpeaker, enable = true)
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -203,7 +210,7 @@ class WebRtcActivity : AppCompatActivity() {
             statusBarColor = Color.TRANSPARENT
         }
 
-        //  volumeControlStream = AudioManager.STREAM_VOICE_CALL
+        volumeControlStream = AudioManager.STREAM_VOICE_CALL
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_calling)
         binding.lifecycleOwner = this
