@@ -84,7 +84,7 @@ interface SignUpNetworkService {
     ): DeviceDetailsResponse
 
     @PATCH("$DIR/mentor/fcm/{id}/")
-    suspend fun patchFCMToken(@Path("id") id: Int, @Body params: Map<String, String>): Void
+    suspend fun patchFCMToken(@Path("id") id: Int, @Body params: Map<String, String>): Response<Void>
 
     @FormUrlEncoded
     @POST("$DIR/mentor/fcm/")

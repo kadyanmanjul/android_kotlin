@@ -144,7 +144,7 @@ object WorkManagerAdmin {
     }
 
     fun refreshFcmToken() {
-        val workRequest = PeriodicWorkRequestBuilder<RefreshFCMTokenWorker>(2, TimeUnit.DAYS)
+        val workRequest = PeriodicWorkRequestBuilder<RefreshFCMTokenWorker>(6, TimeUnit.HOURS)
             .setInitialDelay(20, TimeUnit.MINUTES)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniquePeriodicWork(

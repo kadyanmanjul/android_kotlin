@@ -14,7 +14,7 @@ class FCMResponse(
     val id: Int,
 
     @SerializedName("user_id")
-    var userId: String,
+    var userId: String?,
 
     @Expose
     var apiStatus: ApiRespStatus = ApiRespStatus.EMPTY

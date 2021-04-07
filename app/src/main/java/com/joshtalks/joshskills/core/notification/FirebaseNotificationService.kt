@@ -1,12 +1,12 @@
 package com.joshtalks.joshskills.core.notification
 
-//import com.cometchat.pro.constants.CometChatConstants
-//import com.cometchat.pro.helpers.CometChatHelper
-//import com.cometchat.pro.models.BaseMessage
-//import com.cometchat.pro.models.Group
-//import com.cometchat.pro.models.TextMessage
-//import com.joshtalks.joshskills.ui.groupchat.constant.StringContract
-//import com.joshtalks.joshskills.ui.groupchat.utils.Utils
+// import com.cometchat.pro.constants.CometChatConstants
+// import com.cometchat.pro.helpers.CometChatHelper
+// import com.cometchat.pro.models.BaseMessage
+// import com.cometchat.pro.models.Group
+// import com.cometchat.pro.models.TextMessage
+// import com.joshtalks.joshskills.ui.groupchat.constant.StringContract
+// import com.joshtalks.joshskills.ui.groupchat.utils.Utils
 import android.app.*
 import android.content.Context
 import android.content.Intent
@@ -34,9 +34,7 @@ import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.repository.local.model.NotificationAction
-import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
-import com.joshtalks.joshskills.repository.local.model.NotificationObject
+import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
@@ -69,13 +67,11 @@ import java.util.concurrent.ExecutorService
 import kotlin.collections.HashMap
 import kotlin.collections.set
 
-
 const val FCM_TOKEN = "fcmToken"
 const val HAS_NOTIFICATION = "has_notification"
 const val NOTIFICATION_ID = "notification_id"
 const val HAS_COURSE_REPORT = "has_course_report"
 const val QUESTION_ID = "question_id"
-
 
 class FirebaseNotificationService : FirebaseMessagingService() {
 
@@ -90,12 +86,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     private val executor: ExecutorService =
         JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-Notification")
 
-
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Timber.tag(FirebaseNotificationService::class.java.name).e(token)
         PrefManager.put(FCM_TOKEN, token)
-        CleverTapAPI.getDefaultInstance(this)?.pushFcmRegistrationId(token,true)
+        CleverTapAPI.getDefaultInstance(this)?.pushFcmRegistrationId(token, true)
         if (AppObjectController.freshChat != null) {
             AppObjectController.freshChat?.setPushRegistrationToken(token)
         }
@@ -130,7 +125,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             ex.printStackTrace()
         }
     }
-
 
     private fun sendNotification(notificationObject: NotificationObject) {
         executor.execute {
@@ -241,7 +235,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         notificationManager.notify(uniqueInt, notificationBuilder.build())
                     }
                 }
-
             }
             if (PrefManager.getStringValue(API_TOKEN).isNotEmpty()) {
                 EngagementNetworkHelper.receivedNotification(notificationObject)
@@ -368,7 +361,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
             }
             NotificationAction.INCOMING_CALL_NOTIFICATION -> {
-                incomingCallNotificationAction(notificationObject.actionData)
+                if (User.getInstance().isVerified) {
+                    incomingCallNotificationAction(notificationObject.actionData)
+                }
                 return null
             }
             NotificationAction.CALL_DISCONNECT_NOTIFICATION -> {
@@ -376,7 +371,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return null
             }
             NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION -> {
-                callForceConnect(notificationObject.actionData)
+                if (User.getInstance().isVerified) {
+                    callForceConnect(notificationObject.actionData)
+                }
                 return null
             }
             NotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION -> {
@@ -396,8 +393,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return null
             }
             NotificationAction.AUDIO_FEEDBACK_REPORT -> {
-                //deleteUserCredentials()
-                //deleteUserData()
+                // deleteUserCredentials()
+                // deleteUserData()
                 return null
             }
             NotificationAction.AWARD_DECLARE -> {
@@ -530,7 +527,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     private fun processQuestionTypeNotification(
         notificationObject: NotificationObject?,
-        action: NotificationAction?, actionData: String?
+        action: NotificationAction?,
+        actionData: String?
     ): Intent? {
 
         notificationChannelId = action?.name ?: EMPTY
@@ -576,7 +574,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     private fun processChatTypeNotification(
         notificationObject: NotificationObject?,
-        action: NotificationAction?, actionData: String?
+        action: NotificationAction?,
+        actionData: String?
     ): Intent? {
         val obj: InboxEntity = AppObjectController.appDatabase.courseDao()
             .chooseRegisterCourseMinimal(actionData!!) ?: return null
@@ -592,8 +591,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             putExtra(HAS_NOTIFICATION, true)
             putExtra(QUESTION_ID, actionData)
             // addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            //addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-
+            // addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
         if (NotificationAction.ACTION_OPEN_COURSE_REPORT == action) {
             rIntnet.putExtra(HAS_COURSE_REPORT, true)
@@ -849,8 +847,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 //                    notificationBuilder.setChannelId(groupChatChannelId + channelIndex)
 //                }
 //
-////                val isChatScreenOpen =
-////                    AppObjectController.currentActivityClass == CometChatMessageListActivity::class.simpleName
+// //                val isChatScreenOpen =
+// //                    AppObjectController.currentActivityClass == CometChatMessageListActivity::class.simpleName
 //                val isChatScreenOpen = false
 //                val isNotificationMuted = getBoolValue(IS_GROUP_NOTIFICATION_MUTED, false, false)
 //                if (Utils.isMessageVisible(baseMessage) && message != null && isChatScreenOpen.not() && isNotificationMuted.not()) {
@@ -902,8 +900,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         )
         paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
         canvas.drawBitmap(bitmap, rect, rect, paint)
-        //Bitmap _bmp = Bitmap.createScaledBitmap(output, 60, 60, false);
-        //return _bmp;
+        // Bitmap _bmp = Bitmap.createScaledBitmap(output, 60, 60, false);
+        // return _bmp;
         return output
     }
 
@@ -927,5 +925,4 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     companion object {
 //        val unreadMessageList: LinkedList<BaseMessage> = LinkedList()
     }
-
 }

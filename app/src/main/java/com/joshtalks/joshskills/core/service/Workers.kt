@@ -8,6 +8,7 @@ import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.common.util.concurrent.ListenableFuture
+import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.*
@@ -233,23 +234,30 @@ class MessageReadPeriodicWorker(context: Context, workerParams: WorkerParameters
 class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(
-            OnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    task.exception?.run {
-                        LogException.catchException(this)
-                    }
-                    task.exception?.printStackTrace()
-                    return@OnCompleteListener
-                }
-                task.result?.run {
-                    PrefManager.put(FCM_TOKEN, this)
-                    val fcmResponse = FCMResponse.getInstance()
-                    fcmResponse?.apiStatus = ApiRespStatus.POST
-                    fcmResponse?.update()
+        FirebaseInstallations.getInstance().delete().addOnCompleteListener {
+            FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener {
+                FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener {
+                    FirebaseMessaging.getInstance().token.addOnCompleteListener(
+                        OnCompleteListener { task ->
+                            if (!task.isSuccessful) {
+                                task.exception?.run {
+                                    LogException.catchException(this)
+                                }
+                                task.exception?.printStackTrace()
+                                return@OnCompleteListener
+                            }
+                            task.result?.run {
+                                PrefManager.put(FCM_TOKEN, this)
+                                val fcmResponse = FCMResponse.getInstance()
+                                fcmResponse?.apiStatus = ApiRespStatus.POST
+                                fcmResponse?.update()
+                            }
+                        }
+                    )
                 }
             }
-        )
+        }
+
         return Result.success()
     }
 }
@@ -272,10 +280,13 @@ class UploadFCMTokenOnServer(context: Context, workerParams: WorkerParameters) :
                 val userId = Mentor.getInstance().getId()
                 if (fcmResponse != null && userId.isNotBlank()) {
                     val data = mutableMapOf("user_id" to userId, "registration_id" to token)
-                    AppObjectController.signUpNetworkService.patchFCMToken(fcmResponse.id, data)
-                    fcmResponse.userId = Mentor.getInstance().getId()
-                    fcmResponse.apiStatus = ApiRespStatus.PATCH
-                    fcmResponse.update()
+                    val resp =
+                        AppObjectController.signUpNetworkService.patchFCMToken(fcmResponse.id, data)
+                    if (resp.isSuccessful) {
+                        fcmResponse.userId = userId
+                        fcmResponse.apiStatus = ApiRespStatus.PATCH
+                        fcmResponse.update()
+                    }
                 }
             } else {
                 val data = mutableMapOf(
