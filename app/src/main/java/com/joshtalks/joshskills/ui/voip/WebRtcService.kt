@@ -42,12 +42,12 @@ import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
+import java.lang.ref.WeakReference
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.lang.ref.WeakReference
-import java.util.concurrent.TimeUnit
 
 const val RTC_TOKEN_KEY = "token"
 const val RTC_CHANNEL_KEY = "channel_name"
@@ -526,8 +526,10 @@ class WebRtcService : BaseWebRtcService() {
         if (handlerThread != null) {
             mHandler = Handler(handlerThread!!.looper)
         }
-        TelephonyUtil.getManager(this)
-            .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_CALL_STATE)
+        CoroutineScope(Dispatchers.IO).launch {
+            TelephonyUtil.getManager(this@WebRtcService)
+                .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_CALL_STATE)
+        }
     }
 
     private fun initEngine(callback: () -> Unit) {

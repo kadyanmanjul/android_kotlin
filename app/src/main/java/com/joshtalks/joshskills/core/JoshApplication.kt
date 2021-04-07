@@ -30,6 +30,10 @@ class JoshApplication :
         var isAppVisible = false
     }
 
+    init {
+        println("asd123 JoshApplication.init")
+    }
+
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         base.let { ViewPumpContextWrapper.wrap(it) }
@@ -85,12 +89,14 @@ class JoshApplication :
                 )
             }
         }
-        val intentFilterUnreadMessages =
-            IntentFilter(Freshchat.FRESHCHAT_UNREAD_MESSAGE_COUNT_CHANGED)
-        getLocalBroadcastManager().registerReceiver(
-            unreadCountChangeReceiver,
-            intentFilterUnreadMessages
-        )
+        JoshSkillExecutors.BOUNDED.submit {
+            val intentFilterUnreadMessages =
+                IntentFilter(Freshchat.FRESHCHAT_UNREAD_MESSAGE_COUNT_CHANGED)
+            getLocalBroadcastManager().registerReceiver(
+                unreadCountChangeReceiver,
+                intentFilterUnreadMessages
+            )
+        }
     }
 
     private var restoreIdReceiver: BroadcastReceiver =

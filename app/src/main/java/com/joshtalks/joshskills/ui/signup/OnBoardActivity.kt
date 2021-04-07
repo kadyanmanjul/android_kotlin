@@ -8,6 +8,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.text.color
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
@@ -25,6 +26,8 @@ import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class OnBoardActivity : CoreJoshActivity() {
     private lateinit var layout: ActivityOnboardBinding
@@ -37,32 +40,37 @@ class OnBoardActivity : CoreJoshActivity() {
         )
         layout.handler = this
         layout.lifecycleOwner = this
-        if (PrefManager.getStringValue(REFERRED_REFERRAL_CODE).isBlank())
-            layout.haveAReferralCode.visibility = View.VISIBLE
-        VersionResponse.getInstance().version.name?.let {
-            if (it == ONBOARD_VERSIONS.ONBOARDING_V7 && AppObjectController.isSettingUpdate.not() && PrefManager.getBoolValue(
-                    USER_LOCALE_UPDATED
-                ).not()
-            ) {
-                openLanguageChooserDialog()
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (PrefManager.getStringValue(REFERRED_REFERRAL_CODE).isBlank())
+                layout.haveAReferralCode.visibility = View.VISIBLE
+            VersionResponse.getInstance().version.name?.let {
+                if (it == ONBOARD_VERSIONS.ONBOARDING_V7 && AppObjectController.isSettingUpdate.not() && PrefManager.getBoolValue(
+                        USER_LOCALE_UPDATED
+                    ).not()
+                ) {
+                    openLanguageChooserDialog()
+                }
             }
         }
     }
 
     fun signUp() {
-        AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
-            .addBasicParam()
-            .addUserDetails()
-            .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
-            .push()
-        val intent = Intent(this, SignUpActivity::class.java).apply {
-            putExtra(FLOW_FROM, "onboarding journey")
+        lifecycleScope.launch(Dispatchers.IO) {
+            AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
+                .push()
+            val intent = Intent(this@OnBoardActivity, SignUpActivity::class.java).apply {
+                putExtra(FLOW_FROM, "onboarding journey")
+            }
+            startActivity(intent)
         }
-        startActivity(intent)
     }
 
     fun openCourseExplore() {
-        /*
+        lifecycleScope.launch(Dispatchers.IO) {
+            /*
         val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, false)
 
         if (exploreType.isNotBlank()) {
@@ -71,15 +79,15 @@ class OnBoardActivity : CoreJoshActivity() {
             WorkManagerAdmin.registerUserGAID(null, null)
         }
 */
-        AppAnalytics.create(AnalyticsEvent.EXPLORE_BTN_CLICKED.NAME)
-            .addParam("name", this.javaClass.simpleName)
-            .addBasicParam()
-            .addUserDetails()
-            .push()
-        startActivity(Intent(applicationContext, CourseExploreActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-        })
-
+            AppAnalytics.create(AnalyticsEvent.EXPLORE_BTN_CLICKED.NAME)
+                .addParam("name", this.javaClass.simpleName)
+                .addBasicParam()
+                .addUserDetails()
+                .push()
+            startActivity(Intent(applicationContext, CourseExploreActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+            })
+        }
     }
 
     fun openReferralDialogue() {

@@ -34,14 +34,14 @@ import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.muddzdev.styleabletoast.StyleableToast
+import java.util.concurrent.TimeUnit
+import kotlin.random.Random.Default.nextInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
-import kotlin.random.Random.Default.nextInt
 
 const val PAUSE_AUDIO = "PAUSE_AUDIO"
 
@@ -228,7 +228,10 @@ class VocabularyPracticeAdapter(
                 }
             }
             binding.submitAnswerBtn.setOnClickListener {
-                if (lessonQuestion != null && assessmentWithRelations != null) {
+                if (lessonQuestion != null &&
+                    assessmentWithRelations != null &&
+                    assessmentWithRelations?.questionList.isNullOrEmpty().not()
+                ) {
                     onSubmitQuizClick(lessonQuestion!!, assessmentWithRelations!!.questionList[0])
                 }
             }
@@ -304,13 +307,13 @@ class VocabularyPracticeAdapter(
                 isCorrect = assessmentQuestion.question.status == QuestionStatus.CORRECT
 
                 val selectedChoice =
-                    assessmentQuestion.choiceList[
-                            binding.quizRadioGroup.indexOfChild(
-                                binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
-                            )
-                    ]
-                selectedChoice.isSelectedByUser = true
-                selectedChoice.userSelectedOrder = 1
+                    assessmentQuestion.choiceList.getOrNull(
+                        binding.quizRadioGroup.indexOfChild(
+                            binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
+                        )
+                    )
+                selectedChoice?.isSelectedByUser = true
+                selectedChoice?.userSelectedOrder = 1
 
                 // This will get Radio button of correct answer and set its background.
                 binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.tag as Int)

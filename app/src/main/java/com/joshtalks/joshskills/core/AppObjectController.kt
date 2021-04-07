@@ -72,6 +72,9 @@ import java.text.DateFormat
 import java.util.Collections
 import java.util.Date
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.Cache
 import okhttp3.CacheControl
 import okhttp3.CertificatePinner
@@ -202,125 +205,129 @@ class AppObjectController {
         private const val cacheSize = 10 * 1024 * 1024.toLong()
 
         fun initLibrary(context: Context): AppObjectController {
-            joshApplication = context as JoshApplication
-            appDatabase = AppDatabase.getDatabase(context)!!
-            firebaseAnalytics = FirebaseAnalytics.getInstance(context)
-            firebaseAnalytics.setAnalyticsCollectionEnabled(true)
-            //   initDebugService()
-            Branch.getAutoInstance(context)
-            initFirebaseRemoteConfig()
-            configureCrashlytics()
-            initFlurryAnalytics(context)
-            //   initNewRelic(context)
-            initFonts()
-            WorkManagerAdmin.deviceIdGenerateWorker()
-            WorkManagerAdmin.runMemoryManagementWorker()
+            CoroutineScope(Dispatchers.IO).launch {
+                joshApplication = context as JoshApplication
+                appDatabase = AppDatabase.getDatabase(context)!!
+                firebaseAnalytics = FirebaseAnalytics.getInstance(context)
+                firebaseAnalytics.setAnalyticsCollectionEnabled(true)
+                //   initDebugService()
+                Branch.getAutoInstance(context)
+                initFirebaseRemoteConfig()
+                configureCrashlytics()
+                initFlurryAnalytics(context)
+                //   initNewRelic(context)
+                initFonts()
+                WorkManagerAdmin.deviceIdGenerateWorker()
+                WorkManagerAdmin.runMemoryManagementWorker()
 
-            gsonMapper = GsonBuilder()
-                .enableComplexMapKeySerialization()
-                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                .registerTypeAdapter(Date::class.java, object : JsonDeserializer<Date> {
-                    @Throws(JsonParseException::class)
-                    override fun deserialize(
-                        json: JsonElement,
-                        typeOfT: Type,
-                        context: JsonDeserializationContext
-                    ): Date {
-                        return Date(json.asJsonPrimitive.asLong * 1000)
-                    }
-                })
-                .excludeFieldsWithModifiers(
-                    Modifier.TRANSIENT
-                )
-                .setDateFormat(DateFormat.LONG)
-                .setPrettyPrinting()
-                .serializeNulls()
-                .create()
+                gsonMapper = GsonBuilder()
+                    .enableComplexMapKeySerialization()
+                    .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                    .registerTypeAdapter(Date::class.java, object : JsonDeserializer<Date> {
+                        @Throws(JsonParseException::class)
+                        override fun deserialize(
+                            json: JsonElement,
+                            typeOfT: Type,
+                            context: JsonDeserializationContext
+                        ): Date {
+                            return Date(json.asJsonPrimitive.asLong * 1000)
+                        }
+                    })
+                    .excludeFieldsWithModifiers(
+                        Modifier.TRANSIENT
+                    )
+                    .setDateFormat(DateFormat.LONG)
+                    .setPrettyPrinting()
+                    .serializeNulls()
+                    .create()
 
-            gsonMapperForLocal = GsonBuilder()
-                .serializeNulls()
-                .setDateFormat(DateFormat.LONG)
-                .setPrettyPrinting()
-                .setLenient()
-                .create()
+                gsonMapperForLocal = GsonBuilder()
+                    .serializeNulls()
+                    .setDateFormat(DateFormat.LONG)
+                    .setPrettyPrinting()
+                    .setLenient()
+                    .create()
 
-            val builder = OkHttpClient().newBuilder()
-                .connectTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS)
-                .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
-                .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
-                .callTimeout(CALL_TIMEOUT, TimeUnit.SECONDS)
-                // .retryOnConnectionFailure(true)
-                .followSslRedirects(true)
-                .addInterceptor(StatusCodeInterceptor())
-                //   .addInterceptor(NewRelicHttpMetricsLogger())
-                .addNetworkInterceptor(SmartlookOkHttpInterceptor())
-                .addInterceptor(HeaderInterceptor())
-                .hostnameVerifier { _, _ -> true }
-                //  .addInterceptor(OfflineInterceptor())
-                .cache(cache())
+                val builder = OkHttpClient().newBuilder()
+                    .connectTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS)
+                    .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
+                    .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
+                    .callTimeout(CALL_TIMEOUT, TimeUnit.SECONDS)
+                    // .retryOnConnectionFailure(true)
+                    .followSslRedirects(true)
+                    .addInterceptor(StatusCodeInterceptor())
+                    //   .addInterceptor(NewRelicHttpMetricsLogger())
+                    .addNetworkInterceptor(SmartlookOkHttpInterceptor())
+                    .addInterceptor(HeaderInterceptor())
+                    .hostnameVerifier { _, _ -> true }
+                    //  .addInterceptor(OfflineInterceptor())
+                    .cache(cache())
 
-            if (BuildConfig.DEBUG.not() && BuildConfig.FLAVOR == "prod2") {
-                builder.certificatePinner(
-                    CertificatePinner.Builder()
-                        .add(
-                            getHostOfUrl(),
-                            *getCertificatePins()
+                if (BuildConfig.DEBUG.not() && BuildConfig.FLAVOR == "prod2") {
+                    builder.certificatePinner(
+                        CertificatePinner.Builder()
+                            .add(
+                                getHostOfUrl(),
+                                *getCertificatePins()
+                            )
+                            .build()
+                    )
+                    val spec: ConnectionSpec = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                        .tlsVersions(TlsVersion.TLS_1_2)
+                        .cipherSuites(
+                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+                            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+                            CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
                         )
                         .build()
-                )
-                val spec: ConnectionSpec = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                    .tlsVersions(TlsVersion.TLS_1_2)
-                    .cipherSuites(
-                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-                        CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
-                    )
+
+                    builder.connectionSpecs(Collections.singletonList(spec))
+                }
+
+                if (BuildConfig.DEBUG) {
+                    builder.addInterceptor(getOkhhtpToolInterceptor())
+                    val logging =
+                        HttpLoggingInterceptor { message ->
+                            Timber.tag("OkHttp").d(message)
+                        }.apply {
+                            level = HttpLoggingInterceptor.Level.BODY
+
+                        }
+                    builder.addInterceptor(logging)
+                    builder.addNetworkInterceptor(getStethoInterceptor())
+                    builder.eventListener(PrintingEventListener())
+                }
+                retrofit = Retrofit.Builder()
+                    .baseUrl(BuildConfig.BASE_URL)
+                    .client(builder.build())
+                    .addCallAdapterFactory(CoroutineCallAdapterFactory())
+                    .addConverterFactory(GsonConverterFactory.create(gsonMapper))
                     .build()
+                signUpNetworkService = retrofit.create(SignUpNetworkService::class.java)
+                chatNetworkService = retrofit.create(ChatNetworkService::class.java)
+                commonNetworkService = retrofit.create(CommonNetworkService::class.java)
 
-                builder.connectionSpecs(Collections.singletonList(spec))
+                val p2pRetrofitBuilder = Retrofit.Builder()
+                    .baseUrl(BuildConfig.BASE_URL)
+                    .client(
+                        builder.connectTimeout(5L, TimeUnit.SECONDS)
+                            .writeTimeout(5L, TimeUnit.SECONDS)
+                            .readTimeout(5L, TimeUnit.SECONDS)
+                            .callTimeout(5L, TimeUnit.SECONDS).build()
+                    )
+                    .addCallAdapterFactory(CoroutineCallAdapterFactory())
+                    .addConverterFactory(GsonConverterFactory.create(gsonMapper))
+                    .build()
+                p2pNetworkService = p2pRetrofitBuilder.create(P2PNetworkService::class.java)
+
+                initObjectInThread(context)
             }
-
-            if (BuildConfig.DEBUG) {
-                builder.addInterceptor(getOkhhtpToolInterceptor())
-                val logging =
-                    HttpLoggingInterceptor { message -> Timber.tag("OkHttp").d(message) }.apply {
-                        level = HttpLoggingInterceptor.Level.BODY
-
-                    }
-                builder.addInterceptor(logging)
-                builder.addNetworkInterceptor(getStethoInterceptor())
-                builder.eventListener(PrintingEventListener())
-            }
-            retrofit = Retrofit.Builder()
-                .baseUrl(BuildConfig.BASE_URL)
-                .client(builder.build())
-                .addCallAdapterFactory(CoroutineCallAdapterFactory())
-                .addConverterFactory(GsonConverterFactory.create(gsonMapper))
-                .build()
-            signUpNetworkService = retrofit.create(SignUpNetworkService::class.java)
-            chatNetworkService = retrofit.create(ChatNetworkService::class.java)
-            commonNetworkService = retrofit.create(CommonNetworkService::class.java)
-
-            val p2pRetrofitBuilder = Retrofit.Builder()
-                .baseUrl(BuildConfig.BASE_URL)
-                .client(
-                    builder.connectTimeout(5L, TimeUnit.SECONDS)
-                        .writeTimeout(5L, TimeUnit.SECONDS)
-                        .readTimeout(5L, TimeUnit.SECONDS)
-                        .callTimeout(5L, TimeUnit.SECONDS).build()
-                )
-                .addCallAdapterFactory(CoroutineCallAdapterFactory())
-                .addConverterFactory(GsonConverterFactory.create(gsonMapper))
-                .build()
-            p2pNetworkService = p2pRetrofitBuilder.create(P2PNetworkService::class.java)
-
-            initObjectInThread(context)
             return INSTANCE
         }
 
         fun init(context: JoshApplication) {
             joshApplication = context
-            Thread {
+            CoroutineScope(Dispatchers.IO).launch {
                 com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
                 ActivityLifecycleCallback.register(joshApplication)
                 AppEventsLogger.activateApp(joshApplication)
@@ -332,8 +339,7 @@ class AppObjectController {
                     PrefManager.put(USER_LOCALE, "en")
                 }
                 Lingver.init(context, PrefManager.getStringValue(USER_LOCALE))
-            }.start()
-
+            }
         }
 
         private fun initRtcEngine(context: Context): RtcEngine? {
@@ -386,39 +392,43 @@ class AppObjectController {
         }
 
         private fun initFacebookService(context: Context) {
-            if (FacebookSdk.isInitialized().not()) {
-                FacebookSdk.fullyInitialize()
-            }
-            FacebookSdk.setAutoLogAppEventsEnabled(false)
-            FacebookSdk.setLimitEventAndDataUsage(context, true)
-            facebookEventLogger = AppEventsLogger.newLogger(context)
-            facebookEventLogger.flush()
+            CoroutineScope(Dispatchers.IO).launch {
+                if (FacebookSdk.isInitialized().not()) {
+                    FacebookSdk.fullyInitialize()
+                }
+                FacebookSdk.setAutoLogAppEventsEnabled(false)
+                FacebookSdk.setLimitEventAndDataUsage(context, true)
+                facebookEventLogger = AppEventsLogger.newLogger(context)
+                facebookEventLogger.flush()
 
-            if (BuildConfig.DEBUG) {
-                initStethoLibrary(context)
-                FacebookSdk.setIsDebugEnabled(true)
-                FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
-                FacebookSdk.addLoggingBehavior(LoggingBehavior.CACHE)
-                FacebookSdk.addLoggingBehavior(LoggingBehavior.DEVELOPER_ERRORS)
-                FacebookSdk.addLoggingBehavior(LoggingBehavior.GRAPH_API_DEBUG_INFO)
-                FacebookSdk.addLoggingBehavior(LoggingBehavior.GRAPH_API_DEBUG_WARNING)
-                FacebookSdk.addLoggingBehavior(LoggingBehavior.REQUESTS)
-                FacebookSdk.setCodelessDebugLogEnabled(true)
-                FacebookSdk.setMonitorEnabled(true)
+                if (BuildConfig.DEBUG) {
+                    initStethoLibrary(context)
+                    FacebookSdk.setIsDebugEnabled(true)
+                    FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
+                    FacebookSdk.addLoggingBehavior(LoggingBehavior.CACHE)
+                    FacebookSdk.addLoggingBehavior(LoggingBehavior.DEVELOPER_ERRORS)
+                    FacebookSdk.addLoggingBehavior(LoggingBehavior.GRAPH_API_DEBUG_INFO)
+                    FacebookSdk.addLoggingBehavior(LoggingBehavior.GRAPH_API_DEBUG_WARNING)
+                    FacebookSdk.addLoggingBehavior(LoggingBehavior.REQUESTS)
+                    FacebookSdk.setCodelessDebugLogEnabled(true)
+                    FacebookSdk.setMonitorEnabled(true)
+                }
             }
         }
 
         private fun initFonts() {
-            ViewPump.init(
-                ViewPump.builder().addInterceptor(
-                    CalligraphyInterceptor(
-                        CalligraphyConfig.Builder()
-                            .setDefaultFontPath("fonts/OpenSans-Regular.ttf")
-                            .setFontAttrId(R.attr.fontPath)
-                            .build()
-                    )
-                ).build()
-            )
+            CoroutineScope(Dispatchers.IO).launch {
+                ViewPump.init(
+                    ViewPump.builder().addInterceptor(
+                        CalligraphyInterceptor(
+                            CalligraphyConfig.Builder()
+                                .setDefaultFontPath("fonts/OpenSans-Regular.ttf")
+                                .setFontAttrId(R.attr.fontPath)
+                                .build()
+                        )
+                    ).build()
+                )
+            }
         }
 
         fun getHostOfUrl(): String {
@@ -445,29 +455,35 @@ class AppObjectController {
           }*/
 
         private fun initFirebaseRemoteConfig() {
-            val configSettingsBuilder = FirebaseRemoteConfigSettings.Builder()
-                .setMinimumFetchIntervalInSeconds(60 * 3600)
-            getFirebaseRemoteConfig().setConfigSettingsAsync(configSettingsBuilder.build())
-            getFirebaseRemoteConfig().setDefaultsAsync(R.xml.remote_config_defaults)
-            getFirebaseRemoteConfig().fetchAndActivate()
+            CoroutineScope(Dispatchers.IO).launch {
+                val configSettingsBuilder = FirebaseRemoteConfigSettings.Builder()
+                    .setMinimumFetchIntervalInSeconds(60 * 3600)
+                getFirebaseRemoteConfig().setConfigSettingsAsync(configSettingsBuilder.build())
+                getFirebaseRemoteConfig().setDefaultsAsync(R.xml.remote_config_defaults)
+                getFirebaseRemoteConfig().fetchAndActivate()
+            }
         }
 
         private fun configureCrashlytics() {
-            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+            CoroutineScope(Dispatchers.IO).launch {
+                FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+            }
         }
 
         private fun initFlurryAnalytics(context: Context) {
-            FlurryAgent.Builder()
-                .withDataSaleOptOut(false) //CCPA - the default value is false
-                .withCaptureUncaughtExceptions(true)
-                .withIncludeBackgroundSessionsInMetrics(true)
-                .withLogLevel(Log.VERBOSE)
-                .withPerformanceMetrics(FlurryPerformance.ALL)
-                .build(context, BuildConfig.FLURRY_API_KEY)
+            CoroutineScope(Dispatchers.Main).launch {
+                FlurryAgent.Builder()
+                    .withDataSaleOptOut(false) //CCPA - the default value is false
+                    .withCaptureUncaughtExceptions(true)
+                    .withIncludeBackgroundSessionsInMetrics(true)
+                    .withLogLevel(Log.VERBOSE)
+                    .withPerformanceMetrics(FlurryPerformance.ALL)
+                    .build(context, BuildConfig.FLURRY_API_KEY)
+            }
         }
 
         fun initialiseFreshChat() {
-            JoshSkillExecutors.BOUNDED.submit {
+            CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val config =
                         FreshchatConfig(

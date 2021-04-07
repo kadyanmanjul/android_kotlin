@@ -28,7 +28,6 @@ import io.branch.referral.Defines
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.android.synthetic.main.activity_launcher.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -36,10 +35,16 @@ import timber.log.Timber
 
 
 class LauncherActivity : CoreJoshActivity() {
+
+    init {
+        Timber.d("asd123  LauncherActivity.init")
+    }
+
     private var testId: String? = null
     private val apiRun: AtomicBoolean = AtomicBoolean(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Timber.d("asd123  LauncherActivity.onCreate")
         initApp()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
@@ -48,15 +53,17 @@ class LauncherActivity : CoreJoshActivity() {
         handleIntent()
         AppObjectController.uiHandler.postDelayed({
             analyzeAppRequirement()
-        }, 2000)
+        }, 700)
     }
 
     private fun initApp() {
-        WorkManager.getInstance(applicationContext).cancelAllWork()
-        Branch.getInstance(applicationContext).resetUserSession()
-        WorkManagerAdmin.appInitWorker()
-        logAppLaunchEvent(getNetworkOperatorName())
-        //logNotificationData()
+        lifecycleScope.launch(Dispatchers.IO) {
+            WorkManager.getInstance(applicationContext).cancelAllWork()
+            WorkManagerAdmin.appInitWorker()
+            Branch.getInstance(applicationContext).resetUserSession()
+            logAppLaunchEvent(getNetworkOperatorName())
+            //logNotificationData()
+        }
     }
 
     private fun animatedProgressBar() {
@@ -72,49 +79,56 @@ class LauncherActivity : CoreJoshActivity() {
     }
 
     private fun analyzeAppRequirement() {
-        when {
-            PrefManager.getStringValue(INSTANCE_ID).isEmpty() -> {
-                initGaid(testId)
-            }
-            Mentor.getInstance().hasId() -> {
-                startNextActivity()
-            }
-            else -> {
-                getMentorForUser(PrefManager.getStringValue(INSTANCE_ID), testId)
+        lifecycleScope.launch(Dispatchers.IO) {
+            when {
+                PrefManager.getStringValue(INSTANCE_ID).isEmpty() -> {
+                    initGaid(testId)
+                }
+                Mentor.getInstance().hasId() -> {
+                    startNextActivity()
+                }
+                else -> {
+                    getMentorForUser(PrefManager.getStringValue(INSTANCE_ID), testId)
+                }
             }
         }
     }
 
     private fun handleIntent() {
-        Branch.sessionBuilder(WeakReference(this).get()).withCallback { referringParams, error ->
-            try {
-                val jsonParams = referringParams ?: (Branch.getInstance().firstReferringParams
-                    ?: Branch.getInstance().latestReferringParams)
-                Timber.tag("BranchDeepLinkParams : ")
-                    .d("referringParams = $referringParams, error = $error")
-                var testId: String? = null
-                var exploreType: String? = null
+        lifecycleScope.launch(Dispatchers.IO) {
+            Branch.sessionBuilder(WeakReference(this@LauncherActivity).get())
+                .withCallback { referringParams, error ->
+                    try {
+                        val jsonParams =
+                            referringParams ?: (Branch.getInstance().firstReferringParams
+                                ?: Branch.getInstance().latestReferringParams)
+                        Timber.tag("BranchDeepLinkParams : ")
+                            .d("referringParams = $referringParams, error = $error")
+                        var testId: String? = null
+                        var exploreType: String? = null
 
-                if (error == null) {
-                    AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-                    if (jsonParams?.has(Defines.Jsonkey.AndroidDeepLinkPath.key) == true) {
-                        testId = jsonParams.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
-                    } else if (jsonParams?.has(Defines.Jsonkey.ContentType.key) == true) {
-                        exploreType = if (jsonParams.has(Defines.Jsonkey.ContentType.key)) {
-                            jsonParams.getString(Defines.Jsonkey.ContentType.key)
-                        } else null
+                        if (error == null) {
+                            AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+                            if (jsonParams?.has(Defines.Jsonkey.AndroidDeepLinkPath.key) == true) {
+                                testId =
+                                    jsonParams.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
+                            } else if (jsonParams?.has(Defines.Jsonkey.ContentType.key) == true) {
+                                exploreType = if (jsonParams.has(Defines.Jsonkey.ContentType.key)) {
+                                    jsonParams.getString(Defines.Jsonkey.ContentType.key)
+                                } else null
+                            }
+                        }
+                        if (isFinishing.not()) {
+                            initReferral(testId = testId, exploreType = exploreType, jsonParams)
+                            initAfterBranch(testId = testId, exploreType = exploreType)
+                        }
+                    } catch (ex: Throwable) {
+                        ex.printStackTrace()
+                        startNextActivity()
+                        LogException.catchException(ex)
                     }
-                }
-                if (isFinishing.not()) {
-                    initReferral(testId = testId, exploreType = exploreType, jsonParams)
-                    initAfterBranch(testId = testId, exploreType = exploreType)
-                }
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
-                startNextActivity()
-                LogException.catchException(ex)
-            }
-        }.withData(this.intent.data).init()
+                }.withData(this@LauncherActivity.intent.data).init()
+        }
     }
 
     private fun initReferral(
@@ -154,35 +168,43 @@ class LauncherActivity : CoreJoshActivity() {
     }
 
     private fun startNextActivity() {
-        WorkManagerAdmin.appStartWorker()
-        AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-        val intent = getIntentForState()
-        startActivity(intent)
-        this@LauncherActivity.finishAndRemoveTask()
-
+        lifecycleScope.launch(Dispatchers.IO) {
+            WorkManagerAdmin.appStartWorker()
+            AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+            val intent = getIntentForState()
+            startActivity(intent)
+            this@LauncherActivity.finishAndRemoveTask()
+        }
     }
 
     private fun logInstallByReferralEvent(
         testId: String?,
         exploreType: String?,
         referralCode: String
-    ) = AppAnalytics.create(AnalyticsEvent.APP_INSTALL_BY_REFERRAL.NAME)
-        .addBasicParam()
-        .addUserDetails()
-        .addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, testId)
-        .addParam(AnalyticsEvent.EXPLORE_TYPE.NAME, exploreType)
-        .addParam(
-            AnalyticsEvent.REFERRAL_CODE.NAME,
-            referralCode
-        )
-        .push()
+    ) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            AppAnalytics.create(AnalyticsEvent.APP_INSTALL_BY_REFERRAL.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, testId)
+                .addParam(AnalyticsEvent.EXPLORE_TYPE.NAME, exploreType)
+                .addParam(
+                    AnalyticsEvent.REFERRAL_CODE.NAME,
+                    referralCode
+                )
+                .push()
+        }
+    }
 
-    private fun logAppLaunchEvent(networkOperatorName: String) =
-        AppAnalytics.create(AnalyticsEvent.APP_LAUNCHED.NAME)
-            .addBasicParam()
-            .addUserDetails()
-            .addParam(AnalyticsEvent.NETWORK_CARRIER.NAME, networkOperatorName)
-            .push(true)
+    private fun logAppLaunchEvent(networkOperatorName: String) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            AppAnalytics.create(AnalyticsEvent.APP_LAUNCHED.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .addParam(AnalyticsEvent.NETWORK_CARRIER.NAME, networkOperatorName)
+                .push(true)
+        }
+    }
 
 
     private fun getNetworkOperatorName() =
@@ -195,28 +217,32 @@ class LauncherActivity : CoreJoshActivity() {
         ) else null
 
     private fun initAppInFirstTime() {
-        if (Utils.isInternetAvailable().not() && PrefManager.hasKey(SERVER_GID_ID)) {
-            startNextActivity()
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (Utils.isInternetAvailable().not() && PrefManager.hasKey(SERVER_GID_ID)) {
+                startNextActivity()
+            }
         }
     }
 
     private fun initAfterBranch(testId: String? = null, exploreType: String? = null) {
-        when {
-            testId != null -> {
-                initGaid(testId, exploreType)
-            }
-            PrefManager.hasKey(SERVER_GID_ID) -> {
-                if (PrefManager.hasKey(API_TOKEN)) {
-                    startNextActivity()
-                } else {
-                    getMentorForUser(PrefManager.getStringValue(INSTANCE_ID), testId)
+        lifecycleScope.launch(Dispatchers.IO) {
+            when {
+                testId != null -> {
+                    initGaid(testId, exploreType)
                 }
-            }
-            Mentor.getInstance().hasId() -> {
-                startNextActivity()
-            }
-            else -> {
-                initGaid(testId)
+                PrefManager.hasKey(SERVER_GID_ID) -> {
+                    if (PrefManager.hasKey(API_TOKEN)) {
+                        startNextActivity()
+                    } else {
+                        getMentorForUser(PrefManager.getStringValue(INSTANCE_ID), testId)
+                    }
+                }
+                Mentor.getInstance().hasId() -> {
+                    startNextActivity()
+                }
+                else -> {
+                    initGaid(testId)
+                }
             }
         }
     }
@@ -244,7 +270,7 @@ class LauncherActivity : CoreJoshActivity() {
         apiRun.set(true)
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
         this.testId = testId
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             val obj = RequestRegisterGAId()
             obj.test = testId?.split("_")?.get(1)?.toInt()
             if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
@@ -281,7 +307,7 @@ class LauncherActivity : CoreJoshActivity() {
     }
 
     private fun getMentorForUser(instanceId: String, testId: String?) {
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             val response =
                 AppObjectController.signUpNetworkService.createGuestUser(mapOf("instance_id" to instanceId))
             Mentor.updateFromLoginResponse(response)
