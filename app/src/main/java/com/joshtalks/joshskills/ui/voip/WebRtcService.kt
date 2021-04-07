@@ -42,12 +42,12 @@ import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
+import java.lang.ref.WeakReference
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.lang.ref.WeakReference
-import java.util.concurrent.TimeUnit
 
 const val RTC_TOKEN_KEY = "token"
 const val RTC_CHANNEL_KEY = "channel_name"
@@ -593,7 +593,7 @@ class WebRtcService : BaseWebRtcService() {
                 adjustRecordingSignalVolume(400)
                 adjustPlaybackSignalVolume(100)
                 enableInEarMonitoring(true)
-                setInEarMonitoringVolume(0)
+                setInEarMonitoringVolume(75)
 
                 // Configuration for the publisher. When the network condition is poor, send audio only.
                 setLocalPublishFallbackOption(STREAM_FALLBACK_OPTION_AUDIO_ONLY)
@@ -1038,7 +1038,6 @@ class WebRtcService : BaseWebRtcService() {
 
     fun switchSpeck() {
         executor.submit {
-
             try {
                 isMicEnable = !isMicEnable
                 if (isMicEnable) {
