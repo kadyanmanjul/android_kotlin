@@ -126,9 +126,9 @@ class SearchingUserActivity : BaseActivity() {
         }
 
         override fun onNoUserFound() {
+            stopCalling()
             showToast(getString(R.string.did_not_answer_message))
             timer?.cancel()
-            this@SearchingUserActivity.finishAndRemoveTask()
         }
 
         override fun onChannelJoin() {
@@ -303,7 +303,7 @@ class SearchingUserActivity : BaseActivity() {
 
     private fun stopCalling() {
         mBoundService?.endCall(apiCall = false)
-        mBoundService?. setOngoingCall()
+        mBoundService?.setOngoingCall()
         AppAnalytics.create(AnalyticsEvent.STOP_USER_FOR_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -314,7 +314,7 @@ class SearchingUserActivity : BaseActivity() {
 
     fun stopSearching() {
         mBoundService?.endCall(apiCall = true)
-        mBoundService?. setOngoingCall()
+        mBoundService?.setOngoingCall()
         AppAnalytics.create(AnalyticsEvent.STOP_USER_FOR_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()
