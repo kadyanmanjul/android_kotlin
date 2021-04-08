@@ -564,7 +564,7 @@
     </style>
 
     <!-- The splash theme. to set the background with your splash screen drawable -->
-    <style name="AppTheme.Splash" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="AppTheme.Splash" parent="AppNoBarTheme">
         <item name="android:windowBackground">@drawable/splash_drawable</item>
     </style>
 
