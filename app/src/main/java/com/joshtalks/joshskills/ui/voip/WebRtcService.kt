@@ -593,7 +593,7 @@ class WebRtcService : BaseWebRtcService() {
                 adjustRecordingSignalVolume(400)
                 adjustPlaybackSignalVolume(100)
                 enableInEarMonitoring(true)
-                setInEarMonitoringVolume(75)
+                setInEarMonitoringVolume(0)
 
                 // Configuration for the publisher. When the network condition is poor, send audio only.
                 setLocalPublishFallbackOption(STREAM_FALLBACK_OPTION_AUDIO_ONLY)

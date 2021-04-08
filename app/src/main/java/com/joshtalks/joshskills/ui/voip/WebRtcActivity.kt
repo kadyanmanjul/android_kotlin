@@ -44,10 +44,10 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
 const val CALL_USER_OBJ = "call_user_obj"
@@ -352,9 +352,9 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
 
-    override fun onBackPressed() {
+    /*override fun onBackPressed() {
     }
-
+*/
 
     private fun addObserver() {
         userDetailLiveData.observe(
