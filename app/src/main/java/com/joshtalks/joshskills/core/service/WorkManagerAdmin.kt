@@ -1,12 +1,21 @@
 package com.joshtalks.joshskills.core.service
 
-import androidx.work.*
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequest
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 object WorkManagerAdmin {
@@ -31,8 +40,8 @@ object WorkManagerAdmin {
             )
             .then(
                 mutableListOf(
-                    OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build(),
-                    OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build(),
+                    OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.UploadFCMTokenOnServer>().build(),
+                    OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.UpdateDeviceDetailsWorker>().build(),
                     //  OneTimeWorkRequestBuilder<InstanceIdGenerationWorker>().build(),
                 )
             )
@@ -41,51 +50,51 @@ object WorkManagerAdmin {
               )*/
             .then(
                 mutableListOf(
-                    OneTimeWorkRequestBuilder<AppUsageSyncWorker>().build(),
-                    OneTimeWorkRequestBuilder<DeleteUnlockTypeQuestion>().build()
+                    OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.AppUsageSyncWorker>().build(),
+                    OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.DeleteUnlockTypeQuestion>().build()
                 )
             )
-            .then(OneTimeWorkRequestBuilder<GenerateRestoreIdWorker>().build())
+            .then(OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.GenerateRestoreIdWorker>().build())
             .enqueue()
     }
 
     fun requiredTaskAfterLoginComplete() {
         WorkManager.getInstance(AppObjectController.joshApplication)
-            .beginWith(OneTimeWorkRequestBuilder<WorkerAfterLoginInApp>().build())
+            .beginWith(OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.WorkerAfterLoginInApp>().build())
             // .then(OneTimeWorkRequestBuilder<PatchUserIdToGAIdV2>().build())
-            .then(OneTimeWorkRequestBuilder<MergeMentorWithGAIDWorker>().build())
+            .then(OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.MergeMentorWithGAIDWorker>().build())
             .then(
                 mutableListOf(
-                    OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build(),
+                    OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.UploadFCMTokenOnServer>().build(),
                     OneTimeWorkRequestBuilder<JoshTalksInstallWorker>().build(),
                 )
             )
-            .then(OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build())
+            .then(OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.UpdateDeviceDetailsWorker>().build())
             .enqueue()
     }
 
     fun requiredTaskInLandingPage() {
         WorkManager.getInstance(AppObjectController.joshApplication)
-            .beginWith(OneTimeWorkRequestBuilder<WorkerInLandingScreen>().build())
-            .then(OneTimeWorkRequestBuilder<UserActiveWorker>().build())
+            .beginWith(OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.WorkerInLandingScreen>().build())
+            .then(OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.UserActiveWorker>().build())
             .then(
                 mutableListOf(
                     //  OneTimeWorkRequestBuilder<ReferralCodeRefreshWorker>().build(),
-                    OneTimeWorkRequestBuilder<SyncEngageVideo>().build(),
-                    OneTimeWorkRequestBuilder<FeedbackRatingWorker>().build(),
-                    OneTimeWorkRequestBuilder<LogAchievementLevelEventWorker>().build(),
+                    OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.SyncEngageVideo>().build(),
+                    OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.FeedbackRatingWorker>().build(),
+                    OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.LogAchievementLevelEventWorker>().build(),
                 )
             )
-            .then(OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build())
-            .then(OneTimeWorkRequestBuilder<SyncFavoriteCaller>().build())
-            .then(OneTimeWorkRequestBuilder<CourseUsageSyncWorker>().build())
+            .then(OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.UpdateDeviceDetailsWorker>().build())
+            .then(OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.SyncFavoriteCaller>().build())
+            .then(OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.CourseUsageSyncWorker>().build())
             .enqueue()
     }
 
     fun syncEngageVideoTask() {
         WorkManager.getInstance(AppObjectController.joshApplication)
-            .beginWith(OneTimeWorkRequestBuilder<SyncEngageVideo>().build())
-            .then(OneTimeWorkRequestBuilder<LogAchievementLevelEventWorker>().build()).enqueue()
+            .beginWith(OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.SyncEngageVideo>().build())
+            .then(OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.LogAchievementLevelEventWorker>().build()).enqueue()
     }
 
     fun deviceIdGenerateWorker() {
@@ -124,7 +133,7 @@ object WorkManagerAdmin {
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
         val workRequest = PeriodicWorkRequest.Builder(
-            CourseUsageSyncWorker::class.java,
+            RefreshFCMTokenWorker.CourseUsageSyncWorker::class.java,
             1,
             TimeUnit.HOURS,
             PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
@@ -132,20 +141,20 @@ object WorkManagerAdmin {
         )
             .setConstraints(constraints)
             .setInitialDelay(10, TimeUnit.MINUTES)
-            .addTag(CourseUsageSyncWorker::class.java.simpleName)
+            .addTag(RefreshFCMTokenWorker.CourseUsageSyncWorker::class.java.simpleName)
             .build()
 
         WorkManager.getInstance(AppObjectController.joshApplication)
             .enqueueUniquePeriodicWork(
-                CourseUsageSyncWorker::class.java.simpleName,
+                RefreshFCMTokenWorker.CourseUsageSyncWorker::class.java.simpleName,
                 ExistingPeriodicWorkPolicy.KEEP,
                 workRequest
             )
     }
 
     fun refreshFcmToken() {
-        val workRequest = PeriodicWorkRequestBuilder<RefreshFCMTokenWorker>(6, TimeUnit.HOURS)
-            .setInitialDelay(20, TimeUnit.MINUTES)
+        val workRequest = PeriodicWorkRequestBuilder<RefreshFCMTokenWorker>(15, TimeUnit.MINUTES)
+            .setInitialDelay(1, TimeUnit.MINUTES)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniquePeriodicWork(
             "fcm_refresh",
@@ -162,7 +171,7 @@ object WorkManagerAdmin {
 
     fun getQuestionNPA(eventName: String): UUID {
         val data = workDataOf("event" to eventName)
-        val workRequest = OneTimeWorkRequestBuilder<NPAQuestionViaEventWorker>()
+        val workRequest = OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.NPAQuestionViaEventWorker>()
             .setInputData(data)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
@@ -174,7 +183,7 @@ object WorkManagerAdmin {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
-        val workRequest = OneTimeWorkRequestBuilder<LanguageChangeWorker>()
+        val workRequest = OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.LanguageChangeWorker>()
             .setInputData(data)
             .setConstraints(constraints)
             .setBackoffCriteria(BackoffPolicy.LINEAR, 11, TimeUnit.SECONDS)
@@ -194,7 +203,7 @@ object WorkManagerAdmin {
                 "day" to interval,
                 "id" to id
             )
-        val workRequest = OneTimeWorkRequestBuilder<DeterminedNPSEvent>()
+        val workRequest = OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.DeterminedNPSEvent>()
             .setInputData(data)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
@@ -221,8 +230,8 @@ object WorkManagerAdmin {
     }
 
     fun deleteUnlockTypeQuestions() {
-        val workRequest = OneTimeWorkRequestBuilder<DeleteUnlockTypeQuestion>()
-            .addTag(DeleteUnlockTypeQuestion::class.java.simpleName)
+        val workRequest = OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.DeleteUnlockTypeQuestion>()
+            .addTag(RefreshFCMTokenWorker.DeleteUnlockTypeQuestion::class.java.simpleName)
             .build()
 
         WorkManager.getInstance(AppObjectController.joshApplication)
@@ -234,7 +243,7 @@ object WorkManagerAdmin {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
-        val workRequest = OneTimeWorkRequestBuilder<IsUserActiveWorker>()
+        val workRequest = OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.IsUserActiveWorker>()
             .setInputData(data)
             .setInitialDelay(1, TimeUnit.SECONDS)
             .setConstraints(constraints)
@@ -267,7 +276,7 @@ object WorkManagerAdmin {
                 Constraints.Builder()
                     .build()
             }
-        val workRequest = OneTimeWorkRequestBuilder<AppUsageWorker>()
+        val workRequest = OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.AppUsageWorker>()
             .setInputData(data)
             .setConstraints(constraints)
             .build()
@@ -279,7 +288,7 @@ object WorkManagerAdmin {
     }
 
     fun syncFavoriteCaller() {
-        val workRequest = OneTimeWorkRequestBuilder<SyncFavoriteCaller>()
+        val workRequest = OneTimeWorkRequestBuilder<RefreshFCMTokenWorker.SyncFavoriteCaller>()
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniqueWork(
             "SyncFavoriteCaller_Api",
