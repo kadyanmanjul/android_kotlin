@@ -148,8 +148,10 @@ abstract class BaseWebRtcService : Service(), SensorEventListener {
                 .build()
             ringtonePlayer = MediaPlayer()
             ringtonePlayer?.setOnPreparedListener { mediaPlayer ->
-                ringtonePlayer?.start()
-                ringingPlay = true
+                try {
+                    ringtonePlayer?.start()
+                    ringingPlay = true
+                } catch (ex: IllegalStateException) {}
             }
             ringtonePlayer?.isLooping = true
             ringtonePlayer?.setAudioAttributes(att)
@@ -238,5 +240,4 @@ abstract class BaseWebRtcService : Service(), SensorEventListener {
         else
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && JoshApplication.isAppVisible.not()
     }
-
 }
