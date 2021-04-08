@@ -31,6 +31,8 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SpeakingPractiseFragment : CoreJoshFragment() {
 
@@ -113,7 +115,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
                 spQuestion?.topicId?.let {
                     this.topicId = it
-                    //    viewModel.getTopicDetail(it)
+                    viewModel.getTopicDetail(it)
                 }
                 spQuestion?.lessonId?.let { viewModel.getCourseIdByLessonId(it) }
             }
@@ -236,7 +238,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private fun startPractiseSearchScreen(favoriteUserCall: Boolean = false) {
         viewModel.speakingTopicLiveData.value?.run {
-            if (isCallOngoing(message = R.string.call_engage_message).not()) {
+            if (isCallOngoing().not()) {
                 openCallActivity.launch(
                     SearchingUserActivity.startUserForPractiseOnPhoneActivity(
                         requireActivity(),

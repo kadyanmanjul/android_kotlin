@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
@@ -25,6 +26,7 @@ import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

@@ -350,11 +350,11 @@ class WebRtcActivity : AppCompatActivity() {
         volumeControlStream = AudioManager.STREAM_MUSIC
         super.onDestroy()
     }
-/*
+
 
     override fun onBackPressed() {
     }
-*/
+
 
     private fun addObserver() {
         userDetailLiveData.observe(

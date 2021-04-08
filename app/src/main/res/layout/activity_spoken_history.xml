@@ -3,12 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
 
-        <variable
-            name="handler"
-            type="com.joshtalks.joshskills.ui.points_history.SpokenHistoryActivity" />
-    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/root_view"
@@ -56,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginBottom="@dimen/_4sdp"
-                android:text="@string/user_minutes_text"
+                android:text="@string/user_point_text"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                 android:textColor="@color/grey_68"
                 app:layout_constraintBottom_toBottomOf="parent"
