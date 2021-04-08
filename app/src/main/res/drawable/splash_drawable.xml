@@ -14,7 +14,6 @@
         android:top="@dimen/_10sdp">
         <bitmap
             android:gravity="center"
-            android:mipMap="true"
             android:src="@drawable/josh_skill_bg" />
     </item>
 

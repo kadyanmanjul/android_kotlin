@@ -27,7 +27,8 @@ import io.branch.referral.Branch
 import io.branch.referral.Defines
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlinx.android.synthetic.main.activity_launcher.*
+import kotlinx.android.synthetic.main.activity_launcher.progress_bar
+import kotlinx.android.synthetic.main.activity_launcher.retry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -39,7 +40,6 @@ class LauncherActivity : CoreJoshActivity() {
     private val apiRun: AtomicBoolean = AtomicBoolean(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.AppNoBarTheme)
         initApp()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
