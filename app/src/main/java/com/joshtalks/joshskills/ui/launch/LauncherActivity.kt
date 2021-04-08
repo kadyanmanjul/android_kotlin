@@ -35,16 +35,10 @@ import timber.log.Timber
 
 
 class LauncherActivity : CoreJoshActivity() {
-
-    init {
-        Timber.d("asd123  LauncherActivity.init")
-    }
-
     private var testId: String? = null
     private val apiRun: AtomicBoolean = AtomicBoolean(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Timber.d("asd123  LauncherActivity.onCreate")
         setTheme(R.style.AppNoBarTheme)
         initApp()
         super.onCreate(savedInstanceState)

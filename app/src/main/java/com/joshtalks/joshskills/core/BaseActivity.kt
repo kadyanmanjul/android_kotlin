@@ -111,10 +111,6 @@ abstract class BaseActivity :
     FirebaseInAppMessagingImpressionListener,
     FirebaseInAppMessagingClickListener {
 
-    init {
-        Timber.d("asd123  BaseActivity.init")
-    }
-
     private lateinit var referrerClient: InstallReferrerClient
     private val versionResponseTypeToken: Type = object : TypeToken<VersionResponse>() {}.type
     private var versionResponse: VersionResponse? = null
@@ -156,7 +152,6 @@ abstract class BaseActivity :
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Timber.d("asd123  BaseActivity.onCreate")
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(this)
         window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.status_bar_color)

@@ -10,19 +10,13 @@ import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
 import kotlinx.android.synthetic.main.base_toolbar.iv_help
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 
 abstract class CoreJoshActivity : BaseActivity() {
 
-    init {
-        Timber.d("asd123  CoreJoshActivity.init")
-    }
-
     var currentAudio: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Timber.d("asd123  CoreJoshActivity.onCreate")
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {

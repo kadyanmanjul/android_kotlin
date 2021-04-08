@@ -8,16 +8,10 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 abstract class TrackActivity : AppCompatActivity(), LifecycleObserver {
 
-    init {
-        Timber.d("asd123 TrackActivity.init")
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        Timber.d("asd123  TrackActivity.onCreate")
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(this)
     }
