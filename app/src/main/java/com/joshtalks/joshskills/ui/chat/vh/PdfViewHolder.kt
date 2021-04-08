@@ -4,6 +4,7 @@ import android.net.Uri
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.RelativeLayout
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.FragmentActivity
@@ -43,6 +44,7 @@ class PdfViewHolder(
     val tvPdfInfo: AppCompatTextView = view.findViewById(R.id.tv_pdf_info)
     val messageDetail: JoshTextView = view.findViewById(R.id.tv_message_detail)
     val imageView: ShimmerImageView = view.findViewById(R.id.image_view)
+    val pdfNameContainer: RelativeLayout = view.findViewById(R.id.pdf_name_container)
 
     private val downloadContainer: FrameLayout = view.findViewById(R.id.download_container)
     private val ivCancelDownload: AppCompatImageView = view.findViewById(R.id.iv_cancel_download)
@@ -59,6 +61,11 @@ class PdfViewHolder(
             }
         }
         ivStartDownload.also { it ->
+            it.setOnClickListener {
+                onClickPdfContainer()
+            }
+        }
+        pdfNameContainer.also { it ->
             it.setOnClickListener {
                 onClickPdfContainer()
             }
