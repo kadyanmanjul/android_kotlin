@@ -28,7 +28,7 @@
             app:lottie_imageAssetsFolder="lottie"
             app:lottie_loop="false"
             app:lottie_scale="1"
-            app:lottie_speed="0.75" />
+            app:lottie_speed="1" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/pic_uploaded_text"

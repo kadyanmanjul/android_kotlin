@@ -58,7 +58,7 @@
                     android:paddingTop="@dimen/_10sdp"
                     android:paddingEnd="@dimen/_14sdp"
                     android:paddingBottom="@dimen/_10sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                     android:textColor="@color/black"
                     android:textColorHint="@color/light_grey"
                     android:textCursorDrawable="@drawable/cursor_drawable" />
@@ -97,7 +97,7 @@
                     android:paddingTop="@dimen/_10sdp"
                     android:paddingEnd="@dimen/_14sdp"
                     android:paddingBottom="@dimen/_10sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                     android:textColor="@color/black"
                     android:textColorHint="@color/light_grey"
                     android:visibility="gone"
@@ -191,7 +191,7 @@
                         android:maxLength="13"
                         android:paddingStart="@dimen/_8sdp"
                         android:paddingEnd="@dimen/_4sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                         android:textColor="@color/black"
                         android:textColorHint="@color/black"
                         app:backgroundTint="@color/white"
@@ -249,7 +249,7 @@
                     android:paddingTop="@dimen/_10sdp"
                     android:paddingEnd="@dimen/_14sdp"
                     android:paddingBottom="@dimen/_10sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                     android:textColor="@color/black"
                     android:textColorHint="@color/light_grey" />
 

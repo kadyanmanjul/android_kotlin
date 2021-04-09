@@ -875,5 +875,6 @@
     <string name="online_tooltip">अब हम जान सकते हैं कि कौन से स्टूडेंट्स ऑनलाइन हैं |</string>
     <string name="skip">Skip</string>
     <string name="upload">Upload</string>
+    <string name="ucrop_label_edit_photo">Add photo</string>
 
 </resources>

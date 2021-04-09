@@ -25,19 +25,19 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.33"
+            app:layout_constraintVertical_bias="0.3"
             app:srcCompat="@drawable/ic_pic_upload" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/add_photo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_62sdp"
+            android:layout_marginHorizontal="@dimen/_16sdp"
             android:layout_marginTop="@dimen/_24sdp"
             android:gravity="center"
             android:onClick="@{()->handler.submitProfilePic()}"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-            android:textColor="#687C90"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+            android:textColor="#000000"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/image"
