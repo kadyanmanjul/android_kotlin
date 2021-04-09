@@ -6,7 +6,6 @@ import android.content.SharedPreferences
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 
-
 object LastSyncPrefManager {
 
     private const val LAST_SYNC_PREF_NAME = "JoshSkills_Last_Sync"
@@ -23,11 +22,6 @@ object LastSyncPrefManager {
         )
     }
 
-    fun clear() {
-        lastSyncPrefManager.edit().clear().apply()
-    }
-
-
     fun hasKey(key: String) = lastSyncPrefManager.contains(key)
 
     fun getBoolValue(key: String, defValue: Boolean = false) =
@@ -38,9 +32,7 @@ object LastSyncPrefManager {
 
     fun getIntValue(key: String) = lastSyncPrefManager.getInt(key, 0)
 
-
     fun getLongValue(key: String) = lastSyncPrefManager.getLong(key, 0)
-
 
     private fun getFloatValue(key: String) = lastSyncPrefManager.getFloat(key, 0F)
 
@@ -57,7 +49,9 @@ object LastSyncPrefManager {
     fun removeKey(key: String) = lastSyncPrefManager.edit().remove(key).apply()
 
     fun removeAll() = lastSyncPrefManager.edit().clear().apply()
-
+    fun clear() {
+        lastSyncPrefManager.edit().clear().apply()
+    }
 
     fun getLastSyncTime(key: String): Pair<String, String> {
         return try {
