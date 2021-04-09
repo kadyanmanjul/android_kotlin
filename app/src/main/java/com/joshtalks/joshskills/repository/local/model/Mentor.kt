@@ -9,6 +9,9 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.local.model.googlelocation.Locality
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 const val MENTOR_PERSISTANT_KEY = "mentor"
 
@@ -47,18 +50,20 @@ class Mentor {
         }
 
         fun updateFromLoginResponse(loginResponse: LoginResponse) {
-            val user = User.getInstance()
-            user.userId = loginResponse.userId
-            user.isVerified = false
-            user.token = loginResponse.token
-            User.update(user)
-            PrefManager.put(API_TOKEN, loginResponse.token)
-            getInstance()
-                .setId(loginResponse.mentorId)
-                .setReferralCode(loginResponse.referralCode)
-                .setUserId(loginResponse.userId)
-                .update()
-            AppAnalytics.updateUser()
+            CoroutineScope(Dispatchers.IO).launch {
+                val user = User.getInstance()
+                user.userId = loginResponse.userId
+                user.isVerified = false
+                user.token = loginResponse.token
+                User.update(user)
+                PrefManager.put(API_TOKEN, loginResponse.token)
+                getInstance()
+                    .setId(loginResponse.mentorId)
+                    .setReferralCode(loginResponse.referralCode)
+                    .setUserId(loginResponse.userId)
+                    .update()
+                AppAnalytics.updateUser()
+            }
         }
     }
 

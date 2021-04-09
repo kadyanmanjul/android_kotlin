@@ -4,17 +4,13 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.JobIntentService
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.JoshSkillExecutors
 import timber.log.Timber
-import java.util.concurrent.ExecutorService
 
 const val CONVERSATION_ID = "conversation_id"
 const val SCREEN_NAME = "screen_name"
 
 class CourseUsageService : JobIntentService() {
     private val courseUsageDao = AppObjectController.appDatabase.courseUsageDao()
-    private val executor: ExecutorService =
-        JoshSkillExecutors.newCachedSingleThreadExecutor("Course-Usage-Service")
     private val tag = CourseUsageService::class.java.simpleName
 
     override fun onCreate() {
@@ -24,21 +20,19 @@ class CourseUsageService : JobIntentService() {
 
     override fun onHandleWork(intent: Intent) {
         Timber.tag(tag).e("Handle-Work  " + intent.getStringExtra(SCREEN_NAME))
-        executor.submit {
-            intent.action?.let {
-                when (it) {
-                    AppUsageStartConversationId().action -> {
-                        val conversationId = intent.getStringExtra(CONVERSATION_ID)
-                        val screenName = intent.getStringExtra(SCREEN_NAME)
-                        val obj = CourseUsageModel(
-                            conversationId = conversationId,
-                            screenName = screenName
-                        )
-                        courseUsageDao.insertIntoCourseUsage(obj)
-                    }
-                    AppUsageEndConversationId().action -> {
-                        courseUsageDao.updateLastCourseUsage()
-                    }
+        intent.action?.let {
+            when (it) {
+                AppUsageStartConversationId().action -> {
+                    val conversationId = intent.getStringExtra(CONVERSATION_ID)
+                    val screenName = intent.getStringExtra(SCREEN_NAME)
+                    val obj = CourseUsageModel(
+                        conversationId = conversationId,
+                        screenName = screenName
+                    )
+                    courseUsageDao.insertIntoCourseUsage(obj)
+                }
+                AppUsageEndConversationId().action -> {
+                    courseUsageDao.updateLastCourseUsage()
                 }
             }
         }

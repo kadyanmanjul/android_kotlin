@@ -85,12 +85,14 @@ class JoshApplication :
                 )
             }
         }
-        val intentFilterUnreadMessages =
-            IntentFilter(Freshchat.FRESHCHAT_UNREAD_MESSAGE_COUNT_CHANGED)
-        getLocalBroadcastManager().registerReceiver(
-            unreadCountChangeReceiver,
-            intentFilterUnreadMessages
-        )
+        JoshSkillExecutors.BOUNDED.submit {
+            val intentFilterUnreadMessages =
+                IntentFilter(Freshchat.FRESHCHAT_UNREAD_MESSAGE_COUNT_CHANGED)
+            getLocalBroadcastManager().registerReceiver(
+                unreadCountChangeReceiver,
+                intentFilterUnreadMessages
+            )
+        }
     }
 
     private var restoreIdReceiver: BroadcastReceiver =

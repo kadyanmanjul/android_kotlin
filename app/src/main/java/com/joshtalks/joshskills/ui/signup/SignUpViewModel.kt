@@ -27,10 +27,10 @@ import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.truecaller.android.sdk.TrueProfile
+import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.*
 
 class SignUpViewModel(application: Application) : AndroidViewModel(application) {
     private val _signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()
@@ -206,26 +206,28 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private fun updateFromLoginResponse(loginResponse: LoginResponse) {
-        FCMResponse.removeOldFCM()
-        DeviceDetailsResponse.removeOldDevice()
-        deleteMentor(loginResponse.mentorId, Mentor.getInstance().getId())
-        val user = User.getInstance()
-        user.userId = loginResponse.userId
-        user.isVerified = true
-        user.token = loginResponse.token
-        user.source = loginResponse.createdSource!!
-        User.update(user)
-        PrefManager.put(API_TOKEN, loginResponse.token)
-        Mentor.getInstance()
-            .setId(loginResponse.mentorId)
-            .setReferralCode(loginResponse.referralCode)
-            .setUserId(loginResponse.userId)
-            .update()
-        Mentor.getInstance().updateUser(user)
-        AppAnalytics.updateUser()
-        fetchMentor()
-        WorkManagerAdmin.userActiveStatusWorker(true)
-        WorkManagerAdmin.requiredTaskAfterLoginComplete()
+        viewModelScope.launch {
+            FCMResponse.removeOldFCM()
+            DeviceDetailsResponse.removeOldDevice()
+            deleteMentor(loginResponse.mentorId, Mentor.getInstance().getId())
+            val user = User.getInstance()
+            user.userId = loginResponse.userId
+            user.isVerified = true
+            user.token = loginResponse.token
+            user.source = loginResponse.createdSource!!
+            User.update(user)
+            PrefManager.put(API_TOKEN, loginResponse.token)
+            Mentor.getInstance()
+                .setId(loginResponse.mentorId)
+                .setReferralCode(loginResponse.referralCode)
+                .setUserId(loginResponse.userId)
+                .update()
+            Mentor.getInstance().updateUser(user)
+            AppAnalytics.updateUser()
+            fetchMentor()
+            WorkManagerAdmin.userActiveStatusWorker(true)
+            WorkManagerAdmin.requiredTaskAfterLoginComplete()
+        }
     }
 
     private fun deleteMentor(mentorId: String, oldMentorId: String) {

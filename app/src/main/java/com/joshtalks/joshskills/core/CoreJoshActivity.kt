@@ -3,16 +3,17 @@ package com.joshtalks.joshskills.core
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
+import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.repository.server.feedback.FeedbackTypes
 import com.joshtalks.joshskills.ui.feedback.FeedbackFragment
 import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
 import kotlinx.android.synthetic.main.base_toolbar.iv_help
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 
 abstract class CoreJoshActivity : BaseActivity() {
+
     var currentAudio: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +59,7 @@ abstract class CoreJoshActivity : BaseActivity() {
 /*
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO){
             try {
                 if ((requestCode == PRACTISE_SUBMIT_REQUEST_CODE || requestCode == VIDEO_OPEN_REQUEST_CODE) && resultCode == Activity.RESULT_OK && data != null) {
                     var obj: ChatModel? = null
@@ -93,7 +94,7 @@ abstract class CoreJoshActivity : BaseActivity() {
     }*/
 
     private suspend fun canTakeRequestFeedbackFromUser(questionId: String): Boolean {
-        return withContext(CoroutineScope(Dispatchers.IO).coroutineContext + Dispatchers.IO) {
+        return withContext(lifecycleScope.coroutineContext + Dispatchers.IO) {
             val minFeedbackCount =
                 AppObjectController.getFirebaseRemoteConfig()
                     .getDouble("MINIMUM_FEEDBACK_IN_A_DAY_COUNT").toInt()

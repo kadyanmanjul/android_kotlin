@@ -534,8 +534,10 @@ class WebRtcService : BaseWebRtcService() {
         if (handlerThread != null) {
             mHandler = Handler(handlerThread!!.looper)
         }
-        TelephonyUtil.getManager(this)
-            .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_CALL_STATE)
+        CoroutineScope(Dispatchers.IO).launch {
+            TelephonyUtil.getManager(this@WebRtcService)
+                .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_CALL_STATE)
+        }
     }
 
     private fun initIncomingCallChannel() {
