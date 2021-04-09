@@ -249,20 +249,22 @@
                         android:orientation="vertical"
                         android:padding="@dimen/_8sdp">
 
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/upload_practise_view"
-                            android:layout_width="@dimen/_52sdp"
-                            android:layout_height="@dimen/_52sdp"
+                        <com.airbnb.lottie.LottieAnimationView
                             android:layout_gravity="center"
-                            android:layout_marginTop="@dimen/_16sdp"
                             android:adjustViewBounds="true"
+                            android:id="@+id/recording_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_16sdp"
+                            android:layout_marginVertical="@dimen/_16sdp"
+                            android:padding="@dimen/_10sdp"
                             android:background="@drawable/recv_bg_mic"
-                            android:backgroundTint="@color/button_color"
-                            android:scaleType="centerInside"
-                            android:tint="@color/white"
-                            android:visibility="gone"
-                            app:srcCompat="@drawable/ic_rec_mic_big"
-                            tools:visibility="visible" />
+                            android:scaleType="fitCenter"
+                            app:lottie_autoPlay="true"
+                            app:lottie_loop="true"
+                            app:lottie_repeatMode="reverse"
+                            app:srcCompat="@drawable/ic_mic_white_24dp"
+                             />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/audio_practise_hint"
@@ -271,7 +273,7 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:padding="@dimen/_4sdp"
-                            android:text="@string/hold_to_record_msz"
+                            android:text="@string/recording_start"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                             android:textColor="@color/black"
                             android:visibility="gone"
