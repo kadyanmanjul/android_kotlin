@@ -338,11 +338,11 @@ class WorkerInLandingScreen(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         AppObjectController.clearDownloadMangerCallback()
-        AppAnalytics.updateUser()
         // SyncChatService.syncChatWithServer()
         WorkManagerAdmin.readMessageUpdating()
         WorkManagerAdmin.refreshFcmToken()
         WorkManagerAdmin.syncAppCourseUsage()
+        AppAnalytics.updateUser()
         return Result.success()
     }
 }
