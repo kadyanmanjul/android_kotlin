@@ -1,6 +1,10 @@
 package com.joshtalks.joshskills.core
 
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.ComponentCallbacks2
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.StrictMode
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
