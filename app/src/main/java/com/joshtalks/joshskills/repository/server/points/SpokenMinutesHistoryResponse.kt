@@ -27,5 +27,5 @@ data class SpokenHistory(
     @SerializedName("sub_title")
     val subTitle: String?,
     @SerializedName("title")
-    val title: String?
+    val title: Int?=0
 )

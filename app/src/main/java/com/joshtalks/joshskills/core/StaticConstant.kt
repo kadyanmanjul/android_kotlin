@@ -267,3 +267,36 @@ data class Level7(
 enum class CallType {
     INCOMING, OUTGOING, FAVORITE_INCOMING, FAVORITE_MISSED_CALL, CONNECTED
 }
+
+val PointHistoryTitlesArray=arrayOf(
+    "Your Points",
+    "Grammar Video Watched",
+    "Correct Answer in Quiz (Per Question)",
+    "Vocabulary Practice Submitted (Per Word)",
+    "Correct Answer in Vocab Revision (Per Question)",
+    "Reading Practice Submitted",
+    "Speaking with Practice Partner (+2 points per minute)",
+    "English Spoken in Group Chat (Per Minute)",
+    "English Spoken for 60 Mins in a Day",
+    "Call pickup from Practice Partner (+5 points per call)",
+    "1 Lesson Completed in a Day",
+    "3 Lessons Completed in a Day",
+    "5 Lessons Completed in a Day",
+    "10 Lessons Completed in a Day",
+    "Beginner Certificate Exam Passed",
+    "Intermediate Certificate Exam Passed",
+    "Advanced Certificate Exam Passed",
+    "Course Completed",
+    "3 Days Streak",
+    "5 Days Streak",
+    "15 Days Streak",
+    "30 Days Streak",
+    "60 Days Streak",
+    "90 Days Streak",
+    "150 Days Streak",
+    "Student Of The Year",
+    "Student Of The Month",
+    "Student Of The Week",
+    "Student Of The Day",
+    "Carried Forward"
+)
