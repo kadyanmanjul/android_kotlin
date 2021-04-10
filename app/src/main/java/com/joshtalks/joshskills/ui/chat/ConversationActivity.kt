@@ -30,7 +30,6 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.custom_ui.decorator.EndlessRecyclerViewScrollListener
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
@@ -82,16 +81,16 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.lang.ref.WeakReference
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.concurrent.scheduleAtFixedRate
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.lang.ref.WeakReference
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.concurrent.scheduleAtFixedRate
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -293,7 +292,7 @@ class ConversationActivity :
         linearLayoutManager = SmoothScrollingLinearLayoutManager(this, false)
         linearLayoutManager.stackFromEnd = true
         linearLayoutManager.isItemPrefetchEnabled = true
-        linearLayoutManager.initialPrefetchItemCount = 10
+        linearLayoutManager.initialPrefetchItemCount = 20
         linearLayoutManager.isSmoothScrollbarEnabled = true
         conversationBinding.chatRv.apply {
             addItemDecoration(LayoutMarginDecoration(Utils.dpToPx(context, 4f)))
@@ -306,24 +305,6 @@ class ConversationActivity :
         conversationAdapter.initializePool(conversationBinding.chatRv.recycledViewPool)
         conversationBinding.chatRv.adapter = conversationAdapter
         conversationBinding.chatRv.layoutManager?.isMeasurementCacheEnabled = false
-
-        conversationBinding.chatRv.addOnScrollListener(object :
-                EndlessRecyclerViewScrollListener(linearLayoutManager, LoadOnScrollDirection.TOP) {
-                override fun onLoadMore(page: Int, totalItemsCount: Int) {
-                    if (conversationAdapter.itemCount == 0) {
-                        return
-                    }
-                }
-            })
-        conversationBinding.chatRv.addOnScrollListener(object :
-                EndlessRecyclerViewScrollListener(linearLayoutManager, LoadOnScrollDirection.BOTTOM) {
-                override fun onLoadMore(page: Int, totalItemsCount: Int) {
-                    if (conversationAdapter.itemCount == 0) {
-                        return
-                    }
-                    //   getPreviousRecord()
-                }
-            })
 
         conversationBinding.chatRv.addOnScrollListener(object :
                 RecyclerView.OnScrollListener() {
@@ -382,8 +363,7 @@ class ConversationActivity :
             )
         }
 
-        conversationBinding.imgGroupChat.visibility =
-            if (inboxEntity.isGroupActive) GONE else GONE
+        conversationBinding.imgGroupChat.visibility = if (inboxEntity.isGroupActive) GONE else GONE
 
 //        conversationBinding.imgGroupChat.setOnClickListener {
 //            utilConversationViewModel.initCometChat()
@@ -739,8 +719,10 @@ class ConversationActivity :
         }
         lifecycleScope.launchWhenCreated {
             conversationViewModel.updateChatMessage.collectLatest { chat ->
-                conversationAdapter.updateItem(chat)
-                unlockClassViewModel.canWeAddUnlockNextClass(chat.chatId)
+                chat?.let {
+                    conversationAdapter.updateItem(it)
+                    unlockClassViewModel.canWeAddUnlockNextClass(it.chatId)
+                }
             }
         }
         lifecycleScope.launchWhenCreated {
@@ -895,12 +877,13 @@ class ConversationActivity :
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
-                        val time = try {
-                            conversationAdapter.getLastItem().messageTime
-                        } catch (ex: Exception) {
-                            0.0
+                        if (conversationAdapter.itemCount == 0) {
+                            conversationViewModel.addNewMessages(0.0)
+                        } else {
+                            conversationAdapter.getLastItemV2()?.messageTime?.let {
+                                conversationViewModel.addNewMessages(it)
+                            }
                         }
-                        conversationViewModel.addNewMessages(time)
                         refreshMessageByUser = it.refreshMessageUser
                     },
                     {
@@ -1223,7 +1206,7 @@ class ConversationActivity :
                         isNewMessageShowing = false
                         conversationBinding.refreshLayout.isRefreshing = true
                         // conversationBinding.chatRv.removeView(it.viewHolder)
-                        conversationAdapter.removeNewClassCard()
+                        // conversationAdapter.removeNewClassCard()
                         conversationAdapter.removeUnlockMessage()
                         unlockClassViewModel.updateBatchChangeRequest()
                         logUnlockCardEvent()

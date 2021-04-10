@@ -16,14 +16,33 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils.dateHeaderDateFormat
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LessonModel
+import com.joshtalks.joshskills.repository.local.entity.Sender
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.chat.vh.*
+import com.joshtalks.joshskills.ui.chat.vh.AssessmentViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.AudioViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.BaseViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.BestStudentPerformerViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.CertificationExamViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.DateItemHolder
+import com.joshtalks.joshskills.ui.chat.vh.ImageViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.LessonViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.NewMessageViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.PdfViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.PracticeOldViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.TextViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.UnlockNextClassViewHolder
+import com.joshtalks.joshskills.ui.chat.vh.VideoViewHolder
 import com.joshtalks.joshskills.util.StickyHeaderAdapter
 import com.joshtalks.joshskills.util.Utils
-import timber.log.Timber
 import java.lang.ref.WeakReference
-import java.util.*
+import java.util.ArrayList
+import java.util.Locale
+import java.util.NoSuchElementException
+import timber.log.Timber
 
 class ConversationAdapter(private val activityRef: WeakReference<FragmentActivity>) :
     RecyclerView.Adapter<BaseViewHolder>(),
@@ -86,6 +105,10 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
         }
     }
 
+    fun getLastItemV2(): ChatModel? {
+        return messageList.findLast { it.chatId.isNotEmpty() }
+    }
+
     fun getFirstItem(): ChatModel {
         return messageList.first()
     }
@@ -98,17 +121,16 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
         return messageList.indexOfLast { it.chatId == id }
     }
 
-    fun updateItem(newMessage: ChatModel): Boolean {
-        val position: Int = getMessagePositionById(newMessage.chatId)
-        Timber.tag("ConversationAdapter").e("%s", position)
-        return if (position >= 0) {
-            uiHandler.post {
+    fun updateItem(newMessage: ChatModel) {
+        try {
+            val position: Int = getMessagePositionById(newMessage.chatId)
+            Timber.tag("ConversationAdapter").e("%s", position)
+            if (position >= 0) {
                 messageList[position] = newMessage
                 notifyItemChanged(position)
             }
-            true
-        } else {
-            false
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
         }
     }
 
