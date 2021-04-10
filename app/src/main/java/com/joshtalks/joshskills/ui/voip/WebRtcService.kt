@@ -59,6 +59,7 @@ import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
 import io.agora.rtc.Constants
 import io.agora.rtc.Constants.AUDIO_PROFILE_SPEECH_STANDARD
 import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSET
+import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSETBLUETOOTH
 import io.agora.rtc.Constants.AUDIO_SCENARIO_EDUCATION
 import io.agora.rtc.Constants.CHANNEL_PROFILE_COMMUNICATION
 import io.agora.rtc.Constants.CHAT_BEAUTIFIER_MAGNETIC
@@ -273,11 +274,32 @@ class WebRtcService : BaseWebRtcService() {
             Timber.tag(TAG).e("onAudioRouteChanged=  $routing")
             executor.submit {
                 if (routing == AUDIO_ROUTE_HEADSET) {
+                    bluetoothDisconnected()
                     callCallback?.get()?.onSpeakerOff()
                     isSpeakerEnable = false
                     mRtcEngine?.setDefaultAudioRoutetoSpeakerphone(isSpeakerEnable)
+                } else if (routing == AUDIO_ROUTE_HEADSETBLUETOOTH) {
+                    callCallback?.get()?.onSpeakerOff()
+                    isSpeakerEnable = false
+                    bluetoothConnected()
+                } else {
+                    bluetoothDisconnected()
                 }
             }
+        }
+
+        private fun bluetoothDisconnected() {
+            val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+            audioManager.stopBluetoothSco()
+            audioManager.isBluetoothScoOn = false
+        }
+
+        private fun bluetoothConnected() {
+            val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+            audioManager.startBluetoothSco()
+            audioManager.isBluetoothScoOn = true
         }
 
         override fun onError(errorCode: Int) {
