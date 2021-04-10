@@ -5,8 +5,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.PointHistoryTitlesArray
 import com.joshtalks.joshskills.repository.server.points.PointsHistory
+import com.joshtalks.joshskills.repository.server.points.PointsHistoryTitles
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
@@ -64,7 +64,8 @@ class PointsSummaryDescViewHolder(
             rootView.background = drawable
             divider.visibility = android.view.View.VISIBLE
         }
-        title.text = PointHistoryTitlesArray.getOrNull(pointsHistory.title ?: 0)
+        //title.text = PointHistoryTitlesArray.getOrNull(pointsHistory.title ?: 0)
+        title.text = PointsHistoryTitles.getTitleForIndex(pointsHistory.title ?: 0)
         score.text = "+".plus(pointsHistory.points)
         pointsHistory.subTitle?.let {
             inLesson.visibility = android.view.View.VISIBLE

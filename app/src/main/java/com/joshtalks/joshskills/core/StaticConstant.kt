@@ -223,6 +223,8 @@ class FirebaseRemoteConfigKey {
         const val ADD_PROFILE_PHOTO_TEXT = "ADD_PROFILE_PHOTO_TEXT"
         const val PROFILE_PIC_SUCCESSFUL_TEXT = "PROFILE_PIC_SUCCESSFUL_TEXT"
 
+        const val POINTS_HISTORY_TITLES = "POINTS_HISTORY_TITLES"
+
     }
 }
 
@@ -274,6 +276,7 @@ enum class CallType {
     INCOMING, OUTGOING, FAVORITE_INCOMING, FAVORITE_MISSED_CALL, CONNECTED
 }
 
+/*
 val PointHistoryTitlesArray=arrayOf(
     "Your Points",
     "Grammar Video Watched",
@@ -306,3 +309,4 @@ val PointHistoryTitlesArray=arrayOf(
     "Student Of The Day",
     "Carried Forward"
 )
+*/
