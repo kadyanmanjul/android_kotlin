@@ -69,7 +69,6 @@ import com.joshtalks.joshskills.ui.extra.SignUpPermissionDialogFragment
 import com.joshtalks.joshskills.ui.gif.GIFActivity
 import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
-import com.joshtalks.joshskills.ui.inbox.IS_FROM_NEW_ONBOARDING
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
@@ -326,8 +325,8 @@ abstract class BaseActivity :
         return Intent(this, InboxActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            putExtra(SHOW_OVERLAY, true)
-            putExtra(IS_FROM_NEW_ONBOARDING, isFromOnBoardingFlow)
+            //putExtra(SHOW_OVERLAY, true)
+            //putExtra(IS_FROM_NEW_ONBOARDING, isFromOnBoardingFlow)
         }
     }
 
