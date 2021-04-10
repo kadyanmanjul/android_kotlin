@@ -319,7 +319,7 @@ class SignUpActivity : BaseActivity() {
 
     private fun openProfilePicUpdateFragment() {
         binding.skip.visibility= View.VISIBLE
-        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        binding.ivHelp.visibility= View.GONE
         supportFragmentManager.commit(true) {
             addToBackStack(null)
             replace(

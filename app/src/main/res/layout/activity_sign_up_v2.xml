@@ -75,6 +75,7 @@
                 android:onClick="@{()->handler.openHelpActivity()}"
                 android:padding="@dimen/_4sdp"
                 android:tint="@color/black"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_help_outline" />
