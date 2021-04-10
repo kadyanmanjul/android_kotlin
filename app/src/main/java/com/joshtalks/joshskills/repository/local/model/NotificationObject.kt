@@ -99,6 +99,9 @@ enum class NotificationAction(val type: String) {
     @SerializedName("delete_data")
     ACTION_DELETE_DATA("delete_data"),
 
+    @SerializedName("delete_conversation_data")
+    ACTION_DELETE_CONVERSATION_DATA("delete_conversation_data"),
+
     @SerializedName("delete_user")
     ACTION_DELETE_USER("delete_user"),
 

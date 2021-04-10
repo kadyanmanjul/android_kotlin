@@ -97,5 +97,7 @@ interface CourseDao {
     @Query(value = "select courseId from course where conversation_id= :conversationId AND is_deleted=0  LIMIT 1")
     fun getCourseIdFromConversationId(conversationId: String): String
 
+    @Query(value = "select conversation_id from course where courseId= :courseId AND is_deleted=0  LIMIT 1")
+    fun getConversationIdFromCourseId(courseId: String): String
 
 }

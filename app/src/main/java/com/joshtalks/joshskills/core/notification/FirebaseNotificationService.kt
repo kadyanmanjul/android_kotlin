@@ -361,6 +361,14 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 deleteUserData()
                 return null
             }
+            NotificationAction.ACTION_DELETE_CONVERSATION_DATA -> {
+                actionData?.let {
+                    println("action = ${action}")
+                    println("actionData = ${actionData}")
+                    deleteConversationData(it)
+                }
+                return null
+            }
             NotificationAction.ACTION_DELETE_USER -> {
                 deleteUserCredentials()
                 return null
@@ -527,6 +535,16 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 PrefManager.removeKey(it)
             }
             clearAllTables()
+        }
+    }
+
+    private fun deleteConversationData(courseId: String) {
+        AppObjectController.appDatabase.run {
+            val conversationId = this.courseDao().getConversationIdFromCourseId(courseId)
+            conversationId?.let {
+                PrefManager.removeKey(it)
+            }
+            commonDao().deleteConversationData(courseId.toInt())
         }
     }
 
