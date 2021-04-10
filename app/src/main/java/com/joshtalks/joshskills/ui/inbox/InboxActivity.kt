@@ -72,7 +72,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private fun addAfterTime() {
         workInBackground()
         handelIntentAction()
-        initNewUserTip()
+        //initNewUserTip()
         viewModel.getTotalWatchTime()
     }
 
