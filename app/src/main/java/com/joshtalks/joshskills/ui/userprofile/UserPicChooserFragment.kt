@@ -47,7 +47,7 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        isCancelable = false
+        isCancelable = true
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.user_pic_chooser_dialog,
