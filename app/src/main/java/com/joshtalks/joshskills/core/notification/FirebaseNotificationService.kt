@@ -52,6 +52,7 @@ import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
@@ -359,7 +360,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
              }*/
             NotificationAction.ACTION_DELETE_DATA -> {
-                deleteUserData()
+                Mentor.deleteUserData()
                 return null
             }
             NotificationAction.ACTION_DELETE_CONVERSATION_DATA -> {
@@ -371,12 +372,12 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return null
             }
             NotificationAction.ACTION_DELETE_USER -> {
-                deleteUserCredentials()
+                Mentor.deleteUserCredentials()
                 return null
             }
             NotificationAction.ACTION_DELETE_USER_AND_DATA -> {
-                deleteUserCredentials()
-                deleteUserData()
+                Mentor.deleteUserCredentials()
+                Mentor.deleteUserData()
                 return null
             }
             NotificationAction.ACTION_OPEN_REMINDER -> {
@@ -530,28 +531,15 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         }
     }
 
-    private fun deleteUserData() {
-        AppObjectController.appDatabase.run {
-            courseDao().getAllConversationId().forEach {
-                PrefManager.removeKey(it)
-                LastSyncPrefManager.removeKey(it)
-            }
-            clearAllTables()
-        }
-    }
-
     private fun deleteConversationData(courseId: String) {
         AppObjectController.appDatabase.run {
             val conversationId = this.courseDao().getConversationIdFromCourseId(courseId)
             conversationId?.let {
                 PrefManager.removeKey(it)
+                LastSyncPrefManager.removeKey(it)
             }
             commonDao().deleteConversationData(courseId.toInt())
         }
-    }
-
-    private fun deleteUserCredentials() {
-        PrefManager.logoutUser()
     }
 
     private fun isNotificationCrash(): Class<*> {

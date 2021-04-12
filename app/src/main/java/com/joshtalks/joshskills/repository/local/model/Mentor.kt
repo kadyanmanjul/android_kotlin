@@ -7,6 +7,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.repository.local.model.googlelocation.Locality
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import kotlinx.coroutines.CoroutineScope
@@ -65,6 +66,23 @@ class Mentor {
                 AppAnalytics.updateUser()
             }
         }
+
+        @JvmStatic
+        fun deleteUserData() {
+            AppObjectController.appDatabase.run {
+                courseDao().getAllConversationId().forEach {
+                    PrefManager.removeKey(it)
+                }
+                LastSyncPrefManager.removeAll()
+                clearAllTables()
+            }
+        }
+
+        @JvmStatic
+        fun deleteUserCredentials() {
+            PrefManager.logoutUser()
+        }
+
     }
 
     fun getLocality(): Locality? {
