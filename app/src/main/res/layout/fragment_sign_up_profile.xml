@@ -15,6 +15,7 @@
         android:layout_height="match_parent"
         android:background="@color/white"
         android:fillViewport="true"
+        android:layout_marginTop="@dimen/_24sdp"
         android:paddingStart="@dimen/_8sdp"
         android:paddingEnd="@dimen/_8sdp"
         android:scrollbarThumbHorizontal="@null"

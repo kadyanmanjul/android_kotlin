@@ -153,12 +153,15 @@ class SignUpActivity : BaseActivity() {
                     openNumberVerificationFragment()
                 }
                 SignUpStepStatus.ProfileInCompleted -> {
+                    binding.ivBack.visibility=View.GONE
                     openProfileDetailFragment(true)
                 }
                 SignUpStepStatus.ProfileCompleted -> {
+                    binding.ivBack.visibility=View.GONE
                     openProfilePicUpdateFragment()
                 }
                 SignUpStepStatus.ProfilePicUploaded -> {
+                    binding.ivBack.visibility=View.GONE
                     binding.skip.visibility=View.INVISIBLE
                     openProfilePicSuccessfullyUpdateFragment()
                 }
