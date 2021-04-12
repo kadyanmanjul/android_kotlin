@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
+import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -509,10 +510,26 @@ class UserActiveWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
-            AppObjectController.signUpNetworkService.userActive(
+            val instanceId = when {
+                PrefManager.hasKey(INSTANCE_ID, true) -> {
+                    PrefManager.getStringValue(INSTANCE_ID, true)
+                }
+                PrefManager.hasKey(INSTANCE_ID, false) -> {
+                    PrefManager.getStringValue(INSTANCE_ID, false)
+                }
+                else -> {
+                    null
+                }
+            }
+            val response = AppObjectController.signUpNetworkService.userActive(
                 Mentor.getInstance().getId(),
-                Any()
+                mapOf("instance_id" to instanceId)
             )
+
+            if (response.isSuccessful && response.body()?.isLatestLoginDevice == false) {
+                Mentor.deleteUserCredentials()
+                Mentor.deleteUserData()
+            }
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
