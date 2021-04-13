@@ -2,7 +2,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
     xmlns:wheel="http://schemas.android.com/apk/res-auto">
 
     <data>
@@ -15,8 +14,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:theme="@style/AppThemeDark"
         android:background="#000000"
+        android:theme="@style/AppThemeDark"
         tools:background="#000">
 
         <include
@@ -26,159 +25,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/pdf_view"
+        <ViewStub
+            android:id="@+id/pdf_view_stub"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_marginHorizontal="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_8sdp"
-            android:clickable="false"
+            android:layout="@layout/pdf_view_stub"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/include"
-            tools:visibility="visible">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/pdf_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:padding="@dimen/_6sdp"
-                android:scaleType="centerCrop"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_pdf" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/pdf_name_tv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:paddingTop="@dimen/_4sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/pdf_icon"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Pdf name will be shown here" />
-
-            <FrameLayout
-                android:id="@+id/download_container"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:layout_marginBottom="@dimen/_4sdp"
-                android:alpha="0.8"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/pdf_icon"
-                app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv"
-                tools:visibility="visible">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_start_download"
-                    android:layout_width="@dimen/_20sdp"
-                    android:layout_height="@dimen/_20sdp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/circle_pdf_bg"
-                    android:padding="@dimen/_6sdp"
-                    android:tint="#7A7A7A"
-                    android:visibility="visible"
-                    app:srcCompat="@drawable/ic_download" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_download_completed"
-                    android:layout_width="@dimen/_20sdp"
-                    android:layout_height="@dimen/_20sdp"
-                    android:layout_gravity="center"
-                    android:padding="@dimen/_6sdp"
-                    android:tint="#7A7A7A"
-                    android:visibility="gone"
-                    app:srcCompat="@drawable/ic_tick_default" />
-
-                <com.pnikosis.materialishprogress.ProgressWheel
-                    android:id="@+id/progress_dialog"
-                    android:layout_width="@dimen/_20sdp"
-                    android:layout_height="@dimen/_20sdp"
-                    android:layout_gravity="center"
-                    android:visibility="gone"
-                    app:matProg_barWidth="@dimen/_2sdp"
-                    tools:visibility="gone"
-                    wheel:matProg_barColor="#878A91"
-                    wheel:matProg_fillRadius="true"
-                    wheel:matProg_progressIndeterminate="true" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_cancel_download"
-                    android:layout_width="@dimen/_20sdp"
-                    android:layout_height="@dimen/_20sdp"
-                    android:layout_gravity="center"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="@{()->handler.downloadCancel()}"
-                    android:padding="@dimen/_2sdp"
-                    android:tint="#878A91"
-                    android:visibility="gone"
-                    app:srcCompat="@drawable/ic_cross" />
-
-            </FrameLayout>
-
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/page_count_tv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:layout_marginBottom="@dimen/_6sdp"
-                android:text="238 pages"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                android:textColor="#808080"
-                app:layout_constraintBottom_toBottomOf="@+id/download_container"
-                app:layout_constraintStart_toEndOf="@+id/download_container"
-                app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv"
-                app:layout_constraintTop_toTopOf="@+id/download_container" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/size_tv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_6sdp"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:layout_marginBottom="@dimen/_6sdp"
-                android:drawableStart="@drawable/ic_unselected_dot"
-                android:drawablePadding="@dimen/_6sdp"
-                android:text="24Kb"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                android:textColor="#808080"
-                app:drawableTint="#808080"
-                app:layout_constraintBottom_toBottomOf="@+id/download_container"
-                app:layout_constraintStart_toEndOf="@+id/page_count_tv"
-                app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv"
-                app:layout_constraintTop_toTopOf="@+id/download_container" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_6sdp"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:layout_marginBottom="@dimen/_6sdp"
-                android:drawableStart="@drawable/ic_unselected_dot"
-                android:drawablePadding="@dimen/_6sdp"
-                android:text="PDF"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                android:textColor="#808080"
-                app:drawableTint="#808080"
-                app:layout_constraintBottom_toBottomOf="@+id/download_container"
-                app:layout_constraintStart_toEndOf="@+id/size_tv"
-                app:layout_constraintTop_toBottomOf="@+id/pdf_name_tv"
-                app:layout_constraintTop_toTopOf="@+id/download_container" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toBottomOf="@id/include"
+            tools:visibility="gone" />
 
         <View
             android:id="@+id/pdf_bottom"
@@ -188,7 +47,7 @@
             android:background="@color/transparent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pdf_view" />
+            app:layout_constraintTop_toBottomOf="@id/bottom_barier" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/progress_title_tv"
@@ -200,7 +59,14 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pdf_bottom" />
+            app:layout_constraintTop_toBottomOf="@id/pdf_bottom" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/bottom_barier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="pdf_view_stub,include" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/progress_rv"
@@ -211,7 +77,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/progress_title_tv"
+            app:layout_constraintTop_toBottomOf="@id/progress_title_tv"
             tools:listitem="@layout/progress_activity_adapter_main_view_layout" />
 
         <RelativeLayout
@@ -220,7 +86,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:background="@color/overlay"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <com.pnikosis.materialishprogress.ProgressWheel
                 android:id="@+id/progress_bar"
@@ -238,7 +104,7 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/progress_bar"
+                android:layout_below="@id/progress_bar"
                 android:layout_centerInParent="true"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"

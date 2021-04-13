@@ -185,7 +185,6 @@
     <string name="certificate_progress_h">Certificate Progress</string>
     <string name="claim_certificate_h">Claim Certificate</string>
     <string name="performance_h">Performance</string>
-    <string name="course_overview_header">Course Overview</string>
     <string name="your_performance_so_far">Your Performance So Far</string>
     <string name="download_certificate">Download Digital Copy</string>
     <string name="certificate_unmodify_msz">Please fill carefully, no changes will be possible</string>

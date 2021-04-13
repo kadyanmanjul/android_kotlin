@@ -1,9 +1,11 @@
 package com.joshtalks.joshskills.ui.course_progress_new
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
@@ -12,18 +14,44 @@ import com.joshtalks.joshskills.databinding.ProgressActivityAdapterHeaderViewLay
 import com.joshtalks.joshskills.databinding.ProgressActivityAdapterMainViewLayoutBinding
 import com.joshtalks.joshskills.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewResponse
+import java.util.ArrayList
 
 class ProgressActivityAdapter(
     val context: Context,
-    val list: List<CourseOverviewResponse>,
     val onItemClickListener: CourseProgressAdapter.ProgressItemClickListener,
     val conversationId: String,
-    val lastAvailableLessonId: Int?
+    val lastAvailableLessonId: Int?,
 ) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>(), StickHeaderItemDecoration.StickyHeaderInterface{
+    RecyclerView.Adapter<RecyclerView.ViewHolder>(),
+    StickHeaderItemDecoration.StickyHeaderInterface {
+    private var list: ArrayList<CourseOverviewResponse> = arrayListOf()
+    private val diffCallback: CourseProgressAdapterDiffCallback by lazy { CourseProgressAdapterDiffCallback() }
+    private val viewPool:RecyclerView.RecycledViewPool by lazy { RecyclerView.RecycledViewPool() }
 
     private var MAIN_VIEW: Int = 1
     private var HEADER_VIEW: Int = 0
+
+    fun addItems(newList: List<CourseOverviewResponse>) {
+        if (newList.isEmpty()) {
+            return
+        }
+        diffCallback.setItems(list, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        list.clear()
+        list.addAll(newList)
+        diffResult.dispatchUpdatesTo(this)
+
+        if (list.isEmpty()) {
+
+        } else {
+            //calculatePositionOfchangedItem(newList,list)
+        }
+    }
+
+    fun updateItem(courseOverviewResponse: CourseOverviewResponse, position: Int) {
+        list[position] = courseOverviewResponse
+        notifyItemChanged(position)
+    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -49,12 +77,12 @@ class ProgressActivityAdapter(
         }
     }
 
-    fun getListner():StickHeaderItemDecoration.StickyHeaderInterface{
+    fun getListner(): StickHeaderItemDecoration.StickyHeaderInterface {
         return this
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (list.get(position).type==-1) {
+        if (list.get(position).type == -1) {
             return MAIN_VIEW
         } else {
             return HEADER_VIEW
@@ -62,6 +90,7 @@ class ProgressActivityAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        Log.d("Manjul", "onBindViewHolder() called with: Outer position = $position")
         when (holder.itemViewType) {
             MAIN_VIEW -> {
                 (holder as ProgressViewHolder).bind(position, list[position])
@@ -78,12 +107,11 @@ class ProgressActivityAdapter(
 
     inner class ProgressViewHolder(val binding: ProgressActivityAdapterMainViewLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
         lateinit var adapter: CourseProgressAdapter
-        fun bind(position: Int, item: CourseOverviewResponse) {
-            item.data = item.data.sortedBy { it.lessonNo }
-            adapter = CourseProgressAdapter(
+        /*private val adapter by lazy {
+            CourseProgressAdapter(
                 context,
-                item.data,
                 onItemClickListener,
                 conversationId,
                 item.chatId ?: "0",
@@ -93,12 +121,37 @@ class ProgressActivityAdapter(
                 parentPosition = layoutPosition,
                 unLockCardPOsition = item.totalCount,
                 title = item.title
-            )
+            ).apply {
+                this.setHasStableIds(true)
+            }
+        }*/
+
+        fun bind(position: Int, item: CourseOverviewResponse) {
+            item.data = item.data.sortedBy { it.lessonNo }
+            //adapter.addData()
+             adapter = CourseProgressAdapter(
+                 context,
+                 item.data,
+                 onItemClickListener,
+                 conversationId,
+                 item.chatId ?: "0",
+                 item.certificateExamId ?: 0,
+                 item.examStatus ?: CExamStatus.FRESH,
+                 lastAvailableLessonNo = lastAvailableLessonId,
+                 parentPosition = layoutPosition,
+                 unLockCardPOsition = item.totalCount,
+                 title = item.title
+             )
+            /*adapter.updateValues(
+                item.data,
+            )*/
             binding.progressRv.adapter = adapter
-            if (position==list.size.minus(1)){
-                binding.view.visibility=View.VISIBLE
-            } else{
-                binding.view.visibility=View.GONE
+            binding.progressRv.setHasFixedSize(true)
+            binding.progressRv.setRecycledViewPool(viewPool)
+            if (position == list.size.minus(1)) {
+                binding.view.visibility = View.VISIBLE
+            } else {
+                binding.view.visibility = View.GONE
             }
 
         }
@@ -114,7 +167,7 @@ class ProgressActivityAdapter(
     }
 
     override fun getHeaderPositionForItem(itemPosition: Int): Int {
-        var item=itemPosition
+        var item = itemPosition
         var headerPosition = 0
         do {
             if (isHeader(item)) {
@@ -131,7 +184,8 @@ class ProgressActivityAdapter(
     }
 
     override fun bindHeaderData(header: View?, headerPosition: Int) {
-        header?.findViewById<MaterialTextView>(R.id.progress_title_tv)?.text=list.get(headerPosition).title
+        header?.findViewById<MaterialTextView>(R.id.progress_title_tv)?.text =
+            list.get(headerPosition).title
     }
 
     override fun isHeader(itemPosition: Int): Boolean {

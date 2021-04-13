@@ -12,130 +12,59 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.StickHeaderItemDecoration
-import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.databinding.CourseProgressActivityNewBinding
 import com.joshtalks.joshskills.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewItem
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewResponse
-import com.joshtalks.joshskills.repository.server.course_overview.PdfInfo
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
+import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
+import com.joshtalks.joshskills.ui.chat.vh.PdfCourseProgressView
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
-import com.joshtalks.joshskills.ui.pdfviewer.MESSAGE_ID
-import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.util.CustomDialog
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.tonyodev.fetch2.Download
-import com.tonyodev.fetch2.Error
-import com.tonyodev.fetch2.FetchListener
-import com.tonyodev.fetch2core.DownloadBlock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.File
 
 const val COURSE_ID = "course_id"
 
 class CourseProgressActivityNew :
     WebRtcMiddlewareActivity(),
     CourseProgressAdapter.ProgressItemClickListener {
-
+    private var  pdfViewStub: Stub<PdfCourseProgressView>? = null
     private var courseOverviewResponse: List<CourseOverviewResponse>? = null
 
     private var lastAvailableLessonNo: Int? = null
     lateinit var binding: CourseProgressActivityNewBinding
-    lateinit var adapter: ProgressActivityAdapter
+    private val adapter: ProgressActivityAdapter by lazy {
+        ProgressActivityAdapter(
+            this,
+            this,
+            intent.getStringExtra(CONVERSATION_ID) ?: "0",
+            lastAvailableLessonNo
+        )
+    }
+
     var courseId: Int = -1
-    var pdfInfo: PdfInfo? = null
-//    var courseOverviewResponse: CourseOverviewResponse? = null
 
-    val dayWiseActivityListener: ActivityResultLauncher<Intent> =
+    val activityListener: ActivityResultLauncher<Intent> =
         registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                viewModel.getCourseOverview(courseId)
-            }
-        }
-
-    val cExamActivityListener: ActivityResultLauncher<Intent> =
-        registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                result.data?.getStringExtra(MESSAGE_ID).let { chatId ->
-                    viewModel.getCourseOverview(courseId)
+                result.data?.let { intent ->
+                    if (intent.hasExtra(CHAT_ROOM_ID) && intent.getStringExtra(CHAT_ROOM_ID)
+                            .isNullOrBlank().not()
+                    ) {
+                        binding.progressLayout.visibility=View.VISIBLE
+                        viewModel.getCourseOverview(courseId)
+                    }
                 }
             }
         }
-
-    private var downloadListener = object : FetchListener {
-        override fun onAdded(download: Download) {
-        }
-
-        override fun onCancelled(download: Download) {
-            DownloadUtils.removeCallbackListener(download.tag)
-//            message?.downloadStatus = DOWNLOAD_STATUS.FAILED
-            fileNotDownloadView()
-        }
-
-        override fun onCompleted(download: Download) {
-            DownloadUtils.removeCallbackListener(download.tag)
-//            message?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
-            fileDownloadSuccess()
-        }
-
-        override fun onDeleted(download: Download) {
-        }
-
-        override fun onDownloadBlockUpdated(
-            download: Download,
-            downloadBlock: DownloadBlock,
-            totalBlocks: Int
-        ) {
-        }
-
-        override fun onError(download: Download, error: Error, throwable: Throwable?) {
-            DownloadUtils.removeCallbackListener(download.tag)
-//            message?.downloadStatus = DOWNLOAD_STATUS.FAILED
-            fileNotDownloadView()
-        }
-
-        override fun onPaused(download: Download) {
-        }
-
-        override fun onProgress(
-            download: Download,
-            etaInMilliSeconds: Long,
-            downloadedBytesPerSecond: Long
-        ) {
-        }
-
-        override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
-        }
-
-        override fun onRemoved(download: Download) {
-        }
-
-        override fun onResumed(download: Download) {
-        }
-
-        override fun onStarted(
-            download: Download,
-            downloadBlocks: List<DownloadBlock>,
-            totalBlocks: Int
-        ) {
-            fileDownloadingInProgressView()
-        }
-
-        override fun onWaitingNetwork(download: Download) {
-        }
-    }
 
     private val viewModel: CourseOverviewViewModel by lazy {
         ViewModelProvider(this).get(CourseOverviewViewModel::class.java)
@@ -157,69 +86,87 @@ class CourseProgressActivityNew :
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.course_progress_activity_new)
 
-        setupToolbar()
         if (intent.hasExtra(COURSE_ID).not())
             finish()
 
         courseId = intent.getIntExtra(COURSE_ID, 0)
+        setupToolbar()
+        initRV()
+        addObservers()
+        setupUi()
+        getData()
+    }
 
+    fun addObservers() {
+        viewModel.progressLiveData.observe(
+            this,
+            { response->
+                binding.progressLayout.visibility = View.GONE
+                courseOverviewResponse = response.responseData
+                pdfViewStub?.let { view ->
+                    view.resolved().let {
+                        view.get()?.visibility = View.VISIBLE
+                        view.get()?.setup(
+                            response.pdfInfo,
+                            courseId.toString(),
+                            getConversationId() ?: EMPTY
+                        )
+                        view.get().addCallback(object : PdfCourseProgressView.Callback {
+                            override fun showDialog(idString: Int) {
+                                when (idString) {
+                                    -1 -> {
+                                        PermissionUtils.permissionPermanentlyDeniedDialog(
+                                            this@CourseProgressActivityNew
+                                        )
+                                    }
+                                    else -> {
+                                        PermissionUtils.permissionPermanentlyDeniedDialog(
+                                            this@CourseProgressActivityNew,
+                                            idString
+                                        )
+                                    }
+                                }
+                            }
+                        })
+                    }
+                }
+
+                val data = ArrayList<CourseOverviewResponse>()
+                response.responseData?.forEach { courseOverview->
+                    val courseOverviewResponse = CourseOverviewResponse()
+                    courseOverviewResponse.title = courseOverview.title
+                    courseOverviewResponse.unLockCount = courseOverview.unLockCount
+                    courseOverviewResponse.type = 10
+                    data.add(courseOverviewResponse)
+                    data.add(courseOverview)
+                }
+                adapter.addItems(data)
+            }
+        )
+    }
+
+    fun getData() {
         CoroutineScope(Dispatchers.IO).launch {
             lastAvailableLessonNo = viewModel.getLastLessonForCourse(courseId)
         }
 
         viewModel.getCourseOverview(courseId)
+    }
 
-        binding.progressLayout.visibility = View.VISIBLE
-        viewModel.progressLiveData.observe(
-            this,
-            {
+    private fun initRV() {
+        val linearLayoutManager = SmoothScrollingLinearLayoutManager(this, true)
+        linearLayoutManager.stackFromEnd = true
+        linearLayoutManager.isItemPrefetchEnabled = true
+        linearLayoutManager.initialPrefetchItemCount = 6
+        linearLayoutManager.isSmoothScrollbarEnabled = true
+        //binding.progressRv.layoutManager = linearLayoutManager
 
-                courseOverviewResponse = it.responseData
-                pdfInfo = it.pdfInfo
-
-                pdfInfo?.let {
-                    binding.pdfNameTv.text = it.coursePdfName
-                    binding.sizeTv.text = "${it.coursePdfSize} kB"
-                    binding.pageCountTv.text = "${it.coursePdfPageCount} pages"
-                    binding.pdfView.visibility = View.GONE
-                    binding.progressLayout.visibility = View.GONE
-                    if (PermissionUtils.isStoragePermissionEnabled(this) && AppDirectory.getFileSize(
-                            File(
-                                    AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath
-                                )
-                        ) > 0
-                    ) {
-                        fileDownloadSuccess()
-                    } else {
-                        fileNotDownloadView()
-                    }
-                }
-                val data = ArrayList<CourseOverviewResponse>()
-                it.responseData?.forEach {
-                    val courseOverviewResponse = CourseOverviewResponse()
-                    courseOverviewResponse.title = it.title
-                    courseOverviewResponse.unLockCount = it.unLockCount
-                    courseOverviewResponse.type = 10
-                    data.add(courseOverviewResponse)
-                    data.add(it)
-                }
-
-                adapter =
-                    ProgressActivityAdapter(
-                        this,
-                        data,
-                        this,
-                        it.conversationId ?: "0",
-                        lastAvailableLessonNo
-                    )
-                binding.progressRv.adapter = adapter
-
-                val stickHeaderDecoration = StickHeaderItemDecoration(adapter.getListner())
-                binding.progressRv.addItemDecoration(stickHeaderDecoration)
-            }
-        )
-
-        setupUi()
+        adapter.setHasStableIds(true)
+        binding.progressRv.adapter = adapter
+        binding.progressRv.setHasFixedSize(true)
+        binding.progressRv.setItemViewCacheSize(6)
+        val stickHeaderDecoration = StickHeaderItemDecoration(adapter.getListner())
+        binding.progressRv.addItemDecoration(stickHeaderDecoration)
     }
 
     override fun getConversationId(): String? {
@@ -227,12 +174,7 @@ class CourseProgressActivityNew :
     }
 
     private fun setupUi() {
-        binding.pdfNameTv.setOnClickListener {
-            openPdf()
-        }
-        binding.downloadContainer.setOnClickListener {
-            download()
-        }
+        pdfViewStub = Stub(findViewById(R.id.pdf_view_stub))
     }
 
     private fun setupToolbar() {
@@ -246,7 +188,7 @@ class CourseProgressActivityNew :
             val lessonModel = viewModel.getLesson(item.lessonId)
             runOnUiThread {
                 if (lessonModel != null) {
-                    dayWiseActivityListener.launch(
+                    activityListener.launch(
                         LessonActivity.getActivityIntent(
                             this@CourseProgressActivityNew,
                             item.lessonId,
@@ -294,7 +236,7 @@ class CourseProgressActivityNew :
                         )
                     }
                 } else {
-                    cExamActivityListener.launch(
+                    activityListener.launch(
                         CertificationBaseActivity.certificationExamIntent(
                             this@CourseProgressActivityNew,
                             conversationId = conversationId,
@@ -315,144 +257,6 @@ class CourseProgressActivityNew :
             title,
             message
         ).show()
-    }
-
-    private fun askStoragePermission() {
-
-        PermissionUtils.storageReadAndWritePermission(
-            this,
-            object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let { flag ->
-                        if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.permissionPermanentlyDeniedDialog(
-                                this@CourseProgressActivityNew,
-                                R.string.storage_permission_message
-                            )
-                            return
-                        }
-                    }
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
-                ) {
-                    token?.continuePermissionRequest()
-                }
-            }
-        )
-    }
-
-    fun onClickPdfContainer() {
-        if (PermissionUtils.isStoragePermissionEnabled(this)) {
-            PermissionUtils.storageReadAndWritePermission(
-                this,
-                object : MultiplePermissionsListener {
-                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                        report?.areAllPermissionsGranted()?.let { flag ->
-                            if (flag) {
-                                openPdf()
-                                return
-                            }
-                            if (report.isAnyPermissionPermanentlyDenied) {
-                                PermissionUtils.permissionPermanentlyDeniedDialog(
-                                    this@CourseProgressActivityNew
-                                )
-                                return
-                            }
-                        }
-                    }
-
-                    override fun onPermissionRationaleShouldBeShown(
-                        permissions: MutableList<PermissionRequest>?,
-                        token: PermissionToken?
-                    ) {
-                        token?.continuePermissionRequest()
-                    }
-                }
-            )
-            return
-        }
-        openPdf()
-    }
-
-    private fun openPdf() {
-        if (PermissionUtils.isStoragePermissionEnabled(this).not()) {
-            askStoragePermission()
-            return
-        }
-
-        pdfInfo?.let {
-            if (PermissionUtils.isStoragePermissionEnabled(this) && AppDirectory.getFileSize(
-                    File(
-                            AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath
-                        )
-                ) > 0
-            ) {
-                PdfViewerActivity.startPdfActivity(
-                    context = this,
-                    pdfId = "$courseId",
-                    courseName = it.coursePdfName,
-                    pdfPath = AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath,
-                    conversationId = intent.getStringExtra(CONVERSATION_ID)
-                )
-            } else {
-                download()
-            }
-        }
-    }
-
-    private fun fileDownloadSuccess() {
-        binding.pdfNameTv.isClickable = true
-        binding.downloadContainer.isClickable = false
-        binding.downloadContainer.visibility = View.GONE
-        binding.ivStartDownload.visibility = View.GONE
-        binding.progressDialog.visibility = View.GONE
-        binding.ivCancelDownload.visibility = View.GONE
-        binding.pdfView.isClickable = false
-        binding.ivDownloadCompleted.visibility = View.VISIBLE
-    }
-
-    private fun fileNotDownloadView() {
-        binding.pdfNameTv.isClickable = false
-        binding.downloadContainer.isClickable = true
-        binding.downloadContainer.visibility = View.VISIBLE
-        binding.ivStartDownload.visibility = View.VISIBLE
-        binding.progressDialog.visibility = View.GONE
-        binding.ivCancelDownload.visibility = View.GONE
-        binding.ivDownloadCompleted.visibility = View.GONE
-    }
-
-    private fun fileDownloadingInProgressView() {
-        binding.ivStartDownload.visibility = View.GONE
-        binding.progressDialog.visibility = View.VISIBLE
-        binding.ivCancelDownload.visibility = View.VISIBLE
-        binding.ivDownloadCompleted.visibility = View.GONE
-    }
-
-    fun downloadCancel() {
-        fileNotDownloadView()
-//        message?.downloadStatus = DOWNLOAD_STATUS.NOT_START
-    }
-
-    fun downloadStart() {
-        download()
-    }
-
-    private fun download() {
-        if (PermissionUtils.isStoragePermissionEnabled(this).not()) {
-            askStoragePermission()
-            return
-        }
-        pdfInfo?.let {
-            DownloadUtils.downloadFile(
-                it.coursePdfUrl,
-                AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath,
-                "$courseId",
-                downloadListener
-            )
-        }
     }
 
     override fun onBackPressed() {
