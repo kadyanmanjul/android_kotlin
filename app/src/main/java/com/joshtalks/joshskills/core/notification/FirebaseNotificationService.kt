@@ -532,13 +532,17 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     }
 
     private fun deleteConversationData(courseId: String) {
-        AppObjectController.appDatabase.run {
-            val conversationId = this.courseDao().getConversationIdFromCourseId(courseId)
-            conversationId?.let {
-                PrefManager.removeKey(it)
-                LastSyncPrefManager.removeKey(it)
+        try {
+            AppObjectController.appDatabase.run {
+                val conversationId = this.courseDao().getConversationIdFromCourseId(courseId)
+                conversationId?.let {
+                    PrefManager.removeKey(it)
+                    LastSyncPrefManager.removeKey(it)
+                }
+                commonDao().deleteConversationData(courseId.toInt())
             }
-            commonDao().deleteConversationData(courseId.toInt())
+        } catch (ex: Exception) {
+            Timber.e(ex)
         }
     }
 
