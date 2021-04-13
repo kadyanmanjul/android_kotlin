@@ -539,6 +539,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     PrefManager.removeKey(it)
                     LastSyncPrefManager.removeKey(it)
                 }
+                val lessons = lessonDao().getLessonIdsForCourse(courseId.toInt())
+                lessons.forEach {
+                    LastSyncPrefManager.removeKey(it.toString())
+                }
                 commonDao().deleteConversationData(courseId.toInt())
             }
         } catch (ex: Exception) {

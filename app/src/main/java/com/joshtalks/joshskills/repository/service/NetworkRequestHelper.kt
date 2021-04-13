@@ -191,7 +191,8 @@ object NetworkRequestHelper {
             )
             if (resp.chatModelList.isNullOrEmpty().not()) {
                 LastSyncPrefManager.put(
-                    conversationId.trim(), getTimeInString(resp.chatModelList.last().messageTime)
+                    conversationId.trim(),
+                    getTimeInString(resp.chatModelList.last().messageTime)
                 )
             }
 
