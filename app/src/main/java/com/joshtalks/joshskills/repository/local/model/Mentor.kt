@@ -1,17 +1,26 @@
 package com.joshtalks.joshskills.repository.local.model
 
+import android.content.Intent
+import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.googlelocation.Locality
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
+import com.joshtalks.joshskills.ui.signup.FLOW_FROM
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 const val MENTOR_PERSISTANT_KEY = "mentor"
@@ -81,8 +90,31 @@ class Mentor {
         @JvmStatic
         fun deleteUserCredentials() {
             PrefManager.logoutUser()
+            logoutAndShowLoginScreen()
         }
 
+        private fun logoutAndShowLoginScreen() {
+            CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+                delay(1000)
+                AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
+                    .addUserDetails()
+                    .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
+                val intent =
+                    Intent(
+                        AppObjectController.joshApplication,
+                        SignUpActivity::class.java
+                    )
+                intent.apply {
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                AppObjectController.joshApplication.startActivity(intent)
+                showToast(
+                    AppObjectController.joshApplication.getString(R.string.auto_logout_message),
+                    Toast.LENGTH_LONG
+                )
+            }
+        }
     }
 
     fun getLocality(): Locality? {
@@ -159,8 +191,4 @@ class Mentor {
         return AppObjectController.gsonMapper.toJson(this)
     }
 
-
 }
-
-
-

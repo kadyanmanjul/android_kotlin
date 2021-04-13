@@ -452,5 +452,5 @@
     <string name="last_seen">अंतिम सक्रिय %1$s</string>
     <string name="rank">पद</string>
     <string name="how_to_pronounce">How to pronounce:</string>
-
+    <string name="auto_logout_message">"आपको इस फ़ोन से लॉग आउट किया गया है क्योंकि आपने किसी अन्य फ़ोन से लॉग इन किया है।"</string>
 </resources>
