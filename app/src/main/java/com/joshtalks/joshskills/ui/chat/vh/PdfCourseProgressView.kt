@@ -165,6 +165,7 @@ class PdfCourseProgressView : FrameLayout {
             pdfNameTv.text = it.coursePdfName
             sizeTv.text = "${it.coursePdfSize} kB"
             pageCountTv.text = "${it.coursePdfPageCount} pages"
+            // remove under code to show pdf
             pdfView.visibility = View.GONE
 
             //progressLayout.visibility = View.GONE

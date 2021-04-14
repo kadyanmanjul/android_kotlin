@@ -26,7 +26,7 @@ class ProgressActivityAdapter(
     StickHeaderItemDecoration.StickyHeaderInterface {
     private var list: ArrayList<CourseOverviewResponse> = arrayListOf()
     private val diffCallback: CourseProgressAdapterDiffCallback by lazy { CourseProgressAdapterDiffCallback() }
-    private val viewPool:RecyclerView.RecycledViewPool by lazy { RecyclerView.RecycledViewPool() }
+    private val viewPool: RecyclerView.RecycledViewPool by lazy { RecyclerView.RecycledViewPool() }
 
     private var MAIN_VIEW: Int = 1
     private var HEADER_VIEW: Int = 0
@@ -40,17 +40,6 @@ class ProgressActivityAdapter(
         list.clear()
         list.addAll(newList)
         diffResult.dispatchUpdatesTo(this)
-
-        if (list.isEmpty()) {
-
-        } else {
-            //calculatePositionOfchangedItem(newList,list)
-        }
-    }
-
-    fun updateItem(courseOverviewResponse: CourseOverviewResponse, position: Int) {
-        list[position] = courseOverviewResponse
-        notifyItemChanged(position)
     }
 
     override fun onCreateViewHolder(
@@ -90,13 +79,16 @@ class ProgressActivityAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        Log.d("Manjul", "onBindViewHolder() called with: Outer position = $position")
         when (holder.itemViewType) {
             MAIN_VIEW -> {
                 (holder as ProgressViewHolder).bind(position, list[position])
             }
             else -> {
-                (holder as HeaderViewHolder).bind(position, list[position])
+                Log.d(
+                    "Manjul",
+                    "onBindViewHolder() called with: list = ${list[position].title}, position = $position"
+                )
+                (holder as HeaderViewHolder).bind(list[position])
             }
         }
     }
@@ -109,9 +101,13 @@ class ProgressActivityAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         lateinit var adapter: CourseProgressAdapter
-        /*private val adapter by lazy {
-            CourseProgressAdapter(
+
+        fun bind(position: Int, item: CourseOverviewResponse) {
+            item.data = item.data.sortedBy { it.lessonNo }
+
+            adapter = CourseProgressAdapter(
                 context,
+                item.data,
                 onItemClickListener,
                 conversationId,
                 item.chatId ?: "0",
@@ -119,32 +115,8 @@ class ProgressActivityAdapter(
                 item.examStatus ?: CExamStatus.FRESH,
                 lastAvailableLessonNo = lastAvailableLessonId,
                 parentPosition = layoutPosition,
-                unLockCardPOsition = item.totalCount,
                 title = item.title
-            ).apply {
-                this.setHasStableIds(true)
-            }
-        }*/
-
-        fun bind(position: Int, item: CourseOverviewResponse) {
-            item.data = item.data.sortedBy { it.lessonNo }
-            //adapter.addData()
-             adapter = CourseProgressAdapter(
-                 context,
-                 item.data,
-                 onItemClickListener,
-                 conversationId,
-                 item.chatId ?: "0",
-                 item.certificateExamId ?: 0,
-                 item.examStatus ?: CExamStatus.FRESH,
-                 lastAvailableLessonNo = lastAvailableLessonId,
-                 parentPosition = layoutPosition,
-                 unLockCardPOsition = item.totalCount,
-                 title = item.title
-             )
-            /*adapter.updateValues(
-                item.data,
-            )*/
+            )
             binding.progressRv.adapter = adapter
             binding.progressRv.setHasFixedSize(true)
             binding.progressRv.setRecycledViewPool(viewPool)
@@ -159,9 +131,9 @@ class ProgressActivityAdapter(
 
     inner class HeaderViewHolder(val binding: ProgressActivityAdapterHeaderViewLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        lateinit var adapter: CourseProgressAdapter
-        fun bind(position: Int, item: CourseOverviewResponse) {
-            item.data = item.data.sortedBy { it.lessonNo }
+        fun bind(item: CourseOverviewResponse) {
+            Log.d("Manjul", "bind() called with: item = ${item.title}")
+            //item.data = item.data.sortedBy { it.lessonNo }
             binding.progressTitleTv.text = item.title
         }
     }

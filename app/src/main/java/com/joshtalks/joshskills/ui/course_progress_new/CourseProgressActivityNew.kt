@@ -100,7 +100,7 @@ class CourseProgressActivityNew :
     fun addObservers() {
         viewModel.progressLiveData.observe(
             this,
-            { response->
+            { response ->
                 binding.progressLayout.visibility = View.GONE
                 courseOverviewResponse = response.responseData
                 pdfViewStub?.let { view ->
@@ -132,7 +132,7 @@ class CourseProgressActivityNew :
                 }
 
                 val data = ArrayList<CourseOverviewResponse>()
-                response.responseData?.forEach { courseOverview->
+                response.responseData?.forEach { courseOverview ->
                     val courseOverviewResponse = CourseOverviewResponse()
                     courseOverviewResponse.title = courseOverview.title
                     courseOverviewResponse.unLockCount = courseOverview.unLockCount
@@ -154,17 +154,17 @@ class CourseProgressActivityNew :
     }
 
     private fun initRV() {
-        val linearLayoutManager = SmoothScrollingLinearLayoutManager(this, true)
-        linearLayoutManager.stackFromEnd = true
+        val linearLayoutManager = SmoothScrollingLinearLayoutManager(this, false)
+        linearLayoutManager.stackFromEnd = false
         linearLayoutManager.isItemPrefetchEnabled = true
-        linearLayoutManager.initialPrefetchItemCount = 6
+        linearLayoutManager.initialPrefetchItemCount = 4
         linearLayoutManager.isSmoothScrollbarEnabled = true
-        //binding.progressRv.layoutManager = linearLayoutManager
+        binding.progressRv.layoutManager = linearLayoutManager
 
-        adapter.setHasStableIds(true)
+        //adapter.setHasStableIds(true)
         binding.progressRv.adapter = adapter
         binding.progressRv.setHasFixedSize(true)
-        binding.progressRv.setItemViewCacheSize(6)
+        binding.progressRv.setItemViewCacheSize(4)
         val stickHeaderDecoration = StickHeaderItemDecoration(adapter.getListner())
         binding.progressRv.addItemDecoration(stickHeaderDecoration)
     }

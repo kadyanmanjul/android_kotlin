@@ -4,6 +4,7 @@ package com.joshtalks.joshskills.repository.server.points
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import java.lang.reflect.Type
 
@@ -34,7 +35,7 @@ class PointsHistoryTitles {
             if (instance==null){
                 getInstance()
             }
-            return instance?.filter { it.index == titleIndex }?.getOrNull(0)?.label ?: "Manjul"
+            return instance?.filter { it.index == titleIndex }?.getOrNull(0)?.label ?: EMPTY
         }
     }
 }

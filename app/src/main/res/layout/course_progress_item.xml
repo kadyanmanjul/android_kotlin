@@ -4,13 +4,6 @@
     xmlns:tool="http://schemas.android.com/tools"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-        <variable
-            name="handler"
-            type="com.joshtalks.joshskills.ui.course_progress_new.CourseProgressAdapter" />
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
