@@ -35,7 +35,6 @@ abstract class BaseWebRtcService : Service(), SensorEventListener {
     protected var compositeDisposable = CompositeDisposable()
     protected var mNotificationManager: NotificationManager? = null
 
-
     @SuppressLint("InvalidWakeLockTag")
     override fun onCreate() {
         super.onCreate()
@@ -60,32 +59,34 @@ abstract class BaseWebRtcService : Service(), SensorEventListener {
         val sm: SensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         val proximity: Sensor? = sm.getDefaultSensor(Sensor.TYPE_PROXIMITY)
         try {
-            proximity?.let {
-                proximityWakelock = (getSystemService(POWER_SERVICE) as PowerManager?)?.newWakeLock(
-                    PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
-                    "joshtalsk-prx"
-                )
-                sm.registerListener(
-                    this@BaseWebRtcService,
-                    proximity,
-                    SensorManager.SENSOR_DELAY_NORMAL
-                )
-            }
-        } catch (x: Exception) {
+            proximityWakelock = (getSystemService(POWER_SERVICE) as PowerManager?)?.newWakeLock(
+                PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
+                "joshtalsk-prx"
+            )
+            sm.registerListener(
+                this@BaseWebRtcService,
+                proximity,
+                SensorManager.SENSOR_DELAY_NORMAL
+            )
+        } catch (x: Throwable) {
             x.printStackTrace()
         }
     }
 
     private fun removeWakeLock() {
-        proximityWakelock?.let {
-            if (it.isHeld) {
-                it.release()
+        try {
+            proximityWakelock?.let {
+                if (it.isHeld) {
+                    it.release()
+                }
             }
-        }
-        cpuWakelock?.let {
-            if (it.isHeld) {
-                it.release()
+            cpuWakelock?.let {
+                if (it.isHeld) {
+                    it.release()
+                }
             }
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
         }
     }
 
@@ -102,15 +103,18 @@ abstract class BaseWebRtcService : Service(), SensorEventListener {
         }
     }
 
-
     override fun onSensorChanged(event: SensorEvent) {
-        if (event.sensor.type == Sensor.TYPE_PROXIMITY) {
-            val am = getSystemService(AUDIO_SERVICE) as AudioManager
-            if (am.isSpeakerphoneOn && am.isBluetoothScoOn) {
-                return
+        try {
+            if (event.sensor.type == Sensor.TYPE_PROXIMITY) {
+                val am = getSystemService(AUDIO_SERVICE) as AudioManager
+                if (am.isSpeakerphoneOn && am.isBluetoothScoOn) {
+                    return
+                }
+                val newIsNear: Boolean = event.values[0] < min(event.sensor.maximumRange, 3F)
+                checkIsNear(newIsNear)
             }
-            val newIsNear: Boolean = event.values[0] < min(event.sensor.maximumRange, 3F)
-            checkIsNear(newIsNear)
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
         }
     }
 
@@ -123,7 +127,7 @@ abstract class BaseWebRtcService : Service(), SensorEventListener {
                 } else {
                     proximityWakelock?.release(1)
                 }
-            } catch (x: Exception) {
+            } catch (x: Throwable) {
                 x.printStackTrace()
             }
         }
@@ -151,7 +155,8 @@ abstract class BaseWebRtcService : Service(), SensorEventListener {
                 try {
                     ringtonePlayer?.start()
                     ringingPlay = true
-                } catch (ex: IllegalStateException) {}
+                } catch (ex: IllegalStateException) {
+                }
             }
             ringtonePlayer?.isLooping = true
             ringtonePlayer?.setAudioAttributes(att)
@@ -204,11 +209,10 @@ abstract class BaseWebRtcService : Service(), SensorEventListener {
                 cancel()
                 vibrator = null
             }
-        } catch (ex: Exception) {
+        } catch (ex: Throwable) {
             ex.printStackTrace()
         }
     }
-
 
     protected fun executeEvent(event: String) {
         executor.execute {
