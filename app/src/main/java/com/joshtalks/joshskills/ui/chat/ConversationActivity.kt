@@ -13,6 +13,8 @@ import android.view.*
 import android.view.View.*
 import android.view.animation.*
 import android.widget.Toast
+import androidx.core.view.iterator
+import androidx.core.view.size
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
@@ -235,12 +237,20 @@ class ConversationActivity :
                 PrefManager.put(IS_DEMO_P2P, false)
             }
             conversationBinding.textMessageTitle.text = inboxEntity.course_name
+            conversationBinding.dummyTextMessageTitle.text = inboxEntity.course_name
             conversationBinding.imageViewLogo.setImageWithPlaceholder(inboxEntity.course_icon)
             conversationBinding.imageViewLogo.visibility = VISIBLE
             conversationBinding.imageViewLogo.setOnClickListener {
                 openCourseProgressListingScreen()
             }
+            conversationBinding.dummyImageViewLogo.setImageWithPlaceholder(inboxEntity.course_icon)
+            conversationBinding.dummyImageViewLogo.setOnClickListener {
+                openCourseProgressListingScreen()
+            }
             conversationBinding.textMessageTitle.setOnClickListener {
+                openCourseProgressListingScreen()
+            }
+            conversationBinding.dummyTextMessageTitle.setOnClickListener {
                 openCourseProgressListingScreen()
             }
 
@@ -844,6 +854,7 @@ class ConversationActivity :
             .getBoolean(FirebaseRemoteConfigKey.COURSE_PROGRESS_TOOLTIP_VISIBILITY)
         ) {
             conversationBinding.courseProgressTooltip.setDismissListener(this)
+            conversationBinding.courseProgressTooltipContainer.visibility = VISIBLE
             conversationBinding.courseProgressTooltip.visibility = VISIBLE
             conversationBinding.shader.visibility = VISIBLE
 
@@ -861,6 +872,7 @@ class ConversationActivity :
                 conversationBinding.txtUnreadCount
             )
         }
+        conversationBinding.courseProgressTooltipContainer.visibility = GONE
         conversationBinding.courseProgressTooltip.visibility = GONE
         conversationBinding.shader.visibility = GONE
 
