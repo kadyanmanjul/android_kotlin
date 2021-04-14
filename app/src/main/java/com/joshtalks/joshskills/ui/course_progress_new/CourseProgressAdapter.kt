@@ -23,15 +23,38 @@ class CourseProgressAdapter(
     val cExamStatus: CExamStatus = CExamStatus.FRESH,
     val lastAvailableLessonNo: Int?,
     val parentPosition: Int,
-    val unLockCardPOsition: Int?,
     val title: String
 ) :
     RecyclerView.Adapter<CourseProgressAdapter.CourseProgressViewHolder>() {
 
+    val vocabColor = ArrayList<Int>().apply {
+        this.add(Color.parseColor("#3ADD03"))
+        this.add(Color.parseColor("#B6FD04"))
+    }
+
+    val speakingColor = ArrayList<Int>().apply {
+        this.add(Color.parseColor("#560FBC"))
+        this.add(Color.parseColor("#560FBC"))
+    }
+
+    val readingColor = ArrayList<Int>().apply {
+        this.add(Color.parseColor("#09C9DB"))
+        this.add(Color.parseColor("#0DF9D0"))
+    }
+
+    val outerColor = ArrayList<Int>().apply {
+        this.add(Color.parseColor("#E10717"))
+        this.add(Color.parseColor("#FD3085"))
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseProgressViewHolder {
-        val binding = CourseProgressItemBinding.inflate(LayoutInflater.from(context), parent, false)
-        binding.handler = this
-        return CourseProgressViewHolder(binding)
+        return CourseProgressViewHolder(
+            CourseProgressItemBinding.inflate(
+                LayoutInflater.from(
+                    context
+                ), parent, false
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: CourseProgressViewHolder, position: Int) {
@@ -44,8 +67,8 @@ class CourseProgressAdapter(
 
     inner class CourseProgressViewHolder(val binding: CourseProgressItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(position: Int) {
 
+        fun bind(position: Int) {
             if (position == itemList.size) {
                 binding.progressIv.visibility = View.VISIBLE
                 binding.progressIv.visibility = View.GONE
@@ -57,21 +80,16 @@ class CourseProgressAdapter(
                         binding.progressIv.alpha = 1f
                     else
                         binding.progressIv.alpha = 0.5f
-                    val item = mutableListOf<CourseOverviewItem>()
-                    item.addAll(itemList.filter { it.lessonNo == unLockCardPOsition })
-                    if (item.isNullOrEmpty()) {
-                        item.add(itemList.get(position - 1))
-                    }
 
                     binding.root.setOnClickListener {
                         onItemClickListener.onCertificateExamClick(
-                                itemList.get(layoutPosition - 1),
-                                conversationId,
-                                chatMessageId,
-                                certificationId,
-                                cExamStatus,
-                                parentPosition.div(2),
-                                title
+                            itemList.get(layoutPosition - 1),
+                            conversationId,
+                            chatMessageId,
+                            certificationId,
+                            cExamStatus,
+                            parentPosition.div(2),
+                            title
                         )
                     }
                 } else {
@@ -88,9 +106,11 @@ class CourseProgressAdapter(
                     item.grammarPercentage.toDouble().toInt()
                 )
                 binding.radialProgressView.setCenterProgress(
-                    item.vpPercentage.toDouble().toInt()
+                    item.vocabPercentage.toDouble().toInt()
                 )
-                binding.radialProgressView.setInnerProgress(item.rpPercentageval.toDouble().toInt())
+                binding.radialProgressView.setInnerProgress(
+                    item.readingPercentage.toDouble().toInt()
+                )
                 if (item.speakingPercentage == null) {
                     binding.radialProgressView.hasThreeProgressView(true)
                 } else {
@@ -119,7 +139,6 @@ class CourseProgressAdapter(
                 }
                 binding.progressIv.visibility = View.GONE
 
-
                 binding.root.setOnClickListener {
                     if (position > 0) {
                         onItemClickListener.onProgressItemClick(
@@ -136,29 +155,10 @@ class CourseProgressAdapter(
             }
 
             binding.radialProgressView.hasThreeProgressView(true)
-            val outerColor = ArrayList<Int>()
-            outerColor.add(Color.parseColor("#E10717"))
-            outerColor.add(Color.parseColor("#FD3085"))
             binding.radialProgressView.setOuterProgressColor(outerColor)
-
-
-            val vocabColor = ArrayList<Int>()
-            vocabColor.add(Color.parseColor("#3ADD03"))
-            vocabColor.add(Color.parseColor("#B6FD04"))
             binding.radialProgressView.setCenterProgressColor(vocabColor)
-
-
-            val readingColor = ArrayList<Int>()
-            readingColor.add(Color.parseColor("#09C9DB"))
-            readingColor.add(Color.parseColor("#0DF9D0"))
             binding.radialProgressView.setInnerProgressColor(readingColor)
-
-
-            val speakingColor = ArrayList<Int>()
-            speakingColor.add(Color.parseColor("#560FBC"))
-            speakingColor.add(Color.parseColor("#560FBC"))
             binding.radialProgressView.setInnerMostProgressColor(speakingColor)
-
         }
 
     }
@@ -171,7 +171,7 @@ class CourseProgressAdapter(
             certificationId: Int,
             cExamStatus: CExamStatus = CExamStatus.FRESH,
             parentPosition: Int,
-            title:String
+            title: String
         )
     }
 

@@ -2,7 +2,7 @@ package com.joshtalks.joshskills.core
 
 enum class SignUpStepStatus {
     SignUpStepFirst, SignUpStepSecond, SignUpCompleted,
-    RequestForOTP, ReGeneratedOTP, ProfileCompleted,
+    RequestForOTP, ReGeneratedOTP, ProfileCompleted,ProfilePicUploaded,StartAfterPicUploaded,ProfilePicSkipped,
     ProfileInCompleted, SignUpResendOTP, SignUpWithoutRegister,
     WRONG_OTP, ERROR
 }
@@ -217,6 +217,14 @@ class FirebaseRemoteConfigKey {
         const val VOIP_CALL_DISCONNECT_TIME = "VOIP_CALL_DISCONNECT_TIME"
         const val VOIP_CALL_RECONNECT_TIME = "VOIP_CALL_RECONNECT_TIME"
         const val VOIP_FEEDBACK_MESSAGE = "VOIP_FEEDBACK_MESSAGE"
+
+        //UPDATE PIC STRINGS
+        const val ADD_PROFILE_PHOTO = "ADD_PROFILE_PHOTO"
+        const val ADD_PROFILE_PHOTO_TEXT = "ADD_PROFILE_PHOTO_TEXT"
+        const val PROFILE_PIC_SUCCESSFUL_TEXT = "PROFILE_PIC_SUCCESSFUL_TEXT"
+
+        const val POINTS_HISTORY_TITLES = "POINTS_HISTORY_TITLES"
+
     }
 }
 
@@ -268,6 +276,7 @@ enum class CallType {
     INCOMING, OUTGOING, FAVORITE_INCOMING, FAVORITE_MISSED_CALL, CONNECTED
 }
 
+/*
 val PointHistoryTitlesArray=arrayOf(
     "Your Points",
     "Grammar Video Watched",
@@ -300,3 +309,4 @@ val PointHistoryTitlesArray=arrayOf(
     "Student Of The Day",
     "Carried Forward"
 )
+*/

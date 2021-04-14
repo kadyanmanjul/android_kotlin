@@ -377,4 +377,17 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
+
+    fun changeSignupStatusToProfilePicUploaded() {
+        _signUpStatus.postValue(SignUpStepStatus.ProfilePicUploaded)
+    }
+
+    fun changeSignupStatusToStartAfterPicUploaded() {
+        _signUpStatus.postValue(SignUpStepStatus.StartAfterPicUploaded)
+    }
+
+    fun changeSignupStatusToProfilePicSkipped() {
+        _signUpStatus.postValue(SignUpStepStatus.ProfilePicSkipped)
+    }
+
 }
