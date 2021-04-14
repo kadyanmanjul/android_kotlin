@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.lesson.reading
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -10,6 +11,7 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -28,7 +30,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.airbnb.lottie.LottieCompositionFactory
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
@@ -59,7 +60,6 @@ import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.RemovePracticeAudioEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
-import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -181,7 +181,6 @@ class ReadingFragmentWithoutFeedback :
 
     override fun onPause() {
         super.onPause()
-        stopAudioRecording()
         binding.videoPlayer.onPause()
         pauseAllAudioAndUpdateViews()
     }
@@ -217,10 +216,6 @@ class ReadingFragmentWithoutFeedback :
             }
 
             audioManager?.release()
-        } catch (ex: Exception) {
-        }
-        try {
-            viewModel.stopRecording()
         } catch (ex: Exception) {
         }
     }
@@ -429,8 +424,8 @@ class ReadingFragmentWithoutFeedback :
             binding.practiseInputHeader.text =
                 AppObjectController.getFirebaseRemoteConfig()
                     .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
-            binding.recordingView.setImageResource(R.drawable.ic_mic_white_24dp)
-            setUpAudioRecordTouchListener()
+            binding.recordingView.setImageResource(R.drawable.recv_ic_mic_white)
+            audioRecordTouchListener()
             binding.audioPractiseHint.visibility = VISIBLE
         }
     }
@@ -708,25 +703,6 @@ class ReadingFragmentWithoutFeedback :
         enableSubmitButton()
     }
 
-    private fun setUpAudioRecordTouchListener() {
-        binding.recordingView.setOnClickListener {
-            if (isCallOngoing()) {
-                return@setOnClickListener
-            }
-            if (isAudioRecording) {
-                stopAudioRecording()
-                return@setOnClickListener
-            } else {
-                if (PermissionUtils.isAudioAndStoragePermissionEnable(requireContext()).not()) {
-                    RxBus2.publish(ViewPagerDisableEventBus(true))
-                    recordPermission()
-                    return@setOnClickListener
-                }
-                startAudioRecording()
-            }
-        }
-    }
-
     private fun recordPermission() {
         PermissionUtils.audioRecordStorageReadAndWritePermission(
             requireActivity(),
@@ -734,7 +710,8 @@ class ReadingFragmentWithoutFeedback :
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
-                            startAudioRecording()
+                            binding.recordingView.setOnClickListener(null)
+                            audioRecordTouchListener()
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
@@ -757,62 +734,73 @@ class ReadingFragmentWithoutFeedback :
         )
     }
 
-    private fun startAudioRecording() {
-        isAudioRecording = true
-        LottieCompositionFactory.fromAsset(requireContext(), "lottie/audio_record.json")
-            .addListener {
-                binding.recordingView.setComposition(it)
-                binding.recordingView.playAnimation()
+    @SuppressLint("ClickableViewAccessibility")
+    private fun audioRecordTouchListener() {
+        binding.recordingView.setOnTouchListener { _, event ->
+            if (isCallOngoing()) {
+                return@setOnTouchListener false
             }
-        binding.videoPlayer.onPause()
-        pauseAllAudioAndUpdateViews()
-        binding.rootView.requestDisallowInterceptTouchEvent(true)
-        binding.counterContainer.visibility = VISIBLE
-        binding.linearLayout.layoutTransition?.setAnimateParentHierarchy(false)
-
-        binding.recordingView.setSafeMode(true)
-        binding.linearLayout.layoutTransition?.setAnimateParentHierarchy(false)
-        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        appAnalytics?.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
-        // appAnalytics?.create(AnalyticsEvent.AUDIO_RECORD.NAME).push()
-        binding.counterTv.base = SystemClock.elapsedRealtime()
-        startTime = System.currentTimeMillis()
-        binding.counterTv.start()
-        viewModel.startRecord()
-        binding.audioPractiseHint.visibility = GONE
-        RxBus2.publish(ViewPagerDisableEventBus(false))
-        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    }
-
-    private fun stopAudioRecording() {
-        isAudioRecording = false
-        binding.counterTv.stop()
-        viewModel.stopRecording()
-        binding.rootView.requestDisallowInterceptTouchEvent(false)
-        binding.recordingView.cancelAnimation()
-        binding.recordingView.setImageResource(R.drawable.ic_mic_white_24dp)
-        binding.counterContainer.visibility = GONE
-        binding.audioPractiseHint.visibility = VISIBLE
-        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        val timeDifference =
-            TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) - TimeUnit.MILLISECONDS.toSeconds(
-                startTime
-            )
-        if (timeDifference > 1) {
-            viewModel.recordFile?.let {
-                isAudioRecordDone = true
-
-                filePath = AppDirectory.getAudioSentFile(null).absolutePath
-                AppDirectory.copy(it.absolutePath, filePath!!)
-                audioAttachmentInit()
-                lifecycleScope.launch(Dispatchers.Main) {
-                    delay(200)
-                    binding.submitAnswerBtn.parent.requestChildFocus(
-                        binding.submitAnswerBtn,
-                        binding.submitAnswerBtn
-                    )
+            if (PermissionUtils.isAudioAndStoragePermissionEnable(requireContext()).not()) {
+                recordPermission()
+                return@setOnTouchListener true
+            }
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    isAudioRecording = true
+                    binding.videoPlayer.onPause()
+                    pauseAllAudioAndUpdateViews()
+                    binding.rootView.requestDisallowInterceptTouchEvent(true)
+                    binding.counterTv.visibility = VISIBLE
+                    binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
+                    binding.recordingViewFrame.startAnimation(scaleAnimation)
+                    binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
+                    requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    appAnalytics?.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
+                    // appAnalytics?.create(AnalyticsEvent.AUDIO_RECORD.NAME).push()
+                    binding.counterTv.base = SystemClock.elapsedRealtime()
+                    startTime = System.currentTimeMillis()
+                    binding.counterTv.start()
+                    val params =
+                        binding.counterTv.layoutParams as ViewGroup.MarginLayoutParams
+//                    params.topMargin = binding.rootView.scrollY
+                    viewModel.startRecord()
+                    binding.audioPractiseHint.visibility = GONE
+                }
+                MotionEvent.ACTION_MOVE -> {
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    isAudioRecording = false
+                    binding.rootView.requestDisallowInterceptTouchEvent(false)
+                    binding.counterTv.stop()
+                    viewModel.stopRecording()
+                    binding.recordingViewFrame.clearAnimation()
+                    binding.counterTv.visibility = GONE
+                    binding.audioPractiseHint.visibility = VISIBLE
+                    requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    val timeDifference =
+                        TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) - TimeUnit.MILLISECONDS.toSeconds(
+                            startTime
+                        )
+                    if (timeDifference > 1) {
+                        viewModel.recordFile?.let {
+                            isAudioRecordDone = true
+                            filePath = AppDirectory.getAudioSentFile(null).absolutePath
+                            AppDirectory.copy(it.absolutePath, filePath!!)
+                            audioAttachmentInit()
+                            AppObjectController.uiHandler.postDelayed(
+                                {
+                                    binding.submitAnswerBtn.parent.requestChildFocus(
+                                        binding.submitAnswerBtn,
+                                        binding.submitAnswerBtn
+                                    )
+                                },
+                                200
+                            )
+                        }
+                    }
                 }
             }
+            true
         }
     }
 
