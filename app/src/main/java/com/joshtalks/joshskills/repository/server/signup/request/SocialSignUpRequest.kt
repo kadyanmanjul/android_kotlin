@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.repository.server.signup.request
 
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.Utils
 
 class SocialSignUpRequest private constructor(
     @SerializedName("instance_id")
@@ -14,7 +15,9 @@ class SocialSignUpRequest private constructor(
     @SerializedName("photo_url")
     val photoUrl: String?,
     @SerializedName("created_source")
-    val createdSource: String
+    val createdSource: String,
+    @SerializedName("device_id")
+    val deviceId: String = Utils.getDeviceId()
 ) {
     data class Builder(
         var mentorId: String,
@@ -22,7 +25,7 @@ class SocialSignUpRequest private constructor(
         var email: String? = null,
         var instanceId: String,
         var photoUrl: String? = null,
-        var createdSource: String=""
+        var createdSource: String = ""
     ) {
         fun instanceId(instanceId: String) = apply { this.instanceId = instanceId }
         fun mentorId(mentorId: String) = apply { this.mentorId = mentorId }
@@ -30,6 +33,7 @@ class SocialSignUpRequest private constructor(
         fun name(name: String?) = apply { this.name = name }
         fun photoUrl(photoUrl: String?) = apply { this.photoUrl = photoUrl }
         fun createdSource(createdSource: String) = apply { this.createdSource = createdSource }
-        fun build() = SocialSignUpRequest(instanceId, mentorId, name, email, photoUrl,createdSource)
+        fun build() =
+            SocialSignUpRequest(instanceId, mentorId, name, email, photoUrl, createdSource)
     }
 }

@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.repository.server
 
 
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.Utils
 
 data class TrueCallerLoginRequest(
     @SerializedName("payload")
@@ -11,5 +12,7 @@ data class TrueCallerLoginRequest(
     @SerializedName("signature_algo")
     val signatureAlgo: String,
     @SerializedName("instance_id")
-    val instanceID: String
+    val instanceID: String,
+    @SerializedName("device_id")
+    val deviceId: String = Utils.getDeviceId()
 )

@@ -524,7 +524,7 @@ class UserActiveWorker(context: Context, workerParams: WorkerParameters) :
             }
             val response = AppObjectController.signUpNetworkService.userActive(
                 Mentor.getInstance().getId(),
-                mapOf("instance_id" to instanceId)
+                mapOf("instance_id" to instanceId, "device_id" to Utils.getDeviceId())
             )
 
             if (response.isSuccessful && response.body()?.isLatestLoginDevice == false) {
