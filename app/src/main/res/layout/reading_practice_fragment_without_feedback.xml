@@ -47,7 +47,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    card_view:cardCornerRadius="@dimen/_4sdp"
+                    card_view:cardCornerRadius="@dimen/_8sdp"
                     card_view:cardElevation="0dp"
                     card_view:cardUseCompatPadding="false"
                     tools:visibility="visible">
@@ -85,17 +85,15 @@
                     android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginEnd="@dimen/_6sdp"
                     android:visibility="gone"
-                    app:contentPaddingBottom="@dimen/_5sdp"
                     app:contentPaddingLeft="@dimen/_8sdp"
                     app:contentPaddingRight="@dimen/_10sdp"
-                    app:contentPaddingTop="@dimen/_5sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/practise_input_layout"
                     card_view:cardCornerRadius="@dimen/_8sdp"
                     card_view:cardElevation="0dp"
                     card_view:cardUseCompatPadding="false"
-                    tools:visibility="gone">
+                    tools:visibility="visible">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -154,7 +152,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_6sdp"
-                    android:layout_marginTop="@dimen/_6sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginEnd="@dimen/_6sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -255,7 +253,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/_12sdp"
+                        android:layout_marginTop="@dimen/_16sdp"
                         android:layout_marginBottom="@dimen/_8sdp"
                         android:gravity="center"
                         android:padding="@dimen/_4sdp"
@@ -312,7 +310,7 @@
                         android:padding="@dimen/_10sdp"
                         android:scaleType="centerInside"
                         android:tint="@color/white"
-                        android:elevation="@dimen/_4sdp"
+                        android:elevation="@dimen/_16sdp"
                         app:srcCompat="@drawable/ic_rec_mic_big" />
 
                 </FrameLayout>
@@ -351,6 +349,7 @@
                     style="@style/Widget.MaterialComponents.CardView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="@dimen/_56sdp"
                     android:layout_marginStart="@dimen/_6sdp"
                     android:layout_marginTop="@dimen/_6sdp"
                     android:layout_marginEnd="@dimen/_6sdp"
