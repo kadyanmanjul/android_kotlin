@@ -193,10 +193,10 @@ class VoipCallFeedbackView : DialogFragment() {
                 }
                 when (response) {
                     "YES" -> {
-                        showToast("$callerName is now added to your Favourites.")
+                        showToast("$callerName is now added to your Favorite Practice Partners.")
                     }
                     "NO" -> {
-                        showToast("$callerName is now added to your Blacklist.")
+                        showToast("$callerName is now added to your Blocklist.")
                     }
                     "MAYBE" -> {
                         showToast("Thank you for submitting the feedback.")
