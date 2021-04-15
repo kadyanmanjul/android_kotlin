@@ -132,7 +132,7 @@
     <!-- Help Screen  -->
     <string name="today_practise">Today\'s Practice</string>
 
-    <string name="hold_to_record_msz">Press and hold to record a answer</string>
+    <string name="hold_to_record_msz">Press and hold to record your answer</string>
     <string name="upload_file_msz">Upload a file</string>
     <string name="your_answer">Your Answer</string>
     <string name="your_feedback">Your Feedback</string>

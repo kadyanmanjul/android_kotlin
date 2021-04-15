@@ -238,7 +238,7 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun hidePracticeSubmitLayout() {
-        binding.yourSubAnswerTv.visibility = GONE
+        //binding.yourSubAnswerTv.visibility = GONE
         binding.subPractiseSubmitLayout.visibility = GONE
     }
 
@@ -380,7 +380,7 @@ class ReadingFragmentWithoutFeedback :
             }
             if ((this.materialType == LessonMaterialType.TX).not()) {
                 if (this.qText.isNullOrEmpty().not()) {
-                    binding.practiseTextInfoLayout.visibility = VISIBLE
+                    binding.practiseTextInfoLayout.visibility = GONE
                     binding.infoTv2.visibility = VISIBLE
                     binding.infoTv2.text =
                         HtmlCompat.fromHtml(this.qText!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
@@ -420,7 +420,8 @@ class ReadingFragmentWithoutFeedback :
     private fun setViewAccordingExpectedAnswer() {
         currentLessonQuestion?.run {
             showPracticeInputLayout()
-            binding.recordingView.visibility = VISIBLE
+            binding.recordingViewFrame.visibility = VISIBLE
+            binding.hintContainer.visibility = VISIBLE
             binding.practiseInputHeader.text =
                 AppObjectController.getFirebaseRemoteConfig()
                     .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
@@ -962,6 +963,8 @@ class ReadingFragmentWithoutFeedback :
                         binding.progressLayout.visibility = VISIBLE
                         binding.feedbackGrade.visibility = GONE
                         binding.feedbackDescription.visibility = GONE
+                        binding.recordingViewFrame.visibility = GONE
+                        binding.hintContainer.visibility = GONE
                         disableSubmitButton()
                     }
                     // practiceViewModel.submitPractise(chatModel, requestEngage, engageType)

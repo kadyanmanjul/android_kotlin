@@ -26,6 +26,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/_16sdp">
 
@@ -48,27 +50,30 @@
                     card_view:cardCornerRadius="@dimen/_4sdp"
                     card_view:cardElevation="0dp"
                     card_view:cardUseCompatPadding="false"
-                    tools:visibility="gone">
-
+                    tools:visibility="visible">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/practise_input_header"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="start|center"
                         android:text="@string/please_record_answer"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
                         android:textColor="@color/black" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/practise_input_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_20sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
                         android:gravity="start|center"
                         android:text="@string/attempt_reading_practice"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/grey_68" />
-
+                    </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
@@ -242,6 +247,7 @@
                     card_view:cardCornerRadius="@dimen/_8sdp"
                     card_view:cardElevation="0dp"
                     card_view:cardUseCompatPadding="false"
+                    android:visibility="gone"
                     tools:visibility="visible">
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -249,22 +255,23 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/_28sdp"
+                        android:layout_marginTop="@dimen/_12sdp"
                         android:layout_marginBottom="@dimen/_8sdp"
                         android:gravity="center"
                         android:padding="@dimen/_4sdp"
                         android:text="@string/hold_to_record_msz"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                        android:textSize="@dimen/_10ssp"
                         android:textColor="@color/black"
                         android:visibility="gone"
-                        tools:visibility="gone" />
+                        tools:visibility="visible" />
 
                     <Chronometer
                         android:id="@+id/counter_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="top|center"
-                        android:layout_marginTop="@dimen/_28sdp"
+                        android:layout_marginTop="@dimen/_24sdp"
                         android:background="@drawable/bg_timer"
                         android:drawableStart="@drawable/timer_drawable"
                         android:drawablePadding="@dimen/_4sdp"
@@ -272,7 +279,7 @@
                         android:gravity="top|center"
                         android:padding="@dimen/_5sdp"
                         android:textColor="#515151"
-                        android:textSize="@dimen/_12ssp"
+                        android:textSize="@dimen/font_11_5"
                         android:visibility="gone"
                         tools:visibility="visible" />
 
@@ -285,7 +292,11 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/circle2"
                     android:backgroundTint="@color/white"
-                    android:padding="@dimen/_4sdp"
+                    android:padding="@dimen/_5sdp"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:visibility="gone"
+                    tools:visibility="visible"
                     app:layout_constraintBottom_toTopOf="@id/hint_container"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -298,13 +309,11 @@
                         android:layout_gravity="center"
                         android:adjustViewBounds="true"
                         android:background="@drawable/recv_bg_mic"
-                        android:backgroundTint="@color/button_color"
                         android:padding="@dimen/_10sdp"
                         android:scaleType="centerInside"
                         android:tint="@color/white"
-                        android:visibility="gone"
-                        app:srcCompat="@drawable/ic_rec_mic_big"
-                        tools:visibility="visible" />
+                        android:elevation="@dimen/_4sdp"
+                        app:srcCompat="@drawable/ic_rec_mic_big" />
 
                 </FrameLayout>
 
@@ -370,8 +379,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_16sdp"
-                        android:orientation="vertical"
-                        android:padding="@dimen/_8sdp">
+                        android:orientation="vertical">
 
                         <com.mindorks.placeholderview.PlaceHolderView
                             android:id="@+id/audio_list"

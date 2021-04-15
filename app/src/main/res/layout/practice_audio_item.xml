@@ -7,7 +7,7 @@
         android:id="@+id/audio_view_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/_16sdp"
+        android:paddingEnd="@dimen/_8sdp"
         android:paddingVertical="@dimen/_4sdp">
 
         <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
