@@ -44,7 +44,9 @@
                 tools:listitem="@layout/inbox_row_layout" />
 
             <include layout="@layout/find_more_layout" />
+
         </LinearLayout>
+
     </androidx.core.widget.NestedScrollView>
 
     <ViewStub
