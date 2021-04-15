@@ -14,7 +14,7 @@ interface CommonDao {
     @Query("DELETE FROM assessments WHERE remoteId IN (SELECT assessment_id FROM question_table WHERE course_id = :courseId)")
     fun deleteAssessmentsFromQuestionsForCourse(courseId: Int): Int
 
-    @Query("DELETE FROM SpeakingTopic WHERE id IN (SELECT topic_id FROM lesson_question WHERE lessonId IN (SELECT lesson_id FROM lessonmodel WHERE course = :courseId ))")
+    @Query("DELETE FROM SpeakingTopic WHERE CAST(id AS String) IN (SELECT topic_id FROM lesson_question WHERE lessonId IN (SELECT lesson_id FROM lessonmodel WHERE course = :courseId ))")
     fun deleteSpeakingTopicsForCourse(courseId: Int): Int
 
     @Query("DELETE FROM practise_engagement_table WHERE questionForId IN (SELECT id FROM lesson_question WHERE lessonId IN (SELECT lesson_id FROM lessonmodel WHERE course = :courseId ))")
