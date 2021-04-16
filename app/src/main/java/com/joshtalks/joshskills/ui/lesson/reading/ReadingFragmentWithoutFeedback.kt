@@ -753,7 +753,7 @@ class ReadingFragmentWithoutFeedback :
                     binding.rootView.requestDisallowInterceptTouchEvent(true)
                     binding.counterTv.visibility = VISIBLE
                     binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
-                    binding.recordingViewFrame.startAnimation(scaleAnimation)
+                    binding.recordingView.startAnimation(scaleAnimation)
                     binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
                     requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     appAnalytics?.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
