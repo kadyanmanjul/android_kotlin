@@ -70,7 +70,7 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
 
         override fun onDisconnect(callId: String?, channelName: String?, time: Long) {
             super.onDisconnect(callId, channelName, time)
-            lifecycleScope.launch(Dispatchers.Main) {
+            lifecycleScope.launchWhenResumed {
                 findViewById<View>(R.id.ongoing_call_container).visibility = View.GONE
                 findViewById<View>(R.id.ongoing_call_container).setOnClickListener(null)
                 if (time > 0 && channelName.isNullOrEmpty().not()) {
