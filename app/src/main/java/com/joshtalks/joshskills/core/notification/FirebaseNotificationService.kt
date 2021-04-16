@@ -376,8 +376,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return null
             }
             NotificationAction.ACTION_DELETE_USER_AND_DATA -> {
-                Mentor.deleteUserCredentials()
-                Mentor.deleteUserData()
+                if (Mentor.getInstance().hasId()) {
+                    Mentor.deleteUserCredentials()
+                    Mentor.deleteUserData()
+                }
                 return null
             }
             NotificationAction.ACTION_OPEN_REMINDER -> {

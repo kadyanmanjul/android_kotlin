@@ -2,7 +2,9 @@ package com.joshtalks.joshskills.repository.local.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.RawQuery
 import androidx.room.Transaction
+import androidx.sqlite.db.SimpleSQLiteQuery
 import timber.log.Timber
 
 @Dao
@@ -43,6 +45,18 @@ interface CommonDao {
 
     @Query("DELETE FROM course WHERE courseId = :courseId")
     fun deleteCourse(courseId: String): Int
+
+//    @RawQuery
+//    fun deleteCourseDataPartOne(
+//        courseId: Int,
+//        query: SimpleSQLiteQuery = SimpleSQLiteQuery("DELETE assessments, lessonmodel, lesson_question, SpeakingTopic FROM assessments INNER JOIN lesson_question ON assessments.remoteId = lesson_question.assessment_id INNER JOIN lessonmodel ON lesson_question.lessonId = lessonmodel.lesson_id INNER JOIN SpeakingTopic ON lesson_question.topic_id = SpeakingTopic.id WHERE lessonmodel.course = $courseId")
+//    )
+//
+//    @RawQuery
+//    fun deleteCourseDataPartTwo(
+//        courseId: Int,
+//        query: SimpleSQLiteQuery = SimpleSQLiteQuery("DELETE course, chat_table, course_usage, question_table, video_watch_table FROM course INNER JOIN chat_table ON course.conversation_id = chat_table.conversation_id INNER JOIN course_usage ON chat_table.conversation_id = course_usage.conversation_id INNER JOIN question_table ON course.courseId = question_table.course_id INNER JOIN video_watch_table ON question_table.course_id = video_watch_table.course_id WHERE course.courseId = = $courseId")
+//    )
 
     @Transaction
     fun deleteConversationData(courseId: Int) {

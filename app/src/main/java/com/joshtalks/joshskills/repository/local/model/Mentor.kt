@@ -82,7 +82,7 @@ class Mentor {
                 courseDao().getAllConversationId().forEach {
                     PrefManager.removeKey(it)
                 }
-                LastSyncPrefManager.removeAll()
+                LastSyncPrefManager.clear()
                 clearAllTables()
             }
         }

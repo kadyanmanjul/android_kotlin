@@ -48,11 +48,7 @@ object LastSyncPrefManager {
 
     fun removeKey(key: String) = lastSyncPrefManager.edit().remove(key).apply()
 
-    fun removeAll() = lastSyncPrefManager.edit().clear().apply()
-
-    fun clear() {
-        lastSyncPrefManager.edit().clear().apply()
-    }
+    fun clear() = lastSyncPrefManager.edit().clear().apply()
 
     fun getLastSyncTime(key: String): Pair<String, String> {
         return try {
