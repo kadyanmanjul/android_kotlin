@@ -108,6 +108,9 @@ enum class NotificationAction(val type: String) {
     @SerializedName("delete_user_and_data")
     ACTION_DELETE_USER_AND_DATA("delete_user_and_data"),
 
+    @SerializedName("logout_user")
+    ACTION_LOGOUT_USER("logout_user"),
+
     @SerializedName("open_reminder")
     ACTION_OPEN_REMINDER("open_reminder"),
 

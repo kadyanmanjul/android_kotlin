@@ -382,6 +382,13 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
                 return null
             }
+            NotificationAction.ACTION_LOGOUT_USER -> {
+                if (Mentor.getInstance().hasId()) {
+                    Mentor.deleteUserCredentials()
+                    Mentor.deleteUserData()
+                }
+                return null
+            }
             NotificationAction.ACTION_OPEN_REMINDER -> {
                 if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
                     return null
