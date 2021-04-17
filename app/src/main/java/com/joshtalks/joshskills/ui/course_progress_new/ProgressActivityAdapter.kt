@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.course_progress_new
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +29,7 @@ class ProgressActivityAdapter(
 
     private var MAIN_VIEW: Int = 1
     private var HEADER_VIEW: Int = 0
+    private var updatedListPosition: Int = -1
 
     fun addItems(newList: List<CourseOverviewResponse>) {
         if (newList.isEmpty()) {
@@ -41,6 +41,22 @@ class ProgressActivityAdapter(
         list.addAll(newList)
         diffResult.dispatchUpdatesTo(this)
     }
+
+   /* fun updateItem(courseOverviewResponseDiff: CourseOverviewResponse, titleKey: String?) {
+        if (titleKey.isNullOrBlank().not()) {
+            list.forEachIndexed { index, courseOverviewResponse ->
+                if (courseOverviewResponse.title.equals(titleKey) && courseOverviewResponse.data.isNullOrEmpty().not()){
+                    updatedListPosition=index
+                    this.get(updatedListPosition)
+                    courseOverviewResponseDiff.data.minus(courseOverviewResponse.data)
+                }
+            }
+            Log.d(
+                "Manjul",
+                "updateItem() called with: lessonId = $lessonId lesssonData = $lesssonData"
+            )
+        }
+    }*/
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -84,10 +100,6 @@ class ProgressActivityAdapter(
                 (holder as ProgressViewHolder).bind(position, list[position])
             }
             else -> {
-                Log.d(
-                    "Manjul",
-                    "onBindViewHolder() called with: list = ${list[position].title}, position = $position"
-                )
                 (holder as HeaderViewHolder).bind(list[position])
             }
         }
@@ -107,7 +119,7 @@ class ProgressActivityAdapter(
 
             adapter = CourseProgressAdapter(
                 context,
-                item.data,
+                ArrayList(item.data),
                 onItemClickListener,
                 conversationId,
                 item.chatId ?: "0",
@@ -127,13 +139,16 @@ class ProgressActivityAdapter(
             }
 
         }
+
+        fun updateItem(item: CourseOverviewResponse, position: Int) {
+            list[position] = item
+        }
     }
 
     inner class HeaderViewHolder(val binding: ProgressActivityAdapterHeaderViewLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: CourseOverviewResponse) {
-            Log.d("Manjul", "bind() called with: item = ${item.title}")
-            //item.data = item.data.sortedBy { it.lessonNo }
+            item.data = item.data.sortedBy { it.lessonNo }
             binding.progressTitleTv.text = item.title
         }
     }

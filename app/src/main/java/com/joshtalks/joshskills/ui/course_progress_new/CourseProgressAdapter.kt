@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.CourseProgressItemBinding
@@ -15,7 +16,7 @@ import com.joshtalks.joshskills.repository.server.course_overview.CourseOverview
 
 class CourseProgressAdapter(
     val context: Context,
-    val itemList: List<CourseOverviewItem>,
+    val itemList: ArrayList<CourseOverviewItem>,
     val onItemClickListener: ProgressItemClickListener,
     val conversationId: String,
     val chatMessageId: String,
@@ -26,6 +27,8 @@ class CourseProgressAdapter(
     val title: String
 ) :
     RecyclerView.Adapter<CourseProgressAdapter.CourseProgressViewHolder>() {
+
+    private val diffCallback: CourseOverviewAdapterDiffCallback by lazy { CourseOverviewAdapterDiffCallback() }
 
     val vocabColor = ArrayList<Int>().apply {
         this.add(Color.parseColor("#3ADD03"))
@@ -63,6 +66,17 @@ class CourseProgressAdapter(
 
     override fun getItemCount(): Int {
         return itemList.size + 1
+    }
+
+    fun updateDataList(newList: List<CourseOverviewItem>?) {
+        if (newList.isNullOrEmpty()) {
+            return
+        }
+        diffCallback.setItems(itemList, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        itemList.clear()
+        itemList.addAll(newList)
+        diffResult.dispatchUpdatesTo(this)
     }
 
     inner class CourseProgressViewHolder(val binding: CourseProgressItemBinding) :

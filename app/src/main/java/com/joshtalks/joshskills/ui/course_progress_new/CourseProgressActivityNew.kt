@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.StickHeaderItemDecoration
+import com.joshtalks.joshskills.core.extension.deepEquals
 import com.joshtalks.joshskills.databinding.CourseProgressActivityNewBinding
 import com.joshtalks.joshskills.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewItem
@@ -34,7 +35,7 @@ const val COURSE_ID = "course_id"
 class CourseProgressActivityNew :
     WebRtcMiddlewareActivity(),
     CourseProgressAdapter.ProgressItemClickListener {
-    private var  pdfViewStub: Stub<PdfCourseProgressView>? = null
+    private var pdfViewStub: Stub<PdfCourseProgressView>? = null
     private var courseOverviewResponse: List<CourseOverviewResponse>? = null
 
     private var lastAvailableLessonNo: Int? = null
@@ -59,7 +60,7 @@ class CourseProgressActivityNew :
                     if (intent.hasExtra(CHAT_ROOM_ID) && intent.getStringExtra(CHAT_ROOM_ID)
                             .isNullOrBlank().not()
                     ) {
-                        binding.progressLayout.visibility=View.VISIBLE
+                        //binding.progressLayout.visibility=View.VISIBLE
                         viewModel.getCourseOverview(courseId)
                     }
                 }
@@ -101,46 +102,79 @@ class CourseProgressActivityNew :
         viewModel.progressLiveData.observe(
             this,
             { response ->
+
                 binding.progressLayout.visibility = View.GONE
-                courseOverviewResponse = response.responseData
-                pdfViewStub?.let { view ->
-                    view.resolved().let {
-                        view.get()?.visibility = View.VISIBLE
-                        view.get()?.setup(
-                            response.pdfInfo,
-                            courseId.toString(),
-                            getConversationId() ?: EMPTY
-                        )
-                        view.get().addCallback(object : PdfCourseProgressView.Callback {
-                            override fun showDialog(idString: Int) {
-                                when (idString) {
-                                    -1 -> {
-                                        PermissionUtils.permissionPermanentlyDeniedDialog(
-                                            this@CourseProgressActivityNew
-                                        )
-                                    }
-                                    else -> {
-                                        PermissionUtils.permissionPermanentlyDeniedDialog(
-                                            this@CourseProgressActivityNew,
-                                            idString
-                                        )
+                val isAnyDifference = courseOverviewResponse?.deepEquals(response.responseData!!)
+                if (isAnyDifference == false) {
+
+                    courseOverviewResponse?.forEachIndexed { index, courseOverviewResponse ->
+                        if (courseOverviewResponse.equals(response.responseData?.get(index)).not()
+                        ) {
+
+                            val viewHolder =
+                                binding.progressRv.findViewHolderForAdapterPosition((index * 2).plus(1))
+                            if (viewHolder is ProgressActivityAdapter.ProgressViewHolder) {
+                                viewHolder.adapter.updateDataList(response.responseData?.get(index)?.data)
+                                viewHolder.updateItem(courseOverviewResponse, (index * 2).plus(1))
+                            }
+                        }
+                        return@forEachIndexed
+                    }
+                    /*val diffResponse = courseOverviewResponse?.minus(response.responseData!!)
+                    courseOverviewResponse.co
+                    val responseDifference = response.responseData?.filter {
+                        it.title.equals(diffResponse?.get(0)?.title) && it.data.isNullOrEmpty()
+                            .not()
+                    }
+                    responseDifference?.get(0)
+                        ?.let { adapter.updateItem(it, diffResponse?.get(0)?.title) }
+                    responseDifference?.get(0)
+                        ?.let { binding.progressRv.findViewHolderForAdapterPosition() }*/
+
+                } else {
+                    /*courseOverviewResponse?.forEachIndexed { index, courseOverviewResponse ->
+                    courseOverviewResponse.conta(response.responseData)
+                }*/
+                    courseOverviewResponse = response.responseData
+                    pdfViewStub?.let { view ->
+                        view.resolved().let {
+                            view.get()?.visibility = View.VISIBLE
+                            view.get()?.setup(
+                                response.pdfInfo,
+                                courseId.toString(),
+                                getConversationId() ?: EMPTY
+                            )
+                            view.get().addCallback(object : PdfCourseProgressView.Callback {
+                                override fun showDialog(idString: Int) {
+                                    when (idString) {
+                                        -1 -> {
+                                            PermissionUtils.permissionPermanentlyDeniedDialog(
+                                                this@CourseProgressActivityNew
+                                            )
+                                        }
+                                        else -> {
+                                            PermissionUtils.permissionPermanentlyDeniedDialog(
+                                                this@CourseProgressActivityNew,
+                                                idString
+                                            )
+                                        }
                                     }
                                 }
-                            }
-                        })
+                            })
+                        }
                     }
-                }
 
-                val data = ArrayList<CourseOverviewResponse>()
-                response.responseData?.forEach { courseOverview ->
-                    val courseOverviewResponse = CourseOverviewResponse()
-                    courseOverviewResponse.title = courseOverview.title
-                    courseOverviewResponse.unLockCount = courseOverview.unLockCount
-                    courseOverviewResponse.type = 10
-                    data.add(courseOverviewResponse)
-                    data.add(courseOverview)
+                    val data = ArrayList<CourseOverviewResponse>()
+                    response.responseData?.forEach { courseOverview ->
+                        val courseOverviewResponse = CourseOverviewResponse()
+                        courseOverviewResponse.title = courseOverview.title
+                        courseOverviewResponse.unLockCount = courseOverview.unLockCount
+                        courseOverviewResponse.type = 10
+                        data.add(courseOverviewResponse)
+                        data.add(courseOverview)
+                    }
+                    adapter.addItems(data)
                 }
-                adapter.addItems(data)
             }
         )
     }
