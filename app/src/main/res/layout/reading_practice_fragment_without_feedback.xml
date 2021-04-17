@@ -369,7 +369,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="start|center"
-                        android:text="@string/your_submitted_answer"
+                        android:text="@string/your_answer"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
                         android:textColor="@color/black" />
 

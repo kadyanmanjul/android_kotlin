@@ -275,6 +275,7 @@ class ReadingFragmentWithoutFeedback :
                                 if (this.practiceEngagement.isNullOrEmpty()) {
                                     showPracticeInputLayout()
                                     binding.feedbackLayout.visibility = GONE
+                                    //binding.yourSubAnswerTv.text = getString(R.string.your_answer)
                                     hidePracticeSubmitLayout()
                                     disableSubmitButton()
                                 } else {
@@ -774,7 +775,7 @@ class ReadingFragmentWithoutFeedback :
                     binding.rootView.requestDisallowInterceptTouchEvent(false)
                     binding.counterTv.stop()
                     viewModel.stopRecording()
-                    binding.recordingViewFrame.clearAnimation()
+                    binding.recordingView.clearAnimation()
                     binding.counterTv.visibility = GONE
                     binding.audioPractiseHint.visibility = VISIBLE
                     requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -965,6 +966,7 @@ class ReadingFragmentWithoutFeedback :
                         binding.feedbackDescription.visibility = GONE
                         binding.recordingViewFrame.visibility = GONE
                         binding.hintContainer.visibility = GONE
+                        binding.yourSubAnswerTv.text = getString(R.string.your_submitted_answer)
                         disableSubmitButton()
                     }
                     // practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
