@@ -65,7 +65,7 @@
         android:layout_marginHorizontal="@dimen/_16sdp"
         android:layout_marginTop="@dimen/_16sdp"
         android:background="@drawable/rounded_state_button_bg"
-        android:backgroundTint="#E5E5E5"
+        android:backgroundTint="@color/light_shade_of_gray"
         android:drawableRight="@drawable/ic_tick_extra_smallest"
         android:gravity="center"
         android:paddingHorizontal="@dimen/_20sdp"
