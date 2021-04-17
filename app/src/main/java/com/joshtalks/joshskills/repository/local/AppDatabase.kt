@@ -70,6 +70,7 @@ import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagem
 import com.joshtalks.joshskills.repository.local.entity.practise.WrongWord
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionFeedback
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentMediaType
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentStatus
@@ -99,7 +100,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class,
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class,
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
-        RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class
+        RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class
     ],
     version = 34,
     exportSchema = true

@@ -8,6 +8,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionFeedback
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
@@ -35,6 +36,9 @@ abstract class AssessmentDao {
             questionWithRelations.reviseConcept?.let { reviseConcept ->
                 insertReviseConcept(reviseConcept)
             }
+            questionWithRelations.questionFeedback?.let { questionFeedback ->
+                insertAssessmentQuestionFeedback(questionFeedback)
+            }
         }
         assessmentWithRelations.assessmentIntroList?.forEach { assessmentIntro ->
             insertAssessmentIntro(assessmentIntro)
@@ -49,6 +53,9 @@ abstract class AssessmentDao {
             insertAssessmentChoice(choice)
             assessmentQuestionWithRelations.reviseConcept?.let { reviseConcept ->
                 insertReviseConcept(reviseConcept)
+            }
+            assessmentQuestionWithRelations.questionFeedback?.let { questionFeedback ->
+                insertAssessmentQuestionFeedback(questionFeedback)
             }
         }
     }
@@ -69,6 +76,11 @@ abstract class AssessmentDao {
             }
             question.reviseConcept?.let { reviseConcept ->
                 insertReviseConcept(ReviseConcept(reviseConcept, question.id))
+            }
+            question.feedback?.let { questionFeedback ->
+                insertAssessmentQuestionFeedback(
+                    AssessmentQuestionFeedback(questionFeedback, question.id)
+                )
             }
         }
         assessmentResponse.intro?.forEach { assessmentIntro ->
@@ -96,6 +108,9 @@ abstract class AssessmentDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insertReviseConcept(reviseConcept: ReviseConcept)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun insertAssessmentQuestionFeedback(assessmentQuestionFeedback: AssessmentQuestionFeedback)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun updateReviseConcept(reviseConcept: ReviseConcept)

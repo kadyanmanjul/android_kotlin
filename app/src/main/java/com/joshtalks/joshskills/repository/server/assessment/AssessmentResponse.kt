@@ -55,7 +55,10 @@ enum class AssessmentType(val type: String) {
     QUIZ("QUIZ"),
 
     @SerializedName("TEST")
-    TEST("TEST")
+    TEST("TEST"),
+
+    @SerializedName("QUIZ_V2")
+    QUIZ_V2("QUIZ_V2")
 }
 
 enum class AssessmentMediaType(val mediaType: String, val intValue: Int) {

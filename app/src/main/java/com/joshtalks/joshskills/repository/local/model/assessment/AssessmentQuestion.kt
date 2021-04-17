@@ -8,6 +8,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentMediaType
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterChoiceType
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterQuestionStatus
@@ -51,17 +52,30 @@ data class AssessmentQuestion(
     val text: String,
 
     @ColumnInfo
+    @SerializedName("sub_text")
+    val subText: String = EMPTY,
+
+    @ColumnInfo
     @SerializedName("sort_order")
     val sortOrder: Int,
 
     @ColumnInfo
     @SerializedName("media_url")
-    val mediaUrl: String,
+    val mediaUrl: String = EMPTY,
 
     @TypeConverters(TypeConverterAssessmentMediaType::class)
     @ColumnInfo
     @SerializedName("media_type")
-    val mediaType: AssessmentMediaType,
+    val mediaType: AssessmentMediaType = AssessmentMediaType.NONE,
+
+    @ColumnInfo
+    @SerializedName("media_url_2")
+    val mediaUrl2: String = EMPTY,
+
+    @TypeConverters(TypeConverterAssessmentMediaType::class)
+    @ColumnInfo
+    @SerializedName("media_type_2")
+    val mediaType2: AssessmentMediaType = AssessmentMediaType.NONE,
 
     @ColumnInfo
     @SerializedName("video_thumbnail_url")
@@ -87,9 +101,12 @@ data class AssessmentQuestion(
         remoteId = assessmentQuestionResponse.id,
         assessmentId = assessmentId,
         text = assessmentQuestionResponse.text,
+        subText = assessmentQuestionResponse.subText,
         sortOrder = assessmentQuestionResponse.sortOrder,
         mediaUrl = assessmentQuestionResponse.mediaUrl,
         mediaType = assessmentQuestionResponse.mediaType,
+        mediaUrl2 = assessmentQuestionResponse.mediaUrl2,
+        mediaType2 = assessmentQuestionResponse.mediaType2,
         videoThumbnailUrl = assessmentQuestionResponse.videoThumbnailUrl,
         choiceType = assessmentQuestionResponse.choiceType,
         isAttempted = assessmentQuestionResponse.isAttempted,
