@@ -81,7 +81,9 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     fun getQuestions(lessonId: Int, isDemo: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO) {
-            val questionsFromDB = getQuestionsFromDB(lessonId)
+            //val questionsFromDB = getQuestionsFromDB(lessonId)
+            //TODO remove below line and uncomment above code after getting correct data from API
+            val questionsFromDB = emptyList<LessonQuestion>()
             if (questionsFromDB.isNotEmpty()) {
                 lessonQuestionsLiveData.postValue(questionsFromDB)
             }
@@ -152,8 +154,11 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 if (isDemo) {
                     lastSyncTime = "0"
                 }
+                //TODO remove "0" param and uncomment "lastSyncTime" from below code after getting correct data from API
+
                 val response = AppObjectController.chatNetworkService.getQuestionsForLesson(
-                    lastSyncTime,
+                    //lastSyncTime,
+                    "0",
                     lessonId
                 )
 

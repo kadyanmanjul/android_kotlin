@@ -1,24 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/_2sdp"
+    android:layout_marginTop="@dimen/_15sdp"
     android:layout_marginBottom="@dimen/_2sdp">
 
-    <FrameLayout
-        android:id="@+id/root_view_fl"
-        android:layout_width="@dimen/_220sdp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:layout_marginStart="@dimen/_16sdp"
-        android:padding="@dimen/_3sdp">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:layout_marginEnd="@dimen/_12sdp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/question_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+            android:textColor="@color/grammar_black_text_color"
+            android:textSize="@dimen/_18ssp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="सही अनुवाद चुनें" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/question_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+            android:textColor="@color/grammar_black_text_color"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/question_heading"
+            tools:text="काश मुझे सच पता होता।  "
+            tools:visibility="visible" />
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </FrameLayout>
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/heading_barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="question_description,question_heading" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/regular_audio_iv"
+            android:layout_width="@dimen/_86sdp"
+            android:layout_height="@dimen/_86sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_11sdp"
+            android:background="@drawable/chip_view_selector"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@id/slow_audio_iv"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/heading_barrier"
+            app:srcCompat="@drawable/regular_audio"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/slow_audio_iv"
+            android:layout_width="@dimen/_58sdp"
+            android:layout_height="@dimen/_58sdp"
+            android:layout_marginStart="@dimen/_11sdp"
+            android:background="@drawable/chip_view_selector"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/regular_audio_iv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/regular_audio_iv"
+            app:srcCompat="@drawable/slow_audio"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
+
