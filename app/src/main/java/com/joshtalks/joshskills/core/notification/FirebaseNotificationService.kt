@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
+import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -507,6 +508,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             courseDao().getAllConversationId().forEach {
                 PrefManager.removeKey(it)
             }
+            LastSyncPrefManager.clear()
             clearAllTables()
         }
     }

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.AppDatabase
 
@@ -189,6 +190,7 @@ object PrefManager {
 
     fun clearUser() {
         prefManagerCommon.edit().clear().apply()
+        LastSyncPrefManager.clear()
         AppDatabase.clearDatabase()
         WorkManagerAdmin.instanceIdGenerateWorker()
         WorkManagerAdmin.appInitWorker()
