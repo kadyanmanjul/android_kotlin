@@ -13,6 +13,7 @@ import com.google.android.material.button.MaterialButton
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.extension.slideUpAnimation
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentQuestionFeedbackResponse
 
 class GrammarButtonView : FrameLayout {
@@ -75,8 +76,8 @@ class GrammarButtonView : FrameLayout {
         return true
     }
 
-    fun setup(assessmentQuestionFeedbackResponse: AssessmentQuestionFeedbackResponse) {
-        assessmentQuestionFeedbackResponse.run {
+    fun setup(assessmentQuestion: AssessmentQuestionWithRelations) {
+        assessmentQuestion.questionFeedback?.run {
 
             if (this.correctAnswerHeading.isBlank()) {
                 correctAnswerTitle.visibility = View.GONE

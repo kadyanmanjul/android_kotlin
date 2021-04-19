@@ -408,4 +408,7 @@ dependencies {
     implementation "ru.tinkoff.scrollingpagerindicator:scrollingpagerindicator:1.2.1"
     implementation "com.github.skydoves:balloon:1.3.3"
 
+    //Flow Layout
+    implementation 'com.nex3z:flow-layout:1.2.2'
+
 }

@@ -67,31 +67,9 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     }
 
     private fun initViews() {
-
         headingView = Stub(binding.grammarScrollView.findViewById(R.id.heading_view))
-        headingView?.resolved().let {
-            headingView!!.get().setup(
-                "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Vidushi_audio_recordings/RP+ogg+format/L27.ogg",
-                "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Vidushi_audio_recordings/RP+ogg+format/L28.ogg",
-                "HEading",
-                "Description"
-            )
-        }
-
         choiceView = Stub(binding.grammarScrollView.findViewById(R.id.choice_view))
-        choiceView?.resolved().let {
-            choiceView!!.get().setup()
-        }
-
         buttonView = Stub(binding.grammarScrollView.findViewById(R.id.button_action_views))
-        buttonView?.resolved().let {
-            buttonView!!.get().setup(
-                AssessmentQuestionFeedbackResponse(
-                    10, "Correct Answer", "Correct Answer Text",
-                    "Wrong Answer H1", "Wrong Answer T1", "Wrong Answer H2", "Wrong Answer T2"
-                )
-            )
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -127,15 +105,33 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             }
 
             if (assessmentQuestions.size > 0) {
-               // binding.quizRadioGroup.setOnCheckedChangeListener(quizCheckedChangeListener)
+                // binding.quizRadioGroup.setOnCheckedChangeListener(quizCheckedChangeListener)
                 //showQuizUi()
                 // updateQuiz(assessmentQuestions[0])
+                setupViews()
 
                 if (quizQuestion?.status == QUESTION_STATUS.AT) {
-                   // setQuizScore(assessmentQuestions)
-                   // showQuizCompleteLayout()
+                    // setQuizScore(assessmentQuestions)
+                    // showQuizCompleteLayout()
                 }
             }
+        }
+    }
+
+    private fun setupViews() {
+        headingView?.resolved().let {
+            headingView!!.get().setup(
+                "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Vidushi_audio_recordings/RP+ogg+format/L27.ogg",
+                "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Vidushi_audio_recordings/RP+ogg+format/L28.ogg",
+                "HEading",
+                "Description"
+            )
+        }
+        choiceView?.resolved().let {
+            choiceView!!.get().setup(assessmentQuestions.get(0))
+        }
+        buttonView?.resolved().let {
+            buttonView!!.get().setup(assessmentQuestions.get(0))
         }
     }
 
