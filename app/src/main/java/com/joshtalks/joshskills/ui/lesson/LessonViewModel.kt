@@ -28,13 +28,13 @@ import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.util.showAppropriateMsg
+import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.io.File
 
 class LessonViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -81,9 +81,9 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     fun getQuestions(lessonId: Int, isDemo: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO) {
-            //val questionsFromDB = getQuestionsFromDB(lessonId)
+            val questionsFromDB = getQuestionsFromDB(lessonId)
             //TODO remove below line and uncomment above code after getting correct data from API
-            val questionsFromDB = emptyList<LessonQuestion>()
+            //val questionsFromDB = emptyList<LessonQuestion>()
             if (questionsFromDB.isNotEmpty()) {
                 lessonQuestionsLiveData.postValue(questionsFromDB)
             }
@@ -154,11 +154,8 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 if (isDemo) {
                     lastSyncTime = "0"
                 }
-                //TODO remove "0" param and uncomment "lastSyncTime" from below code after getting correct data from API
-
                 val response = AppObjectController.chatNetworkService.getQuestionsForLesson(
-                    //lastSyncTime,
-                    "0",
+                    lastSyncTime,
                     lessonId
                 )
 
