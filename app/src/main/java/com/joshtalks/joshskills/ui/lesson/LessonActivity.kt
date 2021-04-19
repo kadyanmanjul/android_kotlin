@@ -120,6 +120,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     titleView.text =
                         getString(R.string.lesson_no, it.lessonNo)
                 }
+
                 setUpTabLayout()
                 setTabCompletionStatus()
             }
@@ -226,9 +227,11 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     }
 
     private fun setUpTabLayout() {
+        //TODO remove true by logic after implementation of the new param in lesson model
         val adapter = LessonPagerAdapter(
             supportFragmentManager,
-            this.lifecycle
+            this.lifecycle,
+            true
         )
 
         binding.lessonViewpager.adapter = adapter

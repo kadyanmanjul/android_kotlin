@@ -1,10 +1,12 @@
 package com.joshtalks.joshskills.core.extension
 
+import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.*
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
 
 fun View.moveViewToScreenCenter(imgGroupChat: AppCompatImageView, txtUnreadCount: TextView) {
@@ -142,6 +144,16 @@ fun View.slideInAnimation() {
         animSet.addAnimation(translate)
         this.startAnimation(animSet)
     }
+}
+
+fun View.slideUpAnimation(context: Context) {
+        val bottomUp = AnimationUtils.loadAnimation(
+            context,
+            R.anim.slide_up_dialog
+        )
+
+        this.startAnimation(bottomUp)
+        this.setVisibility(View.VISIBLE)
 }
 
 fun AppCompatImageView.shiftGroupChatIconUp(txtUnreadCount: TextView) {
