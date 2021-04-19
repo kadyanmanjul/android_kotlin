@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/choice_ats_root_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/_16sdp">
+
+    <FrameLayout
+        android:id="@+id/ats_answer_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.nex3z.flowlayout.FlowLayout
+            android:id="@+id/ats_answer_flow_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:flFlow="true" />
+
+        <View
+            style="@style/split_line_horizontal"
+            android:layout_marginTop="@dimen/_50sdp" />
+
+        <View
+            style="@style/split_line_horizontal"
+            android:layout_marginTop="@dimen/_105sdp" />
+
+    </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/ats_options_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/_60sdp">
+
+    </RelativeLayout>
+
+</RelativeLayout>
