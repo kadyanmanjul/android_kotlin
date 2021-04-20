@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.certification_exam.report
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -7,6 +8,8 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.MarginPageTransformer
@@ -30,6 +33,7 @@ import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_ID
 import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTION
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
 import com.joshtalks.joshskills.ui.certification_exam.examview.CExamMainActivity
+import com.joshtalks.joshskills.ui.certification_exam.report.udetail.CertificateDetailActivity
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
@@ -58,6 +62,14 @@ class CExamReportActivity : BaseActivity() {
     private lateinit var binding: ActivityCexamReportBinding
     private var compositeDisposable = CompositeDisposable()
 
+    private var userDetailsActivityResult: ActivityResultLauncher<Intent> =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
@@ -79,6 +91,7 @@ class CExamReportActivity : BaseActivity() {
         addObserver()
         viewModel.getUserAllExamReports(certificateExamId)
     }
+
     override fun getConversationId(): String? {
         return intent.getStringExtra(com.joshtalks.joshskills.track.CONVERSATION_ID)
     }
@@ -176,7 +189,17 @@ class CExamReportActivity : BaseActivity() {
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                     {
-                        downloadFile(it.url, message = "Certificate download complete")
+                     //   if (it.url == null) {
+                            userDetailsActivityResult.launch(
+                                CertificateDetailActivity.startUserDetailsActivity(
+                                    this, rId = it.id,
+                                    conversationId = getConversationId(),
+                                )
+                            )
+                            return@subscribe
+                    //    }
+
+                      //  downloadFile(it.url, message = "Certificate download complete")
                     },
                     {
                         it.printStackTrace()
