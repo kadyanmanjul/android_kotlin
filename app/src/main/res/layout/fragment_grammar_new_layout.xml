@@ -31,7 +31,7 @@
                 android:layout_height="@dimen/_12sdp"
                 android:layout_marginHorizontal="@dimen/_22sdp"
                 android:layout_marginTop="@dimen/_18sdp"
-                android:progress="70"
+                android:progress="0"
                 android:progressDrawable="@drawable/grammar_rating_progress_bar_drawable" />
 
             <ViewStub

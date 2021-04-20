@@ -11,12 +11,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestionType
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
-import com.joshtalks.joshskills.repository.server.assessment.AssessmentQuestionFeedbackResponse
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.chat.vh.GrammarButtonView
 import com.joshtalks.joshskills.ui.chat.vh.GrammarChoiceView
@@ -108,6 +108,8 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 // binding.quizRadioGroup.setOnCheckedChangeListener(quizCheckedChangeListener)
                 //showQuizUi()
                 // updateQuiz(assessmentQuestions[0])
+                binding.progressBar.max = assessmentQuestions.size
+                binding.progressBar.progress = 0
                 setupViews()
 
                 if (quizQuestion?.status == QUESTION_STATUS.AT) {
@@ -118,20 +120,51 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         }
     }
 
-    private fun setupViews() {
+    private fun setupViews(position: Int = 0) {
         headingView?.resolved().let {
             headingView!!.get().setup(
-                "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Vidushi_audio_recordings/RP+ogg+format/L27.ogg",
-                "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Vidushi_audio_recordings/RP+ogg+format/L28.ogg",
-                "HEading",
-                "Description"
+                assessmentQuestions.get(position).question.mediaUrl,
+                assessmentQuestions.get(position).question.mediaUrl2,
+                assessmentQuestions.get(position).question.text,
+                assessmentQuestions.get(position).question.subText
             )
         }
         choiceView?.resolved().let {
-            choiceView!!.get().setup(assessmentQuestions.get(0))
+            //TODO reset the view in setup as well for next question
+            choiceView!!.get().setup(assessmentQuestions.get(position))
+            choiceView!!.get()
+                .addCallback(object : GrammarChoiceView.EnableDisableGrammarButtonCallback {
+                    override fun disableGrammarButton() {
+                        buttonView?.get()?.disableBtn()
+                    }
+
+                    override fun enableGrammarButton() {
+                        buttonView?.get()?.enableBtn()
+                    }
+
+                })
         }
         buttonView?.resolved().let {
-            buttonView!!.get().setup(assessmentQuestions.get(0))
+            buttonView!!.get().setup(assessmentQuestions.get(position))
+            buttonView!!.get().addCallback(object : GrammarButtonView.CheckQuestionCallback {
+                override fun checkQuestionCallBack(): Boolean? {
+                    binding.progressBar.progress = position.plus(1)
+                    return choiceView?.get()?.isCorrectAnswer()
+                }
+
+                override fun nextQuestion() {
+                    moveToNextGrammarQuestion(position)
+                }
+            })
+        }
+    }
+
+    private fun moveToNextGrammarQuestion(position: Int) {
+        if (position >= assessmentQuestions.size.minus(1)) {
+            //TODO completed card
+            showToast("Last Question ")
+        } else {
+            setupViews(position.plus(1))
         }
     }
 
