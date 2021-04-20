@@ -7,7 +7,6 @@ import android.content.IntentSender
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
@@ -21,7 +20,6 @@ import com.google.android.gms.auth.api.credentials.CredentialsOptions
 import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.android.gms.auth.api.credentials.IdentityProviders
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.DATE_FORMATTER
 import com.joshtalks.joshskills.core.DATE_FORMATTER_2
@@ -34,13 +32,19 @@ import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePick
 import com.joshtalks.joshskills.core.service.CONVERSATION_ID
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityCertificateDetailBinding
+import com.joshtalks.joshskills.repository.server.certification_exam.CertificationUserDetail
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
+import java.text.ParseException
 import java.util.Calendar
+import java.util.Date
 import java.util.regex.Pattern
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 const val REPORT_ID = "report_id"
 const val COUNTRY_CODE = "+91"
+const val CERTIFICATE_URL = "certificate_url"
 
 class CertificateDetailActivity : BaseActivity() {
 
@@ -49,10 +53,11 @@ class CertificateDetailActivity : BaseActivity() {
     }
     private lateinit var binding: ActivityCertificateDetailBinding
     private var datePicker: DatePickerDialog? = null
-    private var userDateOfBirth: String? = null
+    private var userDateOfBirth: String = EMPTY
     private var mobileHintShowing = false
     private var mCredentialsApiClient: CredentialsClient? = null
     private var emailHintShowing = false
+    private var isPostalRequire = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
@@ -167,26 +172,27 @@ class CertificateDetailActivity : BaseActivity() {
             } catch (e: IntentSender.SendIntentException) {
                 emailHintShowing = true
                 e.printStackTrace()
-                Log.e("TAG", "Could not start hint picker Intent", e)
             }
         }
     }
 
     private fun addObserver() {
-
         viewModel.apiStatus.observe(
             this,
             {
                 hideProgressBar()
-                if (it == ApiCallStatus.SUCCESS) {
-                    val resultIntent = Intent().apply {
-                        putExtra(REPORT_ID, getReportId())
-                    }
-                    setResult(RESULT_OK, resultIntent)
-                    this.finish()
-                }
             }
         )
+        lifecycleScope.launchWhenCreated {
+            viewModel.certificateUrl.collectLatest {
+                val resultIntent = Intent().apply {
+                    putExtra(REPORT_ID, getReportId())
+                    putExtra(CERTIFICATE_URL, it)
+                }
+                setResult(RESULT_OK, resultIntent)
+                this@CertificateDetailActivity.finish()
+            }
+        }
 
         lifecycleScope.launchWhenCreated {
             viewModel.cUserDetails.collectLatest {
@@ -196,20 +202,37 @@ class CertificateDetailActivity : BaseActivity() {
                         binding.tvPoAdd.visibility = View.VISIBLE
                         binding.tvPoSubAdd.visibility = View.VISIBLE
                         binding.etPostal.visibility = View.VISIBLE
+                        isPostalRequire = true
                     }
                     binding.etMotherName.setText(it.motherName)
                     binding.etFatherName.setText(it.fatherName)
-                    binding.etDob.setText(it.dateOfBirth)
                     binding.etMobile.setText(getMobileNumber(it.mobile))
                     binding.etEmail.setText(it.email)
                     binding.etName.setText(it.fullName)
                     binding.etName.requestFocus()
                     binding.etName.setSelection(it.fullName?.length ?: 0)
+
+                    if (it.dateOfBirth.isNullOrEmpty().not()) {
+                        userDateOfBirth = it.dateOfBirth ?: EMPTY
+                        binding.etDob.setText(getFormatDate(it.dateOfBirth!!))
+                    }
                 }
                 binding.progressBar.visibility = View.GONE
                 binding.scrollView.visibility = View.VISIBLE
             }
         }
+    }
+
+    private fun getFormatDate(date: String): String {
+        try {
+            val date: Date? = DATE_FORMATTER.parse(date)
+            return DATE_FORMATTER_2.format(date)
+        } catch (ex: ParseException) {
+            ex.printStackTrace()
+        } catch (ex: NullPointerException) {
+            ex.printStackTrace()
+        }
+        return EMPTY
     }
 
     private fun getMobileNumber(mobile: String?): String {
@@ -238,32 +261,48 @@ class CertificateDetailActivity : BaseActivity() {
     }
 
     fun submit() {
-        if (binding.etName.text.isNullOrEmpty()) {
-            showToast(getString(R.string.name_error_toast))
-            return
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (binding.etName.text.isNullOrEmpty()) {
+                showToast(getString(R.string.name_error_toast))
+                return@launch
+            }
+            if (binding.etDob.text.isNullOrEmpty()) {
+                showToast(getString(R.string.dob_error_toast))
+                return@launch
+            }
+            if (binding.etMotherName.text.isNullOrEmpty()) {
+                showToast(getString(R.string.mname_error_toast))
+                return@launch
+            }
+            if (binding.etFatherName.text.isNullOrEmpty()) {
+                showToast(getString(R.string.fname_error_toast))
+                return@launch
+            }
+            if (isValidIndianNumber(binding.etMobile.text.toString()).not()) {
+                showToast(getString(R.string.please_enter_valid_number))
+                return@launch
+            }
+            if (isEmailValid(binding.etEmail.text.toString()).not()) {
+                showToast(getString(R.string.enter_valid_email_toast))
+                return@launch
+            }
+            showProgressBar()
+            viewModel.postCertificateUserDetails(getUserDetail())
         }
-        if (binding.etDob.text.isNullOrEmpty()) {
-            showToast(getString(R.string.dob_error_toast))
-            return
-        }
-        if (binding.etMotherName.text.isNullOrEmpty()) {
-            showToast(getString(R.string.mname_error_toast))
-            return
-        }
-        if (binding.etFatherName.text.isNullOrEmpty()) {
-            showToast(getString(R.string.fname_error_toast))
-            return
-        }
-        if (isValidIndianNumber(binding.etMobile.text.toString()).not()) {
-            showToast(getString(R.string.please_enter_valid_number))
-            return
-        }
-        if (isEmailValid(binding.etEmail.text.toString()).not()) {
-            showToast(getString(R.string.enter_valid_email_toast))
-            return
-        }
-        showProgressBar()
-        
+    }
+
+    private fun getUserDetail(): CertificationUserDetail {
+        return CertificationUserDetail(
+            fullName = this.binding.etName.text.toString(),
+            reportId = this.getReportId(),
+            dateOfBirth = this.userDateOfBirth,
+            email = this.binding.etEmail.text.toString(),
+            mobile = COUNTRY_CODE + this.binding.etMobile.text.toString(),
+            motherName = this.binding.etMotherName.text.toString(),
+            fatherName = this.binding.etFatherName.text.toString(),
+            isPostalRequire = this.isPostalRequire,
+            postalAddress = this.binding.etPostal.text.toString(),
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
