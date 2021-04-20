@@ -13,8 +13,6 @@ import android.view.*
 import android.view.View.*
 import android.view.animation.*
 import android.widget.Toast
-import androidx.core.view.iterator
-import androidx.core.view.size
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
@@ -317,24 +315,24 @@ class ConversationActivity :
         conversationBinding.chatRv.layoutManager?.isMeasurementCacheEnabled = false
 
         conversationBinding.chatRv.addOnScrollListener(object :
-                RecyclerView.OnScrollListener() {
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    super.onScrollStateChanged(recyclerView, newState)
-                    if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        conversationBinding.scrollToEndButton.visibility = GONE
-                    } else if (recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        conversationBinding.scrollToEndButton.visibility = VISIBLE
-                    }
-                    visibleItem()
+            RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    conversationBinding.scrollToEndButton.visibility = GONE
+                } else if (recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    conversationBinding.scrollToEndButton.visibility = VISIBLE
                 }
+                visibleItem()
+            }
 
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    if (recyclerView.canScrollVertically(-1)) {
-                        getPreviousRecord()
-                    }
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (recyclerView.canScrollVertically(-1)) {
+                    getPreviousRecord()
                 }
-            })
+            }
+        })
     }
 
     private fun getLayoutManager(): SmoothScrollingLinearLayoutManager {
@@ -552,7 +550,7 @@ class ConversationActivity :
                     return@OnRecordTouchListener
                 }
                 if (conversationBinding.chatEdit.text.toString()
-                    .isEmpty() && it == MotionEvent.ACTION_DOWN
+                        .isEmpty() && it == MotionEvent.ACTION_DOWN
                 ) {
                     if (PermissionUtils.isAudioAndStoragePermissionEnable(this).not()) {
                         PermissionUtils.audioRecordStorageReadAndWritePermission(
@@ -851,7 +849,7 @@ class ConversationActivity :
 
     private fun showCourseProgressTooltip() {
         if (AppObjectController.getFirebaseRemoteConfig()
-            .getBoolean(FirebaseRemoteConfigKey.COURSE_PROGRESS_TOOLTIP_VISIBILITY)
+                .getBoolean(FirebaseRemoteConfigKey.COURSE_PROGRESS_TOOLTIP_VISIBILITY)
         ) {
             conversationBinding.courseProgressTooltip.setDismissListener(this)
             conversationBinding.courseProgressTooltipContainer.visibility = VISIBLE
@@ -1160,9 +1158,9 @@ class ConversationActivity :
                             .addParam(
                                 AnalyticsEvent.PRACTICE_SOLVED.NAME,
                                 (it.chatModel.question != null) && (
-                                    it.chatModel.question!!.practiceEngagement.isNullOrEmpty()
-                                        .not()
-                                    )
+                                        it.chatModel.question!!.practiceEngagement.isNullOrEmpty()
+                                            .not()
+                                        )
                             )
                             .addParam("chatId", it.chatModel.chatId)
                             .push()
