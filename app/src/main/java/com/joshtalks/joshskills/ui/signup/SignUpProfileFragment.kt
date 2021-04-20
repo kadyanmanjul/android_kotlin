@@ -20,14 +20,11 @@ import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePickerDialo
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfileBinding
 import com.joshtalks.joshskills.repository.local.model.User
-import java.text.SimpleDateFormat
 import java.util.*
 
 class SignUpProfileFragment : BaseSignUpFragment() {
 
     private var prefix: String = EMPTY
-    private val DATE_FORMATTER = SimpleDateFormat("yyyy-MM-dd")
-    private val DATE_FORMATTER_2 = SimpleDateFormat("dd - MMM - yyyy")
     private lateinit var viewModel: SignUpViewModel
     private lateinit var binding: FragmentSignUpProfileBinding
     private var datePicker: DatePickerDialog? = null
