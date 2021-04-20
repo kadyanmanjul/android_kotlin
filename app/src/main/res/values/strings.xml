@@ -878,4 +878,8 @@
     <string name="ucrop_label_edit_photo">Add photo</string>
     <string name="please_record_answer">Please, Record your answer</string>
 
+    <string name="certificate_d_header">Please fill the below details to download your certificate</string>
+    <string name="mname_error_toast">Mother name cannot be empty!</string>
+    <string name="fname_error_toast">Father name cannot be empty!</string>
+
 </resources>
