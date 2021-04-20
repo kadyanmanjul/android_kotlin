@@ -100,7 +100,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginTop="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_14sdp"
                     android:text="Date of Birth"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                     android:textColor="@color/black" />
@@ -139,7 +139,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginTop="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_14sdp"
                     android:text="Mother’s Name"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                     android:textColor="@color/black" />
@@ -167,7 +167,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginTop="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_14sdp"
                     android:text="Father’s Name"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                     android:textColor="@color/black" />
@@ -195,7 +195,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginTop="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_14sdp"
                     android:text="Mobile Number"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                     android:textColor="@color/black" />
@@ -224,7 +224,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginTop="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_14sdp"
                     android:text="Email Address"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                     android:textColor="@color/black" />
@@ -251,7 +251,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginTop="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_14sdp"
                     android:text="Postal Address"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                     android:textColor="@color/black"
@@ -296,7 +296,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginHorizontal="@dimen/_10sdp"
-                    android:layout_marginTop="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_18sdp"
                     android:layout_marginBottom="@dimen/_16sdp"
                     android:backgroundTint="@color/colorPrimary"
                     android:gravity="center"

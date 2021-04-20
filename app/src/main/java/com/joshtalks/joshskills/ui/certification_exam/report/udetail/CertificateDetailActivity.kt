@@ -202,9 +202,9 @@ class CertificateDetailActivity : BaseActivity() {
                         binding.tvPoAdd.visibility = View.VISIBLE
                         binding.tvPoSubAdd.visibility = View.VISIBLE
                         binding.etPostal.visibility = View.VISIBLE
-                        binding.etPostal.setText(it.postalAddress)
                         isPostalRequire = true
                     }
+                    binding.etPostal.setText(it.postalAddress)
                     binding.etMotherName.setText(it.motherName)
                     binding.etFatherName.setText(it.fatherName)
                     binding.etMobile.setText(getMobileNumber(it.mobile))
