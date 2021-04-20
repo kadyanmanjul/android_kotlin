@@ -10,10 +10,16 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
-import com.joshtalks.joshskills.repository.server.certification_exam.*
+import com.joshtalks.joshskills.repository.server.certification_exam.Answer
+import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
+import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
+import com.joshtalks.joshskills.repository.server.certification_exam.CertificationUserDetail
+import com.joshtalks.joshskills.repository.server.certification_exam.RequestSubmitAnswer
+import com.joshtalks.joshskills.repository.server.certification_exam.RequestSubmitCertificateExam
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
 class CertificationExamViewModel(application: Application) : AndroidViewModel(application) {
@@ -32,7 +38,6 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
         MutableLiveData()
     val isUserSubmitExam: MutableLiveData<Boolean> = MutableLiveData()
     var isSAnswerUiShow: Boolean = false
-
 
     fun startExam() {
         startExamLiveData.postValue(Unit)
@@ -156,4 +161,30 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
         }
     }
 
+    val cUserDetails = MutableSharedFlow<CertificationUserDetail?>(replay = 0)
+
+    fun getCertificateUserDetails() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val resp = AppObjectController.commonNetworkService.getCertificateUserDetails()
+                cUserDetails.emit(resp)
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+                apiStatus.postValue(ApiCallStatus.FAILED)
+                ex.printStackTrace()
+            }
+        }
+    }
+    fun postCertificateUserDetails( certificationUserDetail: CertificationUserDetail) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val resp = AppObjectController.commonNetworkService.submitUserDetailForCertificate(certificationUserDetail)
+                apiStatus.postValue(ApiCallStatus.SUCCESS)
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+                apiStatus.postValue(ApiCallStatus.FAILED)
+                ex.printStackTrace()
+            }
+        }
+    }
 }
