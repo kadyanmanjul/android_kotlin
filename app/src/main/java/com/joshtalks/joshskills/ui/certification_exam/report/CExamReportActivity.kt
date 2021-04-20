@@ -33,27 +33,13 @@ import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_ID
 import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTION
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
 import com.joshtalks.joshskills.ui.certification_exam.examview.CExamMainActivity
+import com.joshtalks.joshskills.ui.certification_exam.report.udetail.CERTIFICATE_URL
 import com.joshtalks.joshskills.ui.certification_exam.report.udetail.CertificateDetailActivity
+import com.joshtalks.joshskills.ui.certification_exam.view.CertificateDownloadDialog
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 class CExamReportActivity : BaseActivity() {
-
-    companion object {
-        fun getExamResultActivityIntent(
-            context: Context,
-            certificateExamId: Int,
-            certificationQuestionModel: CertificationQuestionModel,
-            conversationId: String? = null,
-        ): Intent {
-            return Intent(context, CExamReportActivity::class.java).apply {
-                putExtra(CERTIFICATION_EXAM_ID, certificateExamId)
-                putExtra(CERTIFICATION_EXAM_QUESTION, certificationQuestionModel)
-                putExtra(CONVERSATION_ID, conversationId)
-            }
-        }
-    }
-
     private val viewModel: CertificationExamViewModel by lazy {
         ViewModelProvider(this).get(CertificationExamViewModel::class.java)
     }
@@ -61,12 +47,16 @@ class CExamReportActivity : BaseActivity() {
     private var certificationQuestionModel: CertificationQuestionModel? = null
     private lateinit var binding: ActivityCexamReportBinding
     private var compositeDisposable = CompositeDisposable()
+    private var url="https://s3.ap-south-1.amazonaws.com/www.static.skills.com/certificate_exam/pdf/Tejaswini_cae18966.pdf"
 
     private var userDetailsActivityResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.getStringExtra(CERTIFICATE_URL)?.let {
+                    openCertificationDownloadUI(url)
+                }
             }
         }
 
@@ -189,17 +179,17 @@ class CExamReportActivity : BaseActivity() {
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                     {
-                     //   if (it.url == null) {
-                            userDetailsActivityResult.launch(
-                                CertificateDetailActivity.startUserDetailsActivity(
-                                    this, rId = it.id,
-                                    conversationId = getConversationId(),
-                                )
-                            )
+                    /*    if (it.url != null) {
+                            openCertificationDownloadUI(it.url)
                             return@subscribe
-                    //    }
-
-                      //  downloadFile(it.url, message = "Certificate download complete")
+                        }*/
+                        userDetailsActivityResult.launch(
+                            CertificateDetailActivity.startUserDetailsActivity(
+                                this, rId = it.id,
+                                conversationId = getConversationId(),
+                            )
+                        )
+                        return@subscribe
                     },
                     {
                         it.printStackTrace()
@@ -217,11 +207,22 @@ class CExamReportActivity : BaseActivity() {
         super.onBackPressed()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        try {
-            unregisterReceiver(onDownloadComplete)
-        } catch (ex: Exception) {
+    private fun openCertificationDownloadUI(url: String) {
+        CertificateDownloadDialog.showDownloadCertificateDialog(supportFragmentManager, url)
+    }
+
+    companion object {
+        fun getExamResultActivityIntent(
+            context: Context,
+            certificateExamId: Int,
+            certificationQuestionModel: CertificationQuestionModel,
+            conversationId: String? = null,
+        ): Intent {
+            return Intent(context, CExamReportActivity::class.java).apply {
+                putExtra(CERTIFICATION_EXAM_ID, certificateExamId)
+                putExtra(CERTIFICATION_EXAM_QUESTION, certificationQuestionModel)
+                putExtra(CONVERSATION_ID, conversationId)
+            }
         }
     }
 }
