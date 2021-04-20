@@ -9,27 +9,28 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat
-import com.google.android.material.button.MaterialButton
+import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.extension.slideUpAnimation
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
-import com.joshtalks.joshskills.repository.server.assessment.AssessmentQuestionFeedbackResponse
 
 class GrammarButtonView : FrameLayout {
 
-    private lateinit var rootView: FrameLayout //root_view_fl
-    private lateinit var textContainer: ConstraintLayout //text_container
-    private lateinit var correctAnswerTitle: AppCompatTextView //correct_answer_title
-    private lateinit var correctAnswerDesc: AppCompatTextView //correct_answer_desc
-    private lateinit var explanationTitle: AppCompatTextView //explanation_title
-    private lateinit var explanationText: AppCompatTextView //explanation_title
-    private lateinit var wrongAnswerTitle: AppCompatTextView //wrong_answer_title
-    private lateinit var wrongAnswerDesc: AppCompatTextView //wrong_answer_desc
-    private lateinit var flagIv: AppCompatImageView //flag_iv
-    private lateinit var grammarBtn: MaterialButton //grammar_btn
-    private lateinit var wrongAnswerGroup: Group //wrong_anser_group
-    private lateinit var rightAnswerGroup: Group //right_answer_group
+    private lateinit var rootView: FrameLayout
+    private lateinit var textContainer: ConstraintLayout
+    private lateinit var correctAnswerTitle: AppCompatTextView
+    private lateinit var correctAnswerDesc: AppCompatTextView
+    private lateinit var explanationTitle: AppCompatTextView
+    private lateinit var explanationText: AppCompatTextView
+    private lateinit var wrongAnswerTitle: AppCompatTextView
+    private lateinit var wrongAnswerDesc: AppCompatTextView
+    private lateinit var flagIv: AppCompatImageView
+    private lateinit var grammarBtn: MaterialTextView
+    private lateinit var wrongAnswerGroup: Group
+    private lateinit var rightAnswerGroup: Group
+    private var callback: CheckQuestionCallback? = null
+    private var isAnswerChecked: Boolean = false
 
     constructor(context: Context) : super(context) {
         init()
@@ -57,26 +58,48 @@ class GrammarButtonView : FrameLayout {
         explanationText = findViewById(R.id.explanation_text)
         wrongAnswerTitle = findViewById(R.id.wrong_answer_title)
         wrongAnswerDesc = findViewById(R.id.wrong_answer_desc)
-        wrongAnswerGroup = findViewById(R.id.wrong_anser_group)
+        wrongAnswerGroup = findViewById(R.id.wrong_answer_group)
         rightAnswerGroup = findViewById(R.id.right_answer_group)
         flagIv = findViewById(R.id.flag_iv)
         grammarBtn = findViewById(R.id.grammar_btn)
         grammarBtn.setOnClickListener {
-            grammarBtn.text = context.getString(R.string.grammar_btn_text_continue)
-            if (checkForCorrectIncorrectLogic()) {
-                setCorrectView()
+            if (isAnswerChecked) {
+                callback?.nextQuestion()
             } else {
-                setWrongView()
+                grammarBtn.text = context.getString(R.string.grammar_btn_text_continue)
+                callback?.let { callback ->
+                    val result = callback.checkQuestionCallBack()
+                    if (result != null) {
+                        isAnswerChecked = true
+                        if (result) {
+                            setCorrectView()
+                        } else {
+                            setWrongView()
+                        }
+                    } else {
+                        disableBtn()
+                    }
+                }
             }
         }
+        /*var booleanA = true
+        textContainer.setOnClickListener {
+            if (booleanA) {
+                enableBtn()
+            } else {
+                disableBtn()
+            }
+            booleanA = booleanA.not()
+        }*/
     }
 
     private fun checkForCorrectIncorrectLogic(): Boolean {
         //TODO LOGIC
-        return true
+        return false
     }
 
     fun setup(assessmentQuestion: AssessmentQuestionWithRelations) {
+
         assessmentQuestion.questionFeedback?.run {
 
             if (this.correctAnswerHeading.isBlank()) {
@@ -120,29 +143,68 @@ class GrammarButtonView : FrameLayout {
                 explanationText.visibility = View.VISIBLE
                 explanationText.text = this.wrongAnswerText2
             }
+            textContainer.visibility=View.GONE
+            wrongAnswerGroup.visibility = View.GONE
+            rightAnswerGroup.visibility = View.GONE
+
+            grammarBtn.isEnabled = false
+            grammarBtn.isClickable = false
+            grammarBtn.text = context.getString(R.string.grammar_btn_text_check)
+            grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.grey_shade_new))
+            updateBgTint(grammarBtn, R.color.light_shade_of_gray)
+
+            flagIv.visibility= GONE
+            //flagIv.setBackgroundColor(ContextCompat.getColor(context, R.color.grammar_green_color))
+            updateBgColor(rootView, R.color.white)
+            isAnswerChecked = false
+
         }
+
+    }
+
+    public fun enableBtn() {
+
+        grammarBtn.isEnabled = true
+        grammarBtn.isClickable = true
+        updateBgTint(grammarBtn, R.color.grammar_green_color)
+        grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.white))
+
+    }
+
+    public fun disableBtn() {
+
+        grammarBtn.isEnabled = false
+        grammarBtn.isClickable = false
+        updateBgTint(grammarBtn, R.color.light_shade_of_gray)
+        grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.grey_shade_new))
+
     }
 
     fun setCorrectView() {
+
         wrongAnswerGroup.visibility = View.GONE
         rightAnswerGroup.visibility = View.VISIBLE
         grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.white))
+        flagIv.visibility= VISIBLE
         //flagIv.setBackgroundColor(ContextCompat.getColor(context, R.color.grammar_green_color))
         updateBgColor(rootView, R.color.grammar_right_answer_bg)
         updateBgTint(grammarBtn, R.color.grammar_green_color)
         updateImageTint(flagIv, R.color.grammar_green_color)
         textContainer.slideUpAnimation(context)
+
     }
 
     fun setWrongView() {
+
         wrongAnswerGroup.visibility = View.VISIBLE
         rightAnswerGroup.visibility = View.GONE
+        flagIv.visibility= VISIBLE
         grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.white))
         updateBgColor(rootView, R.color.grammar_wrong_answer_bg)
         updateBgTint(grammarBtn, R.color.grammar_red_color_dark)
         updateImageTint(flagIv, R.color.grammar_red_color_dark)
-        //flagIv.backgroundTintList(ContextCompat.getColor(context, R.color.grammar_red_color_dark))
         textContainer.slideUpAnimation(context)
+
     }
 
     private fun updateBgTint(view: View, color: Int) {
@@ -154,12 +216,23 @@ class GrammarButtonView : FrameLayout {
     }
 
     private fun updateBgColor(view: View, color: Int) {
+
         view.setBackgroundColor(
             ContextCompat.getColor(
                 AppObjectController.joshApplication,
                 color
             )
         )
+
+    }
+
+    fun addCallback(callback: CheckQuestionCallback) {
+        this.callback = callback
+    }
+
+    interface CheckQuestionCallback {
+        fun checkQuestionCallBack(): Boolean?
+        fun nextQuestion()
     }
 
 }

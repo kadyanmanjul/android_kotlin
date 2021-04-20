@@ -116,7 +116,7 @@
                 tools:visibility="visible" />
 
             <androidx.constraintlayout.widget.Group
-                android:id="@+id/wrong_anser_group"
+                android:id="@+id/wrong_answer_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
@@ -133,7 +133,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.google.android.material.button.MaterialButton
+        <com.google.android.material.textview.MaterialTextView
 
             android:id="@+id/grammar_btn"
             android:layout_width="match_parent"

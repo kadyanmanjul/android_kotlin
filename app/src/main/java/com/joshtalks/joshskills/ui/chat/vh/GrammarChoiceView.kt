@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.chat.vh
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -23,6 +24,7 @@ class GrammarChoiceView : RelativeLayout {
     private lateinit var optionsContainer: RelativeLayout
     private lateinit var customLayout: CustomLayout
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
+    private var callback: EnableDisableGrammarButtonCallback? = null
 
     constructor(context: Context) : super(context) {
         init()
@@ -143,11 +145,26 @@ class GrammarChoiceView : RelativeLayout {
             if (motionEvent.action == MotionEvent.ACTION_DOWN && !customLayout.isEmpty()) {
                 val customWord = view as CustomWord
                 customWord.changeViewGroup(customLayout, answerFlowLayout)
-                isAnyAnswerSelected()  // TODO - Call interface method to update BottomButton color and status
+                if (isAnyAnswerSelected()){
+                    callback?.enableGrammarButton()
+                } else {
+                    callback?.disableGrammarButton()
+                }
+                ///isAnyAnswerSelected()  // TODO - Call interface method to update BottomButton color and status
                 return true
             }
             return false
         }
+    }
+
+
+    fun addCallback(callback: EnableDisableGrammarButtonCallback) {
+        this.callback = callback
+    }
+
+    interface EnableDisableGrammarButtonCallback {
+        fun disableGrammarButton()
+        fun enableGrammarButton()
     }
 
 }
