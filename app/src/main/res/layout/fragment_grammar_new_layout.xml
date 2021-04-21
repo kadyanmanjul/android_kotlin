@@ -51,7 +51,13 @@
                     android:layout="@layout/grammar_heading_view_stub" />
 
                 <ViewStub
-                    android:id="@+id/choice_view"
+                    android:id="@+id/ats_choice_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout="@layout/ats_choice_view_stub" />
+
+                <ViewStub
+                    android:id="@+id/mcq_choice_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout="@layout/mcq_option_group_stub" />

@@ -154,8 +154,7 @@ class GrammarButtonView : FrameLayout {
             grammarBtn.isClickable = false
             grammarBtn.text = context.getString(R.string.grammar_btn_text_check)
             grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.grey_shade_new))
-            updateGrammarButton(grammarBtn, R.color.light_shade_of_gray)
-            //mmarBtn, R.color.light_shade_of_gray)
+            //updateGrammarButton(grammarBtn, R.color.light_shade_of_gray)
 
             flagIv.visibility = GONE
             //flagIv.setBackgroundColor(ContextCompat.getColor(context, R.color.grammar_green_color))
@@ -216,10 +215,10 @@ class GrammarButtonView : FrameLayout {
         buttonColor: Int,
         shadowColor: Int = R.color.light_shade_of_gray
     ) {
-        grammarBtn.backgroundTintList = ContextCompat.getColorStateList(context, buttonColor)
-        //grammarBtn.background = buttonColor
-        //grammarBtn.shadowColor = shadowColor
-        //grammarBtn.isShadowEnabled = true
+        //grammarBtn.backgroundTintList = ContextCompat.getColorStateList(context, buttonColor)
+        grammarBtn.buttonColor = buttonColor
+        grammarBtn.shadowColor = shadowColor
+        grammarBtn.isShadowEnabled = true
         //grammarBtn.refresh()
     }
 
