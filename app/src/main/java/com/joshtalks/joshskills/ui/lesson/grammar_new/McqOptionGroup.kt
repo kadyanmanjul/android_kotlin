@@ -94,9 +94,14 @@ class McqOptionGroup : RadioGroup {
 
     private inner class ClickListener : View.OnClickListener {
         override fun onClick(view: View?) {
-            if (mcqOptionsRadioGroup.childCount > 0) {
-                val optionView = view as McqOptionView?
-                optionView?.changeState()
+            val clickedOptionView = view as McqOptionView?
+            for (i in 0 until mcqOptionsRadioGroup.childCount) {
+                val optionView = (mcqOptionsRadioGroup.getChildAt(i) as McqOptionView)
+                if (optionView == clickedOptionView) {
+                    optionView.changeState()
+                } else {
+                    optionView.setState(McqOptionState.UNSELECTED)
+                }
                 if (isAnyAnswerSelected()) {
                     callback?.enableGrammarButton()
                 } else {
