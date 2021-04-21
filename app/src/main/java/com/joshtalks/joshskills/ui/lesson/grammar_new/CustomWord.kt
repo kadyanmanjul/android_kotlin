@@ -23,7 +23,7 @@ class CustomWord(context: Context) : AppCompatTextView(context) {
             optionsLayout.removeViewCustomLayout(this, choice)
             answerLayout.addView(this)
             choice.apply {
-                this.userSelectedOrder = answerLayout.childCount - 1
+                this.userSelectedOrder = answerLayout.childCount
             }
         } else {
             answerLayout.removeView(this)
