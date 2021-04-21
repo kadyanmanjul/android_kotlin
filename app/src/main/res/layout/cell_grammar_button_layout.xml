@@ -16,7 +16,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/text_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/flag_iv"
@@ -154,7 +154,7 @@
             button:cornerRadius="@dimen/_10sdp"
             button:shadowColor="@color/black"
             button:shadowEnabled="true"
-            button:shadowHeight="@dimen/_4sdp" />
+            button:shadowHeight="@dimen/_3sdp" />
 
     </LinearLayout>
 </FrameLayout>

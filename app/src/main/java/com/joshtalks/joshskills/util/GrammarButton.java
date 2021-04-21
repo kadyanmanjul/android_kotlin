@@ -108,10 +108,10 @@ public class GrammarButton extends androidx.appcompat.widget.AppCompatButton imp
             isShadowEnabled = typedArray.getBoolean(attr, true); //Default is true
         } else if (attr == R.styleable.GrammarButton_buttonColor) {
             //  mButtonColor = typedArray.getColor(attr, R.color.grammar_button_default_color);
-            mButtonColor = typedArray.getColor(attr, context.getResources().getColor(R.color.grammar_button_default_color));
+            mButtonColor = typedArray.getColor(attr, Color.BLUE);
         } else if (attr == R.styleable.GrammarButton_shadowColor) {
             //  mShadowColor = typedArray.getColor(attr, R.color.grammar_button_default_shadow_color);
-            mShadowColor = typedArray.getColor(attr, context.getResources().getColor(R.color.grammar_button_default_shadow_color));
+            mShadowColor = typedArray.getColor(attr, Color.GRAY);
             isShadowColorDefined = true;
         } else if (attr == R.styleable.GrammarButton_shadowHeight) {
             mShadowHeight = typedArray.getDimensionPixelSize(attr, R.dimen.grammar_button_default_shadow_height);

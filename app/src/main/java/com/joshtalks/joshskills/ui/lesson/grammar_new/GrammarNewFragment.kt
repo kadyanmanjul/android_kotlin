@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.lesson.grammar_new
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +18,9 @@ import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestionType
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.ui.assessment.view.Stub
+import com.joshtalks.joshskills.ui.chat.vh.AtsChoiceView
 import com.joshtalks.joshskills.ui.chat.vh.EnableDisableGrammarButtonCallback
 import com.joshtalks.joshskills.ui.chat.vh.GrammarButtonView
 import com.joshtalks.joshskills.ui.chat.vh.GrammarHeadingView
@@ -37,7 +40,8 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private var assessmentQuestions: ArrayList<AssessmentQuestionWithRelations> = ArrayList()
 
     private var headingView: Stub<GrammarHeadingView>? = null
-    private var choiceView: Stub<McqChoiceView>? = null
+    private var mcqChoiceView: Stub<McqChoiceView>? = null
+    private var atsChoiceView: Stub<AtsChoiceView>? = null
     private var buttonView: Stub<GrammarButtonView>? = null
     private var quizQuestion: LessonQuestion? = null
 
@@ -68,7 +72,8 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
 
     private fun initViews() {
         headingView = Stub(binding.grammarScrollView.findViewById(R.id.heading_view))
-        choiceView = Stub(binding.grammarScrollView.findViewById(R.id.choice_view))
+        mcqChoiceView = Stub(binding.grammarScrollView.findViewById(R.id.mcq_choice_view))
+        atsChoiceView = Stub(binding.grammarScrollView.findViewById(R.id.ats_choice_view))
         buttonView = Stub(binding.grammarScrollView.findViewById(R.id.button_action_views))
     }
 
@@ -129,27 +134,62 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 assessmentQuestions.get(position).question.subText
             )
         }
-        choiceView?.resolved().let {
-            //TODO reset the view in setup as well for next question
-            choiceView!!.get().setup(assessmentQuestions.get(position))
-            choiceView!!.get()
-                .addCallback(object : EnableDisableGrammarButtonCallback {
-                    override fun disableGrammarButton() {
-                        buttonView?.get()?.disableBtn()
-                    }
 
-                    override fun enableGrammarButton() {
-                        buttonView?.get()?.enableBtn()
-                    }
+        if (assessmentQuestions.get(position).question.choiceType == ChoiceType.ARRANGE_THE_SENTENCE) {
+            mcqChoiceView?.get()?.visibility=View.GONE
+            atsChoiceView?.resolved().let {
+                atsChoiceView?.get()?.visibility=View.VISIBLE
+                //TODO reset the view in setup as well for next question
+                atsChoiceView!!.get().setup(assessmentQuestions.get(position))
+                atsChoiceView!!.get()
+                    .addCallback(object : EnableDisableGrammarButtonCallback {
+                        override fun disableGrammarButton() {
+                            buttonView?.get()?.disableBtn()
+                        }
 
-                })
+                        override fun enableGrammarButton() {
+                            buttonView?.get()?.enableBtn()
+                        }
+
+                    })
+            }
+        } else if (assessmentQuestions.get(position).question.choiceType == ChoiceType.SINGLE_SELECTION_TEXT) {
+            atsChoiceView?.get()?.visibility=View.GONE
+            mcqChoiceView?.resolved().let {
+                //TODO reset the view in setup as well for next question
+                mcqChoiceView?.get()?.visibility=View.VISIBLE
+                mcqChoiceView!!.get().setup(assessmentQuestions.get(position))
+                mcqChoiceView!!.get()
+                    .addCallback(object : EnableDisableGrammarButtonCallback {
+                        override fun disableGrammarButton() {
+                            buttonView?.get()?.disableBtn()
+                        }
+
+                        override fun enableGrammarButton() {
+                            buttonView?.get()?.enableBtn()
+                        }
+
+                    })
+            }
+        } else {
+            atsChoiceView?.get()?.visibility=View.GONE
+            mcqChoiceView?.get()?.visibility=View.GONE
         }
+
         buttonView?.resolved().let {
             buttonView!!.get().setup(assessmentQuestions.get(position))
             buttonView!!.get().addCallback(object : GrammarButtonView.CheckQuestionCallback {
                 override fun checkQuestionCallBack(): Boolean? {
                     binding.progressBar.progress = position.plus(1)
-                    return choiceView?.get()?.isCorrectAnswer()
+                    if (assessmentQuestions.get(position).question.choiceType == ChoiceType.ARRANGE_THE_SENTENCE) {
+                        return atsChoiceView?.get()?.isCorrectAnswer()
+                    } else if (assessmentQuestions.get(position).question.choiceType == ChoiceType.SINGLE_SELECTION_TEXT) {
+                        return mcqChoiceView?.get()?.isCorrectAnswer()?.apply {
+                            if (this) {
+                                Log.d("buttonView", "checkQuestionCallBack() called")
+                            }
+                        }
+                    } else return null
                 }
 
                 override fun nextQuestion() {
