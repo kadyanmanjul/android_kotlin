@@ -8,6 +8,10 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.ui.chat.vh.EnableDisableGrammarButtonCallback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class McqChoiceView : RadioGroup {
 
@@ -38,7 +42,12 @@ class McqChoiceView : RadioGroup {
                 val optionView = getOptionView(it)
                 mcqOptionsRadioGroup.addView(optionView)
             }
-
+        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+            delay(500)
+            if (assessmentQuestion.question.isAttempted) {
+                callback?.alreadyAttempted(isCorrectAnswer())
+            }
+        }
     }
 
     private fun getOptionView(choice: Choice): McqOptionView {

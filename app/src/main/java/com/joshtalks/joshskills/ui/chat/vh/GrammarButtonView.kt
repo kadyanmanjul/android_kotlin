@@ -101,7 +101,7 @@ class GrammarButtonView : FrameLayout {
     }
 
     fun setup(assessmentQuestion: AssessmentQuestionWithRelations) {
-        this.questionFeedback=assessmentQuestion.questionFeedback
+        this.questionFeedback = assessmentQuestion.questionFeedback
 
         this.questionFeedback?.run {
 
@@ -208,6 +208,16 @@ class GrammarButtonView : FrameLayout {
         updateImageTint(flagIv, R.color.grammar_red_color_dark)
         textContainer.slideUpAnimation(context)
 
+    }
+
+    fun setAlreadyAttemptedView(isCorrect: Boolean) {
+        grammarBtn.text = context.getString(R.string.grammar_btn_text_continue)
+        isAnswerChecked = true
+        enableBtn()
+        if (isCorrect) {
+            setCorrectView()
+        } else
+            setWrongView()
     }
 
     private fun updateGrammarButton(
