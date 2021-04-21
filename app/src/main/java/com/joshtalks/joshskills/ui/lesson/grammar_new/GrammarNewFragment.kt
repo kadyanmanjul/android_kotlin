@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.repository.local.entity.LessonQuestionType
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.ui.assessment.view.Stub
+import com.joshtalks.joshskills.ui.chat.vh.EnableDisableGrammarButtonCallback
 import com.joshtalks.joshskills.ui.chat.vh.GrammarButtonView
 import com.joshtalks.joshskills.ui.chat.vh.GrammarChoiceView
 import com.joshtalks.joshskills.ui.chat.vh.GrammarHeadingView
@@ -133,7 +134,7 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             //TODO reset the view in setup as well for next question
             choiceView!!.get().setup(assessmentQuestions.get(position))
             choiceView!!.get()
-                .addCallback(object : GrammarChoiceView.EnableDisableGrammarButtonCallback {
+                .addCallback(object : EnableDisableGrammarButtonCallback {
                     override fun disableGrammarButton() {
                         buttonView?.get()?.disableBtn()
                     }
