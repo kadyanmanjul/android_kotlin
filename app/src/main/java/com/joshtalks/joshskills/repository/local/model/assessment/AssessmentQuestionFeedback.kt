@@ -41,27 +41,27 @@ data class AssessmentQuestionFeedback(
 
     @ColumnInfo
     @SerializedName("correct_answer_heading")
-    val correctAnswerHeading: String = EMPTY,
+    val correctAnswerHeading: String? = EMPTY,
 
     @ColumnInfo
     @SerializedName("correct_answer_text")
-    val correctAnswerText: String = EMPTY,
+    val correctAnswerText: String? = EMPTY,
 
     @ColumnInfo
     @SerializedName("wrong_answer_heading")
-    val wrongAnswerHeading: String = EMPTY,
+    val wrongAnswerHeading: String? = EMPTY,
 
     @ColumnInfo
     @SerializedName("wrong_answer_text")
-    val wrongAnswerText: String = EMPTY,
+    val wrongAnswerText: String? = EMPTY,
 
     @ColumnInfo
     @SerializedName("wrong_answer_heading2")
-    val wrongAnswerHeading2: String = EMPTY,
+    val wrongAnswerHeading2: String? = EMPTY,
 
     @ColumnInfo
     @SerializedName("wrong_answer_text2")
-    val wrongAnswerText2: String = EMPTY,
+    val wrongAnswerText2: String? = EMPTY,
 
     ) : Parcelable {
 

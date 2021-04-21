@@ -161,11 +161,24 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
 
     private fun moveToNextGrammarQuestion(position: Int) {
         if (position >= assessmentQuestions.size.minus(1)) {
-            //TODO completed card
-            showToast("Last Question ")
+            showQuizCompleteLayout()
         } else {
             setupViews(position.plus(1))
         }
+    }
+
+
+    fun onGrammarContinueClick() {
+        lessonActivityListener?.onNextTabCall(0)
+    }
+
+    fun onRedoQuizClick() {
+        showToast("Redo quiz clicked")
+    }
+
+    private fun showQuizCompleteLayout() {
+        binding.grammarCompleteLayout.visibility = View.VISIBLE
+        binding.marksTv.text = getString(R.string.marks_text, 0, assessmentQuestions.size)
     }
 
     private fun setupUi(lessonQuestion: LessonQuestion) {

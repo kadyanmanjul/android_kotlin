@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.chat.vh
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -65,6 +64,8 @@ class GrammarChoiceView : RelativeLayout {
 
     fun setup(assessmentQuestion: AssessmentQuestionWithRelations) {
         this.assessmentQuestion = assessmentQuestion
+        customLayout.removeAllViews()
+        answerFlowLayout.removeAllViews()
         val selectedWords = ArrayList<CustomWord>()
         assessmentQuestion.choiceList
             .sortedBy { it.sortOrder }
@@ -150,7 +151,6 @@ class GrammarChoiceView : RelativeLayout {
                 } else {
                     callback?.disableGrammarButton()
                 }
-                ///isAnyAnswerSelected()  // TODO - Call interface method to update BottomButton color and status
                 return true
             }
             return false

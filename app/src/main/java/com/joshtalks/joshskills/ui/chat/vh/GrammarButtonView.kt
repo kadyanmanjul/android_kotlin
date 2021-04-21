@@ -102,48 +102,48 @@ class GrammarButtonView : FrameLayout {
 
         assessmentQuestion.questionFeedback?.run {
 
-            if (this.correctAnswerHeading.isBlank()) {
+            if (this.correctAnswerHeading.isNullOrBlank()) {
                 correctAnswerTitle.visibility = View.GONE
             } else {
                 correctAnswerTitle.visibility = View.VISIBLE
                 correctAnswerTitle.text = this.correctAnswerHeading
             }
 
-            if (this.correctAnswerText.isBlank()) {
+            if (this.correctAnswerText.isNullOrBlank()) {
                 correctAnswerDesc.visibility = View.GONE
             } else {
                 correctAnswerDesc.visibility = View.VISIBLE
                 correctAnswerDesc.text = this.correctAnswerText
             }
 
-            if (this.wrongAnswerHeading.isBlank()) {
+            if (this.wrongAnswerHeading.isNullOrBlank()) {
                 wrongAnswerTitle.visibility = View.GONE
             } else {
                 wrongAnswerTitle.visibility = View.VISIBLE
                 wrongAnswerTitle.text = this.wrongAnswerHeading
             }
 
-            if (this.wrongAnswerText.isBlank()) {
+            if (this.wrongAnswerText.isNullOrBlank()) {
                 wrongAnswerDesc.visibility = View.GONE
             } else {
                 wrongAnswerDesc.visibility = View.VISIBLE
                 wrongAnswerDesc.text = this.wrongAnswerText
             }
 
-            if (this.wrongAnswerHeading2.isBlank()) {
+            if (this.wrongAnswerHeading2.isNullOrBlank()) {
                 explanationTitle.visibility = View.GONE
             } else {
                 explanationTitle.visibility = View.VISIBLE
                 explanationTitle.text = this.wrongAnswerHeading2
             }
 
-            if (this.wrongAnswerText2.isBlank()) {
+            if (this.wrongAnswerText2.isNullOrBlank()) {
                 explanationText.visibility = View.GONE
             } else {
                 explanationText.visibility = View.VISIBLE
                 explanationText.text = this.wrongAnswerText2
             }
-            textContainer.visibility=View.GONE
+            textContainer.visibility = View.GONE
             wrongAnswerGroup.visibility = View.GONE
             rightAnswerGroup.visibility = View.GONE
 
@@ -152,8 +152,9 @@ class GrammarButtonView : FrameLayout {
             grammarBtn.text = context.getString(R.string.grammar_btn_text_check)
             grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.grey_shade_new))
             updateBgTint(grammarBtn, R.color.light_shade_of_gray)
+            ///mmarBtn, R.color.light_shade_of_gray)
 
-            flagIv.visibility= GONE
+            flagIv.visibility = GONE
             //flagIv.setBackgroundColor(ContextCompat.getColor(context, R.color.grammar_green_color))
             updateBgColor(rootView, R.color.white)
             isAnswerChecked = false
@@ -185,7 +186,7 @@ class GrammarButtonView : FrameLayout {
         wrongAnswerGroup.visibility = View.GONE
         rightAnswerGroup.visibility = View.VISIBLE
         grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.white))
-        flagIv.visibility= VISIBLE
+        flagIv.visibility = VISIBLE
         //flagIv.setBackgroundColor(ContextCompat.getColor(context, R.color.grammar_green_color))
         updateBgColor(rootView, R.color.grammar_right_answer_bg)
         updateBgTint(grammarBtn, R.color.grammar_green_color)
@@ -198,7 +199,7 @@ class GrammarButtonView : FrameLayout {
 
         wrongAnswerGroup.visibility = View.VISIBLE
         rightAnswerGroup.visibility = View.GONE
-        flagIv.visibility= VISIBLE
+        flagIv.visibility = VISIBLE
         grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.white))
         updateBgColor(rootView, R.color.grammar_wrong_answer_bg)
         updateBgTint(grammarBtn, R.color.grammar_red_color_dark)
