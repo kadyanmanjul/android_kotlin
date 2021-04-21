@@ -175,7 +175,9 @@
             android:value="@string/truecaller_key" />
         <meta-data
             android:name="CLEVERTAP_BACKGROUND_SYNC"
-            android:value="1" /> <!-- replace below value with your FCM project number. -->
+            android:value="1" />
+
+        <!-- replace below value with your FCM project number.-->
         <meta-data
             android:name="FCM_SENDER_ID"
             android:value="id:359106841538" />
@@ -185,13 +187,6 @@
             android:alwaysRetainTaskState="true"
             android:launchMode="singleTop"
             android:theme="@style/AppNoBarTheme" />
-        <!--
-<activity
-            android:name=".ui.launch.LauncherActivity"
-            android:alwaysRetainTaskState="true"
-            android:launchMode="singleTop"
-            android:theme="@style/AppNoBarTheme" />
-        -->
         <activity
             android:name=".ui.launch.LauncherActivity"
             android:alwaysRetainTaskState="true"
@@ -228,19 +223,6 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
-
-        <!--        <activity-->
-        <!--            android:name=".ui.lesson.grammar_new.WordTaskActivity"-->
-        <!--            android:alwaysRetainTaskState="true"-->
-        <!--            android:launchMode="singleTop"-->
-        <!--            android:screenOrientation="portrait"-->
-        <!--            android:theme="@style/AppNoBarTheme">-->
-        <!--            <intent-filter>-->
-        <!--                <action android:name="android.intent.action.MAIN" />-->
-        <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-        <!--            </intent-filter>-->
-        <!--        </activity>-->
-
         <activity
             android:name=".ui.inbox.InboxActivity"
             android:alwaysRetainTaskState="true"
