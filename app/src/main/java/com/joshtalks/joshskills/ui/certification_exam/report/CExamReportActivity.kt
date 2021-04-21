@@ -47,7 +47,6 @@ class CExamReportActivity : BaseActivity() {
     private var certificationQuestionModel: CertificationQuestionModel? = null
     private lateinit var binding: ActivityCexamReportBinding
     private var compositeDisposable = CompositeDisposable()
-    private var url="https://s3.ap-south-1.amazonaws.com/www.static.skills.com/certificate_exam/pdf/Tejaswini_cae18966.pdf"
 
     private var userDetailsActivityResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(
@@ -55,7 +54,7 @@ class CExamReportActivity : BaseActivity() {
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.getStringExtra(CERTIFICATE_URL)?.let {
-                    openCertificationDownloadUI(url)
+                    openCertificationDownloadUI(it)
                 }
             }
         }
@@ -179,10 +178,10 @@ class CExamReportActivity : BaseActivity() {
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                     {
-                    /*    if (it.url != null) {
+                        if (it.url != null) {
                             openCertificationDownloadUI(it.url)
                             return@subscribe
-                        }*/
+                        }
                         userDetailsActivityResult.launch(
                             CertificateDetailActivity.startUserDetailsActivity(
                                 this, rId = it.id,

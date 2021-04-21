@@ -21,7 +21,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
 
 class CertificationExamViewModel(application: Application) : AndroidViewModel(application) {
     private var context: JoshApplication = getApplication()
@@ -180,18 +179,16 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
 
     fun postCertificateUserDetails(certificationUserDetail: CertificationUserDetail) {
         viewModelScope.launch(Dispatchers.IO) {
-            withTimeout(2000) {
-                try {
-                    val resp =
-                        AppObjectController.commonNetworkService.submitUserDetailForCertificate(
-                            certificationUserDetail
-                        )
-                    certificateUrl.emit("")
-                } catch (ex: Throwable) {
-                    ex.showAppropriateMsg()
-                    apiStatus.postValue(ApiCallStatus.FAILED)
-                    ex.printStackTrace()
-                }
+            try {
+                val resp =
+                    AppObjectController.commonNetworkService.submitUserDetailForCertificate(
+                        certificationUserDetail
+                    )
+                certificateUrl.emit(resp.getOrDefault("pdf", ""))
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+                apiStatus.postValue(ApiCallStatus.FAILED)
+                ex.printStackTrace()
             }
         }
     }

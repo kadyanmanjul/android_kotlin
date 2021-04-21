@@ -89,9 +89,12 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
 
     @Click(R.id.btn_download_certificate)
     fun downloadCertificate() {
-        if (certificateExamReport.certificateURL.isNullOrEmpty().not()) {
-            RxBus2.publish(DownloadFileEventBus(id = certificateExamReport.reportId, certificateExamReport.certificateURL!!))
-        }
+        RxBus2.publish(
+            DownloadFileEventBus(
+                id = certificateExamReport.reportId,
+                url = certificateExamReport.certificateURL
+            )
+        )
     }
 
     @Click(R.id.check_exam_details)

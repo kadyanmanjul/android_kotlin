@@ -182,6 +182,7 @@ class CertificateDownloadDialog : DialogFragment(), FetchListener {
     override fun onCompleted(download: Download) {
         Timber.tag(TAG).e("onCompleted     " + download.tag)
         // updateDownloadStatus(download.file, download.extras, download.tag)
+        dismissAllowingStateLoss()
         try {
             val intent = Intent()
             intent.action = Intent.ACTION_VIEW
@@ -192,7 +193,6 @@ class CertificateDownloadDialog : DialogFragment(), FetchListener {
             e.printStackTrace()
             // no Activity to handle this kind of files
         }
-        dismissAllowingStateLoss()
     }
 
     override fun onDeleted(download: Download) {
