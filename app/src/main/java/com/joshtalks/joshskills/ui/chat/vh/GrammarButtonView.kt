@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.extension.slideUpAnimation
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionFeedback
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.util.GrammarButton
 
@@ -31,6 +32,7 @@ class GrammarButtonView : FrameLayout {
     private lateinit var rightAnswerGroup: Group
     private var callback: CheckQuestionCallback? = null
     private var isAnswerChecked: Boolean = false
+    private var questionFeedback: AssessmentQuestionFeedback? = null
 
     constructor(context: Context) : super(context) {
         init()
@@ -99,8 +101,9 @@ class GrammarButtonView : FrameLayout {
     }
 
     fun setup(assessmentQuestion: AssessmentQuestionWithRelations) {
+        this.questionFeedback=assessmentQuestion.questionFeedback
 
-        assessmentQuestion.questionFeedback?.run {
+        this.questionFeedback?.run {
 
             if (this.correctAnswerHeading.isNullOrBlank()) {
                 correctAnswerTitle.visibility = View.GONE

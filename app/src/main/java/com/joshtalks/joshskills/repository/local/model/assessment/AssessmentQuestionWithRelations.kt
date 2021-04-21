@@ -30,7 +30,7 @@ data class AssessmentQuestionWithRelations(
         entityColumn = "questionId",
         entity = AssessmentQuestionFeedback::class
     )
-    val questionFeedback: AssessmentQuestionFeedback?
+    var questionFeedback: AssessmentQuestionFeedback?
 
 ) {
 
