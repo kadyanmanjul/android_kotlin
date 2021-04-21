@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:button="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_view"
     android:layout_width="match_parent"
@@ -133,7 +134,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.google.android.material.textview.MaterialTextView
+        <com.joshtalks.joshskills.util.GrammarButton
 
             android:id="@+id/grammar_btn"
             android:layout_width="match_parent"
@@ -142,8 +143,6 @@
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_26sdp"
             android:layout_marginBottom="@dimen/_16sdp"
-            android:background="@drawable/chip_view_selector"
-            android:backgroundTint="@color/light_shade_of_gray"
             android:enabled="true"
             android:gravity="center"
             android:paddingVertical="@dimen/_12sdp"
@@ -151,7 +150,11 @@
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.JoshTypography.ButtonRegular"
             android:textColor="@color/grey_shade_new"
-            app:cornerRadius="@dimen/_10sdp" />
+            button:buttonColor="@color/grammar_red_color_btn"
+            button:cornerRadius="@dimen/_10sdp"
+            button:shadowColor="@color/black"
+            button:shadowEnabled="true"
+            button:shadowHeight="@dimen/_4sdp" />
 
     </LinearLayout>
 </FrameLayout>

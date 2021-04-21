@@ -9,11 +9,11 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat
-import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.extension.slideUpAnimation
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.util.GrammarButton
 
 class GrammarButtonView : FrameLayout {
 
@@ -26,7 +26,7 @@ class GrammarButtonView : FrameLayout {
     private lateinit var wrongAnswerTitle: AppCompatTextView
     private lateinit var wrongAnswerDesc: AppCompatTextView
     private lateinit var flagIv: AppCompatImageView
-    private lateinit var grammarBtn: MaterialTextView
+    private lateinit var grammarBtn: GrammarButton
     private lateinit var wrongAnswerGroup: Group
     private lateinit var rightAnswerGroup: Group
     private var callback: CheckQuestionCallback? = null
@@ -151,8 +151,8 @@ class GrammarButtonView : FrameLayout {
             grammarBtn.isClickable = false
             grammarBtn.text = context.getString(R.string.grammar_btn_text_check)
             grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.grey_shade_new))
-            updateBgTint(grammarBtn, R.color.light_shade_of_gray)
-            ///mmarBtn, R.color.light_shade_of_gray)
+            updateGrammarButton(grammarBtn, R.color.light_shade_of_gray)
+            //mmarBtn, R.color.light_shade_of_gray)
 
             flagIv.visibility = GONE
             //flagIv.setBackgroundColor(ContextCompat.getColor(context, R.color.grammar_green_color))
@@ -167,7 +167,7 @@ class GrammarButtonView : FrameLayout {
 
         grammarBtn.isEnabled = true
         grammarBtn.isClickable = true
-        updateBgTint(grammarBtn, R.color.grammar_green_color)
+        updateGrammarButton(grammarBtn, R.color.grammar_green_color)
         grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.white))
 
     }
@@ -176,7 +176,7 @@ class GrammarButtonView : FrameLayout {
 
         grammarBtn.isEnabled = false
         grammarBtn.isClickable = false
-        updateBgTint(grammarBtn, R.color.light_shade_of_gray)
+        updateGrammarButton(grammarBtn, R.color.light_shade_of_gray)
         grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.grey_shade_new))
 
     }
@@ -189,7 +189,7 @@ class GrammarButtonView : FrameLayout {
         flagIv.visibility = VISIBLE
         //flagIv.setBackgroundColor(ContextCompat.getColor(context, R.color.grammar_green_color))
         updateBgColor(rootView, R.color.grammar_right_answer_bg)
-        updateBgTint(grammarBtn, R.color.grammar_green_color)
+        updateGrammarButton(grammarBtn, R.color.grammar_green_color)
         updateImageTint(flagIv, R.color.grammar_green_color)
         textContainer.slideUpAnimation(context)
 
@@ -202,10 +202,22 @@ class GrammarButtonView : FrameLayout {
         flagIv.visibility = VISIBLE
         grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.white))
         updateBgColor(rootView, R.color.grammar_wrong_answer_bg)
-        updateBgTint(grammarBtn, R.color.grammar_red_color_dark)
+        updateGrammarButton(grammarBtn, R.color.grammar_red_color_dark)
         updateImageTint(flagIv, R.color.grammar_red_color_dark)
         textContainer.slideUpAnimation(context)
 
+    }
+
+    private fun updateGrammarButton(
+        grammarBtn: GrammarButton,
+        buttonColor: Int,
+        shadowColor: Int = R.color.light_shade_of_gray
+    ) {
+        grammarBtn.backgroundTintList = ContextCompat.getColorStateList(context, buttonColor)
+        //grammarBtn.background = buttonColor
+        //grammarBtn.shadowColor = shadowColor
+        //grammarBtn.isShadowEnabled = true
+        //grammarBtn.refresh()
     }
 
     private fun updateBgTint(view: View, color: Int) {
