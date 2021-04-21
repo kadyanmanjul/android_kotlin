@@ -20,7 +20,6 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQues
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.chat.vh.EnableDisableGrammarButtonCallback
 import com.joshtalks.joshskills.ui.chat.vh.GrammarButtonView
-import com.joshtalks.joshskills.ui.chat.vh.GrammarChoiceView
 import com.joshtalks.joshskills.ui.chat.vh.GrammarHeadingView
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
@@ -38,7 +37,7 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private var assessmentQuestions: ArrayList<AssessmentQuestionWithRelations> = ArrayList()
 
     private var headingView: Stub<GrammarHeadingView>? = null
-    private var choiceView: Stub<McqOptionGroup>? = null
+    private var choiceView: Stub<McqChoiceView>? = null
     private var buttonView: Stub<GrammarButtonView>? = null
     private var quizQuestion: LessonQuestion? = null
 

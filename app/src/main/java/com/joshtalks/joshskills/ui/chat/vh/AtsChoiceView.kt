@@ -15,7 +15,7 @@ import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomLayout
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.nex3z.flowlayout.FlowLayout
 
-class GrammarChoiceView : RelativeLayout {
+class AtsChoiceView : RelativeLayout {
 
     private lateinit var rootView: RelativeLayout
     private lateinit var answerContainer: FrameLayout
