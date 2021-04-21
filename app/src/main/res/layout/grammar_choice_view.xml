@@ -20,11 +20,11 @@
 
         <View
             style="@style/split_line_horizontal"
-            android:layout_marginTop="@dimen/_50sdp" />
+            android:layout_marginTop="@dimen/_36sdp" />
 
         <View
             style="@style/split_line_horizontal"
-            android:layout_marginTop="@dimen/_105sdp" />
+            android:layout_marginTop="@dimen/_80sdp" />
 
     </FrameLayout>
 
@@ -33,6 +33,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_60sdp"
         android:layout_marginBottom="@dimen/_60sdp">
 
     </RelativeLayout>

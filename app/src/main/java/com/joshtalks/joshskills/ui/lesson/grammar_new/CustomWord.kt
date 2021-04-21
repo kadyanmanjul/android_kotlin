@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.lesson.grammar_new
 
 import android.content.Context
+import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatTextView
@@ -9,9 +10,11 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.nex3z.flowlayout.FlowLayout
 
-class CustomWord(context: Context) : AppCompatTextView(context) {
+class CustomWord : AppCompatTextView {
 
     lateinit var choice: Choice
+
+    constructor(context: Context) : super(context)
 
     constructor(context: Context, choice: Choice) : this(context) {
         this.choice = choice
@@ -43,12 +46,15 @@ class CustomWord(context: Context) : AppCompatTextView(context) {
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        layoutParams.setMargins(20, 20, 20, 0)
-        setTextColor(resources.getColor(R.color.black))
+        layoutParams.gravity = Gravity.CENTER
+        layoutParams.setMargins(12, 12, 12, 12)
         setLayoutParams(layoutParams)
+        gravity = Gravity.CENTER
+        minWidth = 120
         textAlignment = TEXT_ALIGNMENT_CENTER
         textSize = 20f
         background =
-            ContextCompat.getDrawable(getContext(), R.drawable.rounded_rectangle_with_border)
+            ContextCompat.getDrawable(getContext(), R.drawable.rounded_rectangle_with_grey_border)
+        setTextColor(ContextCompat.getColor(context, R.color.grammar_black_text_color))
     }
 }

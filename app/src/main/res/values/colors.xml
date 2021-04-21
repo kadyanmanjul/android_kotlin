@@ -146,6 +146,8 @@
     <color name="grammar_button_color_nephritis">#27ae60</color>
     <color name="grammar_button_color_peter_river">#3498db</color>
     <color name="grammar_button_color_belize_hole">#2980b9</color>
+    <color name="grammar_button_color_blue">#84D7FF</color>
+    <color name="grammar_button_color_light_blue">#DDF3FE</color>
     <color name="grammar_button_color_amethyst">#9b59b6</color>
     <color name="grammar_button_color_wisteria">#8e44ad</color>
     <color name="grammar_button_color_wet_asphalt">#34495e</color>
