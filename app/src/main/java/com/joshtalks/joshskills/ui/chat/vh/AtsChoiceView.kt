@@ -103,7 +103,7 @@ class AtsChoiceView : RelativeLayout {
 
     private fun getWordView(choice: Choice): CustomWord {
         val customWord = CustomWord(context, choice)
-        customWord.setOnTouchListener(TouchListener())
+        customWord.setOnClickListener(ClickListener())
         return customWord
     }
 
@@ -151,9 +151,9 @@ class AtsChoiceView : RelativeLayout {
         return true
     }
 
-    private inner class TouchListener : View.OnTouchListener {
-        override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {
-            if (motionEvent.action == MotionEvent.ACTION_DOWN && !customLayout.isEmpty()) {
+    private inner class ClickListener : View.OnClickListener {
+        override fun onClick(view: View?) {
+            if (!customLayout.isEmpty()) {
                 val customWord = view as CustomWord
                 customWord.changeViewGroup(customLayout, answerFlowLayout)
                 if (isAnyAnswerSelected()) {
@@ -161,12 +161,9 @@ class AtsChoiceView : RelativeLayout {
                 } else {
                     callback?.disableGrammarButton()
                 }
-                return true
             }
-            return false
         }
     }
-
 
     fun addCallback(callback: EnableDisableGrammarButtonCallback) {
         this.callback = callback
