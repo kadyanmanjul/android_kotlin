@@ -2,18 +2,14 @@ package com.joshtalks.joshskills.ui.lesson.grammar_new
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.MotionEvent
 import android.view.View
 import android.widget.RadioGroup
-import androidx.appcompat.widget.AppCompatRadioButton
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.interfaces.ClickListener
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.ui.chat.vh.EnableDisableGrammarButtonCallback
-import com.joshtalks.joshskills.ui.chat.vh.GrammarChoiceView
 
-class McqOptionGroup : RadioGroup {
+class McqChoiceView : RadioGroup {
 
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
     lateinit var mcqOptionsRadioGroup: RadioGroup
