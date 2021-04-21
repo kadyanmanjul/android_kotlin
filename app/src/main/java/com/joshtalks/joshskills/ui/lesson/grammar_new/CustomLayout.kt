@@ -21,9 +21,6 @@ class CustomLayout(context: Context?) : FlowLayout(context) {
         customWord?.background =
             ContextCompat.getDrawable(context, R.drawable.rounded_rectangle_grey)
         customWord?.setTextColor(ContextCompat.getColor(context, R.color.light_shade_of_gray))
-//        val params = LinearLayout.LayoutParams(view.width, view.height)
-//        params.setMargins(20, 20, 20, 0)
-//        customWord!!.layoutParams = params
         removeView(view)
         addView(customWord, choice.sortOrder - 1)
     }
