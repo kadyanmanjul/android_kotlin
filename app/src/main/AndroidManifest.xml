@@ -153,19 +153,6 @@
                     android:scheme="http" />
             </intent-filter>
         </activity>
-
-        <!--        <activity-->
-        <!--            android:name=".ui.lesson.grammar_new.WordTaskActivity"-->
-        <!--            android:alwaysRetainTaskState="true"-->
-        <!--            android:launchMode="singleTop"-->
-        <!--            android:screenOrientation="portrait"-->
-        <!--            android:theme="@style/AppNoBarTheme">-->
-        <!--            <intent-filter>-->
-        <!--                <action android:name="android.intent.action.MAIN" />-->
-        <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-        <!--            </intent-filter>-->
-        <!--        </activity>-->
-
         <activity
             android:name=".ui.inbox.InboxActivity"
             android:alwaysRetainTaskState="true"
