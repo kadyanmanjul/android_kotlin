@@ -146,7 +146,7 @@ class GrammarChoiceView : RelativeLayout {
             if (motionEvent.action == MotionEvent.ACTION_DOWN && !customLayout.isEmpty()) {
                 val customWord = view as CustomWord
                 customWord.changeViewGroup(customLayout, answerFlowLayout)
-                if (isAnyAnswerSelected()){
+                if (isAnyAnswerSelected()) {
                     callback?.enableGrammarButton()
                 } else {
                     callback?.disableGrammarButton()
@@ -162,9 +162,9 @@ class GrammarChoiceView : RelativeLayout {
         this.callback = callback
     }
 
-    interface EnableDisableGrammarButtonCallback {
-        fun disableGrammarButton()
-        fun enableGrammarButton()
-    }
+}
 
+interface EnableDisableGrammarButtonCallback {
+    fun disableGrammarButton()
+    fun enableGrammarButton()
 }
