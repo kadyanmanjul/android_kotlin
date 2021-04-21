@@ -7,6 +7,8 @@ import android.content.IntentSender
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
+import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
@@ -93,6 +95,17 @@ class CertificateDetailActivity : BaseActivity() {
         binding.etEmail.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus)
                 emailChooser()
+        }
+
+        binding.etPostal.overScrollMode = View.OVER_SCROLL_ALWAYS
+        binding.etPostal.scrollBarStyle = View.SCROLLBARS_INSIDE_INSET
+        binding.etPostal.movementMethod = ScrollingMovementMethod.getInstance()
+        binding.etPostal.setOnTouchListener { view, motionEvent ->
+            view.parent.requestDisallowInterceptTouchEvent(true)
+            if (motionEvent.action and MotionEvent.ACTION_UP !== 0 && motionEvent.actionMasked and MotionEvent.ACTION_UP !== 0) {
+                view.parent.requestDisallowInterceptTouchEvent(false)
+            }
+            false
         }
     }
 
