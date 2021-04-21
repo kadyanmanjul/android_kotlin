@@ -14,6 +14,10 @@ import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomLayout
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.nex3z.flowlayout.FlowLayout
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class AtsChoiceView : RelativeLayout {
 
@@ -81,6 +85,12 @@ class AtsChoiceView : RelativeLayout {
             it.changeViewGroup(customLayout, answerFlowLayout)
         }
 
+        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+            delay(500)
+            if (assessmentQuestion.question.isAttempted) {
+                callback?.alreadyAttempted(isCorrectAnswer())
+            }
+        }
     }
 
     private fun addChoiceToOptionsLayout(word: CustomWord) {
@@ -167,4 +177,5 @@ class AtsChoiceView : RelativeLayout {
 interface EnableDisableGrammarButtonCallback {
     fun disableGrammarButton()
     fun enableGrammarButton()
+    fun alreadyAttempted(isCorrectAnswer: Boolean)
 }
