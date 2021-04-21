@@ -72,7 +72,7 @@ class GrammarChoiceView : RelativeLayout {
             .forEach {
                 val wordView = getWordView(it)
                 addChoiceToOptionsLayout(wordView)
-                if (it.userSelectedOrder != -1 && it.userSelectedOrder != 100) {
+                if (it.userSelectedOrder != 0 && it.userSelectedOrder != 100) {
                     selectedWords.add(wordView)
                 }
             }
@@ -125,12 +125,12 @@ class GrammarChoiceView : RelativeLayout {
         } else {
             assessmentQuestion?.question?.isAttempted = true
             assessmentQuestion?.choiceList?.forEach {
-                if ((it.correctAnswerOrder == -1 || it.correctAnswerOrder == 100) &&
-                    (it.userSelectedOrder != -1 || it.userSelectedOrder != 100)
+                if ((it.correctAnswerOrder == 0 || it.correctAnswerOrder == 100) &&
+                    (it.userSelectedOrder != 0 || it.userSelectedOrder != 100)
                 ) {
                     return false
                 }
-                if (it.correctAnswerOrder != -1 &&
+                if (it.correctAnswerOrder != 0 &&
                     it.correctAnswerOrder != 100 &&
                     it.userSelectedOrder != it.correctAnswerOrder
                 ) {
