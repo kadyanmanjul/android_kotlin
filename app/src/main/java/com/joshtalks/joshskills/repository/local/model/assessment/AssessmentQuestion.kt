@@ -61,7 +61,7 @@ data class AssessmentQuestion(
 
     @ColumnInfo
     @SerializedName("media_url")
-    val mediaUrl: String = EMPTY,
+    val mediaUrl: String? = EMPTY,
 
     @TypeConverters(TypeConverterAssessmentMediaType::class)
     @ColumnInfo
@@ -70,7 +70,7 @@ data class AssessmentQuestion(
 
     @ColumnInfo
     @SerializedName("media_url_2")
-    val mediaUrl2: String = EMPTY,
+    val mediaUrl2: String? = EMPTY,
 
     @TypeConverters(TypeConverterAssessmentMediaType::class)
     @ColumnInfo
