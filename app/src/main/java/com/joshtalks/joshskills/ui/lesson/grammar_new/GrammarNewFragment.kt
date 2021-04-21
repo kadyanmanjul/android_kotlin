@@ -115,18 +115,26 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             }
 
             if (assessmentQuestions.size > 0) {
-                // binding.quizRadioGroup.setOnCheckedChangeListener(quizCheckedChangeListener)
-                //showQuizUi()
-                // updateQuiz(assessmentQuestions[0])
                 binding.progressBar.max = assessmentQuestions.size
                 binding.progressBar.progress = 0
                 setupViews()
 
                 if (quizQuestion?.status == QUESTION_STATUS.AT) {
-                    // setQuizScore(assessmentQuestions)
-                    // showQuizCompleteLayout()
+                    binding.progressBar.progress = binding.progressBar.max
+                    setQuizScore(assessmentQuestions)
+                    showQuizCompleteLayout()
                 }
             }
+        }
+    }
+
+    private fun setQuizScore(assessmentQuestions: ArrayList<AssessmentQuestionWithRelations>) {
+        correctAnswers = 0
+        assessmentQuestions.forEach {
+            it.choiceList.filter { choice -> choice.isCorrect && choice.isSelectedByUser }
+                .forEach {
+                    correctAnswers = correctAnswers.plus(1)
+                }
         }
     }
 
