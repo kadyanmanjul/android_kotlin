@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -16,43 +17,137 @@
         android:background="@color/white"
         android:overScrollMode="never">
 
-        <LinearLayout
-            android:id="@+id/container"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="@dimen/_8sdp"
-            tools:visibility="visible">
+            android:orientation="vertical">
 
-            <ProgressBar
-                android:id="@+id/progress_bar"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_12sdp"
-                android:layout_marginHorizontal="@dimen/_22sdp"
-                android:layout_marginTop="@dimen/_18sdp"
-                android:progress="0"
-                android:progressDrawable="@drawable/grammar_rating_progress_bar_drawable" />
-
-            <ViewStub
-                android:id="@+id/heading_view"
+            <LinearLayout
+                android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout="@layout/grammar_heading_view_stub" />
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/_8sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible">
 
-            <ViewStub
-                android:id="@+id/choice_view"
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_12sdp"
+                    android:layout_marginHorizontal="@dimen/_22sdp"
+                    android:layout_marginTop="@dimen/_18sdp"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/grammar_rating_progress_bar_drawable" />
+
+                <ViewStub
+                    android:id="@+id/heading_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout="@layout/grammar_heading_view_stub" />
+
+                <ViewStub
+                    android:id="@+id/choice_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout="@layout/grammar_choice_view_stub" />
+
+                <ViewStub
+                    android:id="@+id/button_action_views"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout="@layout/grammar_button_view_stub" />
+
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/grammar_complete_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout="@layout/grammar_choice_view_stub" />
+                android:background="@color/white"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:visibility="gone">
 
-            <ViewStub
-                android:id="@+id/button_action_views"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout="@layout/grammar_button_view_stub" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_8sdp"
+                    app:layout_constraintBottom_toTopOf="@+id/quiz_completed_tv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:srcCompat="@drawable/ic_new_shadow_tick" />
 
-        </LinearLayout>
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/quiz_completed_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_8sdp"
+                    android:text="@string/quiz_completed"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                    app:layout_constraintBottom_toTopOf="@+id/marks_tv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/marks_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_8sdp"
+                    android:text="@string/marks_text"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                    app:layout_constraintBottom_toTopOf="@+id/quiz_complete_btn"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/quiz_complete_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="@dimen/_16sdp"
+                    android:layout_marginVertical="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_16sdp"
+                    android:background="@drawable/rounded_state_button_bg"
+                    android:gravity="center"
+                    android:onClick="@{()->handler.onGrammarContinueClick()}"
+                    android:padding="@dimen/_8sdp"
+                    android:text="@string/continue_label"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                    android:textColor="@color/white"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toTopOf="@+id/redo_tv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_goneMarginBottom="@dimen/_8sdp"
+                    app:rippleColor="@color/white" />
+
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/redo_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_8sdp"
+                    android:onClick="@{()->handler.onRedoQuizClick()}"
+                    android:text="@string/redo_quiz"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
 </layout>

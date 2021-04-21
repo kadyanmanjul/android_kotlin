@@ -53,7 +53,7 @@ data class AssessmentQuestion(
 
     @ColumnInfo
     @SerializedName("sub_text")
-    val subText: String = EMPTY,
+    val subText: String? = EMPTY,
 
     @ColumnInfo
     @SerializedName("sort_order")
