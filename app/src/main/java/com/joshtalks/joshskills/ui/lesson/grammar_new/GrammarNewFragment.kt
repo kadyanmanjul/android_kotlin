@@ -38,7 +38,7 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private var assessmentQuestions: ArrayList<AssessmentQuestionWithRelations> = ArrayList()
 
     private var headingView: Stub<GrammarHeadingView>? = null
-    private var choiceView: Stub<GrammarChoiceView>? = null
+    private var choiceView: Stub<McqOptionGroup>? = null
     private var buttonView: Stub<GrammarButtonView>? = null
     private var quizQuestion: LessonQuestion? = null
 

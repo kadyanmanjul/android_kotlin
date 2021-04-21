@@ -54,7 +54,7 @@
                     android:id="@+id/choice_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout="@layout/grammar_choice_view_stub" />
+                    android:layout="@layout/mcq_option_group_stub" />
 
                 <ViewStub
                     android:id="@+id/button_action_views"
