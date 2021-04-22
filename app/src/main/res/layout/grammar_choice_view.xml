@@ -12,19 +12,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.nex3z.flowlayout.FlowLayout
-            android:id="@+id/ats_answer_flow_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:flFlow="true" />
-
         <View
+            android:id="@+id/lineFirst"
             style="@style/split_line_horizontal"
             android:layout_marginTop="@dimen/_36sdp" />
 
         <View
+            android:id="@+id/lineSecond"
             style="@style/split_line_horizontal"
             android:layout_marginTop="@dimen/_80sdp" />
+
+        <com.nex3z.flowlayout.FlowLayout
+            android:id="@+id/ats_answer_flow_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:flFlow="true" />
 
     </FrameLayout>
 
