@@ -53,13 +53,14 @@
             android:layout_height="@dimen/_86sdp"
             android:layout_marginTop="@dimen/_20sdp"
             android:layout_marginEnd="@dimen/_11sdp"
-            android:background="@drawable/chip_view_selector"
+            android:background="@drawable/blue_btn_grammar_selector"
+            android:padding="@dimen/_22sdp"
             android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@id/slow_audio_iv"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/heading_barrier"
-            app:srcCompat="@drawable/regular_audio"
+            app:srcCompat="@drawable/ic_baseline_speaker_on"
             tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -67,12 +68,14 @@
             android:layout_width="@dimen/_58sdp"
             android:layout_height="@dimen/_58sdp"
             android:layout_marginStart="@dimen/_11sdp"
-            android:background="@drawable/chip_view_selector"
+            android:background="@drawable/blue_btn_grammar_selector"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_18sdp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/regular_audio_iv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/regular_audio_iv"
-            app:srcCompat="@drawable/slow_audio"
+            app:srcCompat="@drawable/ic_speaker_slow"
             tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,8 +3,8 @@
     <item>
         <!-- 3d effect part of button (not the button face) -->
         <shape>
-            <solid android:color="#D3D3D3" />
-            <corners android:radius="@dimen/_20sdp" />
+            <solid android:color="#58A700" />
+            <corners android:radius="@dimen/_15sdp" />
         </shape>
     </item>
 </selector>
