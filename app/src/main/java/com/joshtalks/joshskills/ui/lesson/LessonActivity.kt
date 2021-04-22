@@ -19,17 +19,22 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.* // ktlint-disable no-wildcard-imports
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.extension.transaltionAnimation
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.eventbus.AnimateAtsOtionViewEvent
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,6 +51,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     private var isDemo = false
     private var testId = -1
     private var whatsappUrl = EMPTY
+    private val compositeDisposable = CompositeDisposable()
 
     var lesson: LessonModel? = null // Do not use this var
     private lateinit var tabs: ViewGroup
@@ -97,6 +103,24 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         if (isDemo) {
             binding.buyCourseLl.visibility = View.VISIBLE
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        subscribeRxBus()
+    }
+
+    private fun subscribeRxBus() {
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(AnimateAtsOtionViewEvent::class.java)
+                .subscribeOn(Schedulers.computation())
+                .subscribe { event ->
+                    binding.animationView.text = event.text ?: "Word"
+                    binding.animationView.x = event.fromLocation[0].toFloat()
+                    binding.animationView.y = event.fromLocation[1].toFloat()
+                    binding.animationView.transaltionAnimation(event.fromLocation, event.toLocation)
+                }
+        )
     }
 
     override fun getConversationId(): String? {

@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.lesson.grammar_new
 
 import android.content.Context
+import android.graphics.Rect
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.ViewGroup
@@ -9,6 +10,8 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.utils.Utils
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.AnimateAtsOtionViewEvent
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.nex3z.flowlayout.FlowLayout
 import kotlin.math.roundToInt
@@ -26,12 +29,24 @@ class CustomWord : AppCompatTextView {
 
     fun changeViewGroup(optionsLayout: CustomLayout, answerLayout: FlowLayout) {
         if (parent is CustomLayout) {
+            val fromLocation = IntArray(2)
+            this.getLocationOnScreen(fromLocation)
             optionsLayout.removeViewCustomLayout(this, choice)
             answerLayout.addView(this)
+            val toLocation = IntArray(2)
+            this.getLocationOnScreen(toLocation)
             choice.apply {
                 this.userSelectedOrder = answerLayout.childCount
             }
+
+
+            val rect = Rect()
+            this.getGlobalVisibleRect(rect)
+            RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, toLocation, this.choice.text))
         } else {
+
+            val fromLocation = IntArray(2)
+            this.getLocationOnScreen(fromLocation)
             answerLayout.removeView(this)
             optionsLayout.addViewAt(this, choice.sortOrder - 1)
             choice.apply {

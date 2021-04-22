@@ -90,6 +90,7 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
 
     private fun subscribeRxBus() {
 
+
     }
 
     override fun onDestroy() {

@@ -141,5 +141,19 @@
             app:matProg_linearProgress="false"
             app:matProg_progressIndeterminate="true" />
 
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/animation_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_photo"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8_Semi_Bold"
+            android:visibility="gone"
+            android:textColor="@color/black" />
+        </FrameLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
