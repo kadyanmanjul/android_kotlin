@@ -14,6 +14,7 @@ import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
@@ -34,6 +35,8 @@ import com.tonyodev.fetch2.Request
 import com.tonyodev.fetch2core.DownloadBlock
 import java.io.File
 import kotlin.random.Random
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class CertificateDownloadDialog : DialogFragment(), FetchListener {
@@ -140,16 +143,18 @@ class CertificateDownloadDialog : DialogFragment(), FetchListener {
     }
 
     private fun initDownload() {
-        try {
-            val fileDir =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
-            val destination = File(
-                fileDir + File.separator + Utils.getFileNameFromURL(certificateUrl)
-            )
-            destination.createNewFile()
-            addDownload(certificateUrl, destination.absolutePath)
-        } catch (ex: Throwable) {
-            ex.printStackTrace()
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val fileDir =
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
+                val destination = File(
+                    fileDir + File.separator + Utils.getFileNameFromURL(certificateUrl)
+                )
+                destination.createNewFile()
+                addDownload(certificateUrl, destination.absolutePath)
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
         }
     }
 
