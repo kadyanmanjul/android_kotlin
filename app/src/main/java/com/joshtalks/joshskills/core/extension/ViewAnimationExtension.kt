@@ -10,8 +10,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
 
 fun View.moveViewToScreenCenter(imgGroupChat: AppCompatImageView, txtUnreadCount: TextView) {
-    val fromLocation = IntArray(2)
-    this.getLocationOnScreen(fromLocation)
     val animSet = AnimationSet(false)
     animSet.fillAfter = false
     animSet.duration = 700
@@ -60,8 +58,6 @@ fun View.moveViewToScreenCenter(imgGroupChat: AppCompatImageView, txtUnreadCount
 }
 
 fun View.slideOutAnimation(imgGroupChat: AppCompatImageView, txtUnreadCount: TextView) {
-    val fromLocattion = IntArray(2)
-    this.getLocationOnScreen(fromLocattion)
     val animSet = AnimationSet(false)
     animSet.fillAfter = false
     animSet.duration = 700
@@ -112,8 +108,6 @@ fun View.slideOutAnimation(imgGroupChat: AppCompatImageView, txtUnreadCount: Tex
 fun View.slideInAnimation() {
     if (this.visibility != View.VISIBLE) {
         this@slideInAnimation.visibility = View.VISIBLE
-        val fromLocattion = IntArray(2)
-        this.getLocationOnScreen(fromLocattion)
         val animSet = AnimationSet(false)
         animSet.fillAfter = true
         animSet.duration = 250
@@ -146,14 +140,49 @@ fun View.slideInAnimation() {
     }
 }
 
-fun View.slideUpAnimation(context: Context) {
-        val bottomUp = AnimationUtils.loadAnimation(
-            context,
-            R.anim.slide_up_dialog
-        )
+fun View.transaltionAnimation(fromLocation: IntArray, toLocation: IntArray) {
+    this@transaltionAnimation.visibility = View.VISIBLE
+    val animSet = AnimationSet(false)
+    animSet.fillAfter = false
+    animSet.duration = 1000
+    //animSet.interpolator = LinearInterpolator()
+    val xDiff = (toLocation.get(0) - fromLocation.get(0))
+    val translate = TranslateAnimation(
+        Animation.ABSOLUTE,  //from xType
+        0f,
+        Animation.ABSOLUTE,  //to xType
+        xDiff.toFloat(),
+        Animation.ABSOLUTE,  //from yType
+        0f,
+        Animation.ABSOLUTE,  //to yType
+        toLocation.get(1).toFloat() - fromLocation.get(1).toFloat()
+    )
 
-        this.startAnimation(bottomUp)
-        this.setVisibility(View.VISIBLE)
+    animSet.setAnimationListener(object : Animation.AnimationListener {
+        override fun onAnimationEnd(p0: Animation?) {
+            this@transaltionAnimation.visibility = View.GONE
+        }
+
+        override fun onAnimationStart(p0: Animation?) {
+
+        }
+
+        override fun onAnimationRepeat(p0: Animation?) {
+        }
+    })
+    translate.interpolator = LinearInterpolator()
+    animSet.addAnimation(translate)
+    this.startAnimation(animSet)
+}
+
+fun View.slideUpAnimation(context: Context) {
+    val bottomUp = AnimationUtils.loadAnimation(
+        context,
+        R.anim.slide_up_dialog
+    )
+
+    this.startAnimation(bottomUp)
+    this.setVisibility(View.VISIBLE)
 }
 
 fun AppCompatImageView.shiftGroupChatIconUp(txtUnreadCount: TextView) {
