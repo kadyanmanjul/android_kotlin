@@ -81,14 +81,14 @@ class McqOptionView(context: Context) : AppCompatRadioButton(context) {
                         context,
                         R.drawable.rounded_rectangle_with_grey_border_pressed
                     )
-                    val currentPadding = v.paddingTop
+                    val currentPaddingTop = v.paddingTop
+                    val currentPaddingBottom = v.paddingBottom
                     v.setPadding(
                         v.paddingLeft,
-                        currentPadding + Utils.convertDpToPixel(3f).roundToInt(),
+                        currentPaddingTop + Utils.convertDpToPixel(3f).roundToInt(),
                         v.paddingRight,
-                        v.paddingBottom
+                        currentPaddingBottom - Utils.convertDpToPixel(3f).roundToInt(),
                     )
-                    //v.background.setColorFilter(-0x1f0b8adf, PorterDuff.Mode.SRC_ATOP)
                     v.invalidate()
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -96,12 +96,13 @@ class McqOptionView(context: Context) : AppCompatRadioButton(context) {
                         context,
                         R.drawable.rounded_rectangle_with_grey_border
                     )
-                    val currentPadding = v.paddingTop
+                    val currentPaddingTop = v.paddingTop
+                    val currentPaddingBottom = v.paddingBottom
                     v.setPadding(
                         v.paddingLeft,
-                        currentPadding - Utils.convertDpToPixel(3f).roundToInt(),
+                        currentPaddingTop - Utils.convertDpToPixel(3f).roundToInt(),
                         v.paddingRight,
-                        v.paddingBottom
+                        currentPaddingBottom + Utils.convertDpToPixel(3f).roundToInt(),
                     )
                     v.invalidate()
                 }
