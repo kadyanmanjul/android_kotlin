@@ -52,15 +52,15 @@ class CustomWord : AppCompatTextView {
         layoutParams.gravity = Gravity.CENTER
         layoutParams.setMargins(
             Utils.convertDpToPixel(10f).roundToInt(),
+            Utils.convertDpToPixel(18f).roundToInt(),
             Utils.convertDpToPixel(10f).roundToInt(),
-            Utils.convertDpToPixel(10f).roundToInt(),
-            Utils.convertDpToPixel(10f).roundToInt()
+            Utils.convertDpToPixel(18f).roundToInt()
         )
         setLayoutParams(layoutParams)
         gravity = Gravity.CENTER
-        minWidth = 120
+        minWidth = 160
         textAlignment = TEXT_ALIGNMENT_CENTER
-        textSize = 20f
+        textSize = 24f
         setOnTouchListener { v, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {

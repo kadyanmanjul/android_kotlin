@@ -15,12 +15,12 @@
         <View
             android:id="@+id/lineFirst"
             style="@style/split_line_horizontal"
-            android:layout_marginTop="@dimen/_36sdp" />
+            android:layout_marginTop="@dimen/_38sdp" />
 
         <View
             android:id="@+id/lineSecond"
             style="@style/split_line_horizontal"
-            android:layout_marginTop="@dimen/_80sdp" />
+            android:layout_marginTop="@dimen/_77sdp" />
 
         <com.nex3z.flowlayout.FlowLayout
             android:id="@+id/ats_answer_flow_layout"
@@ -34,9 +34,10 @@
         android:id="@+id/ats_options_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/ats_answer_container"
         android:layout_alignParentBottom="true"
         android:layout_marginHorizontal="@dimen/_20sdp"
-        android:layout_marginTop="@dimen/_60sdp"
+        android:layout_marginTop="@dimen/_20sdp"
         android:layout_marginBottom="@dimen/_60sdp">
 
     </RelativeLayout>
