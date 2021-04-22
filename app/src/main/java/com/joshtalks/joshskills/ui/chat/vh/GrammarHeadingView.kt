@@ -3,12 +3,15 @@ package com.joshtalks.joshskills.ui.chat.vh
 import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.ViewCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
@@ -16,6 +19,7 @@ import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEvent
 import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.muddzdev.styleabletoast.StyleableToast
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 class GrammarHeadingView : FrameLayout, AudioPlayerEventListener {
@@ -48,6 +52,42 @@ class GrammarHeadingView : FrameLayout, AudioPlayerEventListener {
         init()
     }
 
+    val onTouchListener = OnTouchListener { v, event ->
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                val paddingBottom = v.paddingBottom
+                val paddingStart = ViewCompat.getPaddingStart(v)
+                val paddingEnd = ViewCompat.getPaddingEnd(v)
+                val paddingTop = v.paddingTop
+                ViewCompat.setPaddingRelative(
+                    v,
+                    paddingStart,
+                    paddingTop + com.github.mikephil.charting.utils.Utils.convertDpToPixel(3f)
+                        .roundToInt(),
+                    paddingEnd,
+                    paddingBottom
+                )
+                v.invalidate()
+            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                val paddingBottom = v.paddingBottom
+                val paddingStart = ViewCompat.getPaddingStart(v)
+                val paddingEnd = ViewCompat.getPaddingEnd(v)
+                val paddingTop = v.paddingTop
+                ViewCompat.setPaddingRelative(
+                    v,
+                    paddingStart,
+                    paddingTop - com.github.mikephil.charting.utils.Utils.convertDpToPixel(3f)
+                        .roundToInt(),
+                    paddingEnd,
+                    paddingBottom
+                )
+                v.invalidate()
+            }
+        }
+        false
+    }
+
     private fun init() {
         View.inflate(context, R.layout.cell_grammar_heading_layout, this)
         rootView = findViewById(R.id.root_view)
@@ -62,6 +102,9 @@ class GrammarHeadingView : FrameLayout, AudioPlayerEventListener {
         slowAudioIv.setOnClickListener {
             playAudio(slowAudio)
         }
+        regularAudioIv.setOnTouchListener(onTouchListener)
+        slowAudioIv.setOnTouchListener(onTouchListener)
+
     }
 
     fun playAudio(audioUrl: String?) {

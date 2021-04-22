@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.chat.vh
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import androidx.annotation.DrawableRes
@@ -11,12 +12,14 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import com.github.mikephil.charting.utils.Utils
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.extension.slideUpAnimation
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionFeedback
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
+import kotlin.math.roundToInt
 
 class GrammarButtonView : FrameLayout {
 
@@ -35,6 +38,7 @@ class GrammarButtonView : FrameLayout {
     private var callback: CheckQuestionCallback? = null
     private var isAnswerChecked: Boolean = false
     private var questionFeedback: AssessmentQuestionFeedback? = null
+    private var currentState: GrammarButtonState = GrammarButtonState.DISABLED
 
     constructor(context: Context) : super(context) {
         init()
@@ -66,6 +70,10 @@ class GrammarButtonView : FrameLayout {
         rightAnswerGroup = findViewById(R.id.right_answer_group)
         flagIv = findViewById(R.id.flag_iv)
         grammarBtn = findViewById(R.id.grammar_btn)
+        setGrammarButtonListners()
+    }
+
+    private fun setGrammarButtonListners() {
         grammarBtn.setOnClickListener {
             if (isAnswerChecked) {
                 callback?.nextQuestion()
@@ -86,15 +94,60 @@ class GrammarButtonView : FrameLayout {
                 }
             }
         }
-        /*var booleanA = true
-        textContainer.setOnClickListener {
-            if (booleanA) {
-                enableBtn()
-            } else {
-                disableBtn()
+        grammarBtn.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    /*val drawable =
+                        when (currentState) {
+                            GrammarButtonState.DISABLED -> {
+                                R.drawable.gray_btn_pressed_state
+                            }
+                            GrammarButtonState.CORRECT,GrammarButtonState.ENABLED -> {
+                                R.drawable.green_btn_pressed_state
+                            }
+                            GrammarButtonState.WRONG -> {
+                                R.drawable.red_btn_pressed_state
+                            }
+                        }*/
+
+                    val paddingBottom = v.paddingBottom
+                    val paddingStart = ViewCompat.getPaddingStart(v)
+                    val paddingEnd = ViewCompat.getPaddingEnd(v)
+                    val paddingTop = v.paddingTop
+                   /* v.background = ContextCompat.getDrawable(
+                        context,
+                        drawable
+                    )*/
+                    ViewCompat.setPaddingRelative(v, paddingStart, paddingTop + Utils.convertDpToPixel(3f).roundToInt(), paddingEnd, paddingBottom)
+                    v.invalidate()
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                   /* val drawable =
+                        when (currentState) {
+                            GrammarButtonState.DISABLED -> {
+                                R.drawable.gray_btn_pressed_state
+                            }
+                            GrammarButtonState.CORRECT,GrammarButtonState.ENABLED -> {
+                                R.drawable.green_btn_unpressed_state
+                            }
+                            GrammarButtonState.WRONG -> {
+                                R.drawable.red_btn_unpressed_state
+                            }
+                        }*/
+                    val paddingBottom = v.paddingBottom
+                    val paddingStart = ViewCompat.getPaddingStart(v)
+                    val paddingEnd = ViewCompat.getPaddingEnd(v)
+                    val paddingTop = v.paddingTop
+                    /*v.background = ContextCompat.getDrawable(
+                        context,
+                        drawable
+                    )*/
+                    ViewCompat.setPaddingRelative(v, paddingStart, paddingTop - Utils.convertDpToPixel(3f).roundToInt(), paddingEnd, paddingBottom)
+                    v.invalidate()
+                }
             }
-            booleanA = booleanA.not()
-        }*/
+            false
+        }
     }
 
     private fun checkForCorrectIncorrectLogic(): Boolean {
@@ -156,8 +209,8 @@ class GrammarButtonView : FrameLayout {
             grammarBtn.isClickable = false
             grammarBtn.text = context.getString(R.string.grammar_btn_text_check)
             grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.grey_shade_new))
+            currentState=GrammarButtonState.DISABLED
             updateGrammarButtonDrawable(grammarBtn, R.drawable.gray_btn_pressed_state)
-
             flagIv.visibility = GONE
             //flagIv.setBackgroundColor(ContextCompat.getColor(context, R.color.grammar_green_color))
             updateBgColor(rootView, R.color.white)
@@ -171,6 +224,7 @@ class GrammarButtonView : FrameLayout {
 
         grammarBtn.isEnabled = true
         grammarBtn.isClickable = true
+        currentState=GrammarButtonState.ENABLED
         updateGrammarButtonDrawable(grammarBtn, R.drawable.green_btn_grammar_selector)
         grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.white))
 
@@ -180,6 +234,7 @@ class GrammarButtonView : FrameLayout {
 
         grammarBtn.isEnabled = false
         grammarBtn.isClickable = false
+        currentState=GrammarButtonState.DISABLED
         updateGrammarButtonDrawable(grammarBtn, R.drawable.gray_btn_pressed_state)
         grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.grey_shade_new))
 
@@ -191,6 +246,7 @@ class GrammarButtonView : FrameLayout {
         rightAnswerGroup.visibility = View.VISIBLE
         grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.white))
         flagIv.visibility = VISIBLE
+        currentState=GrammarButtonState.CORRECT
         //flagIv.setBackgroundColor(ContextCompat.getColor(context, R.color.grammar_green_color))
         updateBgColor(rootView, R.color.grammar_right_answer_bg)
         updateGrammarButtonDrawable(grammarBtn, R.drawable.green_btn_grammar_selector)
@@ -206,6 +262,7 @@ class GrammarButtonView : FrameLayout {
         flagIv.visibility = VISIBLE
         grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.white))
         updateBgColor(rootView, R.color.grammar_wrong_answer_bg)
+        currentState=GrammarButtonState.WRONG
         updateGrammarButtonDrawable(grammarBtn, R.drawable.red_btn_grammar_selector)
         updateImageTint(flagIv, R.color.grammar_red_color_dark)
         textContainer.slideUpAnimation(context)
@@ -272,6 +329,13 @@ class GrammarButtonView : FrameLayout {
     interface CheckQuestionCallback {
         fun checkQuestionCallBack(): Boolean?
         fun nextQuestion()
+    }
+
+    enum class GrammarButtonState(state: String) {
+        DISABLED("DISABLED"),
+        ENABLED("DISABLED"),
+        CORRECT("CORRECT"),
+        WRONG("WRONG")
     }
 
 }
