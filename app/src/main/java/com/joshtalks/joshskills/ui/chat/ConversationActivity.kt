@@ -82,16 +82,16 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.lang.ref.WeakReference
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.concurrent.scheduleAtFixedRate
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.lang.ref.WeakReference
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.concurrent.scheduleAtFixedRate
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -883,8 +883,8 @@ class ConversationActivity :
         conversationBinding.shader.visibility = GONE
 
         userProfileData?.let {
-            initScoreCardView(it)
-            profileFeatureActiveView()
+            //initScoreCardView(it)
+            //profileFeatureActiveView()
         }
     }
 
