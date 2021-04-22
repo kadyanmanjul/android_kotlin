@@ -134,7 +134,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.joshtalks.joshskills.util.GrammarButton
+        <com.google.android.material.textview.MaterialTextView
 
             android:id="@+id/grammar_btn"
             android:layout_width="match_parent"
@@ -143,6 +143,7 @@
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_26sdp"
             android:layout_marginBottom="@dimen/_16sdp"
+            android:background="@drawable/green_btn_grammar_selector"
             android:enabled="true"
             android:gravity="center"
             android:paddingVertical="@dimen/_12sdp"
@@ -150,11 +151,7 @@
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.JoshTypography.ButtonRegular"
             android:textColor="@color/grey_shade_new"
-            button:buttonColor="@color/grammar_red_color_btn"
-            button:cornerRadius="@dimen/_10sdp"
-            button:shadowColor="@color/black"
-            button:shadowEnabled="true"
-            button:shadowHeight="@dimen/_3sdp" />
+            app:cornerRadius="@dimen/_10sdp" />
 
     </LinearLayout>
 </FrameLayout>

@@ -120,9 +120,9 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 setupViews()
 
                 if (quizQuestion?.status == QUESTION_STATUS.AT) {
-                    binding.progressBar.progress = binding.progressBar.max
-                    setQuizScore(assessmentQuestions)
-                    showQuizCompleteLayout()
+                    //binding.progressBar.progress = binding.progressBar.max
+                    //setQuizScore(assessmentQuestions)
+                    //showQuizCompleteLayout()
                 }
             }
         }
@@ -208,14 +208,14 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                     binding.progressBar.progress = position.plus(1)
                     if (assessmentQuestions.get(position).question.choiceType == ChoiceType.ARRANGE_THE_SENTENCE) {
                         return atsChoiceView?.get()?.isCorrectAnswer()?.apply {
-                            saveAssessmentQuestionToDb(position, this)
+                            //saveAssessmentQuestionToDb(position, this)
                             if (this) {
                                 correctAnswers = correctAnswers.plus(1)
                             }
                         }
                     } else if (assessmentQuestions.get(position).question.choiceType == ChoiceType.SINGLE_SELECTION_TEXT) {
                         return mcqChoiceView?.get()?.isCorrectAnswer()?.apply {
-                            saveAssessmentQuestionToDb(position, this)
+                            //saveAssessmentQuestionToDb(position, this)
                             if (this) {
                                 correctAnswers = correctAnswers.plus(1)
                             }
