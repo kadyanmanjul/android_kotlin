@@ -1505,9 +1505,11 @@ class WebRtcService : BaseWebRtcService() {
                 val resp = AppObjectController.p2pNetworkService.getAgoraCallResponse(data)
                 if (resp.code() == 500) {
                     callCallback?.get()?.onNoUserFound()
+                    return@launch
                 }
                 if (CallAction.ACCEPT == callAction) {
                     callCallback?.get()?.onServerConnect()
+                    return@launch
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
