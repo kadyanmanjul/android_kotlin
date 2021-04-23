@@ -7,13 +7,17 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import androidx.core.content.ContextCompat
+import com.github.mikephil.charting.utils.Utils
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomLayout
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.nex3z.flowlayout.FlowLayout
+import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -24,6 +28,7 @@ class AtsChoiceView : RelativeLayout {
     private lateinit var rootView: RelativeLayout
     private lateinit var answerContainer: FrameLayout
     private lateinit var answerFlowLayout: FlowLayout
+    private lateinit var dummyAnswerFlowLayout: FlowLayout
     private lateinit var optionsContainer: RelativeLayout
     private lateinit var customLayout: CustomLayout
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
@@ -52,6 +57,7 @@ class AtsChoiceView : RelativeLayout {
         rootView = findViewById(R.id.choice_ats_root_view)
         answerContainer = findViewById(R.id.ats_answer_container)
         answerFlowLayout = findViewById(R.id.ats_answer_flow_layout)
+        dummyAnswerFlowLayout = findViewById(R.id.dummy_answer_flow_layout)
         optionsContainer = findViewById(R.id.ats_options_container)
         initOptionsFlowLayout()
     }
@@ -91,6 +97,13 @@ class AtsChoiceView : RelativeLayout {
                 callback?.alreadyAttempted(isCorrectAnswer())
             }
         }
+
+        if (customLayout.childCount > 9) {
+            addDummyLineView(3)
+        } else {
+            addDummyLineView(2)
+        }
+
     }
 
     private fun addChoiceToOptionsLayout(word: CustomWord) {
@@ -167,6 +180,42 @@ class AtsChoiceView : RelativeLayout {
 
     fun addCallback(callback: EnableDisableGrammarButtonCallback) {
         this.callback = callback
+    }
+
+    fun addDummyLineView(numberOfLines: Int) {
+        dummyAnswerFlowLayout.removeAllViews()
+        for (i in 1..numberOfLines) {
+            val dummyWordView = CustomWord(context)
+            val wordLayoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            wordLayoutParams.gravity = Gravity.CENTER
+            wordLayoutParams.setMargins(
+                Utils.convertDpToPixel(10f).roundToInt(),
+                Utils.convertDpToPixel(12f).roundToInt(),
+                Utils.convertDpToPixel(10f).roundToInt(),
+                Utils.convertDpToPixel(12f).roundToInt()
+            )
+            dummyWordView.setLayoutParams(wordLayoutParams)
+            dummyWordView.visibility = INVISIBLE
+            dummyAnswerFlowLayout.addView(dummyWordView)
+            val line = View(context)
+            val layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                Utils.convertDpToPixel(3f).roundToInt()
+            )
+            layoutParams.setMargins(
+                0,
+                Utils.convertDpToPixel(10f).roundToInt(),
+                0,
+                Utils.convertDpToPixel(10f).roundToInt()
+            )
+            line.setLayoutParams(layoutParams)
+            line.background = ContextCompat.getDrawable(context, R.color.light_shade_of_gray)
+            dummyAnswerFlowLayout.addView(line)
+
+        }
     }
 
 }

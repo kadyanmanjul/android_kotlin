@@ -28,22 +28,46 @@ class CustomWord : AppCompatTextView {
 
     fun changeViewGroup(optionsLayout: CustomLayout, answerLayout: FlowLayout) {
         if (parent is CustomLayout) {
-            val fromLocation = IntArray(2)
-            this.getLocationOnScreen(fromLocation)
+//            val fromLocation = IntArray(2)
+//            this.getLocationOnScreen(fromLocation)
+            val layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            layoutParams.gravity = Gravity.CENTER
+            layoutParams.setMargins(
+                Utils.convertDpToPixel(14f).roundToInt(),
+                Utils.convertDpToPixel(22f).roundToInt(),
+                Utils.convertDpToPixel(14f).roundToInt(),
+                Utils.convertDpToPixel(22f).roundToInt()
+            )
+            setLayoutParams(layoutParams)
             optionsLayout.removeViewCustomLayout(this, choice)
             answerLayout.addView(this)
 
-            val toLocation = IntArray(2)
-            this.getLocationOnScreen(toLocation)
+//            val toLocation = IntArray(2)
+//            this.getLocationOnScreen(toLocation)
 
             choice.apply {
                 this.userSelectedOrder = answerLayout.childCount
             }
-            RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, toLocation, this.choice.text))
+//            RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, toLocation, this.choice.text))
         } else {
 
-            val fromLocation = IntArray(2)
-            this.getLocationOnScreen(fromLocation)
+//            val fromLocation = IntArray(2)
+//            this.getLocationOnScreen(fromLocation)
+            val layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            layoutParams.gravity = Gravity.CENTER
+            layoutParams.setMargins(
+                Utils.convertDpToPixel(14f).roundToInt(),
+                Utils.convertDpToPixel(14f).roundToInt(),
+                Utils.convertDpToPixel(14f).roundToInt(),
+                Utils.convertDpToPixel(14f).roundToInt()
+            )
+            setLayoutParams(layoutParams)
             answerLayout.removeView(this)
             optionsLayout.addViewAt(this, choice.sortOrder - 1)
             choice.apply {
@@ -63,16 +87,16 @@ class CustomWord : AppCompatTextView {
         )
         layoutParams.gravity = Gravity.CENTER
         layoutParams.setMargins(
-            Utils.convertDpToPixel(10f).roundToInt(),
-            Utils.convertDpToPixel(18f).roundToInt(),
-            Utils.convertDpToPixel(10f).roundToInt(),
-            Utils.convertDpToPixel(18f).roundToInt()
+            Utils.convertDpToPixel(14f).roundToInt(),
+            Utils.convertDpToPixel(14f).roundToInt(),
+            Utils.convertDpToPixel(14f).roundToInt(),
+            Utils.convertDpToPixel(14f).roundToInt()
         )
         setLayoutParams(layoutParams)
         gravity = Gravity.CENTER
         minWidth = 160
         textAlignment = TEXT_ALIGNMENT_CENTER
-        textSize = 24f
+        textSize = 22f
         setOnTouchListener { v, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
