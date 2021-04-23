@@ -5,22 +5,19 @@
     android:id="@+id/choice_ats_root_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/_16sdp">
+    android:paddingHorizontal="@dimen/_12sdp"
+    android:paddingVertical="@dimen/_16sdp">
 
     <FrameLayout
         android:id="@+id/ats_answer_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <View
-            android:id="@+id/lineFirst"
-            style="@style/split_line_horizontal"
-            android:layout_marginTop="@dimen/_38sdp" />
-
-        <View
-            android:id="@+id/lineSecond"
-            style="@style/split_line_horizontal"
-            android:layout_marginTop="@dimen/_77sdp" />
+        <com.nex3z.flowlayout.FlowLayout
+            android:id="@+id/dummy_answer_flow_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:flFlow="true" />
 
         <com.nex3z.flowlayout.FlowLayout
             android:id="@+id/ats_answer_flow_layout"
