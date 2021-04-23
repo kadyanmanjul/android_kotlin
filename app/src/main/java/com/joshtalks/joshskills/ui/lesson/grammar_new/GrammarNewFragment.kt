@@ -76,9 +76,9 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     }
 
     private fun initViews() {
-        headingView = Stub(binding.grammarScrollView.findViewById(R.id.heading_view))
-        mcqChoiceView = Stub(binding.grammarScrollView.findViewById(R.id.mcq_choice_view))
-        atsChoiceView = Stub(binding.grammarScrollView.findViewById(R.id.ats_choice_view))
+        headingView = Stub(binding.container.findViewById(R.id.heading_view))
+        mcqChoiceView = Stub(binding.container.findViewById(R.id.mcq_choice_view))
+        atsChoiceView = Stub(binding.container.findViewById(R.id.ats_choice_view))
         buttonView = Stub(binding.frame.findViewById(R.id.button_action_views))
     }
 
@@ -121,9 +121,9 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 setupViews()
 
                 if (quizQuestion?.status == QUESTION_STATUS.AT) {
-                    //binding.progressBar.progress = binding.progressBar.max
-                    //setQuizScore(assessmentQuestions)
-                    //showQuizCompleteLayout()
+                    binding.progressBar.progress = binding.progressBar.max
+                    setQuizScore(assessmentQuestions)
+                    showQuizCompleteLayout()
                 }
             }
         }
@@ -209,14 +209,14 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                     binding.progressBar.progress = position.plus(1)
                     if (assessmentQuestions.get(position).question.choiceType == ChoiceType.ARRANGE_THE_SENTENCE) {
                         return atsChoiceView?.get()?.isCorrectAnswer()?.apply {
-                            //saveAssessmentQuestionToDb(position, this)
+                            saveAssessmentQuestionToDb(position, this)
                             if (this) {
                                 correctAnswers = correctAnswers.plus(1)
                             }
                         }
                     } else if (assessmentQuestions.get(position).question.choiceType == ChoiceType.SINGLE_SELECTION_TEXT) {
                         return mcqChoiceView?.get()?.isCorrectAnswer()?.apply {
-                            //saveAssessmentQuestionToDb(position, this)
+                            saveAssessmentQuestionToDb(position, this)
                             if (this) {
                                 correctAnswers = correctAnswers.plus(1)
                             }

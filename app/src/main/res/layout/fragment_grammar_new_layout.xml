@@ -15,71 +15,62 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ScrollView
-            android:id="@+id/grammar_scroll_view"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
-            android:overScrollMode="never">
+            android:paddingBottom="@dimen/_70sdp"
+            tools:visibility="visible">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/container"
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_12sdp"
+                android:layout_marginHorizontal="@dimen/_22sdp"
+                android:layout_marginTop="@dimen/_18sdp"
+                android:progress="0"
+                android:progressDrawable="@drawable/grammar_rating_progress_bar_drawable"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ViewStub
+                android:id="@+id/heading_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                android:orientation="vertical"
-                android:paddingBottom="@dimen/_90sdp"
-                tools:visibility="visible">
+                android:inflatedId="@+id/heading_view"
+                android:layout="@layout/grammar_heading_view_stub"
+                android:minHeight="@dimen/_52sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/progress_bar" />
 
-                <ProgressBar
-                    android:id="@+id/progress_bar"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_12sdp"
-                    android:layout_marginHorizontal="@dimen/_22sdp"
-                    android:layout_marginTop="@dimen/_18sdp"
-                    android:progress="0"
-                    android:progressDrawable="@drawable/grammar_rating_progress_bar_drawable"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+            <ViewStub
+                android:id="@+id/ats_choice_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inflatedId="@+id/ats_choice_view"
+                android:layout="@layout/ats_choice_view_stub"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/heading_view"
+                app:layout_constraintVertical_bias="0" />
 
-                <ViewStub
-                    android:id="@+id/heading_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inflatedId="@+id/heading_view"
-                    android:layout="@layout/grammar_heading_view_stub"
-                    android:minHeight="@dimen/_52sdp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/progress_bar" />
+            <ViewStub
+                android:id="@+id/mcq_choice_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inflatedId="@+id/mcq_choice_view"
+                android:layout="@layout/mcq_option_group_stub"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/heading_view"
+                app:layout_constraintVertical_bias="0.5" />
 
-                <ViewStub
-                    android:id="@+id/ats_choice_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inflatedId="@+id/ats_choice_view"
-                    android:layout="@layout/ats_choice_view_stub"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/heading_view" />
-
-                <ViewStub
-                    android:id="@+id/mcq_choice_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inflatedId="@+id/mcq_choice_view"
-                    android:layout="@layout/mcq_option_group_stub"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/heading_view"
-                    app:layout_constraintVertical_bias="0.5" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </ScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ViewStub
             android:id="@+id/button_action_views"

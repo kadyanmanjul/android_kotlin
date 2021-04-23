@@ -1,8 +1,6 @@
 package com.joshtalks.joshskills.ui.lesson.grammar_new
 
 import android.content.Context
-import android.graphics.Rect
-import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.ViewGroup
@@ -34,28 +32,10 @@ class CustomWord : AppCompatTextView {
             this.getLocationOnScreen(fromLocation)
             optionsLayout.removeViewCustomLayout(this, choice)
             answerLayout.addView(this)
-            val child = answerLayout.getChildAt(answerLayout.indexOfChild(this))
-
-            val lastChild = answerLayout.getChildAt(answerLayout.childCount.minus(1))
-            val newToLastLocation = IntArray(2)
-            lastChild.getLocationOnScreen(newToLastLocation)
-
-            val new2ToLastLocation = IntArray(2)
-            child.getLocationOnScreen(new2ToLastLocation)
-
-            val newToLocation = IntArray(2)
-            (parent as FlowLayout).getChildAt(0).getLocationOnScreen(newToLocation)
-
-            val rect = Rect()
-            this.getGlobalVisibleRect(rect)
 
             val toLocation = IntArray(2)
             this.getLocationOnScreen(toLocation)
 
-            Log.d(
-                "Manjul",
-                "changeViewGroup() called with: toLocation = ${toLocation[0]},${toLocation[1]}   newToLocation = ${newToLocation[0]},${newToLocation[1]}    newToLastLocation = ${newToLastLocation[0]},${newToLastLocation[1]}    fromLocation = ${fromLocation[0]},${fromLocation[1]}    new2ToLastLocation = ${new2ToLastLocation[0]},${new2ToLastLocation[1]}   "
-            )
             choice.apply {
                 this.userSelectedOrder = answerLayout.childCount
             }

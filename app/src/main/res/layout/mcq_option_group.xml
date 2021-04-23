@@ -3,6 +3,7 @@
     android:id="@+id/mcq_options_radio_group"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/_16sdp">
+    android:paddingVertical="@dimen/_16sdp"
+    android:paddingHorizontal="@dimen/_7sdp">
 
 </RadioGroup>
