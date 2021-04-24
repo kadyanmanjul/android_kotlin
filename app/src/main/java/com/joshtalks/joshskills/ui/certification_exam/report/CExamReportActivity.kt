@@ -1,9 +1,11 @@
 package com.joshtalks.joshskills.ui.certification_exam.report
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -12,6 +14,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
@@ -19,6 +22,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.interfaces.FileDownloadCallback
 import com.joshtalks.joshskills.core.service.CONVERSATION_ID
 import com.joshtalks.joshskills.databinding.ActivityCexamReportBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -38,8 +42,11 @@ import com.joshtalks.joshskills.ui.certification_exam.report.udetail.Certificate
 import com.joshtalks.joshskills.ui.certification_exam.view.CertificateDownloadDialog
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class CExamReportActivity : BaseActivity() {
+class CExamReportActivity : BaseActivity(), FileDownloadCallback {
     private val viewModel: CertificationExamViewModel by lazy {
         ViewModelProvider(this).get(CertificationExamViewModel::class.java)
     }
@@ -208,6 +215,20 @@ class CExamReportActivity : BaseActivity() {
 
     private fun openCertificationDownloadUI(url: String) {
         CertificateDownloadDialog.showDownloadCertificateDialog(supportFragmentManager, url)
+    }
+
+    override fun downloadedFile(path: String) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val intent = Intent()
+                intent.action = Intent.ACTION_VIEW
+                intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                intent.setDataAndType(Uri.fromFile(File(path)), "application/pdf")
+                startActivity(intent)
+            } catch (e: ActivityNotFoundException) {
+                e.printStackTrace()
+            }
+        }
     }
 
     companion object {

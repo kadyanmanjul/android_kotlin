@@ -21,7 +21,7 @@ data class CertificateExamReportModel(
     @SerializedName("answers")
     val answers: List<UserSelectedAnswer>? = emptyList(),
     @SerializedName("certificate_url")
-    val certificateURL: String?,
+    var certificateURL: String?,
     @SerializedName("correct")
     val correct: Int,
     @SerializedName("wrong")

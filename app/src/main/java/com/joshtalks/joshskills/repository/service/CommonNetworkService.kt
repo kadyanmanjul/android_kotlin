@@ -203,7 +203,7 @@ interface CommonNetworkService {
     @GET("$DIR/certificateexam/{id}/")
     suspend fun getCertificateExamDetails(@Path("id") id: Int): CertificationQuestionModel
 
-    @POST("$DIR/certificateexam/report")
+    @POST("$DIR/certificateexam/v2/report")
     suspend fun submitExam(@Body params: RequestSubmitCertificateExam): Response<Any>
 
     @GET("$DIR/certificateexam/report")

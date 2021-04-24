@@ -36,7 +36,6 @@ interface OnDismissWithSuccess : OnDismissDialog {
     fun onSuccessDismiss()
 }
 
-
 interface CertificationExamListener {
     fun onPauseExit()
     fun onFinishExam()
@@ -44,7 +43,7 @@ interface CertificationExamListener {
     fun onGoToQuestion(position: Int)
 }
 
-interface OnOpenCourseListener{
+interface OnOpenCourseListener {
     fun onClick(inboxEntity: InboxEntity)
 }
 
@@ -53,3 +52,6 @@ interface RecyclerViewItemClickListener {
     fun onItemLongClick(view: View?, position: Int)
 }
 
+interface FileDownloadCallback {
+    fun downloadedFile(path: String)
+}

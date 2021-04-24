@@ -1,8 +1,6 @@
 package com.joshtalks.joshskills.ui.certification_exam.view
 
 import android.app.Dialog
-import android.content.ActivityNotFoundException
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -20,6 +18,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.interfaces.FileDownloadCallback
 import com.joshtalks.joshskills.databinding.CertificateDownloadFragmentBinding
 import com.joshtalks.joshskills.ui.certification_exam.report.udetail.CERTIFICATE_URL
 import com.karumi.dexter.MultiplePermissionsReport
@@ -45,9 +44,12 @@ class CertificateDownloadDialog : DialogFragment(), FetchListener {
     private var certificateUrl: String = EMPTY
     private val fetch = AppObjectController.getFetchObject()
     private val TAG = CertificateDownloadDialog::class.java.simpleName
+    private var listener: FileDownloadCallback? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        listener = requireActivity() as FileDownloadCallback
         arguments?.getString(CERTIFICATE_URL)?.run {
             certificateUrl = this
         }
@@ -173,7 +175,7 @@ class CertificateDownloadDialog : DialogFragment(), FetchListener {
                 Timber.tag(TAG).e("error  ")
                 it.throwable?.printStackTrace()
             }
-        ).awaitFinishOrTimeout(60_000)
+        ).awaitFinishOrTimeout(120_000)
     }
 
     override fun onAdded(download: Download) {
@@ -188,7 +190,8 @@ class CertificateDownloadDialog : DialogFragment(), FetchListener {
         Timber.tag(TAG).e("onCompleted     " + download.tag)
         // updateDownloadStatus(download.file, download.extras, download.tag)
         dismissAllowingStateLoss()
-        try {
+        listener?.downloadedFile(download.file)
+      /*  try {
             val intent = Intent()
             intent.action = Intent.ACTION_VIEW
             intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -197,7 +200,7 @@ class CertificateDownloadDialog : DialogFragment(), FetchListener {
         } catch (e: ActivityNotFoundException) {
             e.printStackTrace()
             // no Activity to handle this kind of files
-        }
+        }*/
     }
 
     override fun onDeleted(download: Download) {
