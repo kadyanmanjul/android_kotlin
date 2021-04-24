@@ -34,7 +34,6 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import timber.log.Timber
 
-
 class LauncherActivity : CoreJoshActivity() {
     private var testId: String? = null
     private val apiRun: AtomicBoolean = AtomicBoolean(false)
@@ -46,9 +45,12 @@ class LauncherActivity : CoreJoshActivity() {
         animatedProgressBar()
         initAppInFirstTime()
         handleIntent()
-        AppObjectController.uiHandler.postDelayed({
-            analyzeAppRequirement()
-        }, 2000)
+        AppObjectController.uiHandler.postDelayed(
+            {
+                analyzeAppRequirement()
+            },
+            2000
+        )
     }
 
     private fun initApp() {
@@ -56,7 +58,7 @@ class LauncherActivity : CoreJoshActivity() {
         Branch.getInstance(applicationContext).resetUserSession()
         WorkManagerAdmin.appInitWorker()
         logAppLaunchEvent(getNetworkOperatorName())
-        //logNotificationData()
+        // logNotificationData()
     }
 
     private fun animatedProgressBar() {
@@ -88,8 +90,10 @@ class LauncherActivity : CoreJoshActivity() {
     private fun handleIntent() {
         Branch.sessionBuilder(WeakReference(this).get()).withCallback { referringParams, error ->
             try {
-                val jsonParams = referringParams ?: (Branch.getInstance().firstReferringParams
-                    ?: Branch.getInstance().latestReferringParams)
+                val jsonParams = referringParams ?: (
+                    Branch.getInstance().firstReferringParams
+                        ?: Branch.getInstance().latestReferringParams
+                    )
                 Timber.tag("BranchDeepLinkParams : ")
                     .d("referringParams = $referringParams, error = $error")
                 var testId: String? = null
@@ -159,7 +163,6 @@ class LauncherActivity : CoreJoshActivity() {
         val intent = getIntentForState()
         startActivity(intent)
         this@LauncherActivity.finishAndRemoveTask()
-
     }
 
     private fun logInstallByReferralEvent(
@@ -183,7 +186,6 @@ class LauncherActivity : CoreJoshActivity() {
             .addUserDetails()
             .addParam(AnalyticsEvent.NETWORK_CARRIER.NAME, networkOperatorName)
             .push(true)
-
 
     private fun getNetworkOperatorName() =
         (baseContext.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?)?.networkOperatorName
@@ -236,7 +238,6 @@ class LauncherActivity : CoreJoshActivity() {
         startNextActivity()
     }
 
-
     private fun initGaid(testId: String? = null, exploreType: String? = null) {
         if (apiRun.get()) {
             return
@@ -246,7 +247,10 @@ class LauncherActivity : CoreJoshActivity() {
         this.testId = testId
         CoroutineScope(Dispatchers.IO).launch {
             val obj = RequestRegisterGAId()
-            obj.test = testId?.split("_")?.get(1)?.toInt()
+            try {
+                obj.test = testId?.split("_")?.get(1)?.toInt()
+            } catch (ex: Throwable) {
+            }
             if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
                 val id = getGoogleAdId(this@LauncherActivity)
                 PrefManager.put(USER_UNIQUE_ID, id)
@@ -269,7 +273,6 @@ class LauncherActivity : CoreJoshActivity() {
                 PrefManager.put(INSTANCE_ID, resp.instanceId)
                 PrefManager.put(INSTANCE_ID, resp.instanceId, isConsistent = true)
                 getMentorForUser(resp.instanceId, testId)
-
             } catch (ex: Exception) {
                 apiRun.set(false)
                 AppObjectController.uiHandler.post {
@@ -293,7 +296,6 @@ class LauncherActivity : CoreJoshActivity() {
         }
     }
 
-
     private fun startOnboardingNewActivity() {
         OnBoardingActivityNew.startOnBoardingActivity(
             this@LauncherActivity,
@@ -310,12 +312,13 @@ class LauncherActivity : CoreJoshActivity() {
             successCallback = {
                 AppObjectController.isSettingUpdate = true
                 startNextActivity()
-            }, errorCallback = {
+            },
+            errorCallback = {
                 startNextActivity()
-            })
+            }
+        )
     }
 }
-
 
 /*private fun logNotificationData() {
     lifecycleScope.launchWhenStarted {
