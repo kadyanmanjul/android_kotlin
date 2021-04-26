@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.repository.server.SuccessResponse
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
+import com.joshtalks.joshskills.repository.server.certification_exam.CertificationUserDetail
 import com.joshtalks.joshskills.repository.server.certification_exam.RequestSubmitCertificateExam
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmitConversationPractiseRequest
@@ -202,11 +203,17 @@ interface CommonNetworkService {
     @GET("$DIR/certificateexam/{id}/")
     suspend fun getCertificateExamDetails(@Path("id") id: Int): CertificationQuestionModel
 
-    @POST("$DIR/certificateexam/report")
+    @POST("$DIR/certificateexam/v2/report")
     suspend fun submitExam(@Body params: RequestSubmitCertificateExam): Response<Any>
 
     @GET("$DIR/certificateexam/report")
     suspend fun getExamReports(@Query("certificateexam_id") id: Int): List<CertificateExamReportModel>
+
+    @GET("$DIR/certificateexam/user_details")
+    suspend fun getCertificateUserDetails(): CertificationUserDetail?
+
+    @POST("$DIR/certificateexam/user_details")
+    suspend fun submitUserDetailForCertificate(@Body certificationUserDetail: CertificationUserDetail): Map<String, String>
 
     @GET("$DIR/group/user_profile/{mentor_id}/")
     suspend fun getUserProfileData(

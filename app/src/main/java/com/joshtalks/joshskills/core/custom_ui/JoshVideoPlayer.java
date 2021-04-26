@@ -13,9 +13,7 @@ import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -47,13 +45,10 @@ import com.joshtalks.joshskills.repository.local.entity.VideoEngage;
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus;
 import com.joshtalks.joshskills.repository.server.engage.Graph;
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.annotation.Nullable;
-
 import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
 import static com.joshtalks.joshskills.messaging.RxBus2.publish;
 
@@ -187,7 +182,6 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             player.addAnalyticsListener(new AnalyticsListener() {
                 @Override
                 public void onPlayerStateChanged(EventTime eventTime, boolean playWhenReady, int playbackState) {
-
                     if (playWhenReady) {
                         countUpTimer.resume();
                     } else {
@@ -399,6 +393,13 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         }
     }
 
+    public void seekToStart() {
+        if (player != null) {
+            player.seekTo(0);
+            player.setPlayWhenReady(false);
+        }
+    }
+
     public void downloadStreamButNotPlay() {
         if (player != null) {
             boolean haveStartPosition = startWindow != C.INDEX_UNSET;
@@ -582,6 +583,9 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
             if (playerEventCallback != null) {
                 playerEventCallback.onReceiveEvent(playbackState, playWhenReady);
+            }
+            if (playbackState == Player.STATE_ENDED) {
+                getHandler().postDelayed(JoshVideoPlayer.this::seekToStart, 250);
             }
         }
 

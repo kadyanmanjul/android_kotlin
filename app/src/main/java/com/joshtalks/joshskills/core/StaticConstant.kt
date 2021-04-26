@@ -31,6 +31,7 @@ const val SHOW_OVERLAY = "show_overlay"
 const val ACHIEVED_AWARD_LIST = "achieved_award_list"
 const val MIN_LINES = 4
 const val RC_HINT = 2
+const val EMAIL_HINT = 3
 const val MAX_YEAR = 6
 const val ALPHA_MAX = 1F
 const val ALPHA_MIN = 0.45F

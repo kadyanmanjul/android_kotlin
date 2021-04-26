@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.certification_exam.report.vh
 
-
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
@@ -42,10 +41,8 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
     @com.mindorks.placeholderview.annotations.View(R.id.group_certificate_download)
     lateinit var cDownloadGroup: androidx.constraintlayout.widget.Group
 
-
     @com.mindorks.placeholderview.annotations.View(R.id.btn_download_certificate)
     lateinit var downloadCertificateBtn: MaterialButton
-
 
     private val context: Context = AppObjectController.joshApplication
 
@@ -75,7 +72,6 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
             checkExamDetails.visibility = View.VISIBLE
             scoreTv.text = getScoreText(score, maxScore)
         }
-
     }
 
     private fun getScoreText(score: Double, maxScore: Int): SpannableString? {
@@ -93,9 +89,12 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
 
     @Click(R.id.btn_download_certificate)
     fun downloadCertificate() {
-        if (certificateExamReport.certificateURL.isNullOrEmpty().not()) {
-            RxBus2.publish(DownloadFileEventBus(certificateExamReport.certificateURL!!))
-        }
+        RxBus2.publish(
+            DownloadFileEventBus(
+                id = certificateExamReport.reportId,
+                url = certificateExamReport.certificateURL
+            )
+        )
     }
 
     @Click(R.id.check_exam_details)
