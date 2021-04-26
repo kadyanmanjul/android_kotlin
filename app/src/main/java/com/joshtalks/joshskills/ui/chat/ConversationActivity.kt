@@ -875,8 +875,8 @@ class ConversationActivity :
         conversationBinding.shader.visibility = GONE
 
         userProfileData?.let {
-            initScoreCardView(it)
-            profileFeatureActiveView()
+            //initScoreCardView(it)
+            //profileFeatureActiveView()
         }
     }
 

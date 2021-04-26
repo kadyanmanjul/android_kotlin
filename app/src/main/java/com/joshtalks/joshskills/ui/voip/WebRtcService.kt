@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.voip
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Notification
 import android.app.NotificationChannel
@@ -572,7 +571,6 @@ class WebRtcService : BaseWebRtcService() {
         }
     }
 
-    @SuppressLint("InvalidWakeLockTag")
     override fun onCreate() {
         super.onCreate()
         Timber.tag(TAG).e("onCreate")
@@ -1137,10 +1135,7 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        RtcEngine.destroy()
-        AppObjectController.mRtcEngine = null
         joshAudioManager?.quitEverything()
-        handlerThread?.quitSafely()
         isEngineInit = false
         isTimeOutToPickCall = false
         switchChannel = false
@@ -1556,9 +1551,11 @@ class WebRtcService : BaseWebRtcService() {
                 val resp = AppObjectController.p2pNetworkService.getAgoraCallResponse(data)
                 if (resp.code() == 500) {
                     callCallback?.get()?.onNoUserFound()
+                    return@launch
                 }
                 if (CallAction.ACCEPT == callAction) {
                     callCallback?.get()?.onServerConnect()
+                    return@launch
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()

@@ -8,13 +8,14 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.media.*
+import android.media.* // ktlint-disable no-wildcard-imports
 import android.net.Uri
 import android.os.Build
 import android.os.PowerManager
+import android.os.PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY
 import android.os.VibrationEffect
 import android.os.Vibrator
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.* // ktlint-disable no-wildcard-imports
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.ui.voip.util.WebRtcAudioManager
 import io.reactivex.disposables.CompositeDisposable
@@ -34,7 +35,6 @@ abstract class BaseWebRtcService : Service(), SensorEventListener {
     private var vibrator: Vibrator? = null
     protected var compositeDisposable = CompositeDisposable()
     protected var mNotificationManager: NotificationManager? = null
-
 
     @SuppressLint("InvalidWakeLockTag")
     override fun onCreate() {
@@ -60,32 +60,30 @@ abstract class BaseWebRtcService : Service(), SensorEventListener {
         val sm: SensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         val proximity: Sensor? = sm.getDefaultSensor(Sensor.TYPE_PROXIMITY)
         try {
-            proximity?.let {
-                proximityWakelock = (getSystemService(POWER_SERVICE) as PowerManager?)?.newWakeLock(
-                    PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
-                    "joshtalsk-prx"
-                )
-                sm.registerListener(
-                    this@BaseWebRtcService,
-                    proximity,
-                    SensorManager.SENSOR_DELAY_NORMAL
-                )
-            }
-        } catch (x: Exception) {
-            x.printStackTrace()
+            proximityWakelock = (getSystemService(POWER_SERVICE) as PowerManager?)?.newWakeLock(
+                PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
+                "joshtalsk-prx"
+            )
+            sm.registerListener(
+                this@BaseWebRtcService,
+                proximity,
+                SensorManager.SENSOR_DELAY_NORMAL
+            )
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 
     private fun removeWakeLock() {
-        proximityWakelock?.let {
-            if (it.isHeld) {
-                it.release()
+        try {
+            if (proximityWakelock != null && proximityWakelock!!.isHeld) {
+                proximityWakelock!!.release(RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
             }
-        }
-        cpuWakelock?.let {
-            if (it.isHeld) {
-                it.release()
+            if (cpuWakelock != null && cpuWakelock!!.isHeld) {
+                cpuWakelock!!.release(RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
             }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 
@@ -97,20 +95,23 @@ abstract class BaseWebRtcService : Service(), SensorEventListener {
             if (proximity != null) {
                 sm.unregisterListener(this)
             }
-        } catch (ex: Throwable) {
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
 
-
     override fun onSensorChanged(event: SensorEvent) {
-        if (event.sensor.type == Sensor.TYPE_PROXIMITY) {
-            val am = getSystemService(AUDIO_SERVICE) as AudioManager
-            if (am.isSpeakerphoneOn && am.isBluetoothScoOn) {
-                return
+        try {
+            if (event.sensor.type == Sensor.TYPE_PROXIMITY) {
+                val am = getSystemService(AUDIO_SERVICE) as AudioManager
+                if (am.isSpeakerphoneOn && am.isBluetoothScoOn) {
+                    return
+                }
+                val newIsNear: Boolean = event.values[0] < min(event.sensor.maximumRange, 3F)
+                checkIsNear(newIsNear)
             }
-            val newIsNear: Boolean = event.values[0] < min(event.sensor.maximumRange, 3F)
-            checkIsNear(newIsNear)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 
@@ -123,8 +124,8 @@ abstract class BaseWebRtcService : Service(), SensorEventListener {
                 } else {
                     proximityWakelock?.release(1)
                 }
-            } catch (x: Exception) {
-                x.printStackTrace()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }
@@ -151,7 +152,8 @@ abstract class BaseWebRtcService : Service(), SensorEventListener {
                 try {
                     ringtonePlayer?.start()
                     ringingPlay = true
-                } catch (ex: IllegalStateException) {}
+                } catch (ex: IllegalStateException) {
+                }
             }
             ringtonePlayer?.isLooping = true
             ringtonePlayer?.setAudioAttributes(att)
@@ -208,7 +210,6 @@ abstract class BaseWebRtcService : Service(), SensorEventListener {
             ex.printStackTrace()
         }
     }
-
 
     protected fun executeEvent(event: String) {
         executor.execute {

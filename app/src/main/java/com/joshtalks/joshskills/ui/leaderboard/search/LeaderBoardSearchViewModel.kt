@@ -52,27 +52,32 @@ class LeaderBoardSearchViewModel : ViewModel() {
             delay(waitMs)
             val call1 = async(Dispatchers.IO) {
                 searchQuery(key, LeaderboardType.TODAY, 0)?.let {
+                    it.sortedBy { it.ranking }
                     leaderBoardDataOfToday.postValue(it)
                 }
             }
             val call2 = async(Dispatchers.IO) {
                 searchQuery(key, LeaderboardType.WEEK, 0)?.let {
+                    it.sortedBy { it.ranking }
                     leaderBoardDataOfWeek.postValue(it)
                 }
             }
             val call3 = async(Dispatchers.IO) {
                 searchQuery(key, LeaderboardType.MONTH, 0)?.let {
+                    it.sortedBy { it.ranking }
                     leaderBoardDataOfMonth.postValue(it)
                 }
             }
             val call4 = async(Dispatchers.IO) {
                 searchQuery(key, LeaderboardType.BATCH, 0)?.let {
+                    it.sortedBy { it.ranking }
                     leaderBoardDataOfBatch.postValue(it)
                 }
             }
 
             val call5 = async(Dispatchers.IO) {
                 searchQuery(key, LeaderboardType.LIFETIME, 0)?.let {
+                    it.sortedBy { it.ranking }
                     leaderBoardDataOfLifeTime.postValue(it)
                 }
             }

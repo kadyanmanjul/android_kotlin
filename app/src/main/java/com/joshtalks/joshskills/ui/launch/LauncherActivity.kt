@@ -34,7 +34,6 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import timber.log.Timber
 
-
 class LauncherActivity : CoreJoshActivity() {
     private var testId: String? = null
     private val apiRun: AtomicBoolean = AtomicBoolean(false)
@@ -46,9 +45,12 @@ class LauncherActivity : CoreJoshActivity() {
         animatedProgressBar()
         initAppInFirstTime()
         handleIntent()
-        AppObjectController.uiHandler.postDelayed({
-            analyzeAppRequirement()
-        }, 700)
+        AppObjectController.uiHandler.postDelayed(
+            {
+                analyzeAppRequirement()
+            },
+            700
+        )
     }
 
     private fun initApp() {
@@ -57,7 +59,7 @@ class LauncherActivity : CoreJoshActivity() {
             WorkManagerAdmin.appInitWorker()
             Branch.getInstance(applicationContext).resetUserSession()
             logAppLaunchEvent(getNetworkOperatorName())
-            //logNotificationData()
+            // logNotificationData()
         }
     }
 
@@ -201,7 +203,6 @@ class LauncherActivity : CoreJoshActivity() {
         }
     }
 
-
     private fun getNetworkOperatorName() =
         (baseContext.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?)?.networkOperatorName
             ?: ""
@@ -244,19 +245,23 @@ class LauncherActivity : CoreJoshActivity() {
 
     private fun navigateToCourseDetailsScreen(testId: String) {
         WorkManagerAdmin.appStartWorker()
-        CourseDetailsActivity.startCourseDetailsActivity(
-            this,
-            testId.split("_")[1].toInt(),
-            this@LauncherActivity.javaClass.simpleName,
-            buySubscription = false
-        )
+        try {
+            CourseDetailsActivity.startCourseDetailsActivity(
+                this,
+                testId.split("_")[1].toInt(),
+                this@LauncherActivity.javaClass.simpleName,
+                buySubscription = false
+            )
+        }
+        catch (ex: Exception) {
+            ex.printStackTrace()
+        }
         this@LauncherActivity.finish()
     }
 
     private fun navigateToNextScreen() {
         startNextActivity()
     }
-
 
     private fun initGaid(testId: String? = null, exploreType: String? = null) {
         if (apiRun.get()) {
@@ -267,7 +272,10 @@ class LauncherActivity : CoreJoshActivity() {
         this.testId = testId
         lifecycleScope.launch(Dispatchers.IO) {
             val obj = RequestRegisterGAId()
-            obj.test = testId?.split("_")?.get(1)?.toInt()
+            try {
+                obj.test = testId?.split("_")?.get(1)?.toInt()
+            } catch (ex: Throwable) {
+            }
             if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
                 val id = getGoogleAdId(this@LauncherActivity)
                 PrefManager.put(USER_UNIQUE_ID, id)
@@ -290,7 +298,6 @@ class LauncherActivity : CoreJoshActivity() {
                 PrefManager.put(INSTANCE_ID, resp.instanceId)
                 PrefManager.put(INSTANCE_ID, resp.instanceId, isConsistent = true)
                 getMentorForUser(resp.instanceId, testId)
-
             } catch (ex: Exception) {
                 apiRun.set(false)
                 AppObjectController.uiHandler.post {
@@ -314,7 +321,6 @@ class LauncherActivity : CoreJoshActivity() {
         }
     }
 
-
     private fun startOnboardingNewActivity() {
         OnBoardingActivityNew.startOnBoardingActivity(
             this@LauncherActivity,
@@ -331,12 +337,13 @@ class LauncherActivity : CoreJoshActivity() {
             successCallback = {
                 AppObjectController.isSettingUpdate = true
                 startNextActivity()
-            }, errorCallback = {
+            },
+            errorCallback = {
                 startNextActivity()
-            })
+            }
+        )
     }
 }
-
 
 /*private fun logNotificationData() {
     lifecycleScope.launchWhenStarted {

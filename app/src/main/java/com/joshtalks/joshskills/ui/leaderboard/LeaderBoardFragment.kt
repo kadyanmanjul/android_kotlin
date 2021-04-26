@@ -27,8 +27,8 @@ import com.skydoves.balloon.*
 import com.skydoves.balloon.overlay.BalloonOverlayAnimation
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.launch
 import java.util.*
+import kotlinx.coroutines.launch
 
 class LeaderBoardFragment : Fragment() {
 
@@ -112,22 +112,22 @@ class LeaderBoardFragment : Fragment() {
         })*/
 
         binding.recyclerView.addOnScrollListener(object :
-                RecyclerView.OnScrollListener() {
+            RecyclerView.OnScrollListener() {
 
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() < userPosition.plus(
-                            4
-                        ) && linearLayoutManager.findLastCompletelyVisibleItemPosition() > userPosition.plus(
-                                2
-                            )
-                    ) {
-                        binding.userLayout.visibility = View.GONE
-                    } else {
-                        binding.userLayout.visibility = View.VISIBLE
-                    }
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() < userPosition.plus(
+                        4
+                    ) && linearLayoutManager.findLastCompletelyVisibleItemPosition() > userPosition.plus(
+                        2
+                    )
+                ) {
+                    binding.userLayout.visibility = View.GONE
+                } else {
+                    binding.userLayout.visibility = View.VISIBLE
                 }
-            })
+            }
+        })
     }
 
     private fun addObserver() {
@@ -277,7 +277,9 @@ class LeaderBoardFragment : Fragment() {
         leaderboardResponse1.last_mentor_list?.forEach {
             binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
         }
-        addOnlineTooltip()
+        AppObjectController.uiHandler.postDelayed({
+            addOnlineTooltip()
+        }, 500)
     }
 
     private fun setCurrentUserDetails(response: LeaderboardMentor) {
@@ -356,7 +358,7 @@ class LeaderBoardFragment : Fragment() {
                 val lbOpenCount = PrefManager.getIntValue(LEADER_BOARD_OPEN_COUNT)
                 val b = viewModel.isUserHad4And5Lesson()
                 if (lbOpenCount >= 3 || b) {
-                //    delay(250)
+                    //    delay(250)
                     val item =
                         binding.recyclerView.getViewResolverAtPosition(liveUserPosition) as LeaderBoardItemViewHolder
                     val balloon = Balloon.Builder(requireContext())

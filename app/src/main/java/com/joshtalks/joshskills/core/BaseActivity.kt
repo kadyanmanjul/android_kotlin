@@ -738,11 +738,15 @@ abstract class BaseActivity :
     }
 
     protected fun showProgressBar() {
-        FullScreenProgressDialog.showProgressBar(this)
+        lifecycleScope.launch(Dispatchers.Main) {
+            FullScreenProgressDialog.showProgressBar(this@BaseActivity)
+        }
     }
 
     protected fun hideProgressBar() {
-        FullScreenProgressDialog.hideProgressBar(this)
+        lifecycleScope.launch(Dispatchers.Main) {
+            FullScreenProgressDialog.hideProgressBar(this@BaseActivity)
+        }
     }
 
     protected fun downloadFile(

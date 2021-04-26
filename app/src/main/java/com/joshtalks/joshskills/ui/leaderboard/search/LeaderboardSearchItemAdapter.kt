@@ -7,8 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.setImage
-import com.joshtalks.joshskills.core.setUserInitial
+import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.ListItemBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
@@ -64,9 +63,7 @@ class LeaderboardSearchItemAdapter(val context: Context, val itemList: List<Lead
             }
             binding.name.text = resp
             binding.points.text = response.points.toString()
-            if (response.photoUrl.isNullOrEmpty())
-                binding.userPic.setUserInitial(response.name!!)
-            else binding.userPic.setImage(response.photoUrl)
+            binding.userPic.setUserImageOrInitials(response.photoUrl,response.name?:"User",16,true)
 
             if (response.isOnline != null && response.isOnline) {
                 binding.onlineStatusIv.visibility = android.view.View.VISIBLE

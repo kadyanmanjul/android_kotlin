@@ -8,7 +8,6 @@ class JoshAppInitializer : Initializer<AppObjectController> {
 
     override fun create(context: Context): AppObjectController {
         return AppObjectController.initLibrary(context)
-
     }
 
     override fun dependencies(): List<Class<out Initializer<*>>> =

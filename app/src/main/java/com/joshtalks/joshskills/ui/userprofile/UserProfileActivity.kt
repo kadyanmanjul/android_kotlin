@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.ScrollView
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -51,6 +52,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private val compositeDisposable = CompositeDisposable()
     private var awardCategory: List<AwardCategory>? = emptyList()
     private var startTime = 0L
+
+    init {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
+    }
 
     private val viewModel by lazy {
         ViewModelProvider(this).get(
@@ -508,10 +513,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             mentorId: String,
             flags: Array<Int> = arrayOf(),
             intervalType: String? = null,
-            previousPage: String?=null,
+            previousPage: String? = null,
             conversationId: String? = null,
 
-        ) {
+            ) {
             Intent(activity, UserProfileActivity::class.java).apply {
                 putExtra(KEY_MENTOR_ID, mentorId)
                 intervalType?.let {

@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.course_details
 
 import android.app.Activity
 import android.app.DownloadManager
+import android.content.ActivityNotFoundException
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -778,12 +779,17 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     }
 
     fun openWhatsapp() {
-        val whatsappIntent = Intent(Intent.ACTION_VIEW)
-        whatsappIntent.data = Uri.parse(intent.getStringExtra(WHATSAPP_URL))
-        whatsappIntent.apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+            val whatsappIntent = Intent(Intent.ACTION_VIEW)
+            whatsappIntent.data = Uri.parse(intent.getStringExtra(WHATSAPP_URL))
+            whatsappIntent.apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            startActivity(whatsappIntent)
+        }catch (ex: ActivityNotFoundException ){
+            ex.printStackTrace()
+            showToast(getString(R.string.whatsApp_not_installed))
         }
-        startActivity(whatsappIntent)
     }
 
     private fun updateButtonText(discountedPrice: Double) {

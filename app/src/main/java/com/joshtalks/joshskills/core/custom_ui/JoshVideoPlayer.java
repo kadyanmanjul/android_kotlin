@@ -394,9 +394,13 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     }
 
     public void seekToStart() {
-        if (player != null) {
-            player.seekTo(0);
-            player.setPlayWhenReady(false);
+        try {
+            if (player != null) {
+                player.seekTo(0);
+                player.setPlayWhenReady(false);
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
     }
 
@@ -585,7 +589,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 playerEventCallback.onReceiveEvent(playbackState, playWhenReady);
             }
             if (playbackState == Player.STATE_ENDED) {
-                getHandler().postDelayed(JoshVideoPlayer.this::seekToStart, 250);
+                seekToStart();
             }
         }
 

@@ -11,13 +11,23 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentVocabularyBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
+import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestionType
+import com.joshtalks.joshskills.repository.local.entity.PendingTask
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
@@ -395,14 +405,16 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                             ).pauseAudio()
                 }
             }
-        } catch (ex: Exception) {
+        } catch (ex: Throwable) {
             Timber.d(ex)
         }
     }
 
     override fun onPause() {
         super.onPause()
-        adapter.audioManager?.onPause()
+        if (::adapter.isInitialized) {
+            adapter.audioManager?.onPause()
+        }
 //        adapter.itemList.forEachIndexed { index, lessonQuestion ->
 //            if (lessonQuestion.type != LessonQuestionType.QUIZ)
 //                binding.practiceRv.findViewHolderForAdapterPosition(index)?.let {
