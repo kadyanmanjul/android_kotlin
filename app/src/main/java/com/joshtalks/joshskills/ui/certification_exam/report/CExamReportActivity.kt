@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.interfaces.FileDownloadCallback
 import com.joshtalks.joshskills.core.service.CONVERSATION_ID
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityCexamReportBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadFileEventBus
@@ -226,6 +227,7 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
     }
 
     override fun downloadedFile(path: String) {
+        showToast(getString(R.string.certificate_download_success))
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val target = Intent(Intent.ACTION_VIEW)
