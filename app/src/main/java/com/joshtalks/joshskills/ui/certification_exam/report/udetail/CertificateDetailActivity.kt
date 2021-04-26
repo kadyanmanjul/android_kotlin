@@ -11,6 +11,7 @@ import android.text.method.ScrollingMovementMethod
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -22,6 +23,7 @@ import com.google.android.gms.auth.api.credentials.CredentialsOptions
 import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.android.gms.auth.api.credentials.IdentityProviders
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.DATE_FORMATTER
 import com.joshtalks.joshskills.core.DATE_FORMATTER_2
@@ -31,24 +33,28 @@ import com.joshtalks.joshskills.core.MAX_YEAR
 import com.joshtalks.joshskills.core.RC_HINT
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePickerDialog
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
+import com.joshtalks.joshskills.core.interfaces.FileDownloadCallback
 import com.joshtalks.joshskills.core.service.CONVERSATION_ID
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityCertificateDetailBinding
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationUserDetail
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
+import com.joshtalks.joshskills.ui.certification_exam.view.CertificateDownloadDialog
 import java.text.ParseException
 import java.util.Calendar
 import java.util.Date
 import java.util.regex.Pattern
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 
 const val REPORT_ID = "report_id"
 const val COUNTRY_CODE = "+91"
 const val CERTIFICATE_URL = "certificate_url"
+const val LOCAL_DOWNLOAD_URL = "local_download_url"
 
-class CertificateDetailActivity : BaseActivity() {
+class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
 
     private val viewModel: CertificationExamViewModel by lazy {
         ViewModelProvider(this).get(CertificationExamViewModel::class.java)
@@ -193,17 +199,14 @@ class CertificateDetailActivity : BaseActivity() {
         viewModel.apiStatus.observe(
             this,
             {
-                hideProgressBar()
+                if (it == ApiCallStatus.FAILED) {
+                    CertificateDownloadDialog.hideProgressBar(this)
+                }
             }
         )
         lifecycleScope.launchWhenCreated {
             viewModel.certificateUrl.collectLatest {
-                val resultIntent = Intent().apply {
-                    putExtra(REPORT_ID, getReportId())
-                    putExtra(CERTIFICATE_URL, it)
-                }
-                setResult(RESULT_OK, resultIntent)
-                this@CertificateDetailActivity.finish()
+                getCertificateDownloadProgress()?.updateDownloadUrl(it)
             }
         }
 
@@ -300,7 +303,11 @@ class CertificateDetailActivity : BaseActivity() {
                 showToast(getString(R.string.enter_valid_email_toast))
                 return@launch
             }
-            showProgressBar()
+            CertificateDownloadDialog.showDownloadCertificateDialog(
+                supportFragmentManager,
+                EMPTY,
+                cancelable = true
+            )
             viewModel.postCertificateUserDetails(getUserDetail())
         }
     }
@@ -334,6 +341,49 @@ class CertificateDetailActivity : BaseActivity() {
         } catch (ex: Throwable) {
             ex.printStackTrace()
         }
+    }
+
+    override fun onSuccessDismiss() {
+        super.onSuccessDismiss()
+        lifecycleScope.launch(Dispatchers.Main) {
+            binding.rootView.setBackgroundColor(
+                ContextCompat.getColor(
+                    this@CertificateDetailActivity,
+                    R.color.black
+                )
+            )
+            binding.rootView.removeAllViews()
+        }
+    }
+
+    override fun webURL(webUrl: String, localUrl: String) {
+        super.webURL(webUrl, localUrl)
+        val resultIntent = Intent().apply {
+            putExtra(REPORT_ID, getReportId())
+            putExtra(CERTIFICATE_URL, webUrl)
+            putExtra(LOCAL_DOWNLOAD_URL, localUrl)
+        }
+        setResult(RESULT_OK, resultIntent)
+        this@CertificateDetailActivity.finish()
+    }
+
+    override fun onCancel() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val resultIntent = Intent().apply {
+                    putExtra(REPORT_ID, getReportId())
+                    putExtra(CERTIFICATE_URL, viewModel.certificateUrl.single())
+                }
+                setResult(RESULT_OK, resultIntent)
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
+            this@CertificateDetailActivity.finish()
+        }
+    }
+
+    private fun getCertificateDownloadProgress(): CertificateDownloadDialog? {
+        return supportFragmentManager.findFragmentByTag(CertificateDownloadDialog::class.java.name) as CertificateDownloadDialog?
     }
 
     companion object {

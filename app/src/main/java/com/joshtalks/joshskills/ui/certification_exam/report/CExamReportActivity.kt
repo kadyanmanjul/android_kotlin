@@ -39,7 +39,9 @@ import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
 import com.joshtalks.joshskills.ui.certification_exam.examview.CExamMainActivity
 import com.joshtalks.joshskills.ui.certification_exam.report.udetail.CERTIFICATE_URL
 import com.joshtalks.joshskills.ui.certification_exam.report.udetail.CertificateDetailActivity
+import com.joshtalks.joshskills.ui.certification_exam.report.udetail.LOCAL_DOWNLOAD_URL
 import com.joshtalks.joshskills.ui.certification_exam.view.CertificateDownloadDialog
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.io.File
@@ -61,7 +63,15 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.getStringExtra(CERTIFICATE_URL)?.let {
-                    openCertificationDownloadUI(it)
+                    val localPath = result.data?.getStringExtra(LOCAL_DOWNLOAD_URL)
+                    if (localPath.isNullOrEmpty()) {
+                        openCertificationDownloadUI(it)
+                    } else {
+                        downloadedFile(localPath)
+                    }
+                    val cPos = binding.examReportList.currentItem
+                    viewModel.examReportLiveData.value?.getOrNull(cPos)?.certificateURL =
+                        it //  prevent api call to direct update filed value
                 }
             }
         }
@@ -104,16 +114,10 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
             { certificateList ->
                 certificateList?.run {
                     setUpExamViewPager(this)
-                    certificateList.last().awardMentor?.let {
-                        // showAward(mutableListOf(it))
-                    }
-
-                    if (certificateList.last().points.isNullOrBlank().not()) {
-                        showSnackBar(
-                            binding.rootView,
-                            Snackbar.LENGTH_LONG,
-                            certificateList.last().points
-                        )
+                    certificateList.lastOrNull()?.let {
+                        if (it.points.isNullOrBlank().not()) {
+                            showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.points)
+                        }
                     }
                 }
             }
@@ -131,7 +135,6 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
                 )
             )
         )
-
         val tabStrip: LinearLayout = binding.tabLayout.getChildAt(0) as LinearLayout
         for (i in 0 until tabStrip.childCount) {
             tabStrip.getChildAt(i).setOnTouchListener { _, _ -> true }
@@ -159,6 +162,7 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(GotoCEQuestionEventBus::class.java)
                 .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
                         certificationQuestionModel?.run {
@@ -183,10 +187,14 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(DownloadFileEventBus::class.java)
                 .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
-                        if (it.url != null) {
-                            openCertificationDownloadUI(it.url)
+                        val cPos = binding.examReportList.currentItem
+                        val url =
+                            viewModel.examReportLiveData.value?.getOrNull(cPos)?.certificateURL
+                        if (url != null) {
+                            openCertificationDownloadUI(url)
                             return@subscribe
                         }
                         userDetailsActivityResult.launch(
@@ -220,10 +228,11 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
     override fun downloadedFile(path: String) {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val intent = Intent()
-                intent.action = Intent.ACTION_VIEW
-                intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                intent.setDataAndType(Uri.fromFile(File(path)), "application/pdf")
+                val target = Intent(Intent.ACTION_VIEW)
+                target.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                target.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
+                target.setDataAndType(Uri.fromFile(File(path)), "application/pdf")
+                val intent = Intent.createChooser(target, "Open Certifificate ")
                 startActivity(intent)
             } catch (e: ActivityNotFoundException) {
                 e.printStackTrace()

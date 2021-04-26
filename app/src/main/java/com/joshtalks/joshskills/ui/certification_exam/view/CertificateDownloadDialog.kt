@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.R
@@ -38,14 +39,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+const val CANCELABLE = "cancelable"
+
 class CertificateDownloadDialog : DialogFragment(), FetchListener {
 
     private lateinit var binding: CertificateDownloadFragmentBinding
     private var certificateUrl: String = EMPTY
+    private var mCancelable: Boolean = true
+
     private val fetch = AppObjectController.getFetchObject()
     private val TAG = CertificateDownloadDialog::class.java.simpleName
     private var listener: FileDownloadCallback? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +57,10 @@ class CertificateDownloadDialog : DialogFragment(), FetchListener {
         arguments?.getString(CERTIFICATE_URL)?.run {
             certificateUrl = this
         }
+        arguments?.getBoolean(CANCELABLE)?.run {
+            mCancelable = this
+        }
+
         fetch.addListener(this)
     }
 
@@ -101,8 +109,17 @@ class CertificateDownloadDialog : DialogFragment(), FetchListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (certificateUrl.isEmpty()) {
-            dismissAllowingStateLoss()
+            return
         }
+        setupDownload()
+    }
+
+    fun updateDownloadUrl(certificateUrl: String) {
+        this.certificateUrl = certificateUrl
+        setupDownload()
+    }
+
+    private fun setupDownload() {
         if (PermissionUtils.isStoragePermissionEnabled(requireContext()).not()) {
             askStoragePermission()
             return
@@ -122,14 +139,14 @@ class CertificateDownloadDialog : DialogFragment(), FetchListener {
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
                             PermissionUtils.permissionPermanentlyDeniedDialog(requireActivity())
-                            dismissAllowingStateLoss()
+                            errorDismiss()
                             return
                         }
                         return
                     }
                     report?.isAnyPermissionPermanentlyDenied?.let {
                         PermissionUtils.permissionPermanentlyDeniedDialog(requireActivity())
-                        dismissAllowingStateLoss()
+                        errorDismiss()
                         return
                     }
                 }
@@ -172,6 +189,7 @@ class CertificateDownloadDialog : DialogFragment(), FetchListener {
                 Timber.tag(TAG).e("Request   " + it.file + "  " + it.url)
             },
             {
+                errorDismiss()
                 Timber.tag(TAG).e("error  ")
                 it.throwable?.printStackTrace()
             }
@@ -188,19 +206,12 @@ class CertificateDownloadDialog : DialogFragment(), FetchListener {
 
     override fun onCompleted(download: Download) {
         Timber.tag(TAG).e("onCompleted     " + download.tag)
-        // updateDownloadStatus(download.file, download.extras, download.tag)
-        dismissAllowingStateLoss()
+        listener?.onSuccessDismiss()
+        if (mCancelable) {
+            dismissAllowingStateLoss()
+        }
         listener?.downloadedFile(download.file)
-      /*  try {
-            val intent = Intent()
-            intent.action = Intent.ACTION_VIEW
-            intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-            intent.setDataAndType(download.fileUri, "application/pdf")
-            startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
-            e.printStackTrace()
-            // no Activity to handle this kind of files
-        }*/
+        listener?.webURL(certificateUrl, download.file)
     }
 
     override fun onDeleted(download: Download) {
@@ -217,6 +228,7 @@ class CertificateDownloadDialog : DialogFragment(), FetchListener {
 
     override fun onError(download: Download, error: Error, throwable: Throwable?) {
         Timber.tag(TAG).e("onError     " + download.tag)
+        errorDismiss()
     }
 
     override fun onPaused(download: Download) {
@@ -255,29 +267,48 @@ class CertificateDownloadDialog : DialogFragment(), FetchListener {
         Timber.tag(TAG).e("onWaitingNetwork     " + download.tag)
     }
 
+    fun errorDismiss() {
+        dismissAllowingStateLoss()
+        listener?.onCancel()
+    }
+
     companion object {
         @JvmStatic
-        private fun newInstance(certificateUrl: String) =
+        private fun newInstance(certificateUrl: String, cancelable: Boolean = true) =
             CertificateDownloadDialog().apply {
                 arguments = Bundle().apply {
                     putString(CERTIFICATE_URL, certificateUrl)
+                    putBoolean(CANCELABLE, cancelable)
                 }
             }
 
         @JvmStatic
         fun showDownloadCertificateDialog(
             fragmentManager: FragmentManager,
-            certificateUrl: String
+            certificateUrl: String,
+            cancelable: Boolean = true
         ) {
             val prev =
                 fragmentManager.findFragmentByTag(CertificateDownloadDialog::class.java.name)
             if (prev != null) {
                 return
             }
-            newInstance(certificateUrl).show(
+            newInstance(certificateUrl, cancelable).show(
                 fragmentManager,
                 CertificateDownloadDialog::class.java.name
             )
+        }
+
+        fun hideProgressBar(activity: FragmentActivity) {
+            try {
+                val dialog =
+                    activity.supportFragmentManager.findFragmentByTag(CertificateDownloadDialog::class.java.name)
+                if (dialog != null && dialog is CertificateDownloadDialog) {
+                    dialog.dismiss()
+                }
+            } catch (ignored: Exception) {
+                ignored.printStackTrace()
+            }
         }
     }
 }
