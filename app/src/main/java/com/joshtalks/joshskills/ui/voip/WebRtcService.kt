@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.voip
 
-import android.annotation.SuppressLint
 import android.app.*
 import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.NotificationManager.IMPORTANCE_LOW
@@ -523,7 +522,6 @@ class WebRtcService : BaseWebRtcService() {
         }
     }
 
-    @SuppressLint("InvalidWakeLockTag")
     override fun onCreate() {
         super.onCreate()
         Timber.tag(TAG).e("onCreate")
@@ -1086,10 +1084,7 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        RtcEngine.destroy()
-        AppObjectController.mRtcEngine = null
         joshAudioManager?.quitEverything()
-        handlerThread?.quitSafely()
         isEngineInit = false
         isTimeOutToPickCall = false
         switchChannel = false

@@ -338,11 +338,11 @@ class WorkerInLandingScreen(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         AppObjectController.clearDownloadMangerCallback()
-        AppAnalytics.updateUser()
         // SyncChatService.syncChatWithServer()
         WorkManagerAdmin.readMessageUpdating()
         WorkManagerAdmin.refreshFcmToken()
         WorkManagerAdmin.syncAppCourseUsage()
+        AppAnalytics.updateUser()
         return Result.success()
     }
 }
@@ -467,6 +467,7 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
                         deviceId,
                         UpdateDeviceRequest()
                     )
+                    //TODO no need to send UpdateDeviceRequest object in patch request 
                     details.apiStatus = ApiRespStatus.PATCH
                     details.update()
                 }
@@ -509,9 +510,20 @@ class UserActiveWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
+            val instanceId = when {
+                PrefManager.hasKey(INSTANCE_ID, true) -> {
+                    PrefManager.getStringValue(INSTANCE_ID, true)
+                }
+                PrefManager.hasKey(INSTANCE_ID, false) -> {
+                    PrefManager.getStringValue(INSTANCE_ID, false)
+                }
+                else -> {
+                    null
+                }
+            }
             AppObjectController.signUpNetworkService.userActive(
                 Mentor.getInstance().getId(),
-                Any()
+                mapOf("instance_id" to instanceId, "device_id" to Utils.getDeviceId())
             )
         } catch (ex: Exception) {
             ex.printStackTrace()

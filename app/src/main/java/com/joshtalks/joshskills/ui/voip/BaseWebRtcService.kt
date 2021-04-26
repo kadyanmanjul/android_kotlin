@@ -8,13 +8,14 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.media.*
+import android.media.* // ktlint-disable no-wildcard-imports
 import android.net.Uri
 import android.os.Build
 import android.os.PowerManager
+import android.os.PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY
 import android.os.VibrationEffect
 import android.os.Vibrator
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.* // ktlint-disable no-wildcard-imports
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.ui.voip.util.WebRtcAudioManager
 import io.reactivex.disposables.CompositeDisposable
@@ -68,24 +69,20 @@ abstract class BaseWebRtcService : Service(), SensorEventListener {
                 proximity,
                 SensorManager.SENSOR_DELAY_NORMAL
             )
-        } catch (x: Throwable) {
-            x.printStackTrace()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 
     private fun removeWakeLock() {
         try {
-            proximityWakelock?.let {
-                if (it.isHeld) {
-                    it.release()
-                }
+            if (proximityWakelock != null && proximityWakelock!!.isHeld) {
+                proximityWakelock!!.release(RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
             }
-            cpuWakelock?.let {
-                if (it.isHeld) {
-                    it.release()
-                }
+            if (cpuWakelock != null && cpuWakelock!!.isHeld) {
+                cpuWakelock!!.release(RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
             }
-        } catch (ex: Throwable) {
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
@@ -98,7 +95,7 @@ abstract class BaseWebRtcService : Service(), SensorEventListener {
             if (proximity != null) {
                 sm.unregisterListener(this)
             }
-        } catch (ex: Throwable) {
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
@@ -113,7 +110,7 @@ abstract class BaseWebRtcService : Service(), SensorEventListener {
                 val newIsNear: Boolean = event.values[0] < min(event.sensor.maximumRange, 3F)
                 checkIsNear(newIsNear)
             }
-        } catch (ex: Throwable) {
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
@@ -127,8 +124,8 @@ abstract class BaseWebRtcService : Service(), SensorEventListener {
                 } else {
                     proximityWakelock?.release(1)
                 }
-            } catch (x: Throwable) {
-                x.printStackTrace()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }
@@ -209,7 +206,7 @@ abstract class BaseWebRtcService : Service(), SensorEventListener {
                 cancel()
                 vibrator = null
             }
-        } catch (ex: Throwable) {
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
