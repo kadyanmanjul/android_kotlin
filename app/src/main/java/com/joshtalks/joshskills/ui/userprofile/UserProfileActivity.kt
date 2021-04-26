@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.ScrollView
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -32,14 +33,14 @@ import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.text.DecimalFormat
+import java.util.*
 import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.text.DecimalFormat
-import java.util.*
 
 class UserProfileActivity : WebRtcMiddlewareActivity() {
 
@@ -51,6 +52,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private val compositeDisposable = CompositeDisposable()
     private var awardCategory: List<AwardCategory>? = emptyList()
     private var startTime = 0L
+
+    init {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
+    }
 
     private val viewModel by lazy {
         ViewModelProvider(this).get(
@@ -507,10 +512,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             mentorId: String,
             flags: Array<Int> = arrayOf(),
             intervalType: String? = null,
-            previousPage: String?=null,
+            previousPage: String? = null,
             conversationId: String? = null,
 
-        ) {
+            ) {
             Intent(activity, UserProfileActivity::class.java).apply {
                 putExtra(KEY_MENTOR_ID, mentorId)
                 intervalType?.let {

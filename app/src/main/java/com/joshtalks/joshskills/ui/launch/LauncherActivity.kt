@@ -225,12 +225,17 @@ class LauncherActivity : CoreJoshActivity() {
 
     private fun navigateToCourseDetailsScreen(testId: String) {
         WorkManagerAdmin.appStartWorker()
-        CourseDetailsActivity.startCourseDetailsActivity(
-            this,
-            testId.split("_")[1].toInt(),
-            this@LauncherActivity.javaClass.simpleName,
-            buySubscription = false
-        )
+        try {
+            CourseDetailsActivity.startCourseDetailsActivity(
+                this,
+                testId.split("_")[1].toInt(),
+                this@LauncherActivity.javaClass.simpleName,
+                buySubscription = false
+            )
+        }
+        catch (ex: Exception) {
+            ex.printStackTrace()
+        }
         this@LauncherActivity.finish()
     }
 
