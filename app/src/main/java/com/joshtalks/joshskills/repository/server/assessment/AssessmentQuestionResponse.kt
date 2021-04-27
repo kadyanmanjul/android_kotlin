@@ -4,7 +4,6 @@ package com.joshtalks.joshskills.repository.server.assessment
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionFeedback
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -79,6 +78,9 @@ enum class ChoiceType(val type: String) {
 
     @SerializedName("ARRANGE_THE_SENTENCE")
     ARRANGE_THE_SENTENCE("ARRANGE_THE_SENTENCE"),
+
+    @SerializedName("ARRANGE_THE_SENTENCE_NEW")
+    ARRANGE_THE_SENTENCE_NEW("ARRANGE_THE_SENTENCE_NEW"),
 
 }
 

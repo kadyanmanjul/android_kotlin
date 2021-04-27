@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.ui.chat.vh
 
 import android.content.Context
+import android.text.SpannableString
+import android.text.Spanned
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.MotionEvent
@@ -11,16 +13,19 @@ import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.Group
 import androidx.core.view.ViewCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.repository.local.entity.AudioType
+import com.joshtalks.joshskills.util.DottedLineSpan
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.muddzdev.styleabletoast.StyleableToast
 import kotlin.math.roundToInt
 import kotlin.random.Random
+
 
 class GrammarHeadingView : FrameLayout, AudioPlayerEventListener {
 
@@ -28,13 +33,18 @@ class GrammarHeadingView : FrameLayout, AudioPlayerEventListener {
     private lateinit var container: ConstraintLayout //container
     private lateinit var questionHeading: AppCompatTextView //question_heading
     private lateinit var questionDescription: AppCompatTextView //question_description
+    private lateinit var questionText: AppCompatTextView //question_text
     private lateinit var regularAudioIv: AppCompatImageView //regular_audio_iv
     private lateinit var slowAudioIv: AppCompatImageView //slow_audio_iv
+    private lateinit var singleAudioIv: AppCompatImageView //single_audio
+    private lateinit var group1: Group //group_1
+    private lateinit var group2: Group //group_2
     var audioManager = ExoAudioPlayer.getInstance()
     var regularAudio: String? = null
     var slowAudio: String? = null
     var heading: String? = null
     var description: String? = null
+    var isNewHeader: Boolean = false
 
     constructor(context: Context) : super(context) {
         init()
@@ -94,8 +104,12 @@ class GrammarHeadingView : FrameLayout, AudioPlayerEventListener {
         container = findViewById(R.id.container)
         questionHeading = findViewById(R.id.question_heading)
         questionDescription = findViewById(R.id.question_description)
+        questionText = findViewById(R.id.question_text)
         regularAudioIv = findViewById(R.id.regular_audio_iv)
         slowAudioIv = findViewById(R.id.slow_audio_iv)
+        singleAudioIv = findViewById(R.id.single_audio)
+        group1 = findViewById(R.id.group_1)
+        group2 = findViewById(R.id.group_2)
         regularAudioIv.setOnClickListener {
             playAudio(regularAudio)
         }
@@ -137,36 +151,64 @@ class GrammarHeadingView : FrameLayout, AudioPlayerEventListener {
         regularAudio: String?,
         slowAudio: String?,
         heading: String?,
-        description: String?
+        description: String?,
+        isNewHeader: Boolean
     ) {
         this.regularAudio = regularAudio
         this.slowAudio = slowAudio
         this.heading = heading
         this.description = description
+        this.isNewHeader = isNewHeader
+
         if (heading.isNullOrBlank()) {
             questionHeading.visibility = View.GONE
         } else {
             questionHeading.visibility = View.VISIBLE
             questionHeading.text = heading
         }
+        if (this.isNewHeader) {
+            group1.visibility = View.GONE
+            group2.visibility = View.VISIBLE
 
-        if (description.isNullOrBlank()) {
-            questionDescription.visibility = View.GONE
-        } else {
-            questionDescription.visibility = View.VISIBLE
-            questionDescription.text = description
-        }
+            if (description.isNullOrBlank()) {
+                questionText.visibility = View.GONE
+            } else {
+                questionText.visibility = View.VISIBLE
+                val text = SpannableString(description)
+                val dottedLineSpan = DottedLineSpan(R.color.colorPrimary, description, context)
+                text.setSpan(dottedLineSpan, 0, description.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                questionText.text = text
 
-        if (slowAudio.isNullOrBlank()) {
-            slowAudioIv.visibility = View.GONE
-        } else {
-            slowAudioIv.visibility = View.VISIBLE
-        }
+            }
 
-        if (regularAudio.isNullOrBlank()) {
-            regularAudioIv.visibility = View.GONE
+            if (regularAudio.isNullOrBlank()) {
+                regularAudioIv.visibility = View.GONE
+            } else {
+                regularAudioIv.visibility = View.VISIBLE
+            }
+
         } else {
-            regularAudioIv.visibility = View.VISIBLE
+            group1.visibility = View.VISIBLE
+            group2.visibility = View.GONE
+
+            if (description.isNullOrBlank()) {
+                questionDescription.visibility = View.GONE
+            } else {
+                questionDescription.visibility = View.VISIBLE
+                questionDescription.text = description
+            }
+
+            if (slowAudio.isNullOrBlank()) {
+                slowAudioIv.visibility = View.GONE
+            } else {
+                slowAudioIv.visibility = View.VISIBLE
+            }
+
+            if (regularAudio.isNullOrBlank()) {
+                regularAudioIv.visibility = View.GONE
+            } else {
+                regularAudioIv.visibility = View.VISIBLE
+            }
         }
 
     }
