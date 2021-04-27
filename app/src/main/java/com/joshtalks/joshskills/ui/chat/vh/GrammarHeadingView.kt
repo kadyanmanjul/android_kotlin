@@ -30,7 +30,7 @@ class GrammarHeadingView : FrameLayout, AudioPlayerEventListener {
     private lateinit var container: ConstraintLayout //container
     private lateinit var questionHeading: AppCompatTextView //question_heading
     private lateinit var questionDescription: AppCompatTextView //question_description
-    private lateinit var questionText: AppCompatTextView //question_text
+    private lateinit var questionText: DashedUnderlinedTextView //question_text
     private lateinit var regularAudioIv: AppCompatImageView //regular_audio_iv
     private lateinit var slowAudioIv: AppCompatImageView //slow_audio_iv
     private lateinit var singleAudioIv: AppCompatImageView //single_audio
