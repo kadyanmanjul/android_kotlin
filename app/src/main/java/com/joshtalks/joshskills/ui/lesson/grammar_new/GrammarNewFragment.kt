@@ -145,7 +145,9 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 assessmentQuestions.get(position).question.mediaUrl,
                 assessmentQuestions.get(position).question.mediaUrl2,
                 assessmentQuestions.get(position).question.text,
-                assessmentQuestions.get(position).question.subText
+                assessmentQuestions.get(position).question.subText,
+                //assessmentQuestions.get(position).question.isNewHeader
+            true
             )
         }
 

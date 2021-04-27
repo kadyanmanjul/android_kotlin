@@ -90,6 +90,10 @@ data class AssessmentQuestion(
     @SerializedName("is_attempted")
     var isAttempted: Boolean = false,
 
+    @ColumnInfo
+    @SerializedName("is_new_header")
+    var isNewHeader: Boolean = false,
+
     @TypeConverters(TypeConverterQuestionStatus::class)
     @ColumnInfo
     @SerializedName("status")
