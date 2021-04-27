@@ -92,7 +92,7 @@ data class AssessmentQuestion(
 
     @ColumnInfo
     @SerializedName("is_new_header")
-    var isNewHeader: Boolean = false,
+    var isNewHeader: Boolean,
 
     @TypeConverters(TypeConverterQuestionStatus::class)
     @ColumnInfo
@@ -114,6 +114,7 @@ data class AssessmentQuestion(
         videoThumbnailUrl = assessmentQuestionResponse.videoThumbnailUrl,
         choiceType = assessmentQuestionResponse.choiceType,
         isAttempted = assessmentQuestionResponse.isAttempted,
+        isNewHeader= assessmentQuestionResponse.isNewHeader,
         status = assessmentQuestionResponse.status
     )
 

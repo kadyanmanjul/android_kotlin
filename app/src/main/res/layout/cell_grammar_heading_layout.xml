@@ -110,6 +110,8 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/grammar_black_text_color"
             android:visibility="gone"
+            android:layerType="software"
+            android:drawableBottom="@drawable/dotted_line"
             app:layout_constraintStart_toEndOf="@id/single_audio"
             app:layout_constraintTop_toTopOf="@id/single_audio"
             app:layout_constraintBottom_toBottomOf="@id/single_audio"
@@ -120,6 +122,7 @@
             android:id="@+id/group_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:constraint_referenced_ids="single_audio,question_text"
             tools:visibility="visible" />
 
