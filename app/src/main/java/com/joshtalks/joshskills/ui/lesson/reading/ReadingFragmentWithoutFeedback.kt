@@ -422,7 +422,7 @@ class ReadingFragmentWithoutFeedback :
         currentLessonQuestion?.run {
             showPracticeInputLayout()
             binding.recordingViewFrame.visibility = VISIBLE
-            binding.hintContainer.visibility = VISIBLE
+            binding.audioPractiseHint.visibility = VISIBLE
             binding.practiseInputHeader.text =
                 AppObjectController.getFirebaseRemoteConfig()
                     .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
@@ -965,7 +965,8 @@ class ReadingFragmentWithoutFeedback :
                         binding.feedbackGrade.visibility = GONE
                         binding.feedbackDescription.visibility = GONE
                         binding.recordingViewFrame.visibility = GONE
-                        binding.hintContainer.visibility = GONE
+                        binding.audioPractiseHint.visibility = GONE
+                        binding.counterTv.visibility = GONE
                         binding.yourSubAnswerTv.text = getString(R.string.your_submitted_answer)
                         disableSubmitButton()
                     }
