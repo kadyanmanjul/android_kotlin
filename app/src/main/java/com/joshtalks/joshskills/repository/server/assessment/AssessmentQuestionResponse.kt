@@ -51,6 +51,9 @@ data class AssessmentQuestionResponse(
     @SerializedName("is_attempted")
     val isAttempted: Boolean = false,
 
+    @SerializedName("is_new_header")
+    val isNewHeader: Boolean = false,
+
     @SerializedName("status")
     val status: QuestionStatus = QuestionStatus.NONE
 

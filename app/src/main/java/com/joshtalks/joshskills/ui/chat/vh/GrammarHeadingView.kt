@@ -1,8 +1,6 @@
 package com.joshtalks.joshskills.ui.chat.vh
 
 import android.content.Context
-import android.text.SpannableString
-import android.text.Spanned
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.MotionEvent
@@ -20,7 +18,6 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.repository.local.entity.AudioType
-import com.joshtalks.joshskills.util.DottedLineSpan
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.muddzdev.styleabletoast.StyleableToast
 import kotlin.math.roundToInt
@@ -113,11 +110,15 @@ class GrammarHeadingView : FrameLayout, AudioPlayerEventListener {
         regularAudioIv.setOnClickListener {
             playAudio(regularAudio)
         }
+        singleAudioIv.setOnClickListener {
+            playAudio(regularAudio)
+        }
         slowAudioIv.setOnClickListener {
             playAudio(slowAudio)
         }
         regularAudioIv.setOnTouchListener(onTouchListener)
         slowAudioIv.setOnTouchListener(onTouchListener)
+        singleAudioIv.setOnTouchListener(onTouchListener)
 
     }
 
@@ -160,51 +161,47 @@ class GrammarHeadingView : FrameLayout, AudioPlayerEventListener {
         this.description = description
         this.isNewHeader = isNewHeader
 
-        if (heading.isNullOrBlank()) {
+        if (this.heading.isNullOrBlank()) {
             questionHeading.visibility = View.GONE
         } else {
             questionHeading.visibility = View.VISIBLE
-            questionHeading.text = heading
+            questionHeading.text = this.heading
         }
         if (this.isNewHeader) {
             group1.visibility = View.GONE
             group2.visibility = View.VISIBLE
 
-            if (description.isNullOrBlank()) {
+            if (this.description.isNullOrBlank()) {
                 questionText.visibility = View.GONE
             } else {
                 questionText.visibility = View.VISIBLE
-                val text = SpannableString(description)
-                val dottedLineSpan = DottedLineSpan(R.color.colorPrimary, description, context)
-                text.setSpan(dottedLineSpan, 0, description.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                questionText.text = text
-
+                questionText.text = this.description
             }
 
-            if (regularAudio.isNullOrBlank()) {
-                regularAudioIv.visibility = View.GONE
+            if (this.regularAudio.isNullOrBlank()) {
+                singleAudioIv.visibility = View.GONE
             } else {
-                regularAudioIv.visibility = View.VISIBLE
+                singleAudioIv.visibility = View.VISIBLE
             }
 
         } else {
             group1.visibility = View.VISIBLE
             group2.visibility = View.GONE
 
-            if (description.isNullOrBlank()) {
+            if (this.description.isNullOrBlank()) {
                 questionDescription.visibility = View.GONE
             } else {
                 questionDescription.visibility = View.VISIBLE
-                questionDescription.text = description
+                questionDescription.text = this.description
             }
 
-            if (slowAudio.isNullOrBlank()) {
+            if (this.slowAudio.isNullOrBlank()) {
                 slowAudioIv.visibility = View.GONE
             } else {
                 slowAudioIv.visibility = View.VISIBLE
             }
 
-            if (regularAudio.isNullOrBlank()) {
+            if (this.regularAudio.isNullOrBlank()) {
                 regularAudioIv.visibility = View.GONE
             } else {
                 regularAudioIv.visibility = View.VISIBLE
