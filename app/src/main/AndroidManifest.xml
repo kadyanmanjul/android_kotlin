@@ -580,6 +580,8 @@
         <activity
             android:name=".ui.voip.WebRtcActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
