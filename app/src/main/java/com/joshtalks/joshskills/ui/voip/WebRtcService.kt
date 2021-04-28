@@ -280,7 +280,6 @@ class WebRtcService : BaseWebRtcService() {
                         startCallTimer()
                         callStatusNetworkApi(it, CallAction.ACCEPT)
                         addNotification(CallConnect().action, callData)
-                        addSensor()
                         joshAudioManager?.startCommunication()
                     }
                 } catch (ex: Exception) {
@@ -332,7 +331,7 @@ class WebRtcService : BaseWebRtcService() {
                 500
             )
             addNotification(CallConnect().action, callData)
-            addSensor()
+            // addSensor()
             joshAudioManager?.startCommunication()
             joshAudioManager?.stopConnectTone()
             audioFocus()
@@ -1052,7 +1051,7 @@ class WebRtcService : BaseWebRtcService() {
     private fun resetConfig() {
         stopRing()
         joshAudioManager?.stopConnectTone()
-        removeSensor()
+        // removeSensor()
         isCallerJoin = false
         eventListener = null
         isSpeakerEnable = false
@@ -1114,7 +1113,7 @@ class WebRtcService : BaseWebRtcService() {
             .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_NONE)
         phoneCallState = CallState.CALL_STATE_IDLE
         Timber.tag(TAG).e("onDestroy")
-        removeSensor()
+        // removeSensor()
         executor.shutdown()
         super.onDestroy()
     }
