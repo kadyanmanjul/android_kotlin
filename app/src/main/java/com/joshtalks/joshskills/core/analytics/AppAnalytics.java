@@ -48,15 +48,17 @@ public class AppAnalytics {
 
     private static void init() {
         JoshSkillExecutors.getBOUNDED().submit(() -> {
-            if (cleverTapAnalytics == null) {
-                cleverTapAnalytics = CleverTapAPI.getDefaultInstance(AppObjectController.getJoshApplication());
-                if (BuildConfig.DEBUG) {
-                    CleverTapAPI.setDebugLevel(CleverTapAPI.LogLevel.DEBUG);
+            try {
+                if (cleverTapAnalytics == null) {
+                    cleverTapAnalytics = CleverTapAPI.getDefaultInstance(AppObjectController.getJoshApplication());
+                    if (BuildConfig.DEBUG) {
+                        CleverTapAPI.setDebugLevel(CleverTapAPI.LogLevel.DEBUG);
+                    }
                 }
-            }
-            if (firebaseAnalytics == null) {
-                firebaseAnalytics = FirebaseAnalytics.getInstance(AppObjectController.getJoshApplication());
-            }
+                if (firebaseAnalytics == null) {
+                    firebaseAnalytics = FirebaseAnalytics.getInstance(AppObjectController.getJoshApplication());
+                }
+            }catch(Exception e){}
         });
     }
 
@@ -319,10 +321,14 @@ public class AppAnalytics {
             return;
         }
         JoshSkillExecutors.getBOUNDED().submit(() -> {
-            formatParameters();
-            pushToFirebase();
-            pushToCleverTap();
-            pushToFlurry(false);
+            try {
+                formatParameters();
+                pushToCleverTap();
+                pushToFirebase();
+                pushToFlurry(false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
 
     }

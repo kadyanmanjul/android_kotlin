@@ -9,9 +9,11 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.webkit.MimeTypeMap
 import android.widget.LinearLayout
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -19,6 +21,7 @@ import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.Utils
@@ -46,6 +49,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.io.File
+import java.util.Objects
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -230,14 +234,31 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
         showToast(getString(R.string.certificate_download_success))
         lifecycleScope.launch(Dispatchers.IO) {
             try {
+                val file = File(path)
+                val mime: MimeTypeMap = MimeTypeMap.getSingleton()
+                val ext: String = file.name.substring(file.name.lastIndexOf(".") + 1)
+                val type = mime.getMimeTypeFromExtension(ext)
                 val target = Intent(Intent.ACTION_VIEW)
                 target.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
                 target.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
-                target.setDataAndType(Uri.fromFile(File(path)), "application/pdf")
+                target.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    val contentUri: Uri = FileProvider.getUriForFile(
+                        Objects.requireNonNull(applicationContext),
+                        BuildConfig.APPLICATION_ID + ".provider", file
+                    )
+                    target.setDataAndType(contentUri, type)
+                } else {
+                    target.setDataAndType(Uri.fromFile(file), type)
+                }
+                target.flags =
+                    (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                 val intent = Intent.createChooser(target, "Open Certifificate ")
                 startActivity(intent)
             } catch (e: ActivityNotFoundException) {
                 e.printStackTrace()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }

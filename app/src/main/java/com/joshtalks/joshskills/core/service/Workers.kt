@@ -16,7 +16,6 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
-import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -468,7 +467,7 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
                         deviceId,
                         UpdateDeviceRequest()
                     )
-                    //TODO no need to send UpdateDeviceRequest object in patch request 
+                    // TODO no need to send UpdateDeviceRequest object in patch request 
                     details.apiStatus = ApiRespStatus.PATCH
                     details.update()
                 }
@@ -782,13 +781,20 @@ class CourseUsageSyncWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
-            val list = AppObjectController.appDatabase.courseUsageDao().getAllSession()
-                .parallelStream()
-                .map {
+            val db = AppObjectController.appDatabase
+            val sessionList = db.courseUsageDao().getAllSession()
+            val keys = sessionList.groupBy { it.conversationId }.keys
+            val courseIdList = db.courseDao().getCourseIdsFromConversationId(keys.toList())
+
+            val list = sessionList.parallelStream()
+                .map { courseUsageModel ->
                     CourseUsageSync(
-                        it.conversationId,
-                        it.startTime,
-                        it.endTime ?: 0
+                        courseId = courseIdList.findLast { it.conversationId == courseUsageModel.conversationId }?.courseId
+                            ?: -1,
+                        conversationId = courseUsageModel.conversationId,
+                        screenName = courseUsageModel.screenName ?: EMPTY,
+                        startTime = courseUsageModel.startTime,
+                        endTime = courseUsageModel.endTime ?: 0
                     )
                 }.toList()
             if (list.isEmpty()) {

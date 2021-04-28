@@ -23,8 +23,7 @@ abstract class TrackActivity : AppCompatActivity(), LifecycleObserver {
                 getConversationId()?.let {
                     CourseUsageService.startTimeConversation(
                         this@TrackActivity,
-                        it,
-                        javaClass.simpleName
+                        it, this@TrackActivity.javaClass.simpleName
                     )
                 }
             }

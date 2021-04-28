@@ -1165,7 +1165,6 @@ class WebRtcService : BaseWebRtcService() {
             .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_NONE)
         phoneCallState = CallState.CALL_STATE_IDLE
         Timber.tag(TAG).e("onDestroy")
-        removeSensor()
         executor.shutdown()
         super.onDestroy()
     }
