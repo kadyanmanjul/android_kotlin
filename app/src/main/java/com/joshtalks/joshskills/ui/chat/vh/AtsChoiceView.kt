@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.chat.vh
 import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -91,7 +90,7 @@ class AtsChoiceView : RelativeLayout {
             it.changeViewGroup(customLayout, answerFlowLayout)
         }
 
-        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+        CoroutineScope(Dispatchers.IO).launch(Dispatchers.Main) {
             delay(500)
             if (assessmentQuestion.question.isAttempted) {
                 callback?.alreadyAttempted(isCorrectAnswer())

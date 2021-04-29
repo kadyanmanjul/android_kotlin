@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.chat.vh
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -13,6 +14,9 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Group
 import androidx.core.view.ViewCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
@@ -24,19 +28,19 @@ import kotlin.math.roundToInt
 import kotlin.random.Random
 
 
-class GrammarHeadingView : FrameLayout, AudioPlayerEventListener {
+class GrammarHeadingView : FrameLayout, LifecycleObserver,AudioPlayerEventListener {
 
-    private lateinit var rootView: FrameLayout //root_view_fl
-    private lateinit var container: ConstraintLayout //container
-    private lateinit var questionHeading: AppCompatTextView //question_heading
-    private lateinit var questionDescription: AppCompatTextView //question_description
-    private lateinit var questionText: DashedUnderlinedTextView //question_text
-    private lateinit var regularAudioIv: AppCompatImageView //regular_audio_iv
-    private lateinit var slowAudioIv: AppCompatImageView //slow_audio_iv
-    private lateinit var singleAudioIv: AppCompatImageView //single_audio
-    private lateinit var group1: Group //group_1
-    private lateinit var group2: Group //group_2
-    var audioManager = ExoAudioPlayer.getInstance()
+    private lateinit var rootView: FrameLayout
+    private lateinit var container: ConstraintLayout
+    private lateinit var questionHeading: AppCompatTextView
+    private lateinit var questionDescription: AppCompatTextView
+    private lateinit var questionText: DashedUnderlinedTextView
+    private lateinit var regularAudioIv: AppCompatImageView
+    private lateinit var slowAudioIv: AppCompatImageView
+    private lateinit var singleAudioIv: AppCompatImageView
+    private lateinit var group1: Group
+    private lateinit var group2: Group
+    var audioManager: ExoAudioPlayer? = null
     var regularAudio: String? = null
     var slowAudio: String? = null
     var heading: String? = null
@@ -119,6 +123,7 @@ class GrammarHeadingView : FrameLayout, AudioPlayerEventListener {
         regularAudioIv.setOnTouchListener(onTouchListener)
         slowAudioIv.setOnTouchListener(onTouchListener)
         singleAudioIv.setOnTouchListener(onTouchListener)
+        audioManager = ExoAudioPlayer.getInstance()
 
     }
 
@@ -141,6 +146,14 @@ class GrammarHeadingView : FrameLayout, AudioPlayerEventListener {
         }
     }
 
+    private fun checkIsPlayer(): Boolean {
+        return audioManager != null
+    }
+
+    private fun isAudioPlaying(): Boolean {
+        return this.checkIsPlayer() && this.audioManager!!.isPlaying()
+    }
+
     private fun onPlayAudio(
         audioObject: AudioType
     ) {
@@ -160,6 +173,9 @@ class GrammarHeadingView : FrameLayout, AudioPlayerEventListener {
         this.heading = heading
         this.description = description
         this.isNewHeader = isNewHeader
+        if (isAudioPlaying()) {
+            audioManager?.onPause()
+        }
 
         if (this.heading.isNullOrBlank()) {
             questionHeading.visibility = View.GONE
@@ -207,6 +223,21 @@ class GrammarHeadingView : FrameLayout, AudioPlayerEventListener {
                 regularAudioIv.visibility = View.VISIBLE
             }
         }
+    }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    fun onPausePlayer() {
+        Log.d("Manjul", "onPausePlayer() called")
+        if (isAudioPlaying()) {
+            audioManager?.onPause()
+        }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        Log.d("Manjul", "onDetachedFromWindow() called")
+        if (isAudioPlaying()) {
+            audioManager?.onPause()
+        }
     }
 }

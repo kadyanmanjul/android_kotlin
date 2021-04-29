@@ -11,7 +11,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshFragment
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestionType
@@ -49,6 +48,7 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private var buttonView: Stub<GrammarButtonView>? = null
     private var quizQuestion: LessonQuestion? = null
     private var correctAnswers: Int = 0
+    private var currentQuizQuestion: Int = 0
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -85,7 +85,6 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
-
     }
 
     private fun subscribeRxBus() {
@@ -118,14 +117,39 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             if (assessmentQuestions.size > 0) {
                 binding.progressBar.max = assessmentQuestions.size
                 binding.progressBar.progress = 0
-                setupViews()
-
                 if (quizQuestion?.status == QUESTION_STATUS.AT) {
-                    //binding.progressBar.progress = binding.progressBar.max
-                    //setQuizScore(assessmentQuestions)
-                    //showQuizCompleteLayout()
+                    binding.progressBar.progress = binding.progressBar.max
+                    setQuizScore(assessmentQuestions)
+                    showQuizCompleteLayout()
                 }
+                setCurrentQuestion(assessmentQuestions)
+                if (currentQuizQuestion == assessmentQuestions.size) {
+                    currentQuizQuestion = currentQuizQuestion.minus(1)
+                    setupViews(currentQuizQuestion)
+                } else {
+                    setupViews(currentQuizQuestion)
+                }
+
             }
+        }
+    }
+
+    private fun setCurrentQuestion(assessmentQuestions: ArrayList<AssessmentQuestionWithRelations>) {
+        var isQuizAttempted = false
+        if (quizQuestion?.status == QUESTION_STATUS.AT) {
+            currentQuizQuestion = assessmentQuestions.size
+            return
+        }
+        assessmentQuestions.forEachIndexed { index, assessmentQuestionWithRelations ->
+            if (assessmentQuestionWithRelations.question.isAttempted) {
+                currentQuizQuestion = index.plus(1)
+                isQuizAttempted = true
+            }
+        }
+        if (isQuizAttempted) {
+            binding.progressBar.progress = currentQuizQuestion
+        } else {
+            binding.progressBar.progress = 0
         }
     }
 
@@ -139,23 +163,24 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         }
     }
 
-    private fun setupViews(position: Int = 0) {
+    private fun setupViews(position: Int) {
+        currentQuizQuestion = position
         headingView?.resolved().let {
             headingView!!.get().setup(
-                assessmentQuestions.get(position).question.mediaUrl,
-                assessmentQuestions.get(position).question.mediaUrl2,
-                assessmentQuestions.get(position).question.text,
-                assessmentQuestions.get(position).question.subText,
-                assessmentQuestions.get(position).question.isNewHeader
+                assessmentQuestions.get(currentQuizQuestion).question.mediaUrl,
+                assessmentQuestions.get(currentQuizQuestion).question.mediaUrl2,
+                assessmentQuestions.get(currentQuizQuestion).question.text,
+                assessmentQuestions.get(currentQuizQuestion).question.subText,
+                assessmentQuestions.get(currentQuizQuestion).question.isNewHeader
             )
         }
 
-        if (assessmentQuestions.get(position).question.choiceType == ChoiceType.ARRANGE_THE_SENTENCE) {
+        if (assessmentQuestions.get(currentQuizQuestion).question.choiceType == ChoiceType.ARRANGE_THE_SENTENCE) {
             mcqChoiceView?.get()?.visibility = View.GONE
             atsChoiceView?.resolved().let {
                 atsChoiceView?.get()?.visibility = View.VISIBLE
                 //TODO reset the view in setup as well for next question
-                atsChoiceView!!.get().setup(assessmentQuestions.get(position))
+                atsChoiceView!!.get().setup(assessmentQuestions.get(currentQuizQuestion))
                 atsChoiceView!!.get()
                     .addCallback(object : EnableDisableGrammarButtonCallback {
                         override fun disableGrammarButton() {
@@ -174,12 +199,12 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
 
                     })
             }
-        } else if (assessmentQuestions.get(position).question.choiceType == ChoiceType.SINGLE_SELECTION_TEXT) {
+        } else if (assessmentQuestions.get(currentQuizQuestion).question.choiceType == ChoiceType.SINGLE_SELECTION_TEXT) {
             atsChoiceView?.get()?.visibility = View.GONE
             mcqChoiceView?.resolved().let {
                 //TODO reset the view in setup as well for next question
                 mcqChoiceView?.get()?.visibility = View.VISIBLE
-                mcqChoiceView!!.get().setup(assessmentQuestions.get(position))
+                mcqChoiceView!!.get().setup(assessmentQuestions.get(currentQuizQuestion))
                 mcqChoiceView!!.get()
                     .addCallback(object : EnableDisableGrammarButtonCallback {
                         override fun disableGrammarButton() {
@@ -204,20 +229,20 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         }
 
         buttonView?.resolved().let {
-            buttonView!!.get().setup(assessmentQuestions.get(position))
+            buttonView!!.get().setup(assessmentQuestions.get(currentQuizQuestion))
             buttonView!!.get().addCallback(object : GrammarButtonView.CheckQuestionCallback {
                 override fun checkQuestionCallBack(): Boolean? {
-                    binding.progressBar.progress = position.plus(1)
-                    if (assessmentQuestions.get(position).question.choiceType == ChoiceType.ARRANGE_THE_SENTENCE) {
+                    binding.progressBar.progress = currentQuizQuestion.plus(1)
+                    if (assessmentQuestions.get(currentQuizQuestion).question.choiceType == ChoiceType.ARRANGE_THE_SENTENCE) {
                         return atsChoiceView?.get()?.isCorrectAnswer()?.apply {
-                            //saveAssessmentQuestionToDb(position, this)
+                            saveAssessmentQuestionToDb(currentQuizQuestion, this)
                             if (this) {
                                 correctAnswers = correctAnswers.plus(1)
                             }
                         }
-                    } else if (assessmentQuestions.get(position).question.choiceType == ChoiceType.SINGLE_SELECTION_TEXT) {
+                    } else if (assessmentQuestions.get(currentQuizQuestion).question.choiceType == ChoiceType.SINGLE_SELECTION_TEXT) {
                         return mcqChoiceView?.get()?.isCorrectAnswer()?.apply {
-                            //saveAssessmentQuestionToDb(position, this)
+                            saveAssessmentQuestionToDb(currentQuizQuestion, this)
                             if (this) {
                                 correctAnswers = correctAnswers.plus(1)
                             }
@@ -226,7 +251,7 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 }
 
                 override fun nextQuestion() {
-                    moveToNextGrammarQuestion(position)
+                    moveToNextGrammarQuestion()
                 }
             })
         }
@@ -266,20 +291,20 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 correctQuestionList.add(questionWithRelation.question.remoteId)
             }
         }
+        viewModel.saveQuizToServer(assessmentQuestions[currentQuizQuestion].question.assessmentId)
         if (currentQuizQuestion == assessmentQuestions.size - 1)
             lessonActivityListener?.onQuestionStatusUpdate(
                 QUESTION_STATUS.AT,
                 quizQuestion?.id,
                 quizCorrectQuestionIds = correctQuestionList
             )
-        viewModel.saveQuizToServer(assessmentQuestions[currentQuizQuestion].question.assessmentId)
     }
 
-    private fun moveToNextGrammarQuestion(position: Int) {
-        if (position >= assessmentQuestions.size.minus(1)) {
+    private fun moveToNextGrammarQuestion() {
+        if (currentQuizQuestion >= assessmentQuestions.size.minus(1)) {
             showQuizCompleteLayout()
         } else {
-            setupViews(position.plus(1))
+            setupViews(currentQuizQuestion.plus(1))
         }
     }
 
@@ -289,7 +314,76 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     }
 
     fun onRedoQuizClick() {
-        showToast("Redo quiz clicked")
+        correctAnswers = 0
+        assessmentQuestions.forEach { question ->
+            question.question.isAttempted = false
+            question.question.status = QuestionStatus.NONE
+            question.choiceList.forEach { choice ->
+                choice.isSelectedByUser = false
+                choice.userSelectedOrder = 0
+            }
+            viewModel.saveAssessmentQuestion(question)
+        }
+        lessonActivityListener?.onQuestionStatusUpdate(
+            QUESTION_STATUS.NA,
+            quizQuestion?.id,
+            quizCorrectQuestionIds = ArrayList()
+        )
+        currentQuizQuestion = 0
+        updateQuiz(assessmentQuestions[0])
+        binding.grammarCompleteLayout.visibility = View.GONE
+        binding.progressBar.progress = currentQuizQuestion
+        setupViews(currentQuizQuestion)
+    }
+
+    private fun updateQuiz(question: AssessmentQuestionWithRelations) {
+        /*binding.quizQuestionTv.text = getString(
+            R.string.ques_short_form,
+            currentQuizQuestion + 1,
+            assessmentQuestions.size, question.question.text
+        )
+
+        if (currentQuizQuestion == 0)
+            binding.previousQuestionIv.visibility = View.GONE
+        else
+            binding.previousQuestionIv.visibility = View.VISIBLE
+
+        if (assessmentQuestions.size - 1 == currentQuizQuestion)
+            binding.nextQuestionIv.visibility = View.GONE
+        else
+            binding.nextQuestionIv.visibility = View.VISIBLE
+
+        hideExplanation()
+        binding.explanationTv.text = question.reviseConcept?.description
+        binding.quizRadioGroup.check(-1)
+        question.choiceList.forEachIndexed { index, choice ->
+            when (index) {
+                0 -> {
+                    setupOption(binding.option1, choice, question)
+                }
+                1 -> {
+                    setupOption(binding.option2, choice, question)
+                }
+                2 -> {
+                    setupOption(binding.option3, choice, question)
+                }
+                3 -> {
+                    setupOption(binding.option4, choice, question)
+                }
+            }
+        }
+
+        binding.submitAnswerBtn.isEnabled = false
+        binding.continueBtn.visibility = View.GONE
+        if (question.question.isAttempted) {
+            binding.submitAnswerBtn.visibility = View.GONE
+            binding.showExplanationBtn.visibility = View.VISIBLE
+            binding.continueBtn.visibility = View.VISIBLE
+        } else {
+            binding.submitAnswerBtn.visibility = View.VISIBLE
+            binding.showExplanationBtn.visibility = View.GONE
+            binding.continueBtn.visibility = View.GONE
+        }*/
     }
 
     private fun showQuizCompleteLayout() {

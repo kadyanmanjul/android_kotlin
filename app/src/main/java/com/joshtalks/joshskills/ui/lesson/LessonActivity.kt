@@ -260,6 +260,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
         binding.lessonViewpager.adapter = adapter
         binding.lessonViewpager.requestTransparentRegion(binding.lessonViewpager)
+        binding.lessonViewpager.offscreenPageLimit = 4
         binding.lessonViewpager.recyclerView.enforceSingleScrollDirection()
 
         tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
