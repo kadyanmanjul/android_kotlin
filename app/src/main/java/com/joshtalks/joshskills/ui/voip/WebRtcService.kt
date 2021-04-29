@@ -99,7 +99,7 @@ class WebRtcService : BaseWebRtcService() {
     private var userAgoraId: Int? = null
     var channelName: String? = null
     private var isEngineInit = false
-    var isCallerJoin: Boolean = false
+    var isCalleeJoin: Boolean = false
     private var isMicEnable = true
     private var isSpeakerEnable = false
     private var oppositeCallerId: Int? = null
@@ -350,7 +350,7 @@ class WebRtcService : BaseWebRtcService() {
                 callCallback?.get()?.onDisconnect(
                     callId,
                     callData?.let { getChannelName(it) },
-                    if (isCallerJoin) {
+                    if (isCalleeJoin) {
                         TimeUnit.SECONDS.toMillis(stats.totalDuration.toLong())
                     } else {
                         getTimeOfTalk()
@@ -368,7 +368,7 @@ class WebRtcService : BaseWebRtcService() {
             oppositeCallerId = uid
             compositeDisposable.clear()
             isCallWasOnGoing = true
-            isCallerJoin = true
+            isCalleeJoin = true
             if (callStartTime == 0L) {
                 startCallTimer()
             }
@@ -387,7 +387,7 @@ class WebRtcService : BaseWebRtcService() {
                 val id = getUID(it)
                 Timber.tag(TAG).e("onUserOffline =  $id")
                 if (id != uid && reason == Constants.USER_OFFLINE_QUIT) {
-                    if (isCallerJoin) {
+                    if (isCalleeJoin) {
                         endCall(apiCall = true, action = CallAction.DISCONNECT)
                     } else {
                         endCall(apiCall = true, action = CallAction.AUTO_DISCONNECT)
@@ -459,11 +459,11 @@ class WebRtcService : BaseWebRtcService() {
                     Completable.complete()
                         .delay(5, TimeUnit.SECONDS)
                         .doOnComplete {
-                            Timber.tag("Reconnect").e("doOnComplete  $isCallerJoin")
+                            Timber.tag("Reconnect").e("doOnComplete  $isCalleeJoin")
                         }
                         .subscribeOn(Schedulers.io())
                         .subscribe {
-                            if (isCallerJoin) {
+                            if (isCalleeJoin) {
                                 lostNetwork()
                             }
                         }
@@ -1098,7 +1098,7 @@ class WebRtcService : BaseWebRtcService() {
         stopRing()
         joshAudioManager?.stopConnectTone()
         removeSensor()
-        isCallerJoin = false
+        isCalleeJoin = false
         eventListener = null
         isSpeakerEnable = false
         isMicEnable = true
@@ -1136,7 +1136,7 @@ class WebRtcService : BaseWebRtcService() {
         isEngineInit = false
         isTimeOutToPickCall = false
         switchChannel = false
-        isCallerJoin = false
+        isCalleeJoin = false
         callStartTime = 0L
         retryInitLibrary = 0
         userDetailMap = null
@@ -1153,7 +1153,7 @@ class WebRtcService : BaseWebRtcService() {
         AppObjectController.mRtcEngine = null
         handlerThread?.quitSafely()
         isTimeOutToPickCall = false
-        isCallerJoin = false
+        isCalleeJoin = false
         callStartTime = 0L
         retryInitLibrary = 0
         isCallWasOnGoing = false
