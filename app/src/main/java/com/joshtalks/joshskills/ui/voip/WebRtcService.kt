@@ -339,9 +339,7 @@ class WebRtcService : BaseWebRtcService() {
             }
             callId = mRtcEngine?.callId
             switchChannel = false
-            if (CallType.OUTGOING == callType) {
-                callCallback?.get()?.onChannelJoin()
-            }
+            callCallback?.get()?.onChannelJoin()
         }
 
         override fun onLeaveChannel(stats: RtcStats) {
@@ -374,13 +372,7 @@ class WebRtcService : BaseWebRtcService() {
             if (callStartTime == 0L) {
                 startCallTimer()
             }
-            callCallback?.get()?.onConnect(uid.toString())
-            mHandler?.postDelayed(
-                {
-                    callCallback?.get()?.onServerConnect()
-                },
-                500
-            )
+            callCallback?.get()?.onCalleeConnect(uid.toString())
             addNotification(CallConnect().action, callData)
             addSensor()
             joshAudioManager?.startCommunication()
@@ -768,7 +760,7 @@ class WebRtcService : BaseWebRtcService() {
                                             callData = it
                                         }
                                         if (callCallback != null && callCallback?.get() != null) {
-                                            callCallback?.get()?.switchChannel(data)
+                                            callCallback?.get()?.onSwitchChannel(data)
                                         } else {
                                             startAutoPickCallActivity(false)
                                         }
@@ -1558,7 +1550,7 @@ class WebRtcService : BaseWebRtcService() {
                     callCallback?.get()?.onNoUserFound()
                 }
                 if (CallAction.ACCEPT == callAction) {
-                    callCallback?.get()?.onServerConnect()
+                    callCallback?.get()?.onCalleeConnect(EMPTY)
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -1612,13 +1604,11 @@ class NotificationId {
 
 interface WebRtcCallback {
     fun onChannelJoin() {}
-    fun onConnect(callId: String) {}
+    fun onCalleeConnect(callId: String) {}
     fun onDisconnect(callId: String?, channelName: String?, time: Long = 0) {}
     fun onCallReject(callId: String?) {}
-    fun switchChannel(data: HashMap<String, String?>) {}
+    fun onSwitchChannel(data: HashMap<String, String?>) {}
     fun onNoUserFound() {}
-    fun onServerConnect() {}
-    fun onIncomingCall() {}
     fun onNetworkLost() {}
     fun onNetworkReconnect() {}
     fun onHoldCall() {}

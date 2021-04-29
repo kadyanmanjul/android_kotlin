@@ -30,11 +30,11 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.LinkedHashMap
 import kotlin.collections.set
+import timber.log.Timber
 
 const val COURSE_ID = "course_id"
 const val TOPIC_ID = "topic_id"
@@ -95,12 +95,7 @@ class SearchingUserActivity : BaseActivity() {
 
     private var callback: WebRtcCallback = object : WebRtcCallback {
 
-        override fun onIncomingCall() {
-            super.onIncomingCall()
-            this@SearchingUserActivity.finish()
-        }
-
-        override fun onConnect(connectId: String) {
+        override fun onCalleeConnect(connectId: String) {
             compositeDisposable.clear()
             Timber.tag("SearchingUserActivity").e("onConnect")
             outgoingCallData[RTC_CALLER_UID_KEY] = connectId
@@ -109,7 +104,7 @@ class SearchingUserActivity : BaseActivity() {
             this@SearchingUserActivity.finish()
         }
 
-        override fun switchChannel(data: HashMap<String, String?>) {
+        override fun onSwitchChannel(data: HashMap<String, String?>) {
             compositeDisposable.clear()
             val callActivityIntent =
                 Intent(this@SearchingUserActivity, WebRtcActivity::class.java).apply {

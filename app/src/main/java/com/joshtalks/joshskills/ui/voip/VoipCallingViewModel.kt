@@ -25,11 +25,11 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
         topicId: Int?,
         location: Location?,
         aFunction: (String, String, Int) -> Unit,
-        is_demo: Boolean = PrefManager.getBoolValue(IS_DEMO_P2P,defValue = false)
+        is_demo: Boolean = PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val request= AgoraTokenRequest( Mentor.getInstance().getId(),courseId,is_demo,topicId.toString())
+                val request = AgoraTokenRequest(Mentor.getInstance().getId(), courseId, is_demo, topicId.toString())
                 val response =
                     AppObjectController.p2pNetworkService.getAgoraClientToken(request)
                 if (response.isSuccessful && response.code() in 200..203) {
@@ -60,7 +60,6 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
             }
         }
     }
-
 
     fun initCallForFavoriteCaller(
         courseId: String,
@@ -96,7 +95,6 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
             }
         }
     }
-
 
     private fun uploadUserCurrentLocation(channelName: String, location: Location) {
         viewModelScope.launch(Dispatchers.IO) {

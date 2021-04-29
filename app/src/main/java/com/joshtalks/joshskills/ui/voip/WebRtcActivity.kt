@@ -101,7 +101,7 @@ class WebRtcActivity : AppCompatActivity() {
 
     private var callback: WebRtcCallback = object : WebRtcCallback {
 
-        override fun onConnect(callId: String) {
+        override fun onCalleeConnect(callId: String) {
             Timber.tag(TAG).e("onConnect")
             AppObjectController.uiHandler.removeCallbacksAndMessages(null)
             AppObjectController.uiHandler.postDelayed(
@@ -125,13 +125,6 @@ class WebRtcActivity : AppCompatActivity() {
             Timber.tag(TAG).e("onCallReject")
             onStopCall()
             checkAndShowRating(callId)
-        }
-
-        override fun onServerConnect() {
-            super.onServerConnect()
-            Timber.tag(TAG).e("onServerConnect")
-            updateCallInfo()
-            PrefManager.put(P2P_LAST_CALL, true)
         }
 
         override fun onNetworkLost() {
@@ -350,11 +343,6 @@ class WebRtcActivity : AppCompatActivity() {
         volumeControlStream = AudioManager.STREAM_MUSIC
         super.onDestroy()
     }
-
-
-    /*override fun onBackPressed() {
-    }
-*/
 
     private fun addObserver() {
         userDetailLiveData.observe(
