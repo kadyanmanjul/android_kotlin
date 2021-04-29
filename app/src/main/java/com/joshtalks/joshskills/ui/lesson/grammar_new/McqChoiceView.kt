@@ -42,7 +42,7 @@ class McqChoiceView : RadioGroup {
                 val optionView = getOptionView(it)
                 mcqOptionsRadioGroup.addView(optionView)
             }
-        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+        CoroutineScope(Dispatchers.IO).launch(Dispatchers.Main) {
             delay(500)
             if (assessmentQuestion.question.isAttempted) {
                 callback?.alreadyAttempted(isCorrectAnswer())

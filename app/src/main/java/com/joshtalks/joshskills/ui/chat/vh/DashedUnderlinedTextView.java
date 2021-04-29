@@ -55,7 +55,7 @@ public class DashedUnderlinedTextView extends AppCompatTextView {
         mPaint.setStrokeWidth(mStrokeWidth);
 
         // Comment below line if no dashed underline needed.
-        mPaint.setPathEffect(new DashPathEffect(new float[]{5, 5}, 0));
+        mPaint.setPathEffect(new DashPathEffect(new float[]{20, 10}, 1));
     }
 
     @SuppressWarnings("unused")

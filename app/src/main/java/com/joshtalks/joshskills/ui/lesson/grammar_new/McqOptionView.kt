@@ -1,17 +1,15 @@
 package com.joshtalks.joshskills.ui.lesson.grammar_new
 
 import android.content.Context
-import android.graphics.PorterDuff
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatRadioButton
 import androidx.core.content.ContextCompat
-import com.github.mikephil.charting.utils.Utils
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
-import kotlin.math.roundToInt
 
 class McqOptionView(context: Context) : AppCompatRadioButton(context) {
 
@@ -85,9 +83,9 @@ class McqOptionView(context: Context) : AppCompatRadioButton(context) {
                     val currentPaddingBottom = v.paddingBottom
                     v.setPadding(
                         v.paddingLeft,
-                        currentPaddingTop + Utils.convertDpToPixel(3f).roundToInt(),
+                        currentPaddingTop + Utils.dpToPx(3),
                         v.paddingRight,
-                        currentPaddingBottom - Utils.convertDpToPixel(3f).roundToInt(),
+                        currentPaddingBottom - Utils.dpToPx(3),
                     )
                     v.invalidate()
                 }
@@ -100,9 +98,9 @@ class McqOptionView(context: Context) : AppCompatRadioButton(context) {
                     val currentPaddingBottom = v.paddingBottom
                     v.setPadding(
                         v.paddingLeft,
-                        currentPaddingTop - Utils.convertDpToPixel(3f).roundToInt(),
+                        currentPaddingTop - Utils.dpToPx(3),
                         v.paddingRight,
-                        currentPaddingBottom + Utils.convertDpToPixel(3f).roundToInt(),
+                        currentPaddingBottom + Utils.dpToPx(3),
                     )
                     v.invalidate()
                 }

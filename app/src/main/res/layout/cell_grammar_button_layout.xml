@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_2sdp"
                 android:layout_marginEnd="@dimen/_14sdp"
-                android:layout_marginBottom="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_8sdp"
                 app:layout_constraintBottom_toBottomOf="@id/flag_barrier"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:srcCompat="@drawable/ic_flag_vector" />
@@ -32,13 +32,15 @@
                 android:id="@+id/correct_answer_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                 android:textColor="@color/grammar_green_color"
                 android:textSize="@dimen/_18ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/flag_iv"
+                app:layout_constraintHorizontal_bias="0"
                 tools:text="सही जवाब:" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -60,13 +62,15 @@
                 android:id="@+id/wrong_answer_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                 android:textColor="@color/grammar_red_color_dark"
                 android:textSize="@dimen/_18ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintEnd_toStartOf="@id/flag_iv"
                 tools:text="सही जवाब:" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -95,7 +99,7 @@
                 android:id="@+id/explanation_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                 android:textColor="@color/grammar_red_color_dark"
@@ -103,6 +107,8 @@
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/wrong_answer_desc"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintEnd_toEndOf="parent"
                 tools:text="अनुवाद: "
                 tools:visibility="visible" />
 
@@ -130,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 app:constraint_referenced_ids="wrong_answer_title,wrong_answer_desc,explanation_title,explanation_text"
-                tools:visibility="gone" />
+                tools:visibility="visible" />
 
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/right_answer_group"
@@ -138,7 +144,7 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 app:constraint_referenced_ids="correct_answer_title,correct_answer_desc"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
