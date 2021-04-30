@@ -9,8 +9,6 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.utils.Utils
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.AnimateAtsOtionViewEvent
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.nex3z.flowlayout.FlowLayout
 import kotlin.math.roundToInt
@@ -24,6 +22,13 @@ class CustomWord : AppCompatTextView {
     constructor(context: Context, choice: Choice) : this(context) {
         this.choice = choice
         text = choice.text
+        setPadding(
+            mPaddingLeft,
+            mPaddingTop,
+            mPaddingRight,
+            mPaddingBottom
+        )
+        invalidate()
     }
 
     fun changeViewGroup(optionsLayout: CustomLayout, answerLayout: FlowLayout) {
@@ -36,10 +41,10 @@ class CustomWord : AppCompatTextView {
             )
             layoutParams.gravity = Gravity.CENTER
             layoutParams.setMargins(
-                Utils.convertDpToPixel(14f).roundToInt(),
-                Utils.convertDpToPixel(22f).roundToInt(),
-                Utils.convertDpToPixel(14f).roundToInt(),
-                Utils.convertDpToPixel(22f).roundToInt()
+                mPadding14F,
+                mPadding14F,
+                mPadding14F,
+                mPadding14F
             )
             setLayoutParams(layoutParams)
             optionsLayout.removeViewCustomLayout(this, choice)
@@ -62,10 +67,10 @@ class CustomWord : AppCompatTextView {
             )
             layoutParams.gravity = Gravity.CENTER
             layoutParams.setMargins(
-                Utils.convertDpToPixel(14f).roundToInt(),
-                Utils.convertDpToPixel(14f).roundToInt(),
-                Utils.convertDpToPixel(14f).roundToInt(),
-                Utils.convertDpToPixel(14f).roundToInt()
+                mPadding14F,
+                mPadding14F,
+                mPadding14F,
+                mPadding14F
             )
             setLayoutParams(layoutParams)
             answerLayout.removeView(this)
@@ -78,6 +83,13 @@ class CustomWord : AppCompatTextView {
 
     companion object {
         private const val TAG = "CustomWord"
+        var mPaddingTop = Utils.convertDpToPixel(35f).roundToInt()
+        var mPaddingBottom = Utils.convertDpToPixel(35f).roundToInt()
+        var mPaddingLeft = Utils.convertDpToPixel(30f).roundToInt()
+        var mPaddingRight = Utils.convertDpToPixel(30f).roundToInt()
+        private var mPadding14F = Utils.convertDpToPixel(14f).roundToInt()
+        private var mPadding22F = Utils.convertDpToPixel(22f).roundToInt()
+
     }
 
     init {
@@ -87,16 +99,16 @@ class CustomWord : AppCompatTextView {
         )
         layoutParams.gravity = Gravity.CENTER
         layoutParams.setMargins(
-            Utils.convertDpToPixel(14f).roundToInt(),
-            Utils.convertDpToPixel(14f).roundToInt(),
-            Utils.convertDpToPixel(14f).roundToInt(),
-            Utils.convertDpToPixel(14f).roundToInt()
+            mPadding14F,
+            mPadding14F,
+            mPadding14F,
+            mPadding14F
         )
         setLayoutParams(layoutParams)
         gravity = Gravity.CENTER
-        minWidth = 160
+        minWidth = 125
         textAlignment = TEXT_ALIGNMENT_CENTER
-        textSize = 22f
+        textSize = 16f
         setOnTouchListener { v, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
@@ -104,13 +116,11 @@ class CustomWord : AppCompatTextView {
                         context,
                         R.drawable.rounded_rectangle_with_grey_border_pressed
                     )
-                    val currentPaddingTop = v.paddingTop
-                    val currentPaddingBottom = v.paddingBottom
                     v.setPadding(
-                        v.paddingLeft,
-                        currentPaddingTop + Utils.convertDpToPixel(3f).roundToInt(),
-                        v.paddingRight,
-                        currentPaddingBottom - Utils.convertDpToPixel(3f).roundToInt(),
+                        mPaddingLeft,
+                        mPaddingTop + Utils.convertDpToPixel(3f).roundToInt(),
+                        mPaddingRight,
+                        mPaddingBottom - Utils.convertDpToPixel(3f).roundToInt(),
                     )
                     v.invalidate()
                 }
@@ -119,13 +129,11 @@ class CustomWord : AppCompatTextView {
                         context,
                         R.drawable.rounded_rectangle_with_grey_border
                     )
-                    val currentPaddingTop = v.paddingTop
-                    val currentPaddingBottom = v.paddingBottom
                     v.setPadding(
-                        v.paddingLeft,
-                        currentPaddingTop - Utils.convertDpToPixel(3f).roundToInt(),
-                        v.paddingRight,
-                        currentPaddingBottom + Utils.convertDpToPixel(3f).roundToInt(),
+                        mPaddingLeft,
+                        mPaddingTop - Utils.convertDpToPixel(3f).roundToInt(),
+                        mPaddingRight,
+                        mPaddingBottom + Utils.convertDpToPixel(3f).roundToInt(),
                     )
                     v.invalidate()
                 }
