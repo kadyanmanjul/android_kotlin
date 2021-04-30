@@ -329,6 +329,7 @@ class WebRtcService : BaseWebRtcService() {
                         startCallTimer()
                         callStatusNetworkApi(it, CallAction.ACCEPT)
                         addNotification(CallConnect().action, callData)
+                        //addSensor()
                         joshAudioManager?.startCommunication()
                     }
                 } catch (ex: Exception) {
