@@ -94,12 +94,7 @@ class DemoSearchingUserActivity : AppCompatActivity() {
 
     private var callback: WebRtcCallback = object : WebRtcCallback {
 
-        override fun onIncomingCall() {
-            super.onIncomingCall()
-            this@DemoSearchingUserActivity.finish()
-        }
-
-        override fun onConnect(connectId: String) {
+        override fun onCalleeConnect(connectId: String) {
             compositeDisposable.clear()
             Timber.tag("SearchingUserActivity").e("onConnect")
             outgoingCallData[RTC_CALLER_UID_KEY] = connectId
@@ -110,7 +105,7 @@ class DemoSearchingUserActivity : AppCompatActivity() {
             this@DemoSearchingUserActivity.finish()
         }
 
-        override fun switchChannel(data: HashMap<String, String?>) {
+        override fun onSwitchChannel(data: HashMap<String, String?>) {
             compositeDisposable.clear()
             val callActivityIntent =
                 Intent(this@DemoSearchingUserActivity, WebRtcActivity::class.java).apply {

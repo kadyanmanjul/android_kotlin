@@ -35,7 +35,7 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
                         }
                         findViewById<View>(R.id.ongoing_call_container).visibility = View.VISIBLE
                         val callType = mBoundService?.getCallType()
-                        val callConnected = mBoundService?.isCallerJoin ?: false
+                        val callConnected = mBoundService?.isCalleeJoin ?: false
 
                         if (callType == CallType.OUTGOING) {
                             if (callConnected) {
@@ -61,8 +61,8 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
     }
 
     private var callback: WebRtcCallback = object : WebRtcCallback {
-        override fun onConnect(callId: String) {
-            super.onConnect(callId)
+        override fun onCalleeConnect(callId: String) {
+            super.onCalleeConnect(callId)
             lifecycleScope.launch(Dispatchers.Main) {
                 callTimerUi()
             }
