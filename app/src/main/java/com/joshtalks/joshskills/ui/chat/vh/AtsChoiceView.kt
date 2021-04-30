@@ -192,9 +192,9 @@ class AtsChoiceView : RelativeLayout {
             wordLayoutParams.gravity = Gravity.CENTER
             wordLayoutParams.setMargins(
                 Utils.convertDpToPixel(10f).roundToInt(),
-                Utils.convertDpToPixel(12f).roundToInt(),
+                Utils.convertDpToPixel(20f).roundToInt(),
                 Utils.convertDpToPixel(10f).roundToInt(),
-                Utils.convertDpToPixel(12f).roundToInt()
+                Utils.convertDpToPixel(20f).roundToInt()
             )
             dummyWordView.setLayoutParams(wordLayoutParams)
             dummyWordView.visibility = INVISIBLE
@@ -206,9 +206,9 @@ class AtsChoiceView : RelativeLayout {
             )
             layoutParams.setMargins(
                 0,
-                Utils.convertDpToPixel(10f).roundToInt(),
+                Utils.convertDpToPixel(40f).roundToInt(),
                 0,
-                Utils.convertDpToPixel(10f).roundToInt()
+                Utils.convertDpToPixel(40f).roundToInt()
             )
             line.setLayoutParams(layoutParams)
             line.background = ContextCompat.getDrawable(context, R.color.light_shade_of_gray)

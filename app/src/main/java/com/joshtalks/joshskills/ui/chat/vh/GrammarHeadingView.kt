@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.chat.vh
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
@@ -13,7 +14,6 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Group
-import androidx.core.view.ViewCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -24,11 +24,10 @@ import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEvent
 import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.muddzdev.styleabletoast.StyleableToast
-import kotlin.math.roundToInt
 import kotlin.random.Random
 
 
-class GrammarHeadingView : FrameLayout, LifecycleObserver,AudioPlayerEventListener {
+class GrammarHeadingView : FrameLayout, LifecycleObserver, AudioPlayerEventListener {
 
     private lateinit var rootView: FrameLayout
     private lateinit var container: ConstraintLayout
@@ -63,35 +62,24 @@ class GrammarHeadingView : FrameLayout, LifecycleObserver,AudioPlayerEventListen
         init()
     }
 
-    val onTouchListener = OnTouchListener { v, event ->
+    @SuppressLint("ClickableViewAccessibility")
+    val onTouchListener = OnTouchListener {  v, event ->
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                val paddingBottom = v.paddingBottom
-                val paddingStart = ViewCompat.getPaddingStart(v)
-                val paddingEnd = ViewCompat.getPaddingEnd(v)
-                val paddingTop = v.paddingTop
-                ViewCompat.setPaddingRelative(
-                    v,
-                    paddingStart,
-                    paddingTop + com.github.mikephil.charting.utils.Utils.convertDpToPixel(3f)
-                        .roundToInt(),
-                    paddingEnd,
-                    paddingBottom
+                v.setPadding(
+                    v.paddingLeft,
+                    v.paddingTop + Utils.dpToPx(3),
+                    v.paddingRight,
+                    v.paddingBottom - Utils.dpToPx(3),
                 )
                 v.invalidate()
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                val paddingBottom = v.paddingBottom
-                val paddingStart = ViewCompat.getPaddingStart(v)
-                val paddingEnd = ViewCompat.getPaddingEnd(v)
-                val paddingTop = v.paddingTop
-                ViewCompat.setPaddingRelative(
-                    v,
-                    paddingStart,
-                    paddingTop - com.github.mikephil.charting.utils.Utils.convertDpToPixel(3f)
-                        .roundToInt(),
-                    paddingEnd,
-                    paddingBottom
+                v.setPadding(
+                    v.paddingLeft,
+                    v.paddingTop - Utils.dpToPx(3),
+                    v.paddingRight,
+                    v.paddingBottom + Utils.dpToPx(3),
                 )
                 v.invalidate()
             }
@@ -99,6 +87,7 @@ class GrammarHeadingView : FrameLayout, LifecycleObserver,AudioPlayerEventListen
         false
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun init() {
         View.inflate(context, R.layout.cell_grammar_heading_layout, this)
         rootView = findViewById(R.id.root_view)
