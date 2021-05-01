@@ -16,33 +16,24 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_6sdp"
             android:background="@drawable/rect_with_bound"
-            android:backgroundTint="@color/light_blue"
+            android:backgroundTint="#14107BE5"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_default="percent"
-            android:visibility="gone"
             app:layout_constraintWidth_percent=".93">
-
-            <View
-                android:layout_width="@dimen/_2sdp"
-                android:layout_height="0dp"
-                android:layout_margin="0dp"
-                android:background="@color/colorPrimary"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/image"
-                android:layout_width="@dimen/_12sdp"
-                android:layout_height="@dimen/_12sdp"
-                android:layout_marginHorizontal="@dimen/_10sdp"
-                app:layout_constraintVertical_bias="0.2"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"
                 android:src="@drawable/ic_info"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="@id/info_text" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/info_text"
@@ -50,13 +41,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/_8sdp"
                 android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_1sdp"
                 android:minLines="1"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/image"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="Student of the Week is announed at 10 AM on every Monday" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -69,21 +61,21 @@
             android:background="?android:attr/selectableItemBackground"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:listitem="@layout/list_item"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/info" />
+            app:layout_constraintTop_toBottomOf="@id/info"
+            tools:listitem="@layout/list_item" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/user_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
-            android:orientation="vertical"
-            android:padding="@dimen/_4sdp"
-            android:visibility="visible"
             android:clickable="true"
             android:focusable="true"
             android:foreground="?android:attr/selectableItemBackground"
+            android:orientation="vertical"
+            android:padding="@dimen/_4sdp"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -92,10 +84,10 @@
                 android:id="@+id/rank"
                 android:layout_width="@dimen/_60sdp"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:padding="@dimen/_8sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/white"
-                android:gravity="center"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.01"
@@ -110,21 +102,21 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/_8sdp"
                 android:layout_marginStart="@dimen/_64sdp"
-                android:gravity="center_vertical|start"
-                app:layout_constraintBottom_toBottomOf="parent"
                 android:background="@drawable/circle2"
                 android:backgroundTint="@color/white"
+                android:gravity="center_vertical|start"
                 android:padding="@dimen/_1sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/user_pic"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                tools:src="@color/checkmark_blue"
-                tools:visibility="visible" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/user_pic"
+                    android:layout_width="@dimen/_40sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    tools:src="@color/checkmark_blue"
+                    tools:visibility="visible" />
             </FrameLayout>
 
             <FrameLayout
@@ -133,14 +125,14 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/circle2"
                 android:backgroundTint="@color/colorPrimary"
-                app:layout_constraintHorizontal_bias="1"
-                app:layout_constraintVertical_bias="1"
-                app:layout_constraintStart_toStartOf="@id/user_pic_frame"
-                app:layout_constraintEnd_toEndOf="@id/user_pic_frame"
-                app:layout_constraintTop_toTopOf="@id/user_pic_frame"
-                app:layout_constraintBottom_toBottomOf="@id/user_pic_frame"
+                android:padding="@dimen/_2sdp"
                 android:visibility="gone"
-                android:padding="@dimen/_2sdp">
+                app:layout_constraintBottom_toBottomOf="@id/user_pic_frame"
+                app:layout_constraintEnd_toEndOf="@id/user_pic_frame"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toStartOf="@id/user_pic_frame"
+                app:layout_constraintTop_toTopOf="@id/user_pic_frame"
+                app:layout_constraintVertical_bias="1">
 
                 <ImageView
                     android:layout_width="@dimen/_8sdp"
@@ -164,8 +156,8 @@
                 app:layout_constraintEnd_toStartOf="@id/points"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toEndOf="@id/user_pic_frame"
-                app:layout_goneMarginStart="@dimen/_84sdp"
                 app:layout_constraintTop_toTopOf="@+id/points"
+                app:layout_goneMarginStart="@dimen/_84sdp"
                 tools:text="@string/improve_answer" />
 
             <androidx.appcompat.widget.AppCompatTextView
