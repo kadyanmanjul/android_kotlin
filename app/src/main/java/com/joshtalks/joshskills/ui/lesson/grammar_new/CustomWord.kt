@@ -7,11 +7,10 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
-import com.github.mikephil.charting.utils.Utils
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.nex3z.flowlayout.FlowLayout
-import kotlin.math.roundToInt
 
 class CustomWord : AppCompatTextView {
 
@@ -83,12 +82,12 @@ class CustomWord : AppCompatTextView {
 
     companion object {
         private const val TAG = "CustomWord"
-        var mPaddingTop = Utils.convertDpToPixel(35f).roundToInt()
-        var mPaddingBottom = Utils.convertDpToPixel(35f).roundToInt()
-        var mPaddingLeft = Utils.convertDpToPixel(30f).roundToInt()
-        var mPaddingRight = Utils.convertDpToPixel(30f).roundToInt()
-        private var mPadding14F = Utils.convertDpToPixel(14f).roundToInt()
-        private var mPadding22F = Utils.convertDpToPixel(22f).roundToInt()
+        var mPaddingTop = Utils.dpToPx(18)
+        var mPaddingBottom = Utils.dpToPx(16)
+        var mPaddingLeft = Utils.dpToPx(16)
+        var mPaddingRight = Utils.dpToPx(15)
+        private var mPadding14F = Utils.dpToPx(7)
+        private var mPadding22F = Utils.dpToPx(11)
 
     }
 
@@ -106,7 +105,7 @@ class CustomWord : AppCompatTextView {
         )
         setLayoutParams(layoutParams)
         gravity = Gravity.CENTER
-        minWidth = 125
+        minWidth = Utils.dpToPx(40)
         textAlignment = TEXT_ALIGNMENT_CENTER
         textSize = 16f
         setOnTouchListener { v, event ->
@@ -118,9 +117,9 @@ class CustomWord : AppCompatTextView {
                     )
                     v.setPadding(
                         mPaddingLeft,
-                        mPaddingTop + Utils.convertDpToPixel(3f).roundToInt(),
+                        mPaddingTop + Utils.dpToPx(3),
                         mPaddingRight,
-                        mPaddingBottom - Utils.convertDpToPixel(3f).roundToInt(),
+                        mPaddingBottom - Utils.dpToPx(3),
                     )
                     v.invalidate()
                 }
@@ -131,9 +130,9 @@ class CustomWord : AppCompatTextView {
                     )
                     v.setPadding(
                         mPaddingLeft,
-                        mPaddingTop - Utils.convertDpToPixel(3f).roundToInt(),
+                        mPaddingTop - Utils.dpToPx(3),
                         mPaddingRight,
-                        mPaddingBottom + Utils.convertDpToPixel(3f).roundToInt(),
+                        mPaddingBottom + Utils.dpToPx(3),
                     )
                     v.invalidate()
                 }

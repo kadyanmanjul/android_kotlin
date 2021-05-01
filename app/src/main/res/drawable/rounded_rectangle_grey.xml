@@ -6,10 +6,10 @@
         android:width="@dimen/_1sdp"
         android:color="@color/light_shade_of_gray" />
     <padding
-        android:bottom="@dimen/_8sdp"
-        android:left="@dimen/_8sdp"
-        android:right="@dimen/_8sdp"
-        android:top="@dimen/_8sdp" />
+        android:bottom="@dimen/_12sdp"
+        android:left="@dimen/_12sdp"
+        android:right="@dimen/_12sdp"
+        android:top="@dimen/_12sdp" />
     <corners
         android:bottomLeftRadius="@dimen/_8sdp"
         android:bottomRightRadius="@dimen/_8sdp"
