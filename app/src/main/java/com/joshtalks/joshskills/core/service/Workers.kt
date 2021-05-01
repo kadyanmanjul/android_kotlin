@@ -47,7 +47,14 @@ class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParamet
     override fun doWork(): Result {
         try {
             if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
-                val id = getGoogleAdId(context)
+                var id = getGoogleAdId(context)
+                // TODO abhi ke lea crash ka jugaad
+                if (id.isNullOrEmpty()){
+                    id= getGoogleAdId(context)
+                }
+                if (id.isNullOrEmpty()){
+                    return Result.failure()
+                }
                 PrefManager.put(USER_UNIQUE_ID, id)
                 Branch.getInstance().setIdentity(id)
             }
@@ -813,8 +820,13 @@ class CourseUsageSyncWorker(context: Context, workerParams: WorkerParameters) :
     }
 }
 
-fun getGoogleAdId(context: Context): String {
-    MobileAds.initialize(context)
-    val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context)
-    return adInfo.id
+fun getGoogleAdId(context: Context): String? {
+    try {
+        MobileAds.initialize(context)
+        val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context)
+        return adInfo.id
+    } catch (e:Exception){
+
+    }
+    return null
 }
