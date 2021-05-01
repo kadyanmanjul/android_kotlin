@@ -192,6 +192,12 @@ class LeaderBoardFragment : Fragment() {
     }
 
     private fun setData(leaderboardResponse1: LeaderboardResponse) {
+        if (leaderboardResponse1.info.isNullOrBlank()){
+            binding.info.visibility=View.GONE
+        } else{
+            binding.info.visibility=View.VISIBLE
+            binding.infoText.text = leaderboardResponse1.info
+        }
         userRank = leaderboardResponse1.current_mentor?.ranking ?: 0
         leaderboardResponse1.current_mentor?.let {
             setCurrentUserDetails(it)

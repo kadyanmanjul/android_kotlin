@@ -43,7 +43,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
     val searchActivityResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                viewModel.getFullLeaderBoardData(Mentor.getInstance().getId())
+                viewModel.getFullLeaderBoardData(Mentor.getInstance().getId(),getCourseId())
             }
         }
 
@@ -55,11 +55,15 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
         initToolbar()
         initViewPager()
         addObserver()
-        viewModel.getFullLeaderBoardData(Mentor.getInstance().getId())
+        viewModel.getFullLeaderBoardData(Mentor.getInstance().getId(),getCourseId())
     }
 
     override fun getConversationId(): String? {
         return intent.getStringExtra(CONVERSATION_ID)
+    }
+
+    fun getCourseId(): String? {
+        return intent.getStringExtra(COURSE_ID)
     }
 
     private fun initToolbar() {

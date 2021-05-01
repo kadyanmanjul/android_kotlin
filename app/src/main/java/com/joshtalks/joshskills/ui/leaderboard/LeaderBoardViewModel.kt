@@ -23,37 +23,37 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
     val leaderBoardDataOfBatch: MutableLiveData<LeaderboardResponse> = MutableLiveData()
     val leaderBoardDataOfLifeTime: MutableLiveData<LeaderboardResponse> = MutableLiveData()
 
-    fun getFullLeaderBoardData(mentorId: String) {
+    fun getFullLeaderBoardData(mentorId: String,course_id: String?) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiCallStatusLiveData.postValue(ApiCallStatus.START)
                 val map = HashMap<String, LeaderboardResponse>()
                 val call1 = async(Dispatchers.IO) {
-                    getMentorData(mentorId, "TODAY")?.let {
+                    getMentorData(mentorId, "TODAY",course_id)?.let {
                         leaderBoardDataOfToday.postValue(it)
                         map.put("TODAY", it)
                     }
                 }
                 val call2 = async(Dispatchers.IO) {
-                    getMentorData(mentorId, "WEEK")?.let {
+                    getMentorData(mentorId, "WEEK",course_id)?.let {
                         leaderBoardDataOfWeek.postValue(it)
                         map.put("WEEK", it)
                     }
                 }
                 val call3 = async(Dispatchers.IO) {
-                    getMentorData(mentorId, "MONTH")?.let {
+                    getMentorData(mentorId, "MONTH",course_id)?.let {
                         leaderBoardDataOfMonth.postValue(it)
                         map.put("MONTH", it)
                     }
                 }
                 val call4 = async(Dispatchers.IO) {
-                    getMentorData(mentorId, "BATCH")?.let {
+                    getMentorData(mentorId, "BATCH",course_id)?.let {
                         leaderBoardDataOfBatch.postValue(it)
                         map.put("BATCH", it)
                     }
                 }
                 val call5 = async(Dispatchers.IO) {
-                    getMentorData(mentorId, "LIFETIME")?.let {
+                    getMentorData(mentorId, "LIFETIME",course_id)?.let {
                         leaderBoardDataOfLifeTime.postValue(it)
                         map.put("LIFETIME", it)
                     }
@@ -69,10 +69,14 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    suspend fun getMentorData(mentorId: String, type: String): LeaderboardResponse? {
+    suspend fun getMentorData(
+        mentorId: String,
+        type: String,
+        course_id: String?
+    ): LeaderboardResponse? {
         try {
             val response =
-                AppObjectController.commonNetworkService.getLeaderBoardData(mentorId, type)
+                AppObjectController.commonNetworkService.getLeaderBoardData(mentorId, type,course_id)
             if (response.isSuccessful && response.body() != null) {
                 return response.body()!!
             }
