@@ -9,14 +9,13 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
-import com.github.mikephil.charting.utils.Utils
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomLayout
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.nex3z.flowlayout.FlowLayout
-import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -191,10 +190,10 @@ class AtsChoiceView : RelativeLayout {
             )
             wordLayoutParams.gravity = Gravity.CENTER
             wordLayoutParams.setMargins(
-                Utils.convertDpToPixel(10f).roundToInt(),
-                Utils.convertDpToPixel(20f).roundToInt(),
-                Utils.convertDpToPixel(10f).roundToInt(),
-                Utils.convertDpToPixel(20f).roundToInt()
+                Utils.dpToPx(5),
+                Utils.dpToPx(10),
+                Utils.dpToPx(5),
+                Utils.dpToPx(10)
             )
             dummyWordView.setLayoutParams(wordLayoutParams)
             dummyWordView.visibility = INVISIBLE
@@ -202,13 +201,13 @@ class AtsChoiceView : RelativeLayout {
             val line = View(context)
             val layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                Utils.convertDpToPixel(3f).roundToInt()
+                Utils.dpToPx(3)
             )
             layoutParams.setMargins(
                 0,
-                Utils.convertDpToPixel(40f).roundToInt(),
+                Utils.dpToPx(14),
                 0,
-                Utils.convertDpToPixel(40f).roundToInt()
+                Utils.dpToPx(0)
             )
             line.setLayoutParams(layoutParams)
             line.background = ContextCompat.getDrawable(context, R.color.light_shade_of_gray)
