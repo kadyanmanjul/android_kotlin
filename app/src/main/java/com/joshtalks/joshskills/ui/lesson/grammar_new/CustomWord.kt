@@ -3,12 +3,15 @@ package com.joshtalks.joshskills.ui.lesson.grammar_new
 import android.content.Context
 import android.view.Gravity
 import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.AnimateAtsOtionViewEvent
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.nex3z.flowlayout.FlowLayout
 
@@ -32,8 +35,8 @@ class CustomWord : AppCompatTextView {
 
     fun changeViewGroup(optionsLayout: CustomLayout, answerLayout: FlowLayout) {
         if (parent is CustomLayout) {
-//            val fromLocation = IntArray(2)
-//            this.getLocationOnScreen(fromLocation)
+            val fromLocation = IntArray(2)
+            this.getLocationOnScreen(fromLocation)
             val layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
@@ -48,18 +51,17 @@ class CustomWord : AppCompatTextView {
             setLayoutParams(layoutParams)
             optionsLayout.removeViewCustomLayout(this, choice)
             answerLayout.addView(this)
-
-//            val toLocation = IntArray(2)
-//            this.getLocationOnScreen(toLocation)
+            //this.invalidate()
 
             choice.apply {
                 this.userSelectedOrder = answerLayout.childCount
             }
-//            RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, toLocation, this.choice.text))
+            this.visibility= View.INVISIBLE
+            RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, this.height, this.width, this))
         } else {
 
-//            val fromLocation = IntArray(2)
-//            this.getLocationOnScreen(fromLocation)
+            val fromLocation = IntArray(2)
+            this.getLocationOnScreen(fromLocation)
             val layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
@@ -77,7 +79,14 @@ class CustomWord : AppCompatTextView {
             choice.apply {
                 this.userSelectedOrder = 100
             }
+            //RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, this.height, this.width, this))
+            //RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, this.height, this.width, this,optionsLayout))
+
         }
+    }
+
+    fun updateChoice(choice: Choice) {
+        this.choice = choice
     }
 
     companion object {

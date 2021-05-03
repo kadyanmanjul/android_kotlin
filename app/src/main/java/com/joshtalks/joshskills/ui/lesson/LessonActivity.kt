@@ -20,7 +20,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.extension.transaltionAnimation
+import com.joshtalks.joshskills.core.extension.transaltionAnimationNew
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
@@ -29,10 +29,12 @@ import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.AnimateAtsOtionViewEvent
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
+import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
@@ -52,7 +54,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     private var testId = -1
     private var whatsappUrl = EMPTY
     private val compositeDisposable = CompositeDisposable()
-
+    private var customView: CustomWord? = null
     var lesson: LessonModel? = null // Do not use this var
     private lateinit var tabs: ViewGroup
     var openLessonCompletedActivity: ActivityResultLauncher<Intent> =
@@ -84,7 +86,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         isDemo = if (intent.hasExtra(IS_DEMO)) intent.getBooleanExtra(IS_DEMO, false) else false
         whatsappUrl =
             if (intent.hasExtra(WHATSAPP_URL) && intent.getStringExtra(WHATSAPP_URL).isNullOrBlank()
-                .not()
+                    .not()
             ) intent.getStringExtra(WHATSAPP_URL) else EMPTY
         testId = intent.getIntExtra(TEST_ID, -1)
 
@@ -113,12 +115,26 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     private fun subscribeRxBus() {
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(AnimateAtsOtionViewEvent::class.java)
-                .subscribeOn(Schedulers.computation())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { event ->
-                    binding.animationView.text = event.text ?: "Word"
-                    binding.animationView.x = event.fromLocation[0].toFloat()
-                    binding.animationView.y = event.fromLocation[1].toFloat()
-                    binding.animationView.transaltionAnimation(event.fromLocation, event.toLocation)
+                    if (customView == null) {
+                        customView = CustomWord(this, event.customWord.choice)
+                    } else {
+                        binding.rootView.removeView(customView)
+                        customView?.updateChoice(event.customWord.choice)
+                        //customView?.choice = event.customWord.choice
+                    }
+                    customView?.apply {
+                        binding.rootView.addView(this)
+                        this.text = event.customWord.choice.text
+                        this.x = event.fromLocation[0].toFloat()
+                        this.y = event.fromLocation[1].toFloat() - event.height.toFloat()
+                        val toLocation = IntArray(2)
+                        event.customWord.getLocationOnScreen(toLocation)
+                        toLocation[1] = toLocation[1] - (event.height) + CustomWord.mPaddingTop
+                        this.transaltionAnimationNew(toLocation, event.customWord,event.optionLayout)
+                    }
                 }
         )
     }
@@ -189,9 +205,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             CoroutineScope(Dispatchers.IO).launch {
                 viewModel.lessonLiveData.value?.let { lesson ->
                     val lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
-                        lesson.vocabStatus == LESSON_STATUS.CO &&
-                        lesson.readingStatus == LESSON_STATUS.CO &&
-                        lesson.speakingStatus == LESSON_STATUS.CO
+                            lesson.vocabStatus == LESSON_STATUS.CO &&
+                            lesson.readingStatus == LESSON_STATUS.CO &&
+                            lesson.speakingStatus == LESSON_STATUS.CO
 
                     if (lessonCompleted) {
                         lesson.status = LESSON_STATUS.CO
@@ -305,20 +321,20 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         }.attach()
 
         binding.lessonTabLayout.addOnTabSelectedListener(object :
-                TabLayout.OnTabSelectedListener {
+            TabLayout.OnTabSelectedListener {
 
-                override fun onTabSelected(tab: TabLayout.Tab?) {
-                    setSelectedColor(tab)
-                }
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                setSelectedColor(tab)
+            }
 
-                override fun onTabReselected(tab: TabLayout.Tab?) {
-                    setSelectedColor(tab)
-                }
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                setSelectedColor(tab)
+            }
 
-                override fun onTabUnselected(tab: TabLayout.Tab?) {
-                    setUnselectedColor(tab)
-                }
-            })
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                setUnselectedColor(tab)
+            }
+        })
 
         Handler().postDelayed(
             {
