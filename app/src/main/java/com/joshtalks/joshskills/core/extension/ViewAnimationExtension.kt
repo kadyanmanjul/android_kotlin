@@ -1,5 +1,9 @@
 package com.joshtalks.joshskills.core.extension
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +12,8 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomLayout
+import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 
 fun View.moveViewToScreenCenter(imgGroupChat: AppCompatImageView, txtUnreadCount: TextView) {
     val animSet = AnimationSet(false)
@@ -173,6 +179,36 @@ fun View.transaltionAnimation(fromLocation: IntArray, toLocation: IntArray) {
     translate.interpolator = LinearInterpolator()
     animSet.addAnimation(translate)
     this.startAnimation(animSet)
+}
+
+fun View.transaltionAnimationNew(
+    toLocation: IntArray,
+    customWord: CustomWord,
+    optionLayout: CustomLayout?
+) {
+    this@transaltionAnimationNew.visibility = View.VISIBLE
+    customWord.visibility = View.INVISIBLE
+    val slideAnim = AnimatorSet()
+    slideAnim.playTogether(
+        ObjectAnimator.ofFloat(this, View.X, toLocation[0].toFloat()),
+        ObjectAnimator.ofFloat(this, View.Y, toLocation[1].toFloat())
+    )
+
+    val slideSet = AnimatorSet()
+    slideSet.play(slideAnim)
+    val interpolator = LinearInterpolator()
+    slideSet.interpolator = interpolator
+    slideSet.duration = 400
+    slideSet.addListener(object : AnimatorListenerAdapter() {
+        override fun onAnimationEnd(animation: Animator) {
+            optionLayout?.let {
+                optionLayout.addViewAt(customWord,customWord.choice.sortOrder-1)
+            }
+            this@transaltionAnimationNew.setVisibility(View.INVISIBLE)
+            customWord.visibility=View.VISIBLE
+        }
+    })
+    slideSet.start()
 }
 
 fun View.slideUpAnimation(context: Context) {
