@@ -102,7 +102,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class
     ],
-    version = 34,
+    version = 35,
     exportSchema = true
 )
 @TypeConverters(
@@ -180,7 +180,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_28_29,
                                 MIGRATION_30_31,
                                 MIGRATION_31_32,
-                                MIGRATION_32_33
+                                MIGRATION_32_33,
+                                MIGRATION_33_34
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -462,6 +463,12 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.delete("favorite_caller", null, null)
                 database.execSQL("ALTER TABLE favorite_caller ADD COLUMN mentor_id TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
+        private val MIGRATION_33_34: Migration = object : Migration(32, 33) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE assessment_choice ADD COLUMN audio_url TEXT")
             }
         }
 

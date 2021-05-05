@@ -2,19 +2,26 @@ package com.joshtalks.joshskills.ui.lesson.grammar_new
 
 import android.content.Context
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
+import com.joshtalks.joshskills.core.playback.PlaybackInfoListener
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestionType
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.eventbus.AudioPlayerEventBus
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
@@ -26,13 +33,19 @@ import com.joshtalks.joshskills.ui.chat.vh.GrammarButtonView
 import com.joshtalks.joshskills.ui.chat.vh.GrammarHeadingView
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
+import com.joshtalks.joshskills.util.ExoAudioPlayer
+import com.muddzdev.styleabletoast.StyleableToast
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import java.util.ArrayList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedListener {
+
+class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedListener,
+    AudioPlayerEventListener {
 
     lateinit var binding: com.joshtalks.joshskills.databinding.FragmentGrammarNewLayoutBinding
     private var lessonActivityListener: LessonActivityListener? = null
@@ -49,6 +62,8 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private var quizQuestion: LessonQuestion? = null
     private var correctAnswers: Int = 0
     private var currentQuizQuestion: Int = 0
+    private var currentPlayingAudioObjectUrl: String? =null
+    private var audioPlayerManager: ExoAudioPlayer? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -69,10 +84,15 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 false
             )
         binding.handler = this
-        subscribeRxBus()
+        initAudioManager()
         setObservers()
 
         return binding.root
+    }
+
+    private fun initAudioManager() {
+        audioPlayerManager = ExoAudioPlayer.getInstance()
+        audioPlayerManager?.playerListener = this
     }
 
     private fun initViews() {
@@ -88,13 +108,39 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     }
 
     private fun subscribeRxBus() {
-
-
-    }
-
-    override fun onDestroy() {
-        compositeDisposable.dispose()
-        super.onDestroy()
+        compositeDisposable.add(
+            RxBus2.listen(AudioPlayerEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    {
+                        if (Utils.getCurrentMediaVolume(requireActivity().applicationContext) <= 0) {
+                            StyleableToast.Builder(requireActivity().applicationContext)
+                                .gravity(Gravity.BOTTOM)
+                                .text(getString(R.string.volume_up_message)).cornerRadius(16)
+                                .length(Toast.LENGTH_LONG)
+                                .solidBackground().show()
+                        }
+                        if (it.state == PlaybackInfoListener.State.PAUSED) {
+                            audioPlayerManager?.onPause()
+                            return@subscribe
+                        }
+                        /*if (currentPlayingAudioObjectUrl != null && ExoAudioPlayer.LAST_ID == it?.id) {
+                            audioPlayerManager?.resumeOrPause()
+                        } else {*/
+                        currentPlayingAudioObjectUrl = it.audioUrl
+                        audioPlayerManager?.onPause()
+                        audioPlayerManager?.play(
+                            it.audioUrl,
+                            it.id
+                        )
+                        /* }*/
+                    },
+                    {
+                        it.printStackTrace()
+                    }
+                )
+        )
     }
 
     private fun setObservers() {
@@ -408,13 +454,61 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         )
     }
 
-    companion object {
 
-        @JvmStatic
-        fun getInstance() = GrammarNewFragment()
+    override fun onResume() {
+        super.onResume()
+        subscribeRxBus()
+    }
+
+    override fun onPlayerPause() {
+
+    }
+
+    override fun onPlayerResume() {
+    }
+
+    override fun onCurrentTimeUpdated(lastPosition: Long) {
+    }
+
+    override fun onTrackChange(tag: String?) {
+    }
+
+    override fun onPositionDiscontinuity(lastPos: Long, reason: Int) {
+    }
+
+    override fun onPositionDiscontinuity(reason: Int) {
+    }
+
+    override fun onPlayerReleased() {
+    }
+
+    override fun onPlayerEmptyTrack() {
+    }
+
+    override fun complete() {
+        audioPlayerManager?.seekTo(0)
+        audioPlayerManager?.onPause()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        audioPlayerManager?.onPause()
+        compositeDisposable.clear()
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        audioPlayerManager?.release()
+        super.onDestroy()
     }
 
     override fun onScrollChanged() {
 
+    }
+
+    companion object {
+
+        @JvmStatic
+        fun getInstance() = GrammarNewFragment()
     }
 }

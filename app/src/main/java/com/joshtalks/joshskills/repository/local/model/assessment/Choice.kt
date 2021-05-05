@@ -71,7 +71,11 @@ data class Choice(
 
     @ColumnInfo
     @SerializedName("is_selected_by_user")
-    var isSelectedByUser: Boolean = false
+    var isSelectedByUser: Boolean = false,
+
+    @ColumnInfo
+    @SerializedName("audio_url")
+    var audioUrl: String?
 
 ) : Parcelable {
 
@@ -88,7 +92,8 @@ data class Choice(
         correctAnswerOrder = choiceResponse.correctAnswerOrder,
         column = choiceResponse.column,
         userSelectedOrder = choiceResponse.userSelectedOrder,
-        isSelectedByUser = choiceResponse.isSelectedByUser
+        isSelectedByUser = choiceResponse.isSelectedByUser,
+        audioUrl = choiceResponse.audioUrl
     )
 
 }

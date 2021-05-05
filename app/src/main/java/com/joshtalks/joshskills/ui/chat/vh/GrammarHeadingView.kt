@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.chat.vh
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -216,7 +215,6 @@ class GrammarHeadingView : FrameLayout, LifecycleObserver, AudioPlayerEventListe
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun onPausePlayer() {
-        Log.d("Manjul", "onPausePlayer() called")
         if (isAudioPlaying()) {
             audioManager?.onPause()
         }
@@ -224,7 +222,6 @@ class GrammarHeadingView : FrameLayout, LifecycleObserver, AudioPlayerEventListe
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        Log.d("Manjul", "onDetachedFromWindow() called")
         if (isAudioPlaying()) {
             audioManager?.onPause()
         }

@@ -2,22 +2,34 @@ package com.joshtalks.joshskills.ui.lesson.grammar_new
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.View
 import android.widget.RadioGroup
+import android.widget.Toast
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.OnLifecycleEvent
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
+import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.ui.chat.vh.EnableDisableGrammarButtonCallback
+import com.joshtalks.joshskills.util.ExoAudioPlayer
+import com.muddzdev.styleabletoast.StyleableToast
+import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class McqChoiceView : RadioGroup {
+class McqChoiceView : RadioGroup, AudioPlayerEventListener {
 
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
     lateinit var mcqOptionsRadioGroup: RadioGroup
     private var callback: EnableDisableGrammarButtonCallback? = null
+    var audioManager: ExoAudioPlayer? = null
 
     constructor(context: Context) : super(context) {
         init()
@@ -31,11 +43,15 @@ class McqChoiceView : RadioGroup {
     private fun init() {
         View.inflate(context, R.layout.mcq_option_group, this)
         mcqOptionsRadioGroup = findViewById(R.id.mcq_options_radio_group)
+        audioManager = ExoAudioPlayer.getInstance()
     }
 
     fun setup(assessmentQuestion: AssessmentQuestionWithRelations) {
         this.assessmentQuestion = assessmentQuestion
         mcqOptionsRadioGroup.removeAllViews()
+        if (isAudioPlaying()) {
+            audioManager?.onPause()
+        }
         assessmentQuestion.choiceList
             .sortedBy { it.sortOrder }
             .forEach {
@@ -93,6 +109,57 @@ class McqChoiceView : RadioGroup {
         return true
     }
 
+    fun playAudio(audioUrl: String?) {
+        if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) ?: 0 <= 0) {
+            StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
+                .text(AppObjectController.joshApplication.getString(R.string.volume_up_message))
+                .cornerRadius(16)
+                .length(Toast.LENGTH_LONG)
+                .solidBackground().show()
+        }
+
+        audioUrl?.let { url ->
+            if (isAudioPlaying()) {
+                audioManager?.onPause()
+            }
+            val audioType = AudioType()
+            audioType.audio_url = url
+            audioType.downloadedLocalPath = url
+            audioType.duration = 1_00
+            audioType.id = Random.nextInt().toString()
+            onPlayAudio(audioType)
+        }
+    }
+
+    private fun checkIsPlayer(): Boolean {
+        return audioManager != null
+    }
+
+    private fun isAudioPlaying(): Boolean {
+        return this.checkIsPlayer() && this.audioManager!!.isPlaying()
+    }
+
+    private fun onPlayAudio(
+        audioObject: AudioType
+    ) {
+        audioManager?.playerListener = this
+        audioManager?.play(audioObject.audio_url)
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    fun onPausePlayer() {
+        if (isAudioPlaying()) {
+            audioManager?.onPause()
+        }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        if (isAudioPlaying()) {
+            audioManager?.onPause()
+        }
+    }
+
     fun addCallback(callback: EnableDisableGrammarButtonCallback) {
         this.callback = callback
     }
@@ -104,6 +171,7 @@ class McqChoiceView : RadioGroup {
                 val optionView = (mcqOptionsRadioGroup.getChildAt(i) as McqOptionView)
                 if (optionView == clickedOptionView) {
                     optionView.changeState()
+                    playAudio(optionView.choice.audioUrl)
                 } else {
                     optionView.setState(McqOptionState.UNSELECTED)
                 }
