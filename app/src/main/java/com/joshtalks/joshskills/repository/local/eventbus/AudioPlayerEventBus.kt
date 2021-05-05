@@ -2,5 +2,6 @@ package com.joshtalks.joshskills.repository.local.eventbus
 
 data class AudioPlayerEventBus(
     var state: Int,
-    var id: String
+    var id: String,
+    val audioUrl:String
 )

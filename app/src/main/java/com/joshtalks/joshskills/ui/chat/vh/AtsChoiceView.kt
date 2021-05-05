@@ -8,20 +8,29 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.OnLifecycleEvent
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
+import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomLayout
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
+import com.joshtalks.joshskills.util.ExoAudioPlayer
+import com.muddzdev.styleabletoast.StyleableToast
 import com.nex3z.flowlayout.FlowLayout
+import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class AtsChoiceView : RelativeLayout {
+class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
 
     private lateinit var rootView: RelativeLayout
     private lateinit var answerContainer: FrameLayout
@@ -31,6 +40,7 @@ class AtsChoiceView : RelativeLayout {
     private lateinit var customLayout: CustomLayout
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
     private var callback: EnableDisableGrammarButtonCallback? = null
+    var audioManager: ExoAudioPlayer? = null
 
     constructor(context: Context) : super(context) {
         init()
@@ -58,6 +68,7 @@ class AtsChoiceView : RelativeLayout {
         dummyAnswerFlowLayout = findViewById(R.id.dummy_answer_flow_layout)
         optionsContainer = findViewById(R.id.ats_options_container)
         initOptionsFlowLayout()
+        audioManager = ExoAudioPlayer.getInstance()
     }
 
     private fun initOptionsFlowLayout() {
@@ -72,6 +83,9 @@ class AtsChoiceView : RelativeLayout {
 
     fun setup(assessmentQuestion: AssessmentQuestionWithRelations) {
         this.assessmentQuestion = assessmentQuestion
+        if (isAudioPlaying()) {
+            audioManager?.onPause()
+        }
         customLayout.removeAllViews()
         answerFlowLayout.removeAllViews()
         val selectedWords = ArrayList<CustomWord>()
@@ -162,10 +176,64 @@ class AtsChoiceView : RelativeLayout {
         return true
     }
 
+    fun playAudio(audioUrl: String?) {
+        if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) ?: 0 <= 0) {
+            StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
+                .text(AppObjectController.joshApplication.getString(R.string.volume_up_message))
+                .cornerRadius(16)
+                .length(Toast.LENGTH_LONG)
+                .solidBackground().show()
+        }
+
+        audioUrl?.let { url ->
+            if (isAudioPlaying()) {
+                audioManager?.onPause()
+            }
+            val audioType = AudioType()
+            audioType.audio_url = url
+            audioType.downloadedLocalPath = url
+            audioType.duration = 1_00
+            audioType.id = Random.nextInt().toString()
+            onPlayAudio(audioType)
+        }
+    }
+
+    private fun checkIsPlayer(): Boolean {
+        return audioManager != null
+    }
+
+    private fun isAudioPlaying(): Boolean {
+        return this.checkIsPlayer() && this.audioManager!!.isPlaying()
+    }
+
+    private fun onPlayAudio(
+        audioObject: AudioType
+    ) {
+        audioManager?.playerListener = this
+        audioManager?.play(audioObject.audio_url)
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    fun onPausePlayer() {
+        if (isAudioPlaying()) {
+            audioManager?.onPause()
+        }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        if (isAudioPlaying()) {
+            audioManager?.onPause()
+        }
+    }
+
     private inner class ClickListener : View.OnClickListener {
         override fun onClick(view: View?) {
             if (!customLayout.isEmpty()) {
                 val customWord = view as CustomWord
+                if (customWord.parent is CustomLayout) {
+                    playAudio(customWord.choice.audioUrl)
+                }
                 customWord.changeViewGroup(customLayout, answerFlowLayout)
                 if (isAnyAnswerSelected()) {
                     callback?.enableGrammarButton()

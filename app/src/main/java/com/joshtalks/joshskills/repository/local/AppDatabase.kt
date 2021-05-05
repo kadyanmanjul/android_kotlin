@@ -102,7 +102,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class
     ],
-    version = 34,
+    version = 35,
     exportSchema = true
 )
 @TypeConverters(
@@ -469,6 +469,12 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE INDEX IF NOT EXISTS `index_practise_engagement_table_practiseId_question_questionForId` ON `practise_engagement_table` (`practiseId`, `question`, `questionForId`)")
                 database.execSQL("DROP INDEX IF EXISTS `index_practise_engagement_table_practiseId_question`")
+            }
+        }
+
+        private val MIGRATION_33_34: Migration = object : Migration(32, 33) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE assessment_choice ADD COLUMN audio_url TEXT")
             }
         }
 
