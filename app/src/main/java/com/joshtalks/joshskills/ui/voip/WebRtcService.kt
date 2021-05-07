@@ -1141,10 +1141,7 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        RtcEngine.destroy()
-        AppObjectController.mRtcEngine = null
         joshAudioManager?.quitEverything()
-        handlerThread?.quitSafely()
         isEngineInit = false
         isTimeOutToPickCall = false
         switchChannel = false

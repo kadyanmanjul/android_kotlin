@@ -101,7 +101,7 @@ class WebRtcActivity : AppCompatActivity() {
 
     private var callback: WebRtcCallback = object : WebRtcCallback {
 
-        override fun onCalleeConnect(callId: String) {
+        override fun onConnect(callId: String) {
             Timber.tag(TAG).e("onConnect")
             AppObjectController.uiHandler.removeCallbacksAndMessages(null)
             AppObjectController.uiHandler.postDelayed(
@@ -143,7 +143,7 @@ class WebRtcActivity : AppCompatActivity() {
         override fun onNetworkReconnect() {
             super.onNetworkReconnect()
             Timber.tag(TAG).e("onNetworkReconnect")
-            val isCallerJoin = mBoundService?.isCalleeJoin ?: false
+            val isCallerJoin = mBoundService?.isCallerJoin ?: false
             if (isCallerJoin.not()) {
                 return
             }
@@ -416,7 +416,7 @@ class WebRtcActivity : AppCompatActivity() {
 
     private fun updateStatusLabel() {
         lifecycleScope.launchWhenCreated {
-            val callConnected = mBoundService?.isCalleeJoin ?: false
+            val callConnected = mBoundService?.isCallerJoin ?: false
             val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
             callType?.run {
                 if (CallType.FAVORITE_MISSED_CALL == this || CallType.OUTGOING == this) {
