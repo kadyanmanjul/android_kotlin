@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.OnlineTestRequest
+import com.joshtalks.joshskills.repository.server.assessment.OnlineTestResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -19,8 +20,7 @@ import timber.log.Timber
 class OnlineTestViewModel(application: Application) : AndroidViewModel(application) {
 
     val lessonQuestionsLiveData: MutableLiveData<List<LessonQuestion>> = MutableLiveData()
-
-    val grammarAssessmentLiveData: MutableLiveData<AssessmentQuestionWithRelations> = MutableLiveData()
+    val grammarAssessmentLiveData: MutableLiveData<OnlineTestResponse> = MutableLiveData()
     val message: MutableLiveData<String> = MutableLiveData()
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
 
@@ -28,16 +28,11 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
     fun fetchAssessmentDetails() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                var assessmentRelations: AssessmentQuestionWithRelations
                 val response = getOnlineTestServer()
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        response.body()?.question?.let {
-                            assessmentRelations = AssessmentQuestionWithRelations(it, 10)
-                            grammarAssessmentLiveData.postValue(assessmentRelations)
-                        }
-                        response.body()?.message?.let {
-                            message.postValue(it)
+                        response.body()?.let {
+                            grammarAssessmentLiveData.postValue(it)
                         }
                     }
                 }
@@ -73,14 +68,8 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
                         assessmentRequest
                     )
                 if (response.isSuccessful) {
-                    var assessmentRelations: AssessmentQuestionWithRelations
-
-                    response.body()?.question?.let {
-                        assessmentRelations = AssessmentQuestionWithRelations(it, 10)
-                        grammarAssessmentLiveData.postValue(assessmentRelations)
-                    }
-                    response.body()?.message?.let {
-                        message.postValue(it)
+                    response.body()?.let {
+                        grammarAssessmentLiveData.postValue(it)
                     }
                 }
             } catch (ex: Throwable) {

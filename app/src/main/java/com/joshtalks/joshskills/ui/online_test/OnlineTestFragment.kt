@@ -11,7 +11,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentOnlineTestBinding
-import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
@@ -40,9 +39,6 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private var mcqChoiceView: Stub<McqChoiceView>? = null
     private var atsChoiceView: Stub<AtsChoiceView>? = null
     private var buttonView: Stub<GrammarButtonView>? = null
-    private var quizQuestion: LessonQuestion? = null
-    private var currentQuizQuestion: Int = 0
-    private var currentPlayingAudioObjectUrl: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -80,36 +76,18 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
 
     private fun setObservers() {
 
-        viewModel.grammarAssessmentLiveData.observe(viewLifecycleOwner) { assessmentQuestion ->
-            assessmentQuestion?.let {
-                this.assessmentQuestions = it
+        viewModel.grammarAssessmentLiveData.observe(viewLifecycleOwner) { onlineTestresponse ->
+            onlineTestresponse.question?.let {
+                this.assessmentQuestions = AssessmentQuestionWithRelations(it, 10)
             }
-            if (assessmentQuestions == null) {
-                showToast("Empty Or Done Quiz")
-            } else {
+            if (onlineTestresponse.message.isNullOrBlank() && assessmentQuestions != null) {
                 setupViews(assessmentQuestions!!)
+            } else {
+                showToast(onlineTestresponse.message)
             }
-            /*assessmentRelations.questionList.sortedBy { it.question.sortOrder }.let {
-                assessmentQuestions.addAll(it)
-            }*/
-
-            /*if (assessmentQuestions.size > 0) {
-                if (quizQuestion?.status == QUESTION_STATUS.AT) {
-
-                }
-                setCurrentQuestion(assessmentQuestions)
-                if (currentQuizQuestion == assessmentQuestions.size) {
-                    currentQuizQuestion = currentQuizQuestion.minus(1)
-                    setupViews(currentQuizQuestion)
-                } else {
-                    setupViews(currentQuizQuestion)
-                }
-
-            }*/
         }
 
         viewModel.message.observe(viewLifecycleOwner) { message ->
-            showToast(message)
         }
     }
 
