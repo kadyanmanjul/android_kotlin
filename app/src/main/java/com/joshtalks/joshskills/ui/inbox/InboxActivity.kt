@@ -1,10 +1,12 @@
 package com.joshtalks.joshskills.ui.inbox
 
 import android.app.Activity
+import android.content.DialogInterface
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -69,6 +71,23 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         initView()
         addLiveDataObservable()
         addAfterTime()
+        showOnlineTestDialog()
+    }
+
+    private fun showOnlineTestDialog() {
+        if (PrefManager.getBoolValue(ONLINE_TEST_COMPLETED).not()) {
+            AlertDialog.Builder(this)
+                .setTitle("Know Your Level")
+                .setMessage("Do you want to know your english level for free")
+                .setPositiveButton(android.R.string.yes, object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        showOnlineTestScreen()
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show()
+        }
     }
 
     fun showOnlineTestScreen() {
@@ -77,15 +96,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 putExtra(CONVERSATION_ID, intent.getStringExtra(CONVERSATION_ID))
             }
         )
-        /*parent_Container.visibility=View.VISIBLE
-        supportFragmentManager
-            .beginTransaction()
-            .replace(
-                R.id.parent_Container,
-                OnlineTestFragment.getInstance(),
-                OnlineTestFragment.TAG
-            )
-            .commitAllowingStateLoss()*/
     }
 
     private fun addAfterTime() {
@@ -116,13 +126,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         )
         recycler_view_inbox.adapter = inboxAdapter
         iv_setting.setOnClickListener {
-            showOnlineTestScreen()
-
-//            openPopupMenu(it)
+            openPopupMenu(it)
         }
         find_more.setOnClickListener {
-            showOnlineTestScreen()
-   //         courseExploreClick()
+            courseExploreClick()
         }
     }
 

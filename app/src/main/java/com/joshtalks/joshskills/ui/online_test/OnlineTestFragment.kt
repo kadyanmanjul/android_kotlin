@@ -10,6 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.ONLINE_TEST_COMPLETED
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentOnlineTestBinding
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
@@ -78,6 +80,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
 
         viewModel.grammarAssessmentLiveData.observe(viewLifecycleOwner) { onlineTestResponse ->
             if (onlineTestResponse.completed) {
+                PrefManager.put(ONLINE_TEST_COMPLETED,true)
                 showToast(onlineTestResponse.message)
             } else {
                 onlineTestResponse.question?.let {
