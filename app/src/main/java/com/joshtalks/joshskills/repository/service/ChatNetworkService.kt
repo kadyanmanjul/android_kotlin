@@ -17,8 +17,10 @@ import com.joshtalks.joshskills.repository.server.CoursePerformanceResponse
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.ResponseChatMessage
 import com.joshtalks.joshskills.repository.server.UpdateLessonResponse
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentQuestionResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
+import com.joshtalks.joshskills.repository.server.assessment.OnlineTestRequest
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewBaseResponse
 import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
@@ -162,7 +164,7 @@ interface ChatNetworkService {
     @GET("$DIR/reputation/vp_rp_snackbar/")
     suspend fun getSnackBarText(
         @Query("question_id") questionId: String?,
-        @Query("channel_name") channelName: String?=null,
+        @Query("channel_name") channelName: String? = null,
     ): PointsListResponse
 
     @GET("$DIR/course/get_demo_lesson/")
@@ -175,5 +177,11 @@ interface ChatNetworkService {
     )
     @GET("$DIR/course/demo_onboarding_data/")
     suspend fun getDemoOnBoardingData(): Response<DemoOnboardingData>
+
+    @GET("$DIR/assessment/test/")
+    suspend fun getOnlineTestQuestion(): Response<AssessmentQuestionResponse>
+
+    @POST("$DIR/assessment/test/")
+    suspend fun postAndGetNextOnlineTestQuestion(@Body onlineTestRequest: OnlineTestRequest): Response<AssessmentQuestionResponse>
 
 }

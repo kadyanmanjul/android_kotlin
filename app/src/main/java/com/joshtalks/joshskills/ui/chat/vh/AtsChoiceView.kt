@@ -21,7 +21,7 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQues
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomLayout
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
-import com.joshtalks.joshskills.util.ExoAudioPlayer
+import com.joshtalks.joshskills.util.ExoAudioPlayer2
 import com.muddzdev.styleabletoast.StyleableToast
 import com.nex3z.flowlayout.FlowLayout
 import kotlin.random.Random
@@ -40,7 +40,7 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
     private lateinit var customLayout: CustomLayout
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
     private var callback: EnableDisableGrammarButtonCallback? = null
-    var audioManager: ExoAudioPlayer? = null
+    var audioManager: ExoAudioPlayer2? = null
 
     constructor(context: Context) : super(context) {
         init()
@@ -68,7 +68,7 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
         dummyAnswerFlowLayout = findViewById(R.id.dummy_answer_flow_layout)
         optionsContainer = findViewById(R.id.ats_options_container)
         initOptionsFlowLayout()
-        audioManager = ExoAudioPlayer.getInstance()
+        audioManager = ExoAudioPlayer2.getInstance()
     }
 
     private fun initOptionsFlowLayout() {
@@ -185,7 +185,9 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
                 .solidBackground().show()
         }
 
-        audioUrl?.let { url ->
+        val audioUrl2=audioUrl?.replace(" ".toRegex(), "%20")
+
+        audioUrl2?.let { url ->
             if (isAudioPlaying()) {
                 audioManager?.onPause()
             }
