@@ -281,22 +281,21 @@ class GrammarButtonView : FrameLayout {
                 explanationText.visibility = View.VISIBLE
                 explanationText.text = this.wrongAnswerText2
             }
-            textContainer.visibility = View.GONE
-            wrongAnswerGroup.visibility = View.GONE
-            rightAnswerGroup.visibility = View.GONE
-
-            grammarBtn.isEnabled = false
-            grammarBtn.isClickable = false
-            grammarBtn.text = context.getString(R.string.grammar_btn_text_check)
-            grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.grey_shade_new))
-            currentState = GrammarButtonState.DISABLED
-            updateGrammarButtonDrawable(grammarBtn, R.drawable.gray_btn_pressed_state)
-            flagIv.visibility = GONE
-            //flagIv.setBackgroundColor(ContextCompat.getColor(context, R.color.grammar_green_color))
-            updateBgColor(rootView, R.color.white)
-            isAnswerChecked = false
-
         }
+        textContainer.visibility = View.GONE
+        wrongAnswerGroup.visibility = View.GONE
+        rightAnswerGroup.visibility = View.GONE
+
+        grammarBtn.isEnabled = false
+        grammarBtn.isClickable = false
+        grammarBtn.text = context.getString(R.string.grammar_btn_text_check)
+        grammarBtn.setTextColor(ContextCompat.getColor(context, R.color.grey_shade_new))
+        currentState = GrammarButtonState.DISABLED
+        updateGrammarButtonDrawable(grammarBtn, R.drawable.gray_btn_pressed_state)
+        flagIv.visibility = GONE
+        //flagIv.setBackgroundColor(ContextCompat.getColor(context, R.color.grammar_green_color))
+        updateBgColor(rootView, R.color.white)
+        isAnswerChecked = false
 
     }
 

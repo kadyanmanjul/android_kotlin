@@ -107,6 +107,10 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
 
             }*/
         }
+
+        viewModel.message.observe(viewLifecycleOwner) { message ->
+            showToast(message)
+        }
     }
 
     private fun setupViews(assessmentQuestions: AssessmentQuestionWithRelations) {

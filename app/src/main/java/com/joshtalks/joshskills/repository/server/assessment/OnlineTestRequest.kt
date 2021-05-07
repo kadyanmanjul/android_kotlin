@@ -3,7 +3,7 @@ package com.joshtalks.joshskills.repository.server.assessment
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -14,18 +14,19 @@ data class OnlineTestRequest(
 
     @SerializedName("status")
     val status: QuestionStatus,
+
     @SerializedName("answer")
-    val answer: String = EMPTY
+    var answer: String
 
 
 ) : Parcelable {
 
     constructor(
-        questionId: Int,
-        status: QuestionStatus
+        question : AssessmentQuestionWithRelations,
+        answer: String
     ) : this(
-        questionId = questionId,
-        status = status,
-        answer = EMPTY
+        questionId = question.question.remoteId,
+        status = question.question.status,
+        answer = answer
     )
 }
