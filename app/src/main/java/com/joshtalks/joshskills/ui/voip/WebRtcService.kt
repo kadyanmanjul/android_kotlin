@@ -7,6 +7,7 @@ import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.NotificationManager.IMPORTANCE_LOW
 import android.app.PendingIntent
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
@@ -640,7 +641,10 @@ class WebRtcService : BaseWebRtcService() {
                 setVoiceBeautifierPreset(CHAT_BEAUTIFIER_MAGNETIC)
                 setChannelProfile(CHANNEL_PROFILE_COMMUNICATION)
                 adjustRecordingSignalVolume(400)
-                adjustPlaybackSignalVolume(100)
+                val audio = getSystemService(AUDIO_SERVICE) as AudioManager
+                val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
+                val currentVolume = audio.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
+                adjustPlaybackSignalVolume((400 / maxVolume) * currentVolume)
                 enableInEarMonitoring(true)
                 setInEarMonitoringVolume(0)
                 enableDeepLearningDenoise(true)
