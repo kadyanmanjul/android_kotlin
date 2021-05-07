@@ -24,9 +24,9 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.patloew.colocation.CoGeocoder
-import kotlinx.coroutines.*
 import java.util.*
 import java.util.regex.Pattern
+import kotlinx.coroutines.*
 
 @Layout(R.layout.layout_location_stats_view_holder)
 open class LocationStatViewHolder(
@@ -57,7 +57,6 @@ open class LocationStatViewHolder(
     var city: String? = null
     var state: String? = null
     var randomStudents = 0
-
 
     @Resolve
     fun onResolved() {
@@ -109,7 +108,6 @@ open class LocationStatViewHolder(
                         if (flag) {
                             getLocationAndUpload()
                             return
-
                         } else {
                             progressBar.visibility = View.GONE
                         }
@@ -122,7 +120,8 @@ open class LocationStatViewHolder(
                 ) {
                     token?.continuePermissionRequest()
                 }
-            })
+            }
+        )
     }
 
     @SuppressLint("MissingPermission")
@@ -132,14 +131,17 @@ open class LocationStatViewHolder(
 
     private fun getAddressAndSetView(latitude: Double, longitude: Double) {
         CoroutineScope(Dispatchers.IO).launch {
-            val coGeocoder = CoGeocoder.from(context)
-            coGeocoder.getAddressFromLocation(latitude, longitude)?.let {
-                if (city.isNullOrBlank().not() && city.equals(it.locality))
-                    return@launch
-                AppObjectController.uiHandler.post {
-                    stateCityName.text = it.locality.plus(" , ").plus(it.subAdminArea)
-                    showNextImageAndRandomData()
+            try {
+                val coGeocoder = CoGeocoder.from(context)
+                coGeocoder.getAddressFromLocation(latitude, longitude)?.let {
+                    if (city.isNullOrBlank().not() && city.equals(it.locality))
+                        return@launch
+                    AppObjectController.uiHandler.post {
+                        stateCityName.text = it.locality.plus(" , ").plus(it.subAdminArea)
+                        showNextImageAndRandomData()
+                    }
                 }
+            } catch (ex: Throwable) {
             }
         }
     }

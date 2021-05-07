@@ -21,7 +21,7 @@ data class CertificateExamReportModel(
     @SerializedName("answers")
     val answers: List<UserSelectedAnswer>? = emptyList(),
     @SerializedName("certificate_url")
-    val certificateURL: String?,
+    var certificateURL: String?,
     @SerializedName("correct")
     val correct: Int,
     @SerializedName("wrong")
@@ -35,8 +35,9 @@ data class CertificateExamReportModel(
     @SerializedName("award_mentor")
     val awardMentor: Award?,
     @SerializedName("points")
-    val points: String?
-
+    val points: String?,
+    @SerializedName("report_id")
+    val reportId: Int = 0
 
 ) : Parcelable
 

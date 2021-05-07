@@ -536,7 +536,7 @@ class PractiseSubmitActivity :
                                 Utils.getDurationOfMedia(this@PractiseSubmitActivity, filePath!!)
                                 ?.toInt() ?: 0
                         } else {
-                            binding.submitPractiseSeekbar.max = practiseEngagement?.duration!!
+                            binding.submitPractiseSeekbar.max = practiseEngagement?.duration ?: 10_000
                             if (binding.submitPractiseSeekbar.max == 0) {
                                 binding.submitPractiseSeekbar.max = 1_00_000
                             }

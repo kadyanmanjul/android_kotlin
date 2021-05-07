@@ -255,9 +255,10 @@ abstract class BaseActivity :
         )
     }
 
-    fun openLeaderBoard(conversationId: String) {
+    fun openLeaderBoard(conversationId: String, courseId: String?) {
         val i = Intent(this, LeaderBoardViewPagerActivity::class.java).apply {
             putExtra(CONVERSATION_ID, conversationId)
+            putExtra(COURSE_ID, courseId)
         }
         startActivity(i)
     }
@@ -738,11 +739,15 @@ abstract class BaseActivity :
     }
 
     protected fun showProgressBar() {
-        FullScreenProgressDialog.showProgressBar(this)
+        lifecycleScope.launch(Dispatchers.Main) {
+            FullScreenProgressDialog.showProgressBar(this@BaseActivity)
+        }
     }
 
     protected fun hideProgressBar() {
-        FullScreenProgressDialog.hideProgressBar(this)
+        lifecycleScope.launch(Dispatchers.Main) {
+            FullScreenProgressDialog.hideProgressBar(this@BaseActivity)
+        }
     }
 
     protected fun downloadFile(

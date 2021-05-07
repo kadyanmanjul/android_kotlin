@@ -8,6 +8,7 @@ import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.NotificationManager.IMPORTANCE_LOW
 import android.app.PendingIntent
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
@@ -99,7 +100,7 @@ class WebRtcService : BaseWebRtcService() {
     private var userAgoraId: Int? = null
     var channelName: String? = null
     private var isEngineInit = false
-    var isCalleeJoin: Boolean = false
+    var isCallerJoin: Boolean = false
     private var isMicEnable = true
     private var isSpeakerEnable = false
     private var oppositeCallerId: Int? = null
@@ -330,7 +331,7 @@ class WebRtcService : BaseWebRtcService() {
                         startCallTimer()
                         callStatusNetworkApi(it, CallAction.ACCEPT)
                         addNotification(CallConnect().action, callData)
-                        addSensor()
+                        //addSensor()
                         joshAudioManager?.startCommunication()
                     }
                 } catch (ex: Exception) {
@@ -339,7 +340,9 @@ class WebRtcService : BaseWebRtcService() {
             }
             callId = mRtcEngine?.callId
             switchChannel = false
-            callCallback?.get()?.onChannelJoin()
+            if (CallType.OUTGOING == callType) {
+                callCallback?.get()?.onChannelJoin()
+            }
         }
 
         override fun onLeaveChannel(stats: RtcStats) {
@@ -350,7 +353,7 @@ class WebRtcService : BaseWebRtcService() {
                 callCallback?.get()?.onDisconnect(
                     callId,
                     callData?.let { getChannelName(it) },
-                    if (isCalleeJoin) {
+                    if (isCallerJoin) {
                         TimeUnit.SECONDS.toMillis(stats.totalDuration.toLong())
                     } else {
                         getTimeOfTalk()
@@ -368,13 +371,19 @@ class WebRtcService : BaseWebRtcService() {
             oppositeCallerId = uid
             compositeDisposable.clear()
             isCallWasOnGoing = true
-            isCalleeJoin = true
+            isCallerJoin = true
             if (callStartTime == 0L) {
                 startCallTimer()
             }
-            callCallback?.get()?.onCalleeConnect(uid.toString())
+            callCallback?.get()?.onConnect(uid.toString())
+            mHandler?.postDelayed(
+                {
+                    callCallback?.get()?.onServerConnect()
+                },
+                500
+            )
             addNotification(CallConnect().action, callData)
-            addSensor()
+            // addSensor()
             joshAudioManager?.startCommunication()
             joshAudioManager?.stopConnectTone()
             audioFocus()
@@ -387,7 +396,7 @@ class WebRtcService : BaseWebRtcService() {
                 val id = getUID(it)
                 Timber.tag(TAG).e("onUserOffline =  $id")
                 if (id != uid && reason == Constants.USER_OFFLINE_QUIT) {
-                    if (isCalleeJoin) {
+                    if (isCallerJoin) {
                         endCall(apiCall = true, action = CallAction.DISCONNECT)
                     } else {
                         endCall(apiCall = true, action = CallAction.AUTO_DISCONNECT)
@@ -459,11 +468,11 @@ class WebRtcService : BaseWebRtcService() {
                     Completable.complete()
                         .delay(5, TimeUnit.SECONDS)
                         .doOnComplete {
-                            Timber.tag("Reconnect").e("doOnComplete  $isCalleeJoin")
+                            Timber.tag("Reconnect").e("doOnComplete  $isCallerJoin")
                         }
                         .subscribeOn(Schedulers.io())
                         .subscribe {
-                            if (isCalleeJoin) {
+                            if (isCallerJoin) {
                                 lostNetwork()
                             }
                         }
@@ -634,7 +643,10 @@ class WebRtcService : BaseWebRtcService() {
                 setVoiceBeautifierPreset(CHAT_BEAUTIFIER_MAGNETIC)
                 setChannelProfile(CHANNEL_PROFILE_COMMUNICATION)
                 adjustRecordingSignalVolume(400)
-                adjustPlaybackSignalVolume(100)
+                val audio = getSystemService(AUDIO_SERVICE) as AudioManager
+                val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
+                val currentVolume = audio.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
+                adjustPlaybackSignalVolume((400 / maxVolume) * currentVolume)
                 enableInEarMonitoring(true)
                 setInEarMonitoringVolume(0)
                 enableDeepLearningDenoise(true)
@@ -760,7 +772,7 @@ class WebRtcService : BaseWebRtcService() {
                                             callData = it
                                         }
                                         if (callCallback != null && callCallback?.get() != null) {
-                                            callCallback?.get()?.onSwitchChannel(data)
+                                            callCallback?.get()?.switchChannel(data)
                                         } else {
                                             startAutoPickCallActivity(false)
                                         }
@@ -1097,8 +1109,8 @@ class WebRtcService : BaseWebRtcService() {
     private fun resetConfig() {
         stopRing()
         joshAudioManager?.stopConnectTone()
-        removeSensor()
-        isCalleeJoin = false
+        // removeSensor()
+        isCallerJoin = false
         eventListener = null
         isSpeakerEnable = false
         isMicEnable = true
@@ -1136,7 +1148,7 @@ class WebRtcService : BaseWebRtcService() {
         isEngineInit = false
         isTimeOutToPickCall = false
         switchChannel = false
-        isCalleeJoin = false
+        isCallerJoin = false
         callStartTime = 0L
         retryInitLibrary = 0
         userDetailMap = null
@@ -1153,7 +1165,7 @@ class WebRtcService : BaseWebRtcService() {
         AppObjectController.mRtcEngine = null
         handlerThread?.quitSafely()
         isTimeOutToPickCall = false
-        isCalleeJoin = false
+        isCallerJoin = false
         callStartTime = 0L
         retryInitLibrary = 0
         isCallWasOnGoing = false
@@ -1162,7 +1174,7 @@ class WebRtcService : BaseWebRtcService() {
             .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_NONE)
         phoneCallState = CallState.CALL_STATE_IDLE
         Timber.tag(TAG).e("onDestroy")
-        removeSensor()
+        // removeSensor()
         executor.shutdown()
         super.onDestroy()
     }
@@ -1548,9 +1560,11 @@ class WebRtcService : BaseWebRtcService() {
                 val resp = AppObjectController.p2pNetworkService.getAgoraCallResponse(data)
                 if (resp.code() == 500) {
                     callCallback?.get()?.onNoUserFound()
+                    return@launch
                 }
                 if (CallAction.ACCEPT == callAction) {
-                    callCallback?.get()?.onCalleeConnect(EMPTY)
+                    callCallback?.get()?.onServerConnect()
+                    return@launch
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -1604,11 +1618,13 @@ class NotificationId {
 
 interface WebRtcCallback {
     fun onChannelJoin() {}
-    fun onCalleeConnect(callId: String) {}
+    fun onConnect(callId: String) {}
     fun onDisconnect(callId: String?, channelName: String?, time: Long = 0) {}
     fun onCallReject(callId: String?) {}
-    fun onSwitchChannel(data: HashMap<String, String?>) {}
+    fun switchChannel(data: HashMap<String, String?>) {}
     fun onNoUserFound() {}
+    fun onServerConnect() {}
+    fun onIncomingCall() {}
     fun onNetworkLost() {}
     fun onNetworkReconnect() {}
     fun onHoldCall() {}

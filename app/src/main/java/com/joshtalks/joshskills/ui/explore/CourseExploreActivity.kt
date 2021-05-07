@@ -25,13 +25,14 @@ import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.subscription.StartSubscriptionActivity
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.set
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val COURSE_EXPLORER_SCREEN_NAME = "Course Explorer"
 const val USER_COURSES = "user_courses"
@@ -50,7 +51,9 @@ class CourseExploreActivity : CoreJoshActivity() {
         fun startCourseExploreActivity(
             context: Activity,
             requestCode: Int,
-            list: MutableSet<InboxEntity>?, clearBackStack: Boolean = false, state: ActivityEnum
+            list: MutableSet<InboxEntity>?,
+            clearBackStack: Boolean = false,
+            state: ActivityEnum
         ) {
             val intent = Intent(context, CourseExploreActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
@@ -159,8 +162,7 @@ class CourseExploreActivity : CoreJoshActivity() {
     }
 
     private fun loadCourses() {
-        CoroutineScope(Dispatchers.IO).launch {
-
+        lifecycleScope.launch(Dispatchers.IO) {
             try {
                 var list: ArrayList<InboxEntity>? = null
                 if (intent.hasExtra(USER_COURSES)) {
@@ -200,16 +202,15 @@ class CourseExploreActivity : CoreJoshActivity() {
                 val courseByMap: Map<Int, List<CourseExploreModel>> =
                     response.groupBy { it.languageId }.toSortedMap(compareBy { it })
 
-                AppObjectController.uiHandler.post {
+                withContext(Dispatchers.Main) {
                     courseExploreBinding.courseListingRv.adapter =
                         PractiseViewPagerAdapter(this@CourseExploreActivity, courseByMap)
                     courseExploreBinding.progressBar.visibility = View.GONE
                     initViewPagerTab()
                 }
-
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
-                AppObjectController.uiHandler.post {
+                withContext(Dispatchers.Main) {
                     courseExploreBinding.progressBar.visibility = View.GONE
                 }
             }
@@ -236,7 +237,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                 PrefManager.put(SERVER_GID_ID, resp.id)
                 PrefManager.put(EXPLORE_TYPE, resp.exploreCardType!!.name, false)
             } catch (ex: Throwable) {
-                //LogException.catchException(ex)
+                // LogException.catchException(ex)
             }
             loadCourses()
         }
@@ -297,7 +298,8 @@ class CourseExploreActivity : CoreJoshActivity() {
                         }
                     }
                 }
-            })
+            }
+        )
     }
 
     private fun logChipSelectedEvent(selectedLanguage: String) {
@@ -339,5 +341,4 @@ class CourseExploreActivity : CoreJoshActivity() {
         setResult(Activity.RESULT_CANCELED, resultIntent)
         this.finish()
     }
-
 }

@@ -259,6 +259,7 @@ class ConversationActivity :
             }
 
             conversationBinding.toolbar.inflateMenu(R.menu.conversation_menu)
+            profileFeatureActiveView(inboxEntity.isCapsuleCourse)
             conversationBinding.toolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_referral -> {
@@ -280,7 +281,7 @@ class ConversationActivity :
                         )
                     }
                     R.id.leaderboard_setting -> {
-                        openLeaderBoard(inboxEntity.conversation_id)
+                        openLeaderBoard(inboxEntity.conversation_id,inboxEntity.courseId)
                     }
                     R.id.menu_favorite_list -> {
                         FavoriteListActivity.openFavoriteCallerActivity(
@@ -362,7 +363,7 @@ class ConversationActivity :
         }
 
         conversationBinding.leaderboardTxt.setOnClickListener {
-            openLeaderBoard(inboxEntity.conversation_id)
+            openLeaderBoard(inboxEntity.conversation_id,inboxEntity.courseId)
         }
         conversationBinding.points.setOnClickListener {
             openUserProfileActivity(
@@ -679,7 +680,8 @@ class ConversationActivity :
                 this@ConversationActivity.userProfileData = userProfileData
                 if (conversationBinding.courseProgressTooltip.visibility != VISIBLE) {
                     initScoreCardView(userProfileData)
-                    profileFeatureActiveView()
+                    if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
+                        profileFeatureActiveView(true)
                 }
             }
         }
@@ -812,8 +814,8 @@ class ConversationActivity :
             )
     }
 
-    private fun profileFeatureActiveView() {
-        if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+    private fun profileFeatureActiveView(showLeaderboardMenu: Boolean) {
+        if (showLeaderboardMenu) {
             conversationBinding.toolbar.menu.findItem(R.id.leaderboard_setting).isVisible = true
             conversationBinding.toolbar.menu.findItem(R.id.leaderboard_setting).isEnabled = true
             conversationBinding.toolbar.menu.findItem(R.id.profile_setting).isVisible = true
@@ -875,8 +877,8 @@ class ConversationActivity :
         conversationBinding.shader.visibility = GONE
 
         userProfileData?.let {
-            initScoreCardView(it)
-            profileFeatureActiveView()
+            //initScoreCardView(it)
+            //profileFeatureActiveView()
         }
     }
 

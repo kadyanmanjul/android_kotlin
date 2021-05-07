@@ -5,6 +5,7 @@ import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
+import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
@@ -50,13 +51,14 @@ object InboxBindingAdapter {
                 RequestOptions.bitmapTransform(multi).apply(
                     RequestOptions().placeholder(R.drawable.ic_josh_course)
                         .error(R.drawable.ic_josh_course)
+                        .format(DecodeFormat.PREFER_RGB_565)
+                        .disallowHardwareConfig().dontAnimate().encodeQuality(75)
                 )
-
             )
+            .thumbnail(0.05f)
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .into(imageView)
     }
-
 
     @BindingAdapter(value = ["favoriteCallerImage"], requireAll = false)
     @JvmStatic
@@ -65,5 +67,4 @@ object InboxBindingAdapter {
             imageView.setUserImageOrInitials(it.image, it.name, isRound = true)
         } ?: imageView.setImageResource(R.drawable.ic_call_placeholder)
     }
-
 }

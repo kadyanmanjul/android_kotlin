@@ -27,10 +27,10 @@ import com.skydoves.balloon.BalloonAnimation
 import com.skydoves.balloon.overlay.BalloonOverlayAnimation
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
 
 class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
     lateinit var binding: ActivityLeaderboardViewPagerBinding
@@ -43,7 +43,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
     val searchActivityResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                viewModel.getFullLeaderBoardData(Mentor.getInstance().getId())
+                viewModel.getFullLeaderBoardData(Mentor.getInstance().getId(),getCourseId())
             }
         }
 
@@ -55,12 +55,15 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
         initToolbar()
         initViewPager()
         addObserver()
-        viewModel.getFullLeaderBoardData(Mentor.getInstance().getId())
-        showProgressBar()
+        viewModel.getFullLeaderBoardData(Mentor.getInstance().getId(),getCourseId())
     }
 
     override fun getConversationId(): String? {
         return intent.getStringExtra(CONVERSATION_ID)
+    }
+
+    fun getCourseId(): String? {
+        return intent.getStringExtra(COURSE_ID)
     }
 
     private fun initToolbar() {
@@ -149,6 +152,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
         if (flag) {
             return
         }
+        hideProgressBar()
         val lbOpenCount = PrefManager.getIntValue(LEADER_BOARD_OPEN_COUNT)
         val isLastCall = PrefManager.getBoolValue(P2P_LAST_CALL)
         if (lbOpenCount >= 4 || isLastCall) {

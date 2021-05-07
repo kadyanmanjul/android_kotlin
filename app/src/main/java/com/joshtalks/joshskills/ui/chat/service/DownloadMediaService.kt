@@ -205,8 +205,12 @@ class DownloadMediaService : Service(), FetchListener {
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         stopForeground(true)
-        fetch.close()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
         downloadService.shutdown()
+        fetch.close()
     }
 
     private fun showNotification(notification: Notification, notificationId: Int) {

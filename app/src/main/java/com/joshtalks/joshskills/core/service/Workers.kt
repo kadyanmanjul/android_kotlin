@@ -16,7 +16,6 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
-import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -48,7 +47,14 @@ class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParamet
     override fun doWork(): Result {
         try {
             if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
-                val id = getGoogleAdId(context)
+                var id = getGoogleAdId(context)
+                // TODO abhi ke lea crash ka jugaad
+                if (id.isNullOrEmpty()){
+                    id= getGoogleAdId(context)
+                }
+                if (id.isNullOrEmpty()){
+                    return Result.failure()
+                }
                 PrefManager.put(USER_UNIQUE_ID, id)
                 Branch.getInstance().setIdentity(id)
             }
@@ -468,7 +474,7 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
                         deviceId,
                         UpdateDeviceRequest()
                     )
-                    //TODO no need to send UpdateDeviceRequest object in patch request 
+                    // TODO no need to send UpdateDeviceRequest object in patch request 
                     details.apiStatus = ApiRespStatus.PATCH
                     details.update()
                 }
@@ -782,13 +788,20 @@ class CourseUsageSyncWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
-            val list = AppObjectController.appDatabase.courseUsageDao().getAllSession()
-                .parallelStream()
-                .map {
+            val db = AppObjectController.appDatabase
+            val sessionList = db.courseUsageDao().getAllSession()
+            val keys = sessionList.groupBy { it.conversationId }.keys
+            val courseIdList = db.courseDao().getCourseIdsFromConversationId(keys.toList())
+
+            val list = sessionList.parallelStream()
+                .map { courseUsageModel ->
                     CourseUsageSync(
-                        it.conversationId,
-                        it.startTime,
-                        it.endTime ?: 0
+                        courseId = courseIdList.findLast { it.conversationId == courseUsageModel.conversationId }?.courseId
+                            ?: -1,
+                        conversationId = courseUsageModel.conversationId,
+                        screenName = courseUsageModel.screenName ?: EMPTY,
+                        startTime = courseUsageModel.startTime,
+                        endTime = courseUsageModel.endTime ?: 0
                     )
                 }.toList()
             if (list.isEmpty()) {
@@ -807,8 +820,13 @@ class CourseUsageSyncWorker(context: Context, workerParams: WorkerParameters) :
     }
 }
 
-fun getGoogleAdId(context: Context): String {
-    MobileAds.initialize(context)
-    val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context)
-    return adInfo.id
+fun getGoogleAdId(context: Context): String? {
+    try {
+        MobileAds.initialize(context)
+        val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context)
+        return adInfo.id
+    } catch (e:Exception){
+
+    }
+    return null
 }

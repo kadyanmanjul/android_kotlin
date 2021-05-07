@@ -190,8 +190,8 @@ object PrefManager {
     }
 
     fun clearUser() {
-        prefManagerCommon.edit().clear().apply()
         LastSyncPrefManager.clear()
+        prefManagerCommon.edit().clear().apply()
         AppDatabase.clearDatabase()
         WorkManagerAdmin.instanceIdGenerateWorker()
         WorkManagerAdmin.appInitWorker()
