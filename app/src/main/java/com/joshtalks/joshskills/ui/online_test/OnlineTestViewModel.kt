@@ -13,7 +13,6 @@ import com.joshtalks.joshskills.repository.server.assessment.OnlineTestRequest
 import com.joshtalks.joshskills.repository.server.assessment.OnlineTestResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -28,8 +27,10 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
     fun fetchAssessmentDetails() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                apiStatus.postValue(ApiCallStatus.START)
                 val response = getOnlineTestServer()
                 if (response.isSuccessful) {
+                    apiStatus.postValue(ApiCallStatus.SUCCESS)
                     response.body()?.let {
                         response.body()?.let {
                             grammarAssessmentLiveData.postValue(it)
@@ -37,6 +38,7 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
                     }
                 }
             } catch (ex: Throwable) {
+                apiStatus.postValue(ApiCallStatus.FAILED)
                 ex.showAppropriateMsg()
             }
         }
@@ -52,8 +54,8 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
 
     fun postTestQuestionToServer(assessmentQuestion: AssessmentQuestionWithRelations) {
         viewModelScope.launch(Dispatchers.IO) {
-            delay(1000)
             try {
+                apiStatus.postValue(ApiCallStatus.START)
                 val choice = assessmentQuestion.choiceList.filter { it.isSelectedByUser }
                     .sortedBy { it.userSelectedOrder }
                 var answerText: StringBuilder = StringBuilder(EMPTY)
@@ -68,11 +70,13 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
                         assessmentRequest
                     )
                 if (response.isSuccessful) {
+                    apiStatus.postValue(ApiCallStatus.SUCCESS)
                     response.body()?.let {
                         grammarAssessmentLiveData.postValue(it)
                     }
                 }
             } catch (ex: Throwable) {
+                apiStatus.postValue(ApiCallStatus.FAILED)
                 Timber.e(ex)
             }
         }

@@ -8,6 +8,7 @@ import android.view.ViewTreeObserver
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentOnlineTestBinding
@@ -83,6 +84,20 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                     this.assessmentQuestions = AssessmentQuestionWithRelations(it, 10)
                 }
                 setupViews(assessmentQuestions!!)
+            }
+        }
+
+        viewModel.apiStatus.observe(viewLifecycleOwner){
+            when(it){
+                ApiCallStatus.START ->{
+                    binding.progressContainer.visibility=View.VISIBLE
+                }
+                ApiCallStatus.FAILED,ApiCallStatus.SUCCESS ->{
+                    binding.progressContainer.visibility=View.GONE
+                }
+                else -> {
+                    binding.progressContainer.visibility=View.GONE
+                }
             }
         }
     }
