@@ -58,7 +58,8 @@ public class AppAnalytics {
                 if (firebaseAnalytics == null) {
                     firebaseAnalytics = FirebaseAnalytics.getInstance(AppObjectController.getJoshApplication());
                 }
-            }catch(Exception e){}
+            } catch (Exception e) {
+            }
         });
     }
 
@@ -354,7 +355,11 @@ public class AppAnalytics {
     }
 
     private void pushToFirebase() {
-        firebaseAnalytics.logEvent(event, convertMapToBundle(parameters));
+        try {
+            firebaseAnalytics.logEvent(event, convertMapToBundle(parameters));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @NotNull
