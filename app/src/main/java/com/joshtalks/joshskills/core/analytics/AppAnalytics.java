@@ -4,24 +4,30 @@ import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-
 import com.clevertap.android.sdk.CleverTapAPI;
 import com.flurry.android.Constants;
 import com.flurry.android.FlurryAgent;
 import com.freshchat.consumer.sdk.FreshchatUser;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.joshtalks.joshskills.BuildConfig;
-import com.joshtalks.joshskills.core.*;
-import com.joshtalks.joshskills.repository.local.model.*;
-
-import org.jetbrains.annotations.NotNull;
-
+import com.joshtalks.joshskills.core.AppObjectController;
+import com.joshtalks.joshskills.core.JoshSkillExecutors;
+import com.joshtalks.joshskills.core.PrefManager;
+import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel;
+import com.joshtalks.joshskills.repository.local.model.Mentor;
+import com.joshtalks.joshskills.repository.local.model.User;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 import timber.log.Timber;
-
 import static com.joshtalks.joshskills.core.PrefManagerKt.INSTANCE_ID;
 import static com.joshtalks.joshskills.core.PrefManagerKt.USER_UNIQUE_ID;
 import static com.joshtalks.joshskills.core.StaticConstantKt.EMPTY;
@@ -41,15 +47,19 @@ public class AppAnalytics {
     }
 
     private static void init() {
-        if (cleverTapAnalytics == null) {
-            cleverTapAnalytics = CleverTapAPI.getDefaultInstance(AppObjectController.getJoshApplication());
-            if (BuildConfig.DEBUG) {
-                CleverTapAPI.setDebugLevel(CleverTapAPI.LogLevel.DEBUG);
-            }
-        }
-        if (firebaseAnalytics == null) {
-            firebaseAnalytics = FirebaseAnalytics.getInstance(AppObjectController.getJoshApplication());
-        }
+        JoshSkillExecutors.getBOUNDED().submit(() -> {
+            try {
+                if (cleverTapAnalytics == null) {
+                    cleverTapAnalytics = CleverTapAPI.getDefaultInstance(AppObjectController.getJoshApplication());
+                    if (BuildConfig.DEBUG) {
+                        CleverTapAPI.setDebugLevel(CleverTapAPI.LogLevel.DEBUG);
+                    }
+                }
+                if (firebaseAnalytics == null) {
+                    firebaseAnalytics = FirebaseAnalytics.getInstance(AppObjectController.getJoshApplication());
+                }
+            }catch(Exception e){}
+        });
     }
 
     public static void updateUser() {
@@ -211,11 +221,12 @@ public class AppAnalytics {
     }
 
     public static void flush() {
-        if (cleverTapAnalytics == null) {
-            cleverTapAnalytics = CleverTapAPI.getDefaultInstance(AppObjectController.getJoshApplication());
-        }
-        cleverTapAnalytics.flush();
-
+        JoshSkillExecutors.getBOUNDED().submit(() -> {
+            if (cleverTapAnalytics == null) {
+                cleverTapAnalytics = CleverTapAPI.getDefaultInstance(AppObjectController.getJoshApplication());
+            }
+            cleverTapAnalytics.flush();
+        });
     }
 
     private String format(String unformatted) {
@@ -310,10 +321,14 @@ public class AppAnalytics {
             return;
         }
         JoshSkillExecutors.getBOUNDED().submit(() -> {
-            formatParameters();
-            pushToFirebase();
-            pushToCleverTap();
-            pushToFlurry(false);
+            try {
+                formatParameters();
+                pushToCleverTap();
+                pushToFirebase();
+                pushToFlurry(false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
 
     }

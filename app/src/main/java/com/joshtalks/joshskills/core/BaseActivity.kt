@@ -158,7 +158,7 @@ abstract class BaseActivity :
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         AppObjectController.screenHeight = displayMetrics.heightPixels
         AppObjectController.screenWidth = displayMetrics.widthPixels
-        JoshSkillExecutors.BOUNDED.submit {
+        lifecycleScope.launch(Dispatchers.IO) {
             initUserForCrashlytics()
             initIdentifierForTools()
             InstallReferralUtil.installReferrer(applicationContext)
@@ -167,48 +167,65 @@ abstract class BaseActivity :
     }
 
     private fun addScreenRecording() {
-        if (BuildConfig.DEBUG.not()) {
-            if (AppObjectController.getFirebaseRemoteConfig()
-                .getBoolean(FirebaseRemoteConfigKey.UX_CAM_FEATURE_ENABLE)
-            ) {
-                UXCam.startWithKey(BuildConfig.WX_CAM_KEY)
-            }
-            if (AppObjectController.getFirebaseRemoteConfig()
-                .getBoolean(FirebaseRemoteConfigKey.SMART_LOOK_FEATURE_ENABLE)
-            ) {
-                Smartlook.registerIntegrationListener(object : IntegrationListener {
-                    override fun onSessionReady(dashboardSessionUrl: String) {
-                        Timber.tag("baseactivity").e(dashboardSessionUrl)
-                        FirebaseCrashlytics.getInstance()
-                            .setCustomKey("Smartlook_session_Link", dashboardSessionUrl)
-                    }
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (BuildConfig.DEBUG.not()) {
+                if (AppObjectController.getFirebaseRemoteConfig()
+                        .getBoolean(FirebaseRemoteConfigKey.UX_CAM_FEATURE_ENABLE)
+                ) {
+                    UXCam.startWithKey(BuildConfig.WX_CAM_KEY)
+                }
+                if (AppObjectController.getFirebaseRemoteConfig()
+                        .getBoolean(FirebaseRemoteConfigKey.SMART_LOOK_FEATURE_ENABLE)
+                ) {
+                    Smartlook.registerIntegrationListener(object : IntegrationListener {
+                        override fun onSessionReady(dashboardSessionUrl: String) {
+                            Timber.tag("baseactivity").e(dashboardSessionUrl)
+                            FirebaseCrashlytics.getInstance()
+                                .setCustomKey("Smartlook_session_Link", dashboardSessionUrl)
+                        }
 
-                    override fun onVisitorReady(dashboardVisitorUrl: String) {
-                        Timber.tag("baseactivity1").e(dashboardVisitorUrl)
-                        FirebaseCrashlytics.getInstance()
-                            .setCustomKey("Smartlook_visitor_Link", dashboardVisitorUrl)
+                        override fun onVisitorReady(dashboardVisitorUrl: String) {
+                            Timber.tag("baseactivity1").e(dashboardVisitorUrl)
+                            FirebaseCrashlytics.getInstance()
+                                .setCustomKey("Smartlook_visitor_Link", dashboardVisitorUrl)
+                        }
+                    })
+                    val id = if (Mentor.getInstance().hasId()) {
+                        Mentor.getInstance().getId()
+                    } else {
+                        PrefManager.getStringValue(USER_UNIQUE_ID)
                     }
-                })
-                val id = if (Mentor.getInstance().hasId()) {
-                    Mentor.getInstance().getId()
-                } else {
-                    PrefManager.getStringValue(USER_UNIQUE_ID)
+                    Smartlook.setUserIdentifier(id)
+                    Smartlook.setUserProperties(UserProperties())
+                    if (Smartlook.isRecording().not()) {
+                        Smartlook.startRecording()
+                    }
+                    Smartlook.enableIntegration(FirebaseCrashlyticsIntegration())
                 }
-                Smartlook.setUserIdentifier(id)
-                Smartlook.setUserProperties(UserProperties())
-                if (Smartlook.isRecording().not()) {
-                    Smartlook.startRecording()
-                }
-                Smartlook.enableIntegration(FirebaseCrashlyticsIntegration())
             }
         }
     }
 
     private fun initIdentifierForTools() {
-        if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
-            Branch.getInstance().setIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
-            initNewRelic()
-            initFlurry()
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
+                Branch.getInstance().setIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
+                initNewRelic()
+                initFlurry()
+                UXCam.setUserIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
+                // UXCam.setUserProperty(String propertyName , String value)
+
+                UXCam.addVerificationListener(object : OnVerificationListener {
+                    override fun onVerificationSuccess() {
+                        FirebaseCrashlytics.getInstance()
+                            .setCustomKey("UXCam_Recording_Link", UXCam.urlForCurrentSession())
+                    }
+
+                    override fun onVerificationFailed(errorMessage: String) {
+                        Timber.e(errorMessage)
+                    }
+                })
+            }
             UXCam.setUserIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
             // UXCam.setUserProperty(String propertyName , String value)
 
@@ -223,19 +240,6 @@ abstract class BaseActivity :
                 }
             })
         }
-        UXCam.setUserIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
-        // UXCam.setUserProperty(String propertyName , String value)
-
-        UXCam.addVerificationListener(object : OnVerificationListener {
-            override fun onVerificationSuccess() {
-                FirebaseCrashlytics.getInstance()
-                    .setCustomKey("UXCam_Recording_Link", UXCam.urlForCurrentSession())
-            }
-
-            override fun onVerificationFailed(errorMessage: String) {
-                Timber.e(errorMessage)
-            }
-        })
     }
 
     fun openHelpActivity() {
@@ -340,7 +344,7 @@ abstract class BaseActivity :
 
     protected fun processIntent(mIntent: Intent?) {
         try {
-            CoroutineScope(Dispatchers.IO).launch {
+            lifecycleScope.launch(Dispatchers.IO) {
                 if (mIntent != null && mIntent.hasExtra(HAS_NOTIFICATION) && mIntent.hasExtra(
                         NOTIFICATION_ID
                     ) && mIntent.getStringExtra(NOTIFICATION_ID).isNullOrEmpty().not()
@@ -358,36 +362,38 @@ abstract class BaseActivity :
     }
 
     private fun initUserForCrashlytics() {
-        try {
-            val user = User.getInstance()
-            val mentor = Mentor.getInstance()
-            val gaid = PrefManager.getStringValue(USER_UNIQUE_ID, false)
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val user = User.getInstance()
+                val mentor = Mentor.getInstance()
+                val gaid = PrefManager.getStringValue(USER_UNIQUE_ID, false)
 
-            val firebaseCrashlytics = FirebaseCrashlytics.getInstance()
-            firebaseCrashlytics.setUserId(gaid)
-            firebaseCrashlytics.setCustomKey("gaid", gaid)
-            firebaseCrashlytics.setCustomKey("mentor_id", mentor.getId())
-            firebaseCrashlytics.setCustomKey("phone", getPhoneNumber())
-            firebaseCrashlytics.setCustomKey("first_name", user.firstName ?: EMPTY)
-            firebaseCrashlytics.setCustomKey("email", user.email ?: EMPTY)
-            firebaseCrashlytics.setCustomKey("username", user.username)
-            firebaseCrashlytics.setCustomKey("user_type", user.userType)
-            firebaseCrashlytics.setCustomKey(
-                "age",
-                AppAnalytics.getAge(user.dateOfBirth).toString() + ""
-            )
-            user.dateOfBirth?.let { firebaseCrashlytics.setCustomKey("date_of_birth", it) }
-            firebaseCrashlytics.setCustomKey(
-                "gender",
-                if (user.gender == "M") "MALE" else "FEMALE"
-            )
-            FirebaseCrashlytics.getInstance().setUserId(
-                PrefManager.getStringValue(
-                    USER_UNIQUE_ID
+                val firebaseCrashlytics = FirebaseCrashlytics.getInstance()
+                firebaseCrashlytics.setUserId(gaid)
+                firebaseCrashlytics.setCustomKey("gaid", gaid)
+                firebaseCrashlytics.setCustomKey("mentor_id", mentor.getId())
+                firebaseCrashlytics.setCustomKey("phone", getPhoneNumber())
+                firebaseCrashlytics.setCustomKey("first_name", user.firstName ?: EMPTY)
+                firebaseCrashlytics.setCustomKey("email", user.email ?: EMPTY)
+                firebaseCrashlytics.setCustomKey("username", user.username)
+                firebaseCrashlytics.setCustomKey("user_type", user.userType)
+                firebaseCrashlytics.setCustomKey(
+                    "age",
+                    AppAnalytics.getAge(user.dateOfBirth).toString() + ""
                 )
-            )
-        } catch (ex: Throwable) {
-            LogException.catchException(ex)
+                user.dateOfBirth?.let { firebaseCrashlytics.setCustomKey("date_of_birth", it) }
+                firebaseCrashlytics.setCustomKey(
+                    "gender",
+                    if (user.gender == "M") "MALE" else "FEMALE"
+                )
+                FirebaseCrashlytics.getInstance().setUserId(
+                    PrefManager.getStringValue(
+                        USER_UNIQUE_ID
+                    )
+                )
+            } catch (ex: Throwable) {
+                LogException.catchException(ex)
+            }
         }
     }
 
@@ -396,12 +402,19 @@ abstract class BaseActivity :
     }
 
     private fun initFlurry() {
-        FlurryAgent.setUserId(PrefManager.getStringValue(USER_UNIQUE_ID))
+        lifecycleScope.launch(Dispatchers.IO) {
+            FlurryAgent.setUserId(PrefManager.getStringValue(USER_UNIQUE_ID))
+        }
     }
 
     fun callHelpLine() {
-        AppAnalytics.create(AnalyticsEvent.CLICK_HELPLINE_SELECTED.NAME).push()
-        Utils.call(this, AppObjectController.getFirebaseRemoteConfig().getString("helpline_number"))
+        lifecycleScope.launch(Dispatchers.IO) {
+            AppAnalytics.create(AnalyticsEvent.CLICK_HELPLINE_SELECTED.NAME).push()
+            Utils.call(
+                this@BaseActivity,
+                AppObjectController.getFirebaseRemoteConfig().getString("helpline_number")
+            )
+        }
     }
 
     protected fun isUserHaveNotPersonalDetails(): Boolean {
@@ -409,13 +422,13 @@ abstract class BaseActivity :
     }
 
     protected fun showNetPromoterScoreDialog(nps: NPSEvent? = null) {
-        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
             canShowNPSDialog(nps)
         }
     }
 
     protected suspend fun canShowNPSDialog(nps: NPSEvent? = null, id: String = EMPTY): Boolean {
-        return CoroutineScope(Dispatchers.IO).async(Dispatchers.IO) {
+        return lifecycleScope.async(Dispatchers.IO) {
             val currentState: NPSEvent? = getCurrentNpsState(nps) ?: return@async false
             val minNpsInADay = AppObjectController.getFirebaseRemoteConfig()
                 .getDouble("MINIMUM_NPS_IN_A_DAY_COUNT").toInt()
@@ -445,32 +458,34 @@ abstract class BaseActivity :
     private fun getQuestionForNPS(
         eventModel: NPSEventModel
     ) {
-        CoroutineScope(Dispatchers.Main).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             val observer = Observer<WorkInfo> { workInfo ->
-                try {
-                    val currentState: NPSEvent? = getCurrentNpsState()
-                    if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED && currentState != null) {
-                        val output = workInfo.outputData.getString("nps_question_list")
-                        if (output.isNullOrEmpty().not()) {
-                            NPSEventModel.removeCurrentNPA()
-                            val questionList =
-                                NPSQuestionModel.getNPSQuestionModelList(output!!)
-                            if (questionList.isNullOrEmpty().not()) {
-                                showNPSFragment(eventModel, questionList!!)
-                                CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    try {
+                        val currentState: NPSEvent? = getCurrentNpsState()
+                        if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED && currentState != null) {
+                            val output = workInfo.outputData.getString("nps_question_list")
+                            if (output.isNullOrEmpty().not()) {
+                                NPSEventModel.removeCurrentNPA()
+                                val questionList =
+                                    NPSQuestionModel.getNPSQuestionModelList(output!!)
+                                if (questionList.isNullOrEmpty().not()) {
+                                    lifecycleScope.launch(Dispatchers.Main) {
+                                        showNPSFragment(eventModel, questionList!!)
+                                    }
                                     AppObjectController.appDatabase.npsEventModelDao()
                                         .insertNPSEvent(eventModel)
                                 }
                             }
                         }
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
                     }
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
 
-                WorkManager.getInstance(applicationContext)
-                    .getWorkInfoByIdLiveData(WorkManagerAdmin.getQuestionNPA(eventModel.eventName))
-                    .removeObservers(this@BaseActivity)
+                    WorkManager.getInstance(applicationContext)
+                        .getWorkInfoByIdLiveData(WorkManagerAdmin.getQuestionNPA(eventModel.eventName))
+                        .removeObservers(this@BaseActivity)
+                }
             }
             WorkManager.getInstance(applicationContext)
                 .getWorkInfoByIdLiveData(WorkManagerAdmin.getQuestionNPA(eventModel.eventName))
@@ -496,29 +511,33 @@ abstract class BaseActivity :
 
     fun showSignUpDialog() {
         if (AppObjectController.getFirebaseRemoteConfig()
-            .getBoolean(FirebaseRemoteConfigKey.FORCE_SIGN_IN_FEATURE_ENABLE)
+                .getBoolean(FirebaseRemoteConfigKey.FORCE_SIGN_IN_FEATURE_ENABLE)
         )
             SignUpPermissionDialogFragment.showDialog(supportFragmentManager)
     }
 
     fun checkForOemNotifications() {
-        if (shouldRequireCustomPermission()) {
-            var oemIntent = PowerManagers.getIntentForOEM(this)
-            if (oemIntent == null) {
-                oemIntent = Intent(
-                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                    Uri.parse(
-                        "package:$packageName"
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (shouldRequireCustomPermission()) {
+                var oemIntent = PowerManagers.getIntentForOEM(this@BaseActivity)
+                if (oemIntent == null) {
+                    oemIntent = Intent(
+                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.parse(
+                            "package:$packageName"
+                        )
                     )
-                )
-                oemIntent.addCategory(Intent.CATEGORY_DEFAULT)
-                oemIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
+                    oemIntent.addCategory(Intent.CATEGORY_DEFAULT)
+                    oemIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
 
-            CustomPermissionDialogFragment.showCustomPermissionDialog(
-                oemIntent,
-                supportFragmentManager
-            )
+                lifecycleScope.launch(Dispatchers.Main) {
+                    CustomPermissionDialogFragment.showCustomPermissionDialog(
+                        oemIntent,
+                        supportFragmentManager
+                    )
+                }
+            }
         }
     }
 
@@ -563,7 +582,7 @@ abstract class BaseActivity :
         if (User.getInstance().isVerified && PrefManager.getBoolValue(IS_GUEST_ENROLLED)) {
             return true
         } else if (User.getInstance().isVerified && PrefManager.getBoolValue(IS_GUEST_ENROLLED)
-            .not()
+                .not()
         ) {
             return false
         }
@@ -571,20 +590,20 @@ abstract class BaseActivity :
     }
 
     fun logout() {
-        AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
-            .addUserDetails()
-            .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
-        val intent =
-            Intent(
-                AppObjectController.joshApplication,
-                SignUpActivity::class.java
-            )
-        intent.apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            putExtra(FLOW_FROM, "CourseExploreActivity")
-        }
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
+            AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
+                .addUserDetails()
+                .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
+            val intent =
+                Intent(
+                    AppObjectController.joshApplication,
+                    SignUpActivity::class.java
+                )
+            intent.apply {
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                putExtra(FLOW_FROM, "CourseExploreActivity")
+            }
             PrefManager.clearUser()
             AppObjectController.joshApplication.startActivity(intent)
         }
@@ -592,9 +611,11 @@ abstract class BaseActivity :
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun addInAppMessagingListener() {
-        FirebaseInAppMessaging.getInstance().isAutomaticDataCollectionEnabled = true
-        Firebase.inAppMessaging.addImpressionListener(this)
-        Firebase.inAppMessaging.addClickListener(this)
+        lifecycleScope.launch(Dispatchers.IO) {
+            FirebaseInAppMessaging.getInstance().isAutomaticDataCollectionEnabled = true
+            Firebase.inAppMessaging.addImpressionListener(this@BaseActivity)
+            Firebase.inAppMessaging.addClickListener(this@BaseActivity)
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -607,7 +628,7 @@ abstract class BaseActivity :
     }
 
     override fun messageClicked(inAppMessage: InAppMessage, action: Action) {
-        JoshSkillExecutors.BOUNDED.execute {
+        lifecycleScope.launch(Dispatchers.IO) {
             Uri.parse(action.actionUrl).host?.trim()?.toLowerCase(Locale.getDefault()).run {
                 when {
                     this == getString(R.string.conversation_open_dlink) -> {
@@ -678,7 +699,7 @@ abstract class BaseActivity :
                         )
                     }
                     else -> {
-                        return@execute
+                        return@launch
                     }
                 }
             }
@@ -733,33 +754,34 @@ abstract class BaseActivity :
         message: String = "Downloading file",
         title: String = "Josh Skills"
     ) {
-
-        var fileName = Utils.getFileNameFromURL(url)
-        if (fileName.isEmpty()) {
-            url.let {
-                fileName = it + Random(5).nextInt().toString().plus(it.getExtension())
+        lifecycleScope.launch(Dispatchers.IO) {
+            var fileName = Utils.getFileNameFromURL(url)
+            if (fileName.isEmpty()) {
+                url.let {
+                    fileName = it + Random(5).nextInt().toString().plus(it.getExtension())
+                }
             }
+            registerDownloadReceiver(fileName)
+
+            val request: DownloadManager.Request =
+                DownloadManager.Request(Uri.parse(url))
+                    .setTitle(title)
+                    .setDescription(message)
+                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+                    .setAllowedOverMetered(true)
+                    .setAllowedOverRoaming(true)
+                    .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                request.setRequiresCharging(false).setRequiresDeviceIdle(false)
+            }
+
+            val downloadManager = getSystemService(DOWNLOAD_SERVICE) as (DownloadManager)
+            downloadID = downloadManager.enqueue(request)
         }
-        registerDownloadReceiver(fileName)
-
-        val request: DownloadManager.Request =
-            DownloadManager.Request(Uri.parse(url))
-                .setTitle(title)
-                .setDescription(message)
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
-                .setAllowedOverMetered(true)
-                .setAllowedOverRoaming(true)
-                .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
-
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            request.setRequiresCharging(false).setRequiresDeviceIdle(false)
-        }
-
-        val downloadManager = getSystemService(DOWNLOAD_SERVICE) as (DownloadManager)
-        downloadID = downloadManager.enqueue(request)
     }
 
     private fun registerDownloadReceiver(fileName: String) {
@@ -767,10 +789,14 @@ abstract class BaseActivity :
     }
 
     fun showSnackBar(view: View, duration: Int, action_lable: String?) {
-        if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
-            // SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
-            PointSnackbar.make(view, duration, action_lable)?.show()
-            playSnackbarSound(this)
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    // SoundPoolManager.getInstance(AppObjectController.joshApplication).playSnackBarSound()
+                    PointSnackbar.make(view, duration, action_lable)?.show()
+                    playSnackbarSound(this@BaseActivity)
+                }
+            }
         }
     }
 
@@ -832,7 +858,7 @@ abstract class BaseActivity :
 
     @SuppressLint("MissingPermission")
     protected fun fetchUserLocation() {
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             when (val settingsResult = coLocation.checkLocationSettings(locationRequest)) {
                 CoLocation.SettingsResult.Satisfied -> {
                     val location = coLocation.getLastLocation()
@@ -854,7 +880,7 @@ abstract class BaseActivity :
     @SuppressLint("MissingPermission")
     fun startLocationUpdates() {
         locationUpdatesJob?.cancel()
-        locationUpdatesJob = CoroutineScope(Dispatchers.IO).launch {
+        locationUpdatesJob = lifecycleScope.launch(Dispatchers.IO) {
             try {
                 coLocation.getLocationUpdates(locationRequest).collectLatest {
                     onUpdateLocation(it)

@@ -48,6 +48,8 @@ class VoipCallFeedbackView : DialogFragment() {
     private var yourAgoraId: Int = -1
     private var pointsString: String = EMPTY
     private var dimBg = false
+    private var callerName: String = EMPTY
+    private var yourName: String = EMPTY
 
     private val practiceViewModel: PracticeViewModel by lazy {
         ViewModelProvider(this).get(PracticeViewModel::class.java)
@@ -126,8 +128,8 @@ class VoipCallFeedbackView : DialogFragment() {
         arguments?.let {
             channelName = it.getString(ARG_CHANNEL_NAME) ?: EMPTY
             yourAgoraId = it.getInt(ARG_YOUR_AGORA_ID)
-            val callerName = it.getString(ARG_CALLER_NAME) ?: EMPTY
-            val yourName = it.getString(ARG_YOUR_NAME) ?: EMPTY
+            callerName = it.getString(ARG_CALLER_NAME) ?: EMPTY
+            yourName = it.getString(ARG_YOUR_NAME) ?: EMPTY
             binding.txtMessage.text = msz.replaceFirst("#", yourName).replace("##", callerName)
 
             binding.cImage.setImageResource(R.drawable.ic_call_placeholder)
@@ -188,6 +190,17 @@ class VoipCallFeedbackView : DialogFragment() {
                     delay(250)
                 } catch (ex: Throwable) {
                     ex.printStackTrace()
+                }
+                when (response) {
+                    "YES" -> {
+                        showToast("$callerName is now added to your Favorite Practice Partners.")
+                    }
+                    "NO" -> {
+                        showToast("$callerName is now added to your Blocklist.")
+                    }
+                    "MAYBE" -> {
+                        showToast("Thank you for submitting the feedback.")
+                    }
                 }
                 exitDialog()
             }

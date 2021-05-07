@@ -127,7 +127,7 @@
                         android:textColor="@color/button_color"
                         android:textSize="@dimen/_11ssp"
                         app:cornerRadius="@dimen/_16sdp"
-                        app:rippleColor="@color/white"
+                        app:rippleColor="@color/button_color"
                         app:strokeColor="@color/button_color"
                         app:strokeWidth="@dimen/_1sdp" />
 
@@ -143,7 +143,7 @@
                         android:textColor="@color/button_color"
                         android:textSize="@dimen/_11ssp"
                         app:cornerRadius="@dimen/_16sdp"
-                        app:rippleColor="@color/white"
+                        app:rippleColor="@color/button_color"
                         app:strokeColor="@color/button_color"
                         app:strokeWidth="@dimen/_1sdp" />
 
@@ -160,7 +160,7 @@
                         android:textColor="@color/button_color"
                         android:textSize="@dimen/_11ssp"
                         app:cornerRadius="@dimen/_16sdp"
-                        app:rippleColor="@color/white"
+                        app:rippleColor="@color/button_color"
                         app:strokeColor="@color/button_color"
                         app:strokeWidth="@dimen/_1sdp" />
 

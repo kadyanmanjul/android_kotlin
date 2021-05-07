@@ -14,18 +14,17 @@ import com.github.razir.progressbutton.showProgress
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePickerDialog
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfileBinding
 import com.joshtalks.joshskills.repository.local.model.User
-import java.text.SimpleDateFormat
 import java.util.*
 
 class SignUpProfileFragment : BaseSignUpFragment() {
 
     private var prefix: String = EMPTY
-    private val DATE_FORMATTER = SimpleDateFormat("yyyy-MM-dd")
-    private val DATE_FORMATTER_2 = SimpleDateFormat("dd - MMM - yyyy")
     private lateinit var viewModel: SignUpViewModel
     private lateinit var binding: FragmentSignUpProfileBinding
     private var datePicker: DatePickerDialog? = null
@@ -35,11 +34,21 @@ class SignUpProfileFragment : BaseSignUpFragment() {
     private var userDateOfBirth: String? = null
 
     companion object {
-        fun newInstance() = SignUpProfileFragment()
+        const val IS_REGISTRATION_SCREEEN_FIRST_TIME = "is_registration_screen_first_time"
+        fun newInstance(isRegistrationScreenFirstTime:Boolean) = SignUpProfileFragment().apply {
+            arguments=Bundle().apply {
+                putBoolean(IS_REGISTRATION_SCREEEN_FIRST_TIME,isRegistrationScreenFirstTime)
+            }
+        }
     }
+    private var isRegistrationFirstTime: Boolean=true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        arguments?.let {
+            isRegistrationFirstTime =
+                it.getBoolean(IS_REGISTRATION_SCREEEN_FIRST_TIME,true)
+        }
         viewModel = ViewModelProvider(requireActivity()).get(SignUpViewModel::class.java)
     }
 
@@ -67,6 +76,22 @@ class SignUpProfileFragment : BaseSignUpFragment() {
         initDOBPicker()
         initListener()
         initUI()
+        logRegistrationAnalyticsEvent(isRegistrationFirstTime)
+    }
+
+    private fun logRegistrationAnalyticsEvent(eventName:Boolean) {
+        AppAnalytics.create(AnalyticsEvent.REGISTRATION_STARTED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.IS_REGISTRATION_FIRST_TIME.NAME,eventName)
+            .push()
+    }
+
+    private fun logAnalyticsEvent(eventName:String) {
+        AppAnalytics.create(eventName)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
     }
 
     private fun initDOBPicker() {
@@ -237,6 +262,7 @@ class SignUpProfileFragment : BaseSignUpFragment() {
             showToast(getString(R.string.select_gender))
             return
         }
+        logAnalyticsEvent(AnalyticsEvent.REGISTRATION_NEXT.NAME)
         startProgress()
         val requestMap = mutableMapOf<String, String?>()
         requestMap["first_name"] = binding.nameEditText.text?.toString() ?: EMPTY

@@ -5,8 +5,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 abstract class TrackActivity : AppCompatActivity(), LifecycleObserver {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(this)
@@ -14,21 +18,26 @@ abstract class TrackActivity : AppCompatActivity(), LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onVisibleScreen() {
-        if (getConversationId().isNullOrEmpty().not()) {
-            getConversationId()?.let {
-                CourseUsageService.startTimeConversation(this, it, javaClass.simpleName)
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (getConversationId().isNullOrEmpty().not()) {
+                getConversationId()?.let {
+                    CourseUsageService.startTimeConversation(
+                        this@TrackActivity,
+                        it, this@TrackActivity.javaClass.simpleName
+                    )
+                }
             }
-            return
         }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun onInVisibleScreen() {
-        if (getConversationId().isNullOrEmpty().not()) {
-            getConversationId()?.let {
-                CourseUsageService.endTimeConversation(this, it)
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (getConversationId().isNullOrEmpty().not()) {
+                getConversationId()?.let {
+                    CourseUsageService.endTimeConversation(this@TrackActivity, it)
+                }
             }
-            return
         }
     }
 

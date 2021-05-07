@@ -501,6 +501,18 @@ enum class AnalyticsEvent(val NAME: String) {
     USER_OUTGOING_HANGUP_EVENT_P2P("hangup_outgoing_p2p"),
     USER_INCOMING_HANGUP_EVENT_P2P("hangup_incoming_p2p"),
     USER_REJECT_INCOMING_P2P("reject_incoming_p2p"),
+    // Registration_screen_events
+    REGISTRATION_STARTED("registration_started"),
+    IS_REGISTRATION_FIRST_TIME("is_registration_first_time"),
+    REGISTRATION_NEXT("registration_next"),
+    UPLOAD_PROFILE_PIC("upload_profile_pic"),
+    UPLOAD_PIC_CHOOSER_OPENED("upload_pic_chooser_opened"),
+    GALLERY_UPLOAD("gallery_upload"),
+    CAMERA_UPLOAD("camera_upload"),
+    DELETE_PIC("delete_pic"),
+    IS_FROM_REGISTRATION_SCREEN("is_from_registration_screen"),
+    SKIP_PROFILE_PIC("skip_profile_pic"),
+    START_COURSE_CLICKED("start_course_clicked")
 
 
 }

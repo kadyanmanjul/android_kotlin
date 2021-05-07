@@ -26,6 +26,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import java.lang.ref.WeakReference
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.coroutines.CoroutineScope
@@ -33,7 +34,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.lang.ref.WeakReference
 
 abstract class InboxBaseActivity :
     WebRtcMiddlewareActivity(),
@@ -53,7 +53,7 @@ abstract class InboxBaseActivity :
         super.onCreate(savedInstanceState)
         activityRef = WeakReference(this)
         addObserver()
-        lifecycleScope.launchWhenCreated {
+        lifecycleScope.launch(Dispatchers.IO) {
             versionResponse = VersionResponse.getInstance()
         }
         AppObjectController.isSettingUpdate = false
@@ -61,7 +61,7 @@ abstract class InboxBaseActivity :
 
     override fun onStart() {
         super.onStart()
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             isSubscriptionStarted = PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED)
             isSubscriptionEnd = PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED).not()
         }
@@ -70,22 +70,24 @@ abstract class InboxBaseActivity :
     private fun addObserver() {
         lifecycleScope.launchWhenResumed {
             viewModel.overAllWatchTime.collectLatest {
-                var reviewCount = PrefManager.getIntValue(IN_APP_REVIEW_COUNT)
-                val reviewFrequency =
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getLong(FirebaseRemoteConfigKey.MINIMUM_TIME_TO_SHOW_REVIEW)
-                when (reviewCount) {
-                    0 -> if (it > reviewFrequency) {
-                        showInAppReview()
-                        PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
-                    }
-                    1 -> if (it > reviewFrequency * 2) {
-                        PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
-                        showInAppReview()
-                    }
-                    2 -> if (it > reviewFrequency * 3) {
-                        PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
-                        showInAppReview()
+                lifecycleScope.launch(Dispatchers.IO) {
+                    var reviewCount = PrefManager.getIntValue(IN_APP_REVIEW_COUNT)
+                    val reviewFrequency =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getLong(FirebaseRemoteConfigKey.MINIMUM_TIME_TO_SHOW_REVIEW)
+                    when (reviewCount) {
+                        0 -> if (it > reviewFrequency) {
+                            showInAppReview()
+                            PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
+                        }
+                        1 -> if (it > reviewFrequency * 2) {
+                            PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
+                            showInAppReview()
+                        }
+                        2 -> if (it > reviewFrequency * 3) {
+                            PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
+                            showInAppReview()
+                        }
                     }
                 }
             }
@@ -149,11 +151,13 @@ abstract class InboxBaseActivity :
     }
 
     protected fun logEvent(eventName: String) {
-        AppAnalytics.create(eventName)
-            .addBasicParam()
-            .addUserDetails()
-            .addParam("version", versionResponse?.version?.name.toString())
-            .push()
+        lifecycleScope.launch(Dispatchers.IO) {
+            AppAnalytics.create(eventName)
+                .addBasicParam()
+                .addUserDetails()
+                .addParam("version", versionResponse?.version?.name.toString())
+                .push()
+        }
     }
 
     override fun onInAppUpdateError(code: Int, error: Throwable?) {
@@ -176,7 +180,7 @@ abstract class InboxBaseActivity :
     }
 
     protected fun handelIntentAction() {
-        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
             if (intent != null && intent.hasExtra(ShareConstants.ACTION_TYPE)) {
                 val obj =
                     intent.getSerializableExtra(ShareConstants.ACTION_TYPE) as NotificationAction?
@@ -196,33 +200,35 @@ abstract class InboxBaseActivity :
     }
 
     protected fun courseExploreClick() {
-        if (isGuestUser().not()) {
-            openCourseExplorer()
-            logEvent(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
-            return
-        }
-        versionResponse?.version?.name?.let {
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (isGuestUser().not()) {
+                openCourseExplorer()
+                logEvent(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
+                return@launch
+            }
+            versionResponse?.version?.name?.let {
 
-            when (it) {
-                ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V7, ONBOARD_VERSIONS.ONBOARDING_V8 -> {
-                    openCourseExplorer()
-                    logEvent(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
-                }
-                ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V5, ONBOARD_VERSIONS.ONBOARDING_V6 -> {
-                    if (isSubscriptionStarted && isSubscriptionEnd.not()) {
+                when (it) {
+                    ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V7, ONBOARD_VERSIONS.ONBOARDING_V8 -> {
                         openCourseExplorer()
-                    } else {
-                        openCourseSelectionExplorer(true)
+                        logEvent(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
                     }
-                    logEvent(AnalyticsEvent.ADD_MORE_COURSE_CLICKED.NAME)
+                    ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V5, ONBOARD_VERSIONS.ONBOARDING_V6 -> {
+                        if (isSubscriptionStarted && isSubscriptionEnd.not()) {
+                            openCourseExplorer()
+                        } else {
+                            openCourseSelectionExplorer(true)
+                        }
+                        logEvent(AnalyticsEvent.ADD_MORE_COURSE_CLICKED.NAME)
+                    }
                 }
             }
         }
     }
 
     protected fun locationFetch() {
-        AppObjectController.uiHandler.post {
-            if (Mentor.getInstance().getLocality() == null) {
+        if (Mentor.getInstance().getLocality() == null) {
+            AppObjectController.uiHandler.post {
                 PermissionUtils.locationPermission(
                     this,
                     object : MultiplePermissionsListener {

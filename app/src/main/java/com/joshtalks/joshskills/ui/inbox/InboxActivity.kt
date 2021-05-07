@@ -156,7 +156,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private fun addLiveDataObservable() {
         lifecycleScope.launchWhenStarted {
             viewModel.registerCourseNetworkData.collect {
-
                 if (it.isNullOrEmpty()) {
                     openCourseExplorer()
                 } else {
@@ -175,28 +174,35 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         if (items.isEmpty()) {
             return
         }
-        val temp: ArrayList<InboxEntity> = arrayListOf()
-        items.filter { it.isCapsuleCourse }.sortedByDescending { it.courseCreatedDate }.let {
-            temp.addAll(it)
+        lifecycleScope.launch(Dispatchers.Default) {
+            val temp: ArrayList<InboxEntity> = arrayListOf()
+            items.filter { it.isCapsuleCourse }.sortedByDescending { it.courseCreatedDate }.let {
+                temp.addAll(it)
+            }
+
+            items.filter { (it.created == null || it.created == 0L) && it.courseId != TRIAL_COURSE_ID && it.isCapsuleCourse.not() }
+                .sortedByDescending { it.courseCreatedDate }.let {
+                    temp.addAll(it)
+                }
+
+            items.filter { it.created != null && it.created != 0L && it.isCapsuleCourse.not() }
+                .sortedByDescending { it.created }.let {
+                    temp.addAll(it)
+                }
+
+            courseListSet.addAll(temp)
+            lifecycleScope.launch(Dispatchers.Main) {
+                inboxAdapter.addItems(temp)
+            }
         }
-
-        items.filter { (it.created == null || it.created == 0L) && it.courseId != TRIAL_COURSE_ID && it.isCapsuleCourse.not() }
-            .sortedByDescending { it.courseCreatedDate }.let {
-                temp.addAll(it)
-            }
-
-        items.filter { it.created != null && it.created != 0L && it.isCapsuleCourse.not() }
-            .sortedByDescending { it.created }.let {
-                temp.addAll(it)
-            }
-        inboxAdapter.addItems(temp)
-        courseListSet.addAll(temp)
         if (findMoreLayout.visibility == View.INVISIBLE) {
             findMoreLayout.visibility = View.VISIBLE
         }
-        if (isPermissionRequired) {
-            isPermissionRequired = false
-            locationFetch()
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (isPermissionRequired) {
+                isPermissionRequired = false
+                locationFetch()
+            }
         }
     }
 

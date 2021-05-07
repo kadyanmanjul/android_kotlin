@@ -335,7 +335,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private fun openChooser() {
         UserPicChooserFragment.showDialog(
             supportFragmentManager,
-            viewModel.getUserProfileUrl().isNullOrBlank()
+            viewModel.getUserProfileUrl().isNullOrBlank(),
+            isFromRegistration = false
         )
     }
 

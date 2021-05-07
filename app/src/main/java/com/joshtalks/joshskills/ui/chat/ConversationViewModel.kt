@@ -32,7 +32,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 
-
 class ConversationViewModel(
     application: Application,
     private val savedStateHandle: SavedStateHandle,
@@ -51,13 +50,12 @@ class ConversationViewModel(
     val userUnreadCourseChat = MutableSharedFlow<List<ChatModel>>()
     val userReadCourseChat = MutableSharedFlow<List<ChatModel>>()
     val pagingMessagesChat = MutableSharedFlow<List<ChatModel>>()
-    val updateChatMessage = MutableSharedFlow<ChatModel>()
+    val updateChatMessage = MutableSharedFlow<ChatModel?>()
     val newMessageAddFlow = MutableSharedFlow<Boolean>()
 
     val refreshViewLiveData: MutableLiveData<ChatModel> = MutableLiveData()
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
     val unreadMessageCount: MutableLiveData<Int> = MutableLiveData()
-
 
     inner class CheckConnectivity : BroadcastReceiver() {
         override fun onReceive(context: Context, arg1: Intent) {
@@ -66,7 +64,6 @@ class ConversationViewModel(
             }
         }
     }
-
 
     fun sendTextMessage(messageObject: BaseChatMessage, chatModel: ChatModel?) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -91,11 +88,10 @@ class ConversationViewModel(
                     delay(500)
                     refreshMessageObject(chatModel.chatId)
                 }
-            } catch (ex: Exception) {
-                //registerCourseLiveData.postValue(null)
+            } catch (ex: Throwable) {
+                // registerCourseLiveData.postValue(null)
                 ex.printStackTrace()
             }
-
         }
     }
 
@@ -118,7 +114,6 @@ class ConversationViewModel(
         }
     }
 
-
     private fun uploadCompressedMedia(
         mediaPath: String,
         messageObject: BaseChatMessage,
@@ -135,7 +130,6 @@ class ConversationViewModel(
                     (messageObject as BaseMediaMessage).url = url
                     sendTextMessage(messageObject, chatModel)
                 }
-
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -148,7 +142,8 @@ class ConversationViewModel(
                 AppDirectory.copy(
                     Compressor(getApplication()).setQuality(75).setMaxWidth(720).setMaxHeight(
                         1280
-                    ).compressToFile(File(path)).absolutePath, path
+                    ).compressToFile(File(path)).absolutePath,
+                    path
                 )
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -181,13 +176,11 @@ class ConversationViewModel(
                     body
                 ).execute()
                 return@async responseUpload.code()
-
             } catch (ex: Exception) {
                 return@async 220
             }
         }.await()
     }
-
 
     fun getAllCourseMessage() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -220,10 +213,8 @@ class ConversationViewModel(
             }
             updateAllMessageReadByUser()
             getNewMessageFromServer()
-
         }
     }
-
 
     fun loadPagingMessage(lastMessage: ChatModel) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -240,27 +231,26 @@ class ConversationViewModel(
     fun addNewMessages(lastMessageTime: Double) {
         viewModelScope.launch(Dispatchers.IO) {
             if (lastMessageTime > 0L) {
-                delay(250)
+                delay(150)
             }
             userUnreadCourseChat.emit(
                 chatDao.getNewFetchMessages(
                     inboxEntity.conversation_id, lastMessageTime
                 ).sortedWith(compareBy { it.messageTime })
             )
-            updateAllMessageReadByUser()
-            delay(50)
             newMessageAddFlow.emit(true)
+            updateAllMessageReadByUser()
         }
     }
 
     private fun updateAllMessageReadByUser() {
         viewModelScope.launch(Dispatchers.IO) {
+            delay(250)
             appDatabase.chatDao().readAllChatBYUser(inboxEntity.conversation_id)
         }
     }
 
-
-    private fun getNewMessageFromServer(delayTimeNextRequest: Long = 0L,refreshMessageUser: Boolean=false) {
+    private fun getNewMessageFromServer(delayTimeNextRequest: Long = 0L, refreshMessageUser: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO) {
             if (Utils.isInternetAvailable()) {
                 val arguments = mutableMapOf<String, String>()
@@ -287,7 +277,6 @@ class ConversationViewModel(
         getNewMessageFromServer(refreshMessageUser = true)
     }
 
-
     fun refreshMessageObject(chatId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val chatObj = chatDao.getUpdatedChatObjectViaId(chatId)
@@ -303,7 +292,6 @@ class ConversationViewModel(
             }
         }
     }
-
 
     fun getAwardMentorModel(awardMentorId: Int): AwardMentorModel? {
         return appDatabase.awardMentorModelDao().getAwardMentorModel(awardMentorId)
@@ -347,12 +335,10 @@ class ConversationViewModel(
         isRecordingStarted = false
     }
 
-
     override fun onCleared() {
         super.onCleared()
         if (isRecordingStarted) {
             mAudioRecording.stopRecording(true)
         }
     }
-
 }

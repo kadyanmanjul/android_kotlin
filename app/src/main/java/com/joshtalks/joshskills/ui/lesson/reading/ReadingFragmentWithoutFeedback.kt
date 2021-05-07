@@ -9,9 +9,14 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.SystemClock
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.SeekBar
@@ -21,7 +26,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -30,15 +34,30 @@ import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.isCallOngoing
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ReadingPracticeFragmentWithoutFeedbackBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.AudioType
+import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
+import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.LessonMaterialType
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
+import com.joshtalks.joshskills.repository.local.entity.PendingTask
+import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
+import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.RemovePracticeAudioEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -59,13 +78,13 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 
 class ReadingFragmentWithoutFeedback :
     CoreJoshFragment(),
@@ -219,7 +238,7 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun hidePracticeSubmitLayout() {
-        binding.yourSubAnswerTv.visibility = GONE
+        //binding.yourSubAnswerTv.visibility = GONE
         binding.subPractiseSubmitLayout.visibility = GONE
     }
 
@@ -256,6 +275,7 @@ class ReadingFragmentWithoutFeedback :
                                 if (this.practiceEngagement.isNullOrEmpty()) {
                                     showPracticeInputLayout()
                                     binding.feedbackLayout.visibility = GONE
+                                    //binding.yourSubAnswerTv.text = getString(R.string.your_answer)
                                     hidePracticeSubmitLayout()
                                     disableSubmitButton()
                                 } else {
@@ -361,7 +381,7 @@ class ReadingFragmentWithoutFeedback :
             }
             if ((this.materialType == LessonMaterialType.TX).not()) {
                 if (this.qText.isNullOrEmpty().not()) {
-                    binding.practiseTextInfoLayout.visibility = VISIBLE
+                    binding.practiseTextInfoLayout.visibility = GONE
                     binding.infoTv2.visibility = VISIBLE
                     binding.infoTv2.text =
                         HtmlCompat.fromHtml(this.qText!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
@@ -401,11 +421,12 @@ class ReadingFragmentWithoutFeedback :
     private fun setViewAccordingExpectedAnswer() {
         currentLessonQuestion?.run {
             showPracticeInputLayout()
-            binding.uploadPractiseView.visibility = VISIBLE
+            binding.recordingViewFrame.visibility = VISIBLE
+            binding.hintContainer.visibility = VISIBLE
             binding.practiseInputHeader.text =
                 AppObjectController.getFirebaseRemoteConfig()
                     .getString(FirebaseRemoteConfigKey.READING_PRACTICE_TITLE)
-            binding.uploadPractiseView.setImageResource(R.drawable.recv_ic_mic_white)
+            binding.recordingView.setImageResource(R.drawable.recv_ic_mic_white)
             audioRecordTouchListener()
             binding.audioPractiseHint.visibility = VISIBLE
         }
@@ -450,7 +471,7 @@ class ReadingFragmentWithoutFeedback :
 
         viewModel.requestStatusLiveData.observe(
             viewLifecycleOwner,
-            Observer {
+            {
                 if (it) {
                     showCompletedPractise()
                 } else {
@@ -462,7 +483,7 @@ class ReadingFragmentWithoutFeedback :
 
         viewModel.practiceFeedback2LiveData.observe(
             viewLifecycleOwner,
-            Observer {
+            {
                 setFeedBackLayout(it)
                 hideCancelButtonInRV()
                 binding.feedbackLayout.setCardBackgroundColor(
@@ -482,7 +503,7 @@ class ReadingFragmentWithoutFeedback :
 
         viewModel.practiceEngagementData.observe(
             viewLifecycleOwner,
-            Observer {
+            {
                 updatePracticeFeedback(it)
                 if (it.pointsList.isNullOrEmpty().not()) {
                     showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
@@ -497,7 +518,7 @@ class ReadingFragmentWithoutFeedback :
         binding.progressLayout.visibility = GONE
         // binding.feedbackResultProgressLl.visibility = VISIBLE
         binding.rootView.postDelayed(
-            Runnable {
+            {
                 binding.rootView.smoothScrollTo(
                     0,
                     binding.rootView.height
@@ -691,7 +712,7 @@ class ReadingFragmentWithoutFeedback :
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
-                            binding.uploadPractiseView.setOnClickListener(null)
+                            binding.recordingView.setOnClickListener(null)
                             audioRecordTouchListener()
                             return
                         }
@@ -717,7 +738,7 @@ class ReadingFragmentWithoutFeedback :
 
     @SuppressLint("ClickableViewAccessibility")
     private fun audioRecordTouchListener() {
-        binding.uploadPractiseView.setOnTouchListener { _, event ->
+        binding.recordingView.setOnTouchListener { _, event ->
             if (isCallOngoing()) {
                 return@setOnTouchListener false
             }
@@ -731,10 +752,10 @@ class ReadingFragmentWithoutFeedback :
                     binding.videoPlayer.onPause()
                     pauseAllAudioAndUpdateViews()
                     binding.rootView.requestDisallowInterceptTouchEvent(true)
-                    binding.counterContainer.visibility = VISIBLE
-                    binding.linearLayout.layoutTransition?.setAnimateParentHierarchy(false)
-                    binding.uploadPractiseView.startAnimation(scaleAnimation)
-                    binding.linearLayout.layoutTransition?.setAnimateParentHierarchy(false)
+                    binding.counterTv.visibility = VISIBLE
+                    binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
+                    binding.recordingView.startAnimation(scaleAnimation)
+                    binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
                     requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     appAnalytics?.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
                     // appAnalytics?.create(AnalyticsEvent.AUDIO_RECORD.NAME).push()
@@ -742,7 +763,7 @@ class ReadingFragmentWithoutFeedback :
                     startTime = System.currentTimeMillis()
                     binding.counterTv.start()
                     val params =
-                        binding.counterContainer.layoutParams as ViewGroup.MarginLayoutParams
+                        binding.counterTv.layoutParams as ViewGroup.MarginLayoutParams
 //                    params.topMargin = binding.rootView.scrollY
                     viewModel.startRecord()
                     binding.audioPractiseHint.visibility = GONE
@@ -754,8 +775,8 @@ class ReadingFragmentWithoutFeedback :
                     binding.rootView.requestDisallowInterceptTouchEvent(false)
                     binding.counterTv.stop()
                     viewModel.stopRecording()
-                    binding.uploadPractiseView.clearAnimation()
-                    binding.counterContainer.visibility = GONE
+                    binding.recordingView.clearAnimation()
+                    binding.counterTv.visibility = GONE
                     binding.audioPractiseHint.visibility = VISIBLE
                     requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     val timeDifference =
@@ -943,6 +964,9 @@ class ReadingFragmentWithoutFeedback :
                         binding.progressLayout.visibility = VISIBLE
                         binding.feedbackGrade.visibility = GONE
                         binding.feedbackDescription.visibility = GONE
+                        binding.recordingViewFrame.visibility = GONE
+                        binding.hintContainer.visibility = GONE
+                        binding.yourSubAnswerTv.text = getString(R.string.your_submitted_answer)
                         disableSubmitButton()
                     }
                     // practiceViewModel.submitPractise(chatModel, requestEngage, engageType)

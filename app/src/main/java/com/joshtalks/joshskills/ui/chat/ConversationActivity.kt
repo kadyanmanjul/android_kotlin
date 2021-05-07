@@ -30,7 +30,6 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.custom_ui.decorator.EndlessRecyclerViewScrollListener
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
@@ -236,12 +235,20 @@ class ConversationActivity :
                 PrefManager.put(IS_DEMO_P2P, false)
             }
             conversationBinding.textMessageTitle.text = inboxEntity.course_name
+            conversationBinding.dummyTextMessageTitle.text = inboxEntity.course_name
             conversationBinding.imageViewLogo.setImageWithPlaceholder(inboxEntity.course_icon)
             conversationBinding.imageViewLogo.visibility = VISIBLE
             conversationBinding.imageViewLogo.setOnClickListener {
                 openCourseProgressListingScreen()
             }
+            conversationBinding.dummyImageViewLogo.setImageWithPlaceholder(inboxEntity.course_icon)
+            conversationBinding.dummyImageViewLogo.setOnClickListener {
+                openCourseProgressListingScreen()
+            }
             conversationBinding.textMessageTitle.setOnClickListener {
+                openCourseProgressListingScreen()
+            }
+            conversationBinding.dummyTextMessageTitle.setOnClickListener {
                 openCourseProgressListingScreen()
             }
 
@@ -293,7 +300,7 @@ class ConversationActivity :
         linearLayoutManager = SmoothScrollingLinearLayoutManager(this, false)
         linearLayoutManager.stackFromEnd = true
         linearLayoutManager.isItemPrefetchEnabled = true
-        linearLayoutManager.initialPrefetchItemCount = 10
+        linearLayoutManager.initialPrefetchItemCount = 20
         linearLayoutManager.isSmoothScrollbarEnabled = true
         conversationBinding.chatRv.apply {
             addItemDecoration(LayoutMarginDecoration(Utils.dpToPx(context, 4f)))
@@ -308,42 +315,24 @@ class ConversationActivity :
         conversationBinding.chatRv.layoutManager?.isMeasurementCacheEnabled = false
 
         conversationBinding.chatRv.addOnScrollListener(object :
-                EndlessRecyclerViewScrollListener(linearLayoutManager, LoadOnScrollDirection.TOP) {
-                override fun onLoadMore(page: Int, totalItemsCount: Int) {
-                    if (conversationAdapter.itemCount == 0) {
-                        return
-                    }
+            RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    conversationBinding.scrollToEndButton.visibility = GONE
+                } else if (recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    conversationBinding.scrollToEndButton.visibility = VISIBLE
                 }
-            })
-        conversationBinding.chatRv.addOnScrollListener(object :
-                EndlessRecyclerViewScrollListener(linearLayoutManager, LoadOnScrollDirection.BOTTOM) {
-                override fun onLoadMore(page: Int, totalItemsCount: Int) {
-                    if (conversationAdapter.itemCount == 0) {
-                        return
-                    }
-                    //   getPreviousRecord()
-                }
-            })
+                visibleItem()
+            }
 
-        conversationBinding.chatRv.addOnScrollListener(object :
-                RecyclerView.OnScrollListener() {
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    super.onScrollStateChanged(recyclerView, newState)
-                    if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        conversationBinding.scrollToEndButton.visibility = GONE
-                    } else if (recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        conversationBinding.scrollToEndButton.visibility = VISIBLE
-                    }
-                    visibleItem()
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (recyclerView.canScrollVertically(-1)) {
+                    getPreviousRecord()
                 }
-
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    if (recyclerView.canScrollVertically(-1)) {
-                        getPreviousRecord()
-                    }
-                }
-            })
+            }
+        })
     }
 
     private fun getLayoutManager(): SmoothScrollingLinearLayoutManager {
@@ -382,8 +371,7 @@ class ConversationActivity :
             )
         }
 
-        conversationBinding.imgGroupChat.visibility =
-            if (inboxEntity.isGroupActive) GONE else GONE
+        conversationBinding.imgGroupChat.visibility = if (inboxEntity.isGroupActive) GONE else GONE
 
 //        conversationBinding.imgGroupChat.setOnClickListener {
 //            utilConversationViewModel.initCometChat()
@@ -562,7 +550,7 @@ class ConversationActivity :
                     return@OnRecordTouchListener
                 }
                 if (conversationBinding.chatEdit.text.toString()
-                    .isEmpty() && it == MotionEvent.ACTION_DOWN
+                        .isEmpty() && it == MotionEvent.ACTION_DOWN
                 ) {
                     if (PermissionUtils.isAudioAndStoragePermissionEnable(this).not()) {
                         PermissionUtils.audioRecordStorageReadAndWritePermission(
@@ -739,8 +727,10 @@ class ConversationActivity :
         }
         lifecycleScope.launchWhenCreated {
             conversationViewModel.updateChatMessage.collectLatest { chat ->
-                conversationAdapter.updateItem(chat)
-                unlockClassViewModel.canWeAddUnlockNextClass(chat.chatId)
+                chat?.let {
+                    conversationAdapter.updateItem(it)
+                    unlockClassViewModel.canWeAddUnlockNextClass(it.chatId)
+                }
             }
         }
         lifecycleScope.launchWhenCreated {
@@ -859,9 +849,10 @@ class ConversationActivity :
 
     private fun showCourseProgressTooltip() {
         if (AppObjectController.getFirebaseRemoteConfig()
-            .getBoolean(FirebaseRemoteConfigKey.COURSE_PROGRESS_TOOLTIP_VISIBILITY)
+                .getBoolean(FirebaseRemoteConfigKey.COURSE_PROGRESS_TOOLTIP_VISIBILITY)
         ) {
             conversationBinding.courseProgressTooltip.setDismissListener(this)
+            conversationBinding.courseProgressTooltipContainer.visibility = VISIBLE
             conversationBinding.courseProgressTooltip.visibility = VISIBLE
             conversationBinding.shader.visibility = VISIBLE
 
@@ -879,6 +870,7 @@ class ConversationActivity :
                 conversationBinding.txtUnreadCount
             )
         }
+        conversationBinding.courseProgressTooltipContainer.visibility = GONE
         conversationBinding.courseProgressTooltip.visibility = GONE
         conversationBinding.shader.visibility = GONE
 
@@ -895,12 +887,13 @@ class ConversationActivity :
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
-                        val time = try {
-                            conversationAdapter.getLastItem().messageTime
-                        } catch (ex: Exception) {
-                            0.0
+                        if (conversationAdapter.itemCount == 0) {
+                            conversationViewModel.addNewMessages(0.0)
+                        } else {
+                            conversationAdapter.getLastItemV2()?.messageTime?.let {
+                                conversationViewModel.addNewMessages(it)
+                            }
                         }
-                        conversationViewModel.addNewMessages(time)
                         refreshMessageByUser = it.refreshMessageUser
                     },
                     {
@@ -1165,9 +1158,9 @@ class ConversationActivity :
                             .addParam(
                                 AnalyticsEvent.PRACTICE_SOLVED.NAME,
                                 (it.chatModel.question != null) && (
-                                    it.chatModel.question!!.practiceEngagement.isNullOrEmpty()
-                                        .not()
-                                    )
+                                        it.chatModel.question!!.practiceEngagement.isNullOrEmpty()
+                                            .not()
+                                        )
                             )
                             .addParam("chatId", it.chatModel.chatId)
                             .push()
@@ -1223,7 +1216,7 @@ class ConversationActivity :
                         isNewMessageShowing = false
                         conversationBinding.refreshLayout.isRefreshing = true
                         // conversationBinding.chatRv.removeView(it.viewHolder)
-                        conversationAdapter.removeNewClassCard()
+                        // conversationAdapter.removeNewClassCard()
                         conversationAdapter.removeUnlockMessage()
                         unlockClassViewModel.updateBatchChangeRequest()
                         logUnlockCardEvent()

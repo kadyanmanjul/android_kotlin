@@ -51,4 +51,8 @@ interface LessonDao {
 
     @Query(value = "SELECT COUNT(lesson_id) FROM lessonmodel  WHERE lesson_no IN (:ids)")
     suspend fun getLessonNumbers(ids: ArrayList<Int>): Long
+
+    @Query("SELECT DISTINCT lesson_id FROM lessonmodel WHERE course =:courseId")
+    fun getLessonIdsForCourse(courseId: Int): List<Int>
+
 }

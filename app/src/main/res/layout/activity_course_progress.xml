@@ -69,7 +69,7 @@
                             android:ellipsize="marquee"
                             android:gravity="start"
                             android:singleLine="true"
-                            android:text="@string/course_overview_header"
+                            android:text="@string/course_overview"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                             android:textColor="@color/black" />
                     </RelativeLayout>

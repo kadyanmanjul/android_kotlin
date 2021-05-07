@@ -1,6 +1,12 @@
 package com.joshtalks.joshskills.track
 
-import androidx.room.* // ktlint-disable no-wildcard-imports
+import androidx.room.ColumnInfo
+import androidx.room.Dao
+import androidx.room.Entity
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.PrimaryKey
+import androidx.room.Query
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import java.time.Instant
@@ -49,5 +55,17 @@ data class CourseUsageSync(
     @SerializedName("start_time")
     var startTime: Long,
     @SerializedName("end_time")
-    var endTime: Long
+    var endTime: Long,
+    @SerializedName("course_id")
+    var courseId: Int,
+    @SerializedName("screen_name")
+    var screenName: String
+
+)
+
+data class CourseIdFilerModel(
+    @ColumnInfo(name = "conversation_id")
+    var conversationId: String,
+    @ColumnInfo(name = "courseId")
+    var courseId: Int,
 )

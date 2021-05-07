@@ -7,10 +7,21 @@ package com.joshtalks.joshskills.core.notification
 // import com.cometchat.pro.models.TextMessage
 // import com.joshtalks.joshskills.ui.groupchat.constant.StringContract
 // import com.joshtalks.joshskills.ui.groupchat.utils.Utils
-import android.app.*
+import android.app.ActivityManager
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import android.graphics.Rect
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
@@ -28,14 +39,24 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.API_TOKEN
+import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.JoshSkillExecutors
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
+import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.repository.local.model.*
+import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.NotificationAction
+import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
+import com.joshtalks.joshskills.repository.local.model.NotificationObject
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
@@ -45,6 +66,7 @@ import com.joshtalks.joshskills.ui.conversation_practice.PRACTISE_ID
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
@@ -56,17 +78,15 @@ import com.joshtalks.joshskills.ui.voip.RTC_NAME
 import com.joshtalks.joshskills.ui.voip.RTC_TOKEN_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
 import com.joshtalks.joshskills.ui.voip.WebRtcService
-import org.json.JSONObject
-import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
 import java.lang.reflect.Type
 import java.net.HttpURLConnection
 import java.net.URL
-import java.util.*
 import java.util.concurrent.ExecutorService
-import kotlin.collections.HashMap
 import kotlin.collections.set
+import org.json.JSONObject
+import timber.log.Timber
 
 const val FCM_TOKEN = "fcmToken"
 const val HAS_NOTIFICATION = "has_notification"
@@ -340,16 +360,33 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
              }*/
             NotificationAction.ACTION_DELETE_DATA -> {
-                deleteUserData()
+                Mentor.deleteUserData()
+                return null
+            }
+            NotificationAction.ACTION_DELETE_CONVERSATION_DATA -> {
+                actionData?.let {
+                    println("action = ${action}")
+                    println("actionData = ${actionData}")
+                    deleteConversationData(it)
+                }
                 return null
             }
             NotificationAction.ACTION_DELETE_USER -> {
-                deleteUserCredentials()
+                Mentor.deleteUserCredentials()
                 return null
             }
             NotificationAction.ACTION_DELETE_USER_AND_DATA -> {
-                deleteUserCredentials()
-                deleteUserData()
+                if (Mentor.getInstance().hasId()) {
+                    Mentor.deleteUserCredentials()
+                    Mentor.deleteUserData()
+                }
+                return null
+            }
+            NotificationAction.ACTION_LOGOUT_USER -> {
+                if (Mentor.getInstance().hasId()) {
+                    Mentor.deleteUserCredentials()
+                    Mentor.deleteUserData()
+                }
                 return null
             }
             NotificationAction.ACTION_OPEN_REMINDER -> {
@@ -503,18 +540,23 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         }
     }
 
-    private fun deleteUserData() {
-        AppObjectController.appDatabase.run {
-            courseDao().getAllConversationId().forEach {
-                PrefManager.removeKey(it)
+    private fun deleteConversationData(courseId: String) {
+        try {
+            AppObjectController.appDatabase.run {
+                val conversationId = this.courseDao().getConversationIdFromCourseId(courseId)
+                conversationId?.let {
+                    PrefManager.removeKey(it)
+                    LastSyncPrefManager.removeKey(it)
+                }
+                val lessons = lessonDao().getLessonIdsForCourse(courseId.toInt())
+                lessons.forEach {
+                    LastSyncPrefManager.removeKey(it.toString())
+                }
+                commonDao().deleteConversationData(courseId.toInt())
             }
-            LastSyncPrefManager.clear()
-            clearAllTables()
+        } catch (ex: Exception) {
+            Timber.e(ex)
         }
-    }
-
-    private fun deleteUserCredentials() {
-        PrefManager.logoutUser()
     }
 
     private fun isNotificationCrash(): Class<*> {

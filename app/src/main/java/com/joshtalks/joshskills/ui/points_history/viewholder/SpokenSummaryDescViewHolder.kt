@@ -5,6 +5,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.repository.server.points.PointsHistoryTitles
 import com.joshtalks.joshskills.repository.server.points.SpokenHistory
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
@@ -63,7 +64,8 @@ class SpokenSummaryDescViewHolder(
             rootView.background = drawable
             divider.visibility = android.view.View.VISIBLE
         }
-        title.text = spokenHistory.title
+        //title.text = PointHistoryTitlesArray.getOrNull(spokenHistory.title ?: 0)
+        title.text = PointsHistoryTitles.getTitleForIndex(spokenHistory.title ?: 0)
         score.text = "+".plus(spokenHistory.spokenDuration)
         spokenHistory.subTitle?.let {
             inLesson.visibility = android.view.View.VISIBLE

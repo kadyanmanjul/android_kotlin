@@ -3,18 +3,23 @@ package com.joshtalks.joshskills.ui.voip
 import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.app.Service
+import android.content.Intent
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.MediaPlayer
-import android.media.RingtoneManager
+import android.media.RingtoneManager // ktlint-disable no-wildcard-imports
 import android.net.Uri
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import com.joshtalks.joshskills.core.CALL_RINGTONE_NOT_MUTE
 import com.joshtalks.joshskills.core.JoshSkillExecutors
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.PrefManager // ktlint-disable no-wildcard-imports
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.ui.voip.util.WebRtcAudioManager
 import io.reactivex.disposables.CompositeDisposable
@@ -39,26 +44,24 @@ abstract class BaseWebRtcService : Service() { /*,SensorEventListener*/
     override fun onCreate() {
         super.onCreate()
         mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
-        executor.execute {
+
             try {
                 joshAudioManager = WebRtcAudioManager(this)
-               /* cpuWakelock = (getSystemService(POWER_SERVICE) as PowerManager?)?.newWakeLock(
-                    PowerManager.PARTIAL_WAKE_LOCK,
-                    "joshtalsk"
-                )
-                cpuWakelock?.acquire(60 * 1000L *//*1 minutes*//*)*/
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
+               /* cpuWakelock = (getSystemService(POWER_SERVICE) as PowerManager).newWakeLock(
+                PowerManager.PARTIAL_WAKE_LOCK, "joshtalsk"
+            )
+            cpuWakelock?.acquire(60 * 60 * 1000L *//*10 minutes*//*)*/
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 
     /*@SuppressLint("InvalidWakeLockTag")
     protected fun addSensor() {
-        removeWakeLock()
-        val sm: SensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
-        val proximity: Sensor? = sm.getDefaultSensor(Sensor.TYPE_PROXIMITY)
         try {
+            removeWakeLock()
+            val sm: SensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+            val proximity: Sensor? = sm.getDefaultSensor(Sensor.TYPE_PROXIMITY)
             proximityWakelock = (getSystemService(POWER_SERVICE) as PowerManager?)?.newWakeLock(
                 PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
                 "joshtalsk-prx"
@@ -121,7 +124,9 @@ abstract class BaseWebRtcService : Service() { /*,SensorEventListener*/
                 if (isProximityNear) {
                     proximityWakelock?.acquire(30 * 60L * 60)
                 } else {
-                    proximityWakelock?.release(1)
+                    if (proximityWakelock!!.isHeld) {
+                        proximityWakelock?.release(1)
+                    }
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -240,4 +245,9 @@ abstract class BaseWebRtcService : Service() { /*,SensorEventListener*/
         else
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && JoshApplication.isAppVisible.not()
     }*/
+
+    override fun onDestroy() {
+        super.onDestroy()
+        removeSensor()
+    }
 }

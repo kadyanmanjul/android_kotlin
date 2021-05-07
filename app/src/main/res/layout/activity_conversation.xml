@@ -131,7 +131,7 @@
             android:elevation="@dimen/_3sdp"
             android:fillAfter="false"
             android:visibility="gone"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/points"
@@ -213,8 +213,8 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="@dimen/_6sdp"
                     android:paddingBottom="@dimen/_4sdp"
-                    tools:itemCount="5"
-                    tools:listitem="@layout/inbox_row_layout" />
+                    tools:itemCount="1"
+                    tools:listitem="@layout/lesson_progress_stub" />
             </com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout>
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -287,7 +287,7 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:visibility="gone"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bottom_bar"
@@ -452,21 +452,86 @@
             android:id="@+id/shader"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/toolbar_container"
             android:alpha="0.85"
             android:background="@color/transparent_black_alfa_80"
             android:clickable="true"
             android:focusable="true"
-            android:visibility="gone" />
-
-        <com.joshtalks.joshskills.ui.course_progress_new.CourseProgressTooltip
-            android:id="@+id/course_progress_tooltip"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/toolbar_container"
-            android:layout_marginHorizontal="@dimen/_16sdp"
             android:visibility="gone"
             tools:visibility="visible" />
+
+        <FrameLayout
+            android:id="@+id/course_progress_tooltip_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/dummy_toolbar_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:paddingStart="@dimen/_6sdp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/dummy_iv_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical|start"
+                        android:paddingTop="@dimen/_6sdp"
+                        android:paddingBottom="@dimen/_6sdp"
+                        android:visibility="invisible"
+                        app:srcCompat="@drawable/ic_arrow_back" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/dummy_image_view_logo"
+                        android:layout_width="@dimen/_26sdp"
+                        android:layout_height="@dimen/_26sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_toEndOf="@id/dummy_iv_back"
+                        android:background="@drawable/white_button_round_enabled"
+                        android:gravity="center_vertical|start"
+                        android:src="@drawable/ic_josh_course" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/dummy_text_message_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerVertical="true"
+                        android:layout_marginHorizontal="@dimen/_8sdp"
+                        android:layout_marginVertical="@dimen/_4sdp"
+                        android:layout_toEndOf="@id/dummy_image_view_logo"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="start|center"
+                        android:paddingEnd="@dimen/_28sdp"
+                        android:singleLine="true"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+                        android:textColor="@color/white"
+                        tools:text="Spoken English Course" />
+
+                </RelativeLayout>
+
+                <com.joshtalks.joshskills.ui.course_progress_new.CourseProgressTooltip
+                    android:id="@+id/course_progress_tooltip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_marginHorizontal="@dimen/_16sdp" />
+
+            </LinearLayout>
+
+        </FrameLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/overlay_layout"

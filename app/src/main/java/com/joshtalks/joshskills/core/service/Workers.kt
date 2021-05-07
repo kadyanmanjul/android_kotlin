@@ -467,7 +467,7 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
                         deviceId,
                         UpdateDeviceRequest()
                     )
-                    //TODO no need to send UpdateDeviceRequest object in patch request 
+                    // TODO no need to send UpdateDeviceRequest object in patch request 
                     details.apiStatus = ApiRespStatus.PATCH
                     details.update()
                 }
@@ -521,10 +521,15 @@ class UserActiveWorker(context: Context, workerParams: WorkerParameters) :
                     null
                 }
             }
-            AppObjectController.signUpNetworkService.userActive(
+            val response = AppObjectController.signUpNetworkService.userActive(
                 Mentor.getInstance().getId(),
                 mapOf("instance_id" to instanceId, "device_id" to Utils.getDeviceId())
             )
+
+            if (response.isSuccessful && response.body()?.isLatestLoginDevice == false) {
+                Mentor.deleteUserCredentials()
+                Mentor.deleteUserData()
+            }
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -776,13 +781,20 @@ class CourseUsageSyncWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
-            val list = AppObjectController.appDatabase.courseUsageDao().getAllSession()
-                .parallelStream()
-                .map {
+            val db = AppObjectController.appDatabase
+            val sessionList = db.courseUsageDao().getAllSession()
+            val keys = sessionList.groupBy { it.conversationId }.keys
+            val courseIdList = db.courseDao().getCourseIdsFromConversationId(keys.toList())
+
+            val list = sessionList.parallelStream()
+                .map { courseUsageModel ->
                     CourseUsageSync(
-                        it.conversationId,
-                        it.startTime,
-                        it.endTime ?: 0
+                        courseId = courseIdList.findLast { it.conversationId == courseUsageModel.conversationId }?.courseId
+                            ?: -1,
+                        conversationId = courseUsageModel.conversationId,
+                        screenName = courseUsageModel.screenName ?: EMPTY,
+                        startTime = courseUsageModel.startTime,
+                        endTime = courseUsageModel.endTime ?: 0
                     )
                 }.toList()
             if (list.isEmpty()) {

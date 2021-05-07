@@ -47,7 +47,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun getAllRegisterCourseMinimalFromDB() = viewModelScope.launch {
+    private fun getAllRegisterCourseMinimalFromDB() = viewModelScope.launch(Dispatchers.IO) {
         _registerCourseLocalData.emit(appDatabase.courseDao().getRegisterCourseMinimal())
     }
 
@@ -128,7 +128,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getTotalWatchTime() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _overAllWatchTime.emit(appDatabase.videoEngageDao().getOverallWatchTime() ?: 0L)
         }
     }

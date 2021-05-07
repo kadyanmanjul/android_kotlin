@@ -183,6 +183,7 @@ object PrefManager {
 
     fun logoutUser() {
         prefManagerCommon.edit().clear().apply()
+        LastSyncPrefManager.clear()
         WorkManagerAdmin.instanceIdGenerateWorker()
         WorkManagerAdmin.appInitWorker()
         WorkManagerAdmin.appStartWorker()

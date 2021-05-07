@@ -2,9 +2,11 @@ package com.joshtalks.joshskills.ui.signup
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.view.WindowManager
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
@@ -13,10 +15,15 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.facebook.*
+import com.facebook.AccessToken
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.GraphRequest
 import com.facebook.login.LoginBehavior
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -27,24 +34,52 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.AppSignatureHelper
+import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SignUpStepStatus
+import com.joshtalks.joshskills.core.USER_LOCALE
+import com.joshtalks.joshskills.core.VerificationService
+import com.joshtalks.joshskills.core.VerificationStatus
+import com.joshtalks.joshskills.core.VerificationVia
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.custom_ui.countrycodepicker.CountryCodePicker
+import com.joshtalks.joshskills.core.getFBProfilePicture
+import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivitySignUpV2Binding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.ui.userprofile.UserProfileViewModel
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.sinch.verification.*
-import com.truecaller.android.sdk.*
+import com.sinch.verification.CodeInterceptionException
+import com.sinch.verification.Config
+import com.sinch.verification.IncorrectCodeException
+import com.sinch.verification.InitiationResult
+import com.sinch.verification.InvalidInputException
+import com.sinch.verification.PhoneNumberUtils
+import com.sinch.verification.ServiceErrorException
+import com.sinch.verification.SinchVerification
+import com.sinch.verification.Verification
+import com.sinch.verification.VerificationListener
+import com.truecaller.android.sdk.ITrueCallback
+import com.truecaller.android.sdk.TrueError
+import com.truecaller.android.sdk.TrueException
+import com.truecaller.android.sdk.TrueProfile
+import com.truecaller.android.sdk.TruecallerSDK
+import com.truecaller.android.sdk.TruecallerSdkScope
 import com.truecaller.android.sdk.clients.VerificationCallback
 import com.truecaller.android.sdk.clients.VerificationDataBundle
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
@@ -52,7 +87,7 @@ import io.michaelrocks.libphonenumber.android.Phonenumber
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.*
+import java.util.Locale
 
 private const val GOOGLE_SIGN_UP_REQUEST_CODE = 9001
 const val FLOW_FROM = "Flow"
@@ -62,6 +97,9 @@ class SignUpActivity : BaseActivity() {
     private lateinit var appAnalytics: AppAnalytics
     private val viewModel: SignUpViewModel by lazy {
         ViewModelProvider(this).get(SignUpViewModel::class.java)
+    }
+    private val viewModelForDpUpload: UserProfileViewModel by lazy {
+        ViewModelProvider(this).get(UserProfileViewModel::class.java)
     }
     private lateinit var binding: ActivitySignUpV2Binding
     private var fbCallbackManager = CallbackManager.Factory.create()
@@ -100,7 +138,7 @@ class SignUpActivity : BaseActivity() {
         initLoginFeatures()
         setupTrueCaller()
         if (User.getInstance().isVerified && isUserProfileComplete()) {
-            openProfileDetailFragment()
+            openProfileDetailFragment(false)
         } else {
             openSignUpOptionsFragment()
         }
@@ -115,10 +153,19 @@ class SignUpActivity : BaseActivity() {
                     openNumberVerificationFragment()
                 }
                 SignUpStepStatus.ProfileInCompleted -> {
-                    openProfileDetailFragment()
+                    binding.ivBack.visibility=View.GONE
+                    openProfileDetailFragment(true)
                 }
-                SignUpStepStatus.ProfileCompleted, SignUpStepStatus.SignUpCompleted -> {
-
+                SignUpStepStatus.ProfileCompleted -> {
+                    binding.ivBack.visibility=View.GONE
+                    openProfilePicUpdateFragment()
+                }
+                SignUpStepStatus.ProfilePicUploaded -> {
+                    binding.ivBack.visibility=View.GONE
+                    binding.skip.visibility=View.INVISIBLE
+                    openProfilePicSuccessfullyUpdateFragment()
+                }
+                SignUpStepStatus.StartAfterPicUploaded, SignUpStepStatus.ProfilePicSkipped, SignUpStepStatus.SignUpCompleted -> {
                     logLoginSuccessAnalyticsEvent(viewModel.loginViaStatus?.toString())
                     startActivity(getInboxActivityIntent())
                     this@SignUpActivity.finishAffinity()
@@ -129,9 +176,28 @@ class SignUpActivity : BaseActivity() {
         viewModel.progressBarStatus.observe(this, Observer {
             showProgressBar()
         })
+
         viewModel.fromVerificationScreen.observe(this, Observer {
             if (it)
                 addRetryCountAnalytics()
+        })
+
+        viewModelForDpUpload.apiCallStatus.observe(this, Observer {
+            when(it){
+                ApiCallStatus.SUCCESS->{
+                    hideProgressBar()
+                    viewModel.changeSignupStatusToProfilePicUploaded()
+                }
+                ApiCallStatus.FAILED->{
+                    hideProgressBar()
+                }
+                ApiCallStatus.START->{
+                    showProgressBar()
+                }
+                else ->{
+
+                }
+            }
         })
     }
 
@@ -242,14 +308,39 @@ class SignUpActivity : BaseActivity() {
         }
     }
 
-    private fun openProfileDetailFragment() {
+    private fun openProfileDetailFragment(isRegistrationScreenFirstTime:Boolean) {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
             addToBackStack(null)
             replace(
                 R.id.container,
-                SignUpProfileFragment.newInstance(),
+                SignUpProfileFragment.newInstance(isRegistrationScreenFirstTime),
                 SignUpProfileFragment::class.java.name
+            )
+        }
+    }
+
+    private fun openProfilePicUpdateFragment() {
+        binding.skip.visibility= View.VISIBLE
+        binding.ivHelp.visibility= View.GONE
+        supportFragmentManager.commit(true) {
+            addToBackStack(null)
+            replace(
+                R.id.container,
+                SignUpProfilePicUpdateFragment.newInstance(),
+                SignUpProfilePicUpdateFragment.TAG
+            )
+        }
+    }
+
+    private fun openProfilePicSuccessfullyUpdateFragment() {
+        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        supportFragmentManager.commit(true) {
+            addToBackStack(null)
+            replace(
+                R.id.container,
+                SignUpProfilePicSuccessfullyUpdatedFragment.newInstance(),
+                SignUpProfilePicSuccessfullyUpdatedFragment.TAG
             )
         }
     }
@@ -273,7 +364,15 @@ class SignUpActivity : BaseActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == GOOGLE_SIGN_UP_REQUEST_CODE) {
+        val url= ImagePicker.getFilePath(data)
+        if (url.isNullOrBlank().not()&&resultCode == Activity.RESULT_OK){
+                ImagePicker.getFilePath(data)?.let {
+                    val imageUpdatedPath = AppDirectory.getImageSentFilePath()
+                    AppDirectory.copy(it, imageUpdatedPath)
+                    viewModelForDpUpload.uploadMedia(imageUpdatedPath)
+                }
+        }
+        else if (requestCode == GOOGLE_SIGN_UP_REQUEST_CODE) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)
@@ -295,6 +394,7 @@ class SignUpActivity : BaseActivity() {
             return
         }
         hideProgressBar()
+
     }
 
     private fun gmailLogin() {
@@ -308,6 +408,18 @@ class SignUpActivity : BaseActivity() {
 
     private fun trueCallerLogin() {
         TruecallerSDK.getInstance().getUserProfile(this@SignUpActivity)
+    }
+
+    fun onSkipPressed() {
+        logSkipEvent()
+        viewModel.changeSignupStatusToProfilePicSkipped()
+    }
+
+    private fun logSkipEvent() {
+        AppAnalytics.create(AnalyticsEvent.SKIP_PROFILE_PIC.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
     }
 
     fun getUserDetailsFromFB(accessToken: AccessToken) {

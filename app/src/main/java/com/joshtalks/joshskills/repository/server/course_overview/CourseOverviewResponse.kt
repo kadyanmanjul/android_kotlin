@@ -96,10 +96,10 @@ data class CourseOverviewItem(
     var grammarPercentage: String,
     @SerializedName("rp_percentage")
     @Expose
-    var rpPercentageval: String,
+    var readingPercentage: String,
     @SerializedName("vp_percentage")
     @Expose
-    var vpPercentage: String,
+    var vocabPercentage: String,
     @SerializedName("speaking_percentage")
     @Expose
     var speakingPercentage: String?

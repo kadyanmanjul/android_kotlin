@@ -7,7 +7,7 @@ import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.CertificateDetail
 
 interface OnDismissDialog {
-    fun onDismiss()
+    fun onDismiss() {}
 }
 
 interface OnDismissClaimCertificateDialog {
@@ -28,14 +28,13 @@ interface OnConversationPractiseSubmit {
 }
 
 interface OnDismissWithDialog : OnDismissDialog {
-    fun onSuccessDismiss()
-    fun onCancel()
+    fun onSuccessDismiss() {}
+    fun onCancel() {}
 }
 
 interface OnDismissWithSuccess : OnDismissDialog {
     fun onSuccessDismiss()
 }
-
 
 interface CertificationExamListener {
     fun onPauseExit()
@@ -44,7 +43,7 @@ interface CertificationExamListener {
     fun onGoToQuestion(position: Int)
 }
 
-interface OnOpenCourseListener{
+interface OnOpenCourseListener {
     fun onClick(inboxEntity: InboxEntity)
 }
 
@@ -53,3 +52,7 @@ interface RecyclerViewItemClickListener {
     fun onItemLongClick(view: View?, position: Int)
 }
 
+interface FileDownloadCallback : OnDismissWithDialog {
+    fun downloadedFile(path: String) {}
+    fun webURL(path: String, localUrl: String) {}
+}
