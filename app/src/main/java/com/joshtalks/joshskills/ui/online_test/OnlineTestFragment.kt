@@ -20,7 +20,6 @@ import com.joshtalks.joshskills.ui.chat.vh.EnableDisableGrammarButtonCallback
 import com.joshtalks.joshskills.ui.chat.vh.GrammarButtonView
 import com.joshtalks.joshskills.ui.chat.vh.GrammarHeadingView
 import com.joshtalks.joshskills.ui.lesson.grammar_new.McqChoiceView
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,7 +31,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private val viewModel: OnlineTestViewModel by lazy {
         ViewModelProvider(requireActivity()).get(OnlineTestViewModel::class.java)
     }
-    private val compositeDisposable = CompositeDisposable()
+    //private val compositeDisposable = CompositeDisposable()
     private var assessmentQuestions: AssessmentQuestionWithRelations? = null
 
     private var headingView: Stub<GrammarHeadingView>? = null
@@ -76,18 +75,15 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
 
     private fun setObservers() {
 
-        viewModel.grammarAssessmentLiveData.observe(viewLifecycleOwner) { onlineTestresponse ->
-            onlineTestresponse.question?.let {
-                this.assessmentQuestions = AssessmentQuestionWithRelations(it, 10)
-            }
-            if (onlineTestresponse.message.isNullOrBlank() && assessmentQuestions != null) {
-                setupViews(assessmentQuestions!!)
+        viewModel.grammarAssessmentLiveData.observe(viewLifecycleOwner) { onlineTestResponse ->
+            if (onlineTestResponse.completed) {
+                showToast(onlineTestResponse.message)
             } else {
-                showToast(onlineTestresponse.message)
+                onlineTestResponse.question?.let {
+                    this.assessmentQuestions = AssessmentQuestionWithRelations(it, 10)
+                }
+                setupViews(assessmentQuestions!!)
             }
-        }
-
-        viewModel.message.observe(viewLifecycleOwner) { message ->
         }
     }
 
@@ -102,76 +98,80 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             )
         }
 
-        if (assessmentQuestions.question.choiceType == ChoiceType.ARRANGE_THE_SENTENCE) {
-            mcqChoiceView?.get()?.visibility = View.GONE
-            atsChoiceView?.resolved().let {
-                atsChoiceView?.get()?.visibility = View.VISIBLE
-                //TODO reset the view in setup as well for next question
-                atsChoiceView!!.get().setup(assessmentQuestions)
-                atsChoiceView!!.get()
-                    .addCallback(object : EnableDisableGrammarButtonCallback {
-                        override fun disableGrammarButton() {
-                            buttonView?.get()?.disableBtn()
-                        }
-
-                        override fun enableGrammarButton() {
-                            buttonView?.get()?.enableBtn()
-                        }
-
-                        override fun alreadyAttempted(isCorrectAnswer: Boolean) {
-                            CoroutineScope(Dispatchers.Main).launch() {
-                                buttonView?.get()?.setAlreadyAttemptedView(isCorrectAnswer)
+        when (assessmentQuestions.question.choiceType) {
+            ChoiceType.ARRANGE_THE_SENTENCE -> {
+                mcqChoiceView?.get()?.visibility = View.GONE
+                atsChoiceView?.resolved().let {
+                    atsChoiceView?.get()?.visibility = View.VISIBLE
+                    atsChoiceView!!.get().setup(assessmentQuestions)
+                    atsChoiceView!!.get()
+                        .addCallback(object : EnableDisableGrammarButtonCallback {
+                            override fun disableGrammarButton() {
+                                buttonView?.get()?.disableBtn()
                             }
-                        }
 
-                    })
-            }
-        } else if (assessmentQuestions.question.choiceType == ChoiceType.SINGLE_SELECTION_TEXT) {
-            atsChoiceView?.get()?.visibility = View.GONE
-            mcqChoiceView?.resolved().let {
-                //TODO reset the view in setup as well for next question
-                mcqChoiceView?.get()?.visibility = View.VISIBLE
-                mcqChoiceView!!.get().setup(assessmentQuestions)
-                mcqChoiceView!!.get()
-                    .addCallback(object : EnableDisableGrammarButtonCallback {
-                        override fun disableGrammarButton() {
-                            buttonView?.get()?.disableBtn()
-                        }
-
-                        override fun enableGrammarButton() {
-                            buttonView?.get()?.enableBtn()
-                        }
-
-                        override fun alreadyAttempted(isCorrectAnswer: Boolean) {
-                            CoroutineScope(Dispatchers.Main).launch() {
-                                buttonView?.get()?.setAlreadyAttemptedView(isCorrectAnswer)
+                            override fun enableGrammarButton() {
+                                buttonView?.get()?.enableBtn()
                             }
-                        }
 
-                    })
+                            override fun alreadyAttempted(isCorrectAnswer: Boolean) {
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    buttonView?.get()?.setAlreadyAttemptedView(isCorrectAnswer)
+                                }
+                            }
+
+                        })
+                }
             }
-        } else {
-            atsChoiceView?.get()?.visibility = View.GONE
-            mcqChoiceView?.get()?.visibility = View.GONE
+            ChoiceType.SINGLE_SELECTION_TEXT -> {
+                atsChoiceView?.get()?.visibility = View.GONE
+                mcqChoiceView?.resolved().let {
+                    mcqChoiceView?.get()?.visibility = View.VISIBLE
+                    mcqChoiceView!!.get().setup(assessmentQuestions)
+                    mcqChoiceView!!.get()
+                        .addCallback(object : EnableDisableGrammarButtonCallback {
+                            override fun disableGrammarButton() {
+                                buttonView?.get()?.disableBtn()
+                            }
+
+                            override fun enableGrammarButton() {
+                                buttonView?.get()?.enableBtn()
+                            }
+
+                            override fun alreadyAttempted(isCorrectAnswer: Boolean) {
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    buttonView?.get()?.setAlreadyAttemptedView(isCorrectAnswer)
+                                }
+                            }
+
+                        })
+                }
+            }
+            else -> {
+                atsChoiceView?.get()?.visibility = View.GONE
+                mcqChoiceView?.get()?.visibility = View.GONE
+            }
         }
 
         buttonView?.resolved().let {
             buttonView!!.get().setup(assessmentQuestions)
             buttonView!!.get().addCallback(object : GrammarButtonView.CheckQuestionCallback {
                 override fun checkQuestionCallBack(): Boolean? {
-                    if (assessmentQuestions.question.choiceType == ChoiceType.ARRANGE_THE_SENTENCE) {
-                        return atsChoiceView?.get()?.isCorrectAnswer()?.apply {
+                    return when (assessmentQuestions.question.choiceType) {
+                        ChoiceType.ARRANGE_THE_SENTENCE -> atsChoiceView?.get()?.isCorrectAnswer()?.apply {
                             assessmentQuestions.question.status =
                                 if (this) QuestionStatus.CORRECT else QuestionStatus.WRONG
 
                         }
-                    } else if (assessmentQuestions.question.choiceType == ChoiceType.SINGLE_SELECTION_TEXT) {
-                        return mcqChoiceView?.get()?.isCorrectAnswer()?.apply {
-                            assessmentQuestions.question.status =
-                                if (this) QuestionStatus.CORRECT else QuestionStatus.WRONG
+                        ChoiceType.SINGLE_SELECTION_TEXT -> {
+                            mcqChoiceView?.get()?.isCorrectAnswer()?.apply {
+                                assessmentQuestions.question.status =
+                                    if (this) QuestionStatus.CORRECT else QuestionStatus.WRONG
 
+                            }
                         }
-                    } else return null
+                        else -> null
+                    }
                 }
 
                 override fun nextQuestion() {
