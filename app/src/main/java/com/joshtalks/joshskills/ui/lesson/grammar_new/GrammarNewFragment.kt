@@ -507,7 +507,7 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     }
 
     companion object {
-
+        const val TAG = "GrammarNewFragment"
         @JvmStatic
         fun getInstance() = GrammarNewFragment()
     }

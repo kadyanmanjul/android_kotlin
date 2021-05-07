@@ -70,6 +70,8 @@ const val P2P_LAST_CALL = "has_p2p_last_call"
 const val SEARCH_HINT_SHOW = "search_hint_show"
 const val ONLINE_HINT_SHOW = "online_hint_show"
 const val LAST_FIRESTORE_NOTIFICATION_TIME = "last_firestore_notification_time"
+const val ONLINE_TEST_COMPLETED = "online_test_completed"
+
 
 object PrefManager {
 
