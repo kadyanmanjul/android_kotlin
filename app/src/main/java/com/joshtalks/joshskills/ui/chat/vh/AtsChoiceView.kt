@@ -271,7 +271,7 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
             val line = View(context)
             val layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                Utils.dpToPx(3)
+                Utils.dpToPx(1)
             )
             layoutParams.setMargins(
                 0,

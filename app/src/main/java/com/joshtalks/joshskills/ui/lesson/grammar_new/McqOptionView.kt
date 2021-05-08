@@ -83,9 +83,9 @@ class McqOptionView(context: Context) : AppCompatRadioButton(context) {
                     val currentPaddingBottom = v.paddingBottom
                     v.setPadding(
                         v.paddingLeft,
-                        currentPaddingTop + Utils.dpToPx(3),
+                        currentPaddingTop + Utils.dpToPx(1),
                         v.paddingRight,
-                        currentPaddingBottom - Utils.dpToPx(3),
+                        currentPaddingBottom - Utils.dpToPx(1),
                     )
                     v.invalidate()
                 }
@@ -98,9 +98,9 @@ class McqOptionView(context: Context) : AppCompatRadioButton(context) {
                     val currentPaddingBottom = v.paddingBottom
                     v.setPadding(
                         v.paddingLeft,
-                        currentPaddingTop - Utils.dpToPx(3),
+                        currentPaddingTop - Utils.dpToPx(1),
                         v.paddingRight,
-                        currentPaddingBottom + Utils.dpToPx(3),
+                        currentPaddingBottom + Utils.dpToPx(1),
                     )
                     v.invalidate()
                 }
