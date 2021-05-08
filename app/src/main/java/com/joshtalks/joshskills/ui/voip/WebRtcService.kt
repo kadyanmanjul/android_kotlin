@@ -640,15 +640,12 @@ class WebRtcService : BaseWebRtcService() {
                     AUDIO_PROFILE_SPEECH_STANDARD,
                     AUDIO_SCENARIO_EDUCATION
                 )
-                setVoiceBeautifierPreset(CHAT_BEAUTIFIER_MAGNETIC)
                 setChannelProfile(CHANNEL_PROFILE_COMMUNICATION)
                 adjustRecordingSignalVolume(400)
                 val audio = getSystemService(AUDIO_SERVICE) as AudioManager
                 val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
                 val currentVolume = audio.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
-                adjustPlaybackSignalVolume((400 / maxVolume) * currentVolume)
-                enableInEarMonitoring(true)
-                setInEarMonitoringVolume(0)
+                adjustPlaybackSignalVolume((95 / maxVolume) * currentVolume)
                 enableDeepLearningDenoise(true)
                 // Configuration for the publisher. When the network condition is poor, send audio only.
                 setLocalPublishFallbackOption(STREAM_FALLBACK_OPTION_AUDIO_ONLY)
