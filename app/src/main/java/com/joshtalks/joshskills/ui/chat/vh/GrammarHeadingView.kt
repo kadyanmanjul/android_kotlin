@@ -69,18 +69,18 @@ class GrammarHeadingView : FrameLayout, LifecycleObserver, AudioPlayerEventListe
             MotionEvent.ACTION_DOWN -> {
                 v.setPaddingRelative(
                     v.paddingLeft,
-                    currentPaddingTop +  Utils.dpToPx(3),
+                    currentPaddingTop +  Utils.dpToPx(1),
                     v.paddingRight,
-                    currentPaddingBottom -  Utils.dpToPx(3),
+                    currentPaddingBottom -  Utils.dpToPx(1),
                 )
                 v.invalidate()
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 v.setPaddingRelative(
                     v.paddingLeft,
-                    currentPaddingTop -  Utils.dpToPx(3),
+                    currentPaddingTop -  Utils.dpToPx(1),
                     v.paddingRight,
-                    currentPaddingBottom +  Utils.dpToPx(3),
+                    currentPaddingBottom +  Utils.dpToPx(1),
                 )
                 v.invalidate()
             }

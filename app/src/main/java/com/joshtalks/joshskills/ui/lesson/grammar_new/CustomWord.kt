@@ -126,9 +126,9 @@ class CustomWord : AppCompatTextView {
                     )
                     v.setPadding(
                         mPaddingLeft,
-                        mPaddingTop + Utils.dpToPx(3),
+                        mPaddingTop + Utils.dpToPx(1),
                         mPaddingRight,
-                        mPaddingBottom - Utils.dpToPx(3),
+                        mPaddingBottom - Utils.dpToPx(1),
                     )
                     v.invalidate()
                 }
@@ -139,9 +139,9 @@ class CustomWord : AppCompatTextView {
                     )
                     v.setPadding(
                         mPaddingLeft,
-                        mPaddingTop - Utils.dpToPx(3),
+                        mPaddingTop - Utils.dpToPx(1),
                         mPaddingRight,
-                        mPaddingBottom + Utils.dpToPx(3),
+                        mPaddingBottom + Utils.dpToPx(1),
                     )
                     v.invalidate()
                 }
