@@ -1,22 +1,32 @@
 package com.joshtalks.joshskills.repository.local.model
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
-import android.widget.Toast
-import androidx.lifecycle.lifecycleScope
+import android.media.RingtoneManager
+import android.os.Build
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.AppObjectController.Companion.joshApplication
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
+import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.repository.local.model.googlelocation.Locality
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
-import com.joshtalks.joshskills.ui.signup.FLOW_FROM
+import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +48,6 @@ class Mentor {
 
     @SerializedName("user_id")
     private var userId: String? = null
-
 
     @Expose
     var referralCode: String = EMPTY
@@ -101,19 +110,98 @@ class Mentor {
                     .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
                 val intent =
                     Intent(
-                        AppObjectController.joshApplication,
+                        joshApplication,
                         SignUpActivity::class.java
                     )
                 intent.apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
-                AppObjectController.joshApplication.startActivity(intent)
-                showToast(
-                    AppObjectController.joshApplication.getString(R.string.auto_logout_message),
-                    Toast.LENGTH_LONG
-                )
+                joshApplication.startActivity(intent)
+                showLogoutNotification()
+//                showToast(
+//                    AppObjectController.joshApplication.getString(R.string.auto_logout_message),
+//                    Toast.LENGTH_LONG
+//                )
             }
+        }
+
+        fun showLogoutNotification() {
+            val activityList = arrayOf(
+                Intent(joshApplication, OnBoardActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                }
+            )
+
+            val notificationId = 101567
+            val notificationChannelId = "109000"
+            val notificationChannelName = NotificationChannelNames.DEFAULT.type
+            val contentTitle: String? = null
+            val contentText = joshApplication.getString(R.string.auto_logout_message)
+            val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
+            val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            val pendingIntent = PendingIntent.getActivities(
+                joshApplication,
+                uniqueInt, activityList,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+
+            val style = NotificationCompat.BigTextStyle()
+            style.setBigContentTitle(contentTitle)
+            style.bigText(contentText)
+            style.setSummaryText("")
+
+            val notificationBuilder =
+                NotificationCompat.Builder(
+                    joshApplication,
+                    notificationChannelId
+                )
+                    .setTicker(null)
+                    .setSmallIcon(R.drawable.ic_status_bar_notification)
+                    .setContentTitle(contentTitle)
+                    .setAutoCancel(true)
+                    .setSound(defaultSound)
+                    .setContentText(contentText)
+                    .setContentIntent(pendingIntent)
+                    .setStyle(style)
+                    .setWhen(System.currentTimeMillis())
+                    .setDefaults(Notification.DEFAULT_ALL)
+                    .setColor(
+                        ContextCompat.getColor(
+                            joshApplication,
+                            R.color.colorAccent
+                        )
+                    )
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
+            }
+
+            val dismissIntent =
+                Intent(joshApplication, DismissNotifEventReceiver::class.java).apply {
+                    putExtra(NOTIFICATION_ID, notificationId)
+                    putExtra(HAS_NOTIFICATION, true)
+                }
+            val dismissPendingIntent: PendingIntent =
+                PendingIntent.getBroadcast(joshApplication, uniqueInt, dismissIntent, 0)
+
+            notificationBuilder.setDeleteIntent(dismissPendingIntent)
+
+            val notificationManager =
+                joshApplication.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val notificationChannel = NotificationChannel(
+                    notificationChannelId,
+                    notificationChannelName,
+                    NotificationManager.IMPORTANCE_HIGH
+                )
+                notificationChannel.enableLights(true)
+                notificationChannel.enableVibration(true)
+                notificationBuilder.setChannelId(notificationChannelId)
+                notificationManager.createNotificationChannel(notificationChannel)
+            }
+            notificationManager.notify(notificationId, notificationBuilder.build())
         }
     }
 
