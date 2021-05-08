@@ -196,9 +196,9 @@ fun View.transaltionAnimationNew(
 
     val slideSet = AnimatorSet()
     slideSet.play(slideAnim)
-    val interpolator = LinearInterpolator()
+    val interpolator = DecelerateInterpolator()
     slideSet.interpolator = interpolator
-    slideSet.duration = 400
+    slideSet.duration = 120
     slideSet.addListener(object : AnimatorListenerAdapter() {
         override fun onAnimationEnd(animation: Animator) {
             optionLayout?.let {

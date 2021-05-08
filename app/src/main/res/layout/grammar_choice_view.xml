@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingHorizontal="@dimen/_12sdp"
-    android:paddingVertical="@dimen/_16sdp">
+    android:paddingTop="@dimen/_16sdp">
 
     <FrameLayout
         android:id="@+id/ats_answer_container"

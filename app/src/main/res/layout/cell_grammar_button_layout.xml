@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     tools:background="#FFDFE0">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -15,14 +15,19 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/text_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingEnd="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_26sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/flag_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_2sdp"
-                android:layout_marginEnd="@dimen/_14sdp"
+                android:layout_marginEnd="@dimen/_6sdp"
                 android:layout_marginBottom="@dimen/_8sdp"
                 app:layout_constraintBottom_toBottomOf="@id/flag_barrier"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -30,56 +35,60 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/correct_answer_title"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_12sdp"
                 android:layout_marginTop="@dimen/_16sdp"
+                android:paddingEnd="@dimen/_8sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                 android:textColor="@color/grammar_green_color"
                 android:textSize="@dimen/_18ssp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/flag_iv"
                 app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:text="सही जवाब:" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/correct_answer_desc"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_14sdp"
-                android:layout_marginEnd="@dimen/_7sdp"
                 android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginEnd="@dimen/_7sdp"
+                android:paddingEnd="@dimen/_8sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                 android:textColor="@color/grammar_green_color"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/correct_answer_title"
                 tools:text="You could have died." />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/wrong_answer_title"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_12sdp"
                 android:layout_marginTop="@dimen/_16sdp"
+                android:paddingEnd="@dimen/_8sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                 android:textColor="@color/grammar_red_color_dark"
                 android:textSize="@dimen/_18ssp"
+                app:layout_constraintEnd_toStartOf="@id/flag_iv"
+                app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintEnd_toStartOf="@id/flag_iv"
                 tools:text="सही जवाब:" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/wrong_answer_desc"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_18sdp"
                 android:layout_marginTop="@dimen/_12sdp"
                 android:layout_marginEnd="@dimen/_9sdp"
+                android:paddingEnd="@dimen/_8sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                 android:textColor="@color/grammar_red_color_light"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -97,29 +106,31 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/explanation_title"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_12sdp"
                 android:layout_marginTop="@dimen/_16sdp"
+                android:paddingEnd="@dimen/_8sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                 android:textColor="@color/grammar_red_color_dark"
                 android:textSize="@dimen/_18ssp"
                 android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/wrong_answer_desc"
-                app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintEnd_toEndOf="parent"
                 tools:text="अनुवाद: "
                 tools:visibility="visible" />
 
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/explanation_text"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_18sdp"
                 android:layout_marginTop="@dimen/_12sdp"
                 android:layout_marginEnd="@dimen/_9sdp"
+                android:paddingEnd="@dimen/_8sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                 android:textColor="@color/grammar_red_color_light"
                 android:visibility="gone"
@@ -155,7 +166,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginHorizontal="@dimen/_12sdp"
-            android:layout_marginTop="@dimen/_26sdp"
             android:layout_marginBottom="@dimen/_16sdp"
             android:background="@drawable/green_btn_grammar_selector"
             android:enabled="true"
@@ -165,7 +175,11 @@
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.JoshTypography.ButtonRegular"
             android:textColor="@color/grey_shade_new"
-            app:cornerRadius="@dimen/_10sdp" />
+            app:cornerRadius="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_container" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
