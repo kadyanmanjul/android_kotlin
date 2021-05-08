@@ -86,16 +86,18 @@ class DownloadTracker internal constructor(
         renderersFactory: RenderersFactory,
         lessonQuestion: LessonQuestion? = null
     ) {
-        val download = downloads[uri]
-        if (startDownloadDialogHelper != null) {
-            startDownloadDialogHelper!!.release()
+        if (isDownloaded(uri).not()) {
+            val download = downloads[uri]
+            if (startDownloadDialogHelper != null) {
+                startDownloadDialogHelper!!.release()
+            }
+            startDownloadDialogHelper =
+                StartDownloadDialogHelper(
+                    getDownloadHelper(context, uri, renderersFactory),
+                    chatObj,
+                    lessonQuestion
+                )
         }
-        startDownloadDialogHelper =
-            StartDownloadDialogHelper(
-                getDownloadHelper(context, uri, renderersFactory),
-                chatObj,
-                lessonQuestion
-            )
     }
 
     private fun getDownloadHelper(
