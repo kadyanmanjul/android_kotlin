@@ -12,7 +12,6 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.ONLINE_TEST_COMPLETED
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentOnlineTestBinding
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
@@ -34,6 +33,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private val viewModel: OnlineTestViewModel by lazy {
         ViewModelProvider(requireActivity()).get(OnlineTestViewModel::class.java)
     }
+
     //private val compositeDisposable = CompositeDisposable()
     private var assessmentQuestions: AssessmentQuestionWithRelations? = null
 
@@ -64,7 +64,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         headingView = Stub(binding.container.findViewById(R.id.heading_view))
         mcqChoiceView = Stub(binding.container.findViewById(R.id.mcq_choice_view))
         atsChoiceView = Stub(binding.container.findViewById(R.id.ats_choice_view))
-        buttonView = Stub(binding.frame.findViewById(R.id.button_action_views))
+        buttonView = Stub(binding.container.findViewById(R.id.button_action_views))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -80,8 +80,12 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
 
         viewModel.grammarAssessmentLiveData.observe(viewLifecycleOwner) { onlineTestResponse ->
             if (onlineTestResponse.completed) {
-                PrefManager.put(ONLINE_TEST_COMPLETED,true)
-                showToast(onlineTestResponse.message)
+                PrefManager.put(ONLINE_TEST_COMPLETED, true)
+                try {
+                    (requireActivity() as OnlineTestActivity).showTestCompletedScreen(onlineTestResponse.message)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
             } else {
                 onlineTestResponse.question?.let {
                     this.assessmentQuestions = AssessmentQuestionWithRelations(it, 10)
@@ -90,16 +94,16 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             }
         }
 
-        viewModel.apiStatus.observe(viewLifecycleOwner){
-            when(it){
-                ApiCallStatus.START ->{
-                    binding.progressContainer.visibility=View.VISIBLE
+        viewModel.apiStatus.observe(viewLifecycleOwner) {
+            when (it) {
+                ApiCallStatus.START -> {
+                    binding.progressContainer.visibility = View.VISIBLE
                 }
-                ApiCallStatus.FAILED,ApiCallStatus.SUCCESS ->{
-                    binding.progressContainer.visibility=View.GONE
+                ApiCallStatus.FAILED, ApiCallStatus.SUCCESS -> {
+                    binding.progressContainer.visibility = View.GONE
                 }
                 else -> {
-                    binding.progressContainer.visibility=View.GONE
+                    binding.progressContainer.visibility = View.GONE
                 }
             }
         }
@@ -176,11 +180,12 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             buttonView!!.get().addCallback(object : GrammarButtonView.CheckQuestionCallback {
                 override fun checkQuestionCallBack(): Boolean? {
                     return when (assessmentQuestions.question.choiceType) {
-                        ChoiceType.ARRANGE_THE_SENTENCE -> atsChoiceView?.get()?.isCorrectAnswer()?.apply {
-                            assessmentQuestions.question.status =
-                                if (this) QuestionStatus.CORRECT else QuestionStatus.WRONG
+                        ChoiceType.ARRANGE_THE_SENTENCE -> atsChoiceView?.get()?.isCorrectAnswer()
+                            ?.apply {
+                                assessmentQuestions.question.status =
+                                    if (this) QuestionStatus.CORRECT else QuestionStatus.WRONG
 
-                        }
+                            }
                         ChoiceType.SINGLE_SELECTION_TEXT -> {
                             mcqChoiceView?.get()?.isCorrectAnswer()?.apply {
                                 assessmentQuestions.question.status =

@@ -14,24 +14,114 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include
-            android:id="@+id/toolbar_container"
-            layout="@layout/base_toolbar"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/start_test_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_22sdp"
+                android:text="कोर्स शुरू करने से पहले यह जानते है की आपका वर्तमान अंग्रेजी स्तर क्या है"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
+                android:textColor="@android:color/black"
+                app:layout_constraintBottom_toTopOf="@id/start_btn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/start_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginBottom="@dimen/_16sdp"
+                android:background="@drawable/green_btn_grammar_selector"
+                android:enabled="true"
+                android:gravity="center"
+                android:onClick="@{()->handler.startOnlineExamTest()}"
+                android:paddingVertical="@dimen/_12sdp"
+                android:text="@string/grammar_btn_text_start"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.ButtonRegular"
+                android:textColor="@color/white"
+                app:cornerRadius="@dimen/_10sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/test_completed_container"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_22sdp"
+                android:text="Test Completed"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                android:textColor="@android:color/black"
+                app:layout_constraintBottom_toTopOf="@id/continue_btn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.34" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/image"
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="@dimen/_100sdp"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:background="@drawable/ic_lesson_green_tick"
+                app:layout_constraintBottom_toTopOf="@id/continue_btn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text"
+                app:layout_constraintVertical_bias="0" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/continue_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginBottom="@dimen/_16sdp"
+                android:background="@drawable/green_btn_grammar_selector"
+                android:enabled="true"
+                android:gravity="center"
+                android:onClick="@{()->handler.finish()}"
+                android:paddingVertical="@dimen/_12sdp"
+                android:text="@string/grammar_btn_text_continue"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.ButtonRegular"
+                android:textColor="@color/white"
+                app:cornerRadius="@dimen/_10sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <FrameLayout
             android:id="@+id/parent_Container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="@color/white"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar_container"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -889,5 +889,6 @@
 
     <string name="grammar_btn_text_check">चेक करें</string>
     <string name="grammar_btn_text_continue">जारी रखें</string>
+    <string name="grammar_btn_text_start">शुरू करें</string>
 
 </resources>

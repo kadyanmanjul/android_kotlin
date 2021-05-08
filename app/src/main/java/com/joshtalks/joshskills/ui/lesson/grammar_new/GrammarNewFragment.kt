@@ -99,7 +99,7 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         headingView = Stub(binding.container.findViewById(R.id.heading_view))
         mcqChoiceView = Stub(binding.container.findViewById(R.id.mcq_choice_view))
         atsChoiceView = Stub(binding.container.findViewById(R.id.ats_choice_view))
-        buttonView = Stub(binding.frame.findViewById(R.id.button_action_views))
+        buttonView = Stub(binding.container.findViewById(R.id.button_action_views))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

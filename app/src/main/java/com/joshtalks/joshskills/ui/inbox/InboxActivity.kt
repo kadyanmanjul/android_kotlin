@@ -1,12 +1,10 @@
 package com.joshtalks.joshskills.ui.inbox
 
 import android.app.Activity
-import android.content.DialogInterface
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -76,17 +74,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun showOnlineTestDialog() {
         if (PrefManager.getBoolValue(ONLINE_TEST_COMPLETED).not()) {
-            AlertDialog.Builder(this)
-                .setTitle("Know Your Level")
-                .setMessage("Do you want to know your english level for free")
-                .setPositiveButton(android.R.string.yes, object : DialogInterface.OnClickListener {
-                    override fun onClick(dialog: DialogInterface?, which: Int) {
-                        showOnlineTestScreen()
-                    }
-                })
-                .setNegativeButton(android.R.string.no, null)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show()
+            showOnlineTestScreen()
         }
     }
 
