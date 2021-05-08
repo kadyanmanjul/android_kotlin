@@ -63,22 +63,24 @@ class GrammarHeadingView : FrameLayout, LifecycleObserver, AudioPlayerEventListe
 
     @SuppressLint("ClickableViewAccessibility")
     val onTouchListener = OnTouchListener {  v, event ->
+        val currentPaddingTop = v.paddingTop
+        val currentPaddingBottom = v.paddingBottom
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                v.setPadding(
+                v.setPaddingRelative(
                     v.paddingLeft,
-                    v.paddingTop + Utils.dpToPx(3),
+                    currentPaddingTop +  Utils.dpToPx(3),
                     v.paddingRight,
-                    v.paddingBottom - Utils.dpToPx(3),
+                    currentPaddingBottom -  Utils.dpToPx(3),
                 )
                 v.invalidate()
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                v.setPadding(
+                v.setPaddingRelative(
                     v.paddingLeft,
-                    v.paddingTop - Utils.dpToPx(3),
+                    currentPaddingTop -  Utils.dpToPx(3),
                     v.paddingRight,
-                    v.paddingBottom + Utils.dpToPx(3),
+                    currentPaddingBottom +  Utils.dpToPx(3),
                 )
                 v.invalidate()
             }
