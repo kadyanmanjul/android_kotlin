@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.animation.*
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomLayout
@@ -196,9 +197,9 @@ fun View.transaltionAnimationNew(
 
     val slideSet = AnimatorSet()
     slideSet.play(slideAnim)
-    val interpolator = DecelerateInterpolator()
+    val interpolator = FastOutLinearInInterpolator()
     slideSet.interpolator = interpolator
-    slideSet.duration = 120
+    slideSet.duration = 200
     slideSet.addListener(object : AnimatorListenerAdapter() {
         override fun onAnimationEnd(animation: Animator) {
             optionLayout?.let {
