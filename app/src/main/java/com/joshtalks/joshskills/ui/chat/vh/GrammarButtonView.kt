@@ -42,71 +42,9 @@ class GrammarButtonView : FrameLayout {
     private var currentState: GrammarButtonState = GrammarButtonState.DISABLED
 
     @SuppressLint("ClickableViewAccessibility")
-    val onTouchListener = OnTouchListener { v, event ->
+    val onTouchListener3 = OnTouchListener { v, event ->
         val currentPaddingTop = v.paddingTop
         val currentPaddingBottom = v.paddingBottom
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                v.setPadding(
-                    v.paddingLeft,
-                    currentPaddingTop + Utils.dpToPx(3),
-                    v.paddingRight,
-                    currentPaddingBottom - Utils.dpToPx(3),
-                )
-                v.invalidate()
-            }
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                v.setPadding(
-                    v.paddingLeft,
-                    currentPaddingTop -  Utils.dpToPx(3),
-                    v.paddingRight,
-                    currentPaddingBottom +  Utils.dpToPx(3),
-                )
-                v.invalidate()
-            }
-        }
-        false
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    val onTouchListener2 = OnTouchListener { v, event ->
-        when (event.action) {
-            android.view.MotionEvent.ACTION_DOWN -> {
-                v.background = androidx.core.content.ContextCompat.getDrawable(
-                    context,
-                    com.joshtalks.joshskills.R.drawable.rounded_rectangle_with_grey_border_pressed
-                )
-                val currentPaddingTop = v.paddingTop
-                val currentPaddingBottom = v.paddingBottom
-                v.setPadding(
-                    v.paddingLeft,
-                    currentPaddingTop +  Utils.dpToPx(3),
-                    v.paddingRight,
-                    currentPaddingBottom -  Utils.dpToPx(3),
-                )
-                v.invalidate()
-            }
-            android.view.MotionEvent.ACTION_UP, android.view.MotionEvent.ACTION_CANCEL -> {
-                v.background = androidx.core.content.ContextCompat.getDrawable(
-                    context,
-                    com.joshtalks.joshskills.R.drawable.rounded_rectangle_with_grey_border
-                )
-                val currentPaddingTop = v.paddingTop
-                val currentPaddingBottom = v.paddingBottom
-                v.setPadding(
-                    v.paddingLeft,
-                    currentPaddingTop -  Utils.dpToPx(3),
-                    v.paddingRight,
-                    currentPaddingBottom +  Utils.dpToPx(3),
-                )
-                v.invalidate()
-            }
-        }
-        false
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    val onTouchListener3 = OnTouchListener { v, event ->
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 val drawable =
@@ -126,8 +64,7 @@ class GrammarButtonView : FrameLayout {
                     context,
                     drawable
                 )
-                val currentPaddingTop = v.paddingTop
-                val currentPaddingBottom = v.paddingBottom
+
                 v.setPaddingRelative(
                     v.paddingLeft,
                     currentPaddingTop +  Utils.dpToPx(3),
@@ -156,8 +93,6 @@ class GrammarButtonView : FrameLayout {
                     context,
                     drawable
                 )
-                val currentPaddingTop = v.paddingTop
-                val currentPaddingBottom = v.paddingBottom
                 v.setPaddingRelative(
                     v.paddingLeft,
                     currentPaddingTop -  Utils.dpToPx(3),
@@ -227,7 +162,7 @@ class GrammarButtonView : FrameLayout {
                 }
             }
         }
-        grammarBtn.setOnTouchListener(onTouchListener)
+        grammarBtn.setOnTouchListener(onTouchListener3)
     }
 
     private fun checkForCorrectIncorrectLogic(): Boolean {
