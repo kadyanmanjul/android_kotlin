@@ -12,12 +12,15 @@ buildscript {
         }
         maven {
             url "http://dl.bintray.com/piasy/maven"
+            setAllowInsecureProtocol(true)
         }
         maven {
             url 'http://dl.bintray.com/amulyakhare/maven'
+            setAllowInsecureProtocol(true)
         }
         maven {
             url 'http://developer.huawei.com/repo/'
+            setAllowInsecureProtocol(true)
         }
         maven {
             url 'https://sdk.uxcam.com/android/'
@@ -27,8 +30,8 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.3'
-        classpath 'android.arch.navigation:navigation-safe-args-gradle-plugin:1.0.0'
+        classpath 'com.android.tools.build:gradle:4.2.0'
+        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.3.5")
         classpath 'com.google.gms:google-services:4.3.5'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.5.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -56,9 +59,11 @@ allprojects {
         }
         maven {
             url "http://dl.bintray.com/piasy/maven"
+            setAllowInsecureProtocol(true)
         }
         maven {
             url 'http://developer.huawei.com/repo/'
+            setAllowInsecureProtocol(true)
         }
         maven {
             url 'https://sdk.uxcam.com/android/'
