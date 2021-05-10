@@ -75,10 +75,30 @@ class McqOptionView(context: Context) : AppCompatRadioButton(context) {
         setOnTouchListener { v, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    v.background = ContextCompat.getDrawable(
-                        context,
-                        R.drawable.rounded_rectangle_with_grey_border_pressed
-                    )
+                    if (currentState == McqOptionState.UNSELECTED) {
+                        setTextColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.grammar_black_text_color
+                            )
+                        )
+                        v.background = ContextCompat.getDrawable(
+                            context,
+                            R.drawable.rounded_rectangle_with_grey_border_pressed
+                        )
+                    } else {
+                        setTextColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.grammar_button_color_blue
+                            )
+                        )
+                        v.background =
+                            ContextCompat.getDrawable(
+                                getContext(),
+                                R.drawable.rounded_rectangle_with_blue_border_pressed
+                            )
+                    }
                     val currentPaddingTop = v.paddingTop
                     val currentPaddingBottom = v.paddingBottom
                     v.setPadding(
@@ -90,10 +110,30 @@ class McqOptionView(context: Context) : AppCompatRadioButton(context) {
                     v.invalidate()
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    v.background = ContextCompat.getDrawable(
-                        context,
-                        R.drawable.rounded_rectangle_with_grey_border
-                    )
+                    if (currentState == McqOptionState.UNSELECTED) {
+                        setTextColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.grammar_black_text_color
+                            )
+                        )
+                        v.background = ContextCompat.getDrawable(
+                            context,
+                            R.drawable.rounded_rectangle_with_grey_border
+                        )
+                    } else {
+                        setTextColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.grammar_button_color_blue
+                            )
+                        )
+                        v.background =
+                            ContextCompat.getDrawable(
+                                getContext(),
+                                R.drawable.rounded_rectangle_with_blue_border
+                            )
+                    }
                     val currentPaddingTop = v.paddingTop
                     val currentPaddingBottom = v.paddingBottom
                     v.setPadding(
