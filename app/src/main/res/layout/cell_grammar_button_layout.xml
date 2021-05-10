@@ -28,8 +28,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_19sdp"
                 android:layout_marginEnd="@dimen/_6sdp"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_flag_vector" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -172,7 +172,7 @@
             android:paddingVertical="@dimen/_12sdp"
             android:text="@string/grammar_btn_text_check"
             android:textAllCaps="false"
-            android:textAppearance="@style/TextAppearance.JoshTypography.ButtonRegular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
             android:textColor="@color/grey_shade_new"
             app:cornerRadius="@dimen/_10sdp"
             app:layout_constraintBottom_toBottomOf="parent"

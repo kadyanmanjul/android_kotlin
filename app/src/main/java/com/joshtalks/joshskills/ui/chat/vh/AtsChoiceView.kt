@@ -185,7 +185,7 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
                 .solidBackground().show()
         }
 
-        val audioUrl2=audioUrl?.replace(" ".toRegex(), "%20")
+        val audioUrl2 = audioUrl?.replace(" ".toRegex(), "%20")
 
         audioUrl2?.let { url ->
             if (isAudioPlaying()) {

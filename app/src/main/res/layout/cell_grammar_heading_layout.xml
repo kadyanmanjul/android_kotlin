@@ -108,14 +108,13 @@
             tools:visibility="visible" />
 
         <com.joshtalks.joshskills.ui.chat.vh.DashedUnderlinedTextView
-
             android:id="@+id/question_text"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_20ssp"
             android:layout_marginStart="@dimen/_8sdp"
             android:drawableBottom="@drawable/dotted_line"
             android:layerType="software"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
             android:textColor="@color/grammar_black_text_color"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/single_audio"
