@@ -56,7 +56,7 @@ class CustomWord : AppCompatTextView {
             choice.apply {
                 this.userSelectedOrder = answerLayout.childCount
             }
-            this.visibility= View.INVISIBLE
+            this.visibility = View.INVISIBLE
             RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, this.height, this.width, this))
         } else {
 
@@ -80,7 +80,15 @@ class CustomWord : AppCompatTextView {
                 this.userSelectedOrder = 100
             }
             //RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, this.height, this.width, this))
-            RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, this.height, this.width, this,optionsLayout))
+            RxBus2.publish(
+                AnimateAtsOtionViewEvent(
+                    fromLocation,
+                    this.height,
+                    this.width,
+                    this,
+                    optionsLayout
+                )
+            )
 
         }
     }
@@ -92,9 +100,9 @@ class CustomWord : AppCompatTextView {
     companion object {
         private const val TAG = "CustomWord"
         var mPaddingTop = Utils.dpToPx(18)
-        var mPaddingBottom = Utils.dpToPx(16)
+        var mPaddingBottom = Utils.dpToPx(18)
         var mPaddingLeft = Utils.dpToPx(16)
-        var mPaddingRight = Utils.dpToPx(15)
+        var mPaddingRight = Utils.dpToPx(16)
         private var mPadding14F = Utils.dpToPx(7)
         private var mPadding22F = Utils.dpToPx(11)
 

@@ -110,7 +110,9 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
             }
         }
 
-        if (customLayout.childCount > 9) {
+        if (customLayout.childCount > 11) {
+            addDummyLineView(4)
+        } else if (customLayout.childCount > 9) {
             addDummyLineView(3)
         } else {
             addDummyLineView(2)
@@ -261,11 +263,11 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
             wordLayoutParams.gravity = Gravity.CENTER
             wordLayoutParams.setMargins(
                 Utils.dpToPx(5),
-                Utils.dpToPx(10),
+                Utils.dpToPx(13),
                 Utils.dpToPx(5),
-                Utils.dpToPx(10)
+                Utils.dpToPx(13)
             )
-            dummyWordView.setLayoutParams(wordLayoutParams)
+            dummyWordView.layoutParams = wordLayoutParams
             dummyWordView.visibility = INVISIBLE
             dummyAnswerFlowLayout.addView(dummyWordView)
             val line = View(context)
