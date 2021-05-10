@@ -161,7 +161,7 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
             assessmentQuestion?.question?.isAttempted = true
             assessmentQuestion?.choiceList?.forEach {
                 if ((it.correctAnswerOrder == 0 || it.correctAnswerOrder == 100) &&
-                    (it.userSelectedOrder != 0 || it.userSelectedOrder != 100)
+                    (it.userSelectedOrder != 0 && it.userSelectedOrder != 100)
                 ) {
                     return false
                 }
