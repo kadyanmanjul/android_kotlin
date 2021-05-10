@@ -234,7 +234,7 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
             if (!customLayout.isEmpty()) {
                 val customWord = view as CustomWord
                 if (customWord.parent is CustomLayout) {
-                    playAudio(customWord.choice.audioUrl)
+                    //playAudio(customWord.choice.audioUrl)
                 }
                 customWord.changeViewGroup(customLayout, answerFlowLayout)
                 if (isAnyAnswerSelected()) {

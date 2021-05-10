@@ -80,7 +80,7 @@ class CustomWord : AppCompatTextView {
                 this.userSelectedOrder = 100
             }
             //RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, this.height, this.width, this))
-            //RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, this.height, this.width, this,optionsLayout))
+            RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, this.height, this.width, this,optionsLayout))
 
         }
     }

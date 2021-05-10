@@ -53,6 +53,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
     lateinit var titleView: TextView
     private var isDemo = false
+    private var isNewGrammar = false
     private var testId = -1
     private var whatsappUrl = EMPTY
     private val compositeDisposable = CompositeDisposable()
@@ -86,6 +87,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
         val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
         isDemo = if (intent.hasExtra(IS_DEMO)) intent.getBooleanExtra(IS_DEMO, false) else false
+        isNewGrammar = if (intent.hasExtra(IS_NEW_GRAMMAR)) intent.getBooleanExtra(IS_NEW_GRAMMAR, false) else false
         whatsappUrl =
             if (intent.hasExtra(WHATSAPP_URL) && intent.getStringExtra(WHATSAPP_URL).isNullOrBlank()
                     .not()
@@ -267,11 +269,11 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     }
 
     private fun setUpTabLayout() {
-        //TODO remove true by logic after implementation of the new param in lesson model
+
         val adapter = LessonPagerAdapter(
             supportFragmentManager,
             this.lifecycle,
-            true
+            isNewGrammar
         )
 
         binding.lessonViewpager.adapter = adapter
@@ -520,6 +522,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     companion object {
         private const val LESSON_ID = "lesson_id"
         private const val IS_DEMO = "is_demo"
+        private const val IS_NEW_GRAMMAR = "is_new_grammar"
         private const val WHATSAPP_URL = "whatsapp_url"
         private const val TEST_ID = "test_id"
         const val LAST_LESSON_STATUS = "last_lesson_status"
@@ -531,9 +534,11 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             whatsappUrl: String? = null,
             testId: Int? = null,
             conversationId: String? = null,
-        ) = Intent(context, LessonActivity::class.java).apply {
+            isNewGrammar: Boolean = false
+            ) = Intent(context, LessonActivity::class.java).apply {
             putExtra(LESSON_ID, lessonId)
             putExtra(IS_DEMO, isDemo)
+            putExtra(IS_NEW_GRAMMAR, isNewGrammar)
             putExtra(CONVERSATION_ID, conversationId)
             if (isDemo) {
                 putExtra(WHATSAPP_URL, whatsappUrl)

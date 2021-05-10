@@ -26,10 +26,9 @@
                 android:id="@+id/flag_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginTop="@dimen/_19sdp"
                 android:layout_marginEnd="@dimen/_6sdp"
-                android:layout_marginBottom="@dimen/_8sdp"
-                app:layout_constraintBottom_toBottomOf="@id/flag_barrier"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:srcCompat="@drawable/ic_flag_vector" />
 
@@ -101,7 +100,7 @@
                 android:id="@+id/flag_barrier"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:barrierDirection="bottom"
+                app:barrierDirection="top"
                 app:constraint_referenced_ids="correct_answer_title,wrong_answer_title" />
 
             <androidx.appcompat.widget.AppCompatTextView

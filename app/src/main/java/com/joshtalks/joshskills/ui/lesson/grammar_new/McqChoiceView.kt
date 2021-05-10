@@ -171,7 +171,7 @@ class McqChoiceView : RadioGroup, AudioPlayerEventListener {
                 val optionView = (mcqOptionsRadioGroup.getChildAt(i) as McqOptionView)
                 if (optionView == clickedOptionView) {
                     optionView.changeState()
-                    playAudio(optionView.choice.audioUrl)
+                    //playAudio(optionView.choice.audioUrl)
                 } else {
                     optionView.setState(McqOptionState.UNSELECTED)
                 }

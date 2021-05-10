@@ -41,6 +41,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private var mcqChoiceView: Stub<McqChoiceView>? = null
     private var atsChoiceView: Stub<AtsChoiceView>? = null
     private var buttonView: Stub<GrammarButtonView>? = null
+    private var isFirstTime:Boolean = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,6 +57,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             )
         binding.handler = this
         setObservers()
+        binding.progressContainer.visibility = View.VISIBLE
         viewModel.fetchAssessmentDetails()
         return binding.root
     }
@@ -89,15 +91,18 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             } else {
                 onlineTestResponse.question?.let {
                     this.assessmentQuestions = AssessmentQuestionWithRelations(it, 10)
+                    if (isFirstTime){
+                        setupViews(assessmentQuestions!!)
+                    }
                 }
-                setupViews(assessmentQuestions!!)
             }
+            isFirstTime=false
         }
 
         viewModel.apiStatus.observe(viewLifecycleOwner) {
             when (it) {
                 ApiCallStatus.START -> {
-                    binding.progressContainer.visibility = View.VISIBLE
+                    //binding.progressContainer.visibility = View.VISIBLE
                 }
                 ApiCallStatus.FAILED, ApiCallStatus.SUCCESS -> {
                     binding.progressContainer.visibility = View.GONE
@@ -184,13 +189,13 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                             ?.apply {
                                 assessmentQuestions.question.status =
                                     if (this) QuestionStatus.CORRECT else QuestionStatus.WRONG
-
+                                viewModel.postAnswerAndGetNewQuestion(assessmentQuestions)
                             }
                         ChoiceType.SINGLE_SELECTION_TEXT -> {
                             mcqChoiceView?.get()?.isCorrectAnswer()?.apply {
                                 assessmentQuestions.question.status =
                                     if (this) QuestionStatus.CORRECT else QuestionStatus.WRONG
-
+                                viewModel.postAnswerAndGetNewQuestion(assessmentQuestions)
                             }
                         }
                         else -> null
@@ -198,14 +203,14 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 }
 
                 override fun nextQuestion() {
-                    moveToNextGrammarQuestion(assessmentQuestions)
+                    moveToNextGrammarQuestion()
                 }
             })
         }
     }
 
-    private fun moveToNextGrammarQuestion(assessmentQuestions: AssessmentQuestionWithRelations) {
-        viewModel.postAnswerAndGetNewQuestion(assessmentQuestions)
+    private fun moveToNextGrammarQuestion() {
+        setupViews(assessmentQuestions!!)
     }
 
     override fun onResume() {

@@ -1305,7 +1305,8 @@ class ConversationActivity :
                             LessonActivity.getActivityIntent(
                                 this,
                                 it.lessonId,
-                                conversationId = inboxEntity.conversation_id
+                                conversationId = inboxEntity.conversation_id,
+                                isNewGrammar = it.isNewGrammar
                             ),
                             LESSON_REQUEST_CODE
                         )

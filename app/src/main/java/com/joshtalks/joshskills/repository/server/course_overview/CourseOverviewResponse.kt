@@ -102,7 +102,10 @@ data class CourseOverviewItem(
     var vocabPercentage: String,
     @SerializedName("speaking_percentage")
     @Expose
-    var speakingPercentage: String?
+    var speakingPercentage: String?,
+    @SerializedName("is_new_grammar")
+    @Expose
+    var isNewGrammar: Boolean?=false
 )
 
 data class PdfInfo(
