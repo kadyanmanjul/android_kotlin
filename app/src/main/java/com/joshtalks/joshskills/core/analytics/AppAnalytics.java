@@ -402,7 +402,11 @@ public class AppAnalytics {
     }
 
     private void pushToCleverTap() {
-        cleverTapAnalytics.pushEvent(event, parameters);
+        try {
+            cleverTapAnalytics.pushEvent(event, parameters);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void endSession() {
