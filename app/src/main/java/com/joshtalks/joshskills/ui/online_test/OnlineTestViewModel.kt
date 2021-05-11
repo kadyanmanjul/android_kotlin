@@ -56,11 +56,13 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
                 val choice = assessmentQuestion.choiceList.filter { it.isSelectedByUser }
                     .sortedBy { it.userSelectedOrder }
                 var answerText: StringBuilder = StringBuilder(EMPTY)
+                val answerOrderList = arrayListOf<Int>()
                 choice.forEach {
                     answerText = answerText.append(it.text).append(SINGLE_SPACE)
+                    answerOrderList.add(it.sortOrder)
                 }
                 val assessmentRequest = OnlineTestRequest(
-                    assessmentQuestion, answerText.toString()
+                    assessmentQuestion, answerText.toString(),answerOrderList
                 )
                 val response =
                     AppObjectController.chatNetworkService.postAndGetNextOnlineTestQuestion(

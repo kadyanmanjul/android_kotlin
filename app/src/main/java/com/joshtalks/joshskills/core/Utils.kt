@@ -299,11 +299,11 @@ object Utils {
 
     fun dpToPx(context: Context, dp: Float): Int {
         return (
-            TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, dp,
-                context.resources.displayMetrics
-            ) + 0.5f
-            ).roundToInt()
+                TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, dp,
+                    context.resources.displayMetrics
+                ) + 0.5f
+                ).roundToInt()
     }
 
     fun call(context: Context, phoneNumber: String) {
@@ -606,11 +606,11 @@ object Utils {
             Locale.getDefault(), "%02d:%02d",
             TimeUnit.MILLISECONDS.toMinutes(duration.toLong()),
             TimeUnit.MILLISECONDS.toSeconds(duration.toLong()) -
-                TimeUnit.MINUTES.toSeconds(
-                    TimeUnit.MILLISECONDS.toMinutes(
-                        duration.toLong()
+                    TimeUnit.MINUTES.toSeconds(
+                        TimeUnit.MILLISECONDS.toMinutes(
+                            duration.toLong()
+                        )
                     )
-                )
         )
     }
 
@@ -699,7 +699,7 @@ object Utils {
         cal1.time = startDate
         cal2.time = endDate
         return cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR) &&
-            cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)
+                cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)
     }
 
     fun dateHeaderDateFormat(date: Date): String {
@@ -1246,14 +1246,26 @@ fun playSnackbarSound(context: Context) {
     try {
         val mediaplayer: MediaPlayer = MediaPlayer.create(
             context,
-            // R.raw.ting
-            // R.raw.accept_confirm
-            // R.raw.tinder_one
-            // R.raw.tinder_two
-            // R.raw.tinder_new
-            // R.raw.moneybag
-            // R.raw.si_montok_sound_effect,
-            R.raw.right_answer
+            R.raw.right_a
+        )
+
+        mediaplayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
+            override fun onCompletion(mediaPlayer: MediaPlayer) {
+                mediaPlayer.reset()
+                mediaPlayer.release()
+            }
+        })
+        mediaplayer.start()
+    } catch (ex: Exception) {
+        Timber.d(ex)
+    }
+}
+
+fun playWrongAnswerSound(context: Context) {
+    try {
+        val mediaplayer: MediaPlayer = MediaPlayer.create(
+            context,
+            R.raw.wrong_answer
         )
 
         mediaplayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {

@@ -12,6 +12,8 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.ONLINE_TEST_COMPLETED
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.playSnackbarSound
+import com.joshtalks.joshskills.core.playWrongAnswerSound
 import com.joshtalks.joshskills.databinding.FragmentOnlineTestBinding
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
@@ -41,7 +43,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private var mcqChoiceView: Stub<McqChoiceView>? = null
     private var atsChoiceView: Stub<AtsChoiceView>? = null
     private var buttonView: Stub<GrammarButtonView>? = null
-    private var isFirstTime:Boolean = true
+    private var isFirstTime: Boolean = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -84,19 +86,21 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             if (onlineTestResponse.completed) {
                 PrefManager.put(ONLINE_TEST_COMPLETED, true)
                 try {
-                    (requireActivity() as OnlineTestActivity).showTestCompletedScreen(onlineTestResponse.message)
+                    (requireActivity() as OnlineTestActivity).showTestCompletedScreen(
+                        onlineTestResponse.message
+                    )
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                 }
             } else {
                 onlineTestResponse.question?.let {
                     this.assessmentQuestions = AssessmentQuestionWithRelations(it, 10)
-                    if (isFirstTime){
+                    if (isFirstTime) {
                         setupViews(assessmentQuestions!!)
                     }
                 }
             }
-            isFirstTime=false
+            isFirstTime = false
         }
 
         viewModel.apiStatus.observe(viewLifecycleOwner) {
@@ -187,26 +191,35 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                     return when (assessmentQuestions.question.choiceType) {
                         ChoiceType.ARRANGE_THE_SENTENCE -> atsChoiceView?.get()?.isCorrectAnswer()
                             ?.apply {
-                                assessmentQuestions.question.status =
-                                    if (this) QuestionStatus.CORRECT else QuestionStatus.WRONG
-                                viewModel.postAnswerAndGetNewQuestion(assessmentQuestions)
+                                onCheckQuestion(assessmentQuestions,this)
                             }
                         ChoiceType.SINGLE_SELECTION_TEXT -> {
                             mcqChoiceView?.get()?.isCorrectAnswer()?.apply {
-                                assessmentQuestions.question.status =
-                                    if (this) QuestionStatus.CORRECT else QuestionStatus.WRONG
-                                viewModel.postAnswerAndGetNewQuestion(assessmentQuestions)
+                                onCheckQuestion(assessmentQuestions,this)
                             }
                         }
                         else -> null
                     }
                 }
-
                 override fun nextQuestion() {
                     moveToNextGrammarQuestion()
                 }
             })
         }
+    }
+
+    private fun onCheckQuestion(
+        assessmentQuestions: AssessmentQuestionWithRelations,
+        status: Boolean
+    ) {
+        assessmentQuestions.question.status =
+            if (status) QuestionStatus.CORRECT else QuestionStatus.WRONG
+        if (status) {
+            playSnackbarSound(requireActivity())
+        } else {
+            playWrongAnswerSound(requireActivity())
+        }
+        viewModel.postAnswerAndGetNewQuestion(assessmentQuestions)
     }
 
     private fun moveToNextGrammarQuestion() {
