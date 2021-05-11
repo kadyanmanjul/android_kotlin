@@ -55,6 +55,7 @@ class CustomWord : AppCompatTextView {
 
             choice.apply {
                 this.userSelectedOrder = answerLayout.childCount
+                this.isSelectedByUser = true
             }
             this.visibility = View.INVISIBLE
             RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, this.height, this.width, this))
@@ -78,6 +79,7 @@ class CustomWord : AppCompatTextView {
             optionsLayout.addViewAt(this, choice.sortOrder - 1)
             choice.apply {
                 this.userSelectedOrder = 100
+                this.isSelectedByUser = false
             }
             //RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, this.height, this.width, this))
             RxBus2.publish(

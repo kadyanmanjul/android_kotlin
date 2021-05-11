@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.OnlineTestRequest
@@ -48,11 +49,7 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
         AppObjectController.chatNetworkService.getOnlineTestQuestion()
 
 
-    fun postAnswerAndGetNewQuestion(assessmentWithRelations: AssessmentQuestionWithRelations) {
-        postTestQuestionToServer(assessmentWithRelations)
-    }
-
-    fun postTestQuestionToServer(assessmentQuestion: AssessmentQuestionWithRelations) {
+    fun postAnswerAndGetNewQuestion(assessmentQuestion: AssessmentQuestionWithRelations) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiStatus.postValue(ApiCallStatus.START)
@@ -60,7 +57,7 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
                     .sortedBy { it.userSelectedOrder }
                 var answerText: StringBuilder = StringBuilder(EMPTY)
                 choice.forEach {
-                    answerText = answerText.append(it.text)
+                    answerText = answerText.append(it.text).append(SINGLE_SPACE)
                 }
                 val assessmentRequest = OnlineTestRequest(
                     assessmentQuestion, answerText.toString()
