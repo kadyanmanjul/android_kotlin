@@ -306,6 +306,9 @@ object Utils {
                 ).roundToInt()
     }
 
+    // Usage : Utils.sdpToPx(R.dimen._24sdp)
+    fun sdpToPx(dimen: Int) = AppObjectController.joshApplication.resources.getDimension(dimen)
+
     fun call(context: Context, phoneNumber: String) {
         val intent = Intent(Intent.ACTION_DIAL).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
