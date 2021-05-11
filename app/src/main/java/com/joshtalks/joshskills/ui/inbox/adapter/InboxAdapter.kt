@@ -6,10 +6,17 @@ import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.integration.webp.decoder.WebpDrawable
+import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.RequestOptions
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
@@ -21,8 +28,13 @@ import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.databinding.InboxItemLayoutBinding
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
+import java.util.ArrayList
+import java.util.Date
+import java.util.Locale
+import jp.wasabeef.glide.transformations.CropTransformation
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import timber.log.Timber
-import java.util.*
 
 class InboxAdapter(
     private var lifecycleProvider: LifecycleOwner,
@@ -84,6 +96,7 @@ class InboxAdapter(
                 tvName.text = inboxEntity.course_name
                 courseProgressBar.progress = 0
                 horizontalLine.visibility = android.view.View.VISIBLE
+                imageUrl(binding.profileImage, inboxEntity.course_icon)
                 //   profileImage.setInboxImageView(inboxEntity.course_icon)
                 /* if (inboxEntity.chat_id.isNullOrEmpty()) {
                      tvLastMessageTime.setCompoundDrawablesWithIntrinsicBounds(
@@ -146,6 +159,40 @@ class InboxAdapter(
                     horizontalLine.visibility = android.view.View.GONE
                 }
             }
+        }
+
+        fun imageUrl(imageView: ImageView, url: String?) {
+            if (url.isNullOrEmpty()) {
+                imageView.setImageResource(R.drawable.ic_josh_course)
+                return
+            }
+
+            val multi = MultiTransformation(
+                CropTransformation(
+                    Utils.dpToPx(48),
+                    Utils.dpToPx(48),
+                    CropTransformation.CropType.CENTER
+                ),
+                RoundedCornersTransformation(
+                    Utils.dpToPx(ROUND_CORNER),
+                    0,
+                    RoundedCornersTransformation.CornerType.ALL
+                )
+            )
+            Glide.with(AppObjectController.joshApplication)
+                .load(url)
+                .optionalTransform(
+                    WebpDrawable::class.java,
+                    WebpDrawableTransformation(CircleCrop())
+                )
+                .apply(
+                    RequestOptions.bitmapTransform(multi).apply(
+                        RequestOptions().placeholder(R.drawable.ic_josh_course)
+                            .error(R.drawable.ic_josh_course)
+                    )
+
+                )
+                .into(imageView)
         }
 
         private fun setUpProgressAnimate(diff: Int) {
