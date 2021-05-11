@@ -16,17 +16,22 @@ data class OnlineTestRequest(
     val status: QuestionStatus,
 
     @SerializedName("answer")
-    var answer: String
+    var answer: String,
+
+    @SerializedName("answer_order")
+    var answerOrder: List<Int>
 
 
 ) : Parcelable {
 
     constructor(
         question : AssessmentQuestionWithRelations,
-        answer: String
+        answer: String,
+        answerOrder: List<Int>
     ) : this(
         questionId = question.question.remoteId,
         status = question.question.status,
-        answer = answer
+        answer = answer,
+        answerOrder = answerOrder
     )
 }

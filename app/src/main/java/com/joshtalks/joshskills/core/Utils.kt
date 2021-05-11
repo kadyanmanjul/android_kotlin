@@ -1246,14 +1246,26 @@ fun playSnackbarSound(context: Context) {
     try {
         val mediaplayer: MediaPlayer = MediaPlayer.create(
             context,
-            // R.raw.ting
-            // R.raw.accept_confirm
-            // R.raw.tinder_one
-            // R.raw.tinder_two
-            // R.raw.tinder_new
-            // R.raw.moneybag
-            // R.raw.si_montok_sound_effect,
-            R.raw.right_answer
+            R.raw.right_a
+        )
+
+        mediaplayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
+            override fun onCompletion(mediaPlayer: MediaPlayer) {
+                mediaPlayer.reset()
+                mediaPlayer.release()
+            }
+        })
+        mediaplayer.start()
+    } catch (ex: Exception) {
+        Timber.d(ex)
+    }
+}
+
+fun playWrongAnswerSound(context: Context) {
+    try {
+        val mediaplayer: MediaPlayer = MediaPlayer.create(
+            context,
+            R.raw.wrong_answer
         )
 
         mediaplayer.setOnCompletionListener(object : MediaPlayer.OnCompletionListener {
