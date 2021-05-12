@@ -101,97 +101,11 @@
         <activity android:name=".ui.userprofile.SeeAllAwardActivity" />
         <activity android:name=".ui.leaderboard.LeaderBoardViewPagerActivity" />
         <activity android:name=".ui.gif.GIFActivity" />
-
-        <meta-data
-            android:name="CLEVERTAP_ACCOUNT_ID"
-            android:value="844-6K5-865Z" />
-        <meta-data
-            android:name="CLEVERTAP_TOKEN"
-            android:value="536-44b" />
-        <meta-data
-            android:name="CLEVERTAP_USE_GOOGLE_AD_ID"
-            android:value="1" />
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_places_api_key" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_status_bar_notification" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="id-1" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/colorAccent" />
-        <meta-data
-            android:name="firebase_performance_logcat_enabled"
-            android:value="true" />
-        <meta-data
-            android:name="firebase_crashlytics_collection_enabled"
-            android:value="${enableCrashReporting}" />
-        <meta-data
-            android:name="firebase_messaging_auto_init_enabled"
-            android:value="true" />
-        <meta-data
-            android:name="firebase_analytics_collection_enabled"
-            android:value="true" />
-        <meta-data
-            android:name="google_analytics_automatic_screen_reporting_enabled"
-            android:value="true" />
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
-        <meta-data
-            android:name="com.facebook.accountkit.ApplicationName"
-            android:value="@string/app_name" />
-        <meta-data
-            android:name="com.facebook.accountkit.ClientToken"
-            android:value="@string/ACCOUNT_KIT_CLIENT_TOKEN" />
-        <meta-data
-            android:name="com.facebook.sdk.AutoLogAppEventsEnabled"
-            android:value="false" />
-        <!--
- <meta-data
-                 android:name="com.facebook.sdk.AutoInitEnabled"
-                 android:value="false" />
-        -->
-        <meta-data
-            android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled"
-            android:value="true" />
-        <meta-data
-            android:name="com.google.android.gms.ads.AD_MANAGER_APP"
-            android:value="true" />
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/ads_id" />
-        <meta-data
-            android:name="io.branch.sdk.BranchKey"
-            android:value="@string/branch_id" />
-        <meta-data
-            android:name="io.branch.sdk.TestMode"
-            android:value="@bool/branch_test" />
-        <meta-data
-            android:name="com.truecaller.android.sdk.PartnerKey"
-            android:value="@string/truecaller_key" />
-        <meta-data
-            android:name="CLEVERTAP_BACKGROUND_SYNC"
-            android:value="1" /> <!-- replace below value with your FCM project number. -->
-        <meta-data
-            android:name="FCM_SENDER_ID"
-            android:value="id:359106841538" />
-
         <activity
             android:name=".ui.help.HelpActivity"
             android:alwaysRetainTaskState="true"
             android:launchMode="singleTop"
             android:theme="@style/AppNoBarTheme" />
-        <!--
-<activity
-            android:name=".ui.launch.LauncherActivity"
-            android:alwaysRetainTaskState="true"
-            android:launchMode="singleTop"
-            android:theme="@style/AppNoBarTheme" />
-        -->
         <activity
             android:name=".ui.launch.LauncherActivity"
             android:alwaysRetainTaskState="true"
@@ -469,120 +383,16 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoAction" />
-
-        <service
-            android:name=".core.service.video_download.VideoDownloadService"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.android.exoplayer.downloadService.action.RESTART" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </service>
-        <service
-            android:name="com.google.android.exoplayer2.scheduler.PlatformScheduler$PlatformSchedulerService"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service
-            android:name=".core.notification.FirebaseNotificationService"
-            android:directBootAware="true"
-            android:enabled="true"
-            android:exported="false"
-            tools:ignore="ExportedService">
-            <intent-filter android:priority="1000">
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-        <service
-            android:name=".core.chrome.KeepAliveService"
-            android:exported="true"
-            tools:ignore="ExportedService" />
-
-        <receiver
-            android:name=".core.chrome.BrowserActionsReceiver"
-            android:exported="true"
-            tools:ignore="ExportedReceiver" />
-        <receiver
-            android:name=".core.service.SMSReadBroadcastReceiver"
-            android:exported="true"
-            tools:ignore="ExportedReceiver">
-            <intent-filter>
-                <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name=".core.analytics.JoshTalksInstallListener"
-            android:exported="true"
-            tools:ignore="ExportedReceiver,ExportedService">
-            <intent-filter>
-                <action android:name="com.android.vending.INSTALL_REFERRER" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name=".core.analytics.DismissNotifEventReceiver"
-            android:exported="false" />
-        <receiver
-            android:name=".ui.reminder.set_reminder.AlarmNotifDismissReceiver"
-            android:exported="false" />
-        <receiver
-            android:name=".ui.reminder.set_reminder.AlarmReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name=".core.notification.StartUpBootReceiver"
-            android:enabled="true">
-            <intent-filter>
-                <action android:name="com.joshtalks.joshskills.start" />
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-            </intent-filter>
-        </receiver>
-
-        <provider
-            android:name=".repository.service.GenericFileProvider"
-            android:authorities="com.joshtalks.joshskills.provider"
-            android:exported="false"
-            android:grantUriPermissions="true"
-            tools:replace="android:authorities">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths" />
-        </provider>
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx-startup"
-            android:exported="false"
-            tools:node="merge">
-
-            <!-- Automatically run MyInitializer at app startup -->
-
-            <meta-data
-                android:name="com.joshtalks.joshskills.core.speedx.JoshWorkManagerInitializer"
-                android:value="androidx.startup" />
-            <meta-data
-                android:name="com.joshtalks.joshskills.core.speedx.JoshAppInitializer"
-                android:value="androidx.startup" />
-        </provider>
-        <provider
-            android:name="androidx.work.impl.WorkManagerInitializer"
-            android:authorities="${applicationId}.workmanager-init"
-            android:enabled="false"
-            android:exported="false" />
-
         <activity
             android:name=".ui.voip.WebRtcActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
-            android:showOnLockScreen="true"
-            android:showWhenLocked="true"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
+
         <activity android:name=".ui.deeplink.DeeplinkAnalyzeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -646,7 +456,127 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme" />
 
+        <meta-data
+            android:name="CLEVERTAP_ACCOUNT_ID"
+            android:value="844-6K5-865Z" />
+        <meta-data
+            android:name="CLEVERTAP_TOKEN"
+            android:value="536-44b" />
+        <meta-data
+            android:name="CLEVERTAP_USE_GOOGLE_AD_ID"
+            android:value="1" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_places_api_key" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_status_bar_notification" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="id-1" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
+        <meta-data
+            android:name="firebase_performance_logcat_enabled"
+            android:value="true" />
+        <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="${enableCrashReporting}" />
+        <meta-data
+            android:name="firebase_messaging_auto_init_enabled"
+            android:value="true" />
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="true" />
+        <meta-data
+            android:name="google_analytics_automatic_screen_reporting_enabled"
+            android:value="true" />
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+        <meta-data
+            android:name="com.facebook.accountkit.ApplicationName"
+            android:value="@string/app_name" />
+        <meta-data
+            android:name="com.facebook.accountkit.ClientToken"
+            android:value="@string/ACCOUNT_KIT_CLIENT_TOKEN" />
+        <meta-data
+            android:name="com.facebook.sdk.AutoLogAppEventsEnabled"
+            android:value="false" />
+        <!--
+ <meta-data
+                 android:name="com.facebook.sdk.AutoInitEnabled"
+                 android:value="false" />
+        -->
+        <meta-data
+            android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled"
+            android:value="true" />
+        <meta-data
+            android:name="com.google.android.gms.ads.AD_MANAGER_APP"
+            android:value="true" />
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/ads_id" />
+        <meta-data
+            android:name="io.branch.sdk.BranchKey"
+            android:value="@string/branch_id" />
+        <meta-data
+            android:name="io.branch.sdk.TestMode"
+            android:value="@bool/branch_test" />
+        <meta-data
+            android:name="com.truecaller.android.sdk.PartnerKey"
+            android:value="@string/truecaller_key" />
+        <meta-data
+            android:name="CLEVERTAP_BACKGROUND_SYNC"
+            android:value="1" /> <!-- replace below value with your FCM project number. -->
+        <meta-data
+            android:name="FCM_SENDER_ID"
+            android:value="id:359106841538" />
 
+        <receiver
+            android:name=".core.chrome.BrowserActionsReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver" />
+        <receiver
+            android:name=".core.service.SMSReadBroadcastReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".core.analytics.JoshTalksInstallListener"
+            android:exported="true"
+            tools:ignore="ExportedReceiver,ExportedService">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".core.analytics.DismissNotifEventReceiver"
+            android:exported="false" />
+        <receiver
+            android:name=".ui.reminder.set_reminder.AlarmNotifDismissReceiver"
+            android:exported="false" />
+        <receiver
+            android:name=".ui.reminder.set_reminder.AlarmReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".core.notification.StartUpBootReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.joshtalks.joshskills.start" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
         <receiver
             android:name=".core.service.NetworkChangeReceiver"
             android:exported="true">
@@ -677,6 +607,44 @@
             android:enabled="true"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service
+            android:name=".track.CourseUsageService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            tools:ignore="ExportedService" />
+        <service android:name="com.clevertap.android.sdk.pushnotification.fcm.FcmMessageListenerService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".core.service.video_download.VideoDownloadService"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.exoplayer.downloadService.action.RESTART" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.google.android.exoplayer2.scheduler.PlatformScheduler$PlatformSchedulerService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service
+            android:name=".core.notification.FirebaseNotificationService"
+            android:directBootAware="true"
+            android:enabled="true"
+            android:exported="false"
+            tools:ignore="ExportedService">
+            <intent-filter android:priority="1000">
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".core.chrome.KeepAliveService"
+            android:exported="true"
+            tools:ignore="ExportedService" />
         <!--
 <meta-data
             android:name="com.cometchat.pro.uikit"
@@ -693,6 +661,36 @@
             android:name=".ui.groupchat.messagelist.CometChatMessageListActivity"
             android:screenOrientation="portrait" />
         -->
+        <provider
+            android:name=".repository.service.GenericFileProvider"
+            android:authorities="com.joshtalks.joshskills.provider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+
+            <!-- Automatically run MyInitializer at app startup -->
+
+            <meta-data
+                android:name="com.joshtalks.joshskills.core.speedx.JoshWorkManagerInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="com.joshtalks.joshskills.core.speedx.JoshAppInitializer"
+                android:value="androidx.startup" />
+        </provider>
+        <provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="${applicationId}.workmanager-init"
+            android:enabled="false"
+            android:exported="false" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${file_provider}.provider"
@@ -714,16 +712,6 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <service
-            android:name=".track.CourseUsageService"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            tools:ignore="ExportedService" />
-        <service android:name="com.clevertap.android.sdk.pushnotification.fcm.FcmMessageListenerService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
     </application>
 
 </manifest>
