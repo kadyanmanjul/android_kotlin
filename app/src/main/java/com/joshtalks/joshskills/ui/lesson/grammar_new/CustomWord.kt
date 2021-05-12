@@ -101,12 +101,12 @@ class CustomWord : AppCompatTextView {
 
     companion object {
         private const val TAG = "CustomWord"
-        var mPaddingTop = Utils.dpToPx(18)
-        var mPaddingBottom = Utils.dpToPx(18)
-        var mPaddingLeft = Utils.dpToPx(16)
-        var mPaddingRight = Utils.dpToPx(16)
-        private var mPadding14F = Utils.dpToPx(7)
-        private var mPadding22F = Utils.dpToPx(11)
+        var mPaddingTop = Utils.sdpToPx(R.dimen._18sdp).toInt()
+        var mPaddingBottom = Utils.sdpToPx(R.dimen._18sdp).toInt()
+        var mPaddingLeft = Utils.sdpToPx(R.dimen._16sdp).toInt()
+        var mPaddingRight = Utils.sdpToPx(R.dimen._16sdp).toInt()
+        private var mPadding14F = Utils.sdpToPx(R.dimen._7sdp).toInt()
+        private var mPadding22F = Utils.sdpToPx(R.dimen._11sdp).toInt()
 
     }
 
@@ -124,7 +124,7 @@ class CustomWord : AppCompatTextView {
         )
         setLayoutParams(layoutParams)
         gravity = Gravity.CENTER
-        minWidth = Utils.dpToPx(40)
+        minWidth = Utils.sdpToPx(R.dimen._40sdp).toInt()
         textAlignment = TEXT_ALIGNMENT_CENTER
         textSize = 16f
         setOnTouchListener { v, event ->
@@ -136,9 +136,9 @@ class CustomWord : AppCompatTextView {
                     )
                     v.setPadding(
                         mPaddingLeft,
-                        mPaddingTop + Utils.dpToPx(1),
+                        mPaddingTop + Utils.sdpToPx(R.dimen._1sdp).toInt(),
                         mPaddingRight,
-                        mPaddingBottom - Utils.dpToPx(1),
+                        mPaddingBottom - Utils.sdpToPx(R.dimen._1sdp).toInt(),
                     )
                     v.invalidate()
                 }
@@ -149,9 +149,9 @@ class CustomWord : AppCompatTextView {
                     )
                     v.setPadding(
                         mPaddingLeft,
-                        mPaddingTop - Utils.dpToPx(1),
+                        mPaddingTop - Utils.sdpToPx(R.dimen._1sdp).toInt(),
                         mPaddingRight,
-                        mPaddingBottom + Utils.dpToPx(1),
+                        mPaddingBottom + Utils.sdpToPx(R.dimen._1sdp).toInt(),
                     )
                     v.invalidate()
                 }

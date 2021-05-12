@@ -67,9 +67,9 @@ class GrammarButtonView : FrameLayout {
 
                 v.setPaddingRelative(
                     v.paddingLeft,
-                    currentPaddingTop +  Utils.dpToPx(1),
+                    currentPaddingTop + Utils.sdpToPx(R.dimen._1sdp).toInt(),
                     v.paddingRight,
-                    currentPaddingBottom -  Utils.dpToPx(1),
+                    currentPaddingBottom - Utils.sdpToPx(R.dimen._1sdp).toInt(),
                 )
                 v.invalidate()
             }
@@ -95,9 +95,9 @@ class GrammarButtonView : FrameLayout {
                 )
                 v.setPaddingRelative(
                     v.paddingLeft,
-                    currentPaddingTop -  Utils.dpToPx(1),
+                    currentPaddingTop - Utils.sdpToPx(R.dimen._1sdp).toInt(),
                     v.paddingRight,
-                    currentPaddingBottom +  Utils.dpToPx(1),
+                    currentPaddingBottom + Utils.sdpToPx(R.dimen._1sdp).toInt(),
                 )
                 v.invalidate()
             }
