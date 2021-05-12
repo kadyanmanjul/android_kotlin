@@ -557,6 +557,7 @@
     <string name="completed">Completed</string>
     <string name="age">Age:</string>
     <string name="joined_on">Joined on:</string>
+    <string name="batch">Batch:</string>
     <string name="highlights">Highlights</string>
     <string name="points">Points</string>
     <string name="regular">Regular</string>
