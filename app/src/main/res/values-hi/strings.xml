@@ -433,6 +433,7 @@
     <string name="profile_photo">प्रोफ़ाइल फोटो</string>
     <string name="age">आयु:</string>
     <string name="joined_on">दाखिला लिया:</string>
+    <string name="batch">बैच:</string>
     <string name="highlights">हाइलाइट</string>
     <string name="points">अंक</string>
     <string name="regular">नियमित क्रियाएं</string>
