@@ -84,6 +84,8 @@ import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.userprofile.ShowAnimatedLeaderBoardFragment
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
+import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 import com.patloew.colocation.CoLocation
 import com.smartlook.sdk.smartlook.Smartlook
 import com.smartlook.sdk.smartlook.analytics.identify.UserProperties
@@ -304,6 +306,9 @@ abstract class BaseActivity :
             isUserProfileNotComplete() -> {
                 Intent(this, SignUpActivity::class.java)
             }
+            containsFavUserCallBackUrl() -> {
+                getWebRtcActivityIntent()
+            }
             else -> getInboxActivityIntent()
         }
         return intent.apply {
@@ -325,6 +330,27 @@ abstract class BaseActivity :
             ex.printStackTrace()
         }
         return false
+    }
+
+    fun containsFavUserCallBackUrl(): Boolean {
+        try {
+            return intent?.dataString?.contains("app.joshtalks.org/ag") ?: false
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return false
+    }
+
+    fun getWebRtcActivityIntent(): Intent {
+        val partnerUid = intent?.dataString?.split("/")?.lastOrNull()?.toInt()
+        return if (partnerUid != null) {
+            WebRtcActivity.getFavMissedCallbackIntent(partnerUid, this).apply {
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        } else {
+            getInboxActivityIntent()
+        }
     }
 
     fun getInboxActivityIntent(isFromOnBoardingFlow: Boolean = false): Intent {

@@ -83,6 +83,18 @@ class WebRtcActivity : AppCompatActivity() {
                 activity.startActivityForResult(this, 9999)
             }
         }
+
+        fun getFavMissedCallbackIntent(partnerUid: Int, activity: Activity): Intent {
+            val data = HashMap<String, String?>().apply {
+                put(RTC_IS_FAVORITE, "true")
+            }
+
+            return Intent(activity, WebRtcActivity::class.java).apply {
+                putExtra(RTC_PARTNER_ID, partnerUid)
+                putExtra(CALL_TYPE, CallType.FAVORITE_MISSED_CALL)
+                putExtra(CALL_USER_OBJ, data)
+            }
+        }
     }
 
     private var myConnection: ServiceConnection = object : ServiceConnection {
