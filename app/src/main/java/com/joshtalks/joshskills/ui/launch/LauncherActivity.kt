@@ -45,12 +45,9 @@ class LauncherActivity : CoreJoshActivity() {
         animatedProgressBar()
         initAppInFirstTime()
         handleIntent()
-        AppObjectController.uiHandler.postDelayed(
-            {
-                analyzeAppRequirement()
-            },
-            700
-        )
+        AppObjectController.uiHandler.postDelayed({
+            analyzeAppRequirement()
+        }, 700)
     }
 
     private fun initApp() {
@@ -59,7 +56,7 @@ class LauncherActivity : CoreJoshActivity() {
             WorkManagerAdmin.appInitWorker()
             Branch.getInstance(applicationContext).resetUserSession()
             logAppLaunchEvent(getNetworkOperatorName())
-            // logNotificationData()
+            //logNotificationData()
         }
     }
 
@@ -276,13 +273,17 @@ class LauncherActivity : CoreJoshActivity() {
                 obj.test = testId?.split("_")?.get(1)?.toInt()
             } catch (ex: Throwable) {
             }
-            if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
-                val id = getGoogleAdId(this@LauncherActivity)
-                if (id.isNullOrBlank()){
-                    return@launch
-                } else {
-                    PrefManager.put(USER_UNIQUE_ID, id)
+            try {
+                if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
+                    val id = getGoogleAdId(this@LauncherActivity)
+                    if (id.isNullOrBlank()) {
+                        return@launch
+                    } else {
+                        PrefManager.put(USER_UNIQUE_ID, id)
+                    }
                 }
+            } catch (ex: Exception) {
+                LogException.catchException(ex)
             }
             obj.gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
             InstallReferrerModel.getPrefObject()?.let {

@@ -234,13 +234,17 @@ class NewLauncherActivity : CoreJoshActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             val obj = RequestRegisterGAId()
             obj.test = testId?.split("_")?.get(1)?.toInt()
-            if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
-                val id = getGoogleAdId(this@NewLauncherActivity)
-                if (id.isNullOrBlank()){
-                    return@launch
-                } else {
-                    PrefManager.put(USER_UNIQUE_ID, id)
+            try {
+                if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
+                    val id = getGoogleAdId(this@NewLauncherActivity)
+                    if (id.isNullOrBlank()) {
+                        return@launch
+                    } else {
+                        PrefManager.put(USER_UNIQUE_ID, id)
+                    }
                 }
+            } catch (ex: Exception) {
+                LogException.catchException(ex)
             }
             obj.gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
             InstallReferrerModel.getPrefObject()?.let {
