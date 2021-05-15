@@ -17,21 +17,28 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
+import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
+import com.joshtalks.joshskills.core.setRoundImage
+import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
 import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
-import kotlinx.coroutines.CoroutineScope
+import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
-import java.util.*
 
 const val ARG_CALLER_IMAGE = "caller_image_url"
 const val ARG_CALLER_NAME = "caller_name"
@@ -208,13 +215,17 @@ class VoipCallFeedbackView : DialogFragment() {
     }
 
     private fun exitDialog() {
-        if (requireActivity() is WebRtcActivity) {
-            val intent = Intent()
-            intent.putExtra("points_list", pointsString)
-            requireActivity().setResult(Activity.RESULT_OK, intent)
-            requireActivity().finishAndRemoveTask()
-        } else {
-            dismissAllowingStateLoss()
+        try {
+            if (requireActivity() is WebRtcActivity) {
+                val intent = Intent()
+                intent.putExtra("points_list", pointsString)
+                requireActivity().setResult(Activity.RESULT_OK, intent)
+                requireActivity().finishAndRemoveTask()
+            } else {
+                dismissAllowingStateLoss()
+            }
+        } catch (ex: Exception) {
+            LogException.catchException(ex)
         }
     }
 

@@ -30,10 +30,10 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
             lifecycleScope.launch(Dispatchers.Main) {
                 try {
                     if (WebRtcService.isCallWasOnGoing) {
-                        findViewById<View>(R.id.ongoing_call_container).setOnClickListener {
+                        findViewById<View>(R.id.ongoing_call_container)?.setOnClickListener {
                             mBoundService?.openConnectedCallActivity(this@WebRtcMiddlewareActivity)
                         }
-                        findViewById<View>(R.id.ongoing_call_container).visibility = View.VISIBLE
+                        findViewById<View>(R.id.ongoing_call_container)?.visibility = View.VISIBLE
                         val callType = mBoundService?.getCallType()
                         val callConnected = mBoundService?.isCallerJoin ?: false
 
@@ -47,7 +47,7 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
                             callTimerUi()
                         }
                     } else {
-                        findViewById<View>(R.id.ongoing_call_container).visibility = View.GONE
+                        findViewById<View>(R.id.ongoing_call_container)?.visibility = View.GONE
                     }
                 } catch (ex: Throwable) {
                     ex.printStackTrace()
@@ -71,8 +71,8 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
         override fun onDisconnect(callId: String?, channelName: String?, time: Long) {
             super.onDisconnect(callId, channelName, time)
             lifecycleScope.launchWhenResumed {
-                findViewById<View>(R.id.ongoing_call_container).visibility = View.GONE
-                findViewById<View>(R.id.ongoing_call_container).setOnClickListener(null)
+                findViewById<View>(R.id.ongoing_call_container)?.visibility = View.GONE
+                findViewById<View>(R.id.ongoing_call_container)?.setOnClickListener(null)
                 if (time > 0 && channelName.isNullOrEmpty().not()) {
                     VoipCallFeedbackView.showCallRatingDialog(
                         supportFragmentManager,
