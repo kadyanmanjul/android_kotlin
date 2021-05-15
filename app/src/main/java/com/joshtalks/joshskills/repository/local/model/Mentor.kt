@@ -130,6 +130,7 @@ class Mentor {
             val activityList = arrayOf(
                 Intent(joshApplication, OnBoardActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
             )
 
