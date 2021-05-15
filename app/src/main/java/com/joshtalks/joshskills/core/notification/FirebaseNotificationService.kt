@@ -384,7 +384,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             }
             NotificationAction.ACTION_LOGOUT_USER -> {
                 if (Mentor.getInstance().hasId()) {
-                    Mentor.deleteUserCredentials()
+                    Mentor.deleteUserCredentials(true)
                     Mentor.deleteUserData()
                 }
                 return null

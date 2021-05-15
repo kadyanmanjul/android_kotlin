@@ -97,12 +97,12 @@ class Mentor {
         }
 
         @JvmStatic
-        fun deleteUserCredentials() {
+        fun deleteUserCredentials(showNotification: Boolean = false) {
             PrefManager.logoutUser()
-            logoutAndShowLoginScreen()
+            logoutAndShowLoginScreen(showNotification)
         }
 
-        private fun logoutAndShowLoginScreen() {
+        private fun logoutAndShowLoginScreen(showNotification: Boolean) {
             CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
                 delay(1000)
                 AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
@@ -118,7 +118,9 @@ class Mentor {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
                 joshApplication.startActivity(intent)
-                showLogoutNotification()
+                if (showNotification) {
+                    showLogoutNotification()
+                }
 //                showToast(
 //                    AppObjectController.joshApplication.getString(R.string.auto_logout_message),
 //                    Toast.LENGTH_LONG

@@ -534,7 +534,7 @@ class UserActiveWorker(context: Context, workerParams: WorkerParameters) :
             )
 
             if (response.isSuccessful && response.body()?.isLatestLoginDevice == false) {
-                Mentor.deleteUserCredentials()
+                Mentor.deleteUserCredentials(true)
                 Mentor.deleteUserData()
             }
         } catch (ex: Exception) {
