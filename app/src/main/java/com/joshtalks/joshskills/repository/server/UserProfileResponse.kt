@@ -33,6 +33,8 @@ data class UserProfileResponse(
     val status: String?,
     @SerializedName("streak")
     val streak: Int?,
+    @SerializedName("batch_rank")
+    val batchRank: Int?,
     @SerializedName("uid")
     val uid: String?,
     @SerializedName("is_points_active")
