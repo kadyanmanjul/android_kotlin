@@ -10,11 +10,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.databinding.FragmentLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
@@ -28,6 +28,8 @@ import com.skydoves.balloon.overlay.BalloonOverlayAnimation
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.util.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class LeaderBoardFragment : Fragment() {
@@ -350,49 +352,53 @@ class LeaderBoardFragment : Fragment() {
     }
 
     private fun addOnlineTooltip() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            if (type == "TODAY") {
-                val flag = PrefManager.getBoolValue(ONLINE_HINT_SHOW)
-                if (flag) {
-                    showAnotherTooltip()
-                    return@launch
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                if (type == "TODAY") {
+                    val flag = PrefManager.getBoolValue(ONLINE_HINT_SHOW)
+                    if (flag) {
+                        showAnotherTooltip()
+                        return@launch
+                    }
+                    if ((requireActivity() is LeaderBoardViewPagerActivity) && (requireActivity() as LeaderBoardViewPagerActivity).isTooltipShow) {
+                        showAnotherTooltip()
+                        return@launch
+                    }
+                    val lbOpenCount = PrefManager.getIntValue(LEADER_BOARD_OPEN_COUNT)
+                    val b = viewModel.isUserHad4And5Lesson()
+                    if (lbOpenCount >= 3 || b) {
+                        //    delay(250)
+                        val item =
+                            binding.recyclerView.getViewResolverAtPosition(liveUserPosition) as LeaderBoardItemViewHolder
+                        val balloon = Balloon.Builder(requireContext())
+                            .setText(getString(R.string.online_tooltip))
+                            .setTextSize(15F)
+                            .setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                            .setDismissWhenTouchOutside(true)
+                            .setCornerRadius(12f)
+                            .setWidth(BalloonSizeSpec.WRAP)
+                            .setArrowOrientation(ArrowOrientation.BOTTOM)
+                            .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
+                            .setPadding(8)
+                            .setMarginTop(8)
+                            .setIsVisibleOverlay(true) // sets the visibility of the overlay for highlighting an anchor.
+                            .setOverlayColorResource(R.color.pd_transparent_bg_v2) // background color of the overlay using a color resource.
+                            //  .setOverlayPadding(2f) // sets a padding value of the overlay shape in
+                            .setBalloonOverlayAnimation(BalloonOverlayAnimation.FADE) // default is fade.
+                            .setDismissWhenOverlayClicked(false) // disable di
+                            .setBackgroundColorResource(R.color.white)
+                            .setBalloonAnimation(BalloonAnimation.FADE)
+                            .setLifecycleOwner(this@LeaderBoardFragment)
+                            .setDismissWhenClicked(true)
+                            .build()
+                        balloon.showAlignBottom(item.onlineStatusLayout)
+                        PrefManager.put(ONLINE_HINT_SHOW, true)
+                    } else {
+                        showAnotherTooltip()
+                    }
                 }
-                if ((requireActivity() is LeaderBoardViewPagerActivity) && (requireActivity() as LeaderBoardViewPagerActivity).isTooltipShow) {
-                    showAnotherTooltip()
-                    return@launch
-                }
-                val lbOpenCount = PrefManager.getIntValue(LEADER_BOARD_OPEN_COUNT)
-                val b = viewModel.isUserHad4And5Lesson()
-                if (lbOpenCount >= 3 || b) {
-                    //    delay(250)
-                    val item =
-                        binding.recyclerView.getViewResolverAtPosition(liveUserPosition) as LeaderBoardItemViewHolder
-                    val balloon = Balloon.Builder(requireContext())
-                        .setText(getString(R.string.online_tooltip))
-                        .setTextSize(15F)
-                        .setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                        .setDismissWhenTouchOutside(true)
-                        .setCornerRadius(12f)
-                        .setWidth(BalloonSizeSpec.WRAP)
-                        .setArrowOrientation(ArrowOrientation.BOTTOM)
-                        .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
-                        .setPadding(8)
-                        .setMarginTop(8)
-                        .setIsVisibleOverlay(true) // sets the visibility of the overlay for highlighting an anchor.
-                        .setOverlayColorResource(R.color.pd_transparent_bg_v2) // background color of the overlay using a color resource.
-                        //  .setOverlayPadding(2f) // sets a padding value of the overlay shape in
-                        .setBalloonOverlayAnimation(BalloonOverlayAnimation.FADE) // default is fade.
-                        .setDismissWhenOverlayClicked(false) // disable di
-                        .setBackgroundColorResource(R.color.white)
-                        .setBalloonAnimation(BalloonAnimation.FADE)
-                        .setLifecycleOwner(this@LeaderBoardFragment)
-                        .setDismissWhenClicked(true)
-                        .build()
-                    balloon.showAlignBottom(item.onlineStatusLayout)
-                    PrefManager.put(ONLINE_HINT_SHOW, true)
-                } else {
-                    showAnotherTooltip()
-                }
+            } catch (ex: Exception) {
+                LogException.catchException(ex)
             }
         }
     }
