@@ -37,10 +37,6 @@ class NotificationUtil(val context: Context) {
 
     fun addMissCallPPNotification(id: Int) {
         JoshSkillExecutors.BOUNDED.submit {
-            try {
-                Thread.sleep(100)
-            } catch (ex: Exception) {
-            }
             val favoriteCaller =
                 AppObjectController.appDatabase.favoriteCallerDao().getFavoriteCaller(id)
                     ?: return@submit

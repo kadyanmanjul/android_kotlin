@@ -8,7 +8,6 @@ import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.NotificationManager.IMPORTANCE_LOW
 import android.app.PendingIntent
-import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
@@ -63,7 +62,6 @@ import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSET
 import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSETBLUETOOTH
 import io.agora.rtc.Constants.AUDIO_SCENARIO_EDUCATION
 import io.agora.rtc.Constants.CHANNEL_PROFILE_COMMUNICATION
-import io.agora.rtc.Constants.CHAT_BEAUTIFIER_MAGNETIC
 import io.agora.rtc.Constants.CONNECTION_CHANGED_INTERRUPTED
 import io.agora.rtc.Constants.CONNECTION_STATE_RECONNECTING
 import io.agora.rtc.Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY
@@ -758,9 +756,6 @@ class WebRtcService : BaseWebRtcService() {
                                 resetConfig()
                                 addNotification(CallForceConnect().action, null)
                                 callData = null
-                                callData?.let {
-                                    callStatusNetworkApi(it, CallAction.DECLINE)
-                                }
                                 AppObjectController.uiHandler.postDelayed(
                                     {
                                         val data =

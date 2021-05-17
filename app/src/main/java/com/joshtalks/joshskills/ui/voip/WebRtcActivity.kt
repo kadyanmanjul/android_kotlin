@@ -489,10 +489,10 @@ class WebRtcActivity : AppCompatActivity() {
         if (userDetailLiveData.value != null) {
             return
         }
-        if (mBoundService?.getOppositeUserInfo() != null) {
-            userDetailLiveData.postValue(mBoundService?.getOppositeUserInfo())
-            return
-        }
+//        if (mBoundService?.getOppositeUserInfo() != null) {
+//            userDetailLiveData.postValue(mBoundService?.getOppositeUserInfo())
+//            return
+//        }
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val response = AppObjectController.p2pNetworkService.getUserDetailOnCall(uuid)
@@ -720,7 +720,6 @@ class WebRtcActivity : AppCompatActivity() {
     private fun subscribeRXBus() {
         compositeDisposable.add(
             RxBus2.listen(WebrtcEventBus::class.java)
-                .delay(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

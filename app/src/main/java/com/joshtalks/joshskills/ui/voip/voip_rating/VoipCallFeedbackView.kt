@@ -226,6 +226,7 @@ class VoipCallFeedbackView : DialogFragment() {
             }
         } catch (ex: Exception) {
             LogException.catchException(ex)
+            dismissAllowingStateLoss()
         }
     }
 
