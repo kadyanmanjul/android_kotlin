@@ -260,6 +260,7 @@ class ConversationActivity :
 
             conversationBinding.toolbar.inflateMenu(R.menu.conversation_menu)
             profileFeatureActiveView(inboxEntity.isCapsuleCourse)
+            showFavtMenuOption(inboxEntity.isCapsuleCourse)
             conversationBinding.toolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_referral -> {
@@ -825,6 +826,16 @@ class ConversationActivity :
             conversationBinding.toolbar.menu.findItem(R.id.leaderboard_setting).isEnabled = false
             conversationBinding.toolbar.menu.findItem(R.id.profile_setting).isVisible = false
             conversationBinding.toolbar.menu.findItem(R.id.profile_setting).isEnabled = false
+        }
+    }
+
+    private fun showFavtMenuOption(showMenu: Boolean) {
+        if (showMenu) {
+            conversationBinding.toolbar.menu.findItem(R.id.menu_favorite_list).isVisible = true
+            conversationBinding.toolbar.menu.findItem(R.id.menu_favorite_list).isEnabled = true
+        } else {
+            conversationBinding.toolbar.menu.findItem(R.id.menu_favorite_list).isVisible = false
+            conversationBinding.toolbar.menu.findItem(R.id.menu_favorite_list).isEnabled = false
         }
     }
 
