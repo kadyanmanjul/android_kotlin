@@ -12,7 +12,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.voip.WebRtcCallback
 import com.joshtalks.joshskills.ui.voip.WebRtcService
-import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackView
+import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -74,16 +74,18 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
                 findViewById<View>(R.id.ongoing_call_container)?.visibility = View.GONE
                 findViewById<View>(R.id.ongoing_call_container)?.setOnClickListener(null)
                 if (time > 0 && channelName.isNullOrEmpty().not()) {
-                    VoipCallFeedbackView.showCallRatingDialog(
-                        supportFragmentManager,
+                    VoipCallFeedbackActivity.startPtoPFeedbackActivity(
                         channelName = channelName,
                         callTime = time,
                         callerName = mBoundService?.getOppositeCallerName(),
                         callerImage = mBoundService?.getOppositeCallerProfilePic(),
                         yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
                         yourAgoraId = mBoundService?.getUserAgoraId(),
-                        dimBg = true
+                        dimBg = true,
+                        activity = this@WebRtcMiddlewareActivity,
+                        flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                     )
+                    this@WebRtcMiddlewareActivity.finish()
                 }
                 mBoundService?.setOppositeUserInfo(null)
             }

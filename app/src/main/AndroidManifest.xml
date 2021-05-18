@@ -404,6 +404,14 @@
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
+        <activity
+            android:name=".ui.voip.voip_rating.VoipCallFeedbackActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppNoBarTheme"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
         <activity android:name=".ui.deeplink.DeeplinkAnalyzeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

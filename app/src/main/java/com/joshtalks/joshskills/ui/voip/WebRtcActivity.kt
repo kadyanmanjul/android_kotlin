@@ -19,7 +19,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -36,7 +35,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.track.CONVERSATION_ID
-import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackView
+import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -301,7 +300,6 @@ class WebRtcActivity : AppCompatActivity() {
 
     override fun onNewIntent(nIntent: Intent) {
         super.onNewIntent(nIntent)
-        removeRatingDialog()
         try {
             val nMap = nIntent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
             val nChannel = nMap?.get(RTC_CHANNEL_KEY)
@@ -468,24 +466,6 @@ class WebRtcActivity : AppCompatActivity() {
             if (it.not()) {
                 updateStatusLabel(binding.btnMute, false)
             }
-        }
-    }
-
-    private fun removeRatingDialog() {
-        try {
-            val prev =
-                supportFragmentManager.findFragmentByTag(VoipCallFeedbackView::class.java.name)
-            if (prev != null) {
-                val df = prev as DialogFragment
-                df.dismiss()
-                supportFragmentManager.beginTransaction().run {
-                    remove(prev)
-                    addToBackStack(null)
-                }
-                supportFragmentManager.executePendingTransactions()
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
         }
     }
 
@@ -705,16 +685,18 @@ class WebRtcActivity : AppCompatActivity() {
         if (time > 0 && channelName.isNullOrEmpty().not()) {
             runOnUiThread {
                 binding.placeholderBg.visibility = View.VISIBLE
-            }
-            VoipCallFeedbackView.showCallRatingDialog(
-                supportFragmentManager,
+            VoipCallFeedbackActivity.startPtoPFeedbackActivity(
                 channelName = channelName,
                 callTime = time,
                 callerName = userDetailLiveData.value?.get("name"),
                 callerImage = userDetailLiveData.value?.get("profile_pic"),
                 yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
-                yourAgoraId = mBoundService?.getUserAgoraId()
+                yourAgoraId = mBoundService?.getUserAgoraId(),
+                activity = this,
+                flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             )
+            this.finish()
+        }
             mBoundService?.setOppositeUserInfo(null)
             return
         }
@@ -736,11 +718,6 @@ class WebRtcActivity : AppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
-                        val prev =
-                            supportFragmentManager.findFragmentByTag(VoipCallFeedbackView::class.java.name)
-                        if (prev != null) {
-                            return@subscribe
-                        }
                         onStopCall()
                         checkAndShowRating(mBoundService?.getCallId())
                     },

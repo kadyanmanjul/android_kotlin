@@ -7,7 +7,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackView" />
+            type="com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackActivity" />
     </data>
 
     <FrameLayout
