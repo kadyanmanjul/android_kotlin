@@ -10,7 +10,7 @@
 
     <FrameLayout
         android:id="@+id/root_view_fl"
-        android:layout_width="@dimen/_230sdp"
+        android:layout_width="@dimen/_220sdp"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:layout_marginStart="@dimen/_16sdp"
@@ -23,8 +23,8 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_award"
-                android:layout_width="@dimen/_64sdp"
-                android:layout_height="@dimen/_72sdp"
+                android:layout_width="@dimen/_74sdp"
+                android:layout_height="@dimen/_74sdp"
                 android:layout_marginTop="@dimen/_20sdp"
                 android:gravity="center_vertical|start"
                 android:scaleType="fitXY"
@@ -131,7 +131,7 @@
                     android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginBottom="@dimen/_14sdp"
                     android:gravity="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Italic"
                     android:textColor="#511615"
                     android:textStyle="italic"
                     app:layout_constraintBottom_toBottomOf="parent"
