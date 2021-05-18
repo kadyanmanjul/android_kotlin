@@ -687,7 +687,7 @@ class WebRtcActivity : AppCompatActivity() {
             runOnUiThread {
                 binding.placeholderBg.visibility = View.VISIBLE
                 VoipCallFeedbackActivity.startPtoPFeedbackActivity(
-                    channelName = channelName,
+                    channelName = channelName2,
                     callTime = time,
                     callerName = userDetailLiveData.value?.get("name"),
                     callerImage = userDetailLiveData.value?.get("profile_pic"),
