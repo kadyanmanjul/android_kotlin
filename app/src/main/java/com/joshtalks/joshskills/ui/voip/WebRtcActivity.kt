@@ -673,26 +673,27 @@ class WebRtcActivity : AppCompatActivity() {
         if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
             PrefManager.put(DEMO_P2P_CALLEE_NAME, userDetailLiveData.value?.get("name").toString())
         }
-        showCallRatingScreen(callTime)
+        showCallRatingScreen(callTime, channelName)
     }
 
-    private fun showCallRatingScreen(callTime: Long) {
+    private fun showCallRatingScreen(callTime: Long, channelName: String?) {
         var time = mBoundService?.getTimeOfTalk() ?: 0
         if (time <= 0) {
             time = callTime
         }
-        val channelName = mBoundService?.channelName
-        if (time > 0 && channelName.isNullOrEmpty().not()) {
+        val channelName2 =
+            if (channelName.isNullOrBlank().not()) channelName else mBoundService?.channelName
+        if (time > 0 && channelName2.isNullOrEmpty().not()) {
             runOnUiThread {
                 binding.placeholderBg.visibility = View.VISIBLE
-            VoipCallFeedbackActivity.startPtoPFeedbackActivity(
-                channelName = channelName,
-                callTime = time,
-                callerName = userDetailLiveData.value?.get("name"),
-                callerImage = userDetailLiveData.value?.get("profile_pic"),
-                yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
-                yourAgoraId = mBoundService?.getUserAgoraId(),
-                activity = this,
+                VoipCallFeedbackActivity.startPtoPFeedbackActivity(
+                    channelName = channelName,
+                    callTime = time,
+                    callerName = userDetailLiveData.value?.get("name"),
+                    callerImage = userDetailLiveData.value?.get("profile_pic"),
+                    yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
+                    yourAgoraId = mBoundService?.getUserAgoraId(),
+                    activity = this,
                 flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             )
             this.finish()
@@ -719,7 +720,7 @@ class WebRtcActivity : AppCompatActivity() {
                 .subscribe(
                     {
                         onStopCall()
-                        checkAndShowRating(mBoundService?.getCallId())
+                        checkAndShowRating(mBoundService?.getCallId(), mBoundService?.channelName)
                     },
                     {
                         it.printStackTrace()

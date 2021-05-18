@@ -762,6 +762,9 @@ class WebRtcService : BaseWebRtcService() {
                                             intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
                                         data.let {
                                             callData = it
+                                            if (it.containsKey(RTC_CHANNEL_KEY)) {
+                                                channelName = it[RTC_CHANNEL_KEY]
+                                            }
                                         }
                                         if (callCallback != null && callCallback?.get() != null) {
                                             callCallback?.get()?.switchChannel(data)
