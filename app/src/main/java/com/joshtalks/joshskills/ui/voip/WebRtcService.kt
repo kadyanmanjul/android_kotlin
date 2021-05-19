@@ -32,6 +32,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -130,7 +131,7 @@ class WebRtcService : BaseWebRtcService() {
         private var callType: CallType = CallType.OUTGOING
 
         @Volatile
-        var isCallWasOnGoing: Boolean = false
+        var isCallWasOnGoing: MutableLiveData<Boolean> = MutableLiveData(false)
 
         @Volatile
         var holdCall: Boolean = false
@@ -308,7 +309,7 @@ class WebRtcService : BaseWebRtcService() {
                 switchChannel = false
                 return
             }
-            if (isCallWasOnGoing) {
+            if (isCallWasOnGoing.value == true) {
                 return
             }
             RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
@@ -320,7 +321,7 @@ class WebRtcService : BaseWebRtcService() {
             Timber.tag(TAG).e("onJoinChannelSuccess=  $channel = $uid   ")
             compositeDisposable.clear()
             userAgoraId = uid
-            isCallWasOnGoing = true
+            isCallWasOnGoing.postValue(true)
             callData?.let {
                 channelName = getChannelName(it)
                 try {
@@ -346,7 +347,7 @@ class WebRtcService : BaseWebRtcService() {
         override fun onLeaveChannel(stats: RtcStats) {
             Timber.tag(TAG).e("onLeaveChannel=  %s", stats.totalDuration)
             super.onLeaveChannel(stats)
-            isCallWasOnGoing = false
+            isCallWasOnGoing.postValue(false)
             if (switchChannel.not()) {
                 callCallback?.get()?.onDisconnect(
                     callId,
@@ -368,7 +369,7 @@ class WebRtcService : BaseWebRtcService() {
             super.onUserJoined(uid, elapsed)
             oppositeCallerId = uid
             compositeDisposable.clear()
-            isCallWasOnGoing = true
+            isCallWasOnGoing.postValue(true)
             isCallerJoin = true
             if (callStartTime == 0L) {
                 startCallTimer()
@@ -399,7 +400,7 @@ class WebRtcService : BaseWebRtcService() {
                     } else {
                         endCall(apiCall = true, action = CallAction.AUTO_DISCONNECT)
                     }
-                    isCallWasOnGoing = false
+                    isCallWasOnGoing.postValue(false)
                 } else if (id != uid && reason == Constants.USER_OFFLINE_DROPPED) {
                     lostNetwork()
                 }
@@ -673,7 +674,7 @@ class WebRtcService : BaseWebRtcService() {
                                 Timber.tag(TAG).e("LibraryInit")
                             }
                             this == IncomingCall().action -> {
-                                if (CallState.CALL_STATE_BUSY == phoneCallState || isCallWasOnGoing) {
+                                if (CallState.CALL_STATE_BUSY == phoneCallState || isCallWasOnGoing.value == true) {
                                     return@initEngine
                                 }
                                 val data =
@@ -750,7 +751,7 @@ class WebRtcService : BaseWebRtcService() {
                                 compositeDisposable.clear()
                                 switchChannel = true
                                 setOppositeUserInfo(null)
-                                if (isCallWasOnGoing) {
+                                if (isCallWasOnGoing.value == true) {
                                     mRtcEngine?.leaveChannel()
                                 }
                                 resetConfig()
@@ -910,7 +911,7 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     fun isCallNotConnected(): Boolean {
-        return (mRtcEngine?.connectionState == Constants.CONNECTION_STATE_DISCONNECTED || isCallWasOnGoing.not())
+        return (mRtcEngine?.connectionState == Constants.CONNECTION_STATE_DISCONNECTED || isCallWasOnGoing.value == false)
     }
 
     fun timeoutCaller() {
@@ -938,8 +939,8 @@ class WebRtcService : BaseWebRtcService() {
         }
         joshAudioManager?.endCommunication()
         mRtcEngine?.leaveChannel()
-        if (isCallWasOnGoing) {
-            isCallWasOnGoing = false
+        if (isCallWasOnGoing.value == true) {
+            isCallWasOnGoing.postValue(false)
             disconnectService()
         } else {
             callStopWithoutIssue()
@@ -947,7 +948,7 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     fun setOngoingCall() {
-        isCallWasOnGoing = false
+        isCallWasOnGoing.postValue(false)
     }
 
     fun answerCall(data: HashMap<String, String?>) {
@@ -997,7 +998,7 @@ class WebRtcService : BaseWebRtcService() {
                 joinCall(data)
             }
         }
-        isCallWasOnGoing = true
+        isCallWasOnGoing.postValue(true)
     }
 
     private fun getToken(data: HashMap<String, String?>): String? {
@@ -1160,7 +1161,7 @@ class WebRtcService : BaseWebRtcService() {
         isCallerJoin = false
         callStartTime = 0L
         retryInitLibrary = 0
-        isCallWasOnGoing = false
+        isCallWasOnGoing.postValue(false)
         switchChannel = false
         TelephonyUtil.getManager(this)
             .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_NONE)

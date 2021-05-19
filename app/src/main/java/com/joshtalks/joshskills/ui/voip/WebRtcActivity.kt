@@ -365,6 +365,23 @@ class WebRtcActivity : AppCompatActivity() {
                 mBoundService?.setOppositeUserInfo(it)
             }
         )
+
+        WebRtcService.isCallWasOnGoing.observe(this, { isCallOngoing ->
+            if (isCallOngoing) {
+                var partnerUid: String? = intent.getIntExtra(RTC_PARTNER_ID, -1).toString()
+                if (partnerUid == "-1") {
+                    val map =
+                        intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
+                    partnerUid = if (map?.get(RTC_CALLER_UID_KEY) != null) {
+                        map[RTC_CALLER_UID_KEY]
+                    } else {
+                        mBoundService?.getOppositeCallerId()?.toString()
+                    }
+                }
+                setUserInfo(partnerUid)
+            }
+        })
+
     }
 
     private fun initCall() {
@@ -372,9 +389,9 @@ class WebRtcActivity : AppCompatActivity() {
         updateButtonStatus()
         val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
 
-        if (isCallFavoritePP() || WebRtcService.isCallWasOnGoing) {
+        if (isCallFavoritePP() || WebRtcService.isCallWasOnGoing.value == true) {
             updateCallInfo()
-        } else if (callType == CallType.INCOMING && WebRtcService.isCallWasOnGoing) {
+        } else if (callType == CallType.INCOMING && WebRtcService.isCallWasOnGoing.value == true) {
             updateCallInfo()
         }
 
@@ -413,7 +430,7 @@ class WebRtcActivity : AppCompatActivity() {
 
     private fun phoneConnectedStatus() {
         try {
-            if (WebRtcService.isCallWasOnGoing) {
+            if (WebRtcService.isCallWasOnGoing.value == true) {
                 binding.groupForIncoming.visibility = View.GONE
                 binding.groupForOutgoing.visibility = View.VISIBLE
                 binding.callTime.base = SystemClock.elapsedRealtime() - getCallTime()
@@ -487,9 +504,11 @@ class WebRtcActivity : AppCompatActivity() {
 //        }
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val response = AppObjectController.p2pNetworkService.getUserDetailOnCall(uuid)
-                userDetailLiveData.postValue(response)
-                mBoundService?.setOppositeUserInfo(response)
+                val userInfo = mBoundService?.getOppositeUserInfo()
+                val userDetails =
+                    if (userInfo != null && userInfo["uid"] == uuid) userInfo
+                    else AppObjectController.p2pNetworkService.getUserDetailOnCall(uuid)
+                userDetailLiveData.postValue(userDetails)
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
@@ -694,10 +713,10 @@ class WebRtcActivity : AppCompatActivity() {
                     yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
                     yourAgoraId = mBoundService?.getUserAgoraId(),
                     activity = this,
-                flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-            )
-            this.finish()
-        }
+                    flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                )
+                this.finish()
+            }
             mBoundService?.setOppositeUserInfo(null)
             return
         }

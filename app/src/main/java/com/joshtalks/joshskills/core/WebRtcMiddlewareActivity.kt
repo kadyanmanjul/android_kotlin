@@ -29,7 +29,7 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
             mBoundService?.addListener(callback)
             lifecycleScope.launch(Dispatchers.Main) {
                 try {
-                    if (WebRtcService.isCallWasOnGoing) {
+                    if (WebRtcService.isCallWasOnGoing.value == true) {
                         findViewById<View>(R.id.ongoing_call_container)?.setOnClickListener {
                             mBoundService?.openConnectedCallActivity(this@WebRtcMiddlewareActivity)
                         }
