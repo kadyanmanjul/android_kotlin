@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.JobIntentService
 import com.joshtalks.joshskills.core.AppObjectController
+import java.util.Stack
 import timber.log.Timber
 
 const val CONVERSATION_ID = "conversation_id"
@@ -29,10 +30,23 @@ class CourseUsageService : JobIntentService() {
                         conversationId = conversationId,
                         screenName = screenName
                     )
-                    courseUsageDao.insertIntoCourseUsage(obj)
+                    stack.push(courseUsageDao.insertIntoCourseUsage(obj))
                 }
                 AppUsageEndConversationId().action -> {
-                    courseUsageDao.updateLastCourseUsage()
+                    try {
+                        val screenId = stack.peek()
+                        if (screenId != null) {
+                            courseUsageDao.updateLastCourseUsageViaId(screenId)
+                            stack.pop()
+                        } else {
+
+                        }
+                    } catch (ex:Exception){
+                        ex.printStackTrace()
+                    }
+                }
+                else ->{
+
                 }
             }
         }
@@ -45,6 +59,7 @@ class CourseUsageService : JobIntentService() {
 
     companion object {
         private const val JOB_ID = 1000
+        private var stack = Stack<Long>()
 
         fun startTimeConversation(context: Context, conversationId: String, screenName: String) {
             val intent = Intent().apply {

@@ -3,11 +3,11 @@ package com.joshtalks.joshskills.core
 import android.content.Context
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.track.TrackFragment
 
-open class CoreJoshFragment : Fragment() {
+open class CoreJoshFragment : TrackFragment() {
 
     var coreJoshActivity: CoreJoshActivity? = null
 
@@ -27,7 +27,7 @@ open class CoreJoshFragment : Fragment() {
         }
     }
 
-    protected fun getConversationId(): String? {
+    override fun getConversationId(): String? {
         return (requireActivity() as AppCompatActivity).intent.getStringExtra(CONVERSATION_ID)
     }
 }

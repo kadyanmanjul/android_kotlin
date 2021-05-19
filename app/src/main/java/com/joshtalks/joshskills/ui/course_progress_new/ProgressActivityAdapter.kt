@@ -51,10 +51,6 @@ class ProgressActivityAdapter(
                     courseOverviewResponseDiff.data.minus(courseOverviewResponse.data)
                 }
             }
-            Log.d(
-                "Manjul",
-                "updateItem() called with: lessonId = $lessonId lesssonData = $lesssonData"
-            )
         }
     }*/
 
