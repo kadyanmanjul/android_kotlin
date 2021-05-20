@@ -137,7 +137,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:onClick='@{()->handler.submitFeedback("MAYBE")}'
-                        android:text="@string/maybe"
+                        android:text="@string/no"
                         android:textAllCaps="false"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/button_color"
@@ -154,7 +154,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/_8sdp"
                         android:onClick='@{()->handler.submitFeedback("NO")}'
-                        android:text="@string/no"
+                        android:text="@string/block"
                         android:textAllCaps="false"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/button_color"
@@ -178,7 +178,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/toggle_button_group"
                     app:layout_constraintWidth_percent="0.85"
-                    tools:text="By clicking no you are blocking Harsh" />
+                    tools:text="By clicking block you are blocking Harsh" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 

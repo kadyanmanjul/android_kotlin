@@ -43,7 +43,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
     val searchActivityResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                viewModel.getFullLeaderBoardData(Mentor.getInstance().getId(),getCourseId())
+                viewModel.getFullLeaderBoardData(Mentor.getInstance().getId(), getCourseId())
             }
         }
 
@@ -55,7 +55,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
         initToolbar()
         initViewPager()
         addObserver()
-        viewModel.getFullLeaderBoardData(Mentor.getInstance().getId(),getCourseId())
+        viewModel.getFullLeaderBoardData(Mentor.getInstance().getId(), getCourseId())
     }
 
     override fun getConversationId(): String? {
@@ -119,14 +119,14 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
                 setTabText(it)
 
                 binding.viewPager.registerOnPageChangeCallback(object :
-                        ViewPager2.OnPageChangeCallback() {
-                        override fun onPageSelected(position: Int) {
-                            super.onPageSelected(position)
-                            tabPosition = position
-                            mapOfVisitedPage.put(position, mapOfVisitedPage.get(position)?.plus(1) ?: 1)
-                            viewModel.engageLeaderBoardimpression(mapOfVisitedPage, position)
-                        }
-                    })
+                    ViewPager2.OnPageChangeCallback() {
+                    override fun onPageSelected(position: Int) {
+                        super.onPageSelected(position)
+                        tabPosition = position
+                        mapOfVisitedPage.put(position, mapOfVisitedPage.get(position)?.plus(1) ?: 1)
+                        viewModel.engageLeaderBoardimpression(mapOfVisitedPage, position)
+                    }
+                })
             }
         )
 
@@ -205,13 +205,22 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
                 }
             }
             if (map.get(list)?.intervalTabText.isNullOrBlank()) {
-                tab.text =
-                    map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
+                if (position == 4){
+                    tab.text = getString(R.string.my_batch)
+                } else {
+                    tab.text =
+                        map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
+                }
             } else {
+                if (position==4){
+                    tab.text = getString(R.string.my_batch).plus('\n')
+                        .plus(map.get(list)?.intervalTabText)
+                } else{
                 tab.text =
                     map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
                         .plus('\n')
-                        .plus(map.get(list)?.intervalTabText)
+                        .plus(map.get(list)?.intervalTabText)}
+
             }
         }.attach()
     }

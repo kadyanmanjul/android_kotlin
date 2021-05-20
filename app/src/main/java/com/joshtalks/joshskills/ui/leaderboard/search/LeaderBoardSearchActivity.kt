@@ -18,9 +18,9 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.ActivityLeaderboardSearchBinding
 import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearch
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import java.util.ArrayList
 import java.util.Locale
-import com.joshtalks.joshskills.track.CONVERSATION_ID
 
 
 class LeaderBoardSearchActivity : BaseActivity() {
@@ -147,20 +147,29 @@ class LeaderBoardSearchActivity : BaseActivity() {
                     list = "MONTH"
                 }
                 4 -> {
-                    list = "BATCH"
+                    list = "MYBATCH"
                 }
                 3 -> {
                     list = "LIFETIME"
                 }
             }
             if (map.get(list)?.intervalTabText.isNullOrBlank()) {
-                tab.text =
-                    map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
+                if (position == 4){
+                    tab.text = getString(R.string.my_batch)
+                } else {
+                    tab.text =
+                        map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
+                }
             } else {
-                tab.text =
-                    map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
-                        .plus('\n')
+                if (position==4){
+                    tab.text = getString(R.string.my_batch).plus('\n')
                         .plus(map.get(list)?.intervalTabText)
+                } else{
+                    tab.text =
+                        map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
+                            .plus('\n')
+                            .plus(map.get(list)?.intervalTabText)}
+
             }
         }.attach()
 
