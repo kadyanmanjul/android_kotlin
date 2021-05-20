@@ -12,12 +12,14 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.databinding.FragmentLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -25,6 +27,7 @@ import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import com.skydoves.balloon.*
 import com.skydoves.balloon.overlay.BalloonOverlayAnimation
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.util.*
@@ -36,17 +39,20 @@ class LeaderBoardFragment : Fragment() {
 
     private lateinit var binding: FragmentLeaderboardViewPagerBinding
     private lateinit var type: String
+    private lateinit var courseId: String
     private var compositeDisposable = CompositeDisposable()
     private lateinit var linearLayoutManager: LinearLayoutManager
     private var userPosition: Int = 0
     private var userRank: Int = Int.MAX_VALUE
     private val viewModel by lazy { ViewModelProvider(requireActivity()).get(LeaderBoardViewModel::class.java) }
     private var liveUserPosition = -1
+    protected var internetAvailableFlag: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             type = it.getString(TYPE) ?: EMPTY
+            courseId = it.getString(COURSE_ID) ?: EMPTY
         }
     }
 
@@ -71,10 +77,11 @@ class LeaderBoardFragment : Fragment() {
         private const val TYPE = "leadberboard_type"
 
         @JvmStatic
-        fun newInstance(type: String) =
+        fun newInstance(type: String, courseId: String?) =
             LeaderBoardFragment().apply {
                 arguments = Bundle().apply {
                     putString(TYPE, type)
+                    putString(COURSE_ID, courseId)
                 }
             }
     }
@@ -91,6 +98,14 @@ class LeaderBoardFragment : Fragment() {
         binding.userLayout.setOnClickListener {
             scrollToUserPosition()
             binding.userLayout.visibility = View.GONE
+        }
+        binding.refreshLayout.setOnRefreshListener {
+            if (internetAvailableFlag) {
+                binding.refreshLayout.isRefreshing = true
+                viewModel.getRefreshedLeaderboardData(Mentor.getInstance().getId(), courseId, type)
+            } else {
+                binding.refreshLayout.isRefreshing = false
+            }
         }
     }
 
@@ -194,11 +209,18 @@ class LeaderBoardFragment : Fragment() {
     }
 
     private fun setData(leaderboardResponse1: LeaderboardResponse) {
-        if (leaderboardResponse1.info.isNullOrBlank()){
-            binding.info.visibility=View.GONE
-        } else{
-            binding.info.visibility=View.VISIBLE
-            binding.infoText.text = leaderboardResponse1.info
+        binding.refreshLayout.isRefreshing = false
+        var additionalIndexCount = 0
+        if (leaderboardResponse1.info.isNullOrBlank().not()) {
+            // TODO handel this count as well in other places where using position of recycler view eg. in tooltip
+            additionalIndexCount = additionalIndexCount.plus(1)
+            binding.recyclerView.addView(
+                LeaderboardInfoItemViewHolder(
+                    leaderboardResponse1.info!!,
+                    requireContext(),
+                    type
+                )
+            )
         }
         userRank = leaderboardResponse1.current_mentor?.ranking ?: 0
         leaderboardResponse1.current_mentor?.let {
@@ -270,15 +292,6 @@ class LeaderBoardFragment : Fragment() {
         leaderboardResponse1.above_three_mentor_list?.forEach {
             binding.recyclerView.addView(LeaderBoardItemViewHolder(it, requireContext()))
         }
-        var lastPosition = leaderboardResponse1.current_mentor?.ranking ?: 0
-        if (leaderboardResponse1.above_three_mentor_list?.isNullOrEmpty()!!.not()) {
-            lastPosition =
-                leaderboardResponse1.above_three_mentor_list.get(
-                    leaderboardResponse1.above_three_mentor_list.size.minus(
-                        1
-                    )
-                ).ranking
-        }
 
         binding.recyclerView.addView(EmptyItemViewHolder())
 
@@ -331,6 +344,15 @@ class LeaderBoardFragment : Fragment() {
                         it.printStackTrace()
                     }
                 )
+        )
+
+        compositeDisposable.add(
+            ReactiveNetwork.observeNetworkConnectivity(requireActivity().applicationContext)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { connectivity ->
+                    internetAvailableFlag = connectivity.available()
+                }
         )
     }
 
