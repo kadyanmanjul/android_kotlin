@@ -229,7 +229,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
         binding.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         binding.viewPager.isUserInputEnabled = true
         binding.viewPager.adapter =
-            LeaderBoardViewPagerAdapter(this)
+            LeaderBoardViewPagerAdapter(getCourseId(),this)
         binding.viewPager.offscreenPageLimit = 4
     }
 

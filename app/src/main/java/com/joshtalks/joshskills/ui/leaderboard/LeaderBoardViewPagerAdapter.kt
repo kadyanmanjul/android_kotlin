@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
 class LeaderBoardViewPagerAdapter(
+    val courseId:String?,
     fragmentActivity: FragmentActivity
 ) :
     FragmentStateAdapter(fragmentActivity) {
@@ -17,19 +18,19 @@ class LeaderBoardViewPagerAdapter(
     override fun createFragment(position: Int): Fragment {
         return when (position) {
             0 -> {
-                LeaderBoardFragment.newInstance("TODAY")
+                LeaderBoardFragment.newInstance("TODAY",courseId)
             }
             1 -> {
-                LeaderBoardFragment.newInstance("WEEK")
+                LeaderBoardFragment.newInstance("WEEK",courseId)
             }
             2 -> {
-                LeaderBoardFragment.newInstance("MONTH")
+                LeaderBoardFragment.newInstance("MONTH",courseId)
             }
             4 -> {
-                LeaderBoardFragment.newInstance("BATCH")
+                LeaderBoardFragment.newInstance("BATCH",courseId)
             }
             else -> {
-                LeaderBoardFragment.newInstance("LIFETIME")
+                LeaderBoardFragment.newInstance("LIFETIME",courseId)
             }
         }
 

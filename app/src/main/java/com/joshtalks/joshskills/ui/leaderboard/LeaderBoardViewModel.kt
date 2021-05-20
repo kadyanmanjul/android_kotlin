@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.*
+import timber.log.Timber
 
 class LeaderBoardViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -23,37 +24,37 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
     val leaderBoardDataOfBatch: MutableLiveData<LeaderboardResponse> = MutableLiveData()
     val leaderBoardDataOfLifeTime: MutableLiveData<LeaderboardResponse> = MutableLiveData()
 
-    fun getFullLeaderBoardData(mentorId: String,course_id: String?) {
+    fun getFullLeaderBoardData(mentorId: String, course_id: String?) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiCallStatusLiveData.postValue(ApiCallStatus.START)
                 val map = HashMap<String, LeaderboardResponse>()
                 val call1 = async(Dispatchers.IO) {
-                    getMentorData(mentorId, "TODAY",course_id)?.let {
+                    getMentorData(mentorId, "TODAY", course_id)?.let {
                         leaderBoardDataOfToday.postValue(it)
                         map.put("TODAY", it)
                     }
                 }
                 val call2 = async(Dispatchers.IO) {
-                    getMentorData(mentorId, "WEEK",course_id)?.let {
+                    getMentorData(mentorId, "WEEK", course_id)?.let {
                         leaderBoardDataOfWeek.postValue(it)
                         map.put("WEEK", it)
                     }
                 }
                 val call3 = async(Dispatchers.IO) {
-                    getMentorData(mentorId, "MONTH",course_id)?.let {
+                    getMentorData(mentorId, "MONTH", course_id)?.let {
                         leaderBoardDataOfMonth.postValue(it)
                         map.put("MONTH", it)
                     }
                 }
                 val call4 = async(Dispatchers.IO) {
-                    getMentorData(mentorId, "BATCH",course_id)?.let {
+                    getMentorData(mentorId, "BATCH", course_id)?.let {
                         leaderBoardDataOfBatch.postValue(it)
                         map.put("BATCH", it)
                     }
                 }
                 val call5 = async(Dispatchers.IO) {
-                    getMentorData(mentorId, "LIFETIME",course_id)?.let {
+                    getMentorData(mentorId, "LIFETIME", course_id)?.let {
                         leaderBoardDataOfLifeTime.postValue(it)
                         map.put("LIFETIME", it)
                     }
@@ -69,6 +70,39 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
+    fun getRefreshedLeaderboardData(mentorId: String, courseId: String?, type: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                getMentorData(mentorId, type, courseId)?.let {
+                    when (type) {
+                        "TODAY" -> {
+                            leaderBoardDataOfToday.postValue(it)
+                        }
+                        "WEEK" -> {
+                            leaderBoardDataOfWeek.postValue(it)
+                        }
+                        "MONTH" -> {
+                            leaderBoardDataOfMonth.postValue(it)
+                        }
+                        "BATCH" -> {
+                            leaderBoardDataOfBatch.postValue(it)
+                        }
+                        "LIFETIME" -> {
+                            leaderBoardDataOfLifeTime.postValue(it)
+                        }
+                        else -> {
+                            Timber.e("error: No type found")
+                        }
+                    }
+                    leaderBoardDataOfToday.postValue(it)
+                }
+                return@launch
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
     suspend fun getMentorData(
         mentorId: String,
         type: String,
@@ -76,7 +110,11 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
     ): LeaderboardResponse? {
         try {
             val response =
-                AppObjectController.commonNetworkService.getLeaderBoardData(mentorId, type,course_id)
+                AppObjectController.commonNetworkService.getLeaderBoardData(
+                    mentorId,
+                    type,
+                    course_id
+                )
             if (response.isSuccessful && response.body() != null) {
                 return response.body()!!
             }
