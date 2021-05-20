@@ -383,10 +383,8 @@ class SearchingUserActivity : BaseActivity() {
             Completable.complete()
                 .delay(2, TimeUnit.MINUTES)
                 .doOnComplete {
-                    mBoundService?.isCallNotConnected()?.let {
-                        if (it.not()) {
-                            WebRtcService.noUserFoundCallDisconnect()
-                        }
+                    if (mBoundService?.isCallNotConnected() == true) {
+                        WebRtcService.noUserFoundCallDisconnect()
                     }
                 }
                 .subscribe()
@@ -399,10 +397,8 @@ class SearchingUserActivity : BaseActivity() {
                 .timeInterval()
                 .subscribe(
                     {
-                        mBoundService?.isCallNotConnected()?.let { flag ->
-                            if (flag.not()) {
-                                mBoundService?.timeoutCaller()
-                            }
+                        if (mBoundService?.isCallNotConnected() == true) {
+                            mBoundService?.timeoutCaller()
                         }
                     },
                     {
