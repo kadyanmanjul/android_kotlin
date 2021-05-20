@@ -286,7 +286,7 @@
             android:layout_height="match_parent"
             android:background="#AA000000"
             android:visibility="gone"
-            tools:visibility="visible"/>
+            tools:visibility="gone" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

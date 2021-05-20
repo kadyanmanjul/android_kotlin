@@ -184,8 +184,10 @@ class WebRtcActivity : AppCompatActivity() {
             Timber.tag(TAG).e("onUnHoldCall")
             runOnUiThread {
                 //      binding.connectionLost.text = EMPTY
-                binding.connectionLost.visibility = View.GONE
-                binding.callTime.visibility = View.VISIBLE
+                if (binding.connectionLost.text != getString(R.string.ringing)) {
+                    binding.connectionLost.visibility = View.GONE
+                    binding.callTime.visibility = View.VISIBLE
+                }
             }
         }
 
