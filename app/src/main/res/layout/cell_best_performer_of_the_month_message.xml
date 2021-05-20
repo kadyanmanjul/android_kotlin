@@ -12,7 +12,7 @@
 
     <FrameLayout
         android:id="@+id/root_view_fl"
-        android:layout_width="@dimen/_220sdp"
+        android:layout_width="@dimen/_180sdp"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:background="@drawable/bg_student_of_the_month">
@@ -24,41 +24,43 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/image_container"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/_67sdp"
-                android:layout_marginTop="@dimen/_42sdp"
-                android:layout_marginStart="@dimen/_32sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0"
+                android:layout_height="@dimen/_62sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_36sdp"
                 android:background="@drawable/crop_new_"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/iv_award"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent="0.38">
+                app:layout_constraintWidth_percent="0.37">
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/user_pic"
-                        android:layout_width="@dimen/_46sdp"
-                        android:layout_height="@dimen/_44sdp"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:layout_marginBottom="@dimen/_8sdp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        tools:src="@color/checkmark_blue"
-                        tools:visibility="visible" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/user_pic"
+                    android:layout_width="@dimen/_40sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="@dimen/_8sdp"
+                    android:gravity="center"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@color/checkmark_blue"
+                    tools:visibility="visible" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_award"
-                android:layout_width="@dimen/_48sdp"
-                android:layout_height="@dimen/_52sdp"
-                android:layout_marginEnd="@dimen/_32sdp"
+                android:layout_width="@dimen/_42sdp"
+                android:layout_height="@dimen/_48sdp"
+                android:layout_marginStart="@dimen/_4sdp"
                 app:layout_constraintBottom_toBottomOf="@id/image_container"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1"
-                app:layout_constraintStart_toEndOf="@id/image_container"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/image_container"
                 app:layout_constraintTop_toTopOf="@id/image_container"
                 tools:src="@drawable/sample_award"
                 tools:visibility="visible" />
@@ -67,24 +69,24 @@
                 android:id="@+id/name_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
                 android:background="@drawable/ic_rectangle_student_month_bg"
+                android:padding="@dimen/_2sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginTop="@dimen/_6sdp"
-                android:padding="@dimen/_2sdp"
                 app:layout_constraintTop_toBottomOf="@id/image_container">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/student_name"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginHorizontal="@dimen/_14sdp"
                     android:layout_marginTop="@dimen/_3sdp"
-                    android:layout_marginHorizontal="@dimen/_6sdp"
                     android:gravity="center"
                     android:text="Anant Gupta"
                     android:textAllCaps="true"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-                    android:textSize="@dimen/_12ssp"
+                    android:textSize="@dimen/_11ssp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -101,11 +103,11 @@
                     android:textAllCaps="true"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                     android:textSize="@dimen/_8ssp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintVertical_bias="0"
-                    app:layout_constraintTop_toBottomOf="@id/student_name" />
+                    app:layout_constraintTop_toBottomOf="@id/student_name"
+                    app:layout_constraintVertical_bias="0" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -114,15 +116,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_26sdp"
-                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_6sdp"
                 android:gravity="center"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Salsa_SemiBold"
-                android:textSize="@dimen/_9ssp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+                android:textSize="@dimen/_10sdp"
                 android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/name_container"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintVertical_bias="0"
                 tools:text="Vedant won this award by earning 47ww gew  weguh iuhew gig er giuigyuer  iyegr u ge 0 points through his hardwork yesterday" />
 
