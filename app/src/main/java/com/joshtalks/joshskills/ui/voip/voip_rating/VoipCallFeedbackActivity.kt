@@ -95,14 +95,14 @@ class VoipCallFeedbackActivity : BaseActivity() {
 
     fun initFun(arguments: Intent) {
         val msz = AppObjectController.getFirebaseRemoteConfig()
-            .getString(FirebaseRemoteConfigKey.VOIP_FEEDBACK_MESSAGE)
+            .getString(FirebaseRemoteConfigKey.VOIP_FEEDBACK_MESSAGE_NEW)
 
         arguments?.let {
             channelName = it.getStringExtra(ARG_CHANNEL_NAME) ?: EMPTY
             yourAgoraId = it.getIntExtra(ARG_YOUR_AGORA_ID, 0)
             callerName = it.getStringExtra(ARG_CALLER_NAME) ?: EMPTY
             yourName = it.getStringExtra(ARG_YOUR_NAME) ?: EMPTY
-            binding.txtMessage.text = msz.replaceFirst("#", yourName).replace("##", callerName)
+            binding.txtMessage.text = msz.replaceFirst("#", callerName)
 
             binding.cImage.setImageResource(R.drawable.ic_call_placeholder)
             val image = it.getStringExtra(ARG_CALLER_IMAGE)
