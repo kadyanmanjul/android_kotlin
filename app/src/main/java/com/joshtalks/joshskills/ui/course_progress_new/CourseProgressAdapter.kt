@@ -37,7 +37,7 @@ class CourseProgressAdapter(
 
     val speakingColor = ArrayList<Int>().apply {
         this.add(Color.parseColor("#560FBC"))
-        this.add(Color.parseColor("#560FBC"))
+        this.add(Color.parseColor("#7B2ECB"))
     }
 
     val readingColor = ArrayList<Int>().apply {
@@ -168,7 +168,7 @@ class CourseProgressAdapter(
                 }
             }
 
-            binding.radialProgressView.hasThreeProgressView(true)
+            binding.radialProgressView.hasThreeProgressView(false)
             binding.radialProgressView.setOuterProgressColor(outerColor)
             binding.radialProgressView.setCenterProgressColor(vocabColor)
             binding.radialProgressView.setInnerProgressColor(readingColor)
