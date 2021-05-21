@@ -69,7 +69,7 @@
                 android:id="@+id/name_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_4sdp"
                 android:background="@drawable/ic_rectangle_student_month_bg"
                 android:padding="@dimen/_2sdp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -81,7 +81,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginHorizontal="@dimen/_14sdp"
-                    android:layout_marginTop="@dimen/_3sdp"
+                    android:layout_marginTop="@dimen/_1sdp"
                     android:gravity="center"
                     android:text="Anant Gupta"
                     android:textAllCaps="true"
@@ -96,13 +96,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginHorizontal="@dimen/_8sdp"
-                    android:layout_marginTop="@dimen/_1sdp"
-                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:layout_marginBottom="@dimen/_4sdp"
                     android:gravity="center"
                     android:text="Student of the month"
                     android:textAllCaps="true"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-                    android:textSize="@dimen/_8ssp"
+                    android:textSize="@dimen/_7ssp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -116,7 +115,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_26sdp"
-                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_38sdp"
                 android:gravity="center"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
                 android:textSize="@dimen/_10sdp"
@@ -126,7 +126,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/name_container"
                 app:layout_constraintVertical_bias="0"
-                tools:text="Vedant won this award by earning 47ww gew  weguh iuhew gig er giuigyuer  iyegr u ge 0 points through his hardwork yesterday" />
+                tools:text="Vedant won thr u ge 0 points through his hardwork yesterday" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
