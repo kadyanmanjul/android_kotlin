@@ -342,7 +342,7 @@ class DemoSearchingUserActivity : AppCompatActivity() {
             Completable.complete()
                 .delay(2, TimeUnit.MINUTES)
                 .doOnComplete {
-                    if (mBoundService?.isCallNotConnected() == true) {
+                    if (mBoundService?.isCallNotConnected() == false) {
                         WebRtcService.noUserFoundCallDisconnect()
                     }
                 }
