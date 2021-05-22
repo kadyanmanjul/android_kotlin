@@ -15,7 +15,7 @@
         android:layout_width="@dimen/_180sdp"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:background="@drawable/bg_student_of_the_month">
+        android:background="@drawable/bg_student_of_the_month_new">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"

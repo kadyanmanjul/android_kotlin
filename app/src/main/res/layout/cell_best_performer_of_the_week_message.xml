@@ -23,8 +23,8 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_award"
-                android:layout_width="@dimen/_56sdp"
-                android:layout_height="@dimen/_64sdp"
+                android:layout_width="@dimen/_72sdp"
+                android:layout_height="@dimen/_74sdp"
                 android:layout_marginTop="@dimen/_12sdp"
                 android:gravity="center_vertical|start"
                 android:scaleType="fitXY"
