@@ -282,7 +282,7 @@ class ConversationActivity :
                         )
                     }
                     R.id.leaderboard_setting -> {
-                        openLeaderBoard(inboxEntity.conversation_id,inboxEntity.courseId)
+                        openLeaderBoard(inboxEntity.conversation_id, inboxEntity.courseId)
                     }
                     R.id.menu_favorite_list -> {
                         FavoriteListActivity.openFavoriteCallerActivity(
@@ -364,7 +364,7 @@ class ConversationActivity :
         }
 
         conversationBinding.leaderboardTxt.setOnClickListener {
-            openLeaderBoard(inboxEntity.conversation_id,inboxEntity.courseId)
+            openLeaderBoard(inboxEntity.conversation_id, inboxEntity.courseId)
         }
         conversationBinding.points.setOnClickListener {
             openUserProfileActivity(
@@ -864,15 +864,14 @@ class ConversationActivity :
         if (AppObjectController.getFirebaseRemoteConfig()
                 .getBoolean(FirebaseRemoteConfigKey.COURSE_PROGRESS_TOOLTIP_VISIBILITY)
         ) {
+            conversationBinding.userPointContainer.slideOutAnimation(
+                conversationBinding.imgGroupChat,
+                conversationBinding.txtUnreadCount
+            )
             conversationBinding.courseProgressTooltip.setDismissListener(this)
             conversationBinding.courseProgressTooltipContainer.visibility = VISIBLE
             conversationBinding.courseProgressTooltip.visibility = VISIBLE
             conversationBinding.shader.visibility = VISIBLE
-
-            if (conversationBinding.userPointContainer.visibility == VISIBLE) {
-                conversationBinding.userPointContainer.visibility = GONE
-                conversationBinding.imgGroupChat.shiftGroupChatIconUp(conversationBinding.txtUnreadCount)
-            }
         }
     }
 
