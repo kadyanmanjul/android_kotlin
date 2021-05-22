@@ -243,7 +243,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private fun startPractiseSearchScreen(favoriteUserCall: Boolean = false) {
         viewModel.speakingTopicLiveData.value?.run {
-            if (isCallOngoing().not()) {
+            if (isCallOngoing(R.string.call_engage_initiate_call_message).not()) {
                 openCallActivity.launch(
                     SearchingUserActivity.startUserForPractiseOnPhoneActivity(
                         requireActivity(),

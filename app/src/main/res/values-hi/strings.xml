@@ -452,4 +452,8 @@
     <string name="rank">पद</string>
     <string name="how_to_pronounce">How to pronounce:</string>
     <string name="auto_logout_message">"आपको इस फ़ोन से लॉग आउट किया गया है क्योंकि आपने किसी अन्य फ़ोन से लॉग इन किया है।"</string>
+
+    <string name="call_engage_record_message">जब आप कॉल पर हों तब प्रैक्टिस रिकॉर्ड नहीं कर सकते</string>
+    <string name="call_engage_initiate_call_message">जब आप पहले से ही कॉल पर हों तब एक नई कॉल शुरू नहीं कर सकतें</string>
+
 </resources>
