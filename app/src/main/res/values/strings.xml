@@ -854,7 +854,7 @@
     <string name="demo_call_start_permission_message">To start speaking practice, please allow permissions. Tap Settings > Permissions, and turn Microphone on and Storage on and Phone on.</string>
     <string name="spoke_for_minute">Spoke for %1$s </string>
     <string name="block">Block</string>
-    <string name="block_user_hint">By clicking block %s will never be able to call you and your calls will never go to %s</string>
+    <string name="block_user_hint">By clicking block, %s will never be able to call you and your calls will never go to %s</string>
     <string name="search_leaderboard">Search Leaderboard</string>
     <string name="rank">Rank</string>
     <string name="aapki_new_class">Aapki Nayi Classes </string>
