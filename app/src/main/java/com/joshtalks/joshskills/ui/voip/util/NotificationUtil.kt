@@ -24,7 +24,6 @@ import com.joshtalks.joshskills.ui.voip.CALL_USER_OBJ
 import com.joshtalks.joshskills.ui.voip.RTC_IS_FAVORITE
 import com.joshtalks.joshskills.ui.voip.RTC_PARTNER_ID
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
-import com.joshtalks.joshskills.ui.voip.extra.FullScreenActivity
 import java.util.concurrent.TimeUnit
 
 
@@ -50,6 +49,8 @@ class NotificationUtil(val context: Context) {
                 putExtra(RTC_PARTNER_ID, id)
                 putExtra(CALL_TYPE, CallType.FAVORITE_MISSED_CALL)
                 putExtra(CALL_USER_OBJ, data)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -95,7 +96,7 @@ class NotificationUtil(val context: Context) {
 
             notificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             notificationBuilder.setFullScreenIntent(
-                FullScreenActivity.getPendingIntent(context, 22),
+                pendingIntent,
                 true
             )
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

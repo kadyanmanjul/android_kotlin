@@ -79,6 +79,8 @@ class WebRtcActivity : AppCompatActivity() {
                 putExtra(CALL_TYPE, callType)
                 putExtra(CONVERSATION_ID, conversationId)
                 putExtra(IS_DEMO_P2P, isDemoClass)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }.run {
                 activity.startActivityForResult(this, 9999)
             }
@@ -93,6 +95,8 @@ class WebRtcActivity : AppCompatActivity() {
                 putExtra(RTC_PARTNER_ID, partnerUid)
                 putExtra(CALL_TYPE, CallType.FAVORITE_MISSED_CALL)
                 putExtra(CALL_USER_OBJ, data)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
         }
     }

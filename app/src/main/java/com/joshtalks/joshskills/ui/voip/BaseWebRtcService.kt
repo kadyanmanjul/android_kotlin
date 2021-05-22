@@ -229,6 +229,7 @@ abstract class BaseWebRtcService : Service() { /*,SensorEventListener*/
                    putExtra(CALL_TYPE, CallType.INCOMING)
                    putExtra(AUTO_PICKUP_CALL, autoPickupCall)
                    putExtra(CALL_USER_OBJ, data)
+                   addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                }
            startActivity(callActivityIntent)

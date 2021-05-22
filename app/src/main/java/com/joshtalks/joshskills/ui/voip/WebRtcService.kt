@@ -54,7 +54,6 @@ import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.ACTION_NOTIFICA
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CALL_NOTIFICATION_CHANNEL
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CONNECTED_CALL_NOTIFICATION_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_NOTIFICATION_ID
-import com.joshtalks.joshskills.ui.voip.extra.FullScreenActivity
 import com.joshtalks.joshskills.ui.voip.util.NotificationUtil
 import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
 import io.agora.rtc.Constants
@@ -319,6 +318,7 @@ class WebRtcService : BaseWebRtcService() {
         override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
             super.onJoinChannelSuccess(channel, uid, elapsed)
             Timber.tag(TAG).e("onJoinChannelSuccess=  $channel = $uid   ")
+            removeIncomingNotification()
             compositeDisposable.clear()
             userAgoraId = uid
             isCallWasOnGoing.postValue(true)
@@ -367,6 +367,7 @@ class WebRtcService : BaseWebRtcService() {
         override fun onUserJoined(uid: Int, elapsed: Int) {
             Timber.tag(TAG).e("onUserJoined=  $uid  $elapsed" + "   " + mRtcEngine?.connectionState)
             super.onUserJoined(uid, elapsed)
+            removeIncomingNotification()
             oppositeCallerId = uid
             compositeDisposable.clear()
             isCallWasOnGoing.postValue(true)
@@ -765,8 +766,7 @@ class WebRtcService : BaseWebRtcService() {
                                         if (data.containsKey(RTC_CHANNEL_KEY)) {
                                             channelName = data[RTC_CHANNEL_KEY]
                                         }
-                                        mNotificationManager?.cancel(ACTION_NOTIFICATION_ID)
-                                        mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
+                                        removeIncomingNotification()
                                         if (callCallback != null && callCallback?.get() != null) {
                                             callCallback?.get()?.switchChannel(data)
                                         } else {
@@ -813,9 +813,13 @@ class WebRtcService : BaseWebRtcService() {
         data?.let {
             callData = it
         }
+        removeIncomingNotification()
+        startAutoPickCallActivity(true)
+    }
+
+    fun removeIncomingNotification() {
         mNotificationManager?.cancel(ACTION_NOTIFICATION_ID)
         mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
-        startAutoPickCallActivity(true)
     }
 
     private fun startAutoPickCallActivity(autoPick: Boolean) {
@@ -832,6 +836,7 @@ class WebRtcService : BaseWebRtcService() {
                 putExtra(CALL_TYPE, CallType.INCOMING)
                 putExtra(AUTO_PICKUP_CALL, autoPick)
                 putExtra(CALL_USER_OBJ, callData)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
         startActivity(callActivityIntent)
@@ -847,6 +852,7 @@ class WebRtcService : BaseWebRtcService() {
             putExtra(CALL_TYPE, callType)
             putExtra(IS_CALL_CONNECTED, true)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
         startActivity(callActivityIntent)
         context.overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
@@ -876,6 +882,7 @@ class WebRtcService : BaseWebRtcService() {
             putExtra(CALL_USER_OBJ, data)
             putExtra(CALL_TYPE, CallType.INCOMING)
             putExtra(AUTO_PICKUP_CALL, autoPickupCall)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         startActivity(callActivityIntent)
@@ -1328,7 +1335,7 @@ class WebRtcService : BaseWebRtcService() {
 
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         builder.setFullScreenIntent(
-            FullScreenActivity.getPendingIntent(this, 22),
+            pendingIntent,
             true
         )
         val avatar: Bitmap? = getIncomingCallAvatar(isFavorite = isFavorite())
@@ -1511,7 +1518,6 @@ class WebRtcService : BaseWebRtcService() {
             this,
             WebRtcActivity::class.java
         ).apply {
-            putExtra(CALL_USER_OBJ, callData)
             putExtra(CALL_TYPE, callType)
             callData?.apply {
                 if (isFavorite()) {
@@ -1519,8 +1525,9 @@ class WebRtcService : BaseWebRtcService() {
                 }
             }
             putExtra(CALL_USER_OBJ, callData)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
     }
 
