@@ -84,7 +84,6 @@ import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.userprofile.ShowAnimatedLeaderBoardFragment
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
-import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 import com.patloew.colocation.CoLocation
 import com.smartlook.sdk.smartlook.Smartlook
@@ -345,7 +344,7 @@ abstract class BaseActivity :
         val partnerUid = intent?.dataString?.split("/")?.lastOrNull()?.toInt()
         return if (partnerUid != null) {
             WebRtcActivity.getFavMissedCallbackIntent(partnerUid, this).apply {
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
         } else {
