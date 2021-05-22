@@ -1359,7 +1359,7 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     private fun getIncomingCallAvatar(isFavorite: Boolean): Bitmap? {
-        return if (getCallerUrl() == null) {
+        return if (getCallerUrl().isNullOrBlank()) {
             getNameForImage().textDrawableBitmap(width = 80, height = 80)
         } else {
             if (isFavorite) {
