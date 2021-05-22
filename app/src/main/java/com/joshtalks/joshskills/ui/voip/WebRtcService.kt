@@ -1028,6 +1028,10 @@ class WebRtcService : BaseWebRtcService() {
         return false
     }
 
+    fun setAsFavourite() {
+        callData?.put(RTC_IS_FAVORITE, "true")
+    }
+
     private fun getCallerName(): String {
         return callData?.get(RTC_NAME) ?: EMPTY
     }

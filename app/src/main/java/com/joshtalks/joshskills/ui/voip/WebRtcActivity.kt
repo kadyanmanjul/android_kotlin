@@ -119,7 +119,6 @@ class WebRtcActivity : AppCompatActivity() {
                 {
                     updateStatusLabel()
                     startCallTimer()
-                    binding.connectionLost.visibility = View.GONE
                 },
                 500
             )
@@ -162,7 +161,7 @@ class WebRtcActivity : AppCompatActivity() {
             AppObjectController.uiHandler.postDelayed(
                 {
                     // binding.connectionLost.text = EMPTY
-                    binding.connectionLost.visibility = View.GONE
+                    binding.connectionLost.visibility = View.INVISIBLE
                     binding.callTime.visibility = View.VISIBLE
                 },
                 250
@@ -185,7 +184,7 @@ class WebRtcActivity : AppCompatActivity() {
             runOnUiThread {
                 //      binding.connectionLost.text = EMPTY
                 if (binding.connectionLost.text != getString(R.string.ringing)) {
-                    binding.connectionLost.visibility = View.GONE
+                    binding.connectionLost.visibility = View.INVISIBLE
                     binding.callTime.visibility = View.VISIBLE
                 }
             }
@@ -249,13 +248,13 @@ class WebRtcActivity : AppCompatActivity() {
     }
 
     private fun isCallFavoritePP(): Boolean {
-        val f = mBoundService?.isFavorite()
+        val isSetAsFavourite = mBoundService?.isFavorite()
         val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
-        val c = map != null && map.containsKey(RTC_IS_FAVORITE)
-        if (c) {
-            return c
+        val isFavouriteIntent = map != null && map.containsKey(RTC_IS_FAVORITE)
+        if (isSetAsFavourite == false && isFavouriteIntent) {
+            mBoundService?.setAsFavourite()
         }
-        return f ?: c
+        return (isSetAsFavourite == true || isFavouriteIntent)
     }
 
     private fun callMissedCallUser() {
@@ -273,6 +272,7 @@ class WebRtcActivity : AppCompatActivity() {
                 binding.groupForOutgoing.visibility = View.VISIBLE
                 binding.connectionLost.text = getString(R.string.ringing)
                 binding.connectionLost.visibility = View.VISIBLE
+                binding.callTime.visibility = View.INVISIBLE
                 setUserInfo(pId.toString())
                 viewModel.initMissedCall(pId.toString(), ::callback)
                 (getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager?)?.cancel(pId.hashCode())
@@ -393,9 +393,9 @@ class WebRtcActivity : AppCompatActivity() {
 
         if (isCallFavoritePP() || WebRtcService.isCallWasOnGoing.value == true) {
             updateCallInfo()
-        } else if (callType == CallType.INCOMING && WebRtcService.isCallWasOnGoing.value == true) {
+        } /*else if (callType == CallType.INCOMING && WebRtcService.isCallWasOnGoing.value == true) {
             updateCallInfo()
-        }
+        }*/
 
         callType?.run {
             updateStatusLabel()
@@ -435,8 +435,7 @@ class WebRtcActivity : AppCompatActivity() {
             if (WebRtcService.isCallWasOnGoing.value == true) {
                 binding.groupForIncoming.visibility = View.GONE
                 binding.groupForOutgoing.visibility = View.VISIBLE
-                binding.callTime.base = SystemClock.elapsedRealtime() - getCallTime()
-                binding.callTime.start()
+                startCallTimer()
             }
         } catch (ex: Throwable) {
             ex.printStackTrace()
@@ -549,8 +548,10 @@ class WebRtcActivity : AppCompatActivity() {
         binding.callTime.base = SystemClock.elapsedRealtime() - getCallTime()
         binding.callTime.start()
         if (WebRtcService.phoneCallState == CallState.CALL_STATE_IDLE) {
+            binding.connectionLost.visibility = View.INVISIBLE
             binding.callTime.visibility = View.VISIBLE
         } else {
+            binding.connectionLost.visibility = View.VISIBLE
             binding.callTime.visibility = View.INVISIBLE
         }
     }
