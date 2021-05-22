@@ -356,7 +356,7 @@ class DemoSearchingUserActivity : AppCompatActivity() {
                 .timeInterval()
                 .subscribe(
                     {
-                        if (mBoundService?.isCallNotConnected() == true) {
+                        if (mBoundService?.isCallNotConnected() == false) {
                             mBoundService?.timeoutCaller()
                         }
                     },

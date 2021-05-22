@@ -397,7 +397,7 @@ class SearchingUserActivity : BaseActivity() {
                 .timeInterval()
                 .subscribe(
                     {
-                        if (mBoundService?.isCallNotConnected() == true) {
+                        if (mBoundService?.isCallNotConnected() == false) {
                             mBoundService?.timeoutCaller()
                         }
                     },
