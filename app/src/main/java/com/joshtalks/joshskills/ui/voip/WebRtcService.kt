@@ -761,12 +761,12 @@ class WebRtcService : BaseWebRtcService() {
                                     {
                                         val data =
                                             intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
-                                        data.let {
-                                            callData = it
-                                            if (it.containsKey(RTC_CHANNEL_KEY)) {
-                                                channelName = it[RTC_CHANNEL_KEY]
-                                            }
+                                        callData = data
+                                        if (data.containsKey(RTC_CHANNEL_KEY)) {
+                                            channelName = data[RTC_CHANNEL_KEY]
                                         }
+                                        mNotificationManager?.cancel(ACTION_NOTIFICATION_ID)
+                                        mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
                                         if (callCallback != null && callCallback?.get() != null) {
                                             callCallback?.get()?.switchChannel(data)
                                         } else {
