@@ -14,7 +14,7 @@
         android:id="@+id/root_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black_background">
+        android:background="@color/transparent_black_alfa_70">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/root_view"
@@ -181,7 +181,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/toggle_button_group"
                     app:layout_constraintWidth_percent="0.85"
-                    tools:text="By clicking block you are blocking Harsh" />
+                    tools:text="By clicking block Harsh will never be able to call you and your calls will never go to Harsh" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 

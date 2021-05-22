@@ -128,7 +128,7 @@ class VoipCallFeedbackActivity : BaseActivity() {
                 mTime.append(second).append(getSecondString(second))
             }
             binding.txtSpoke.text = getString(R.string.spoke_for_minute, mTime.toString())
-            binding.txtBottom.text = getString(R.string.block_user_hint, callerName)
+            binding.txtBottom.text = getString(R.string.block_user_hint, callerName, callerName)
 
             addObserver()
             practiceViewModel.getPointsForVocabAndReading(null, channelName = channelName)
