@@ -335,7 +335,7 @@ class SearchingUserActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        stopCalling()
+        stopSearching()
     }
 
     override fun onStart() {
