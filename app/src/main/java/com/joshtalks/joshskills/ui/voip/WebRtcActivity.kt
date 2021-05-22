@@ -35,6 +35,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isCallWasOnGoing
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -227,7 +228,9 @@ class WebRtcActivity : AppCompatActivity() {
             .addBasicParam()
             .addUserDetails()
             .push()
-        callMissedCallUser()
+        if (isCallWasOnGoing.value == false) {
+            callMissedCallUser()
+        }
     }
 
     private fun setCallerInfoOnAppCreate() {

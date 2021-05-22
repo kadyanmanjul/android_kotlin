@@ -1520,6 +1520,7 @@ class WebRtcService : BaseWebRtcService() {
             }
             putExtra(CALL_USER_OBJ, callData)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
         }
     }
 
