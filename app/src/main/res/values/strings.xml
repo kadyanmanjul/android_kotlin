@@ -848,7 +848,7 @@
     <string name="p2p_subtitle">Speaking Practice</string>
     <string name="reconnecting">Reconnecting</string>
     <string name="last_seen">Last Seen %1$s</string>
-    <string name="hold_call">Hold call</string>
+    <string name="hold_call">Call On Hold</string>
     <string name="call_start_permission_message_rational">To start speaking practice, please allow permissions for location, making calls, storage and microphone.</string>
     <string name="call_start_permission_message">To start speaking practice, please allow permissions. Tap Settings > Permissions, and turn Microphone on and Storage on and Location on and Phone on.</string>
     <string name="demo_call_start_permission_message">To start speaking practice, please allow permissions. Tap Settings > Permissions, and turn Microphone on and Storage on and Phone on.</string>

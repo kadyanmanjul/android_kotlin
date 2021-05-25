@@ -133,7 +133,10 @@ class WebRtcService : BaseWebRtcService() {
         var isCallWasOnGoing: MutableLiveData<Boolean> = MutableLiveData(false)
 
         @Volatile
-        var holdCall: Boolean = false
+        var holdCallByMe: Boolean = false
+
+        @Volatile
+        var holdCallByAnotherUser: Boolean = false
 
         @Volatile
         var retryInitLibrary: Int = 0
@@ -511,7 +514,8 @@ class WebRtcService : BaseWebRtcService() {
                 when (msg.what) {
                     CallState.UNHOLD.state -> {
                         phoneCallState = CallState.CALL_STATE_IDLE
-                        holdCall = false
+                        holdCallByMe = false
+                        mRtcEngine?.muteAllRemoteAudioStreams(false)
                         callCallback?.get()?.onUnHoldCall()
                         callData?.let {
                             callStatusNetworkApi(it, CallAction.RESUME)
@@ -519,7 +523,8 @@ class WebRtcService : BaseWebRtcService() {
                     }
                     CallState.ONHOLD.state -> {
                         phoneCallState = CallState.CALL_STATE_CONNECTED
-                        holdCall = true
+                        holdCallByMe = true
+                        mRtcEngine?.muteAllRemoteAudioStreams(true)
                         callCallback?.get()?.onHoldCall()
                         callData?.let {
                             callStatusNetworkApi(it, CallAction.ONHOLD)
@@ -529,9 +534,13 @@ class WebRtcService : BaseWebRtcService() {
                         RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
                     }
                     CallState.CALL_HOLD_BY_OPPOSITE.state -> {
+                        holdCallByAnotherUser = true
+                        mRtcEngine?.muteAllRemoteAudioStreams(true)
                         callCallback?.get()?.onHoldCall()
                     }
                     CallState.CALL_RESUME_BY_OPPOSITE.state -> {
+                        holdCallByAnotherUser = false
+                        mRtcEngine?.muteAllRemoteAudioStreams(false)
                         joshAudioManager?.stopConnectTone()
                         compositeDisposable.clear()
                         callCallback?.get()?.onUnHoldCall()
@@ -549,7 +558,9 @@ class WebRtcService : BaseWebRtcService() {
             when (state) {
                 TelephonyManager.CALL_STATE_IDLE -> {
                     phoneCallState = CallState.CALL_STATE_IDLE
-                    holdCall = false
+                    holdCallByMe = false
+                    holdCallByAnotherUser = false
+                    mRtcEngine?.muteAllRemoteAudioStreams(false)
 
                     val message = Message()
                     message.what = CallState.UNHOLD.state
