@@ -10,7 +10,7 @@
 
     <FrameLayout
         android:id="@+id/root_view_fl"
-        android:layout_width="@dimen/_180sdp"
+        android:layout_width="@dimen/_175sdp"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:layout_marginStart="@dimen/_16sdp"
@@ -23,9 +23,9 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_award"
-                android:layout_width="@dimen/_72sdp"
-                android:layout_height="@dimen/_74sdp"
-                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_width="@dimen/_66sdp"
+                android:layout_height="@dimen/_64sdp"
+                android:layout_marginTop="@dimen/_10sdp"
                 android:gravity="center_vertical|start"
                 android:scaleType="fitXY"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -38,7 +38,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginHorizontal="@dimen/_14sdp"
                 android:layout_marginTop="@dimen/_8ssp"
                 android:layout_marginBottom="@dimen/_8sdp"
                 android:background="@drawable/rect_round_4dp_yellow"
@@ -51,7 +51,8 @@
                     android:id="@+id/student_name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginStart="@dimen/_9sdp"
+                    android:layout_marginEnd="@dimen/_4sdp"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:gravity="start"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
@@ -66,11 +67,11 @@
                     android:id="@+id/student_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginStart="@dimen/_9sdp"
                     android:gravity="center"
                     android:paddingVertical="@dimen/_2sdp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                    android:textSize="@dimen/_8sdp"
+                    android:textSize="@dimen/_8ssp"
                     android:textColor="#511615"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/student_name"
@@ -87,22 +88,23 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/barrier"
                     tools:src="@color/checkmark_blue"
                     tools:visibility="visible" />
-
 
                 <androidx.constraintlayout.widget.Barrier
                     android:id="@+id/barrier"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:barrierDirection="bottom"
-                    app:constraint_referenced_ids="student_text,user_pic" />
+                    app:constraint_referenced_ids="student_text" />
 
                 <View
                     android:id="@+id/divider"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_1sdp"
-                    android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:layout_marginStart="@dimen/_9sdp"
+                    android:layout_marginEnd="@dimen/_4sdp"
                     android:layout_marginTop="@dimen/_6sdp"
                     android:background="#571314"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -114,11 +116,11 @@
                     android:id="@+id/user_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/_8sdp"
-                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginHorizontal="@dimen/_9sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
                     android:gravity="start"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                    android:textSize="@dimen/_7sdp"
+                    android:textSize="@dimen/_7ssp"
                     android:textColor="#511615"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -131,7 +133,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_4sdp"
-                    android:layout_marginBottom="@dimen/_4sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
                     android:gravity="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Italic"
                     android:textColor="#511615"

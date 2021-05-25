@@ -12,7 +12,7 @@
 
     <FrameLayout
         android:id="@+id/root_view_fl"
-        android:layout_width="@dimen/_180sdp"
+        android:layout_width="@dimen/_175sdp"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:background="@drawable/bg_student_of_the_month_new">
@@ -26,7 +26,7 @@
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_62sdp"
                 android:layout_marginEnd="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_36sdp"
+                android:layout_marginTop="@dimen/_30sdp"
                 android:background="@drawable/crop_new_"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/iv_award"
@@ -116,10 +116,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_26sdp"
                 android:layout_marginTop="@dimen/_6sdp"
-                android:layout_marginBottom="@dimen/_32sdp"
+                android:layout_marginBottom="@dimen/_38sdp"
                 android:gravity="center"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-                android:textSize="@dimen/_8sdp"
+                android:textSize="@dimen/_8ssp"
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
