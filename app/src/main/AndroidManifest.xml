@@ -149,7 +149,7 @@
 
                 <data
                     android:host="app.joshtalks.org"
-                    android:pathPrefix="/ag"
+                    android:pathPrefix="/sht/ag"
                     android:scheme="http" />
             </intent-filter>
         </activity>

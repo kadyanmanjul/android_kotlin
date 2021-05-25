@@ -333,7 +333,7 @@ abstract class BaseActivity :
 
     fun containsFavUserCallBackUrl(): Boolean {
         try {
-            return intent?.dataString?.contains("app.joshtalks.org/ag") ?: false
+            return intent?.dataString?.contains("app.joshtalks.org/sht/ag") ?: false
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
