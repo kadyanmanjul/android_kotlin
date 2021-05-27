@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.ui.chat.vh.AtsChoiceView
 import com.joshtalks.joshskills.ui.chat.vh.EnableDisableGrammarButtonCallback
 import com.joshtalks.joshskills.ui.chat.vh.GrammarButtonView
 import com.joshtalks.joshskills.ui.chat.vh.GrammarHeadingView
+import com.joshtalks.joshskills.ui.chat.vh.SubjectiveChoiceView
 import com.joshtalks.joshskills.ui.lesson.grammar_new.McqChoiceView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,13 +36,12 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private val viewModel: OnlineTestViewModel by lazy {
         ViewModelProvider(requireActivity()).get(OnlineTestViewModel::class.java)
     }
-
-    //private val compositeDisposable = CompositeDisposable()
     private var assessmentQuestions: AssessmentQuestionWithRelations? = null
 
     private var headingView: Stub<GrammarHeadingView>? = null
     private var mcqChoiceView: Stub<McqChoiceView>? = null
     private var atsChoiceView: Stub<AtsChoiceView>? = null
+    private var subjectiveChoiceView: Stub<SubjectiveChoiceView>? = null
     private var buttonView: Stub<GrammarButtonView>? = null
     private var isFirstTime: Boolean = true
 
@@ -68,6 +68,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         headingView = Stub(binding.container.findViewById(R.id.heading_view))
         mcqChoiceView = Stub(binding.container.findViewById(R.id.mcq_choice_view))
         atsChoiceView = Stub(binding.container.findViewById(R.id.ats_choice_view))
+        subjectiveChoiceView = Stub(binding.container.findViewById(R.id.subjective_choice_view))
         buttonView = Stub(binding.container.findViewById(R.id.button_action_views))
     }
 
@@ -132,6 +133,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         when (assessmentQuestions.question.choiceType) {
             ChoiceType.ARRANGE_THE_SENTENCE -> {
                 mcqChoiceView?.get()?.visibility = View.GONE
+                subjectiveChoiceView?.get()?.visibility = View.GONE
                 atsChoiceView?.resolved().let {
                     atsChoiceView?.get()?.visibility = View.VISIBLE
                     atsChoiceView!!.get().setup(assessmentQuestions)
@@ -156,6 +158,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             }
             ChoiceType.SINGLE_SELECTION_TEXT -> {
                 atsChoiceView?.get()?.visibility = View.GONE
+                subjectiveChoiceView?.get()?.visibility = View.GONE
                 mcqChoiceView?.resolved().let {
                     mcqChoiceView?.get()?.visibility = View.VISIBLE
                     mcqChoiceView!!.get().setup(assessmentQuestions)
@@ -178,8 +181,34 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                         })
                 }
             }
+            ChoiceType.SUBJECTIVE_TEXT -> {
+                atsChoiceView?.get()?.visibility = View.GONE
+                mcqChoiceView?.get()?.visibility = View.GONE
+                subjectiveChoiceView?.resolved().let {
+                    subjectiveChoiceView?.get()?.visibility = View.VISIBLE
+                    subjectiveChoiceView!!.get().setup(assessmentQuestions)
+                    subjectiveChoiceView!!.get()
+                        .addCallback(object : EnableDisableGrammarButtonCallback {
+                            override fun disableGrammarButton() {
+                                buttonView?.get()?.disableBtn()
+                            }
+
+                            override fun enableGrammarButton() {
+                                buttonView?.get()?.enableBtn()
+                            }
+
+                            override fun alreadyAttempted(isCorrectAnswer: Boolean) {
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    buttonView?.get()?.setAlreadyAttemptedView(isCorrectAnswer)
+                                }
+                            }
+
+                        })
+                }
+            }
             else -> {
                 atsChoiceView?.get()?.visibility = View.GONE
+                subjectiveChoiceView?.get()?.visibility = View.GONE
                 mcqChoiceView?.get()?.visibility = View.GONE
             }
         }
@@ -191,16 +220,22 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                     return when (assessmentQuestions.question.choiceType) {
                         ChoiceType.ARRANGE_THE_SENTENCE -> atsChoiceView?.get()?.isCorrectAnswer()
                             ?.apply {
-                                onCheckQuestion(assessmentQuestions,this)
+                                onCheckQuestion(assessmentQuestions, this)
                             }
                         ChoiceType.SINGLE_SELECTION_TEXT -> {
                             mcqChoiceView?.get()?.isCorrectAnswer()?.apply {
-                                onCheckQuestion(assessmentQuestions,this)
+                                onCheckQuestion(assessmentQuestions, this)
+                            }
+                        }
+                        ChoiceType.SUBJECTIVE_TEXT -> {
+                            subjectiveChoiceView?.get()?.isCorrectAnswer()?.apply {
+                                onCheckQuestion(assessmentQuestions, this)
                             }
                         }
                         else -> null
                     }
                 }
+
                 override fun nextQuestion() {
                     moveToNextGrammarQuestion()
                 }
