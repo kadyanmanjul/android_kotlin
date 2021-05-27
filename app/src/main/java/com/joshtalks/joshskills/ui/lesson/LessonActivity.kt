@@ -273,7 +273,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         val adapter = LessonPagerAdapter(
             supportFragmentManager,
             this.lifecycle,
-            isNewGrammar
+            true
         )
 
         binding.lessonViewpager.adapter = adapter

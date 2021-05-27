@@ -5,10 +5,10 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
-import com.joshtalks.joshskills.ui.lesson.grammar_new.GrammarNewFragment
 import com.joshtalks.joshskills.ui.lesson.reading.ReadingFragmentWithoutFeedback
 import com.joshtalks.joshskills.ui.lesson.speaking.SpeakingPractiseFragment
 import com.joshtalks.joshskills.ui.lesson.vocabulary.VocabularyFragment
+import com.joshtalks.joshskills.ui.online_test.GrammarOnlineTestFragment
 
 class LessonPagerAdapter(
     fragmentManager: FragmentManager,
@@ -25,7 +25,7 @@ class LessonPagerAdapter(
             //0 -> GrammarFragment.getInstance()
             0 -> {
                 if (isNewGrammar) {
-                    GrammarNewFragment.getInstance()
+                    GrammarOnlineTestFragment.getInstance()
                 } else {
                     GrammarFragment.getInstance()
                 }

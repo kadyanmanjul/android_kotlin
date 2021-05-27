@@ -19,12 +19,10 @@ import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.*
-import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
-import com.joshtalks.joshskills.ui.online_test.OnlineTestActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService
@@ -69,27 +67,11 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         initView()
         addLiveDataObservable()
         addAfterTime()
-        showOnlineTestDialog()
-    }
-
-    private fun showOnlineTestDialog() {
-        if (PrefManager.getBoolValue(ONLINE_TEST_COMPLETED).not()) {
-            showOnlineTestScreen()
-        }
-    }
-
-    fun showOnlineTestScreen() {
-        startActivity(
-            Intent(this, OnlineTestActivity::class.java).apply {
-                putExtra(CONVERSATION_ID, intent.getStringExtra(CONVERSATION_ID))
-            }
-        )
     }
 
     private fun addAfterTime() {
         workInBackground()
         handelIntentAction()
-        //initNewUserTip()
         viewModel.getTotalWatchTime()
     }
 
