@@ -518,6 +518,8 @@ class WebRtcService : BaseWebRtcService() {
                         phoneCallState = CallState.CALL_STATE_IDLE
                         holdCallByMe = false
                         mRtcEngine?.muteAllRemoteAudioStreams(false)
+                        mRtcEngine?.muteLocalAudioStream(false)
+                        mRtcEngine?.enableLocalAudio(true)
                         callCallback?.get()?.onUnHoldCall()
                         callData?.let {
                             callStatusNetworkApi(it, CallAction.RESUME)
@@ -527,6 +529,8 @@ class WebRtcService : BaseWebRtcService() {
                         phoneCallState = CallState.CALL_STATE_CONNECTED
                         holdCallByMe = true
                         mRtcEngine?.muteAllRemoteAudioStreams(true)
+                        mRtcEngine?.muteLocalAudioStream(true)
+                        mRtcEngine?.enableLocalAudio(false)
                         callCallback?.get()?.onHoldCall()
                         callData?.let {
                             callStatusNetworkApi(it, CallAction.ONHOLD)
@@ -538,11 +542,15 @@ class WebRtcService : BaseWebRtcService() {
                     CallState.CALL_HOLD_BY_OPPOSITE.state -> {
                         holdCallByAnotherUser = true
                         mRtcEngine?.muteAllRemoteAudioStreams(true)
+                        mRtcEngine?.muteLocalAudioStream(true)
+                        mRtcEngine?.enableLocalAudio(false)
                         callCallback?.get()?.onHoldCall()
                     }
                     CallState.CALL_RESUME_BY_OPPOSITE.state -> {
                         holdCallByAnotherUser = false
                         mRtcEngine?.muteAllRemoteAudioStreams(false)
+                        mRtcEngine?.muteLocalAudioStream(false)
+                        mRtcEngine?.enableLocalAudio(true)
                         joshAudioManager?.stopConnectTone()
                         compositeDisposable.clear()
                         callCallback?.get()?.onUnHoldCall()
@@ -564,6 +572,8 @@ class WebRtcService : BaseWebRtcService() {
                     holdCallByMe = false
                     holdCallByAnotherUser = false
                     mRtcEngine?.muteAllRemoteAudioStreams(false)
+                    mRtcEngine?.muteLocalAudioStream(false)
+                    mRtcEngine?.enableLocalAudio(true)
 
                     val message = Message()
                     message.what = CallState.UNHOLD.state
@@ -1117,11 +1127,13 @@ class WebRtcService : BaseWebRtcService() {
     fun switchSpeck() {
         executor.submit {
             try {
-                isMicEnable = !isMicEnable
-                if (isMicEnable) {
-                    unMuteCall()
-                } else {
-                    muteCall()
+                if (holdCallByMe.not() && holdCallByAnotherUser.not()) {
+                    isMicEnable = !isMicEnable
+                    if (isMicEnable) {
+                        unMuteCall()
+                    } else {
+                        muteCall()
+                    }
                 }
             } catch (ex: Throwable) {
                 ex.printStackTrace()

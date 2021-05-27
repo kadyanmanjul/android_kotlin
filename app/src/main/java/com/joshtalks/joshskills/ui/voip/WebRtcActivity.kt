@@ -180,6 +180,7 @@ class WebRtcActivity : AppCompatActivity() {
                 binding.connectionLost.text = getString(R.string.hold_call)
                 binding.connectionLost.visibility = View.VISIBLE
                 binding.callTime.visibility = View.INVISIBLE
+                binding.btnMute.isEnabled = false
             }
         }
 
@@ -191,6 +192,7 @@ class WebRtcActivity : AppCompatActivity() {
                 if (binding.connectionLost.text != getString(R.string.ringing)) {
                     binding.connectionLost.visibility = View.INVISIBLE
                     binding.callTime.visibility = View.VISIBLE
+                    binding.btnMute.isEnabled = true
                 }
             }
         }
