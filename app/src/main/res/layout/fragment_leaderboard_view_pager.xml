@@ -10,26 +10,17 @@
         android:keepScreenOn="true"
         android:orientation="vertical">
 
-        <com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout
-            android:id="@+id/refresh_layout"
+        <com.mindorks.placeholderview.PlaceHolderView
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:background="?android:attr/selectableItemBackground"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srl_direction="top">
-
-            <com.mindorks.placeholderview.PlaceHolderView
-                android:id="@+id/recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?android:attr/selectableItemBackground"
-                tools:listitem="@layout/list_item" />
-
-        </com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout>
-
+            tools:listitem="@layout/list_item" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/user_layout"

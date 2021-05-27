@@ -12,7 +12,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.LogException
@@ -26,7 +25,6 @@ import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import com.skydoves.balloon.*
 import com.skydoves.balloon.overlay.BalloonOverlayAnimation
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.util.*
@@ -45,7 +43,6 @@ class LeaderBoardFragment : Fragment() {
     private var userRank: Int = Int.MAX_VALUE
     private val viewModel by lazy { ViewModelProvider(requireActivity()).get(LeaderBoardViewModel::class.java) }
     private var liveUserPosition = -1
-    protected var internetAvailableFlag: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,14 +94,6 @@ class LeaderBoardFragment : Fragment() {
         binding.userLayout.setOnClickListener {
             scrollToUserPosition()
             binding.userLayout.visibility = View.GONE
-        }
-        binding.refreshLayout.setOnRefreshListener {
-           /* if (internetAvailableFlag) {
-                binding.refreshLayout.isRefreshing = true
-                viewModel.getRefreshedLeaderboardData(Mentor.getInstance().getId(), courseId, type)
-            } else {
-                binding.refreshLayout.isRefreshing = false
-            }*/
         }
     }
 
@@ -208,7 +197,6 @@ class LeaderBoardFragment : Fragment() {
     }
 
     private fun setData(leaderboardResponse1: LeaderboardResponse) {
-        binding.refreshLayout.isRefreshing = false
         var additionalIndexCount = 0
         if (leaderboardResponse1.info.isNullOrBlank().not()) {
             // TODO handel this count as well in other places where using position of recycler view eg. in tooltip
@@ -343,15 +331,6 @@ class LeaderBoardFragment : Fragment() {
                         it.printStackTrace()
                     }
                 )
-        )
-
-        compositeDisposable.add(
-            ReactiveNetwork.observeNetworkConnectivity(requireActivity().applicationContext)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { connectivity ->
-                    internetAvailableFlag = connectivity.available()
-                }
         )
     }
 
