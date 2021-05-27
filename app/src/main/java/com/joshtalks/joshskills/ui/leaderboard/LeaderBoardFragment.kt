@@ -19,7 +19,6 @@ import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.databinding.FragmentLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -100,12 +99,12 @@ class LeaderBoardFragment : Fragment() {
             binding.userLayout.visibility = View.GONE
         }
         binding.refreshLayout.setOnRefreshListener {
-            if (internetAvailableFlag) {
+           /* if (internetAvailableFlag) {
                 binding.refreshLayout.isRefreshing = true
                 viewModel.getRefreshedLeaderboardData(Mentor.getInstance().getId(), courseId, type)
             } else {
                 binding.refreshLayout.isRefreshing = false
-            }
+            }*/
         }
     }
 
