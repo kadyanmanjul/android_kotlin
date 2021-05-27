@@ -108,6 +108,8 @@ class WebRtcService : BaseWebRtcService() {
         private val TAG = WebRtcService::class.java.simpleName
         var phoneCallState = CallState.CALL_STATE_IDLE
 
+        var isOnPstnCall = false
+
         @JvmStatic
         private val callReconnectTime = AppObjectController.getFirebaseRemoteConfig()
             .getLong(FirebaseRemoteConfigKey.VOIP_CALL_RECONNECT_TIME)
@@ -557,6 +559,7 @@ class WebRtcService : BaseWebRtcService() {
             Timber.tag(TAG).e("RTC=    %s", state)
             when (state) {
                 TelephonyManager.CALL_STATE_IDLE -> {
+                    isOnPstnCall = false
                     phoneCallState = CallState.CALL_STATE_IDLE
                     holdCallByMe = false
                     holdCallByAnotherUser = false
@@ -567,11 +570,13 @@ class WebRtcService : BaseWebRtcService() {
                     mHandler?.sendMessageDelayed(message, 500)
                 }
                 TelephonyManager.CALL_STATE_OFFHOOK -> {
+                    isOnPstnCall = true
                     val message = Message()
                     message.what = CallState.ONHOLD.state
                     mHandler?.sendMessage(message)
                 }
                 else -> {
+                    isOnPstnCall = true
                     phoneCallState = CallState.CALL_STATE_BUSY
                 }
             }
@@ -1199,8 +1204,13 @@ class WebRtcService : BaseWebRtcService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             when (action) {
                 IncomingCall().action, FavoriteIncomingCall().action -> {
-                    showNotification(incomingCallNotification(data), INCOMING_CALL_NOTIFICATION_ID)
-                    startRingtoneAndVibration()
+                    if (isOnPstnCall.not()) {
+                        showNotification(
+                            incomingCallNotification(data),
+                            INCOMING_CALL_NOTIFICATION_ID
+                        )
+                        startRingtoneAndVibration()
+                    }
                 }
                 CallConnect().action -> {
                     showNotification(
