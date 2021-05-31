@@ -47,7 +47,7 @@ class McqOptionView(context: Context) : AppCompatRadioButton(context) {
             background =
                 ContextCompat.getDrawable(
                     getContext(),
-                    R.drawable.rounded_rectangle_with_grey_border
+                    R.drawable.rounded_rectangle_with_grey_border_mcq_grammar
                 )
         } else {
             choice.isSelectedByUser = true
@@ -84,7 +84,7 @@ class McqOptionView(context: Context) : AppCompatRadioButton(context) {
                         )
                         v.background = ContextCompat.getDrawable(
                             context,
-                            R.drawable.rounded_rectangle_with_grey_border_pressed
+                            R.drawable.rounded_rectangle_with_grey_border_pressed_mcq_grammar
                         )
                     } else {
                         setTextColor(
@@ -119,7 +119,7 @@ class McqOptionView(context: Context) : AppCompatRadioButton(context) {
                         )
                         v.background = ContextCompat.getDrawable(
                             context,
-                            R.drawable.rounded_rectangle_with_grey_border
+                            R.drawable.rounded_rectangle_with_grey_border_mcq_grammar
                         )
                     } else {
                         setTextColor(
