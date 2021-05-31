@@ -46,7 +46,7 @@ data class Choice(
 
     @ColumnInfo
     @SerializedName("image_url")
-    val imageUrl: String?,
+    var imageUrl: String?,
 
     @ColumnInfo
     @SerializedName("is_correct")

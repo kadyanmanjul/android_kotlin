@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.online_test
 
 import android.os.Bundle
-import android.view.View
 import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
@@ -30,7 +29,7 @@ class OnlineTestActivity : WebRtcMiddlewareActivity() {
     }
 
     fun startOnlineExamTest() {
-        binding.parentContainer.visibility = View.VISIBLE
+        /*binding.parentContainer.visibility = View.VISIBLE
         supportFragmentManager
             .beginTransaction()
             .replace(
@@ -38,18 +37,12 @@ class OnlineTestActivity : WebRtcMiddlewareActivity() {
                 OnlineTestFragment.getInstance(),
                 OnlineTestFragment.TAG
             )
-            .commitAllowingStateLoss()
+            .commitAllowingStateLoss()*/
     }
 
     fun showTestCompletedScreen(messageText: String) {
         setResult(RESULT_OK)
         finish()
-/*        binding.startTestContainer.visibility = View.GONE
-        binding.parentContainer.visibility = View.GONE
-        binding.testCompletedContainer.visibility = View.VISIBLE
-        if (messageText.isNullOrBlank().not()) {
-            binding.title2.text = messageText
-        }*/
     }
 
     override fun onResume() {

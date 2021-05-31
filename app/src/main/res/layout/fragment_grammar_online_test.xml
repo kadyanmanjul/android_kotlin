@@ -45,7 +45,7 @@
                 android:gravity="center"
                 android:paddingHorizontal="@dimen/_22sdp"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:text="क्लास शुरू करने के लिए नीचे बटन को दबाएं "
+                android:text="@string/grammar_unlock_text"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                 android:textColor="@color/grammar_black_text_color"
@@ -81,7 +81,7 @@
             android:id="@+id/test_completed_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible"
+            android:visibility="gone"
             tools:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -135,6 +135,18 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <FrameLayout
+            android:id="@+id/parent_Container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0" />
 
     </FrameLayout>
 </layout>

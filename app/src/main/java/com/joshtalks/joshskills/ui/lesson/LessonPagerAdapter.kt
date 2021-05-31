@@ -13,7 +13,8 @@ import com.joshtalks.joshskills.ui.online_test.GrammarOnlineTestFragment
 class LessonPagerAdapter(
     fragmentManager: FragmentManager,
     lifecycle: Lifecycle,
-    val isNewGrammar: Boolean = false
+    val isNewGrammar: Boolean = false,
+    val lessonNumber: Int
 ) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
     override fun getItemCount(): Int {
@@ -25,7 +26,7 @@ class LessonPagerAdapter(
             //0 -> GrammarFragment.getInstance()
             0 -> {
                 if (isNewGrammar) {
-                    GrammarOnlineTestFragment.getInstance()
+                    GrammarOnlineTestFragment.getInstance(lessonNumber)
                 } else {
                     GrammarFragment.getInstance()
                 }

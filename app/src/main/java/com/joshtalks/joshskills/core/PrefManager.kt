@@ -71,7 +71,7 @@ const val SEARCH_HINT_SHOW = "search_hint_show"
 const val ONLINE_HINT_SHOW = "online_hint_show"
 const val LAST_FIRESTORE_NOTIFICATION_TIME = "last_firestore_notification_time"
 const val ONLINE_TEST_COMPLETED = "online_test_completed"
-
+const val ONLINE_TEST_LAST_LESSON_COMPLETED = "online_test_last_lesson_completed"
 
 object PrefManager {
 

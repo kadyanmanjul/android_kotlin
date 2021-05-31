@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.online_test
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.CoreJoshFragment
-import com.joshtalks.joshskills.core.ONLINE_TEST_COMPLETED
+import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.core.playWrongAnswerSound
@@ -37,19 +38,30 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         ViewModelProvider(requireActivity()).get(OnlineTestViewModel::class.java)
     }
     private var assessmentQuestions: AssessmentQuestionWithRelations? = null
-
+    private var lessonNumber: Int = -1
     private var headingView: Stub<GrammarHeadingView>? = null
     private var mcqChoiceView: Stub<McqChoiceView>? = null
     private var atsChoiceView: Stub<AtsChoiceView>? = null
     private var subjectiveChoiceView: Stub<SubjectiveChoiceView>? = null
     private var buttonView: Stub<GrammarButtonView>? = null
     private var isFirstTime: Boolean = true
+    private var isTestCompleted: Boolean = false
+    private var testCallback: OnlineTestInterface? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnlineTestInterface)
+            testCallback = context
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        arguments?.let {
+            lessonNumber = it.getInt(GrammarOnlineTestFragment.CURRENT_LESSON_NUMBER, -1)
+        }
         binding =
             DataBindingUtil.inflate(
                 inflater,
@@ -58,10 +70,16 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 false
             )
         binding.handler = this
+        binding.lifecycleOwner = this
         setObservers()
         binding.progressContainer.visibility = View.VISIBLE
         viewModel.fetchAssessmentDetails()
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initViews()
     }
 
     private fun initViews() {
@@ -72,27 +90,12 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         buttonView = Stub(binding.container.findViewById(R.id.button_action_views))
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initViews()
-    }
-
-    private fun subscribeRxBus() {
-
-    }
-
     private fun setObservers() {
 
         viewModel.grammarAssessmentLiveData.observe(viewLifecycleOwner) { onlineTestResponse ->
-            if (onlineTestResponse.completed) {
-                PrefManager.put(ONLINE_TEST_COMPLETED, true)
-                try {
-                    (requireActivity() as OnlineTestActivity).showTestCompletedScreen(
-                        onlineTestResponse.message
-                    )
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
+            if (onlineTestResponse.completed && onlineTestResponse.question == null) {
+                PrefManager.put(ONLINE_TEST_LAST_LESSON_COMPLETED, lessonNumber)
+                isTestCompleted = onlineTestResponse.completed
             } else {
                 onlineTestResponse.question?.let {
                     this.assessmentQuestions = AssessmentQuestionWithRelations(it, 10)
@@ -120,6 +123,10 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     }
 
     private fun setupViews(assessmentQuestions: AssessmentQuestionWithRelations) {
+        if (isTestCompleted){
+            showGrammarCompleteFragment()
+            return
+        }
         headingView?.resolved().let {
             headingView!!.get().setup(
                 assessmentQuestions.question.mediaUrl,
@@ -129,7 +136,6 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 assessmentQuestions.question.isNewHeader
             )
         }
-
         when (assessmentQuestions.question.choiceType) {
             ChoiceType.ARRANGE_THE_SENTENCE -> {
                 mcqChoiceView?.get()?.visibility = View.GONE
@@ -181,7 +187,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                         })
                 }
             }
-            ChoiceType.SUBJECTIVE_TEXT -> {
+            ChoiceType.INPUT_TEXT -> {
                 atsChoiceView?.get()?.visibility = View.GONE
                 mcqChoiceView?.get()?.visibility = View.GONE
                 subjectiveChoiceView?.resolved().let {
@@ -227,7 +233,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                                 onCheckQuestion(assessmentQuestions, this)
                             }
                         }
-                        ChoiceType.SUBJECTIVE_TEXT -> {
+                        ChoiceType.INPUT_TEXT -> {
                             subjectiveChoiceView?.get()?.isCorrectAnswer()?.apply {
                                 onCheckQuestion(assessmentQuestions, this)
                             }
@@ -240,6 +246,20 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                     moveToNextGrammarQuestion()
                 }
             })
+        }
+    }
+
+    fun showGrammarCompleteFragment() {
+        activity?.supportFragmentManager?.let { fragmentManager ->
+            fragmentManager
+                .beginTransaction()
+                .replace(
+                    R.id.parent_Container,
+                    GrammarOnlineTestFragment.getInstance(lessonNumber),
+                    GrammarOnlineTestFragment.TAG
+                )
+                .addToBackStack(TAG)
+                .commitAllowingStateLoss()
         }
     }
 
@@ -263,17 +283,25 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
 
     override fun onResume() {
         super.onResume()
-        subscribeRxBus()
     }
 
     override fun onScrollChanged() {
+    }
 
+    interface OnlineTestInterface {
+        fun testCompleted()
     }
 
     companion object {
         const val TAG = "OnlineTestFragment"
 
         @JvmStatic
-        fun getInstance() = OnlineTestFragment()
+        fun getInstance(lessonNumber: Int): OnlineTestFragment {
+            val args = Bundle()
+            args.putInt(GrammarOnlineTestFragment.CURRENT_LESSON_NUMBER, lessonNumber)
+            val fragment = OnlineTestFragment()
+            fragment.arguments = args
+            return fragment
+        }
     }
 }

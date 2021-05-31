@@ -10,17 +10,36 @@ import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatEditText
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
+import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class SubjectiveChoiceView : FrameLayout, TextWatcher {
+class SubjectiveChoiceView : FrameLayout {
 
     private lateinit var rootView: FrameLayout
     private lateinit var answerText: AppCompatEditText
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
     private var callback: EnableDisableGrammarButtonCallback? = null
+    val textListner = object : TextWatcher {
+        override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            assessmentQuestion?.choiceList?.get(0)?.imageUrl = s.toString()
+            if (s.toString().isNullOrBlank()) {
+                callback?.disableGrammarButton()
+            } else {
+                callback?.enableGrammarButton()
+            }
+        }
+
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+        }
+
+        override fun afterTextChanged(p0: Editable?) {
+
+        }
+    }
 
     constructor(context: Context) : super(context) {
         init()
@@ -44,12 +63,15 @@ class SubjectiveChoiceView : FrameLayout, TextWatcher {
         View.inflate(context, R.layout.grammar_subjective_choice_view, this)
         rootView = findViewById(R.id.root_view)
         answerText = findViewById(R.id.submitted_answer_text)
+        answerText.addTextChangedListener(textListner)
     }
 
 
     fun setup(assessmentQuestion: AssessmentQuestionWithRelations) {
         this.assessmentQuestion = assessmentQuestion
+        answerText.removeTextChangedListener(textListner)
         answerText.text?.clear()
+        unlockViews()
 
         CoroutineScope(Dispatchers.IO).launch(Dispatchers.Main) {
             delay(500)
@@ -60,19 +82,18 @@ class SubjectiveChoiceView : FrameLayout, TextWatcher {
     }
 
     private fun lockViews() {
-        answerText.setFocusable(false)
         answerText.setEnabled(false)
         answerText.setCursorVisible(false)
-        answerText.addTextChangedListener(null)
+        answerText.removeTextChangedListener(textListner)
         answerText.setBackgroundColor(Color.TRANSPARENT)
     }
 
     private fun unlockViews() {
-        answerText.setFocusable(true)
         answerText.setEnabled(true)
         answerText.setCursorVisible(true)
-        answerText.addTextChangedListener(this)
+        answerText.addTextChangedListener(textListner)
         answerText.setBackgroundColor(Color.BLACK)
+        answerText.requestFocus()
     }
 
     fun isAnyAnswerSelected() = answerText.text?.length ?: 0 > 0
@@ -83,27 +104,13 @@ class SubjectiveChoiceView : FrameLayout, TextWatcher {
             unlockViews()
             return false
         } else {
-            return answerText.text?.equals(assessmentQuestion?.questionFeedback?.correctAnswerText)
-                ?: false
+            val inputText = answerText.text.toString().toLowerCase(Locale.getDefault())
+            return inputText.equals(assessmentQuestion?.choiceList?.get(0)?.text.toString().toLowerCase(Locale.getDefault()))
         }
     }
 
     fun addCallback(callback: EnableDisableGrammarButtonCallback) {
         this.callback = callback
-    }
-
-    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-    }
-
-    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-        if (isAnyAnswerSelected()) {
-            callback?.enableGrammarButton()
-        } else {
-            callback?.disableGrammarButton()
-        }
-    }
-
-    override fun afterTextChanged(p0: Editable?) {
     }
 
 }

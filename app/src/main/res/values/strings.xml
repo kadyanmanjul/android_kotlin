@@ -890,5 +890,7 @@
     <string name="grammar_btn_text_check">चेक करें</string>
     <string name="grammar_btn_text_continue">जारी रखें</string>
     <string name="grammar_btn_text_start">शुरू करें</string>
+    <string name="grammar_lock_text">क्लास शुरू करने के लिए पहले Lesson %1$d कम्पलीट करे</string>
+    <string name="grammar_unlock_text">क्लास शुरू करने के लिए नीचे बटन को दबाएं </string>
 
 </resources>
