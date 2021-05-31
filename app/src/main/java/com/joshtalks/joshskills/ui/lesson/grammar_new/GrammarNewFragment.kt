@@ -1,50 +1,7 @@
 package com.joshtalks.joshskills.ui.lesson.grammar_new
 
-import android.content.Context
-import android.os.Bundle
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.ViewTreeObserver
-import android.widget.Toast
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.CoreJoshFragment
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
-import com.joshtalks.joshskills.core.playback.PlaybackInfoListener
-import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
-import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
-import com.joshtalks.joshskills.repository.local.entity.LessonQuestionType
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
-import com.joshtalks.joshskills.repository.local.eventbus.AudioPlayerEventBus
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
-import com.joshtalks.joshskills.repository.local.model.assessment.Choice
-import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
-import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
-import com.joshtalks.joshskills.ui.assessment.view.Stub
-import com.joshtalks.joshskills.ui.chat.vh.AtsChoiceView
-import com.joshtalks.joshskills.ui.chat.vh.EnableDisableGrammarButtonCallback
-import com.joshtalks.joshskills.ui.chat.vh.GrammarButtonView
-import com.joshtalks.joshskills.ui.chat.vh.GrammarHeadingView
-import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
-import com.joshtalks.joshskills.ui.lesson.LessonViewModel
-import com.joshtalks.joshskills.util.ExoAudioPlayer
-import com.muddzdev.styleabletoast.StyleableToast
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import java.util.ArrayList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-
-class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedListener,
+class GrammarNewFragment ()/*: CoreJoshFragment(), ViewTreeObserver.OnScrollChangedListener,
     AudioPlayerEventListener {
 
     lateinit var binding: com.joshtalks.joshskills.databinding.FragmentGrammarNewLayoutBinding
@@ -125,16 +82,16 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                             audioPlayerManager?.onPause()
                             return@subscribe
                         }
-                        /*if (currentPlayingAudioObjectUrl != null && ExoAudioPlayer.LAST_ID == it?.id) {
+                        *//*if (currentPlayingAudioObjectUrl != null && ExoAudioPlayer.LAST_ID == it?.id) {
                             audioPlayerManager?.resumeOrPause()
-                        } else {*/
+                        } else {*//*
                         currentPlayingAudioObjectUrl = it.audioUrl
                         audioPlayerManager?.onPause()
                         audioPlayerManager?.play(
                             it.audioUrl,
                             it.id
                         )
-                        /* }*/
+                        *//* }*//*
                     },
                     {
                         it.printStackTrace()
@@ -383,7 +340,7 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     }
 
     private fun updateQuiz(question: AssessmentQuestionWithRelations) {
-        /*binding.quizQuestionTv.text = getString(
+        *//*binding.quizQuestionTv.text = getString(
             R.string.ques_short_form,
             currentQuizQuestion + 1,
             assessmentQuestions.size, question.question.text
@@ -429,7 +386,7 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             binding.submitAnswerBtn.visibility = View.VISIBLE
             binding.showExplanationBtn.visibility = View.GONE
             binding.continueBtn.visibility = View.GONE
-        }*/
+        }*//*
     }
 
     private fun showQuizCompleteLayout() {
@@ -512,3 +469,4 @@ class GrammarNewFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         fun getInstance() = GrammarNewFragment()
     }
 }
+*/

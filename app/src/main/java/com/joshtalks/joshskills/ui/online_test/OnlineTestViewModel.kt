@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.repository.server.assessment.OnlineTestRequest
 import com.joshtalks.joshskills.repository.server.assessment.OnlineTestResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -29,7 +30,8 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiStatus.postValue(ApiCallStatus.START)
-                val response = getOnlineTestServer()
+                val response = AppObjectController.chatNetworkService.getOnlineTestQuestion()
+
                 if (response.isSuccessful) {
                     apiStatus.postValue(ApiCallStatus.SUCCESS)
                     response.body()?.let {
@@ -45,10 +47,6 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-    private suspend fun getOnlineTestServer() =
-        AppObjectController.chatNetworkService.getOnlineTestQuestion()
-
-
     fun postAnswerAndGetNewQuestion(assessmentQuestion: AssessmentQuestionWithRelations) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -61,8 +59,11 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
                     answerText = answerText.append(it.text).append(SINGLE_SPACE)
                     answerOrderList.add(it.sortOrder)
                 }
+                if (assessmentQuestion.question.choiceType == ChoiceType.INPUT_TEXT){
+                    answerText=answerText.clear().append(assessmentQuestion.choiceList.get(0).imageUrl)
+                }
                 val assessmentRequest = OnlineTestRequest(
-                    assessmentQuestion, answerText.toString(),answerOrderList
+                    assessmentQuestion, answerText.toString(), answerOrderList
                 )
                 val response =
                     AppObjectController.chatNetworkService.postAndGetNextOnlineTestQuestion(

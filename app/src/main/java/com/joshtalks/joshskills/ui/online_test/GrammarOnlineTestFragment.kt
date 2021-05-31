@@ -1,32 +1,25 @@
 package com.joshtalks.joshskills.ui.online_test
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
-import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 
-class GrammarOnlineTestFragment : CoreJoshFragment() {
+class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineTestInterface {
     private lateinit var binding: FragmentGrammarOnlineTestBinding
     private var lessonActivityListener: LessonActivityListener? = null
-
-    private var openOnlineTestActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            showGrammarCompleteLayout()
-        }
-    }
+    private var lessonNumber: Int = -1
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -39,9 +32,16 @@ class GrammarOnlineTestFragment : CoreJoshFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
+        arguments?.let {
+            lessonNumber = it.getInt(CURRENT_LESSON_NUMBER, -1)
+        }
         binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_grammar_online_test, container, false)
+            DataBindingUtil.inflate(
+                inflater,
+                R.layout.fragment_grammar_online_test,
+                container,
+                false
+            )
         binding.lifecycleOwner = this
         binding.handler = this
         return binding.root
@@ -49,17 +49,52 @@ class GrammarOnlineTestFragment : CoreJoshFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // TODO if this is completed
-        binding.startTestContainer.visibility = View.VISIBLE
-        binding.testCompletedContainer.visibility = View.GONE
+        when {
+            (PrefManager.getIntValue(ONLINE_TEST_LAST_LESSON_COMPLETED)
+                .plus(1) == lessonNumber) -> {
+                binding.startTestContainer.visibility = View.VISIBLE
+                binding.testCompletedContainer.visibility = View.GONE
+
+            }
+            (PrefManager.getIntValue(ONLINE_TEST_LAST_LESSON_COMPLETED) >= lessonNumber) -> {
+                binding.startTestContainer.visibility = View.GONE
+                binding.testCompletedContainer.visibility = View.VISIBLE
+            }
+            else -> {
+                binding.startTestContainer.visibility = View.VISIBLE
+                binding.testCompletedContainer.visibility = View.GONE
+                binding.startBtn.isEnabled = false
+                binding.startBtn.isClickable = false
+                binding.startBtn.backgroundTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        AppObjectController.joshApplication,
+                        R.color.light_shade_of_gray
+                    )
+                )
+                binding.description.text = getString(
+                    R.string.grammar_lock_text, PrefManager.getIntValue(
+                        ONLINE_TEST_LAST_LESSON_COMPLETED
+                    ).plus(1)
+                )
+            }
+        }
     }
 
     fun startOnlineExamTest() {
-        openOnlineTestActivity.launch(
-            Intent(requireActivity(), OnlineTestActivity::class.java).apply {
-                putExtra(CONVERSATION_ID, requireActivity().intent.getStringExtra(CONVERSATION_ID))
-            }
-        )
+        activity?.supportFragmentManager?.let { fragmentManager ->
+            binding.parentContainer.visibility = View.VISIBLE
+            binding.startTestContainer.visibility = View.GONE
+            binding.testCompletedContainer.visibility = View.GONE
+            fragmentManager
+                .beginTransaction()
+                .replace(
+                    R.id.parent_Container,
+                    OnlineTestFragment.getInstance(lessonNumber),
+                    OnlineTestFragment.TAG
+                )
+                .addToBackStack(TAG)
+                .commitAllowingStateLoss()
+        }
     }
 
     fun showTestCompletedScreen(messageText: String) {
@@ -71,6 +106,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment() {
     }
 
     private fun showGrammarCompleteLayout() {
+        binding.parentContainer.visibility = View.GONE
         binding.startTestContainer.visibility = View.GONE
         binding.testCompletedContainer.visibility = View.VISIBLE
     }
@@ -81,9 +117,20 @@ class GrammarOnlineTestFragment : CoreJoshFragment() {
 
     companion object {
         const val TAG = "GrammarOnlineTestFragment"
+        const val CURRENT_LESSON_NUMBER = "current_lesson_number"
 
         @JvmStatic
-        fun getInstance() = GrammarOnlineTestFragment()
+        fun getInstance(lessonNumber: Int): GrammarOnlineTestFragment {
+            val args = Bundle()
+            args.putInt(CURRENT_LESSON_NUMBER, lessonNumber)
+            val fragment = GrammarOnlineTestFragment()
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+    override fun testCompleted() {
+        showGrammarCompleteLayout()
     }
 
 }

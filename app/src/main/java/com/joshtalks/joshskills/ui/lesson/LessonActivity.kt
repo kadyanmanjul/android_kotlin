@@ -85,7 +85,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
         val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
         isDemo = if (intent.hasExtra(IS_DEMO)) intent.getBooleanExtra(IS_DEMO, false) else false
-        isNewGrammar = if (intent.hasExtra(IS_NEW_GRAMMAR)) intent.getBooleanExtra(IS_NEW_GRAMMAR, false) else false
+        isNewGrammar = if (intent.hasExtra(IS_NEW_GRAMMAR)) intent.getBooleanExtra(
+            IS_NEW_GRAMMAR,
+            false
+        ) else false
         whatsappUrl =
             if (intent.hasExtra(WHATSAPP_URL) && intent.getStringExtra(WHATSAPP_URL).isNullOrBlank()
                     .not()
@@ -135,7 +138,11 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                         val toLocation = IntArray(2)
                         event.customWord.getLocationOnScreen(toLocation)
                         toLocation[1] = toLocation[1] - (event.height) + CustomWord.mPaddingTop
-                        this.transaltionAnimationNew(toLocation, event.customWord,event.optionLayout)
+                        this.transaltionAnimationNew(
+                            toLocation,
+                            event.customWord,
+                            event.optionLayout
+                        )
                     }
                 }
         )
@@ -156,12 +163,14 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             this,
             {
                 binding.progressView.visibility = View.GONE
+                var lessonNumber =-1
                 viewModel.lessonLiveData.value?.let {
                     titleView.text =
                         getString(R.string.lesson_no, it.lessonNo)
+                    lessonNumber=it.lessonNo
                 }
 
-                setUpTabLayout()
+                setUpTabLayout(lessonNumber)
                 setTabCompletionStatus()
             }
         )
@@ -175,20 +184,20 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                         playSnackbarSound(this)
                     }
                 }
-            /*if (it.awardMentorList.isNullOrEmpty().not()) {
-                //TODO add when awards functionality is over
-                //ShowAwardFragment.showDialog(supportFragmentManager,it.awardMentorList!!)
-            }
-            if (it.outranked!!) {
-                it.outrankedData?.let {
-                    showLeaderboardAchievement(
-                        it,
-                        lessonInterval,
-                        chatId,
-                        lessonModel?.lessonNo ?: 0
-                    )
+                /*if (it.awardMentorList.isNullOrEmpty().not()) {
+                    //TODO add when awards functionality is over
+                    //ShowAwardFragment.showDialog(supportFragmentManager,it.awardMentorList!!)
                 }
-            }*/
+                if (it.outranked!!) {
+                    it.outrankedData?.let {
+                        showLeaderboardAchievement(
+                            it,
+                            lessonInterval,
+                            chatId,
+                            lessonModel?.lessonNo ?: 0
+                        )
+                    }
+                }*/
             }
         )
 
@@ -266,12 +275,13 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         }
     }
 
-    private fun setUpTabLayout() {
+    private fun setUpTabLayout(lessonNo: Int) {
 
         val adapter = LessonPagerAdapter(
             supportFragmentManager,
             this.lifecycle,
-            true
+            true,
+            lessonNumber = lessonNo
         )
 
         binding.lessonViewpager.adapter = adapter
@@ -525,7 +535,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             testId: Int? = null,
             conversationId: String? = null,
             isNewGrammar: Boolean = false
-            ) = Intent(context, LessonActivity::class.java).apply {
+        ) = Intent(context, LessonActivity::class.java).apply {
             putExtra(LESSON_ID, lessonId)
             putExtra(IS_DEMO, isDemo)
             putExtra(IS_NEW_GRAMMAR, isNewGrammar)
