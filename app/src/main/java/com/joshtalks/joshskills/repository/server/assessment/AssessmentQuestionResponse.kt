@@ -85,8 +85,8 @@ enum class ChoiceType(val type: String) {
     @SerializedName("ARRANGE_THE_SENTENCE_NEW")
     ARRANGE_THE_SENTENCE_NEW("ARRANGE_THE_SENTENCE_NEW"),
 
-    @SerializedName("SUBJECTIVE_TEXT")
-    SUBJECTIVE_TEXT("SUBJECTIVE_TEXT"),
+    @SerializedName("INPUT_TEXT")
+    INPUT_TEXT("INPUT_TEXT"),
 
 }
 

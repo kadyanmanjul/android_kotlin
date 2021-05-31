@@ -178,10 +178,10 @@ interface ChatNetworkService {
     @GET("$DIR/course/demo_onboarding_data/")
     suspend fun getDemoOnBoardingData(): Response<DemoOnboardingData>
 
-    @GET("$DIR/assessment/test/")
+    @GET("$DIR/assessment/test_v4/")
     suspend fun getOnlineTestQuestion(): Response<OnlineTestResponse>
 
-    @POST("$DIR/assessment/test/")
+    @POST("$DIR/assessment/test_v4/")
     suspend fun postAndGetNextOnlineTestQuestion(@Body onlineTestRequest: OnlineTestRequest): Response<OnlineTestResponse>
 
 }
