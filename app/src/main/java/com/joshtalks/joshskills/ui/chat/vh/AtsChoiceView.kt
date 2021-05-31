@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEvent
 import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
+import com.joshtalks.joshskills.repository.server.assessment.ChoiceColumn
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomLayout
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.joshtalks.joshskills.util.ExoAudioPlayer2
@@ -236,7 +237,7 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
             if (!customLayout.isEmpty()) {
                 val customWord = view as CustomWord
                 if (customWord.parent is CustomLayout) {
-                    //playAudio(customWord.choice.audioUrl)
+                    playAudio(customWord.choice.audioUrl)
                 }
                 customWord.changeViewGroup(customLayout, answerFlowLayout)
                 if (isAnyAnswerSelected()) {
@@ -255,17 +256,19 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
     fun addDummyLineView(numberOfLines: Int) {
         dummyAnswerFlowLayout.removeAllViews()
         for (i in 1..numberOfLines) {
-            val dummyWordView = CustomWord(context)
+            val dummyWordView = CustomWord(context,
+                Choice(0,0,0,"Dummy",null,false,0,0, ChoiceColumn.LEFT,0,false,null)
+            )
             val wordLayoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
             wordLayoutParams.gravity = Gravity.CENTER
             wordLayoutParams.setMargins(
-                Utils.dpToPx(5),
-                Utils.dpToPx(13),
-                Utils.dpToPx(5),
-                Utils.dpToPx(13)
+                CustomWord.mPadding4F,
+                CustomWord.mPadding4F,
+                CustomWord.mPadding4F,
+                CustomWord.mPadding4F
             )
             dummyWordView.layoutParams = wordLayoutParams
             dummyWordView.visibility = INVISIBLE
@@ -277,9 +280,9 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
             )
             layoutParams.setMargins(
                 0,
-                Utils.dpToPx(14),
                 0,
-                Utils.dpToPx(0)
+                0,
+                0
             )
             line.setLayoutParams(layoutParams)
             line.background = ContextCompat.getDrawable(context, R.color.light_shade_of_gray)

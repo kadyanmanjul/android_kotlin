@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/grammar_button_color_blue" />
+            <solid android:color="@color/light_shade_of_gray" />
             <corners
                 android:bottomLeftRadius="@dimen/_8sdp"
                 android:bottomRightRadius="@dimen/_8sdp"
@@ -10,12 +10,12 @@
                 android:topRightRadius="@dimen/_8sdp" />
         </shape>
     </item>
-    <item android:bottom="2dp">
+    <item android:bottom="@dimen/_2sdp">
         <shape android:shape="rectangle">
-            <solid android:color="@color/grammar_button_color_light_blue" />
+            <solid android:color="@color/white" />
             <stroke
                 android:width="@dimen/_1sdp"
-                android:color="@color/grammar_button_color_blue" />
+                android:color="@color/light_shade_of_gray" />
             <padding
                 android:bottom="@dimen/_6sdp"
                 android:left="@dimen/_12sdp"
