@@ -132,8 +132,9 @@ class ExoAudioPlayer2 {
         seekDuration: Long = 0,
         isPlaybackSpeed: Boolean = false,
         delayProgress: Long = 50,
+        playbackSpeed :Float = 1F
     ) {
-        var param = PlaybackParameters(1F)
+        var param = PlaybackParameters(playbackSpeed)
         if (isPlaybackSpeed) {
             param = PlaybackParameters(0.50F, 1F)//pitch sexy hai
         }

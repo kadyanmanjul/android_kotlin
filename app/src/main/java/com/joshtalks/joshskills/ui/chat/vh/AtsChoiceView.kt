@@ -14,6 +14,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.OnLifecycleEvent
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.repository.local.entity.AudioType
@@ -180,17 +181,16 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
     }
 
     fun playAudio(audioUrl: String?) {
-        if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) ?: 0 <= 0) {
-            StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
-                .text(AppObjectController.joshApplication.getString(R.string.volume_up_message))
-                .cornerRadius(16)
-                .length(Toast.LENGTH_LONG)
-                .solidBackground().show()
-        }
 
         val audioUrl2 = audioUrl?.replace(" ".toRegex(), "%20")
-
         audioUrl2?.let { url ->
+            if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) ?: 0 <= 0) {
+                StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
+                    .text(AppObjectController.joshApplication.getString(R.string.volume_up_message))
+                    .cornerRadius(16)
+                    .length(Toast.LENGTH_LONG)
+                    .solidBackground().show()
+            }
             if (isAudioPlaying()) {
                 audioManager?.onPause()
             }
@@ -215,7 +215,11 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
         audioObject: AudioType
     ) {
         audioManager?.playerListener = this
-        audioManager?.play(audioObject.audio_url)
+        audioManager?.play(
+            audioObject.audio_url,
+            playbackSpeed = AppObjectController.getFirebaseRemoteConfig()
+                .getDouble(FirebaseRemoteConfigKey.GRAMMAR_CHOICE_PLAYBACK_SPEED).toFloat()
+        )
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
@@ -236,9 +240,7 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
         override fun onClick(view: View?) {
             if (!customLayout.isEmpty()) {
                 val customWord = view as CustomWord
-                if (customWord.parent is CustomLayout) {
-                    playAudio(customWord.choice.audioUrl)
-                }
+                playAudio(customWord.choice.audioUrl)
                 customWord.changeViewGroup(customLayout, answerFlowLayout)
                 if (isAnyAnswerSelected()) {
                     callback?.enableGrammarButton()
