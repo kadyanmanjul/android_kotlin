@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.databinding.FragmentVocabularyBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
@@ -142,6 +143,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         binding.practiceRv.adapter = adapter
         binding.practiceRv.setHasFixedSize(true)
         binding.practiceRv.setItemViewCacheSize(5)
+        binding.practiceRv.enforceSingleScrollDirection()
     }
 
     override fun submitQuiz(

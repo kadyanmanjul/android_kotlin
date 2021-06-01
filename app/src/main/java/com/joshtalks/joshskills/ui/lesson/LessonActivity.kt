@@ -20,6 +20,8 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.* // ktlint-disable no-wildcard-imports
+import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
+import com.joshtalks.joshskills.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
@@ -231,6 +233,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
         binding.lessonViewpager.adapter = adapter
         binding.lessonViewpager.requestTransparentRegion(binding.lessonViewpager)
+        binding.lessonViewpager.recyclerView.enforceSingleScrollDirection()
 
         tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
         for (i in 0 until tabs.childCount) {
