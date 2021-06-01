@@ -14,6 +14,8 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
+import com.joshtalks.joshskills.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.databinding.ActivityLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenPreviousLeaderboard
@@ -205,21 +207,22 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
                 }
             }
             if (map.get(list)?.intervalTabText.isNullOrBlank()) {
-                if (position == 4){
+                if (position == 4) {
                     tab.text = getString(R.string.my_batch)
                 } else {
                     tab.text =
                         map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
                 }
             } else {
-                if (position==4){
+                if (position == 4) {
                     tab.text = getString(R.string.my_batch).plus('\n')
                         .plus(map.get(list)?.intervalTabText)
-                } else{
-                tab.text =
-                    map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
-                        .plus('\n')
-                        .plus(map.get(list)?.intervalTabText)}
+                } else {
+                    tab.text =
+                        map.get(list)?.intervalType?.toLowerCase(Locale.getDefault())?.capitalize()
+                            .plus('\n')
+                            .plus(map.get(list)?.intervalTabText)
+                }
 
             }
         }.attach()
@@ -229,8 +232,9 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
         binding.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         binding.viewPager.isUserInputEnabled = true
         binding.viewPager.adapter =
-            LeaderBoardViewPagerAdapter(getCourseId(),this)
+            LeaderBoardViewPagerAdapter(getCourseId(), this)
         binding.viewPager.offscreenPageLimit = 4
+        binding.viewPager.recyclerView.enforceSingleScrollDirection()
     }
 
     override fun onResume() {
