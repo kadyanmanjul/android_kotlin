@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.ui.chat.vh.EnableDisableGrammarButtonCallback
 import com.joshtalks.joshskills.ui.chat.vh.GrammarButtonView
 import com.joshtalks.joshskills.ui.chat.vh.GrammarHeadingView
 import com.joshtalks.joshskills.ui.chat.vh.SubjectiveChoiceView
+import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.grammar_new.McqChoiceView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,11 +48,15 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private var isFirstTime: Boolean = true
     private var isTestCompleted: Boolean = false
     private var testCallback: OnlineTestInterface? = null
+    private var lessonActivityListener: LessonActivityListener? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnlineTestInterface)
             testCallback = context
+
+        if (context is LessonActivityListener)
+            lessonActivityListener = context
     }
 
     override fun onCreateView(
@@ -278,6 +283,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     }
 
     private fun moveToNextGrammarQuestion() {
+        lessonActivityListener?.onLessonUpdate()
         setupViews(assessmentQuestions!!)
     }
 

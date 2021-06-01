@@ -59,6 +59,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
             (PrefManager.getIntValue(ONLINE_TEST_LAST_LESSON_COMPLETED) >= lessonNumber) -> {
                 binding.startTestContainer.visibility = View.GONE
                 binding.testCompletedContainer.visibility = View.VISIBLE
+                completeGrammarCardLogic()
             }
             else -> {
                 binding.startTestContainer.visibility = View.VISIBLE
@@ -80,6 +81,14 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         }
     }
 
+    private fun completeGrammarCardLogic() {
+        /*lessonActivityListener?.onQuestionStatusUpdate(
+            QUESTION_STATUS.AT,
+            questionId
+        )*/
+        lessonActivityListener?.onSectionStatusUpdate(0, true)
+    }
+
     fun startOnlineExamTest() {
         activity?.supportFragmentManager?.let { fragmentManager ->
             binding.parentContainer.visibility = View.VISIBLE
@@ -94,14 +103,6 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 )
                 .addToBackStack(TAG)
                 .commitAllowingStateLoss()
-        }
-    }
-
-    fun showTestCompletedScreen(messageText: String) {
-        binding.startTestContainer.visibility = View.GONE
-        binding.testCompletedContainer.visibility = View.VISIBLE
-        if (messageText.isNullOrBlank().not()) {
-            binding.title2.text = messageText
         }
     }
 
