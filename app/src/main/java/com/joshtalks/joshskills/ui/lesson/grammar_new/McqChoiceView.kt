@@ -10,13 +10,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.OnLifecycleEvent
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.ui.chat.vh.EnableDisableGrammarButtonCallback
-import com.joshtalks.joshskills.util.ExoAudioPlayer
+import com.joshtalks.joshskills.util.ExoAudioPlayer2
 import com.muddzdev.styleabletoast.StyleableToast
 import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
@@ -29,7 +30,7 @@ class McqChoiceView : RadioGroup, AudioPlayerEventListener {
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
     lateinit var mcqOptionsRadioGroup: RadioGroup
     private var callback: EnableDisableGrammarButtonCallback? = null
-    var audioManager: ExoAudioPlayer? = null
+    var audioManager: ExoAudioPlayer2? = null
 
     constructor(context: Context) : super(context) {
         init()
@@ -43,7 +44,7 @@ class McqChoiceView : RadioGroup, AudioPlayerEventListener {
     private fun init() {
         View.inflate(context, R.layout.mcq_option_group, this)
         mcqOptionsRadioGroup = findViewById(R.id.mcq_options_radio_group)
-        audioManager = ExoAudioPlayer.getInstance()
+        audioManager = ExoAudioPlayer2.getInstance()
     }
 
     fun setup(assessmentQuestion: AssessmentQuestionWithRelations) {
@@ -110,15 +111,15 @@ class McqChoiceView : RadioGroup, AudioPlayerEventListener {
     }
 
     fun playAudio(audioUrl: String?) {
-        if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) ?: 0 <= 0) {
-            StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
-                .text(AppObjectController.joshApplication.getString(R.string.volume_up_message))
-                .cornerRadius(16)
-                .length(Toast.LENGTH_LONG)
-                .solidBackground().show()
-        }
 
         audioUrl?.let { url ->
+            if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) ?: 0 <= 0) {
+                StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
+                    .text(AppObjectController.joshApplication.getString(R.string.volume_up_message))
+                    .cornerRadius(16)
+                    .length(Toast.LENGTH_LONG)
+                    .solidBackground().show()
+            }
             if (isAudioPlaying()) {
                 audioManager?.onPause()
             }
@@ -143,7 +144,11 @@ class McqChoiceView : RadioGroup, AudioPlayerEventListener {
         audioObject: AudioType
     ) {
         audioManager?.playerListener = this
-        audioManager?.play(audioObject.audio_url)
+        audioManager?.play(
+            audioObject.audio_url,
+            playbackSpeed = AppObjectController.getFirebaseRemoteConfig()
+                .getDouble(FirebaseRemoteConfigKey.GRAMMAR_CHOICE_PLAYBACK_SPEED).toFloat()
+        )
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)

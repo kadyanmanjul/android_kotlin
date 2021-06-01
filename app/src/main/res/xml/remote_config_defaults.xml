@@ -662,5 +662,9 @@
         </value>
     </entry>
 
+    <entry>
+        <key>GRAMMAR_CHOICE_PLAYBACK_SPEED</key>
+        <value>1.5F</value>
+    </entry>
 
 </defaultsMap>
