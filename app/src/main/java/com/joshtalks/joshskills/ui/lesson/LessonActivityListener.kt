@@ -14,4 +14,6 @@ interface LessonActivityListener {
     )
 
     fun onSectionStatusUpdate(tabPosition: Int, isSectionCompleted: Boolean)
+
+    fun onLessonUpdate()
 }

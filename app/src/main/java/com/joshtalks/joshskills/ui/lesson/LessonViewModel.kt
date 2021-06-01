@@ -607,7 +607,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private suspend fun updateLessonStatus() {
+    suspend fun updateLessonStatus() {
         viewModelScope.launch(Dispatchers.IO) {
             lessonLiveData.postValue(
                 lessonLiveData.value?.apply {

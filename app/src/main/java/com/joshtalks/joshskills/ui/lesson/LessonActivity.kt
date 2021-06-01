@@ -165,11 +165,11 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             this,
             {
                 binding.progressView.visibility = View.GONE
-                var lessonNumber =-1
+                var lessonNumber = -1
                 viewModel.lessonLiveData.value?.let {
                     titleView.text =
                         getString(R.string.lesson_no, it.lessonNo)
-                    lessonNumber=it.lessonNo
+                    lessonNumber = it.lessonNo
                 }
 
                 setUpTabLayout(lessonNumber)
@@ -256,6 +256,16 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         }
         AppObjectController.uiHandler.post {
             setTabCompletionStatus()
+        }
+    }
+
+    override fun onLessonUpdate() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                viewModel.updateLessonStatus()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
         }
     }
 
