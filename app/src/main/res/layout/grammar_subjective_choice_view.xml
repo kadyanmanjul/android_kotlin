@@ -22,7 +22,7 @@
             android:backgroundTint="@android:color/transparent"
             android:cursorVisible="true"
             android:gravity="top"
-            android:hint="अंग्रेजी में जवाब लिखे"
+            android:hint="@string/grammar_input_question_hint"
             android:textSize="@dimen/_14ssp"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
