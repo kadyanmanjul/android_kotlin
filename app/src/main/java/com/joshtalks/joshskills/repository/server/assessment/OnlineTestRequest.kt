@@ -18,6 +18,9 @@ data class OnlineTestRequest(
     @SerializedName("answer")
     var answer: String,
 
+    @SerializedName("rule_assessment_question_id")
+    var ruleAssessmentQuestionId: String?=null,
+
     @SerializedName("answer_order")
     var answerOrder: List<Int>
 
@@ -27,11 +30,13 @@ data class OnlineTestRequest(
     constructor(
         question : AssessmentQuestionWithRelations,
         answer: String,
-        answerOrder: List<Int>
+        answerOrder: List<Int>,
+        ruleAssessmentQuestionId: String?
     ) : this(
         questionId = question.question.remoteId,
         status = question.question.status,
         answer = answer,
-        answerOrder = answerOrder
+        answerOrder = answerOrder,
+        ruleAssessmentQuestionId = ruleAssessmentQuestionId
     )
 }

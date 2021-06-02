@@ -47,7 +47,10 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-    fun postAnswerAndGetNewQuestion(assessmentQuestion: AssessmentQuestionWithRelations) {
+    fun postAnswerAndGetNewQuestion(
+        assessmentQuestion: AssessmentQuestionWithRelations,
+        ruleAssessmentQuestionId: String?
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiStatus.postValue(ApiCallStatus.START)
@@ -63,7 +66,7 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
                     answerText=answerText.clear().append(assessmentQuestion.choiceList.get(0).imageUrl)
                 }
                 val assessmentRequest = OnlineTestRequest(
-                    assessmentQuestion, answerText.toString(), answerOrderList
+                    assessmentQuestion, answerText.toString(), answerOrderList,ruleAssessmentQuestionId
                 )
                 val response =
                     AppObjectController.chatNetworkService.postAndGetNextOnlineTestQuestion(
