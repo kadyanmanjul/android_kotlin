@@ -17,10 +17,14 @@ import androidx.core.view.ViewCompat
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.extension.slideUpAnimation
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.VideoShowEvent
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionFeedback
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.repository.server.course_detail.VideoModel
 
 class GrammarButtonView : FrameLayout {
 
@@ -33,12 +37,14 @@ class GrammarButtonView : FrameLayout {
     private lateinit var wrongAnswerTitle: AppCompatTextView
     private lateinit var wrongAnswerDesc: AppCompatTextView
     private lateinit var flagIv: AppCompatImageView
+    private lateinit var videoIv: AppCompatImageView
     private lateinit var grammarBtn: MaterialTextView
     private lateinit var wrongAnswerGroup: Group
     private lateinit var rightAnswerGroup: Group
     private var callback: CheckQuestionCallback? = null
     private var isAnswerChecked: Boolean = false
     private var questionFeedback: AssessmentQuestionFeedback? = null
+    private var reviseVideoObject: VideoModel? = null
     private var currentState: GrammarButtonState = GrammarButtonState.DISABLED
 
     @SuppressLint("ClickableViewAccessibility")
@@ -135,6 +141,7 @@ class GrammarButtonView : FrameLayout {
         wrongAnswerGroup = findViewById(R.id.wrong_answer_group)
         rightAnswerGroup = findViewById(R.id.right_answer_group)
         flagIv = findViewById(R.id.flag_iv)
+        videoIv = findViewById(R.id.video_iv)
         grammarBtn = findViewById(R.id.grammar_btn)
         setGrammarButtonListners()
     }
@@ -163,6 +170,23 @@ class GrammarButtonView : FrameLayout {
             }
         }
         grammarBtn.setOnTouchListener(onTouchListener3)
+        videoIv.setOnClickListener {
+            if (reviseVideoObject?.video_url.isNullOrBlank().not()){
+                openVideoObject()
+            }
+        }
+    }
+
+    private fun openVideoObject() {
+        if (reviseVideoObject?.video_url.isNullOrBlank().not()) {
+            RxBus2.publish(
+                VideoShowEvent(
+                    EMPTY,
+                    reviseVideoObject?.id,
+                    reviseVideoObject?.video_url
+                )
+            )
+        }
     }
 
     private fun checkForCorrectIncorrectLogic(): Boolean {
@@ -170,8 +194,9 @@ class GrammarButtonView : FrameLayout {
         return false
     }
 
-    fun setup(assessmentQuestion: AssessmentQuestionWithRelations) {
+    fun setup(assessmentQuestion: AssessmentQuestionWithRelations, reviseVideoObject: VideoModel?) {
         this.questionFeedback = assessmentQuestion.questionFeedback
+        this.reviseVideoObject = reviseVideoObject
 
         this.questionFeedback?.run {
 
@@ -228,6 +253,7 @@ class GrammarButtonView : FrameLayout {
         currentState = GrammarButtonState.DISABLED
         updateGrammarButtonDrawable(grammarBtn, R.drawable.gray_btn_pressed_state)
         flagIv.visibility = GONE
+        videoIv.visibility = GONE
         //flagIv.setBackgroundColor(ContextCompat.getColor(context, R.color.grammar_green_color))
         updateBgColor(rootView, R.color.white)
         isAnswerChecked = false
@@ -266,6 +292,12 @@ class GrammarButtonView : FrameLayout {
         updateBgColor(rootView, R.color.grammar_right_answer_bg)
         updateGrammarButtonDrawable(grammarBtn, R.drawable.green_btn_grammar_selector)
         updateImageTint(flagIv, R.color.grammar_green_color)
+        if (reviseVideoObject?.video_url.isNullOrBlank()){
+            videoIv.visibility = GONE
+        }else {
+            videoIv.visibility = VISIBLE
+            updateImageTint(videoIv, R.color.grammar_green_color)
+        }
         textContainer.slideUpAnimation(context)
 
     }
@@ -317,6 +349,12 @@ class GrammarButtonView : FrameLayout {
         currentState = GrammarButtonState.WRONG
         updateGrammarButtonDrawable(grammarBtn, R.drawable.red_btn_grammar_selector)
         updateImageTint(flagIv, R.color.grammar_red_color_dark)
+        if (reviseVideoObject?.video_url.isNullOrBlank()){
+            videoIv.visibility = GONE
+        }else {
+            videoIv.visibility = VISIBLE
+            updateImageTint(videoIv, R.color.grammar_red_color_dark)
+        }
         textContainer.slideUpAnimation(context)
 
     }

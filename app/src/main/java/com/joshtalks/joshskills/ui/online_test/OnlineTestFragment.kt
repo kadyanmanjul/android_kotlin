@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
@@ -13,12 +14,16 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.custom_ui.JoshGrammarVideoPlayer
 import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.core.playWrongAnswerSound
 import com.joshtalks.joshskills.databinding.FragmentOnlineTestBinding
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.VideoShowEvent
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
+import com.joshtalks.joshskills.repository.server.course_detail.VideoModel
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.chat.vh.AtsChoiceView
 import com.joshtalks.joshskills.ui.chat.vh.EnableDisableGrammarButtonCallback
@@ -27,6 +32,10 @@ import com.joshtalks.joshskills.ui.chat.vh.GrammarHeadingView
 import com.joshtalks.joshskills.ui.chat.vh.SubjectiveChoiceView
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.grammar_new.McqChoiceView
+import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,6 +48,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         ViewModelProvider(requireActivity()).get(OnlineTestViewModel::class.java)
     }
     private var assessmentQuestions: AssessmentQuestionWithRelations? = null
+    private var ruleAssessmentQuestionId: String? = null
     private var lessonNumber: Int = -1
     private var headingView: Stub<GrammarHeadingView>? = null
     private var mcqChoiceView: Stub<McqChoiceView>? = null
@@ -49,6 +59,8 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private var isTestCompleted: Boolean = false
     private var testCallback: OnlineTestInterface? = null
     private var lessonActivityListener: LessonActivityListener? = null
+    var reviseVideoObject: VideoModel? = null
+    private var compositeDisposable = CompositeDisposable()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -98,6 +110,8 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private fun setObservers() {
 
         viewModel.grammarAssessmentLiveData.observe(viewLifecycleOwner) { onlineTestResponse ->
+            this.ruleAssessmentQuestionId=onlineTestResponse.ruleAssessmentQuestionId
+            this.reviseVideoObject=onlineTestResponse.videoObject
             if (onlineTestResponse.completed && onlineTestResponse.question == null) {
                 PrefManager.put(ONLINE_TEST_LAST_LESSON_COMPLETED, lessonNumber)
                 isTestCompleted = onlineTestResponse.completed
@@ -225,7 +239,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         }
 
         buttonView?.resolved().let {
-            buttonView!!.get().setup(assessmentQuestions)
+            buttonView!!.get().setup(assessmentQuestions,reviseVideoObject)
             buttonView!!.get().addCallback(object : GrammarButtonView.CheckQuestionCallback {
                 override fun checkQuestionCallBack(): Boolean? {
                     return when (assessmentQuestions.question.choiceType) {
@@ -279,7 +293,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         } else {
             playWrongAnswerSound(requireActivity())
         }
-        viewModel.postAnswerAndGetNewQuestion(assessmentQuestions)
+        viewModel.postAnswerAndGetNewQuestion(assessmentQuestions,ruleAssessmentQuestionId)
     }
 
     private fun moveToNextGrammarQuestion() {
@@ -287,8 +301,61 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         setupViews(assessmentQuestions!!)
     }
 
+    override fun onPause() {
+        super.onPause()
+        if (binding.videoContainer.isVisible){
+            binding.videoPlayer.onPause()
+        }
+        compositeDisposable.clear()
+    }
+
     override fun onResume() {
         super.onResume()
+        Runtime.getRuntime().gc()
+        addObserver()
+    }
+
+    private fun addObserver() {
+        compositeDisposable.add(
+            RxBus2.listen(VideoShowEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    binding.videoContainer.visibility=View.VISIBLE
+                    binding.videoPlayer.apply {
+                        visibility=View.VISIBLE
+                        setUrl(it.videoUrl)
+                        setVideoId(it.videoId)
+                        fitToScreen()
+                        downloadStreamPlay()
+                        setPlayListener(object :JoshGrammarVideoPlayer.PlayerFullScreenListener{
+
+                            override fun onFullScreen() {
+                                val currentVideoProgressPosition = binding.videoPlayer.getProgress()
+                                startActivity(
+                                    VideoPlayerActivity.getActivityIntent(
+                                        requireContext(),
+                                        "",
+                                        it.videoId,
+                                        it.videoUrl,
+                                        currentVideoProgressPosition,
+                                        conversationId = getConversationId()
+                                    )
+                                )
+                                visibility=View.GONE
+                            }
+
+                            override fun onClose() {
+                                onPause()
+                                visibility=View.GONE
+                            }
+                        })
+                    }
+
+                }, {
+                    it.printStackTrace()
+                })
+        )
     }
 
     override fun onScrollChanged() {
