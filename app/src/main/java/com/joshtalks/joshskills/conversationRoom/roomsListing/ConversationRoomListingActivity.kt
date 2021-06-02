@@ -13,7 +13,7 @@ import com.joshtalks.joshskills.core.BaseActivity
 class ConversationRoomListingActivity : BaseActivity() {
 
     private val db = FirebaseFirestore.getInstance()
-    private val notebookRef = db.collection("conversation_rooms")
+    private val notebookRef = db.collection("Clubhouse")
     private var adapter: ConversationRoomsListingAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,13 +34,13 @@ class ConversationRoomListingActivity : BaseActivity() {
 
 
     private fun setUpRecyclerView() {
-        val query: Query = notebookRef.orderBy("topic_name", Query.Direction.DESCENDING)
+        val query: Query = notebookRef.orderBy("id", Query.Direction.DESCENDING)
         val options: FirestoreRecyclerOptions<ConversationRoomsListingItem> =
             FirestoreRecyclerOptions.Builder<ConversationRoomsListingItem>()
                 .setQuery(query, ConversationRoomsListingItem::class.java)
                 .build()
         adapter = ConversationRoomsListingAdapter(options)
-        val recyclerView: RecyclerView = findViewById(R.id.rooms_list)
+        val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter

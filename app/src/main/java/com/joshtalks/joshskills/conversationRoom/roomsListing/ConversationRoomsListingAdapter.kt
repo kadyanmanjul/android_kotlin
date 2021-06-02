@@ -15,7 +15,7 @@ class ConversationRoomsListingAdapter(rooms: FirestoreRecyclerOptions<Conversati
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConversationRoomViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(
-            R.layout.li_conversion_rooms_ilisting_tem, parent, false
+            R.layout.li_conversion_rooms_ilisting_item, parent, false
         )
         return ConversationRoomViewHolder(view)
     }
@@ -28,7 +28,8 @@ class ConversationRoomsListingAdapter(rooms: FirestoreRecyclerOptions<Conversati
         holder.roomTopic.text = model.topicName
     }
 
-    class ConversationRoomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ConversationRoomViewHolder(itemView: View
+    ) : RecyclerView.ViewHolder(itemView) {
         var roomTopic: TextView = itemView.findViewById(R.id.conversation_topic_name)
     }
 

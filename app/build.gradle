@@ -22,6 +22,7 @@ android {
         targetSdkVersion 29
         versionCode majorVersion * 10000 + minorVersion * 100 + patchVersion
         versionName "${majorVersion}.${minorVersion}.${patchVersion}"
+        ndkVersion "21.4.7075520"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CLIENT_TOKEN", "\"Ctt75ss5IxyHgBJb48diBbHUXIQ1VANCYRykjdcj\""
@@ -231,14 +232,14 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3-native-mt'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3-native-mt'
     implementation 'com.firebaseui:firebase-ui-firestore:7.1.1'
-
+    implementation 'io.card:android-sdk:5.5.1'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.core:core-ktx:1.3.2'
     implementation "androidx.collection:collection-ktx:1.1.0"
     implementation "androidx.fragment:fragment-ktx:1.3.1"
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.browser:browser:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
@@ -253,6 +254,7 @@ dependencies {
     implementation 'androidx.work:work-rxjava2:2.5.0'
     implementation 'androidx.work:work-runtime:2.5.0'
     implementation "androidx.concurrent:concurrent-futures-ktx:1.1.0"
+    implementation 'com.google.firebase:firebase-firestore:23.0.0'
 
     def room_version = "2.2.6"
 
@@ -408,5 +410,14 @@ dependencies {
     //ScrollingPagerIndicator
     implementation "ru.tinkoff.scrollingpagerindicator:scrollingpagerindicator:1.2.1"
     implementation "com.github.skydoves:balloon:1.3.3"
+
+    dependencies {
+        // Import the BoM for the Firebase platform
+        implementation platform('com.google.firebase:firebase-bom:28.0.1')
+
+        // Declare the dependency for the Cloud Firestore library
+        // When using the BoM, you don't specify versions in Firebase library dependencies
+        implementation 'com.google.firebase:firebase-firestore-ktx'
+    }
 
 }
