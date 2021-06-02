@@ -109,5 +109,34 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0" />
+
+        <FrameLayout
+            android:id="@+id/video_Container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0" >
+
+            <com.joshtalks.joshskills.core.custom_ui.JoshGrammarVideoPlayer
+                android:id="@+id/video_player"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_160sdp"
+                android:layout_gravity="center"
+                android:background="#000"
+                android:focusable="true"
+                android:minHeight="@dimen/_160sdp"
+                android:paddingHorizontal="@dimen/_1sdp"
+                android:layout_marginHorizontal="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_60sdp"
+                app:controller_layout_id="@layout/layout_live_grammar_player_controller"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/practice_title_tv"
+                tools:visibility="visible" />
+        </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
