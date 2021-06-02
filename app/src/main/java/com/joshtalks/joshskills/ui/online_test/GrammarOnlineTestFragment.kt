@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
@@ -51,12 +52,15 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         super.onViewCreated(view, savedInstanceState)
         when {
             (PrefManager.getIntValue(ONLINE_TEST_LAST_LESSON_COMPLETED)
-                .plus(1) == lessonNumber) -> {
+                .plus(2) == lessonNumber) -> {
                 binding.startTestContainer.visibility = View.VISIBLE
                 binding.testCompletedContainer.visibility = View.GONE
-
+                if (PrefManager.getIntValue(ONLINE_TEST_LAST_LESSON_ATTEMPTED) == lessonNumber) {
+                    binding.description.text = getString(R.string.grammar_continue_test_text)
+                    binding.startBtn.text = getString(R.string.grammar_btn_text_continue)
+                }
             }
-            (PrefManager.getIntValue(ONLINE_TEST_LAST_LESSON_COMPLETED) >= lessonNumber) -> {
+            (PrefManager.getIntValue(ONLINE_TEST_LAST_LESSON_COMPLETED).plus(1) >= lessonNumber) -> {
                 binding.startTestContainer.visibility = View.GONE
                 binding.testCompletedContainer.visibility = View.VISIBLE
                 completeGrammarCardLogic()
@@ -75,7 +79,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 binding.description.text = getString(
                     R.string.grammar_lock_text, PrefManager.getIntValue(
                         ONLINE_TEST_LAST_LESSON_COMPLETED
-                    ).plus(1)
+                    ).plus(2)
                 )
             }
         }

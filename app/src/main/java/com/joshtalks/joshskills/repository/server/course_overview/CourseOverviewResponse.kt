@@ -103,7 +103,7 @@ data class CourseOverviewItem(
     @SerializedName("speaking_percentage")
     @Expose
     var speakingPercentage: String?,
-    @SerializedName("is_new_grammar")
+    @SerializedName("show_new_grammar_screen")
     @Expose
     var isNewGrammar: Boolean?=false
 )
