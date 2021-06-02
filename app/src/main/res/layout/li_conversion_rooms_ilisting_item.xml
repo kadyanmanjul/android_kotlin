@@ -4,24 +4,59 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="10dp"
     android:layout_marginStart="12dp"
     android:layout_marginTop="12dp"
-    android:layout_marginEnd="12dp">
+    android:layout_marginEnd="12dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="6dp"
+    app:cardMaxElevation="6dp"
+    app:cardPreventCornerOverlap="true"
+    app:cardUseCompatPadding="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#FFFFE9">
+        android:layout_height="match_parent"
+        android:paddingTop="10dp"
+        android:paddingBottom="20dp">
 
         <TextView
             android:id="@+id/conversation_topic_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/av_orange"
-            android:textSize="22sp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/black"
+            android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Hello Josh Talks" />
+
+        <ImageView
+            android:id="@+id/photos"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            app:layout_constraintStart_toStartOf="@id/conversation_topic_name"
+            app:layout_constraintTop_toBottomOf="@id/conversation_topic_name" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/speakers_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            app:layout_constraintStart_toEndOf="@id/photos"
+            app:layout_constraintTop_toBottomOf="@id/conversation_topic_name" />
+
+        <TextView
+            android:id="@+id/users_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="@id/speakers_list"
+            app:layout_constraintTop_toBottomOf="@id/speakers_list"
+            tools:text="67 / 18" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

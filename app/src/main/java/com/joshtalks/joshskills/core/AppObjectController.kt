@@ -32,6 +32,7 @@ import com.google.gson.JsonParseException
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.conversationRoom.network.ConversationRoomsNetworkService
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -152,6 +153,10 @@ class AppObjectController {
 
         @JvmStatic
         lateinit var mediaDUNetworkService: MediaDUNetworkService
+            private set
+
+        @JvmStatic
+        lateinit var conversationRoomsNetworkService: ConversationRoomsNetworkService
             private set
 
 
@@ -308,6 +313,7 @@ class AppObjectController {
                 signUpNetworkService = retrofit.create(SignUpNetworkService::class.java)
                 chatNetworkService = retrofit.create(ChatNetworkService::class.java)
                 commonNetworkService = retrofit.create(CommonNetworkService::class.java)
+                conversationRoomsNetworkService = retrofit.create(ConversationRoomsNetworkService::class.java)
 
                 val p2pRetrofitBuilder = Retrofit.Builder()
                     .baseUrl(BuildConfig.BASE_URL)
