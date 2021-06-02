@@ -159,7 +159,7 @@ android {
             versionName "${majorVersion}.${minorVersion}.${patchVersion}.Local"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
-            buildConfigField "String", "BASE_URL", "\"https://3e94ac4e12e2.ngrok.io/\""
+            buildConfigField "String", "BASE_URL", "\"https://058d3bbf86e1.ngrok.io/\""
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-local${majorVersion}.${minorVersion}.${patchVersion}.apk"

@@ -71,7 +71,7 @@ class McqOptionView(context: Context) : AppCompatRadioButton(context) {
         gravity = Gravity.CENTER
         textAlignment = TEXT_ALIGNMENT_CENTER
         buttonDrawable = null
-        textSize = 20f
+        textSize = 18f
         setOnTouchListener { v, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {

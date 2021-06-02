@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.custom_ui.JoshGrammarVideoPlayer
@@ -294,6 +295,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             playWrongAnswerSound(requireActivity())
         }
         viewModel.postAnswerAndGetNewQuestion(assessmentQuestions,ruleAssessmentQuestionId)
+        PrefManager.put(ONLINE_TEST_LAST_LESSON_ATTEMPTED, lessonNumber)
     }
 
     private fun moveToNextGrammarQuestion() {

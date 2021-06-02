@@ -164,13 +164,15 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             {
                 binding.progressView.visibility = View.GONE
                 var lessonNumber = -1
+                var lessonIsNewGrammar = false
                 viewModel.lessonLiveData.value?.let {
                     titleView.text =
                         getString(R.string.lesson_no, it.lessonNo)
                     lessonNumber = it.lessonNo
+                    lessonIsNewGrammar = it.isNewGrammar
                 }
 
-                setUpTabLayout(lessonNumber)
+                setUpTabLayout(lessonNumber,lessonIsNewGrammar)
                 setTabCompletionStatus()
             }
         )
@@ -285,12 +287,12 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         }
     }
 
-    private fun setUpTabLayout(lessonNo: Int) {
+    private fun setUpTabLayout(lessonNo: Int, lessonIsNewGrammar: Boolean) {
 
         val adapter = LessonPagerAdapter(
             supportFragmentManager,
             this.lifecycle,
-            true,
+            isNewGrammar = lessonIsNewGrammar,
             lessonNumber = lessonNo
         )
 

@@ -67,8 +67,8 @@ data class LessonModel(
     @SerializedName("modified")
     var modified: Long = 0L,
 
-    @ColumnInfo(name = "is_new_grammar")
-    @SerializedName("is_new_grammar")
+    @ColumnInfo(name = "show_new_grammar_screen")
+    @SerializedName("show_new_grammar_screen")
     var isNewGrammar: Boolean = false,
 
     ) : Parcelable
