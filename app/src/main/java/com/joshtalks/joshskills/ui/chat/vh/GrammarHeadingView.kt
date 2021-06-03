@@ -188,6 +188,7 @@ class GrammarHeadingView : FrameLayout, LifecycleObserver, AudioPlayerEventListe
                 singleAudioIv.visibility = View.GONE
             } else {
                 singleAudioIv.visibility = View.VISIBLE
+                playAudio(this.regularAudio)
             }
 
         } else {
