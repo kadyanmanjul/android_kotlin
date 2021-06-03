@@ -137,6 +137,12 @@ object PrefManager {
 
     }
 
+    fun getIntValue(key: String, isConsistent: Boolean = false,defValue: Int): Int {
+        return if (isConsistent) prefManagerConsistent.getInt(key, defValue)
+        else prefManagerCommon.getInt(key, defValue)
+
+    }
+
     fun getLongValue(key: String, isConsistent: Boolean = false): Long {
         return if (isConsistent) prefManagerConsistent.getLong(key, 0)
         else prefManagerCommon.getLong(key, 0)

@@ -51,16 +51,23 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         when {
-            (PrefManager.getIntValue(ONLINE_TEST_LAST_LESSON_COMPLETED)
-                .plus(2) == lessonNumber) -> {
+            (PrefManager.getIntValue(ONLINE_TEST_LAST_LESSON_COMPLETED, defValue = 1)
+                .plus(1) == lessonNumber) -> {
                 binding.startTestContainer.visibility = View.VISIBLE
                 binding.testCompletedContainer.visibility = View.GONE
-                if (PrefManager.getIntValue(ONLINE_TEST_LAST_LESSON_ATTEMPTED) == lessonNumber) {
+                if (PrefManager.getIntValue(
+                        ONLINE_TEST_LAST_LESSON_ATTEMPTED,
+                        defValue = 1
+                    ) == lessonNumber
+                ) {
                     binding.description.text = getString(R.string.grammar_continue_test_text)
                     binding.startBtn.text = getString(R.string.grammar_btn_text_continue)
                 }
             }
-            (PrefManager.getIntValue(ONLINE_TEST_LAST_LESSON_COMPLETED).plus(1) >= lessonNumber) -> {
+            (PrefManager.getIntValue(
+                ONLINE_TEST_LAST_LESSON_COMPLETED,
+                defValue = 1
+            ) >= lessonNumber) -> {
                 binding.startTestContainer.visibility = View.GONE
                 binding.testCompletedContainer.visibility = View.VISIBLE
                 completeGrammarCardLogic()
@@ -78,8 +85,8 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 )
                 binding.description.text = getString(
                     R.string.grammar_lock_text, PrefManager.getIntValue(
-                        ONLINE_TEST_LAST_LESSON_COMPLETED
-                    ).plus(2)
+                        ONLINE_TEST_LAST_LESSON_COMPLETED, defValue = 1
+                    ).plus(1)
                 )
             }
         }
