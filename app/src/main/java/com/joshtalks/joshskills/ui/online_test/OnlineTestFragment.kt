@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.ui.chat.vh.EnableDisableGrammarButtonCallback
 import com.joshtalks.joshskills.ui.chat.vh.GrammarButtonView
 import com.joshtalks.joshskills.ui.chat.vh.GrammarHeadingView
 import com.joshtalks.joshskills.ui.chat.vh.SubjectiveChoiceView
+import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.grammar_new.McqChoiceView
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
@@ -51,6 +52,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private var assessmentQuestions: AssessmentQuestionWithRelations? = null
     private var ruleAssessmentQuestionId: String? = null
     private var lessonNumber: Int = -1
+    private var lessonId: Int = -1
     private var headingView: Stub<GrammarHeadingView>? = null
     private var mcqChoiceView: Stub<McqChoiceView>? = null
     private var atsChoiceView: Stub<AtsChoiceView>? = null
@@ -80,6 +82,10 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         arguments?.let {
             lessonNumber = it.getInt(GrammarOnlineTestFragment.CURRENT_LESSON_NUMBER, -1)
         }
+
+        lessonId = if (requireActivity().intent.hasExtra(LessonActivity.LESSON_ID))
+            requireActivity().intent.getIntExtra(LessonActivity.LESSON_ID, 0) else 0
+
         binding =
             DataBindingUtil.inflate(
                 inflater,
@@ -91,7 +97,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         binding.lifecycleOwner = this
         setObservers()
         binding.progressContainer.visibility = View.VISIBLE
-        viewModel.fetchAssessmentDetails()
+        viewModel.fetchAssessmentDetails(lessonId)
         return binding.root
     }
 
@@ -113,7 +119,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         viewModel.grammarAssessmentLiveData.observe(viewLifecycleOwner) { onlineTestResponse ->
             this.ruleAssessmentQuestionId=onlineTestResponse.ruleAssessmentQuestionId
             this.reviseVideoObject=onlineTestResponse.videoObject
-            if (onlineTestResponse.completed && onlineTestResponse.question == null) {
+            if (onlineTestResponse.completed) {
                 PrefManager.put(ONLINE_TEST_LAST_LESSON_COMPLETED, lessonNumber)
                 isTestCompleted = onlineTestResponse.completed
             } else {
@@ -294,7 +300,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         } else {
             playWrongAnswerSound(requireActivity())
         }
-        viewModel.postAnswerAndGetNewQuestion(assessmentQuestions,ruleAssessmentQuestionId)
+        viewModel.postAnswerAndGetNewQuestion(assessmentQuestions,ruleAssessmentQuestionId,lessonId)
         PrefManager.put(ONLINE_TEST_LAST_LESSON_ATTEMPTED, lessonNumber)
     }
 

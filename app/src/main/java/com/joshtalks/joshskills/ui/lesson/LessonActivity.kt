@@ -542,7 +542,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     }
 
     companion object {
-        private const val LESSON_ID = "lesson_id"
+        const val LESSON_ID = "lesson_id"
         private const val IS_DEMO = "is_demo"
         private const val IS_NEW_GRAMMAR = "is_new_grammar"
         private const val WHATSAPP_URL = "whatsapp_url"

@@ -26,11 +26,12 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
 
 
-    fun fetchAssessmentDetails() {
+    fun fetchAssessmentDetails(lessonId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiStatus.postValue(ApiCallStatus.START)
-                val response = AppObjectController.chatNetworkService.getOnlineTestQuestion()
+                val params = mapOf("lesson_id" to lessonId)
+                val response = AppObjectController.chatNetworkService.getOnlineTestQuestion(params)
 
                 if (response.isSuccessful) {
                     apiStatus.postValue(ApiCallStatus.SUCCESS)
@@ -49,7 +50,8 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
 
     fun postAnswerAndGetNewQuestion(
         assessmentQuestion: AssessmentQuestionWithRelations,
-        ruleAssessmentQuestionId: String?
+        ruleAssessmentQuestionId: String?,
+        lessonId: Int
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -62,11 +64,16 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
                     answerText = answerText.append(it.text).append(SINGLE_SPACE)
                     answerOrderList.add(it.sortOrder)
                 }
-                if (assessmentQuestion.question.choiceType == ChoiceType.INPUT_TEXT){
-                    answerText=answerText.clear().append(assessmentQuestion.choiceList.get(0).imageUrl)
+                if (assessmentQuestion.question.choiceType == ChoiceType.INPUT_TEXT) {
+                    answerText =
+                        answerText.clear().append(assessmentQuestion.choiceList.get(0).imageUrl)
                 }
                 val assessmentRequest = OnlineTestRequest(
-                    assessmentQuestion, answerText.toString(), answerOrderList,ruleAssessmentQuestionId
+                    question = assessmentQuestion,
+                    answer = answerText.toString(),
+                    answerOrder = answerOrderList,
+                    ruleAssessmentQuestionId = ruleAssessmentQuestionId,
+                    lessonId = lessonId
                 )
                 val response =
                     AppObjectController.chatNetworkService.postAndGetNextOnlineTestQuestion(

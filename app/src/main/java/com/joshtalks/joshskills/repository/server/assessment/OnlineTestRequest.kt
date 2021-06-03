@@ -12,6 +12,9 @@ data class OnlineTestRequest(
     @SerializedName("question_id")
     val questionId: Int,
 
+    @SerializedName("lesson_id")
+    val lessonId: Int,
+
     @SerializedName("status")
     val status: QuestionStatus,
 
@@ -31,12 +34,14 @@ data class OnlineTestRequest(
         question : AssessmentQuestionWithRelations,
         answer: String,
         answerOrder: List<Int>,
-        ruleAssessmentQuestionId: String?
+        ruleAssessmentQuestionId: String?,
+        lessonId: Int
     ) : this(
         questionId = question.question.remoteId,
         status = question.question.status,
         answer = answer,
         answerOrder = answerOrder,
-        ruleAssessmentQuestionId = ruleAssessmentQuestionId
+        ruleAssessmentQuestionId = ruleAssessmentQuestionId,
+        lessonId = lessonId
     )
 }
