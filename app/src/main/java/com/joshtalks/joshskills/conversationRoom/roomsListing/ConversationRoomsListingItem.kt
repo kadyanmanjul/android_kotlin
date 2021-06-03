@@ -7,11 +7,12 @@ class ConversationRoomsListingItem {
     var topic: String? = null
         private set
 
-    var users: List<ConversationRoomSpeakerList> = mutableListOf()
-        private set
+    var users: ArrayList<ConversationRoomSpeakerList> = arrayListOf()
 
     var started_by: Int? = -1
         private set
+
+    var room_id: Int? = null
 
     constructor() {
 

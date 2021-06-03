@@ -1,16 +1,19 @@
 package com.joshtalks.joshskills.conversationRoom.roomsListing
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
 import com.joshtalks.joshskills.databinding.ActivityConversationsRoomsListingBinding
@@ -37,6 +40,39 @@ class ConversationRoomListingActivity : BaseActivity(),
             showPopup()
         }
 
+        viewModel.navigation.observe(this, {
+            when (it) {
+                is ConversationRoomListingNavigation.ApiCallError -> showApiCallErrorToast()
+                is ConversationRoomListingNavigation.OpenConversationLiveRoom -> openConversationLiveRoom(
+                    it.channelName,
+                    it.uid,
+                    it.token,
+                    it.isRoomCreatedByUser,
+                    it.roomId
+                )
+            }
+        })
+
+    }
+
+    private fun openConversationLiveRoom(
+        channelName: String?,
+        uid: Int?,
+        token: String?,
+        isRoomCreatedByUser: Boolean,
+        roomId: Int?
+    ) {
+        val intent = Intent(this, ConversationLiveRoomActivity::class.java)
+        intent.putExtra("CHANNEL_NAME", channelName)
+        intent.putExtra("UID", uid)
+        intent.putExtra("TOKEN", token)
+        intent.putExtra("IS_ROOM_CREATED_BY_USER", isRoomCreatedByUser)
+        intent.putExtra("ROOM_ID",roomId)
+        startActivity(intent)
+    }
+
+    private fun showApiCallErrorToast() {
+        Toast.makeText(this, "Something went wrong. Please try Again!!!", Toast.LENGTH_SHORT).show()
     }
 
     private fun showPopup() {

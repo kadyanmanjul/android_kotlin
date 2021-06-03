@@ -884,6 +884,8 @@
     <string name="fname_error_toast">Father name cannot be empty!</string>
     <string name="certificate_download_success">Congratulations, your certificate has been downloaded</string>
     <string name="my_batch">My Batch</string>
+    <string name="end_room">End Room</string>
+    <string name="leave_room">Leave quietly</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="privacy_label">By continuing you consent to share your information with Josh Skills &amp; agree to <u>Josh Skills’ Privacy Policy</u></string>
 

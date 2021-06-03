@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.conversationRoom.roomsListing
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,6 +44,8 @@ class ConversationRoomsListingAdapter(
         val documentSnapshot = snapshots.getSnapshot(position)
         val id = documentSnapshot.id
 
+        model.room_id = id.toInt()
+
         val query1: Query = firebaseFirestore.document(id).collection("users")
             .orderBy("name", Query.Direction.DESCENDING)
         val options1: FirestoreRecyclerOptions<ConversationRoomSpeakerList> =
@@ -55,6 +58,7 @@ class ConversationRoomsListingAdapter(
         holder.speakers.layoutManager = LinearLayoutManager(holder.itemView.context)
         holder.speakers.setHasFixedSize(false)
         holder.usersSize.text = setUserSize(query1)
+        Log.d("ConversationAdapter", "${model.room_id} ${model.topic}")
 
         holder.itemView.setOnClickListener {
             action.onRoomClick(model)
