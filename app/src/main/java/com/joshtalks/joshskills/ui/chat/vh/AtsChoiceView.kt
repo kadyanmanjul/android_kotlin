@@ -163,18 +163,37 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
             return false
         } else {
             assessmentQuestion?.question?.isAttempted = true
-            assessmentQuestion?.choiceList?.forEach {
-                if ((it.correctAnswerOrder == 0 || it.correctAnswerOrder == 100) &&
-                    (it.userSelectedOrder != 0 && it.userSelectedOrder != 100)
-                ) {
-                    return false
+            assessmentQuestion?.choiceList?.let { list ->
+                list.forEach { choice ->
+                    val sameChoiceList = list.filter { choice.text.equals(it.text) }
+                    if (sameChoiceList.size == 1) {
+                        if ((choice.correctAnswerOrder == 0 || choice.correctAnswerOrder == 100) &&
+                            (choice.userSelectedOrder != 0 && choice.userSelectedOrder != 100)
+                        ) {
+                            return false
+                        }
+                        if (choice.correctAnswerOrder != 0 &&
+                            choice.correctAnswerOrder != 100 &&
+                            choice.userSelectedOrder != choice.correctAnswerOrder
+                        ) {
+                            return false
+                        }
+                    } else {
+                        if ((choice.correctAnswerOrder == 0 || choice.correctAnswerOrder == 100) &&
+                            (choice.userSelectedOrder != 0 && choice.userSelectedOrder != 100)
+                        ) {
+                            return false
+                        }
+                        if (choice.correctAnswerOrder != 0 &&
+                            choice.correctAnswerOrder != 100
+                        ) {
+                            if(sameChoiceList.filter { it.correctAnswerOrder == choice.userSelectedOrder }.size == 0) {
+                                return false
+                            }
+                        }
+                    }
                 }
-                if (it.correctAnswerOrder != 0 &&
-                    it.correctAnswerOrder != 100 &&
-                    it.userSelectedOrder != it.correctAnswerOrder
-                ) {
-                    return false
-                }
+
             }
         }
         return true
@@ -258,8 +277,9 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
     fun addDummyLineView(numberOfLines: Int) {
         dummyAnswerFlowLayout.removeAllViews()
         for (i in 1..numberOfLines) {
-            val dummyWordView = CustomWord(context,
-                Choice(0,0,0,"Dummy",null,false,0,0, ChoiceColumn.LEFT,0,false,null)
+            val dummyWordView = CustomWord(
+                context,
+                Choice(0, 0, 0, "Dummy", null, false, 0, 0, ChoiceColumn.LEFT, 0, false, null)
             )
             val wordLayoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
