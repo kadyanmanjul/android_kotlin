@@ -133,7 +133,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             } else {
                 if (onlineTestResponse.ruleAssessmentId != null) {
                     if (previousId != onlineTestResponse.ruleAssessmentId &&
-                        onlineTestResponse.questiontype == OnlineTestType.TEST) {
+                        onlineTestResponse.questiontype == OnlineTestType.TEST && previousId!=-1) {
                         addNewRuleCompleted(previousId)
                     }
                     previousId = onlineTestResponse.ruleAssessmentId
