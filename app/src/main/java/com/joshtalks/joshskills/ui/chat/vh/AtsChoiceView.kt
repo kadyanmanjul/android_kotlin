@@ -112,7 +112,7 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
             }
         }
 
-        if (customLayout.childCount > 11) {
+        if (customLayout.childCount > 13) {
             addDummyLineView(4)
         } else if (customLayout.childCount > 9) {
             addDummyLineView(3)

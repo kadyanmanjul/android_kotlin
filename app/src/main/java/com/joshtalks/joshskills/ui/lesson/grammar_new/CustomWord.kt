@@ -101,13 +101,13 @@ class CustomWord : AppCompatTextView {
 
     companion object {
         private const val TAG = "CustomWord"
-        var mPaddingTop = Utils.sdpToPx(R.dimen._12sdp).toInt()
-        var mPaddingBottom = Utils.sdpToPx(R.dimen._12sdp).toInt()
+        var mPaddingTop = Utils.sdpToPx(R.dimen._10sdp).toInt()
+        var mPaddingBottom = Utils.sdpToPx(R.dimen._10sdp).toInt()
         var mPaddingLeft = Utils.sdpToPx(R.dimen._14sdp).toInt()
         var mPaddingRight = Utils.sdpToPx(R.dimen._14sdp).toInt()
         var mPadding10F = Utils.sdpToPx(R.dimen._16sdp).toInt()
         var mPadding6F = Utils.sdpToPx(R.dimen._8sdp).toInt()
-        var mPadding4F = Utils.sdpToPx(R.dimen._4sdp).toInt()
+        var mPadding4F = Utils.sdpToPx(R.dimen._3sdp).toInt()
 
     }
 
