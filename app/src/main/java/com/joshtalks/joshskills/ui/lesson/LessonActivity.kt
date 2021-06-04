@@ -14,10 +14,12 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.extension.transaltionAnimationNew
@@ -29,14 +31,20 @@ import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.AnimateAtsOtionViewEvent
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
+import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
+import com.joshtalks.joshskills.ui.lesson.reading.ReadingFragmentWithoutFeedback
+import com.joshtalks.joshskills.ui.lesson.speaking.SpeakingPractiseFragment
+import com.joshtalks.joshskills.ui.lesson.vocabulary.VocabularyFragment
+import com.joshtalks.joshskills.ui.online_test.GrammarOnlineTestFragment
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.lang.reflect.Type
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,6 +66,16 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     private var customView: CustomWord? = null
     var lesson: LessonModel? = null // Do not use this var
     private lateinit var tabs: ViewGroup
+    val arrayFragment = arrayListOf<Fragment>()
+
+    private val adapter: LessonPagerAdapter by lazy {
+        LessonPagerAdapter(
+            supportFragmentManager,
+            this.lifecycle,
+            arrayFragment
+        )
+    }
+
     var openLessonCompletedActivity: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK && result.data!!.hasExtra(IS_BATCH_CHANGED)) {
@@ -171,9 +189,30 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     lessonNumber = it.lessonNo
                     lessonIsNewGrammar = it.isNewGrammar
                 }
+                if (lessonIsNewGrammar) {
+                    viewModel.getListOfRuleIds()
+                }
 
-                setUpTabLayout(lessonNumber,lessonIsNewGrammar)
+                setUpTabLayout(lessonNumber, lessonIsNewGrammar)
                 setTabCompletionStatus()
+            }
+        )
+
+        viewModel.ruleListIds.observe(
+            this,
+            {
+                val mapTypeToken: Type = object : TypeToken<List<Int>?>() {}.type
+                val list: List<Int>? = AppObjectController.gsonMapper.fromJson(
+                    PrefManager.getStringValue(ONLINE_TEST_LIST_OF_COMPLETED_RULES), mapTypeToken
+                )
+                if (list.isNullOrEmpty().not()) {
+                    it.removeAll(list!!)
+                    if (it.isEmpty().not()) {
+                        arrayFragment.removeAt(0)
+                        arrayFragment.add(0, GrammarFragment.getInstance())
+                        adapter.notifyItemChanged(0)
+                    }
+                }
             }
         )
 
@@ -289,13 +328,15 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
     private fun setUpTabLayout(lessonNo: Int, lessonIsNewGrammar: Boolean) {
 
-        val adapter = LessonPagerAdapter(
-            supportFragmentManager,
-            this.lifecycle,
-            isNewGrammar = lessonIsNewGrammar,
-            lessonNumber = lessonNo
-        )
+        if (lessonIsNewGrammar && isOnlineTestCompleted().not()) {
+            arrayFragment.add(0, GrammarOnlineTestFragment.getInstance(lessonNo))
+        } else {
+            arrayFragment.add(0, GrammarFragment.getInstance())
+        }
 
+        arrayFragment.add(1, VocabularyFragment.getInstance())
+        arrayFragment.add(2, ReadingFragmentWithoutFeedback.getInstance())
+        arrayFragment.add(3, SpeakingPractiseFragment.newInstance())
         binding.lessonViewpager.adapter = adapter
         binding.lessonViewpager.requestTransparentRegion(binding.lessonViewpager)
         binding.lessonViewpager.offscreenPageLimit = 4
@@ -366,6 +407,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             },
             50
         )
+    }
+
+    private fun isOnlineTestCompleted(): Boolean {
+        return arrayListOf<Int>(1, 2).isEmpty()
     }
 
     private fun openIncompleteTab(currentTabNumber: Int) {

@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.assessment.OnlineTestRequest
 import com.joshtalks.joshskills.repository.server.assessment.OnlineTestResponse
+import com.joshtalks.joshskills.repository.server.assessment.RuleIdsList
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewBaseResponse
 import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
@@ -183,5 +184,9 @@ interface ChatNetworkService {
 
     @POST("$DIR/assessment/test_v4/")
     suspend fun postAndGetNextOnlineTestQuestion(@Body onlineTestRequest: OnlineTestRequest): Response<OnlineTestResponse>
+
+
+    @GET("$DIR/assessment/rule/")
+    suspend fun getListOfRuleIds(): Response<RuleIdsList>
 
 }

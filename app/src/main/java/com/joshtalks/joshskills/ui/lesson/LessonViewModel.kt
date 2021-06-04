@@ -60,11 +60,11 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val demoOnboardingData: MutableLiveData<DemoOnboardingData> = MutableLiveData()
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val favoriteCaller = MutableSharedFlow<Boolean>(replay = 0)
+    val ruleListIds: MutableLiveData<ArrayList<Int>> = MutableLiveData()
 
     fun getLesson(lessonId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             val lesson = getLessonFromDB(lessonId)
-
             if (lesson != null) {
                 lessonLiveData.postValue(lesson)
             } else {
@@ -672,6 +672,19 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 }
             } catch (ex: Throwable) {
                 apiStatus.postValue(ApiCallStatus.FAILED)
+                Timber.e(ex)
+            }
+        }
+    }
+
+    fun getListOfRuleIds() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = AppObjectController.chatNetworkService.getListOfRuleIds()
+                if (response.isSuccessful && response.body() != null && response.body()!!.rulesId.isNullOrEmpty().not()) {
+                    ruleListIds.postValue(ArrayList(response.body()?.rulesId!!))
+                }
+            } catch (ex: Throwable) {
                 Timber.e(ex)
             }
         }

@@ -72,6 +72,7 @@ const val ONLINE_HINT_SHOW = "online_hint_show"
 const val ONLINE_TEST_COMPLETED = "online_test_completed"
 const val ONLINE_TEST_LAST_LESSON_COMPLETED = "online_test_last_lesson_completed"
 const val ONLINE_TEST_LAST_LESSON_ATTEMPTED = "online_test_last_lesson_attempted"
+const val ONLINE_TEST_LIST_OF_COMPLETED_RULES = "online_test_list_of_completed_rules"
 
 object PrefManager {
 
