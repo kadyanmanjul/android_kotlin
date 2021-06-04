@@ -67,7 +67,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     var lesson: LessonModel? = null // Do not use this var
     private lateinit var tabs: ViewGroup
     val arrayFragment = arrayListOf<Fragment>()
-
+    var lessonIsNewGrammar = false
+    var lessonNumber = -1
+    private var ruleIdLeftList = emptyList<Int>()
     private val adapter: LessonPagerAdapter by lazy {
         LessonPagerAdapter(
             supportFragmentManager,
@@ -181,8 +183,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             this,
             {
                 binding.progressView.visibility = View.GONE
-                var lessonNumber = -1
-                var lessonIsNewGrammar = false
                 viewModel.lessonLiveData.value?.let {
                     titleView.text =
                         getString(R.string.lesson_no, it.lessonNo)
@@ -191,10 +191,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                 }
                 if (lessonIsNewGrammar) {
                     viewModel.getListOfRuleIds()
+                } else {
+                    setUpTabLayout(lessonNumber, lessonIsNewGrammar)
+                    setTabCompletionStatus()
                 }
-
-                setUpTabLayout(lessonNumber, lessonIsNewGrammar)
-                setTabCompletionStatus()
             }
         )
 
@@ -207,12 +207,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                 )
                 if (list.isNullOrEmpty().not()) {
                     it.removeAll(list!!)
-                    if (it.isEmpty().not()) {
-                        arrayFragment.removeAt(0)
-                        arrayFragment.add(0, GrammarFragment.getInstance())
-                        adapter.notifyItemChanged(0)
-                    }
+                    ruleIdLeftList = it
                 }
+                setUpTabLayout(lessonNumber, lessonIsNewGrammar)
+                setTabCompletionStatus()
             }
         )
 
@@ -410,7 +408,15 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     }
 
     private fun isOnlineTestCompleted(): Boolean {
-        return arrayListOf<Int>(1, 2).isEmpty()
+        if (ruleIdLeftList.isEmpty() && PrefManager.getIntValue(
+                ONLINE_TEST_LAST_LESSON_COMPLETED,
+                defValue = 1
+            ) >= lessonNumber
+        ) {
+            return false
+        } else {
+            return true
+        }
     }
 
     private fun openIncompleteTab(currentTabNumber: Int) {
