@@ -106,7 +106,7 @@ class ConversationRoomListingActivity : BaseActivity(),
 
 
     private fun setUpRecyclerView() {
-        val query: Query = notebookRef.orderBy("channel_name", Query.Direction.DESCENDING)
+        val query: Query = notebookRef
         val options: FirestoreRecyclerOptions<ConversationRoomsListingItem> =
             FirestoreRecyclerOptions.Builder<ConversationRoomsListingItem>()
                 .setQuery(query, ConversationRoomsListingItem::class.java)

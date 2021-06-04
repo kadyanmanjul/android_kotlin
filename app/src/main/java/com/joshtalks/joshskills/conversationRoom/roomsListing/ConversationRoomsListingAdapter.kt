@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.joshtalks.joshskills.R
@@ -34,7 +33,7 @@ class ConversationRoomsListingAdapter(
         return ConversationRoomViewHolder(view)
     }
 
-    @SuppressLint("LogNotTimber")
+    @SuppressLint("LogNotTimber", "SetTextI18n")
     override fun onBindViewHolder(
         holder: ConversationRoomViewHolder,
         position: Int,
@@ -48,7 +47,6 @@ class ConversationRoomsListingAdapter(
         model.room_id = id.toInt()
 
         val query1: Query = firebaseFirestore.document(id).collection("users")
-            .orderBy("name", Query.Direction.DESCENDING)
         val options1: FirestoreRecyclerOptions<ConversationRoomSpeakerList> =
             FirestoreRecyclerOptions.Builder<ConversationRoomSpeakerList>()
                 .setQuery(query1, ConversationRoomSpeakerList::class.java).build()
@@ -60,38 +58,41 @@ class ConversationRoomsListingAdapter(
         holder.speakers.setHasFixedSize(false)
         Log.d("ConversationAdapter", "${model.room_id} ${model.topic}")
 
-        query1.addSnapshotListener { value, error ->
-            if (error != null){
+        /*query1.addSnapshotListener { value, error ->
+
+            if (error != null) {
                 return@addSnapshotListener
             }
             if (value != null) {
-                model.users?.clear()
                 for (item: DocumentSnapshot in value) {
-                    item.toObject(ConversationRoomSpeakerList::class.java)?.let {
-                        model.addUser(
-                            it
-                        )
+                    if (item["is_speaker"] == true) {
+                        speakersNumber++
+                    } else if (item["is_speaker"] == false) {
+                        audiencesNumber++
                     }
                 }
-                holder.usersSize.text = setUserSize(model)
+                holder.usersSize.text = "$speakersNumber / $audiencesNumber"
             }
+        }*/
+
+        query1.addSnapshotListener { value, error ->
+            if (error != null) {
+                return@addSnapshotListener
+            }
+            val list = value?.documents?.filter {
+                it["is_speaker"] == true
+            }
+            val list2 = value?.documents?.filter {
+                it["is_speaker"] == false
+            }
+            holder.usersSize.text = "${list?.size ?: 0} / ${list2?.size ?: 0}"
         }
+
 
 
         holder.itemView.setOnClickListener {
             action.onRoomClick(model)
         }
-    }
-
-    private fun setUserSize(model: ConversationRoomsListingItem): String {
-        if (!model.users.isNullOrEmpty()){
-            val totalUsers = model.users?.size ?: 0
-            val speakerList = model.users?.filter {
-                it.is_speaker
-            }?.size ?: 0
-            return "$totalUsers / $speakerList"
-        }
-        return "0 /0"
     }
 
     class ConversationRoomViewHolder(
