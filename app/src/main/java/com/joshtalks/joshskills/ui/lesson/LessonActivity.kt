@@ -70,6 +70,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     var lessonIsNewGrammar = false
     var lessonNumber = -1
     private var ruleIdLeftList = emptyList<Int>()
+    private var ruleCompletedList: List<Int>? = emptyList()
     private val adapter: LessonPagerAdapter by lazy {
         LessonPagerAdapter(
             supportFragmentManager,
@@ -202,14 +203,18 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             this,
             {
                 val mapTypeToken: Type = object : TypeToken<List<Int>?>() {}.type
-                val list: List<Int>? = AppObjectController.gsonMapper.fromJson(
+                ruleCompletedList = AppObjectController.gsonMapper.fromJson(
                     PrefManager.getStringValue(ONLINE_TEST_LIST_OF_COMPLETED_RULES), mapTypeToken
                 )
-                if (list.isNullOrEmpty().not()) {
-                    it.removeAll(list!!)
+                var isTestCompleted = false
+                if (ruleCompletedList.isNullOrEmpty().not()) {
+                    it.removeAll(ruleCompletedList!!)
                     ruleIdLeftList = it
+                    if (ruleIdLeftList.isEmpty()) {
+                        isTestCompleted = true
+                    }
                 }
-                setUpTabLayout(lessonNumber, lessonIsNewGrammar)
+                setUpTabLayout(lessonNumber, lessonIsNewGrammar, isTestCompleted)
                 setTabCompletionStatus()
             }
         )
@@ -324,10 +329,23 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         }
     }
 
-    private fun setUpTabLayout(lessonNo: Int, lessonIsNewGrammar: Boolean) {
+    private fun setUpTabLayout(
+        lessonNo: Int,
+        lessonIsNewGrammar: Boolean,
+        isTestCompleted: Boolean = false
+    ) {
 
-        if (lessonIsNewGrammar && isOnlineTestCompleted().not()) {
-            arrayFragment.add(0, GrammarOnlineTestFragment.getInstance(lessonNo))
+        if (lessonIsNewGrammar) {
+            if (isTestCompleted.not()) {
+                arrayFragment.add(0, GrammarOnlineTestFragment.getInstance(lessonNo))
+            } else if (PrefManager.getIntValue(
+                    ONLINE_TEST_LAST_LESSON_COMPLETED,
+                    defValue = 1
+                ) >= lessonNumber
+            ) {
+                arrayFragment.add(0, GrammarOnlineTestFragment.getInstance(lessonNo))
+
+            } else arrayFragment.add(0, GrammarFragment.getInstance())
         } else {
             arrayFragment.add(0, GrammarFragment.getInstance())
         }
@@ -408,15 +426,11 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     }
 
     private fun isOnlineTestCompleted(): Boolean {
-        if (ruleIdLeftList.isEmpty() && PrefManager.getIntValue(
-                ONLINE_TEST_LAST_LESSON_COMPLETED,
-                defValue = 1
-            ) >= lessonNumber
-        ) {
+        if (ruleCompletedList.isNullOrEmpty()) {
             return false
-        } else {
+        } else if (ruleIdLeftList.isNullOrEmpty()) {
             return true
-        }
+        } else return false
     }
 
     private fun openIncompleteTab(currentTabNumber: Int) {
