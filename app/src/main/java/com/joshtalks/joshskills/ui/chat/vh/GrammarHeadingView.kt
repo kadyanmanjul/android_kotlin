@@ -32,7 +32,7 @@ class GrammarHeadingView : FrameLayout, LifecycleObserver, AudioPlayerEventListe
     private lateinit var container: ConstraintLayout
     private lateinit var questionHeading: AppCompatTextView
     private lateinit var questionDescription: AppCompatTextView
-    private lateinit var questionText: DashedUnderlinedTextView
+    private lateinit var questionText: AppCompatTextView
     private lateinit var regularAudioIv: AppCompatImageView
     private lateinit var slowAudioIv: AppCompatImageView
     private lateinit var singleAudioIv: AppCompatImageView
