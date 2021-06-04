@@ -74,21 +74,22 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun setUpRecyclerView() {
-
-        val speakerQuery = notebookRef.whereEqualTo("is_speaker", true)
-            .orderBy("name", Query.Direction.ASCENDING)
+        val speakerQuery =
+            notebookRef.whereEqualTo("is_speaker", true).orderBy("name", Query.Direction.ASCENDING)
         val speakerOptions: FirestoreRecyclerOptions<ConversationLiveRoomUser> =
             FirestoreRecyclerOptions.Builder<ConversationLiveRoomUser>()
                 .setQuery(speakerQuery, ConversationLiveRoomUser::class.java)
                 .build()
-        val listenerQuery = notebookRef.whereEqualTo("is_speaker", false)
-            .orderBy("name", Query.Direction.ASCENDING)
+        val listenerQuery =
+            notebookRef.orderBy("name", Query.Direction.ASCENDING).whereEqualTo("is_speaker", false)
         val listenerOptions: FirestoreRecyclerOptions<ConversationLiveRoomUser> =
             FirestoreRecyclerOptions.Builder<ConversationLiveRoomUser>()
                 .setQuery(listenerQuery, ConversationLiveRoomUser::class.java)
                 .build()
-        speakerAdapter = SpeakerAdapter(speakerOptions, this)
-        listenerAdapter = SpeakerAdapter(listenerOptions, this)
+        speakerAdapter?.notifyDataSetChanged()
+        listenerAdapter?.notifyDataSetChanged()
+        speakerAdapter = SpeakerAdapter(speakerOptions, this, true)
+        listenerAdapter = SpeakerAdapter(listenerOptions, this, false)
         binding.speakersList.layoutManager = GridLayoutManager(this, 3)
         binding.listenerList.layoutManager = GridLayoutManager(this, 4)
         binding.speakersList.setHasFixedSize(false)

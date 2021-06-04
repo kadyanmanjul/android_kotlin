@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.joshtalks.joshskills.R
@@ -57,16 +58,40 @@ class ConversationRoomsListingAdapter(
         holder.speakers.adapter = roomItemAdapter
         holder.speakers.layoutManager = LinearLayoutManager(holder.itemView.context)
         holder.speakers.setHasFixedSize(false)
-        holder.usersSize.text = setUserSize(query1)
         Log.d("ConversationAdapter", "${model.room_id} ${model.topic}")
+
+        query1.addSnapshotListener { value, error ->
+            if (error != null){
+                return@addSnapshotListener
+            }
+            if (value != null) {
+                model.users?.clear()
+                for (item: DocumentSnapshot in value) {
+                    item.toObject(ConversationRoomSpeakerList::class.java)?.let {
+                        model.addUser(
+                            it
+                        )
+                    }
+                }
+                holder.usersSize.text = setUserSize(model)
+            }
+        }
+
 
         holder.itemView.setOnClickListener {
             action.onRoomClick(model)
         }
     }
 
-    private fun setUserSize(model: Query): String {
-        return ""
+    private fun setUserSize(model: ConversationRoomsListingItem): String {
+        if (!model.users.isNullOrEmpty()){
+            val totalUsers = model.users?.size ?: 0
+            val speakerList = model.users?.filter {
+                it.is_speaker
+            }?.size ?: 0
+            return "$totalUsers / $speakerList"
+        }
+        return "0 /0"
     }
 
     class ConversationRoomViewHolder(

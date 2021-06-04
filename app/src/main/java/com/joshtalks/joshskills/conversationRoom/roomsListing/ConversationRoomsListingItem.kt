@@ -7,7 +7,7 @@ class ConversationRoomsListingItem {
     var topic: String? = null
         private set
 
-    var users: ArrayList<ConversationRoomSpeakerList> = arrayListOf()
+    var users: ArrayList<ConversationRoomSpeakerList>? = null
 
     var started_by: Int? = -1
         private set
@@ -21,6 +21,13 @@ class ConversationRoomsListingItem {
     constructor(channelName: String, topic: String?) {
         this.channel_name = channelName
         this.topic = topic
+    }
+
+    fun addUser(item: ConversationRoomSpeakerList){
+        if (users == null) {
+            users = arrayListOf()
+        }
+        users!!.add(item)
     }
 }
 

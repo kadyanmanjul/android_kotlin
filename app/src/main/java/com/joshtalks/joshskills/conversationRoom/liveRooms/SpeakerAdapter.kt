@@ -14,11 +14,13 @@ import com.joshtalks.joshskills.core.interfaces.ConversationLiveRoomSpeakerClick
 import com.joshtalks.joshskills.core.setImage
 import de.hdodenhof.circleimageview.CircleImageView
 
-class SpeakerAdapter(rooms: FirestoreRecyclerOptions<ConversationLiveRoomUser>,
-                     val action: ConversationLiveRoomSpeakerClickAction
-): FirestoreRecyclerAdapter<ConversationLiveRoomUser,SpeakerAdapter.SpeakerViewHolder>(rooms) {
+class SpeakerAdapter(
+    rooms: FirestoreRecyclerOptions<ConversationLiveRoomUser>,
+    val action: ConversationLiveRoomSpeakerClickAction,
+    val isSpeakerList: Boolean
+) : FirestoreRecyclerAdapter<ConversationLiveRoomUser, SpeakerAdapter.SpeakerViewHolder>(rooms) {
 
-    class SpeakerViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+    class SpeakerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.name)
         val photo: CircleImageView = itemView.findViewById(R.id.user_image)
 
@@ -34,7 +36,7 @@ class SpeakerAdapter(rooms: FirestoreRecyclerOptions<ConversationLiveRoomUser>,
         val id = documentSnapshot.id
 
         holder.name.text = model.name
-        if (!model.photo_url.isNullOrEmpty()){
+        if (!model.photo_url.isNullOrEmpty()) {
             holder.photo.setImage(model.photo_url ?: "")
         }
         Log.d("SpeakerAdapter", "position: $position , ${model.name}")

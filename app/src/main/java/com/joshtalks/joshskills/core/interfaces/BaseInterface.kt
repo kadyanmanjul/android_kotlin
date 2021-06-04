@@ -52,7 +52,7 @@ interface ConversationRoomListAction {
     fun onRoomClick(item: ConversationRoomsListingItem)
 }
 
-interface ConversationLiveRoomSpeakerClickAction{
+interface ConversationLiveRoomSpeakerClickAction {
 
 }
 
