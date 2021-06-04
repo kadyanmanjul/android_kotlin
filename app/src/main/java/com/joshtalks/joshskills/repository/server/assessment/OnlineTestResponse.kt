@@ -22,7 +22,22 @@ data class OnlineTestResponse(
     @SerializedName("rule_assessment_question_id")
     val ruleAssessmentQuestionId: String? = null,
 
+    @SerializedName("rule_assessment_id")
+    val ruleAssessmentId: Int? = null,
+
     @SerializedName("video")
-    var videoObject : VideoModel
+    var videoObject : VideoModel,
+
+    @SerializedName("rule_type")
+    var questiontype : OnlineTestType,
 
 ) : Parcelable
+
+enum class OnlineTestType(val status: String) {
+
+    @SerializedName("TEST")
+    TEST("TEST"),
+
+    @SerializedName("TEACH")
+    TEACH("TEACH"),
+}
