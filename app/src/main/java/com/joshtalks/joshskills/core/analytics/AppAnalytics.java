@@ -13,6 +13,10 @@ import com.joshtalks.joshskills.BuildConfig;
 import com.joshtalks.joshskills.core.AppObjectController;
 import com.joshtalks.joshskills.core.JoshSkillExecutors;
 import com.joshtalks.joshskills.core.PrefManager;
+import static com.joshtalks.joshskills.core.PrefManagerKt.INSTANCE_ID;
+import static com.joshtalks.joshskills.core.PrefManagerKt.USER_UNIQUE_ID;
+import static com.joshtalks.joshskills.core.StaticConstantKt.EMPTY;
+import static com.joshtalks.joshskills.core.UtilsKt.getPhoneNumber;
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel;
 import com.joshtalks.joshskills.repository.local.model.Mentor;
 import com.joshtalks.joshskills.repository.local.model.User;
@@ -28,10 +32,6 @@ import java.util.Map;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import timber.log.Timber;
-import static com.joshtalks.joshskills.core.PrefManagerKt.INSTANCE_ID;
-import static com.joshtalks.joshskills.core.PrefManagerKt.USER_UNIQUE_ID;
-import static com.joshtalks.joshskills.core.StaticConstantKt.EMPTY;
-import static com.joshtalks.joshskills.core.UtilsKt.getPhoneNumber;
 
 public class AppAnalytics {
 
@@ -283,8 +283,13 @@ public class AppAnalytics {
     }
 
     public AppAnalytics addParam(String key, String value) {
-        parameters.put(key, value);
-        return this;
+        try {
+            parameters.put(key, value);
+            return this;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return this;
+        }
     }
 
     public AppAnalytics addParam(String key, List<String> value) {
@@ -356,7 +361,8 @@ public class AppAnalytics {
 
     private void pushToFirebase() {
         try {
-            firebaseAnalytics.logEvent(event, convertMapToBundle(parameters));
+            if (firebaseAnalytics != null)
+                firebaseAnalytics.logEvent(event, convertMapToBundle(parameters));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -402,6 +408,7 @@ public class AppAnalytics {
     }
 
     private void pushToCleverTap() {
+        if (cleverTapAnalytics!=null)
         cleverTapAnalytics.pushEvent(event, parameters);
     }
 
