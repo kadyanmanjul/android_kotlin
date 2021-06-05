@@ -55,7 +55,10 @@ data class AssessmentQuestionResponse(
     val isNewHeader: Boolean = false,
 
     @SerializedName("status")
-    val status: QuestionStatus = QuestionStatus.NONE
+    val status: QuestionStatus = QuestionStatus.NONE,
+
+    @SerializedName("list_of_answers")
+    val listOfAnswers: List<String>? = arrayListOf()
 
 ) : Parcelable
 

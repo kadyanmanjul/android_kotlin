@@ -9,6 +9,7 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.repository.local.ListConverters
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentMediaType
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterChoiceType
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterQuestionStatus
@@ -94,6 +95,13 @@ data class AssessmentQuestion(
     @SerializedName("is_new_header")
     var isNewHeader: Boolean,
 
+    @TypeConverters(
+        ListConverters::class
+    )
+    @ColumnInfo
+    @SerializedName("list_of_answers")
+    var listOfAnswers: List<String>? = arrayListOf(),
+
     @TypeConverters(TypeConverterQuestionStatus::class)
     @ColumnInfo
     @SerializedName("status")
@@ -115,7 +123,8 @@ data class AssessmentQuestion(
         choiceType = assessmentQuestionResponse.choiceType,
         isAttempted = assessmentQuestionResponse.isAttempted,
         isNewHeader= assessmentQuestionResponse.isNewHeader,
-        status = assessmentQuestionResponse.status
+        status = assessmentQuestionResponse.status,
+        listOfAnswers=assessmentQuestionResponse.listOfAnswers
     )
 
 }
