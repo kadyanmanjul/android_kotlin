@@ -15,6 +15,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.repository.local.entity.AudioType
@@ -26,6 +27,7 @@ import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.joshtalks.joshskills.util.ExoAudioPlayer2
 import com.muddzdev.styleabletoast.StyleableToast
 import com.nex3z.flowlayout.FlowLayout
+import java.util.Locale
 import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -163,10 +165,15 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
             return false
         } else {
             assessmentQuestion?.question?.isAttempted = true
-            assessmentQuestion?.choiceList?.let { list ->
-                list.forEach { choice ->
-                    val sameChoiceList = list.filter { choice.text.equals(it.text) }
-                    if (sameChoiceList.size == 1) {
+            val selectedChoices = assessmentQuestion?.choiceList?.filter { it.isSelectedByUser }
+                ?.sortedBy { it.userSelectedOrder }
+            var userSelectedString = StringBuilder()
+            selectedChoices?.forEach {
+                userSelectedString = userSelectedString.append(it.text).append(SINGLE_SPACE)
+            }
+            if (assessmentQuestion?.question?.listOfAnswers.isNullOrEmpty()) {
+                assessmentQuestion?.choiceList?.let { list ->
+                    list.forEach { choice ->
                         if ((choice.correctAnswerOrder == 0 || choice.correctAnswerOrder == 100) &&
                             (choice.userSelectedOrder != 0 && choice.userSelectedOrder != 100)
                         ) {
@@ -178,25 +185,22 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
                         ) {
                             return false
                         }
-                    } else {
-                        if ((choice.correctAnswerOrder == 0 || choice.correctAnswerOrder == 100) &&
-                            (choice.userSelectedOrder != 0 && choice.userSelectedOrder != 100)
-                        ) {
-                            return false
-                        }
-                        if (choice.correctAnswerOrder != 0 &&
-                            choice.correctAnswerOrder != 100
-                        ) {
-                            if(sameChoiceList.filter { it.correctAnswerOrder == choice.userSelectedOrder }.size == 0) {
-                                return false
-                            }
-                        }
                     }
                 }
 
+            } else {
+                assessmentQuestion?.question?.listOfAnswers?.forEach {
+                    if ((userSelectedString.toString().trim()
+                            .toLowerCase(Locale.getDefault())).equals(
+                                it.trim().toLowerCase(Locale.getDefault())
+                            )
+                    ) {
+                        return true
+                    }
+                }
             }
         }
-        return true
+        return false
     }
 
     fun playAudio(audioUrl: String?) {
@@ -204,7 +208,8 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
         val audioUrl2 = audioUrl?.replace(" ".toRegex(), "%20")
         audioUrl2?.let { url ->
             if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) ?: 0 <= 0) {
-                StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
+                StyleableToast.Builder(AppObjectController.joshApplication)
+                    .gravity(Gravity.BOTTOM)
                     .text(AppObjectController.joshApplication.getString(R.string.volume_up_message))
                     .cornerRadius(16)
                     .length(Toast.LENGTH_LONG)
