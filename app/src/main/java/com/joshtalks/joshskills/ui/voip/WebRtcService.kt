@@ -76,6 +76,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+
 const val RTC_TOKEN_KEY = "token"
 const val RTC_CHANNEL_KEY = "channel_name"
 const val RTC_UID_KEY = "uid"
@@ -659,6 +660,11 @@ class WebRtcService : BaseWebRtcService() {
                 }
                 setParameters("{\"rtc.peer.offline_period\":$callReconnectTime}")
                 setParameters("{\"che.audio.keep.audiosession\":true}")
+                // ---------------------Only for debug Purposes-----------------
+//                // Enable saving of PCM Dump files
+//                setParameters("{\"che.audio.start_debug_recording\":\"all\"}")
+                // -------------------------------------------------------------
+
                 disableVideo()
                 enableAudio()
                 enableAudioVolumeIndication(1000, 3, true)

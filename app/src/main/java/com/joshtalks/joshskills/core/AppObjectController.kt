@@ -350,6 +350,16 @@ class AppObjectController {
                     mAreaCode = RtcEngineConfig.AreaCode.AREA_CODE_IN
                     mEventHandler = object : IRtcEngineEventHandler() {
                     }
+                    // -------------------Only For Debug Purposes -----------------------
+//                    mLogConfig = RtcEngineConfig.LogConfig().apply {
+//                        // Set the log filter to INFO
+//                        level = Constants.LogLevel.getValue(Constants.LogLevel.LOG_LEVEL_INFO)
+//                        // Get the current timestamp to separate log files
+//                        val ts = SimpleDateFormat("yyyyMMdd").format(Date())
+//                        filePath = "/sdcard/$ts.log"        // Set the log file path
+//                        fileSize = 2048     // Set the log file size to 2 MB
+//                    }
+                    // ---------------------------------------------------------------------
                 })
             } catch (ex: Throwable) {
                 ex.printStackTrace()
