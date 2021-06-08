@@ -886,6 +886,11 @@
     <string name="my_batch">My Batch</string>
     <string name="end_room">End Room</string>
     <string name="leave_room">Leave quietly</string>
+    <string name="conversation_room">Conversation room</string>
+    <string name="unmute">UnMute</string>
+    <string name="raised">Raised</string>
+    <string name="unraised">UnRaised</string>
+    <string name="hallway">Hallway</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="privacy_label">By continuing you consent to share your information with Josh Skills &amp; agree to <u>Josh Skills’ Privacy Policy</u></string>
 

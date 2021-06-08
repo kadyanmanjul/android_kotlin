@@ -583,11 +583,14 @@
 
 
     <style name="CustomCardViewStyleNoTopCorner" parent="@style/Widget.MaterialComponents.CardView">
-        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay_card_custom_bottom_corners</item>
+        <item name="shapeAppearanceOverlay">
+            @style/ShapeAppearanceOverlay_card_custom_bottom_corners
+        </item>
     </style>
 
     <style name="CustomCardViewStyleNoBottomCorner" parent="@style/Widget.MaterialComponents.CardView">
-        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay_card_custom_top_corners</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay_card_custom_top_corners
+        </item>
     </style>
 
 
@@ -605,6 +608,15 @@
         <item name="cornerSizeTopLeft">@dimen/_8sdp</item>
         <item name="cornerSizeBottomRight">0dp</item>
         <item name="cornerSizeBottomLeft">0dp</item>
+    </style>
+
+    <style name="ConversationRoomStyle" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/MYBottomSheetStyle</item>
+        <item name="android:windowSoftInputMode">adjustResize|stateVisible</item>
+    </style>
+
+    <style name="MYBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
     </style>
 
 </resources>

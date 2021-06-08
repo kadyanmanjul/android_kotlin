@@ -78,7 +78,6 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
-        <activity android:name=".conversationRoom.MainActivity"></activity>
         <activity android:name=".conversationRoom.liveRooms.ConversationLiveRoomActivity" />
         <activity
             android:name=".ui.introduction.IntroductionActivity"

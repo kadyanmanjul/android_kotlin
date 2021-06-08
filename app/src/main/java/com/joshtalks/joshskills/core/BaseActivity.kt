@@ -42,7 +42,6 @@ import com.google.firebase.ktx.Firebase
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingActivity
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
@@ -355,13 +354,12 @@ abstract class BaseActivity :
     }
 
     fun getInboxActivityIntent(isFromOnBoardingFlow: Boolean = false): Intent {
-        /*return Intent(this, InboxActivity::class.java).apply {
+        return Intent(this, InboxActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             //putExtra(SHOW_OVERLAY, true)
             //putExtra(IS_FROM_NEW_ONBOARDING, isFromOnBoardingFlow)
-        }*/
-        return Intent(this, ConversationRoomListingActivity::class.java)
+        }
     }
 
     protected fun openSettings() {

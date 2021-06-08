@@ -12,13 +12,79 @@
         android:layout_height="match_parent"
         tools:context=".conversationRoom.liveRooms.ConversationLiveRoomActivity">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" >
+
+            <TextView
+                android:id="@+id/hallway"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginVertical="@dimen/_10sdp"
+                android:text="@string/hallway"
+                android:textSize="@dimen/_18sdp"
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/arrow_down"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/user_photo"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_marginEnd="@dimen/_20sdp"
+                android:background="@drawable/circle"
+                android:backgroundTint="@color/colorPrimaryDark"
+                android:src="@drawable/ic_call_placeholder"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/light_grey"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"/>
+
+        <TextView
+            android:id="@+id/speakerTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:text="Speakers"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/speakers_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/speakerTextView" />
+
+        <TextView
+            android:id="@+id/audienceTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:text="Audience"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/speakers_list" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/listener_list"
@@ -26,7 +92,7 @@
             android:layout_height="wrap_content"
             android:padding="16dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/speakers_list" />
+            app:layout_constraintTop_toBottomOf="@id/audienceTextView" />
 
 
         <Button
@@ -47,6 +113,16 @@
             android:text="Mute"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/raised_hands"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Raised Hands"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/mute_btn"
+            app:layout_constraintEnd_toEndOf="@id/mute_btn"/>
+
 
         <Button
             android:id="@+id/hand_raise_btn"

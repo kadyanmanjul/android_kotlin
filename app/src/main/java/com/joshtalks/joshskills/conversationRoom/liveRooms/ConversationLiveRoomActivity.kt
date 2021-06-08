@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.conversationRoom.liveRooms
 
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -12,11 +13,18 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBottomSheet
+import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBottomSheetAction
+import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBottomSheetInfo
+import com.joshtalks.joshskills.conversationRoom.bottomsheet.RaisedHandsBottomSheet
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.interfaces.ConversationLiveRoomSpeakerClickAction
+import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.ActivityConversationLiveRoomBinding
+import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -33,6 +41,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     val firebaseFirestore = FirebaseFirestore.getInstance()
     var roomId: Int? = null
     var isRoomCreatedByUser: Boolean = false
+    var isRoomUserSpeaker: Boolean = false
     var speakerAdapter: SpeakerAdapter? = null
     var listenerAdapter: SpeakerAdapter? = null
     lateinit var notebookRef: CollectionReference
@@ -42,7 +51,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     var token: String? = null
     var moderatorUid: Int? = null
     var iSSoundOn = true
-    var isHandRaised = false
+    var isHandRaised = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,17 +65,17 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         isRoomCreatedByUser = intent.getBooleanExtra("IS_ROOM_CREATED_BY_USER", false)
         if (isRoomCreatedByUser) {
             binding.handRaiseBtn.visibility = View.GONE
-        } else {
-            binding.handRaiseBtn.visibility = View.VISIBLE
+            binding.raisedHands.visibility = View.VISIBLE
         }
 
         notebookRef = firebaseFirestore.collection("conversation_rooms").document(roomId.toString())
             .collection("users")
         setUpRecyclerView()
         setLeaveEndButton(isRoomCreatedByUser)
-        engine = AppObjectController.getRtcEngine(AppObjectController.joshApplication)
+        if (engine == null) {
+            engine = AppObjectController.getRtcEngine(this)
+        }
         leaveRoomIfModeratorEndRoom()
-        // Check permission
         takePermissions()
         binding.leaveEndRoomBtn.setOnClickListener {
             viewModel.leaveEndRoom(isRoomCreatedByUser, roomId)
@@ -78,8 +87,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             }
         })
 
-        switchingRoles()
-
         binding.muteBtn.setOnClickListener {
             if (iSSoundOn) {
                 val reference = notebookRef.document(agoraUid.toString())
@@ -87,13 +94,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     .addOnSuccessListener {
                         iSSoundOn = false
                         engine?.enableLocalAudio(iSSoundOn)
-                        binding.muteBtn.text = "UnMute"
-                    }.addOnFailureListener {
-                        Toast.makeText(
-                            this,
-                            "fail update ${it.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        binding.muteBtn.text = getString(R.string.unmute)
                     }
 
             } else {
@@ -103,13 +104,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     .addOnSuccessListener {
                         iSSoundOn = true
                         engine?.enableLocalAudio(iSSoundOn)
-                        binding.muteBtn.text = "Mute"
-                    }.addOnFailureListener {
-                        Toast.makeText(
-                            this,
-                            "fail update ${it.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        binding.muteBtn.text = getString(R.string.mute)
                     }
             }
         }
@@ -120,13 +115,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 reference.update("is_hand_raised", true)
                     .addOnSuccessListener {
                         isHandRaised = !isHandRaised
-                        binding.handRaiseBtn.text = "Raised"
-                    }.addOnFailureListener {
-                        Toast.makeText(
-                            this,
-                            "fail update ${it.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Log.d(TAG, "hand raised value change to $isHandRaised")
+                        binding.handRaiseBtn.text = getString(R.string.raised)
                     }
 
             } else {
@@ -135,33 +125,42 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 reference.update("is_hand_raised", false)
                     .addOnSuccessListener {
                         isHandRaised = !isHandRaised
-                        binding.handRaiseBtn.text = "UnRaised"
-                    }.addOnFailureListener {
-                        Toast.makeText(
-                            this,
-                            "fail update ${it.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Log.d(TAG, "hand raised value change to $isHandRaised")
+                        binding.handRaiseBtn.text = getString(R.string.unraised)
                     }
             }
         }
 
+        binding.raisedHands.setOnClickListener {
+            openRaisedHandsBottomSheet()
+        }
+        binding.userPhoto.setImage(Mentor.getInstance().getUser()?.photo ?: "")
+        binding.userPhoto.setOnClickListener {
+            UserProfileActivity.startUserProfileActivity(
+                this@ConversationLiveRoomActivity,
+                Mentor.getInstance().getId(),
+                arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            )
+        }
+        switchRoles()
+
     }
 
-    private fun switchingRoles() {
+    private fun switchRoles() {
         notebookRef.document(agoraUid.toString()).addSnapshotListener { value, error ->
             if (error != null) {
                 return@addSnapshotListener
             }
             if (value != null) {
-                Log.d(TAG, "${value["is_speaker"]}")
                 val isUserSpeaker = value["is_speaker"]
                 val isMicOn = value["is_mic_on"]
-                val isHandRaisedValue = value["is_hand_raised"]
                 if (!isRoomCreatedByUser) {
                     if (isUserSpeaker == true) {
-                        engine!!.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER)
-                        Log.d(TAG, "onUserJoined: user $agoraUid client role set to broadcaster")
+                        isRoomUserSpeaker = true
+                        if (engine == null) {
+                            engine = AppObjectController.getRtcEngine(this)
+                        }
+                        engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER)
                         binding.muteBtn.visibility = View.VISIBLE
                         binding.handRaiseBtn.visibility = View.GONE
                         iSSoundOn = isMicOn == true
@@ -172,16 +171,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                             binding.muteBtn.text = "UnMute"
                         }
                     } else {
-                        engine!!.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE)
-                        Log.d(TAG, "onUserJoined: user $agoraUid client role set to audience")
+                        isRoomUserSpeaker = false
+                        if (engine == null) {
+                            engine = AppObjectController.getRtcEngine(this)
+                        }
+                        engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE)
                         binding.muteBtn.visibility = View.GONE
                         binding.handRaiseBtn.visibility = View.VISIBLE
-                        isHandRaised = isHandRaisedValue == true
-                        if (isHandRaised) {
-                            binding.handRaiseBtn.text = "Raised"
-                        } else {
-                            binding.handRaiseBtn.text = "UnRaised"
-                        }
                     }
                 } else {
                     binding.muteBtn.visibility = View.VISIBLE
@@ -220,7 +216,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun takePermissions() {
         if (PermissionUtils.isDemoCallingPermissionEnabled(this)) {
             joinChannel(channelName)
-            Log.d(TAG, "takePermissions: All okay already")
             return
         }
 
@@ -231,7 +226,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
                             joinChannel(channelName)
-                            Log.d(TAG, "onPermissionsChecked: all allowed")
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
@@ -240,7 +234,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                                 "Permission Denied ",
                                 Toast.LENGTH_SHORT
                             ).show()
-                            Log.d(TAG, "onPermissionsChecked: Some permission denied")
                             PermissionUtils.callingPermissionPermanentlyDeniedDialog(this@ConversationLiveRoomActivity)
                             return
                         }
@@ -252,7 +245,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     token: PermissionToken?
                 ) {
                     token?.continuePermissionRequest()
-                    Log.d(TAG, "onPermissionRationaleShouldBeShown: ")
                 }
             }
         )
@@ -260,13 +252,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun joinChannel(channelName: String?) {
-        engine!!.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING)
+
+        engine?.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING)
         if (isRoomCreatedByUser) {
-            engine!!.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER)
-            Log.d(TAG, "joinChannel: client role broadcaster")
+            engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER)
         } else {
-            engine!!.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE)
-            Log.d(TAG, "joinChannel: client role audience")
+            engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE)
         }
         if (eventListener != null) {
             engine?.removeHandler(eventListener)
@@ -275,7 +266,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             engine?.addHandler(eventListener)
         }
 
-        engine!!.enableAudioVolumeIndication(1000, 3, true)
+        engine?.enableAudioVolumeIndication(1000, 3, true)
 
         val option = ChannelMediaOptions()
         option.autoSubscribeAudio = true
@@ -301,11 +292,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             super.onJoinChannelSuccess(channel, uid, elapsed)
             agoraUid = uid
             Log.d(TAG, "onJoinChannelSuccess: $uid")
-            Toast.makeText(
-                this@ConversationLiveRoomActivity,
-                "Channel joined successfully",
-                Toast.LENGTH_SHORT
-            ).show()
+
         }
 
         override fun onLeaveChannel(stats: RtcStats) {
@@ -322,16 +309,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         override fun onUserJoined(uid: Int, elapsed: Int) {
             super.onUserJoined(uid, elapsed)
             Log.d(TAG, "onUserJoined: user $uid")
-            Toast.makeText(
-                this@ConversationLiveRoomActivity,
-                String.format("user %d joined!", uid),
-                Toast.LENGTH_LONG
-            ).show()
         }
 
         override fun onUserOffline(uid: Int, reason: Int) {
             super.onUserOffline(uid, reason)
             Log.d(TAG, "onUserOffline: user $uid  $reason")
+
         }
 
         override fun onRejoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
@@ -353,7 +336,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun showAlert(message: String?) {
         AlertDialog.Builder(this).setTitle("Tips").setMessage(message)
-            .setPositiveButton("OK") { dialog: DialogInterface, which: Int -> dialog.dismiss() }
+            .setPositiveButton("OK") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
             .show()
     }
 
@@ -393,6 +376,96 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.speakersList.adapter = speakerAdapter
         binding.listenerList.adapter = listenerAdapter
 
+        listenerAdapter?.setOnItemClickListener(object : SpeakerAdapter.OnUserItemClickListener {
+            override fun onItemClick(documentSnapshot: DocumentSnapshot?, position: Int) {
+                val userUid = documentSnapshot?.id?.toInt()
+                val liveRoomUser = documentSnapshot?.toObject(LiveRoomUser::class.java)
+                val roomInfo = ConversationRoomBottomSheetInfo(
+                    isRoomCreatedByUser,
+                    isRoomUserSpeaker,
+                    false,
+                    liveRoomUser?.name ?: "",
+                    liveRoomUser?.photo_url ?: "",
+                    userUid == agoraUid
+                )
+                showBottomSheet(roomInfo, liveRoomUser?.mentor_id ?: "", userUid)
+            }
+
+        })
+
+        speakerAdapter?.setOnItemClickListener(object : SpeakerAdapter.OnUserItemClickListener {
+            override fun onItemClick(documentSnapshot: DocumentSnapshot?, position: Int) {
+                val userUid = documentSnapshot?.id?.toInt()
+                val liveRoomUser = documentSnapshot?.toObject(LiveRoomUser::class.java)
+                val roomInfo = ConversationRoomBottomSheetInfo(
+                    isRoomCreatedByUser,
+                    isRoomUserSpeaker,
+                    true,
+                    liveRoomUser?.name ?: "",
+                    liveRoomUser?.photo_url ?: "",
+                    userUid == agoraUid
+                )
+                showBottomSheet(roomInfo, liveRoomUser?.mentor_id ?: "", userUid)
+            }
+
+        })
+
+    }
+
+    private fun showBottomSheet(
+        roomInfo: ConversationRoomBottomSheetInfo,
+        mentorId: String,
+        userUid: Int?
+    ) {
+        val bottomSheet =
+            ConversationRoomBottomSheet.newInstance(roomInfo,
+                object : ConversationRoomBottomSheetAction {
+                    override fun openUserProfile() {
+                        UserProfileActivity.startUserProfileActivity(
+                            this@ConversationLiveRoomActivity,
+                            mentorId,
+                            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                        )
+
+                    }
+
+                    override fun moveToAudience() {
+                        // move to audience
+                        val reference = notebookRef.document(userUid.toString())
+                        reference.update("is_speaker", false)
+                            .addOnSuccessListener {
+
+                            }.addOnFailureListener {
+                                Toast.makeText(
+                                    this@ConversationLiveRoomActivity,
+                                    "fail update ${it.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                    }
+
+                    override fun moveToSpeaker() {
+                        val reference = notebookRef.document(userUid.toString())
+                        reference.update("is_speaker", true)
+                            .addOnSuccessListener {
+
+                            }.addOnFailureListener {
+                                Toast.makeText(
+                                    this@ConversationLiveRoomActivity,
+                                    "fail update ${it.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                    }
+
+                })
+        bottomSheet.show(supportFragmentManager, "Bottom sheet")
+
+    }
+
+    fun openRaisedHandsBottomSheet() {
+        val bottomSheet = RaisedHandsBottomSheet.newInstance(roomId ?: 0)
+        bottomSheet.show(supportFragmentManager, "Bottom sheet Hands Raised")
     }
 
     override fun onStart() {
@@ -414,11 +487,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     override fun onDestroy() {
-        super.onDestroy()
+        viewModel.leaveEndRoom(isRoomCreatedByUser, roomId)
         if (engine != null) {
             engine?.leaveChannel()
             engine = null
+            Log.d(TAG, "Agora engine set null")
         }
+        super.onDestroy()
+
     }
 
     companion object {

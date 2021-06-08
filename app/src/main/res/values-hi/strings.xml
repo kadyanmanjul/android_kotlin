@@ -455,5 +455,9 @@
 
     <string name="call_engage_record_message">जब आप कॉल पर हों तब प्रैक्टिस रिकॉर्ड नहीं कर सकते</string>
     <string name="call_engage_initiate_call_message">जब आप पहले से ही कॉल पर हों तब एक नई कॉल शुरू नहीं कर सकतें</string>
+    <string name="unmute">UnMute</string>
+    <string name="mute">Mute</string>
+    <string name="raised">Raised</string>
+    <string name="unraised">UnRaised</string>
 
 </resources>

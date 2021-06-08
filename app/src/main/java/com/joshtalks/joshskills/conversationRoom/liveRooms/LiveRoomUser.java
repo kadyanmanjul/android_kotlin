@@ -8,18 +8,20 @@ public class LiveRoomUser {
     private boolean is_hand_raised;
     private boolean is_mic_on;
     private String photo_url;
+    private String mentor_id;
 
     public LiveRoomUser(){
 
     }
 
-    public LiveRoomUser(String name, boolean is_speaker, boolean is_moderator, boolean is_hand_raised, boolean is_mic_on, String photo_url) {
+    public LiveRoomUser(String name, boolean is_speaker, boolean is_moderator, boolean is_hand_raised, boolean is_mic_on, String photo_url, String mentor_id) {
         this.name = name;
         this.is_speaker = is_speaker;
         this.is_moderator = is_moderator;
         this.is_hand_raised = is_hand_raised;
         this.is_mic_on = is_mic_on;
         this.photo_url = photo_url;
+        this.mentor_id = mentor_id;
     }
 
     public String getName() {
@@ -44,5 +46,9 @@ public class LiveRoomUser {
 
     public String getPhoto_url() {
         return photo_url;
+    }
+
+    public String getMentor_id() {
+        return mentor_id;
     }
 }

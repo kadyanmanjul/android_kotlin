@@ -11,11 +11,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.interfaces.ConversationLiveRoomSpeakerClickAction
 import com.joshtalks.joshskills.core.setImage
 import de.hdodenhof.circleimageview.CircleImageView
+
 
 class SpeakerAdapter(
     rooms: FirestoreRecyclerOptions<LiveRoomUser>,
@@ -25,6 +27,7 @@ class SpeakerAdapter(
 
     val firebaseFirestore = FirebaseFirestore.getInstance().collection("conversation_rooms")
     private val TAG = "SpeakerAdapter"
+    private var listenerUserAction: OnUserItemClickListener? = null
 
     class SpeakerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.name)
@@ -47,8 +50,9 @@ class SpeakerAdapter(
         holder.name.text = model.name
         if (!model.photo_url.isNullOrEmpty()) {
             holder.photo.setImage(model.photo_url ?: "")
-        }else {
-            Glide.with(holder.itemView.context).load(R.drawable.ic_call_placeholder).into(holder.photo)
+        } else {
+            Glide.with(holder.itemView.context).load(R.drawable.ic_call_placeholder)
+                .into(holder.photo)
         }
 
         if (isModerator && model.isIs_hand_raised) {
@@ -70,6 +74,13 @@ class SpeakerAdapter(
 
         }
 
+        holder.itemView.setOnClickListener {
+            val position = holder.bindingAdapterPosition
+            if (position != RecyclerView.NO_POSITION && listenerUserAction != null) {
+                listenerUserAction?.onItemClick(snapshots.getSnapshot(position), position);
+            }
+        }
+
         Log.d("SpeakerAdapter", "position: $position , ${model.name}")
     }
 
@@ -78,5 +89,13 @@ class SpeakerAdapter(
             .inflate(R.layout.li_speakers_item, parent, false)
 
         return SpeakerViewHolder(view)
+    }
+
+    interface OnUserItemClickListener {
+        fun onItemClick(documentSnapshot: DocumentSnapshot?, position: Int)
+    }
+
+    fun setOnItemClickListener(listenerUser: OnUserItemClickListener) {
+        listenerUserAction = listenerUser
     }
 }

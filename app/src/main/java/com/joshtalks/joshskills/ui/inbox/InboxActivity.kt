@@ -10,6 +10,7 @@ import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingActivity
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -128,11 +129,19 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     }
                     R.id.menu_settings ->
                         openSettingActivity()
+                    R.id.menu_conversation_room ->{
+                        openConversationRoom()
+                    }
                 }
                 return@setOnMenuItemClickListener false
             }
         }
         popupMenu?.show()
+    }
+
+    private fun openConversationRoom() {
+        val intent = Intent(this, ConversationRoomListingActivity::class.java)
+        startActivity(intent)
     }
 
     private fun openSettingActivity() {
