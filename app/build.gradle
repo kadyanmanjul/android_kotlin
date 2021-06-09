@@ -35,9 +35,9 @@ android {
         //buildConfigField "String", "COMETCHAT_REGION", "\"us\""
         //buildConfigField "String", "COMETCHAT_APP_ID", "\"25039c54194d899\""
         //buildConfigField "String", "COMETCHAT_API_KEY", "\"eb53131bce1b40ffb7007d74729337ee8d29625b\""
-        buildConfigField "String", "SMARTLOOK_API_KEY", "\"070b0f426bd4bfcd10e1ca37f3fc7e00cd2e5df3\""
         buildConfigField "String", "AGORA_API_KEY", "\"56eb9bed99fd4dd889cd0375056039fe\""
         buildConfigField "String", "BUGSEE_API_KEY", "\"fd4b6776-752e-44ce-a975-ce4d2e428bc3\""
+        buildConfigField "String", "SMARTLOOK_API_KEY", "\"62418dde1661c1a8190b2c76f25de26a843629a7\""
 
         manifestPlaceholders = [file_provider: "com.joshtalks.joshskills"]
         javaCompileOptions {
@@ -383,7 +383,6 @@ dependencies {
     implementation 'androidx.startup:startup-runtime:1.0.0'
 
     implementation 'com.github.YarikSOffice:lingver:1.3.0'
-    implementation 'com.smartlook.recording:app:1.7.0-native'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     // CometChat for Group Chat
     /*implementation('com.cometchat:pro-android-chat-sdk:2.1.3', {
@@ -413,6 +412,8 @@ dependencies {
     implementation 'com.nex3z:flow-layout:1.2.2'
     //Bugsee
     implementation 'com.bugsee:bugsee-android:+'
+    //smartLook
+    implementation 'com.smartlook.recording:app:1.8.1-native'
 
 
 }
