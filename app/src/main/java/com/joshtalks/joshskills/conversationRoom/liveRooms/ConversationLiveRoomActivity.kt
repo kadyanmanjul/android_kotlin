@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBot
 import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBottomSheetAction
 import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBottomSheetInfo
 import com.joshtalks.joshskills.conversationRoom.bottomsheet.RaisedHandsBottomSheet
+import com.joshtalks.joshskills.conversationRoom.notification.NotificationView
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.PermissionUtils
@@ -35,7 +36,8 @@ import io.agora.rtc.RtcEngine
 import io.agora.rtc.models.ChannelMediaOptions
 import kotlin.math.abs
 
-class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeakerClickAction {
+class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeakerClickAction,
+    NotificationView.NotificationViewAction {
     lateinit var binding: ActivityConversationLiveRoomBinding
     lateinit var viewModel: ConversationLiveRoomViewModel
     val firebaseFirestore = FirebaseFirestore.getInstance()
@@ -58,6 +60,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding = ActivityConversationLiveRoomBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ConversationLiveRoomViewModel()
+        binding.notificationBar.setNotificationViewEnquiryAction(this)
         channelName = intent?.getStringExtra("CHANNEL_NAME")
         agoraUid = intent?.getIntExtra("UID", 0)
         token = intent?.getStringExtra("TOKEN")
@@ -67,6 +70,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             binding.handRaiseBtn.visibility = View.GONE
             binding.raisedHands.visibility = View.VISIBLE
         }
+
+        setNotificationStates()
 
         notebookRef = firebaseFirestore.collection("conversation_rooms").document(roomId.toString())
             .collection("users")
@@ -115,7 +120,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 reference.update("is_hand_raised", true)
                     .addOnSuccessListener {
                         isHandRaised = !isHandRaised
-                        Log.d(TAG, "hand raised value change to $isHandRaised")
                         binding.handRaiseBtn.text = getString(R.string.raised)
                     }
 
@@ -125,7 +129,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 reference.update("is_hand_raised", false)
                     .addOnSuccessListener {
                         isHandRaised = !isHandRaised
-                        Log.d(TAG, "hand raised value change to $isHandRaised")
                         binding.handRaiseBtn.text = getString(R.string.unraised)
                     }
             }
@@ -146,6 +149,10 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     }
 
+    private fun setNotificationStates() {
+
+    }
+
     private fun switchRoles() {
         notebookRef.document(agoraUid.toString()).addSnapshotListener { value, error ->
             if (error != null) {
@@ -163,8 +170,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                         engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER)
                         binding.muteBtn.visibility = View.VISIBLE
                         binding.handRaiseBtn.visibility = View.GONE
+                        val reference = notebookRef.document(agoraUid.toString())
+                        reference.update("is_hand_raised", false)
+                        binding.handRaiseBtn.text = getString(R.string.unraised)
+                        isHandRaised = true
                         iSSoundOn = isMicOn == true
                         engine?.enableLocalAudio(iSSoundOn)
+                        engine?.adjustPlaybackSignalVolume(160)
                         if (iSSoundOn) {
                             binding.muteBtn.text = "Mute"
                         } else {
@@ -185,6 +197,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     binding.muteBtn.text = "Mute"
                     iSSoundOn = true
                     engine?.enableLocalAudio(true)
+
                 }
             }
         }
@@ -267,15 +280,10 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         }
 
         engine?.enableAudioVolumeIndication(1000, 3, true)
-        engine?.enableAudio()
-        engine?.setAudioProfile(
-            Constants.AUDIO_PROFILE_SPEECH_STANDARD,
-            Constants.AUDIO_SCENARIO_EDUCATION
-        )
 
         val option = ChannelMediaOptions()
         option.autoSubscribeAudio = true
-        option.autoSubscribeVideo = true
+//        option.autoSubscribeVideo = true
         val res = engine!!.joinChannel(
             token, channelName, "test", agoraUid!!, option
         )
@@ -290,13 +298,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
         override fun onError(errorCode: Int) {
             super.onError(errorCode)
-            Log.d(TAG, "onError: $errorCode")
         }
 
         override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
             super.onJoinChannelSuccess(channel, uid, elapsed)
             agoraUid = uid
-            Log.d(TAG, "onJoinChannelSuccess: $uid")
 
         }
 
@@ -307,33 +313,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 String.format("channel leaved"),
                 Toast.LENGTH_LONG
             ).show()
-            Log.d(TAG, "onLeaveChannel: $stats")
-
-        }
-
-        override fun onUserJoined(uid: Int, elapsed: Int) {
-            super.onUserJoined(uid, elapsed)
-            Log.d(TAG, "onUserJoined: user $uid")
-        }
-
-        override fun onUserOffline(uid: Int, reason: Int) {
-            super.onUserOffline(uid, reason)
-            Log.d(TAG, "onUserOffline: user $uid  $reason")
 
         }
 
         override fun onRejoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
             super.onRejoinChannelSuccess(channel, uid, elapsed)
-            Log.d(TAG, "onRejoinChannelSuccess: user $uid ")
-        }
-
-        override fun onConnectionLost() {
-            super.onConnectionLost()
-            Log.d(TAG, "onConnectionLost: ")
         }
 
     }
-
 
     private fun showApiCallErrorToast() {
         Toast.makeText(this, "Something went wrong. Please try Again!!!", Toast.LENGTH_SHORT).show()
@@ -504,5 +491,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     companion object {
         private const val TAG = "ConversationLiveRoomAct"
+    }
+
+    override fun onAcceptNotification() {
+        // accept
+    }
+
+    override fun onRejectNotification() {
+        binding.notificationBar.visibility = View.GONE
     }
 }

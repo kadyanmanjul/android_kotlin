@@ -133,5 +133,13 @@
             app:layout_constraintBottom_toTopOf="@id/leave_end_room_btn"
             app:layout_constraintStart_toStartOf="@id/leave_end_room_btn" />
 
+        <com.joshtalks.joshskills.conversationRoom.notification.NotificationView
+            android:id="@+id/notification_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
