@@ -9,6 +9,7 @@ import android.os.StrictMode
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import com.airbnb.lottie.L
+import com.bugsee.library.Bugsee
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
@@ -332,6 +333,7 @@ class AppObjectController {
                 ActivityLifecycleCallback.register(joshApplication)
                 AppEventsLogger.activateApp(joshApplication)
                 initUXCam()
+                initBugsee()
                 initSmartLookCam()
                 initFacebookService(joshApplication)
                 initRtcEngine(joshApplication)
@@ -365,6 +367,14 @@ class AppObjectController {
         private fun initUXCam() {
             if (BuildConfig.DEBUG.not()) {
                 UXCam.setAutomaticScreenNameTagging(true)
+            }
+        }
+
+        private fun initBugsee() {
+            if (BuildConfig.DEBUG.not()) {
+                Bugsee.launch(joshApplication, "fd4b6776-752e-44ce-a975-ce4d2e428bc3")
+            } else {
+                Bugsee.launch(joshApplication, "fd4b6776-752e-44ce-a975-ce4d2e428bc3")
             }
         }
 

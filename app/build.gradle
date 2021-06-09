@@ -409,5 +409,8 @@ dependencies {
 
     //Flow Layout
     implementation 'com.nex3z:flow-layout:1.2.2'
+    //Bugsee
+    implementation 'com.bugsee:bugsee-android:+'
+
 
 }
