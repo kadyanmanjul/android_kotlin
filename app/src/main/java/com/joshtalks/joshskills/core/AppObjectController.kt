@@ -10,6 +10,7 @@ import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import com.airbnb.lottie.L
 import com.bugsee.library.Bugsee
+import com.bugsee.library.data.VideoMode
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
@@ -371,10 +372,17 @@ class AppObjectController {
         }
 
         private fun initBugsee() {
+            val options : HashMap<String, Any> = hashMapOf(
+                Bugsee.Option.NotificationBarTrigger to false,
+                Bugsee.Option.VideoEnabled to true,
+                Bugsee.Option.ScreenshotEnabled to true,
+                Bugsee.Option.VideoMode to VideoMode.V3,
+                Bugsee.Option.ShakeToTrigger to false
+            )
             if (BuildConfig.DEBUG.not()) {
-                Bugsee.launch(joshApplication, "fd4b6776-752e-44ce-a975-ce4d2e428bc3")
+                Bugsee.launch(joshApplication, BuildConfig.BUGSEE_API_KEY,options)
             } else {
-                Bugsee.launch(joshApplication, "fd4b6776-752e-44ce-a975-ce4d2e428bc3")
+                Bugsee.launch(joshApplication, BuildConfig.BUGSEE_API_KEY,options)
             }
         }
 

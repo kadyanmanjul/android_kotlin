@@ -37,6 +37,7 @@ android {
         //buildConfigField "String", "COMETCHAT_API_KEY", "\"eb53131bce1b40ffb7007d74729337ee8d29625b\""
         buildConfigField "String", "SMARTLOOK_API_KEY", "\"070b0f426bd4bfcd10e1ca37f3fc7e00cd2e5df3\""
         buildConfigField "String", "AGORA_API_KEY", "\"56eb9bed99fd4dd889cd0375056039fe\""
+        buildConfigField "String", "BUGSEE_API_KEY", "\"fd4b6776-752e-44ce-a975-ce4d2e428bc3\""
 
         manifestPlaceholders = [file_provider: "com.joshtalks.joshskills"]
         javaCompileOptions {
