@@ -28,6 +28,9 @@ buildscript {
         maven {
             url 'https://kotlin.bintray.com/kotlinx/'
         }
+        maven {
+            url "https://sdk.smartlook.com/android/release"
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.0'

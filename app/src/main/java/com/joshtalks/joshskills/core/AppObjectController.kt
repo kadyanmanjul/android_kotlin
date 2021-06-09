@@ -48,7 +48,6 @@ import com.joshtalks.joshskills.repository.service.P2PNetworkService
 import com.joshtalks.joshskills.repository.service.SignUpNetworkService
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.smartlook.sdk.smartlook.Smartlook
-import com.smartlook.sdk.smartlook.interceptors.SmartlookOkHttpInterceptor
 import com.tonyodev.fetch2.Fetch
 import com.tonyodev.fetch2.FetchConfiguration
 import com.tonyodev.fetch2.HttpUrlConnectionDownloader
@@ -259,7 +258,7 @@ class AppObjectController {
                     .followSslRedirects(true)
                     .addInterceptor(StatusCodeInterceptor())
                     //   .addInterceptor(NewRelicHttpMetricsLogger())
-                    .addNetworkInterceptor(SmartlookOkHttpInterceptor())
+                    //.addNetworkInterceptor(SmartlookOkHttpInterceptor())
                     .addInterceptor(HeaderInterceptor())
                     .hostnameVerifier { _, _ -> true }
                     //  .addInterceptor(OfflineInterceptor())
@@ -334,7 +333,7 @@ class AppObjectController {
                 ActivityLifecycleCallback.register(joshApplication)
                 AppEventsLogger.activateApp(joshApplication)
                 initUXCam()
-                initBugsee()
+                //initBugsee()
                 initSmartLookCam()
                 initFacebookService(joshApplication)
                 initRtcEngine(joshApplication)
@@ -562,14 +561,15 @@ class AppObjectController {
         private fun initSmartLookCam() {
             val builder = Smartlook.SetupOptionsBuilder((BuildConfig.SMARTLOOK_API_KEY))
                 .setExperimental(true)
-                .build()
+
             //.setFps(fps: Int)
             //  .useAdaptiveFramerate(enabled: Boolean)
             //.setActivity(@NonNull activity: Activity)
             //    .setRenderingMode(RenderingMode.)
             //  .setRenderingMode(renderingModeOption: RenderingModeOption)
             //.setEventTrackingModes(eventTrackingModes: List<EventTrackingMode>)
-            Smartlook.setup(builder)
+            Smartlook.setupAndStartRecording(builder.build())
+
         }
 
         private fun getOkHttpDownloader(): OkHttpDownloader {
