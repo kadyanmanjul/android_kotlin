@@ -32,6 +32,7 @@ class SpeakerAdapter(
     class SpeakerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.name)
         val photo: CircleImageView = itemView.findViewById(R.id.user_image)
+        val moderatorIcon: ImageView = itemView.findViewById(R.id.moderator_icon)
         val handRaisedIcon: ImageView = itemView.findViewById(R.id.raised_hands)
         val micIcon: ImageView = itemView.findViewById(R.id.volume_icon)
 
@@ -53,6 +54,11 @@ class SpeakerAdapter(
         } else {
             Glide.with(holder.itemView.context).load(R.drawable.ic_call_placeholder)
                 .into(holder.photo)
+        }
+        if (model.isIs_moderator){
+            holder.moderatorIcon.visibility = View.VISIBLE
+        }else{
+            holder.moderatorIcon.visibility = View.GONE
         }
 
         if (isModerator && model.isIs_hand_raised) {

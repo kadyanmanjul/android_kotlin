@@ -267,6 +267,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         }
 
         engine?.enableAudioVolumeIndication(1000, 3, true)
+        engine?.enableAudio()
+        engine?.setAudioProfile(
+            Constants.AUDIO_PROFILE_SPEECH_STANDARD,
+            Constants.AUDIO_SCENARIO_EDUCATION
+        )
 
         val option = ChannelMediaOptions()
         option.autoSubscribeAudio = true
