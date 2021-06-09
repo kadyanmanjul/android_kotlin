@@ -148,14 +148,14 @@ class ExoAudioPlayer2 {
         LAST_ID = id
         val factory = ProgressiveMediaSource.Factory(dataSourceFactory)
         player.repeatMode = ExoPlayer.REPEAT_MODE_OFF
-        player.seekTo(seekDuration)
         player.playWhenReady = true
         progressTracker = ProgressTracker(player, delayProgress)
         player.setWakeMode(C.WAKE_MODE_NETWORK)
         player.setHandleAudioBecomingNoisy(true)
         val audioSource: MediaSource =
             factory.createMediaSource(Uri.parse(audioUrl))
-        player.prepare(audioSource)
+        player.prepare(audioSource,true,false)
+        player.seekTo(seekDuration)
     }
 
     fun isPlaying(): Boolean {
