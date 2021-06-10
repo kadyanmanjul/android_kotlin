@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.GridLayoutManager
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
@@ -54,6 +55,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     var moderatorUid: Int? = null
     var iSSoundOn = true
     var isHandRaised = true
+    var topicName: String? = null
+    var roomReference: DocumentReference? = null
+    var notificationTo: HashMap<String, String>? = null
+    var notificationFrom: HashMap<String, String>? = null
+    var notificationType: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,14 +71,18 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         agoraUid = intent?.getIntExtra("UID", 0)
         token = intent?.getStringExtra("TOKEN")
         roomId = intent?.getIntExtra("ROOM_ID", 0)
+        roomReference =
+            firebaseFirestore.collection("conversation_rooms").document(roomId.toString())
+        roomReference?.get()?.addOnSuccessListener {
+            moderatorUid = it.get("started_by")?.toString()?.toInt()
+            topicName = it.get("topic")?.toString()
+            binding.topic.text = topicName
+        }
         isRoomCreatedByUser = intent.getBooleanExtra("IS_ROOM_CREATED_BY_USER", false)
         if (isRoomCreatedByUser) {
             binding.handRaiseBtn.visibility = View.GONE
             binding.raisedHands.visibility = View.VISIBLE
         }
-
-        setNotificationStates()
-
         notebookRef = firebaseFirestore.collection("conversation_rooms").document(roomId.toString())
             .collection("users")
         setUpRecyclerView()
@@ -80,6 +90,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         if (engine == null) {
             engine = AppObjectController.getRtcEngine(this)
         }
+        setNotificationStates()
         leaveRoomIfModeratorEndRoom()
         takePermissions()
         binding.leaveEndRoomBtn.setOnClickListener {
@@ -121,15 +132,24 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     .addOnSuccessListener {
                         isHandRaised = !isHandRaised
                         binding.handRaiseBtn.text = getString(R.string.raised)
+                        sendNotification(
+                            "HAND_RAISED",
+                            agoraUid?.toString(),
+                            moderatorUid?.toString()
+                        )
                     }
 
             } else {
                 val reference = notebookRef.document(agoraUid.toString())
-
                 reference.update("is_hand_raised", false)
                     .addOnSuccessListener {
                         isHandRaised = !isHandRaised
                         binding.handRaiseBtn.text = getString(R.string.unraised)
+                        sendNotification(
+                            "HAND_UNRAISED",
+                            agoraUid?.toString(),
+                            moderatorUid?.toString()
+                        )
                     }
             }
         }
@@ -149,8 +169,69 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     }
 
-    private fun setNotificationStates() {
+    private fun sendNotification(type: String, fromUid: String?, toUiD: String?) {
+        firebaseFirestore.collection("conversation_rooms").document(roomId.toString())
+            .collection("notifications").document().set(
+                hashMapOf(
+                    "from" to hashMapOf(
+                        "uid" to fromUid,
+                        "name" to "listener name"
+                    ),
+                    "to" to hashMapOf(
+                        "uid" to toUiD,
+                        "name" to "Moderator"
+                    ),
+                    "type" to type
+                )
+            )
+    }
 
+    private fun setNotificationStates() {
+        roomReference?.collection("notifications")?.addSnapshotListener { value, error ->
+            if (error != null) {
+                return@addSnapshotListener
+            }
+            if (value != null) {
+                for (item in value.documentChanges) {
+                    val map = item.document.data
+                    notificationTo = map["to"] as HashMap<String, String>
+                    notificationFrom = map["from"] as HashMap<String, String>
+                    notificationType = map["type"].toString()
+
+                    if (notificationTo?.get("uid")?.toInt()?.equals(agoraUid) == true) {
+                        if (isRoomCreatedByUser) {
+                            if (notificationType == "HAND_RAISED") {
+                                binding.notificationBar.visibility = View.VISIBLE
+                                binding.notificationBar.setRejectButtonText("Dismiss")
+                                binding.notificationBar.setAcceptButtonText("Invite to speak")
+                                binding.notificationBar.setHeading(
+                                    String.format(
+                                        "\uD83D\uDC4B %s has something to say. Invite" +
+                                                "them as speakers?", notificationFrom?.get("name")
+                                    )
+                                )
+                            } else {
+                                binding.notificationBar.visibility = View.GONE
+                            }
+                        } else {
+                            if (notificationType == "SPEAKER_INVITE") {
+                                binding.notificationBar.visibility = View.VISIBLE
+                                binding.notificationBar.setRejectButtonText("Maybe later?")
+                                binding.notificationBar.setAcceptButtonText("Join as speaker")
+                                binding.notificationBar.setHeading(
+                                    String.format(
+                                        "\uD83D\uDC4B %s invited you to join as a speaker",
+                                        notificationFrom?.get("name")
+                                    )
+                                )
+                            }
+                        }
+                    } else {
+                        binding.notificationBar.visibility = View.GONE
+                    }
+                }
+            }
+        }
     }
 
     private fun switchRoles() {
@@ -456,7 +537,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     fun openRaisedHandsBottomSheet() {
-        val bottomSheet = RaisedHandsBottomSheet.newInstance(roomId ?: 0)
+        val bottomSheet = RaisedHandsBottomSheet.newInstance(roomId ?: 0, moderatorUid)
         bottomSheet.show(supportFragmentManager, "Bottom sheet Hands Raised")
     }
 
@@ -494,7 +575,27 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     override fun onAcceptNotification() {
-        // accept
+        if (isRoomCreatedByUser) {
+            sendNotification(
+                "SPEAKER_INVITE",
+                moderatorUid?.toString(),
+                notificationFrom?.get("uid")
+            )
+            binding.notificationBar.visibility = View.GONE
+        } else {
+            if (notificationType == "SPEAKER_INVITE" && notificationTo?.get("uid").toString().toInt() == agoraUid) {
+                val reference = notebookRef.document(agoraUid.toString())
+                reference.update("is_speaker", true).addOnSuccessListener {
+                    binding.notificationBar.visibility = View.GONE
+                    sendNotification(
+                        "SPEAKER_INVITE_ACCEPTED",
+                        notificationTo?.get("uid"),
+                        notificationFrom?.get("uid")
+                    )
+                }
+            }
+        }
+
     }
 
     override fun onRejectNotification() {

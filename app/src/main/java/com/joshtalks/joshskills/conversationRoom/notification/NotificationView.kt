@@ -6,6 +6,8 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.joshtalks.joshskills.R
 import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.acceptButton
+import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.action_layout
+import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.heading
 import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.rejectButton
 
 class NotificationView @JvmOverloads constructor(
@@ -35,6 +37,14 @@ class NotificationView @JvmOverloads constructor(
 
     fun setRejectButtonText(text: String) {
         this.rejectButton.text = text
+    }
+
+    fun setHeading(text: String) {
+        this.heading.text = text
+    }
+
+    fun hideActionLayout() {
+        this.action_layout.visibility = View.VISIBLE
     }
 
     fun setNotificationViewEnquiryAction(action: NotificationViewAction) {

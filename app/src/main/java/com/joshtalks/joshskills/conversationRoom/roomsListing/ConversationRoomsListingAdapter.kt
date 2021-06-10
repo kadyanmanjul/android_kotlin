@@ -58,23 +58,6 @@ class ConversationRoomsListingAdapter(
         holder.speakers.setHasFixedSize(false)
         Log.d("ConversationAdapter", "${model.room_id} ${model.topic}")
 
-        /*query1.addSnapshotListener { value, error ->
-
-            if (error != null) {
-                return@addSnapshotListener
-            }
-            if (value != null) {
-                for (item: DocumentSnapshot in value) {
-                    if (item["is_speaker"] == true) {
-                        speakersNumber++
-                    } else if (item["is_speaker"] == false) {
-                        audiencesNumber++
-                    }
-                }
-                holder.usersSize.text = "$speakersNumber / $audiencesNumber"
-            }
-        }*/
-
         query1.addSnapshotListener { value, error ->
             if (error != null) {
                 return@addSnapshotListener

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/green"
-    android:paddingBottom="@dimen/_16sdp">
+    android:paddingBottom="@dimen/_12sdp">
 
     <TextView
         android:id="@+id/heading"
@@ -35,7 +35,6 @@
             android:layout_marginTop="@dimen/_13sdp"
             android:background="#93D7B0"
             android:letterSpacing="0.02"
-            android:padding="@dimen/_4sdp"
             android:paddingHorizontal="@dimen/_6sdp"
             android:textColor="#FFFFFF"
             android:textSize="@dimen/_12ssp"
@@ -51,7 +50,6 @@
             android:layout_marginTop="@dimen/_13sdp"
             android:background="#FFFFFF"
             android:letterSpacing="0.02"
-            android:padding="@dimen/_4sdp"
             android:paddingHorizontal="@dimen/_6sdp"
             android:textColor="#27AE61"
             android:textSize="@dimen/_12ssp"

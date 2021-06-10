@@ -72,6 +72,10 @@ class ConversationRoomBottomSheet : BottomSheetDialogFragment() {
 
         }
 
+        if (roomUserInfo?.fromSpeaker == false){
+            moveToAudienceButton?.visibility = View.GONE
+        }
+
 
         if (roomUserInfo?.fromSpeaker == true && roomUserInfo?.toSpeaker == true){
             if (roomUserInfo?.isSelf == false) {

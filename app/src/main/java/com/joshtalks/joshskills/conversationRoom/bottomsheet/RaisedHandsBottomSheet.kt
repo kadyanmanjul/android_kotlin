@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.LiveRoomUser
@@ -15,12 +16,14 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
 
     private var raisedHandLists: RecyclerView? = null
     private var roomId: Int? = null
+    private var moderatorUid: Int? = null
     private var adapter: RaisedHandsBottomSheetAdapter? = null
 
     companion object {
-        fun newInstance(id: Int): RaisedHandsBottomSheet {
+        fun newInstance(id: Int, moderatorId: Int?): RaisedHandsBottomSheet {
             return RaisedHandsBottomSheet().apply {
                 roomId = id
+                moderatorUid = moderatorId
             }
         }
     }
@@ -56,6 +59,36 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
         adapter?.startListening()
         adapter?.notifyDataSetChanged()
 
+        adapter?.setOnItemClickListener(object :
+            RaisedHandsBottomSheetAdapter.RaisedHandsBottomSheetAction {
+            override fun onItemClick(documentSnapshot: DocumentSnapshot?, position: Int) {
+                val id = documentSnapshot?.id
+                sendNotification(
+                    "SPEAKER_INVITE",
+                    moderatorUid?.toString(),
+                    id
+                )
+            }
+
+        })
+
+    }
+
+    private fun sendNotification(type: String, fromUid: String?, toUiD: String?) {
+        FirebaseFirestore.getInstance().collection("conversation_rooms").document(roomId.toString())
+            .collection("notifications").document().set(
+                hashMapOf(
+                    "from" to hashMapOf(
+                        "uid" to fromUid,
+                        "name" to "listener name"
+                    ),
+                    "to" to hashMapOf(
+                        "uid" to toUiD,
+                        "name" to "Moderator"
+                    ),
+                    "type" to type
+                )
+            )
     }
 
     private fun setViews(contentView: View?) {
