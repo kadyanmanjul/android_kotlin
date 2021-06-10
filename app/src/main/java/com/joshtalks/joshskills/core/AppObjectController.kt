@@ -41,6 +41,7 @@ import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.service.ChatNetworkService
 import com.joshtalks.joshskills.repository.service.CommonNetworkService
 import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
@@ -54,6 +55,7 @@ import com.tonyodev.fetch2.HttpUrlConnectionDownloader
 import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
+import com.userexperior.UserExperior
 import com.uxcam.UXCam
 import com.yariksoffice.lingver.Lingver
 import io.agora.rtc.Constants
@@ -336,7 +338,8 @@ class AppObjectController {
                 AppEventsLogger.activateApp(joshApplication)
                 initUXCam()
                 //initBugsee()
-                initSmartLookCam()
+                //initSmartLookCam()
+                initUserExperionCam()
                 initFacebookService(joshApplication)
                 initRtcEngine(joshApplication)
                 if (PrefManager.getStringValue(USER_LOCALE).isEmpty()) {
@@ -582,6 +585,11 @@ class AppObjectController {
             //.setEventTrackingModes(eventTrackingModes: List<EventTrackingMode>)
             Smartlook.setupAndStartRecording(builder.build())
 
+        }
+
+        private fun initUserExperionCam() {
+            UserExperior.startRecording(Companion.joshApplication, "942a0473-e1ca-40e5-af83-034cb7f57ee9")
+            UserExperior.setUserIdentifier(Mentor.getInstance().getId())
         }
 
         private fun getOkHttpDownloader(): OkHttpDownloader {
