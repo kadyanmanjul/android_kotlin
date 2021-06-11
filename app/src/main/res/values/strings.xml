@@ -891,6 +891,13 @@
     <string name="raised">Raised</string>
     <string name="unraised">UnRaised</string>
     <string name="hallway">Hallway</string>
+    <string name="e_g_motivation_career_advice">e.g. Motivation, Career Advice</string>
+    <string name="add_a_topic">Add a topic</string>
+    <string name="let_s_go">Let’s Go</string>
+    <string name="start_a_room">Start a room</string>
+    <string name="view_full_profile">View full profile</string>
+    <string name="move_to_audience">Move to audience</string>
+    <string name="move_to_speaker">Move to speaker</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="privacy_label">By continuing you consent to share your information with Josh Skills &amp; agree to <u>Josh Skills’ Privacy Policy</u></string>
 

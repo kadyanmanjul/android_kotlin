@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/green"
+    android:background="#27AE61"
     android:paddingBottom="@dimen/_12sdp">
 
     <TextView
@@ -23,18 +23,19 @@
         android:id="@+id/action_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/heading">
 
-        <Button
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/rejectButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_16sdp"
             android:layout_marginTop="@dimen/_13sdp"
-            android:background="#93D7B0"
+            android:background="@drawable/background_rejected_btn"
+            android:gravity="center"
             android:letterSpacing="0.02"
+            android:padding="@dimen/_8sdp"
             android:paddingHorizontal="@dimen/_6sdp"
             android:textColor="#FFFFFF"
             android:textSize="@dimen/_12ssp"
@@ -42,14 +43,16 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Dismiss" />
 
-        <Button
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/acceptButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_16sdp"
             android:layout_marginTop="@dimen/_13sdp"
-            android:background="#FFFFFF"
+            android:background="@drawable/background_accepted_btn"
+            android:gravity="center"
             android:letterSpacing="0.02"
+            android:padding="@dimen/_8sdp"
             android:paddingHorizontal="@dimen/_6sdp"
             android:textColor="#27AE61"
             android:textSize="@dimen/_12ssp"

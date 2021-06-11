@@ -3,25 +3,68 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:background="@drawable/background_create_room_pop_up"
     android:padding="20dp">
+
+    <TextView
+        android:id="@+id/add_a_topic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:gravity="top"
+        android:text="@string/add_a_topic"
+        android:textColor="#1E1D1B"
+        android:textSize="@dimen/_16ssp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/e_g_motivat"
+        android:layout_width="160dp"
+        android:layout_height="16dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="8dp"
+        android:gravity="top"
+        android:text="@string/e_g_motivation_career_advice"
+        android:textColor="#1E1D1B"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/add_a_topic" />
 
     <EditText
         android:id="@+id/label_field"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:hint="Enter topic"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <Button
-        android:id="@+id/create_room"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginHorizontal="@dimen/_8sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:background="@drawable/background_topic"
+        android:inputType="text"
+        android:padding="@dimen/_16sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/e_g_motivat" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/create_room"
+        android:layout_width="147dp"
+        android:layout_height="35dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_margin="16dp"
-        android:text="Create A Room"
+        android:layout_marginLeft="76dp"
+        android:layout_marginTop="167dp"
+        android:background="@drawable/rectangle_8"
+        android:gravity="center"
+        android:text="@string/let_s_go"
+        android:textColor="@color/white"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/label_field"/>
-
+        app:layout_constraintTop_toBottomOf="@id/label_field" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

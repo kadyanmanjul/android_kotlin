@@ -40,22 +40,23 @@ class RaisedHandsBottomSheetAdapter(rooms: FirestoreRecyclerOptions<LiveRoomUser
     ) {
         var clickCount = 0
         holder.raisedHandUsername.text = model.name
-        holder.userPhoto.setImage(model.photo_url)
+        if (!model.photo_url.isNullOrEmpty())
+            holder.userPhoto.setImage(model.photo_url)
         holder.plus.setOnClickListener {
             val position = holder.bindingAdapterPosition
             if (position != RecyclerView.NO_POSITION && action != null) {
                 if (clickCount == 0) {
                     action?.onItemClick(snapshots.getSnapshot(position), position)
-                    clickCount ++
+                    clickCount++
                     holder.plus.setImageResource(R.drawable.ic_small_tick)
-                }else{
+                } else {
                     holder.plus.setImageResource(R.drawable.ic_small_tick)
                 }
             }
         }
     }
 
-    interface RaisedHandsBottomSheetAction{
+    interface RaisedHandsBottomSheetAction {
         fun onItemClick(documentSnapshot: DocumentSnapshot?, position: Int)
     }
 

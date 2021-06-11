@@ -2,11 +2,10 @@ package com.joshtalks.joshskills.conversationRoom.bottomsheet
 
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setImage
 import de.hdodenhof.circleimageview.CircleImageView
@@ -17,9 +16,9 @@ class ConversationRoomBottomSheet : BottomSheetDialogFragment() {
     private var roomUserInfo: ConversationRoomBottomSheetInfo? = null
     private var userPhoto: CircleImageView? = null
     private var userName: TextView? = null
-    private var openProfileButton: Button? = null
-    private var moveToAudienceButton: Button? = null
-    private var moveToSpeakerButton: Button? = null
+    private var openProfileButton: MaterialTextView? = null
+    private var moveToAudienceButton: MaterialTextView? = null
+    private var moveToSpeakerButton: MaterialTextView? = null
 
     companion object {
         fun newInstance(
@@ -50,40 +49,44 @@ class ConversationRoomBottomSheet : BottomSheetDialogFragment() {
             userPhoto?.setImage(roomUserInfo?.userPhoto ?: "")
         }
         userName?.text = roomUserInfo?.userName
+        openProfileButton?.visibility = View.VISIBLE
 
-        if (roomUserInfo?.toSpeaker == false){
-            if (roomUserInfo?.fromModerator == true){
-                moveToAudienceButton?.visibility = View.GONE
-                moveToSpeakerButton?.visibility = View.VISIBLE
-            }else {
-                moveToAudienceButton?.visibility = View.GONE
-                Log.d(TAG, "from anybody to audience")
+        when(roomUserInfo?.fromModerator){
+            true -> {
+                if (roomUserInfo?.isSelf == true){
+                    moveToAudienceButton?.visibility = View.GONE
+                    moveToSpeakerButton?.visibility = View.GONE
+                }else{
+                    when(roomUserInfo?.toSpeaker){
+                        true -> {
+                            moveToAudienceButton?.visibility = View.VISIBLE
+                            moveToSpeakerButton?.visibility = View.GONE
+
+                        }
+                        false -> {
+                            moveToAudienceButton?.visibility = View.GONE
+                            moveToSpeakerButton?.visibility = View.VISIBLE
+                        }
+                    }
+                }
             }
-        }
+            false -> {
+                when(roomUserInfo?.fromSpeaker){
+                    true -> {
+                        if(roomUserInfo?.isSelf == true){
+                            moveToAudienceButton?.visibility = View.VISIBLE
+                            moveToSpeakerButton?.visibility = View.GONE
+                        }else{
+                            moveToAudienceButton?.visibility = View.GONE
+                            moveToSpeakerButton?.visibility = View.GONE
+                        }
+                    }
+                    false -> {
+                        moveToAudienceButton?.visibility = View.GONE
+                        moveToSpeakerButton?.visibility = View.GONE
+                    }
 
-        if (roomUserInfo?.fromModerator == true && roomUserInfo?.toSpeaker == true){
-            if (roomUserInfo?.isSelf == false) {
-                moveToAudienceButton?.visibility = View.VISIBLE
-                Log.d(TAG, "from moderator to speaker")
-            }else{
-                moveToAudienceButton?.visibility = View.GONE
-                Log.d(TAG, "from moderator to self")
-            }
-
-        }
-
-        if (roomUserInfo?.fromSpeaker == false){
-            moveToAudienceButton?.visibility = View.GONE
-        }
-
-
-        if (roomUserInfo?.fromSpeaker == true && roomUserInfo?.toSpeaker == true){
-            if (roomUserInfo?.isSelf == false) {
-                moveToAudienceButton?.visibility = View.GONE
-                Log.d(TAG, "from speaker to speaker")
-            }else{
-                moveToAudienceButton?.visibility = View.VISIBLE
-                Log.d(TAG, "from speaker to self")
+                }
             }
         }
 

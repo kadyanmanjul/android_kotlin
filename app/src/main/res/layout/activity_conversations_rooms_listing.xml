@@ -20,13 +20,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/create_room"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@color/red"
-            android:text="Start Room"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_24sdp"
+            android:background="@drawable/background_start_room"
+            android:drawableStart="@drawable/create_room_plus"
+            android:drawablePadding="@dimen/_4sdp"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/_12sdp"
+            android:paddingVertical="@dimen/_6sdp"
+            android:text="@string/start_a_room"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_16ssp"
             android:textAlignment="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

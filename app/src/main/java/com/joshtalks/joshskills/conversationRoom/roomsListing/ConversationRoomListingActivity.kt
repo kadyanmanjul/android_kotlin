@@ -4,12 +4,12 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.joshtalks.joshskills.R
@@ -67,7 +67,7 @@ class ConversationRoomListingActivity : BaseActivity(),
         intent.putExtra("UID", uid)
         intent.putExtra("TOKEN", token)
         intent.putExtra("IS_ROOM_CREATED_BY_USER", isRoomCreatedByUser)
-        intent.putExtra("ROOM_ID",roomId)
+        intent.putExtra("ROOM_ID", roomId)
         startActivity(intent)
     }
 
@@ -82,11 +82,10 @@ class ConversationRoomListingActivity : BaseActivity(),
         val dialogView: View = inflater.inflate(R.layout.alert_label_editor, null)
         dialogBuilder.setView(dialogView)
 
-        dialogView.findViewById<EditText>(R.id.label_field)
         val alertDialog: AlertDialog = dialogBuilder.create()
         alertDialog.show()
 
-        dialogView.findViewById<Button>(R.id.create_room).setOnClickListener {
+        dialogView.findViewById<MaterialTextView>(R.id.create_room).setOnClickListener {
             topic = dialogView.findViewById<EditText>(R.id.label_field).text.toString()
             viewModel.createRoom(topic)
             alertDialog.dismiss()
@@ -103,7 +102,6 @@ class ConversationRoomListingActivity : BaseActivity(),
         super.onStop()
         adapter?.stopListening()
     }
-
 
     private fun setUpRecyclerView() {
         val query: Query = notebookRef

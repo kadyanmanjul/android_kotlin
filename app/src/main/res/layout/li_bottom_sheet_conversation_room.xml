@@ -9,8 +9,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/user_photo"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/_80sdp"
+        android:layout_height="@dimen/_80sdp"
         android:layout_margin="@dimen/_16sdp"
         android:layout_marginTop="8dp"
         android:background="@drawable/circle"
@@ -25,38 +25,54 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_15sdp"
         android:layout_marginTop="@dimen/_8sdp"
+        android:textColor="#000000"
         android:textSize="@dimen/_16ssp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/user_photo"
         tools:text="Vedant Maheswari" />
 
-    <Button
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/open_user_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_24sdp"
         android:layout_marginTop="@dimen/_16sdp"
-        android:text="View full profile"
+        android:background="@drawable/background_conversation_room_bottom_sheet_btn"
+        android:gravity="center"
+        android:paddingVertical="@dimen/_4sdp"
+        android:text="@string/view_full_profile"
+        android:textColor="#1E1D1B"
+        android:textSize="@dimen/_12ssp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/user_name" />
 
-    <Button
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/move_to_audience"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_24sdp"
         android:layout_marginVertical="@dimen/_16sdp"
-        android:text="Move to audience"
+        android:background="@drawable/background_conversation_room_bottom_sheet_btn"
+        android:gravity="center"
+        android:paddingVertical="@dimen/_4sdp"
+        android:text="@string/move_to_audience"
+        android:textColor="#1E1D1B"
+        android:textSize="@dimen/_12ssp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/open_user_profile" />
 
-    <Button
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/move_to_speaker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_24sdp"
         android:layout_marginVertical="@dimen/_16sdp"
-        android:text="Move to speaker"
+        android:background="@drawable/background_conversation_room_bottom_sheet_btn"
+        android:gravity="center"
+        android:paddingVertical="@dimen/_4sdp"
+        android:text="@string/move_to_speaker"
+        android:textColor="#1E1D1B"
+        android:textSize="@dimen/_12ssp"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/move_to_audience" />

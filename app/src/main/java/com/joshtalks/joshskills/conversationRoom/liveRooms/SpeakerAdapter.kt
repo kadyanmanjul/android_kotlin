@@ -35,6 +35,7 @@ class SpeakerAdapter(
         val moderatorIcon: ImageView = itemView.findViewById(R.id.moderator_icon)
         val handRaisedIcon: ImageView = itemView.findViewById(R.id.raised_hands)
         val micIcon: ImageView = itemView.findViewById(R.id.volume_icon)
+        val speakingIcon: ImageView = itemView.findViewById(R.id.ring_icon)
 
     }
 
@@ -59,6 +60,12 @@ class SpeakerAdapter(
             holder.moderatorIcon.visibility = View.VISIBLE
         }else{
             holder.moderatorIcon.visibility = View.GONE
+        }
+
+        if (model.isIs_speaking){
+            holder.speakingIcon.visibility = View.VISIBLE
+        }else{
+            holder.speakingIcon.visibility = View.GONE
         }
 
         if (isModerator && model.isIs_hand_raised) {
