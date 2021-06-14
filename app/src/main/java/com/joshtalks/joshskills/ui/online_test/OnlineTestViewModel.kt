@@ -91,4 +91,18 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
             }
         }
     }
+
+    fun sendCompletedRuleIdsToBAckend(
+        ruleAssessmentQuestionId: Int
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val data = mapOf("rule_assessment_id" to ruleAssessmentQuestionId)
+                val response =
+                    AppObjectController.chatNetworkService.setListOfRuleIdsCompleted(data)
+            } catch (ex: Throwable) {
+                Timber.e(ex)
+            }
+        }
+    }
 }

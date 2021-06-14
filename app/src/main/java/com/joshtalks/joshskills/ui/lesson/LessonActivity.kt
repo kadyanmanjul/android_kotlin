@@ -46,7 +46,6 @@ import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.lang.reflect.Type
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -71,8 +70,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     val arrayFragment = arrayListOf<Fragment>()
     var lessonIsNewGrammar = false
     var lessonNumber = -1
-    private var ruleIdLeftList = emptyList<Int>()
-    private var ruleCompletedList: List<Int>? = emptyList()
+    private var ruleIdLeftList = ArrayList<Int>()
+    private var ruleCompletedList: ArrayList<Int>? = arrayListOf()
+    private var totalRuleList: ArrayList<Int>? = arrayListOf()
     private val adapter: LessonPagerAdapter by lazy {
         LessonPagerAdapter(
             supportFragmentManager,
@@ -193,7 +193,20 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     lessonIsNewGrammar = it.isNewGrammar
                 }
                 if (lessonIsNewGrammar) {
-                    viewModel.getListOfRuleIds()
+
+                    totalRuleList = AppObjectController.gsonMapper.fromJson(
+                        PrefManager.getStringValue(ONLINE_TEST_LIST_OF_TOTAL_RULES),
+                        object : TypeToken<ArrayList<Int>?>() {}.type
+                    )
+                    if (totalRuleList.isNullOrEmpty()) {
+                        viewModel.getListOfRuleIds()
+                    } else {
+                        ruleCompletedList = AppObjectController.gsonMapper.fromJson(
+                            PrefManager.getStringValue(ONLINE_TEST_LIST_OF_COMPLETED_RULES),
+                            object : TypeToken<ArrayList<Int>?>() {}.type
+                        )
+                        setUpNewGrammarLayouts(ruleCompletedList, totalRuleList)
+                    }
                 } else {
                     setUpTabLayout(lessonNumber, lessonIsNewGrammar)
                     setTabCompletionStatus()
@@ -203,21 +216,18 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
 
         viewModel.ruleListIds.observe(
             this,
-            {
-                val mapTypeToken: Type = object : TypeToken<List<Int>?>() {}.type
-                ruleCompletedList = AppObjectController.gsonMapper.fromJson(
-                    PrefManager.getStringValue(ONLINE_TEST_LIST_OF_COMPLETED_RULES), mapTypeToken
-                )
-                var isTestCompleted = false
-                if (ruleCompletedList.isNullOrEmpty().not()) {
-                    it.removeAll(ruleCompletedList!!)
-                    ruleIdLeftList = it
-                    if (ruleIdLeftList.isEmpty()) {
-                        isTestCompleted = true
-                    }
+            { ruleIds ->
+                if (ruleIds.totalRulesIds.isNullOrEmpty().not()) {
+                    PrefManager.put(
+                        ONLINE_TEST_LIST_OF_TOTAL_RULES,
+                        ruleIds.totalRulesIds.toString()
+                    )
+                    PrefManager.put(
+                        ONLINE_TEST_LIST_OF_COMPLETED_RULES,
+                        ruleIds.rulesCompletedIds.toString()
+                    )
+                    setUpNewGrammarLayouts(ruleIds.rulesCompletedIds, ruleIds.totalRulesIds)
                 }
-                setUpTabLayout(lessonNumber, lessonIsNewGrammar, isTestCompleted)
-                setTabCompletionStatus()
             }
         )
 
@@ -255,6 +265,22 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                 }
             }
         )
+    }
+
+    private fun setUpNewGrammarLayouts(
+        rulesCompletedIds: ArrayList<Int>?,
+        totalRulesIds: ArrayList<Int>?
+    ) {
+        var isTestCompleted = false
+        if (rulesCompletedIds.isNullOrEmpty().not()) {
+            totalRulesIds?.removeAll(rulesCompletedIds!!)
+            ruleIdLeftList = totalRulesIds ?: ArrayList<Int>()
+            if (ruleIdLeftList.isEmpty()) {
+                isTestCompleted = true
+            }
+        }
+        setUpTabLayout(lessonNumber, lessonIsNewGrammar, isTestCompleted)
+        setTabCompletionStatus()
     }
 
     override fun onNextTabCall(currentTabNumber: Int) {

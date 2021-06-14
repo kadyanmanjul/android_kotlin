@@ -170,15 +170,19 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             PrefManager.getStringValue(ONLINE_TEST_LIST_OF_COMPLETED_RULES),
             mapTypeToken
         )
-        val newupdateList = arrayListOf<Int>()
+        val newupdateList = mutableSetOf<Int>()
         if (list.isNullOrEmpty().not()) {
             newupdateList.addAll(list!!)
         }
-        newupdateList.add(ruleCompletedId)
-        PrefManager.put(
-            ONLINE_TEST_LIST_OF_COMPLETED_RULES,
-            newupdateList.toString()
-        )
+        val isRuleAlreadyCompleted = newupdateList.contains(ruleCompletedId)
+        if (isRuleAlreadyCompleted.not()) {
+            newupdateList.add(ruleCompletedId)
+            PrefManager.put(
+                ONLINE_TEST_LIST_OF_COMPLETED_RULES,
+                newupdateList.toString()
+            )
+            viewModel.sendCompletedRuleIdsToBAckend(ruleCompletedId)
+        }
     }
 
     private fun setupViews(assessmentQuestions: AssessmentQuestionWithRelations) {

@@ -185,8 +185,10 @@ interface ChatNetworkService {
     @POST("$DIR/assessment/test_v4/")
     suspend fun postAndGetNextOnlineTestQuestion(@Body onlineTestRequest: OnlineTestRequest): Response<OnlineTestResponse>
 
-
     @GET("$DIR/assessment/rule/")
     suspend fun getListOfRuleIds(): Response<RuleIdsList>
+
+    @POST("$DIR/assessment/rule/")
+    suspend fun setListOfRuleIdsCompleted(@Body params: Map<String, Int>)
 
 }

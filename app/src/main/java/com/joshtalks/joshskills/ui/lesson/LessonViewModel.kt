@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.UpdateLessonResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
+import com.joshtalks.joshskills.repository.server.assessment.RuleIdsList
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
@@ -60,7 +61,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val demoOnboardingData: MutableLiveData<DemoOnboardingData> = MutableLiveData()
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val favoriteCaller = MutableSharedFlow<Boolean>(replay = 0)
-    val ruleListIds: MutableLiveData<ArrayList<Int>> = MutableLiveData()
+    val ruleListIds: MutableLiveData<RuleIdsList> = MutableLiveData()
 
     fun getLesson(lessonId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -681,8 +682,8 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = AppObjectController.chatNetworkService.getListOfRuleIds()
-                if (response.isSuccessful && response.body() != null && response.body()!!.rulesId.isNullOrEmpty().not()) {
-                    ruleListIds.postValue(ArrayList(response.body()?.rulesId!!))
+                if (response.isSuccessful && response.body() != null && response.body()!!.totalRulesIds.isNullOrEmpty().not()) {
+                    ruleListIds.postValue(response.body())
                 }
             } catch (ex: Throwable) {
                 Timber.e(ex)
