@@ -7,7 +7,9 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterChoiceType
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceColumn
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceResponse
@@ -38,7 +40,7 @@ data class Choice(
 
     @ColumnInfo
     @SerializedName("questionId")
-    val questionId: Int,
+    var questionId: Int,
 
     @ColumnInfo
     @SerializedName("text")
@@ -75,7 +77,16 @@ data class Choice(
 
     @ColumnInfo
     @SerializedName("audio_url")
-    var audioUrl: String?
+    var audioUrl: String?,
+
+    @ColumnInfo
+    @Expose
+    var localAudioUrl: String?,
+
+    @ColumnInfo
+    @Expose
+    var downloadStatus: DOWNLOAD_STATUS = DOWNLOAD_STATUS.NOT_START,
+
 
 ) : Parcelable {
 
@@ -93,7 +104,8 @@ data class Choice(
         column = choiceResponse.column,
         userSelectedOrder = choiceResponse.userSelectedOrder,
         isSelectedByUser = choiceResponse.isSelectedByUser,
-        audioUrl = choiceResponse.audioUrl
+        audioUrl = choiceResponse.audioUrl,
+        localAudioUrl = null
     )
 
 }

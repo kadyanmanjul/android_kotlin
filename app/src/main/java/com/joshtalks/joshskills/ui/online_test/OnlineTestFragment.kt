@@ -17,14 +17,19 @@ import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LIST_OF_COMPLETED_RULES
+import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.custom_ui.JoshGrammarVideoPlayer
+import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.core.playWrongAnswerSound
+import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.databinding.FragmentOnlineTestBinding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.VideoShowEvent
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.repository.server.assessment.OnlineTestType
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
@@ -39,6 +44,14 @@ import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.grammar_new.McqChoiceView
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.tonyodev.fetch2.NetworkType
+import com.tonyodev.fetch2.Priority
+import com.tonyodev.fetch2.Request
+import com.tonyodev.fetch2core.Func
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -46,6 +59,7 @@ import java.lang.reflect.Type
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedListener {
@@ -133,13 +147,19 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             } else {
                 if (onlineTestResponse.ruleAssessmentId != null) {
                     if (previousId != onlineTestResponse.ruleAssessmentId &&
-                        onlineTestResponse.questiontype == OnlineTestType.TEST && previousId!=-1) {
+                        onlineTestResponse.questiontype == OnlineTestType.TEST && previousId != -1
+                    ) {
                         addNewRuleCompleted(previousId)
                     }
                     previousId = onlineTestResponse.ruleAssessmentId
                 }
                 onlineTestResponse.question?.let {
                     this.assessmentQuestions = AssessmentQuestionWithRelations(it, 10)
+                    this.assessmentQuestions?.choiceList?.let { list ->
+                        viewModel.insertChoicesToDB(
+                            list,this.assessmentQuestions
+                        )
+                    }
                     if (isFirstTime) {
                         setupViews(assessmentQuestions!!)
                     }
@@ -190,6 +210,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             showGrammarCompleteFragment()
             return
         }
+        downloadAudios(assessmentQuestions.choiceList)
         headingView?.resolved().let {
             headingView!!.get().setup(
                 assessmentQuestions.question.mediaUrl,
@@ -310,6 +331,100 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 }
             })
         }
+    }
+
+    private fun downloadAudios(choiceList: List<Choice>) {
+        if (PermissionUtils.isStoragePermissionEnabled(AppObjectController.joshApplication).not()) {
+            askStoragePermission(choiceList)
+            return
+        }
+        downloadAudioFileForNewGrammar(choiceList)
+    }
+
+    private fun downloadAudioFileForNewGrammar(choiceList: List<Choice>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                if (PermissionUtils.isStoragePermissionEnabled(requireContext()).not()) {
+                    return@launch
+                }
+                for (choice in choiceList) {
+                    choice.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
+                    AppObjectController.appDatabase.assessmentDao()
+                        .updateChoiceDownloadStatusForAudio(
+                            choice.remoteId,
+                            DOWNLOAD_STATUS.DOWNLOADING
+                        )
+                    val file =
+                        AppDirectory.getAudioReceivedFile(choice.audioUrl.toString()).absolutePath
+                    if (choice.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
+                        return@launch
+                    }
+
+                    val request = Request(choice.audioUrl.toString(), file)
+                    request.priority = Priority.HIGH
+                    request.networkType = NetworkType.ALL
+                    request.tag = choice.remoteId.toString()
+                    AppObjectController.getFetchObject().enqueue(request, Func {
+                        choice.localAudioUrl = it.file
+                        choice.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
+                        CoroutineScope(Dispatchers.IO).launch {
+                            it.tag?.toInt()?.let { id ->
+                                AppObjectController.appDatabase.assessmentDao()
+                                    .updateChoiceDownloadStatusForAudio(id,DOWNLOAD_STATUS.DOWNLOADED)
+                                AppObjectController.appDatabase.assessmentDao()
+                                    .updateChoiceLocalPathForAudio(id,it.file)
+                            }
+                        }
+                        DownloadUtils.objectFetchListener.remove(it.tag)
+                        Timber.e(it.url + "   " + it.file)
+                    },
+                        Func {
+                            it.throwable?.printStackTrace()
+                            choice.downloadStatus = DOWNLOAD_STATUS.FAILED
+                            CoroutineScope(Dispatchers.IO).launch {
+                                AppObjectController.appDatabase.assessmentDao()
+                                    .updateAssessmentChoice(choice)
+                            }
+                        })
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    private fun askStoragePermission(choiceList: List<Choice>) {
+        PermissionUtils.storageReadAndWritePermission(
+            requireContext(),
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (flag) {
+                            downloadAudioFileForNewGrammar(choiceList)
+                            return
+                        }
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.permissionPermanentlyDeniedDialog(requireActivity())
+                            //errorDismiss()
+                            return
+                        }
+                        return
+                    }
+                    report?.isAnyPermissionPermanentlyDenied?.let {
+                        PermissionUtils.permissionPermanentlyDeniedDialog(requireActivity())
+                        //errorDismiss()
+                        return
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            }
+        )
     }
 
     fun showGrammarCompleteFragment() {

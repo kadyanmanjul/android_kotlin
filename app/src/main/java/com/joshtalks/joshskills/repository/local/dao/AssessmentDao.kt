@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionFeedback
@@ -121,5 +122,11 @@ abstract class AssessmentDao {
     @Transaction
     @Query("SELECT  localId FROM assessments  WHERE remoteId = :assessmentId LIMIT 1;")
     abstract fun countOfAssessment(assessmentId: Int? = -1): Int
+
+    @Query(value = "UPDATE assessment_choice SET downloadStatus = :status where remoteId= :choiceId ")
+    abstract fun updateChoiceDownloadStatusForAudio(choiceId: Int, status: DOWNLOAD_STATUS)
+
+    @Query(value = "UPDATE assessment_choice SET localAudioUrl = :localPath where remoteId= :choiceId ")
+    abstract fun updateChoiceLocalPathForAudio(choiceId: Int, localPath: String)
 
 }

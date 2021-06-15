@@ -203,9 +203,9 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
         return false
     }
 
-    fun playAudio(audioUrl: String?) {
+    fun playAudio(audioUrl: String?, localAudioUrl: String?) {
 
-        val audioUrl2 = audioUrl?.replace(" ".toRegex(), "%20")
+        val audioUrl2 = localAudioUrl ?: audioUrl?.replace(" ".toRegex(), "%20")
         audioUrl2?.let { url ->
             if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) ?: 0 <= 0) {
                 StyleableToast.Builder(AppObjectController.joshApplication)
@@ -264,7 +264,7 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
         override fun onClick(view: View?) {
             if (!customLayout.isEmpty()) {
                 val customWord = view as CustomWord
-                playAudio(customWord.choice.audioUrl)
+                playAudio(customWord.choice.audioUrl, customWord.choice.localAudioUrl)
                 customWord.changeViewGroup(customLayout, answerFlowLayout)
                 if (isAnyAnswerSelected()) {
                     callback?.enableGrammarButton()
@@ -284,7 +284,7 @@ class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
         for (i in 1..numberOfLines) {
             val dummyWordView = CustomWord(
                 context,
-                Choice(0, 0, 0, "Dummy", null, false, 0, 0, ChoiceColumn.LEFT, 0, false, null)
+                Choice(0, 0, 0, "Dummy", null, false, 0, 0, ChoiceColumn.LEFT, 0, false, null, null)
             )
             val wordLayoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,

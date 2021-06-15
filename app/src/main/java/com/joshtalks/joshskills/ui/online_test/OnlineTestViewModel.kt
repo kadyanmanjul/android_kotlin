@@ -9,7 +9,11 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
+import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.repository.local.model.assessment.Choice
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.repository.server.assessment.OnlineTestRequest
 import com.joshtalks.joshskills.repository.server.assessment.OnlineTestResponse
@@ -105,4 +109,25 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
             }
         }
     }
+
+
+    fun insertChoicesToDB(choiceList: List<Choice>, questionWithRelations: AssessmentQuestionWithRelations?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            questionWithRelations?.let {
+
+                AppObjectController.appDatabase.assessmentDao().insertAssessmentWithoutRelation(
+                    Assessment(-1,10,null,null,null,null,
+                        EMPTY,null,null,null,AssessmentType.QUIZ_V2,AssessmentStatus.NOT_STARTED)
+                )
+
+                AppObjectController.appDatabase.assessmentDao().insertAssessmentQuestionWithoutRelation(
+                    it.question)
+            }
+            choiceList.forEach { choice ->
+                choice.questionId=questionWithRelations?.question?.remoteId?:-1
+                AppObjectController.appDatabase.assessmentDao().insertAssessmentChoice(choice)
+            }
+        }
+    }
+
 }
