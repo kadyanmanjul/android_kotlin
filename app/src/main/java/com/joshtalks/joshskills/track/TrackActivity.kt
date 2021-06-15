@@ -17,7 +17,7 @@ abstract class TrackActivity : AppCompatActivity(), LifecycleObserver {
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun onVisibleScreen() {
+    open fun onVisibleScreen() {
         lifecycleScope.launch(Dispatchers.IO) {
             if (getConversationId().isNullOrEmpty().not()) {
                 getConversationId()?.let {
@@ -31,7 +31,7 @@ abstract class TrackActivity : AppCompatActivity(), LifecycleObserver {
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    fun onInVisibleScreen() {
+    open fun onInVisibleScreen() {
         lifecycleScope.launch(Dispatchers.IO) {
             if (getConversationId().isNullOrEmpty().not()) {
                 getConversationId()?.let {

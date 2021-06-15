@@ -465,6 +465,14 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         this@LessonActivity.finish()
     }
 
+    override fun onVisibleScreen() {
+
+    }
+
+    override fun onInVisibleScreen() {
+
+    }
+
     companion object {
         private const val LESSON_ID = "lesson_id"
         private const val IS_DEMO = "is_demo"

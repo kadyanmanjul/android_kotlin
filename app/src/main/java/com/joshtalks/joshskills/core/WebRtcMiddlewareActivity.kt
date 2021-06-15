@@ -109,4 +109,8 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
         super.onStop()
         unbindService(myConnection)
     }
+
+    override fun getConversationId(): String? {
+        return super.getConversationId()
+    }
 }
