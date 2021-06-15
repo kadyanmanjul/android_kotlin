@@ -75,8 +75,10 @@
             android:text="Speakers"
             android:textSize="@dimen/_14ssp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/speakers_list"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/topic" />
+            app:layout_constraintTop_toBottomOf="@id/topic"
+            app:layout_constraintVertical_chainStyle="packed" />
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -84,8 +86,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
+            app:layout_constraintBottom_toTopOf="@id/audienceTextView"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/speakerTextView" />
+            app:layout_constraintTop_toBottomOf="@id/speakerTextView"
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
             android:id="@+id/audienceTextView"
@@ -95,8 +99,10 @@
             android:text="Audience"
             android:textSize="@dimen/_14ssp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/listener_list"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/speakers_list" />
+            app:layout_constraintTop_toBottomOf="@id/speakers_list"
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/listener_list"

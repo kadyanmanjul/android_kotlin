@@ -38,7 +38,7 @@
         android:id="@+id/ring_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_speaker"
+        android:src="@drawable/ic_speaker_on"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/user_image"
         app:layout_constraintTop_toTopOf="@id/user_image"/>

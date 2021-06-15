@@ -80,15 +80,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
         viewModel.navigation.observe(this, {
             when (it) {
-                is ConversationLiveRoomNavigation.ApiCallError -> showApiCallErrorToast()
+                is ConversationLiveRoomNavigation.ApiCallError -> showApiCallErrorToast("Something went wrong. Please try Again!!!")
                 is ConversationLiveRoomNavigation.ExitRoom -> finish()
             }
         })
 
         clickListener()
-
         switchRoles()
-
     }
 
     private fun getIntentExtras() {
@@ -156,7 +154,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     moderatorUid?.toString()
                 )
             }?.addOnFailureListener {
-                Log.d(TAG, it.message)
+                showApiCallErrorToast(it.message ?: "")
             }
     }
 
@@ -171,6 +169,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     false -> binding.muteBtn.text = getString(R.string.unmute)
                 }
 
+            }?.addOnFailureListener {
+                showApiCallErrorToast(it.message ?: "")
             }
     }
 
@@ -381,7 +381,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             engine?.addHandler(eventListener)
         }
 
-        engine?.enableAudioVolumeIndication(5000, 3, true)
+        engine?.enableAudioVolumeIndication(4000, 3, true)
 
         val option = ChannelMediaOptions()
         option.autoSubscribeAudio = true
@@ -434,6 +434,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     if (it.uid != 0 && it.volume > 0) {
                         speakingUsersList.add(it.uid)
                     }
+                    if (it.uid == 0 && it.volume > 0){
+                        speakingUsersList.add(agoraUid ?: 0)
+                    }
                 }
                 Log.d(TAG, "size: ${speakingUsersList.size} , $speakingUsersList")
 
@@ -465,8 +468,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     }
 
-    private fun showApiCallErrorToast() {
-        Toast.makeText(this, "Something went wrong. Please try Again!!!", Toast.LENGTH_SHORT).show()
+    private fun showApiCallErrorToast(errorMessage: String) {
+        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
     }
 
     private fun showAlert(message: String?) {
