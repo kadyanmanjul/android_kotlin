@@ -12,7 +12,7 @@ class LessonPagerAdapter(
 ) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
     override fun getItemCount(): Int {
-        return fragmentList.size
+        return 4
     }
 
     override fun createFragment(position: Int): Fragment {
