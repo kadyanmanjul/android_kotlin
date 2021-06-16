@@ -253,6 +253,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             if (error != null) {
                 return@addSnapshotListener
             }
+            if (value?.exists() == false){
+                finish()
+            }
             if (value != null) {
                 val isUserSpeaker = value["is_speaker"]
                 val isMicOn = value["is_mic_on"]
@@ -323,15 +326,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     override fun onRestart() {
         super.onRestart()
+        if (engine == null) {
+            Log.d(TAG, "onRestart: engine null")
+        } else {
+            Log.d(TAG, "onRestart: engine not null")
+        }
         Log.d(TAG, "onRestart:  engine : $engine & channelNmae: $channelName")
 
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (engine != null) {
-            engine?.enableAudio()
-        }
     }
 
 
@@ -438,7 +439,22 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         override fun onUserOffline(uid: Int, reason: Int) {
             super.onUserOffline(uid, reason)
             if (isRoomCreatedByUser) {
-                usersReference?.document(uid.toString())?.delete()
+                if (reason == Constants.USER_OFFLINE_QUIT || reason == Constants.USER_OFFLINE_DROPPED) {
+                    usersReference?.document(uid.toString())?.delete()
+                }
+            }
+            if (uid == moderatorUid){
+                usersReference?.addSnapshotListener { value, error ->
+                    if (error != null){
+                        return@addSnapshotListener
+                    }
+                    if (value != null) {
+                       val secondUserId = value.documents[1].id.toInt()
+                        if (agoraUid == secondUserId){
+                            viewModel.leaveEndRoom(true, roomId)
+                        }
+                    }
+                }
             }
             Log.d(TAG, "onUserOffline: ")
         }
