@@ -61,7 +61,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     var notificationTo: HashMap<String, String>? = null
     var notificationFrom: HashMap<String, String>? = null
     var notificationType: String? = null
-    var speakingUsersList = arrayListOf<Int>()
+    var speakingUsersNewList = arrayListOf<Int>()
+    var speakingUsersOldList = arrayListOf<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,6 +110,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         if (isRoomCreatedByUser) {
             binding.handRaiseBtn.visibility = View.GONE
             binding.raisedHands.visibility = View.VISIBLE
+            engine?.muteLocalAudioStream(false)
         }
     }
 
@@ -164,6 +166,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             ?.addOnSuccessListener {
                 iSSoundOn = isMicOn
                 engine?.enableLocalAudio(iSSoundOn)
+                engine?.muteLocalAudioStream(!iSSoundOn)
                 when (isMicOn) {
                     true -> binding.muteBtn.text = getString(R.string.mute)
                     false -> binding.muteBtn.text = getString(R.string.unmute)
@@ -253,7 +256,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             if (value != null) {
                 val isUserSpeaker = value["is_speaker"]
                 val isMicOn = value["is_mic_on"]
-                if (!isRoomCreatedByUser) {
+                if (!isRoomCreatedByUser && isUserSpeaker?.equals(isRoomUserSpeaker) == false) {
                     if (isUserSpeaker == true) {
                         updateUiWhenSwitchToSpeaker(isMicOn)
                     } else {
@@ -290,7 +293,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         isHandRaised = true
         iSSoundOn = isMicOn == true
         engine?.enableLocalAudio(iSSoundOn)
-//        engine?.adjustPlaybackSignalVolume(160)
+        engine?.muteLocalAudioStream(!iSSoundOn)
         updateMuteButtonText()
     }
 
@@ -312,6 +315,25 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             engine = AppObjectController.getRtcEngine(AppObjectController.joshApplication)
         }
     }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        Log.d(TAG, "On new intent engine: $engine")
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        Log.d(TAG, "onRestart:  engine : $engine & channelNmae: $channelName")
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (engine != null) {
+            engine?.enableAudio()
+        }
+    }
+
 
     private fun leaveRoomIfModeratorEndRoom() {
         roomReference?.addSnapshotListener { value, error ->
@@ -381,7 +403,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             engine?.addHandler(eventListener)
         }
 
-        engine?.enableAudioVolumeIndication(4000, 3, true)
+        engine?.enableAudioVolumeIndication(2000, 3, true)
 
         val option = ChannelMediaOptions()
         option.autoSubscribeAudio = true
@@ -404,23 +426,21 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
         override fun onLeaveChannel(stats: RtcStats) {
             super.onLeaveChannel(stats)
+            Log.d(TAG, "onLeaveChannel: ")
+            engine = null
         }
 
         override fun onRejoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
             super.onRejoinChannelSuccess(channel, uid, elapsed)
+            Log.d(TAG, "onRejoinChannelSuccess: ")
         }
 
         override fun onUserOffline(uid: Int, reason: Int) {
             super.onUserOffline(uid, reason)
             if (isRoomCreatedByUser) {
                 usersReference?.document(uid.toString())?.delete()
-
             }
-        }
-
-        override fun onActiveSpeaker(uid: Int) {
-            super.onActiveSpeaker(uid)
-            Log.d(TAG, "onActiveSpeaker $uid")
+            Log.d(TAG, "onUserOffline: ")
         }
 
         override fun onAudioVolumeIndication(
@@ -429,17 +449,17 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         ) {
             super.onAudioVolumeIndication(speakers, totalVolume)
             if (isRoomCreatedByUser) {
-                speakingUsersList.clear()
+                speakingUsersOldList.clear()
+                speakingUsersOldList.addAll(speakingUsersNewList)
+                speakingUsersNewList.clear()
                 speakers?.forEach {
                     if (it.uid != 0 && it.volume > 0) {
-                        speakingUsersList.add(it.uid)
+                        speakingUsersNewList.add(it.uid)
                     }
-                    if (it.uid == 0 && it.volume > 0){
-                        speakingUsersList.add(agoraUid ?: 0)
+                    if (it.uid == 0 && it.volume > 0) {
+                        speakingUsersNewList.add(agoraUid ?: 0)
                     }
                 }
-                Log.d(TAG, "size: ${speakingUsersList.size} , $speakingUsersList")
-
                 updateFirestoreData()
             }
         }
@@ -447,23 +467,28 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun updateFirestoreData() {
-        usersReference?.whereEqualTo("is_speaker", true)?.addSnapshotListener { value, error ->
+        /*usersReference?.whereEqualTo("is_speaker", true)?.addSnapshotListener { value, error ->
             if (error != null) {
                 return@addSnapshotListener
             }
             if (value != null) {
                 for (item in value.documents) {
-                    if (speakingUsersList.contains(item.id.toInt())) {
-                        usersReference?.document(item.id)?.update("is_speaking", true)
-                        Log.d(TAG, "id: ${item.id} isSpeaking true")
+                    if (speakingUsersOldList.contains(item.id.toInt())) {
+                        if (item["is_speaking"]?.equals(false) == true)
+                            usersReference?.document(item.id)?.update("is_speaking", true)
                     } else {
-                        usersReference?.document(item.id)?.update("is_speaking", false)
-                        Log.d(TAG, "id: ${item.id} isSpeaking false")
-
+                        if (item["is_speaking"]?.equals(true) == true)
+                            usersReference?.document(item.id)?.update("is_speaking", false)
                     }
                 }
             }
 
+        }*/
+        speakingUsersOldList.forEach {
+            usersReference?.document(it.toString())?.update("is_speaking", false)
+        }
+        speakingUsersNewList.forEach {
+            usersReference?.document(it.toString())?.update("is_speaking", true)
         }
 
     }
@@ -587,12 +612,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         super.onStart()
         speakerAdapter?.startListening()
         listenerAdapter?.startListening()
+//        viewModel.makeEnterExitConversationRoom(true)
     }
 
     override fun onStop() {
         super.onStop()
         speakerAdapter?.stopListening()
         listenerAdapter?.stopListening()
+//        viewModel.makeEnterExitConversationRoom(false)
     }
 
     override fun onBackPressed() {

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
@@ -23,7 +24,9 @@ class ConversationRoomsListingAdapter(
     FirestoreRecyclerAdapter<ConversationRoomsListingItem, ConversationRoomsListingAdapter.ConversationRoomViewHolder>(
         rooms
     ) {
+    var task: ListenerRegistration? = null
     val firebaseFirestore = FirebaseFirestore.getInstance().collection("conversation_rooms")
+    var roomItemAdapter :ConversationRoomItemAdapter? = null
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConversationRoomViewHolder {
@@ -50,15 +53,15 @@ class ConversationRoomsListingAdapter(
         val options1: FirestoreRecyclerOptions<ConversationRoomSpeakerList> =
             FirestoreRecyclerOptions.Builder<ConversationRoomSpeakerList>()
                 .setQuery(query1, ConversationRoomSpeakerList::class.java).build()
-        val roomItemAdapter = ConversationRoomItemAdapter(options1)
-        roomItemAdapter.startListening()
-        roomItemAdapter.notifyDataSetChanged()
+        roomItemAdapter = ConversationRoomItemAdapter(options1)
+        roomItemAdapter?.startListening()
+        roomItemAdapter?.notifyDataSetChanged()
         holder.speakers.adapter = roomItemAdapter
         holder.speakers.layoutManager = LinearLayoutManager(holder.itemView.context)
         holder.speakers.setHasFixedSize(false)
         Log.d("ConversationAdapter", "${model.room_id} ${model.topic}")
 
-        query1.addSnapshotListener { value, error ->
+        task = query1.addSnapshotListener { value, error ->
             if (error != null) {
                 return@addSnapshotListener
             }
@@ -76,6 +79,12 @@ class ConversationRoomsListingAdapter(
         holder.itemView.setOnClickListener {
             action.onRoomClick(model)
         }
+    }
+
+    override fun onViewDetachedFromWindow(holder: ConversationRoomViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        roomItemAdapter?.stopListening()
+        task?.remove()
     }
 
     class ConversationRoomViewHolder(

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.conversationRoom.model.CreateConversionRoomRequest
+import com.joshtalks.joshskills.conversationRoom.model.EnterExitConversionRoomRequest
 import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation.ApiCallError
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation.OpenConversationLiveRoom
@@ -79,6 +80,25 @@ class ConversationRoomListingViewModel : ViewModel() {
                 ex.showAppropriateMsg()
             }
 
+        }
+    }
+
+    fun makeEnterExitConversationRoom(isEnter: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val request = EnterExitConversionRoomRequest(Mentor.getInstance().getId())
+                when (isEnter) {
+                    true -> AppObjectController.conversationRoomsNetworkService.enterConversationRoom(
+                        request
+                    )
+                    false -> AppObjectController.conversationRoomsNetworkService.exitConversationRoom(
+                        request
+                    )
+                }
+
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
         }
     }
 

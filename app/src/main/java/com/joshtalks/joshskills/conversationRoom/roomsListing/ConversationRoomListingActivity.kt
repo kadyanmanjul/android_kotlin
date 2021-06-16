@@ -96,11 +96,17 @@ class ConversationRoomListingActivity : BaseActivity(),
     override fun onStart() {
         super.onStart()
         adapter?.startListening()
+        viewModel.makeEnterExitConversationRoom(true)
     }
 
     override fun onStop() {
         super.onStop()
         adapter?.stopListening()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        viewModel.makeEnterExitConversationRoom(false)
     }
 
     private fun setUpRecyclerView() {

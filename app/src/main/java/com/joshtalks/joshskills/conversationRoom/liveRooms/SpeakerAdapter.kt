@@ -62,7 +62,7 @@ class SpeakerAdapter(
             holder.moderatorIcon.visibility = View.GONE
         }
 
-        if (model.isIs_speaking){
+        if (model.isIs_speaking && model.isIs_speaker && model.isIs_mic_on){
             holder.speakingIcon.visibility = View.VISIBLE
         }else{
             holder.speakingIcon.visibility = View.GONE

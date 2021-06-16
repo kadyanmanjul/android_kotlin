@@ -48,9 +48,9 @@ class RaisedHandsBottomSheetAdapter(rooms: FirestoreRecyclerOptions<LiveRoomUser
                 if (clickCount == 0) {
                     action?.onItemClick(snapshots.getSnapshot(position), position)
                     clickCount++
-                    holder.plus.setImageResource(R.drawable.ic_small_tick)
+                    holder.plus.setImageResource(R.drawable.ic_selected_user)
                 } else {
-                    holder.plus.setImageResource(R.drawable.ic_small_tick)
+                    holder.plus.setImageResource(R.drawable.ic_selected_user)
                 }
             }
         }

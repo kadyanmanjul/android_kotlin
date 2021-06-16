@@ -5,10 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomNavigation.ApiCallError
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomNavigation.ExitRoom
+import com.joshtalks.joshskills.conversationRoom.model.EnterExitConversionRoomRequest
 import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.util.showAppropriateMsg
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ConversationLiveRoomViewModel : ViewModel() {
@@ -54,6 +56,21 @@ class ConversationLiveRoomViewModel : ViewModel() {
             }
         } catch (ex: Throwable) {
             ex.showAppropriateMsg()
+        }
+    }
+
+    fun makeEnterExitConversationRoom(isEnter: Boolean){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val request = EnterExitConversionRoomRequest(Mentor.getInstance().getId())
+                when(isEnter){
+                    true -> AppObjectController.conversationRoomsNetworkService.enterConversationRoom(request)
+                    false -> AppObjectController.conversationRoomsNetworkService.exitConversationRoom(request)
+                }
+
+            }catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
         }
     }
 }
