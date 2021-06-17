@@ -144,21 +144,38 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun clickHandRaisedButton(isRaised: Boolean, type: String) {
         val reference = usersReference?.document(agoraUid.toString())
-        reference?.update("is_hand_raised", isRaised)
-            ?.addOnSuccessListener {
-                isHandRaised = !isHandRaised
-                when (isRaised) {
-                    true -> binding.handRaiseBtn.text = getString(R.string.raised)
-                    false -> binding.handRaiseBtn.text = getString(R.string.unraised)
+        usersReference?.addSnapshotListener { value, error ->
+            if (error != null){
+                return@addSnapshotListener
+            }else{
+                if (value != null) {
+                    val speakerList = value.documents.filter {
+                        it["is_speaker"] == true
+                    }
+                    if (speakerList.size < 16){
+                        reference?.update("is_hand_raised", isRaised)
+                            ?.addOnSuccessListener {
+                                isHandRaised = !isHandRaised
+                                when (isRaised) {
+                                    true -> binding.handRaiseBtn.text = getString(R.string.raised)
+                                    false -> binding.handRaiseBtn.text = getString(R.string.unraised)
+                                }
+                                sendNotification(
+                                    type,
+                                    agoraUid?.toString(),
+                                    moderatorUid?.toString()
+                                )
+                            }?.addOnFailureListener {
+                                showApiCallErrorToast(it.message ?: "")
+                            }
+                    }else{
+                        Toast.makeText(this, "Speaker size full. Wait for any speaker left!!! ", Toast.LENGTH_SHORT).show()
+                        // show popup in place of toast
+                    }
                 }
-                sendNotification(
-                    type,
-                    agoraUid?.toString(),
-                    moderatorUid?.toString()
-                )
-            }?.addOnFailureListener {
-                showApiCallErrorToast(it.message ?: "")
             }
+        }
+
     }
 
     private fun changeMuteButtonState(isMicOn: Boolean) {

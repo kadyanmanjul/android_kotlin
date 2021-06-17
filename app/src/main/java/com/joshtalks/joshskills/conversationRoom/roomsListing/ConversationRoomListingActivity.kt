@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomA
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
+import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.ActivityConversationsRoomsListingBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -47,7 +48,7 @@ class ConversationRoomListingActivity : BaseActivity(),
         binding.createRoom.setOnClickListener {
             showPopup()
         }
-
+        binding.userPic.setImage(Mentor.getInstance().getUser()?.photo ?: "")
         binding.userPic.setOnClickListener {
             goToProfile()
         }

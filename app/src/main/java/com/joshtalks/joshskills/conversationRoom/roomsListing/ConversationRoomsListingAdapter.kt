@@ -78,9 +78,9 @@ class ConversationRoomsListingAdapter(
             options1.snapshots[0].photo_url?.let {
                 holder.photo.setImage(it)
             }
-            options1.snapshots[1].photo_url?.let {
-                holder.anotherPhoto.setImage(it)
-            }
+//            options1.snapshots[1].photo_url?.let {
+//                holder.anotherPhoto.setImage(it)
+//            }
         }
 
 
