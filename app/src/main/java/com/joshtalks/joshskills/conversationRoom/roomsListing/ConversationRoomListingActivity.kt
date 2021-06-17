@@ -15,8 +15,12 @@ import com.google.firebase.firestore.Query
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
 import com.joshtalks.joshskills.databinding.ActivityConversationsRoomsListingBinding
+import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 
 
 class ConversationRoomListingActivity : BaseActivity(),
@@ -44,6 +48,10 @@ class ConversationRoomListingActivity : BaseActivity(),
             showPopup()
         }
 
+        binding.user.setOnClickListener {
+            goToProfile()
+        }
+
         viewModel.navigation.observe(this, {
             when (it) {
                 is ConversationRoomListingNavigation.ApiCallError -> showApiCallErrorToast()
@@ -57,6 +65,15 @@ class ConversationRoomListingActivity : BaseActivity(),
             }
         })
 
+    }
+
+    fun goToProfile() {
+        UserProfileActivity.startUserProfileActivity(
+            this, Mentor.getInstance().getId(),
+            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+            null, USER_PROFILE_FLOW_FROM.AWARD.value,
+            conversationId = intent.getStringExtra(CONVERSATION_ID)
+        )
     }
 
     private fun openConversationLiveRoom(

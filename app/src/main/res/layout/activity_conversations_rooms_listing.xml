@@ -13,29 +13,43 @@
         android:background="#B3EBEBB2"
         tools:context=".conversationRoom.roomsListing.ConversationRoomListingActivity">
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/user"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:background="@drawable/rounded_rectangle_attach"
+            android:backgroundTint="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintTop_toTopOf="parent"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/user" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/create_room"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_24sdp"
+            android:layout_marginBottom="@dimen/_50sdp"
             android:background="@drawable/background_start_room"
             android:drawableStart="@drawable/create_room_plus"
-            android:drawablePadding="@dimen/_4sdp"
+            android:drawablePadding="@dimen/_7sdp"
             android:gravity="center"
-            android:paddingHorizontal="@dimen/_12sdp"
-            android:paddingVertical="@dimen/_6sdp"
+            android:paddingVertical="@dimen/_7sdp"
+            android:paddingStart="@dimen/_17sdp"
+            android:paddingEnd="@dimen/_12sdp"
             android:text="@string/start_a_room"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_16ssp"
             android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

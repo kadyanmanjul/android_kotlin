@@ -71,7 +71,8 @@ class ConversationRoomsListingAdapter(
             val list2 = value?.documents?.filter {
                 it["is_speaker"] == false
             }
-            holder.usersSize.text = "${list?.size ?: 0} / ${list2?.size ?: 0}"
+            holder.usersSize.text = "${list?.size ?: 0}"
+            holder.speakerSize.text = "/ ${list2?.size ?: 0}"
         }
 
 
@@ -92,6 +93,7 @@ class ConversationRoomsListingAdapter(
     ) : RecyclerView.ViewHolder(itemView) {
         var roomTopic: TextView = itemView.findViewById(R.id.conversation_topic_name)
         var usersSize: TextView = itemView.findViewById(R.id.users_size)
+        var speakerSize: TextView = itemView.findViewById(R.id.speaker_size)
         var speakers: RecyclerView = itemView.findViewById(R.id.speakers_list)
     }
 

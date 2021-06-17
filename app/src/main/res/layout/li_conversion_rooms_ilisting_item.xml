@@ -4,76 +4,118 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="6dp"
-    android:layout_marginTop="4dp"
-    android:layout_marginEnd="6dp"
-    android:layout_marginBottom="2dp"
+    android:layout_marginHorizontal="@dimen/_16sdp"
+    android:layout_marginVertical="@dimen/_10sdp"
     app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="20dp"
-    app:cardElevation="4dp"
-    app:cardMaxElevation="4dp"
+    app:cardCornerRadius="@dimen/_12sdp"
+    app:cardElevation="@dimen/_2sdp"
+    app:cardMaxElevation="@dimen/_2sdp"
     app:cardPreventCornerOverlap="true"
     app:cardUseCompatPadding="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingStart="@dimen/_4sdp"
-        android:paddingTop="10dp"
-        android:paddingBottom="20dp">
+        android:paddingHorizontal="@dimen/_10sdp"
+        android:paddingVertical="@dimen/_16sdp">
 
         <TextView
             android:id="@+id/conversation_topic_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
             android:textColor="@color/black"
-            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Hello Josh Talks" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/photo1"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/circle"
-            android:backgroundTint="@color/colorPrimaryDark"
-            android:src="@drawable/ic_call_placeholder"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:background="@drawable/round_rectangle_for_clubhouse_images"
+            android:backgroundTint="@color/black"
             app:layout_constraintStart_toStartOf="@id/conversation_topic_name"
             app:layout_constraintTop_toBottomOf="@id/conversation_topic_name" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/photo2"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_margin="40dp"
-            android:background="@drawable/circle"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_22sdp"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:background="@drawable/round_rectangle_for_clubhouse_images"
             android:backgroundTint="@color/colorPrimaryDark"
-            android:src="@drawable/ic_call_placeholder"
             app:layout_constraintStart_toStartOf="@id/photo1"
             app:layout_constraintTop_toTopOf="@id/photo1" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/speakers_list"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:layout_marginHorizontal="@dimen/_8sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/photo2"
-            app:layout_constraintTop_toBottomOf="@id/conversation_topic_name" />
+            app:layout_constraintTop_toTopOf="@id/photo1" />
 
-        <TextView
-            android:id="@+id/users_size"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/user_size_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:textSize="15sp"
+            android:layout_marginTop="@dimen/_6sdp"
             app:layout_constraintStart_toStartOf="@id/speakers_list"
-            app:layout_constraintTop_toBottomOf="@id/speakers_list"
-            tools:text="67 / 18" />
+            app:layout_constraintTop_toBottomOf="@id/speakers_list">
 
+            <TextView
+                android:id="@+id/users_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
+                android:textColor="#999999"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="67" />
+
+            <ImageView
+                android:id="@+id/users_icon"
+                android:layout_width="@dimen/_10sdp"
+                android:layout_height="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_3sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/users_size"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_ic_person_new"
+                tools:text="67 / 18" />
+
+            <TextView
+                android:id="@+id/speaker_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
+                android:textColor="#999999"
+                android:layout_marginStart="@dimen/_6sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/users_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="/ 7" />
+
+            <ImageView
+                android:id="@+id/chat_icon"
+                android:layout_width="@dimen/_12sdp"
+                android:layout_height="@dimen/_12sdp"
+                android:layout_marginStart="@dimen/_2sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/speaker_size"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_chat_icon" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
