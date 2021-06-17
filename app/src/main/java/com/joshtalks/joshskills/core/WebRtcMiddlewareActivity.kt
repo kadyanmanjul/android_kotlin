@@ -102,12 +102,20 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
 
     override fun onStart() {
         super.onStart()
-        bindService(Intent(this, WebRtcService::class.java), myConnection, BIND_AUTO_CREATE)
+        if (!isScreenOpenByConversationRoom) {
+            bindService(Intent(this, WebRtcService::class.java), myConnection, BIND_AUTO_CREATE)
+        }
     }
 
     override fun onStop() {
         super.onStop()
-        unbindService(myConnection)
+        if (!isScreenOpenByConversationRoom) {
+            unbindService(myConnection)
+        }
+    }
+    companion object{
+        var isScreenOpenByConversationRoom = false
+
     }
 
     override fun getConversationId(): String? {

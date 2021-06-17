@@ -28,6 +28,10 @@ class ConversationRoomListingActivity : BaseActivity(),
     lateinit var viewModel: ConversationRoomListingViewModel
     lateinit var binding: ActivityConversationsRoomsListingBinding
 
+    companion object{
+        var CONVERSATION_ROOM_VISIBLE_TRACK_FLAG: Boolean = true
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityConversationsRoomsListingBinding.inflate(layoutInflater)
@@ -62,6 +66,7 @@ class ConversationRoomListingActivity : BaseActivity(),
         isRoomCreatedByUser: Boolean,
         roomId: Int?
     ) {
+        CONVERSATION_ROOM_VISIBLE_TRACK_FLAG = false
         val intent = Intent(this, ConversationLiveRoomActivity::class.java)
         intent.putExtra("CHANNEL_NAME", channelName)
         intent.putExtra("UID", uid)
@@ -96,17 +101,17 @@ class ConversationRoomListingActivity : BaseActivity(),
     override fun onStart() {
         super.onStart()
         adapter?.startListening()
-        viewModel.makeEnterExitConversationRoom(true)
+        if (CONVERSATION_ROOM_VISIBLE_TRACK_FLAG) {
+            viewModel.makeEnterExitConversationRoom(true)
+        }
     }
 
     override fun onStop() {
         super.onStop()
         adapter?.stopListening()
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        viewModel.makeEnterExitConversationRoom(false)
+        if (CONVERSATION_ROOM_VISIBLE_TRACK_FLAG){
+            viewModel.makeEnterExitConversationRoom(false)
+        }
     }
 
     private fun setUpRecyclerView() {

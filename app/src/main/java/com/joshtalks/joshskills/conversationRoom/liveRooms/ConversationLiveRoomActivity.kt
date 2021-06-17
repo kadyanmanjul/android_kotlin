@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBot
 import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBottomSheetInfo
 import com.joshtalks.joshskills.conversationRoom.bottomsheet.RaisedHandsBottomSheet
 import com.joshtalks.joshskills.conversationRoom.notification.NotificationView
+import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingActivity
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.PermissionUtils
@@ -253,7 +254,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             if (error != null) {
                 return@addSnapshotListener
             }
-            if (value?.exists() == false){
+            if (value?.exists() == false) {
                 finish()
             }
             if (value != null) {
@@ -443,14 +444,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     usersReference?.document(uid.toString())?.delete()
                 }
             }
-            if (uid == moderatorUid){
+            if (uid == moderatorUid) {
                 usersReference?.addSnapshotListener { value, error ->
-                    if (error != null){
+                    if (error != null) {
                         return@addSnapshotListener
                     }
                     if (value != null) {
-                       val secondUserId = value.documents[1].id.toInt()
-                        if (agoraUid == secondUserId){
+                        val secondUserId = value.documents[1].id.toInt()
+                        if (agoraUid == secondUserId) {
                             viewModel.leaveEndRoom(true, roomId)
                         }
                     }
@@ -483,23 +484,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun updateFirestoreData() {
-        /*usersReference?.whereEqualTo("is_speaker", true)?.addSnapshotListener { value, error ->
-            if (error != null) {
-                return@addSnapshotListener
-            }
-            if (value != null) {
-                for (item in value.documents) {
-                    if (speakingUsersOldList.contains(item.id.toInt())) {
-                        if (item["is_speaking"]?.equals(false) == true)
-                            usersReference?.document(item.id)?.update("is_speaking", true)
-                    } else {
-                        if (item["is_speaking"]?.equals(true) == true)
-                            usersReference?.document(item.id)?.update("is_speaking", false)
-                    }
-                }
-            }
-
-        }*/
         speakingUsersOldList.forEach {
             usersReference?.document(it.toString())?.update("is_speaking", false)
         }
@@ -615,7 +599,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         UserProfileActivity.startUserProfileActivity(
             this@ConversationLiveRoomActivity,
             mentorId,
-            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+           flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT), isFromConversationRoom = true
         )
     }
 
@@ -628,19 +612,25 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         super.onStart()
         speakerAdapter?.startListening()
         listenerAdapter?.startListening()
-//        viewModel.makeEnterExitConversationRoom(true)
+        if (ConversationRoomListingActivity.CONVERSATION_ROOM_VISIBLE_TRACK_FLAG)
+            viewModel.makeEnterExitConversationRoom(true)
     }
 
     override fun onStop() {
         super.onStop()
         speakerAdapter?.stopListening()
         listenerAdapter?.stopListening()
-//        viewModel.makeEnterExitConversationRoom(false)
+        if (ConversationRoomListingActivity.CONVERSATION_ROOM_VISIBLE_TRACK_FLAG)
+            viewModel.makeEnterExitConversationRoom(false)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ConversationRoomListingActivity.CONVERSATION_ROOM_VISIBLE_TRACK_FLAG = true
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        engine?.leaveChannel()
         viewModel.leaveEndRoom(isRoomCreatedByUser, roomId)
     }
 
