@@ -14,7 +14,7 @@
         tools:context=".conversationRoom.roomsListing.ConversationRoomListingActivity">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/user"
+            android:id="@+id/user_pic"
             android:layout_width="@dimen/_24sdp"
             android:layout_height="@dimen/_24sdp"
             android:layout_marginTop="@dimen/_10sdp"
@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/user" />
+            app:layout_constraintTop_toBottomOf="@id/user_pic" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/create_room"

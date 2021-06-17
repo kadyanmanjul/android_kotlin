@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
@@ -15,6 +16,7 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
+import com.joshtalks.joshskills.core.setImage
 
 
 class ConversationRoomsListingAdapter(
@@ -73,6 +75,12 @@ class ConversationRoomsListingAdapter(
             }
             holder.usersSize.text = "${list?.size ?: 0}"
             holder.speakerSize.text = "/ ${list2?.size ?: 0}"
+            options1.snapshots[0].photo_url?.let {
+                holder.photo.setImage(it)
+            }
+            options1.snapshots[1].photo_url?.let {
+                holder.anotherPhoto.setImage(it)
+            }
         }
 
 
@@ -94,6 +102,8 @@ class ConversationRoomsListingAdapter(
         var roomTopic: TextView = itemView.findViewById(R.id.conversation_topic_name)
         var usersSize: TextView = itemView.findViewById(R.id.users_size)
         var speakerSize: TextView = itemView.findViewById(R.id.speaker_size)
+        var photo: AppCompatImageView = itemView.findViewById(R.id.photo1)
+        var anotherPhoto: AppCompatImageView = itemView.findViewById(R.id.photo2)
         var speakers: RecyclerView = itemView.findViewById(R.id.speakers_list)
     }
 

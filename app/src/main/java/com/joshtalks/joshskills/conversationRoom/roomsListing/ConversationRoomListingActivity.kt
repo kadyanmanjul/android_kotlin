@@ -48,7 +48,7 @@ class ConversationRoomListingActivity : BaseActivity(),
             showPopup()
         }
 
-        binding.user.setOnClickListener {
+        binding.userPic.setOnClickListener {
             goToProfile()
         }
 
