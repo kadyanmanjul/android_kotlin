@@ -141,6 +141,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_16sdp"
+                android:layout_marginBottom="@dimen/_20sdp"
                 android:background="@drawable/rect_round"
                 android:backgroundTint="#F2F2F2"
                 android:drawableStart="@drawable/ic_victory_emoji"
@@ -150,7 +151,7 @@
                 android:paddingEnd="@dimen/_14sdp"
                 android:textColor="#D86464"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/mute_btn"
+                app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="Leave quietly" />
 
 
@@ -180,7 +181,7 @@
                 android:src="@drawable/ic_raised_hand_list"
                 android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@id/mute_btn"
-                app:layout_constraintTop_toTopOf="@id/mute_btn"
+                app:layout_constraintTop_toTopOf="@id/leave_end_room_btn"
                 tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -198,7 +199,7 @@
                 android:paddingEnd="@dimen/_14sdp"
                 android:textColor="@color/pure_black"
                 app:layout_constraintEnd_toStartOf="@id/mute_btn"
-                app:layout_constraintTop_toTopOf="@id/mute_btn"
+                app:layout_constraintTop_toTopOf="@id/leave_end_room_btn"
                 android:text="Raised" />
 
             <com.joshtalks.joshskills.conversationRoom.notification.NotificationView

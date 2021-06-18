@@ -117,7 +117,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         if (isRoomCreatedByUser) {
             binding.handRaiseBtn.visibility = View.GONE
             binding.raisedHands.visibility = View.VISIBLE
+            binding.muteBtn.visibility = View.VISIBLE
             engine?.muteLocalAudioStream(false)
+        } else {
+            binding.handRaiseBtn.visibility = View.VISIBLE
+            binding.raisedHands.visibility = View.GONE
+            binding.muteBtn.visibility = View.GONE
         }
     }
 
@@ -150,42 +155,37 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun clickHandRaisedButton(isRaised: Boolean, type: String) {
         val reference = usersReference?.document(agoraUid.toString())
-        usersReference?.addSnapshotListener { value, error ->
-            if (error != null) {
-                return@addSnapshotListener
-            } else {
-                if (value != null) {
-                    val speakerList = value.documents.filter {
-                        it["is_speaker"] == true
-                    }
-                    if (speakerList.size < 16) {
-                        reference?.update("is_hand_raised", isRaised)
-                            ?.addOnSuccessListener {
-                                isHandRaised = !isHandRaised
-                                when (isRaised) {
-                                    true -> binding.handRaiseBtn.text = getString(R.string.raised)
-                                    false -> binding.handRaiseBtn.text =
-                                        getString(R.string.unraised)
-                                }
-                                sendNotification(
-                                    type,
-                                    agoraUid?.toString(),
-                                    moderatorUid?.toString()
-                                )
-                            }?.addOnFailureListener {
-                                showApiCallErrorToast(it.message ?: "")
+        usersReference?.whereEqualTo("is_speaker", true)
+            ?.get()
+            ?.addOnSuccessListener { documents ->
+                if (documents.size() < 16) {
+                    reference?.update("is_hand_raised", isRaised)
+                        ?.addOnSuccessListener {
+                            isHandRaised = !isHandRaised
+                            when (isRaised) {
+                                true -> binding.handRaiseBtn.text = getString(R.string.raised)
+                                false -> binding.handRaiseBtn.text =
+                                    getString(R.string.unraised)
                             }
-                    } else {
-                        Toast.makeText(
-                            this,
-                            "Speaker size full. Wait for any speaker left!!! ",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        // show popup in place of toast
-                    }
+                            setNotificationWithoutAction(
+                                String.format(
+                                    "\uD83D\uDC4B You raised your hand! We’ll let the speakers\n" +
+                                            "know you want to talk..."
+                                )
+                            )
+                            sendNotification(
+                                type,
+                                agoraUid?.toString(),
+                                moderatorUid?.toString()
+                            )
+                        }?.addOnFailureListener {
+                            showApiCallErrorToast(it.message ?: "")
+                        }
                 }
             }
-        }
+            ?.addOnFailureListener { exception ->
+                Log.w(TAG, "Error getting documents: ", exception)
+            }
 
     }
 
@@ -200,10 +200,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     true -> {
                         binding.muteBtn.setImageDrawable(
                             ResourcesCompat.getDrawable(
-                            AppObjectController.joshApplication.resources,
-                            R.drawable.ic_baseline_mic_off,
-                            null
-                        ))
+                                AppObjectController.joshApplication.resources,
+                                R.drawable.ic_baseline_mic_off,
+                                null
+                            )
+                        )
                     }
                     false -> {
                         binding.muteBtn.setImageDrawable(
@@ -211,7 +212,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                                 AppObjectController.joshApplication.resources,
                                 R.drawable.ic_mic_grey,
                                 null
-                            ))
+                            )
+                        )
                     }
                 }
 
@@ -250,15 +252,25 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
                     if (notificationTo?.get("uid")?.toInt()?.equals(agoraUid) == true) {
                         if (isRoomCreatedByUser) {
-                            if (notificationType == "HAND_RAISED") {
-                                setNotificationBarFields(
-                                    "Dismiss", "Invite to speak", String.format(
-                                        "\uD83D\uDC4B %s has something to say. Invite" +
-                                                "them as speakers?", notificationFrom?.get("name")
+                            when (notificationType) {
+                                "HAND_RAISED" -> {
+                                    setNotificationBarFields(
+                                        "Dismiss", "Invite to speak", String.format(
+                                            "\uD83D\uDC4B %s has something to say. Invite" +
+                                                    "them as speakers?",
+                                            notificationFrom?.get("name")
+                                        )
                                     )
-                                )
-                            } else {
-                                binding.notificationBar.visibility = View.GONE
+                                }
+                                "SPEAKER_INVITE_ACCEPTED" -> {
+                                    setNotificationWithoutAction(
+                                        String.format(
+                                            "%s is now a speaker!",
+                                            notificationFrom?.get("name")
+                                        )
+                                    )
+                                }
+
                             }
                         } else {
                             if (notificationType == "SPEAKER_INVITE") {
@@ -271,9 +283,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                             }
                         }
                         roomReference?.collection("notifications")?.document(item.document.id)
-                            ?.delete()
-                    } else {
-                        binding.notificationBar.visibility = View.GONE
+                            ?.delete()?.addOnFailureListener {
+                                Log.d(TAG, "notification not deleted")
+                            }
                     }
                 }
             }
@@ -286,8 +298,15 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         heading: String
     ) {
         binding.notificationBar.visibility = View.VISIBLE
+        binding.notificationBar.showActionLayout()
         binding.notificationBar.setRejectButtonText(rejectedText)
         binding.notificationBar.setAcceptButtonText(acceptedText)
+        binding.notificationBar.setHeading(heading)
+    }
+
+    private fun setNotificationWithoutAction(heading: String) {
+        binding.notificationBar.visibility = View.VISIBLE
+        binding.notificationBar.hideActionLayout()
         binding.notificationBar.setHeading(heading)
     }
 
@@ -308,14 +327,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     } else {
                         updateUiWhenSwitchToListener()
                     }
-                } /*else {
-                    binding.muteBtn.visibility = View.VISIBLE
-                    binding.handRaiseBtn.visibility = View.GONE
-                    binding.muteBtn.text = getString(R.string.mute)
-                    iSSoundOn = true
-                    engine?.enableLocalAudio(true)
-
-                }*/
+                }
             }
         }
     }
@@ -355,14 +367,16 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     AppObjectController.joshApplication.resources,
                     R.drawable.ic_baseline_mic_off,
                     null
-                ))
+                )
+            )
         } else {
             binding.muteBtn.setImageDrawable(
                 ResourcesCompat.getDrawable(
                     AppObjectController.joshApplication.resources,
                     R.drawable.ic_mic_grey,
                     null
-                ))
+                )
+            )
         }
     }
 
@@ -371,23 +385,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             engine = AppObjectController.getRtcEngine(AppObjectController.joshApplication)
         }
     }
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        Log.d(TAG, "On new intent engine: $engine")
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-        if (engine == null) {
-            Log.d(TAG, "onRestart: engine null")
-        } else {
-            Log.d(TAG, "onRestart: engine not null")
-        }
-        Log.d(TAG, "onRestart:  engine : $engine & channelNmae: $channelName")
-
-    }
-
 
     private fun leaveRoomIfModeratorEndRoom() {
         roomReference?.addSnapshotListener { value, error ->
@@ -458,6 +455,10 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         }
 
         engine?.enableAudioVolumeIndication(2000, 3, true)
+        engine?.setAudioProfile(
+            Constants.AUDIO_SCENARIO_CHATROOM_ENTERTAINMENT,
+            Constants.AUDIO_SCENARIO_DEFAULT
+        )
 
         val option = ChannelMediaOptions()
         option.autoSubscribeAudio = true
@@ -480,13 +481,10 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
         override fun onLeaveChannel(stats: RtcStats) {
             super.onLeaveChannel(stats)
-            Log.d(TAG, "onLeaveChannel: ")
-            engine = null
         }
 
         override fun onRejoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
             super.onRejoinChannelSuccess(channel, uid, elapsed)
-            Log.d(TAG, "onRejoinChannelSuccess: ")
         }
 
         override fun onUserOffline(uid: Int, reason: Int) {
@@ -495,21 +493,16 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 if (reason == Constants.USER_OFFLINE_QUIT || reason == Constants.USER_OFFLINE_DROPPED) {
                     usersReference?.document(uid.toString())?.delete()
                 }
-            }
-            if (uid == moderatorUid) {
-                usersReference?.addSnapshotListener { value, error ->
-                    if (error != null) {
-                        return@addSnapshotListener
-                    }
-                    if (value != null) {
-                        val secondUserId = value.documents[1].id.toInt()
+            } else {
+                if (uid == moderatorUid && reason == Constants.USER_OFFLINE_DROPPED) {
+                    usersReference?.get()?.addOnSuccessListener { documents ->
+                        val secondUserId = documents.documents[1].id.toInt()
                         if (agoraUid == secondUserId) {
                             viewModel.leaveEndRoom(true, roomId)
                         }
                     }
                 }
             }
-            Log.d(TAG, "onUserOffline: ")
         }
 
         override fun onAudioVolumeIndication(
@@ -638,8 +631,24 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     }
 
                     override fun moveToSpeaker() {
-                        val reference = usersReference?.document(userUid.toString())
-                        reference?.update("is_speaker", true)
+                        usersReference?.whereEqualTo("is_speaker", true)
+                            ?.get()
+                            ?.addOnSuccessListener { documents ->
+                                if (documents.size() < 16) {
+                                    sendNotification(
+                                        "SPEAKER_INVITE",
+                                        moderatorUid?.toString(),
+                                        userUid.toString()
+                                    )
+                                } else {
+                                    Toast.makeText(
+                                        this@ConversationLiveRoomActivity,
+                                        "Speakers limit reached !!!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    // show pop up in place of toast
+                                }
+                            }
                     }
 
                 })
@@ -664,16 +673,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         super.onStart()
         speakerAdapter?.startListening()
         listenerAdapter?.startListening()
-        if (ConversationRoomListingActivity.CONVERSATION_ROOM_VISIBLE_TRACK_FLAG)
-            viewModel.makeEnterExitConversationRoom(true)
     }
 
     override fun onStop() {
         super.onStop()
         speakerAdapter?.stopListening()
         listenerAdapter?.stopListening()
-        if (ConversationRoomListingActivity.CONVERSATION_ROOM_VISIBLE_TRACK_FLAG)
-            viewModel.makeEnterExitConversationRoom(false)
     }
 
     override fun onResume() {
@@ -687,7 +692,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     override fun onDestroy() {
-        viewModel.leaveEndRoom(isRoomCreatedByUser, roomId)
         if (engine != null) {
             engine?.leaveChannel()
             engine = null

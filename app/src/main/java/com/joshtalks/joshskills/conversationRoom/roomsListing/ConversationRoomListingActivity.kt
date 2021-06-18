@@ -43,7 +43,7 @@ class ConversationRoomListingActivity : BaseActivity(),
         setContentView(view)
         viewModel = ConversationRoomListingViewModel()
         setUpRecyclerView()
-
+        viewModel.makeEnterExitConversationRoom(true)
         binding.createRoom.setOnClickListener {
             showPopup()
         }
@@ -119,17 +119,17 @@ class ConversationRoomListingActivity : BaseActivity(),
     override fun onStart() {
         super.onStart()
         adapter?.startListening()
-        if (CONVERSATION_ROOM_VISIBLE_TRACK_FLAG) {
-            viewModel.makeEnterExitConversationRoom(true)
-        }
     }
 
     override fun onStop() {
         super.onStop()
         adapter?.stopListening()
-        if (CONVERSATION_ROOM_VISIBLE_TRACK_FLAG){
-            viewModel.makeEnterExitConversationRoom(false)
-        }
+
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        viewModel.makeEnterExitConversationRoom(false)
     }
 
     private fun setUpRecyclerView() {

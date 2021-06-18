@@ -44,6 +44,10 @@ class NotificationView @JvmOverloads constructor(
     }
 
     fun hideActionLayout() {
+        this.action_layout.visibility = View.GONE
+    }
+
+    fun showActionLayout(){
         this.action_layout.visibility = View.VISIBLE
     }
 
