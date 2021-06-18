@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.CollectionReference
@@ -196,8 +197,22 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 engine?.enableLocalAudio(iSSoundOn)
                 engine?.muteLocalAudioStream(!iSSoundOn)
                 when (isMicOn) {
-                    true -> binding.muteBtn.text = getString(R.string.mute)
-                    false -> binding.muteBtn.text = getString(R.string.unmute)
+                    true -> {
+                        binding.muteBtn.setImageDrawable(
+                            ResourcesCompat.getDrawable(
+                            AppObjectController.joshApplication.resources,
+                            R.drawable.ic_baseline_mic_off,
+                            null
+                        ))
+                    }
+                    false -> {
+                        binding.muteBtn.setImageDrawable(
+                            ResourcesCompat.getDrawable(
+                                AppObjectController.joshApplication.resources,
+                                R.drawable.ic_mic_grey,
+                                null
+                            ))
+                    }
                 }
 
             }?.addOnFailureListener {
@@ -335,9 +350,19 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun updateMuteButtonText() {
         if (iSSoundOn) {
-            binding.muteBtn.text = getString(R.string.mute)
+            binding.muteBtn.setImageDrawable(
+                ResourcesCompat.getDrawable(
+                    AppObjectController.joshApplication.resources,
+                    R.drawable.ic_baseline_mic_off,
+                    null
+                ))
         } else {
-            binding.muteBtn.text = getString(R.string.unmute)
+            binding.muteBtn.setImageDrawable(
+                ResourcesCompat.getDrawable(
+                    AppObjectController.joshApplication.resources,
+                    R.drawable.ic_mic_grey,
+                    null
+                ))
         }
     }
 
