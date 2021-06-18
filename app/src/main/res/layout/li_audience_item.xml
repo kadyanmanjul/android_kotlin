@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/_27sdp">
+    android:layout_marginStart="@dimen/_20sdp">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/user_image"
@@ -65,29 +65,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/user_image">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/speaker_badge"
-            android:layout_width="@dimen/_14sdp"
-            android:layout_height="@dimen/_14sdp"
-            android:background="@drawable/circle2"
-            android:backgroundTint="#27AE61"
-            android:padding="@dimen/_2sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_star" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_4sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
             android:textColor="@color/pure_black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@id/speaker_badge"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Rohaneeee a" />
 

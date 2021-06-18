@@ -999,10 +999,11 @@ fun ImageView.setUserImageOrInitials(
 
 fun ImageView.setRoundImage(
     url: String,
-    context: Context = AppObjectController.joshApplication
+    context: Context = AppObjectController.joshApplication,
+    dp: Int =16
 ) {
 
-    val multi = MultiTransformation(RoundedCornersTransformation(Utils.dpToPx(16), 0))
+    val multi = MultiTransformation(RoundedCornersTransformation(Utils.dpToPx(dp), 0))
     Glide.with(context)
         .load(url)
         .override(Target.SIZE_ORIGINAL)

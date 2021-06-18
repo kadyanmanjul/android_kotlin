@@ -19,24 +19,22 @@ import com.joshtalks.joshskills.core.interfaces.ConversationLiveRoomSpeakerClick
 import com.joshtalks.joshskills.core.setImage
 
 
-class SpeakerAdapter(
+class AudienceAdapter(
     rooms: FirestoreRecyclerOptions<LiveRoomUser>,
     val action: ConversationLiveRoomSpeakerClickAction,
     val isModerator: Boolean
-) : FirestoreRecyclerAdapter<LiveRoomUser, SpeakerAdapter.SpeakerViewHolder>(rooms) {
+) : FirestoreRecyclerAdapter<LiveRoomUser, AudienceAdapter.SpeakerViewHolder>(rooms) {
 
     val firebaseFirestore = FirebaseFirestore.getInstance().collection("conversation_rooms")
-    private val TAG = "SpeakerAdapter"
+    private val TAG = "AudienceAdapter"
     private var listenerUserAction: OnUserItemClickListener? = null
 
     class SpeakerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: AppCompatTextView = itemView.findViewById(R.id.name)
         val photo: ShapeableImageView = itemView.findViewById(R.id.user_image)
-        val moderatorIcon: AppCompatImageView = itemView.findViewById(R.id.speaker_badge)
         val handRaisedIcon: AppCompatImageView = itemView.findViewById(R.id.raised_hands)
         val micIcon: AppCompatImageView = itemView.findViewById(R.id.volume_icon)
         val speakingIcon: AppCompatImageView = itemView.findViewById(R.id.ring_icon)
-
     }
 
     @SuppressLint("LogNotTimber")
@@ -51,20 +49,16 @@ class SpeakerAdapter(
 
         holder.name.text = model.name
         if (!model.photo_url.isNullOrEmpty()) {
+            holder.photo.clipToOutline = true
             holder.photo.setImage(model.photo_url ?: "")
         } else {
             Glide.with(holder.itemView.context).load(R.drawable.ic_call_placeholder)
                 .into(holder.photo)
         }
-        if (model.isIs_moderator) {
-            holder.moderatorIcon.visibility = View.VISIBLE
-        } else {
-            holder.moderatorIcon.visibility = View.GONE
-        }
 
-        if (model.isIs_speaking && model.isIs_speaker && model.isIs_mic_on) {
+        if (model.isIs_speaking && model.isIs_speaker && model.isIs_mic_on){
             holder.speakingIcon.visibility = View.VISIBLE
-        } else {
+        }else{
             holder.speakingIcon.visibility = View.GONE
         }
 
@@ -94,12 +88,12 @@ class SpeakerAdapter(
             }
         }
 
-        Log.d("SpeakerAdapter", "position: $position , ${model.name}")
+        Log.d("AudienceAdapter", "position: $position , ${model.name}")
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SpeakerViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.li_speakers_item, parent, false)
+            .inflate(R.layout.li_audience_item, parent, false)
 
         return SpeakerViewHolder(view)
     }

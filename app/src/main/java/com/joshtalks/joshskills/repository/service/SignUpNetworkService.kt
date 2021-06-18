@@ -29,16 +29,13 @@ import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import com.joshtalks.joshskills.repository.server.signup.request.SocialSignUpRequest
 import kotlinx.coroutines.Deferred
-import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.FieldMap
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
-import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
-import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.QueryMap
@@ -100,10 +97,6 @@ interface SignUpNetworkService {
         @Path("id") id: String,
         @Body params: Map<String, Any?>
     ): Response<LastLoginResponse>
-
-    @Multipart
-    @POST("$DIR/user/{id}/upload_profile_pic/")
-    suspend fun uploadProfilePicture(@Path("id") id: String, @Part file: MultipartBody.Part): Any
 
     @POST("$DIR/mentor/devices_v2/")
     suspend fun postDeviceDetails(@Body obj: UpdateDeviceRequest): DeviceDetailsResponse

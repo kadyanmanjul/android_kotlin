@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.firestore.FirebaseFirestore
@@ -17,7 +16,7 @@ import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomA
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
-import com.joshtalks.joshskills.core.setImage
+import com.joshtalks.joshskills.core.setRoundImage
 import com.joshtalks.joshskills.databinding.ActivityConversationsRoomsListingBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -48,7 +47,8 @@ class ConversationRoomListingActivity : BaseActivity(),
         binding.createRoom.setOnClickListener {
             showPopup()
         }
-        binding.userPic.setImage(Mentor.getInstance().getUser()?.photo ?: "")
+        binding.userPic.clipToOutline = true
+        binding.userPic.setRoundImage(Mentor.getInstance().getUser()?.photo ?: "",dp = 8)
         binding.userPic.setOnClickListener {
             goToProfile()
         }
@@ -139,10 +139,9 @@ class ConversationRoomListingActivity : BaseActivity(),
                 .setQuery(query, ConversationRoomsListingItem::class.java)
                 .build()
         adapter = ConversationRoomsListingAdapter(options, this)
-        val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
+        binding.recyclerView.setHasFixedSize(true)
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter = adapter
     }
 
     override fun onRoomClick(item: ConversationRoomsListingItem) {

@@ -6,17 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
-import com.joshtalks.joshskills.core.setImage
+import com.joshtalks.joshskills.core.setRoundImage
 
 
 class ConversationRoomsListingAdapter(
@@ -28,7 +30,7 @@ class ConversationRoomsListingAdapter(
     ) {
     var task: ListenerRegistration? = null
     val firebaseFirestore = FirebaseFirestore.getInstance().collection("conversation_rooms")
-    var roomItemAdapter :ConversationRoomItemAdapter? = null
+    var roomItemAdapter: ConversationRoomItemAdapter? = null
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConversationRoomViewHolder {
@@ -75,12 +77,33 @@ class ConversationRoomsListingAdapter(
             }
             holder.usersSize.text = "${list?.size ?: 0}"
             holder.speakerSize.text = "/ ${list2?.size ?: 0}"
-            options1.snapshots[0].photo_url?.let {
-                holder.photo.setImage(it)
+            if (options1.snapshots.isNullOrEmpty()) {
+                holder.photo.visibility = View.GONE
+                holder.anotherPhoto.visibility = View.GONE
+            } else {
+                if (options1.snapshots[0]?.photo_url.isNullOrBlank().not()) {
+                    holder.photo.visibility = View.VISIBLE
+                    holder.photo.clipToOutline = true
+                    holder.photo.setRoundImage(options1.snapshots[0].photo_url!!,dp = 20)
+
+                } else {
+                    holder.photo.setImageDrawable(
+                        ResourcesCompat.getDrawable(
+                        AppObjectController.joshApplication.resources,
+                        R.drawable.ic_ic_person_new,
+                        null
+                    ))
+                }
+                if (options1.snapshots.size >= 2 && options1.snapshots[1]?.photo_url.isNullOrBlank()
+                        .not()
+                ) {
+                    holder.anotherPhoto.visibility = View.VISIBLE
+                    holder.anotherPhoto.clipToOutline = true
+                    holder.anotherPhoto.setRoundImage(options1.snapshots[1].photo_url!!,dp = 20)
+                } else {
+                    holder.anotherPhoto.visibility = View.GONE
+                }
             }
-//            options1.snapshots[1].photo_url?.let {
-//                holder.anotherPhoto.setImage(it)
-//            }
         }
 
 
@@ -102,8 +125,8 @@ class ConversationRoomsListingAdapter(
         var roomTopic: TextView = itemView.findViewById(R.id.conversation_topic_name)
         var usersSize: TextView = itemView.findViewById(R.id.users_size)
         var speakerSize: TextView = itemView.findViewById(R.id.speaker_size)
-        var photo: AppCompatImageView = itemView.findViewById(R.id.photo1)
-        var anotherPhoto: AppCompatImageView = itemView.findViewById(R.id.photo2)
+        var photo: ShapeableImageView = itemView.findViewById(R.id.photo1)
+        var anotherPhoto: ShapeableImageView = itemView.findViewById(R.id.photo2)
         var speakers: RecyclerView = itemView.findViewById(R.id.speakers_list)
     }
 

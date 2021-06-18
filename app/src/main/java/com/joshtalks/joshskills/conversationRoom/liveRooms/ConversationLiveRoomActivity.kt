@@ -23,8 +23,9 @@ import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomLi
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.getRandomName
 import com.joshtalks.joshskills.core.interfaces.ConversationLiveRoomSpeakerClickAction
-import com.joshtalks.joshskills.core.setImage
+import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.databinding.ActivityConversationLiveRoomBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
@@ -50,7 +51,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     var isRoomCreatedByUser: Boolean = false
     var isRoomUserSpeaker: Boolean = false
     var speakerAdapter: SpeakerAdapter? = null
-    var listenerAdapter: SpeakerAdapter? = null
+    var listenerAdapter: AudienceAdapter? = null
     private var engine: RtcEngine? = null
     var channelName: String? = null
     var agoraUid: Int? = null
@@ -102,7 +103,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun updateUI() {
         setUpRecyclerView()
         setLeaveEndButton(isRoomCreatedByUser)
-        binding.userPhoto.setImage(Mentor.getInstance().getUser()?.photo ?: "")
+        binding.userPhoto.clipToOutline = true
+        binding.userPhoto.setUserImageOrInitials(
+            Mentor.getInstance().getUser()?.photo,
+            Mentor.getInstance().getUser()?.username ?: getRandomName()
+        )
         roomReference?.get()?.addOnSuccessListener {
             moderatorUid = it.get("started_by")?.toString()?.toInt()
             topicName = it.get("topic")?.toString()
@@ -145,20 +150,21 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun clickHandRaisedButton(isRaised: Boolean, type: String) {
         val reference = usersReference?.document(agoraUid.toString())
         usersReference?.addSnapshotListener { value, error ->
-            if (error != null){
+            if (error != null) {
                 return@addSnapshotListener
-            }else{
+            } else {
                 if (value != null) {
                     val speakerList = value.documents.filter {
                         it["is_speaker"] == true
                     }
-                    if (speakerList.size < 16){
+                    if (speakerList.size < 16) {
                         reference?.update("is_hand_raised", isRaised)
                             ?.addOnSuccessListener {
                                 isHandRaised = !isHandRaised
                                 when (isRaised) {
                                     true -> binding.handRaiseBtn.text = getString(R.string.raised)
-                                    false -> binding.handRaiseBtn.text = getString(R.string.unraised)
+                                    false -> binding.handRaiseBtn.text =
+                                        getString(R.string.unraised)
                                 }
                                 sendNotification(
                                     type,
@@ -168,8 +174,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                             }?.addOnFailureListener {
                                 showApiCallErrorToast(it.message ?: "")
                             }
-                    }else{
-                        Toast.makeText(this, "Speaker size full. Wait for any speaker left!!! ", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "Speaker size full. Wait for any speaker left!!! ",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         // show popup in place of toast
                     }
                 }
@@ -539,7 +549,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         speakerAdapter =
             SpeakerAdapter(getFirestoreRecyclerOptions(true), this, isRoomCreatedByUser)
         listenerAdapter =
-            SpeakerAdapter(getFirestoreRecyclerOptions(false), this, isRoomCreatedByUser)
+            AudienceAdapter(getFirestoreRecyclerOptions(false), this, isRoomCreatedByUser)
         binding.speakersList.layoutManager = GridLayoutManager(this, 3)
         binding.listenerList.layoutManager = GridLayoutManager(this, 4)
         binding.speakersList.setHasFixedSize(false)
@@ -547,7 +557,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.speakersList.adapter = speakerAdapter
         binding.listenerList.adapter = listenerAdapter
 
-        listenerAdapter?.setOnItemClickListener(object : SpeakerAdapter.OnUserItemClickListener {
+        listenerAdapter?.setOnItemClickListener(object : AudienceAdapter.OnUserItemClickListener {
             override fun onItemClick(documentSnapshot: DocumentSnapshot?, position: Int) {
                 getDataOnSpeakerAdapterItemClick(documentSnapshot, false)
             }
@@ -616,7 +626,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         UserProfileActivity.startUserProfileActivity(
             this@ConversationLiveRoomActivity,
             mentorId,
-           flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT), isFromConversationRoom = true
+            flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT), isFromConversationRoom = true
         )
     }
 

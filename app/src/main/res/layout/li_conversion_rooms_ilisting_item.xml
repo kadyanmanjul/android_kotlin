@@ -4,8 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/_16sdp"
-    android:layout_marginVertical="@dimen/_10sdp"
     app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="@dimen/_12sdp"
     app:cardElevation="@dimen/_2sdp"
@@ -31,26 +29,36 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Hello Josh Talks" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/photo1"
             android:layout_width="@dimen/_40sdp"
             android:layout_height="@dimen/_40sdp"
             android:layout_marginTop="@dimen/_8sdp"
-            android:background="@drawable/round_rectangle_for_clubhouse_images"
-            android:backgroundTint="@color/black"
+            android:scaleType="fitXY"
+            app:shapeAppearanceOverlay="@style/roundedCornersImageView_16dp"
+            android:background="@color/black"
             app:layout_constraintStart_toStartOf="@id/conversation_topic_name"
             app:layout_constraintTop_toBottomOf="@id/conversation_topic_name" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/photo2"
             android:layout_width="@dimen/_40sdp"
             android:layout_height="@dimen/_40sdp"
             android:layout_marginStart="@dimen/_22sdp"
             android:layout_marginTop="@dimen/_14sdp"
-            android:background="@drawable/round_rectangle_for_clubhouse_images"
-            android:backgroundTint="@color/colorPrimaryDark"
+            android:scaleType="fitXY"
+            app:shapeAppearanceOverlay="@style/roundedCornersImageView_16dp"
+            android:background="@color/colorPrimaryDark"
             app:layout_constraintStart_toStartOf="@id/photo1"
             app:layout_constraintTop_toTopOf="@id/photo1" />
+
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="right"
+            app:constraint_referenced_ids="photo1,photo2" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/speakers_list"
@@ -59,7 +67,7 @@
             android:layout_marginHorizontal="@dimen/_8sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toEndOf="@id/photo2"
+            app:layout_constraintStart_toEndOf="@id/barrier"
             app:layout_constraintTop_toTopOf="@id/photo1" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -86,6 +94,7 @@
                 android:layout_width="@dimen/_10sdp"
                 android:layout_height="@dimen/_10sdp"
                 android:layout_marginStart="@dimen/_3sdp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/users_size"

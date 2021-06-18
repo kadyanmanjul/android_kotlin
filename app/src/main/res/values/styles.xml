@@ -640,4 +640,21 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
+    <style name="roundedCornersImageView_8dp" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/_8sdp</item>
+    </style>
+    <style name="roundedCornersImageView_16dp" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/_16sdp</item>
+    </style>
+    <style name="roundedCornersImageView_26dp" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/_26sdp</item>
+    </style>
+    <style name="roundedCornersImageView_20dp" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/_20sdp</item>
+    </style>
+
 </resources>
