@@ -1,8 +1,10 @@
 package com.joshtalks.joshskills.conversationRoom.bottomsheet
 
-import android.app.Dialog
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -11,9 +13,10 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.LiveRoomUser
+import com.joshtalks.joshskills.databinding.LiBottomSheetRaisedHandsBinding
 
 class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
-
+    private lateinit var binding: LiBottomSheetRaisedHandsBinding
     private var raisedHandLists: RecyclerView? = null
     private var roomId: Int? = null
     private var moderatorUid: Int? = null
@@ -33,44 +36,65 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
         setStyle(STYLE_NORMAL, R.style.ConversationRoomStyle)
     }
 
-    override fun setupDialog(dialog: Dialog, style: Int) {
-        super.setupDialog(dialog, style)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        isCancelable = true
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.li_bottom_sheet_raised_hands,
+            container,
+            false
+        )
+        binding.lifecycleOwner = this
+        binding.fragment = this
+        return binding.root
+    }
 
-        val contentView = View.inflate(context, R.layout.li_bottom_sheet_raised_hands, null)
-        dialog.setContentView(contentView)
-        setViews(contentView)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setViews(view)
         configureRecyclerView()
     }
 
+
     private fun configureRecyclerView() {
-        val query = FirebaseFirestore.getInstance().collection("conversation_rooms")
-            .document(roomId.toString())
-            .collection("users").whereEqualTo("is_hand_raised", true)
-            .whereEqualTo("is_speaker", false)
+        //TODO --> Ankit if list is empty replace false with logic
+        if (false) {
+            binding.noAuidenceText.visibility = View.VISIBLE
+            binding.raisedHandsList.visibility = View.GONE
+        } else {
+            binding.noAuidenceText.visibility = View.GONE
+            binding.raisedHandsList.visibility = View.VISIBLE
+            val query = FirebaseFirestore.getInstance().collection("conversation_rooms")
+                .document(roomId.toString())
+                .collection("users").whereEqualTo("is_hand_raised", true)
+                .whereEqualTo("is_speaker", false)
 
-        val options: FirestoreRecyclerOptions<LiveRoomUser> =
-            FirestoreRecyclerOptions.Builder<LiveRoomUser>()
-                .setQuery(query, LiveRoomUser::class.java)
-                .build()
-        adapter = RaisedHandsBottomSheetAdapter(options)
-        raisedHandLists?.layoutManager = LinearLayoutManager(this.context)
-        raisedHandLists?.setHasFixedSize(false)
-        raisedHandLists?.adapter = adapter
-        adapter?.startListening()
-        adapter?.notifyDataSetChanged()
+            val options: FirestoreRecyclerOptions<LiveRoomUser> =
+                FirestoreRecyclerOptions.Builder<LiveRoomUser>()
+                    .setQuery(query, LiveRoomUser::class.java)
+                    .build()
+            adapter = RaisedHandsBottomSheetAdapter(options)
+            raisedHandLists?.layoutManager = LinearLayoutManager(this.context)
+            raisedHandLists?.setHasFixedSize(false)
+            raisedHandLists?.adapter = adapter
+            adapter?.startListening()
+            adapter?.notifyDataSetChanged()
+            adapter?.setOnItemClickListener(object :
+                RaisedHandsBottomSheetAdapter.RaisedHandsBottomSheetAction {
+                override fun onItemClick(documentSnapshot: DocumentSnapshot?, position: Int) {
+                    val id = documentSnapshot?.id
+                    sendNotification(
+                        "SPEAKER_INVITE",
+                        moderatorUid?.toString(),
+                        id
+                    )
+                }
 
-        adapter?.setOnItemClickListener(object :
-            RaisedHandsBottomSheetAdapter.RaisedHandsBottomSheetAction {
-            override fun onItemClick(documentSnapshot: DocumentSnapshot?, position: Int) {
-                val id = documentSnapshot?.id
-                sendNotification(
-                    "SPEAKER_INVITE",
-                    moderatorUid?.toString(),
-                    id
-                )
-            }
-
-        })
+            })
+        }
 
     }
 

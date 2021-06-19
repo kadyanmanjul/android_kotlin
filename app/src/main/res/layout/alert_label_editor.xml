@@ -48,7 +48,7 @@
         android:background="@drawable/background_topic"
         android:inputType="text"
         android:paddingHorizontal="@dimen/_8sdp"
-        android:paddingVertical="@dimen/_16sdp"
+        android:paddingVertical="@dimen/_2sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/e_g_motivat" />
