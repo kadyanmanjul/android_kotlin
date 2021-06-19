@@ -898,6 +898,7 @@
     <string name="view_full_profile">View full profile</string>
     <string name="move_to_audience">Move to audience</string>
     <string name="move_to_speaker">Move to speaker</string>
+    <string name="alert_end_room_title">Are you sure, you want to end this room for everyone</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="privacy_label">By continuing you consent to share your information with Josh Skills &amp; agree to <u>Josh Skills’ Privacy Policy</u></string>
 

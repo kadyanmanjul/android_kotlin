@@ -2,11 +2,14 @@ package com.joshtalks.joshskills.conversationRoom.liveRooms
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -129,7 +132,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun clickListener() {
 
         binding.leaveEndRoomBtn.setOnClickListener {
-            viewModel.leaveEndRoom(isRoomCreatedByUser, roomId)
+            if (binding.leaveEndRoomBtn.text==getString(R.string.end_room)){
+                showEndRoomPopup()
+            } else {
+                viewModel.leaveEndRoom(isRoomCreatedByUser, roomId)
+            }
         }
         binding.userPhoto.setOnClickListener {
             openUserProfile(Mentor.getInstance().getId())
@@ -667,6 +674,27 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     fun openRaisedHandsBottomSheet() {
         val bottomSheet = RaisedHandsBottomSheet.newInstance(roomId ?: 0, moderatorUid)
         bottomSheet.show(supportFragmentManager, "Bottom sheet Hands Raised")
+    }
+
+    private fun showEndRoomPopup() {
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+        val inflater = this.layoutInflater
+        val dialogView: View = inflater.inflate(R.layout.alert_end_room, null)
+        dialogBuilder.setView(dialogView)
+
+        val alertDialog: AlertDialog = dialogBuilder.create()
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        alertDialog.show()
+
+        dialogView.findViewById<AppCompatTextView>(R.id.cancel).setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        dialogView.findViewById<AppCompatTextView>(R.id.end_room).setOnClickListener {
+            viewModel.leaveEndRoom(isRoomCreatedByUser, roomId)
+            alertDialog.dismiss()
+        }
+
     }
 
     override fun onStart() {

@@ -2,6 +2,8 @@ package com.joshtalks.joshskills.conversationRoom.roomsListing
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
@@ -106,6 +108,7 @@ class ConversationRoomListingActivity : BaseActivity(),
         dialogBuilder.setView(dialogView)
 
         val alertDialog: AlertDialog = dialogBuilder.create()
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.show()
 
         dialogView.findViewById<MaterialTextView>(R.id.create_room).setOnClickListener {
