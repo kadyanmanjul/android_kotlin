@@ -148,8 +148,8 @@
                 android:paddingStart="@dimen/_10sdp"
                 android:paddingEnd="@dimen/_14sdp"
                 android:textColor="#D86464"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 tools:text="Leave quietly" />
 
 
@@ -195,19 +195,20 @@
                 android:paddingVertical="@dimen/_8sdp"
                 android:paddingStart="@dimen/_10sdp"
                 android:paddingEnd="@dimen/_14sdp"
+                android:text="Raised"
                 android:textColor="@color/pure_black"
                 app:layout_constraintEnd_toStartOf="@id/mute_btn"
-                app:layout_constraintTop_toTopOf="@id/leave_end_room_btn"
-                android:text="Raised" />
+                app:layout_constraintTop_toTopOf="@id/leave_end_room_btn" />
 
-            <com.joshtalks.joshskills.conversationRoom.notification.NotificationView
-                android:id="@+id/notification_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="gone" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.joshtalks.joshskills.conversationRoom.notification.NotificationView
+            android:id="@+id/notification_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

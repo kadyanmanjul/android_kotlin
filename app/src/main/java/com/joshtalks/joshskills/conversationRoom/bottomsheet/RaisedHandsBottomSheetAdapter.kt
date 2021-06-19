@@ -8,11 +8,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.firebase.firestore.DocumentSnapshot
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.LiveRoomUser
 import com.joshtalks.joshskills.core.setImage
-import de.hdodenhof.circleimageview.CircleImageView
 
 class RaisedHandsBottomSheetAdapter(rooms: FirestoreRecyclerOptions<LiveRoomUser>) :
     FirestoreRecyclerAdapter<LiveRoomUser, RaisedHandsBottomSheetAdapter.RaisedHandsViewHolder>(
@@ -22,7 +22,7 @@ class RaisedHandsBottomSheetAdapter(rooms: FirestoreRecyclerOptions<LiveRoomUser
 
     class RaisedHandsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val raisedHandUsername: TextView = view.findViewById(R.id.raised_hand_user_name)
-        val userPhoto: CircleImageView = view.findViewById(R.id.user_photo)
+        val userPhoto: ShapeableImageView = view.findViewById(R.id.user_photo)
         val plus: ImageView = view.findViewById(R.id.add_to_speaker)
     }
 
