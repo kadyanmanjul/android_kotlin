@@ -166,6 +166,7 @@ abstract class BaseActivity :
             InstallReferralUtil.installReferrer(applicationContext)
             addScreenRecording()
         }
+        PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, false)
     }
 
     private fun addScreenRecording() {

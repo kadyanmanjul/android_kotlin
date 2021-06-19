@@ -44,6 +44,7 @@ import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
@@ -405,8 +406,13 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
             }
             NotificationAction.INCOMING_CALL_NOTIFICATION -> {
-                if (User.getInstance().isVerified) {
+                if (User.getInstance().isVerified && !PrefManager.getBoolValue(
+                        IS_CONVERSATION_ROOM_ACTIVE)
+                ) {
                     incomingCallNotificationAction(notificationObject.actionData)
+                }else if (PrefManager.getBoolValue(
+                        IS_CONVERSATION_ROOM_ACTIVE)){
+                    callForceDisconnect()
                 }
                 return null
             }

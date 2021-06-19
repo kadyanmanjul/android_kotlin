@@ -16,6 +16,8 @@ import com.google.firebase.firestore.Query
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
 import com.joshtalks.joshskills.core.setRoundImage
@@ -40,6 +42,7 @@ class ConversationRoomListingActivity : BaseActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
         binding = ActivityConversationsRoomsListingBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
@@ -127,7 +130,11 @@ class ConversationRoomListingActivity : BaseActivity(),
     override fun onStop() {
         super.onStop()
         adapter?.stopListening()
+    }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, false)
     }
 
     override fun onBackPressed() {
