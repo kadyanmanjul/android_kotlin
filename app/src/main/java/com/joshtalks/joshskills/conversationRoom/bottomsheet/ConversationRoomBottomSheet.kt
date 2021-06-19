@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.conversationRoom.bottomsheet
 import android.app.Dialog
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageButton
 import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textview.MaterialTextView
@@ -19,6 +20,7 @@ class ConversationRoomBottomSheet : BottomSheetDialogFragment() {
     private var openProfileButton: MaterialTextView? = null
     private var moveToAudienceButton: MaterialTextView? = null
     private var moveToSpeakerButton: MaterialTextView? = null
+    private var closeButton: ImageButton? = null
 
     companion object {
         fun newInstance(
@@ -105,6 +107,10 @@ class ConversationRoomBottomSheet : BottomSheetDialogFragment() {
             dialog.dismiss()
         }
 
+        closeButton?.setOnClickListener {
+            dialog.dismiss()
+        }
+
     }
 
     private fun setViews(view: View?) {
@@ -114,6 +120,7 @@ class ConversationRoomBottomSheet : BottomSheetDialogFragment() {
         openProfileButton = view?.findViewById(R.id.open_user_profile)
         moveToAudienceButton = view?.findViewById(R.id.move_to_audience)
         moveToSpeakerButton = view?.findViewById(R.id.move_to_speaker)
+        closeButton = view?.findViewById(R.id.close)
     }
 }
 
