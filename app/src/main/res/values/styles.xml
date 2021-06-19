@@ -633,11 +633,12 @@
 
     <style name="ConversationRoomStyle" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/MYBottomSheetStyle</item>
-        <item name="android:windowSoftInputMode">adjustResize|stateVisible</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
     </style>
 
     <style name="MYBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@android:color/transparent</item>
+        <item name="android:background">@color/light_shade_of_gray</item>
+        <item name="android:windowIsFloating">false</item>
     </style>
 
     <style name="roundedCornersImageView_8dp" parent="">

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -56,13 +57,14 @@ class ConversationRoomsListingAdapter(
         val query1: Query = firebaseFirestore.document(id).collection("users")
         val options1: FirestoreRecyclerOptions<ConversationRoomSpeakerList> =
             FirestoreRecyclerOptions.Builder<ConversationRoomSpeakerList>()
-                .setQuery(query1, ConversationRoomSpeakerList::class.java).build()
+                .setQuery(query1.limit(4), ConversationRoomSpeakerList::class.java).build()
         roomItemAdapter = ConversationRoomItemAdapter(options1)
+        holder.speakers.recycledViewPool.clear()
+        holder.speakers.adapter = roomItemAdapter
+        holder.speakers.layoutManager = LinearLayoutManager(holder.itemView.context, VERTICAL, false )
+        holder.speakers.setHasFixedSize(false)
         roomItemAdapter?.startListening()
         roomItemAdapter?.notifyDataSetChanged()
-        holder.speakers.adapter = roomItemAdapter
-        holder.speakers.layoutManager = LinearLayoutManager(holder.itemView.context)
-        holder.speakers.setHasFixedSize(false)
         Log.d("ConversationAdapter", "${model.room_id} ${model.topic}")
 
         task = query1.addSnapshotListener { value, error ->
@@ -106,17 +108,9 @@ class ConversationRoomsListingAdapter(
             }
         }
 
-
-
         holder.itemView.setOnClickListener {
             action.onRoomClick(model)
         }
-    }
-
-    override fun onViewDetachedFromWindow(holder: ConversationRoomViewHolder) {
-        super.onViewDetachedFromWindow(holder)
-        roomItemAdapter?.stopListening()
-        task?.remove()
     }
 
     class ConversationRoomViewHolder(
@@ -128,6 +122,7 @@ class ConversationRoomsListingAdapter(
         var photo: ShapeableImageView = itemView.findViewById(R.id.photo1)
         var anotherPhoto: ShapeableImageView = itemView.findViewById(R.id.photo2)
         var speakers: RecyclerView = itemView.findViewById(R.id.speakers_list)
+
     }
 
 }

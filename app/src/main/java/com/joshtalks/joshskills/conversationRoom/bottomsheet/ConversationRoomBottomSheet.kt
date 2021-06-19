@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatTextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setImage
 import de.hdodenhof.circleimageview.CircleImageView
@@ -17,9 +17,9 @@ class ConversationRoomBottomSheet : BottomSheetDialogFragment() {
     private var roomUserInfo: ConversationRoomBottomSheetInfo? = null
     private var userPhoto: CircleImageView? = null
     private var userName: TextView? = null
-    private var openProfileButton: MaterialTextView? = null
-    private var moveToAudienceButton: MaterialTextView? = null
-    private var moveToSpeakerButton: MaterialTextView? = null
+    private var openProfileButton: AppCompatTextView? = null
+    private var moveToAudienceButton: AppCompatTextView? = null
+    private var moveToSpeakerButton: AppCompatTextView? = null
     private var closeButton: ImageButton? = null
 
     companion object {
@@ -33,7 +33,6 @@ class ConversationRoomBottomSheet : BottomSheetDialogFragment() {
             }
         }
 
-        private const val TAG = "ConversationRoomBottomS"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
