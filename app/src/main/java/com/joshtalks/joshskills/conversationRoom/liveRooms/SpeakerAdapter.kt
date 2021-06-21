@@ -51,6 +51,11 @@ class SpeakerAdapter(
                 } else {
                     raisedHands.visibility = View.GONE
                 }
+                if (model.isIs_moderator){
+                    speakerBadge.visibility = View.VISIBLE
+                }else{
+                    speakerBadge.visibility = View.GONE
+                }
 
                 if (model.isIs_speaker && !model.isIs_mic_on) {
                     volumeIcon.visibility = View.VISIBLE

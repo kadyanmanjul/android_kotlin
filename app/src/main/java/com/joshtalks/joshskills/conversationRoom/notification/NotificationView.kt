@@ -8,6 +8,7 @@ import com.joshtalks.joshskills.R
 import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.acceptButton
 import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.action_layout
 import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.heading
+import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.notification_bar
 import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.rejectButton
 
 class NotificationView @JvmOverloads constructor(
@@ -49,6 +50,13 @@ class NotificationView @JvmOverloads constructor(
 
     fun showActionLayout(){
         this.action_layout.visibility = View.VISIBLE
+    }
+
+    fun setBackgroundColor(isPositive: Boolean){
+        when(isPositive){
+            true -> this.notification_bar.setBackgroundResource(R.color.notification_green_color)
+            false -> this.notification_bar.setBackgroundResource(R.color.notification_red_color)
+        }
     }
 
     fun setNotificationViewEnquiryAction(action: NotificationViewAction) {

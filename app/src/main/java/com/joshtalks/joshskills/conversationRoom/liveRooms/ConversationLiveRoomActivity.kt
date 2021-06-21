@@ -66,6 +66,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     var token: String? = null
     var moderatorUid: Int? = null
     var moderatorName: String? = null
+    var moderatorMentorId: String? = null
     var currentUserName: String? = null
     var iSSoundOn = true
     var isHandRaised = true
@@ -136,6 +137,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             usersReference?.document(moderatorUid.toString())?.get()
                 ?.addOnSuccessListener { moderator ->
                     moderatorName = moderator.get("name")?.toString()
+                    moderatorMentorId = moderator.get("mentor_id")?.toString()
                 }
         }
 
@@ -157,7 +159,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             if (binding.leaveEndRoomBtn.text == getString(R.string.end_room)) {
                 showEndRoomPopup()
             } else {
-                viewModel.leaveEndRoom(isRoomCreatedByUser, roomId)
+                viewModel.leaveEndRoom(isRoomCreatedByUser, roomId, moderatorMentorId)
             }
         }
         binding.userPhoto.setOnClickListener {
@@ -192,16 +194,18 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                         ?.addOnSuccessListener {
                             isHandRaised = !isHandRaised
                             when (isRaised) {
-                                true -> binding.handRaiseBtn.text = getString(R.string.raised)
+                                true -> {
+                                    binding.handRaiseBtn.text = getString(R.string.raised)
+                                    setNotificationWithoutAction(
+                                        String.format(
+                                            "\uD83D\uDC4B You raised your hand! We’ll let the speakers\n" +
+                                                    "know you want to talk..."
+                                        ), true
+                                    )
+                                }
                                 false -> binding.handRaiseBtn.text =
                                     getString(R.string.unraised)
                             }
-                            setNotificationWithoutAction(
-                                String.format(
-                                    "\uD83D\uDC4B You raised your hand! We’ll let the speakers\n" +
-                                            "know you want to talk..."
-                                )
-                            )
                             sendNotification(
                                 type,
                                 agoraUid?.toString(),
@@ -304,7 +308,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                                         String.format(
                                             "%s is now a speaker!",
                                             notificationFrom?.get("name")
-                                        )
+                                        ), true
                                     )
                                 }
 
@@ -332,13 +336,17 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun setNotificationBarFieldsWithActions(
         rejectedText: String,
         acceptedText: String,
-        heading: String
+        heading: String,
     ) {
         binding.notificationBar.visibility = View.VISIBLE
         binding.notificationBar.showActionLayout()
         binding.notificationBar.setRejectButtonText(rejectedText)
         binding.notificationBar.setAcceptButtonText(acceptedText)
         binding.notificationBar.setHeading(heading)
+        binding.notificationBar.setBackgroundColor(true)
+        if (runnable != null) {
+            handler?.removeCallbacks(runnable)
+        }
     }
 
     private fun hideNotificationAfter4seconds() {
@@ -359,11 +367,22 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
 
-    private fun setNotificationWithoutAction(heading: String) {
+    private fun setNotificationWithoutAction(heading: String, isGreenColorNotification: Boolean) {
         binding.notificationBar.visibility = View.VISIBLE
         binding.notificationBar.hideActionLayout()
         binding.notificationBar.setHeading(heading)
+        binding.notificationBar.setBackgroundColor(isGreenColorNotification)
         hideNotificationAfter4seconds()
+    }
+
+    private fun showRoomEndNotification() {
+        binding.notificationBar.visibility = View.VISIBLE
+        binding.notificationBar.hideActionLayout()
+        binding.notificationBar.setBackgroundColor(false)
+        binding.notificationBar.setHeading("This room has ended")
+        Handler(Looper.getMainLooper()).postDelayed({
+            finish()
+        }, 4000)
     }
 
     private fun switchRoles() {
@@ -450,7 +469,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             } else {
                 if (value?.exists() == false) {
                     engine?.leaveChannel()
-                    finish()
+                    showRoomEndNotification()
                 }
             }
         }
@@ -552,10 +571,15 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             } else {
                 if (uid == moderatorUid && reason == Constants.USER_OFFLINE_DROPPED) {
                     usersReference?.get()?.addOnSuccessListener { documents ->
-                        val secondUserId = documents.documents[1].id.toInt()
-                        if (agoraUid == secondUserId) {
-                            viewModel.leaveEndRoom(true, roomId)
+                        if (documents.size() > 1) {
+                            if (documents.documents[0].id.toInt() == agoraUid) {
+                                viewModel.leaveEndRoom(true, roomId, moderatorMentorId)
+
+                            } else if (documents.documents[1].id.toInt() == agoraUid) {
+                                viewModel.leaveEndRoom(true, roomId, moderatorMentorId)
+                            }
                         }
+
                     }
                 }
             }
@@ -751,7 +775,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         }
 
         dialogView.findViewById<AppCompatTextView>(R.id.end_room).setOnClickListener {
-            viewModel.leaveEndRoom(isRoomCreatedByUser, roomId)
+            viewModel.leaveEndRoom(isRoomCreatedByUser, roomId, moderatorMentorId)
             alertDialog.dismiss()
         }
 
@@ -776,7 +800,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     override fun onBackPressed() {
         super.onBackPressed()
-        viewModel.leaveEndRoom(isRoomCreatedByUser, roomId)
+        viewModel.leaveEndRoom(isRoomCreatedByUser, roomId, moderatorMentorId)
     }
 
     override fun onDestroy() {

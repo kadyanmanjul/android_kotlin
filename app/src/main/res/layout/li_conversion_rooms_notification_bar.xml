@@ -2,17 +2,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/notification_bar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#27AE61"
-    android:paddingBottom="@dimen/_12sdp">
+    android:paddingBottom="@dimen/_12sdp"
+    tools:background="@color/notification_green_color">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/heading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_16sdp"
         android:layout_marginTop="@dimen/_16sdp"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
         android:textColor="@color/white"
         android:textSize="@dimen/_12ssp"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,11 +36,12 @@
             android:layout_marginTop="@dimen/_13sdp"
             android:background="@drawable/background_rejected_btn"
             android:gravity="center"
-            android:letterSpacing="0.02"
             android:padding="@dimen/_8sdp"
             android:paddingHorizontal="@dimen/_6sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
             android:textColor="#FFFFFF"
             android:textSize="@dimen/_12ssp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Dismiss" />
@@ -53,12 +56,14 @@
             android:gravity="center"
             android:letterSpacing="0.02"
             android:padding="@dimen/_8sdp"
-            android:paddingHorizontal="@dimen/_6sdp"
+            android:paddingHorizontal="@dimen/_18sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
             android:textColor="#27AE61"
             android:textSize="@dimen/_12ssp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Invite to speak" />
+            tools:text="Join as speaker" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

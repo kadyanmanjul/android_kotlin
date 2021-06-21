@@ -16,8 +16,12 @@ import kotlinx.coroutines.launch
 class ConversationLiveRoomViewModel : ViewModel() {
     val navigation = MutableLiveData<ConversationLiveRoomNavigation>()
 
-    fun leaveEndRoom(isRoomCreatedByUser: Boolean, roomId: Int?) {
-        val request = JoinConversionRoomRequest(Mentor.getInstance().getId(), roomId ?: 0)
+    fun leaveEndRoom(isRoomCreatedByUser: Boolean, roomId: Int?, moderatorMentorId: String?) {
+        val mentorIdValue = when (isRoomCreatedByUser) {
+            true -> moderatorMentorId ?: Mentor.getInstance().getId()
+            false -> Mentor.getInstance().getId()
+        }
+        val request = JoinConversionRoomRequest(mentorIdValue, roomId ?: 0)
         viewModelScope.launch {
             when (isRoomCreatedByUser) {
                 true -> {
@@ -59,16 +63,20 @@ class ConversationLiveRoomViewModel : ViewModel() {
         }
     }
 
-    fun makeEnterExitConversationRoom(isEnter: Boolean){
+    fun makeEnterExitConversationRoom(isEnter: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val request = EnterExitConversionRoomRequest(Mentor.getInstance().getId())
-                when(isEnter){
-                    true -> AppObjectController.conversationRoomsNetworkService.enterConversationRoom(request)
-                    false -> AppObjectController.conversationRoomsNetworkService.exitConversationRoom(request)
+                when (isEnter) {
+                    true -> AppObjectController.conversationRoomsNetworkService.enterConversationRoom(
+                        request
+                    )
+                    false -> AppObjectController.conversationRoomsNetworkService.exitConversationRoom(
+                        request
+                    )
                 }
 
-            }catch (ex: Throwable) {
+            } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }
         }

@@ -156,9 +156,24 @@ class ConversationRoomListingActivity : BaseActivity(),
                 .setQuery(query, ConversationRoomsListingItem::class.java)
                 .build()
         adapter = ConversationRoomsListingAdapter(options, this)
-        binding.recyclerView.setHasFixedSize(true)
-        binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        binding.recyclerView.adapter = adapter
+        query.addSnapshotListener { value, error ->
+            if (error != null) {
+                return@addSnapshotListener
+            } else {
+                if (value == null || value.isEmpty) {
+                    binding.noRoomsText.visibility = View.VISIBLE
+                    binding.noRoomsText.text = String.format("\uD83D\uDC4B Hi there! \\n\\n Start a new room to get a conversation going!")
+                    binding.recyclerView.visibility = View.GONE
+                } else {
+                    binding.noRoomsText.visibility = View.GONE
+                    binding.recyclerView.visibility = View.VISIBLE
+
+                    binding.recyclerView.setHasFixedSize(true)
+                    binding.recyclerView.layoutManager = LinearLayoutManager(this)
+                    binding.recyclerView.adapter = adapter
+                }
+            }
+        }
     }
 
     override fun onRoomClick(item: ConversationRoomsListingItem) {
