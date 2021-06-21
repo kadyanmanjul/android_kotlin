@@ -30,7 +30,7 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/user_image"
         app:layout_constraintEnd_toEndOf="@id/user_image"
-        app:srcCompat="@drawable/ic_baseline_mic_off"
+        app:srcCompat="@drawable/ic_mic_off"
         tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatImageView

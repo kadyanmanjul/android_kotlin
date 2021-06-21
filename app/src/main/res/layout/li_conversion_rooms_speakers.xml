@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/_4sdp"
+    android:paddingTop="@dimen/_1sdp"
+    android:layout_marginBottom="@dimen/_4sdp"
     tools:ignore="RtlSymmetry">
 
     <TextView

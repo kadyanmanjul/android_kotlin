@@ -220,7 +220,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                         binding.muteBtn.setImageDrawable(
                             ResourcesCompat.getDrawable(
                                 AppObjectController.joshApplication.resources,
-                                R.drawable.ic_baseline_mic_off,
+                                R.drawable.ic_mic_off,
                                 null
                             )
                         )
@@ -383,7 +383,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             binding.muteBtn.setImageDrawable(
                 ResourcesCompat.getDrawable(
                     AppObjectController.joshApplication.resources,
-                    R.drawable.ic_baseline_mic_off,
+                    R.drawable.ic_mic_off,
                     null
                 )
             )

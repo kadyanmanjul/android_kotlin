@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
@@ -108,7 +109,7 @@ class ConversationRoomsListingAdapter(
             }
         }
 
-        holder.itemView.setOnClickListener {
+        holder.rootView.setOnClickListener {
             action.onRoomClick(model)
         }
     }
@@ -122,6 +123,7 @@ class ConversationRoomsListingAdapter(
         var photo: ShapeableImageView = itemView.findViewById(R.id.photo1)
         var anotherPhoto: ShapeableImageView = itemView.findViewById(R.id.photo2)
         var speakers: RecyclerView = itemView.findViewById(R.id.speakers_list)
+        var rootView: CardView = itemView.findViewById(R.id.container)
 
     }
 

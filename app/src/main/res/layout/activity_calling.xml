@@ -211,7 +211,7 @@
             app:layout_constraintStart_toEndOf="@id/btn_action"
             app:layout_constraintTop_toTopOf="@id/btn_action"
             app:layout_constraintVertical_bias="0.9"
-            app:srcCompat="@drawable/ic_baseline_mic_off" />
+            app:srcCompat="@drawable/ic_mic_off" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txt_speaker"

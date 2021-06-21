@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#B3EBEBB2"
+        android:background="#F2F0E4"
         tools:context=".conversationRoom.roomsListing.ConversationRoomListingActivity">
 
         <com.google.android.material.imageview.ShapeableImageView
