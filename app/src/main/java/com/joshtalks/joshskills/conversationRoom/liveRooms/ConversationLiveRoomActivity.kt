@@ -65,6 +65,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     var agoraUid: Int? = null
     var token: String? = null
     var moderatorUid: Int? = null
+    var moderatorName: String? = null
+    var currentUserName: String? = null
     var iSSoundOn = true
     var isHandRaised = true
     var topicName: String? = null
@@ -83,6 +85,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         setContentView(binding.root)
         viewModel = ConversationLiveRoomViewModel()
         getIntentExtras()
+        getUserName()
         binding.notificationBar.setNotificationViewEnquiryAction(this)
         roomReference = liveRoomReference.document(roomId.toString())
         usersReference = roomReference?.collection("users")
@@ -102,6 +105,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
         clickListener()
         switchRoles()
+    }
+
+    private fun getUserName() {
+        usersReference?.document(agoraUid.toString())?.get()?.addOnSuccessListener {
+            currentUserName = it.get("name").toString()
+        }
     }
 
     private fun getIntentExtras() {
@@ -124,7 +133,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             moderatorUid = it.get("started_by")?.toString()?.toInt()
             topicName = it.get("topic")?.toString()
             binding.topic.text = topicName
+            usersReference?.document(moderatorUid.toString())?.get()
+                ?.addOnSuccessListener { moderator ->
+                    moderatorName = moderator.get("name")?.toString()
+                }
         }
+
         if (isRoomCreatedByUser) {
             binding.handRaiseBtn.visibility = View.GONE
             binding.raisedHands.visibility = View.VISIBLE
@@ -191,7 +205,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                             sendNotification(
                                 type,
                                 agoraUid?.toString(),
-                                moderatorUid?.toString()
+                                currentUserName ?: "User",
+                                moderatorUid?.toString(),
+                                moderatorName ?: "Moderator"
                             )
                         }?.addOnFailureListener {
                             showApiCallErrorToast(it.message ?: "")
@@ -237,16 +253,22 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             }
     }
 
-    private fun sendNotification(type: String, fromUid: String?, toUiD: String?) {
+    private fun sendNotification(
+        type: String,
+        fromUid: String?,
+        fromName: String,
+        toUiD: String?,
+        toName: String
+    ) {
         roomReference?.collection("notifications")?.document()?.set(
             hashMapOf(
                 "from" to hashMapOf(
                     "uid" to fromUid,
-                    "name" to "listener name"
+                    "name" to fromName
                 ),
                 "to" to hashMapOf(
                     "uid" to toUiD,
-                    "name" to "Moderator"
+                    "name" to toName
                 ),
                 "type" to type
             )
@@ -271,7 +293,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                                 "HAND_RAISED" -> {
                                     setNotificationBarFieldsWithActions(
                                         "Dismiss", "Invite to speak", String.format(
-                                            "\uD83D\uDC4B %s has something to say. Invite" +
+                                            "\uD83D\uDC4B %s has something to say. Invite " +
                                                     "them as speakers?",
                                             notificationFrom?.get("name")
                                         )
@@ -637,7 +659,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             liveRoomUser?.photo_url ?: "",
             userUid == agoraUid
         )
-        showBottomSheet(roomInfo, liveRoomUser?.mentor_id ?: "", userUid)
+        usersReference?.document(userUid.toString())?.get()?.addOnSuccessListener {
+            showBottomSheet(
+                roomInfo,
+                liveRoomUser?.mentor_id ?: "",
+                userUid,
+                it.get("name").toString()
+            )
+        }
     }
 
     private fun getFirestoreRecyclerOptions(isSpeaker: Boolean): FirestoreRecyclerOptions<LiveRoomUser> {
@@ -650,7 +679,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun showBottomSheet(
         roomInfo: ConversationRoomBottomSheetInfo,
         mentorId: String,
-        userUid: Int?
+        userUid: Int?,
+        userName: String
     ) {
         val bottomSheet =
             ConversationRoomBottomSheet.newInstance(roomInfo,
@@ -669,10 +699,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                             ?.get()
                             ?.addOnSuccessListener { documents ->
                                 if (documents.size() < 16) {
+
                                     sendNotification(
                                         "SPEAKER_INVITE",
                                         moderatorUid?.toString(),
-                                        userUid.toString()
+                                        moderatorName ?: "Moderator",
+                                        userUid.toString(),
+                                        userName
                                     )
                                 } else {
                                     Toast.makeText(
@@ -765,7 +798,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             sendNotification(
                 "SPEAKER_INVITE",
                 moderatorUid?.toString(),
-                notificationFrom?.get("uid")
+                moderatorName ?: "Moderator",
+                notificationFrom?.get("uid").toString(),
+                notificationFrom?.get("name").toString()
             )
             binding.notificationBar.visibility = View.GONE
         } else {
@@ -778,7 +813,10 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     sendNotification(
                         "SPEAKER_INVITE_ACCEPTED",
                         notificationTo?.get("uid"),
-                        notificationFrom?.get("uid")
+                        notificationTo?.get("name").toString(),
+                        notificationFrom?.get("uid"),
+                        notificationFrom?.get("name").toString()
+
                     )
                 }
             }
