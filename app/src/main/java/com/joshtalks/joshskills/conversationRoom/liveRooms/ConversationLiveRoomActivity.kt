@@ -5,6 +5,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -71,6 +73,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     var notificationType: String? = null
     var speakingUsersNewList = arrayListOf<Int>()
     var speakingUsersOldList = arrayListOf<Int>()
+    var handler: Handler? = null
+    var runnable: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,6 +86,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.notificationBar.setNotificationViewEnquiryAction(this)
         roomReference = liveRoomReference.document(roomId.toString())
         usersReference = roomReference?.collection("users")
+        handler = Handler(Looper.getMainLooper())
         updateUI()
         initializeEngine()
         takePermissions()
@@ -113,7 +118,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.userPhoto.clipToOutline = true
         binding.userPhoto.setUserImageRectOrInitials(
             Mentor.getInstance().getUser()?.photo,
-            User.getInstance().firstName?:"JS", 16, true, 8
+            User.getInstance().firstName ?: "JS", 16, true, 8
         )
         roomReference?.get()?.addOnSuccessListener {
             moderatorUid = it.get("started_by")?.toString()?.toInt()
@@ -264,7 +269,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                         if (isRoomCreatedByUser) {
                             when (notificationType) {
                                 "HAND_RAISED" -> {
-                                    setNotificationBarFields(
+                                    setNotificationBarFieldsWithActions(
                                         "Dismiss", "Invite to speak", String.format(
                                             "\uD83D\uDC4B %s has something to say. Invite" +
                                                     "them as speakers?",
@@ -284,7 +289,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                             }
                         } else {
                             if (notificationType == "SPEAKER_INVITE") {
-                                setNotificationBarFields(
+                                setNotificationBarFieldsWithActions(
                                     "Maybe later?", "Join as speaker", String.format(
                                         "\uD83D\uDC4B %s invited you to join as a speaker",
                                         notificationFrom?.get("name")
@@ -302,7 +307,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         }
     }
 
-    private fun setNotificationBarFields(
+    private fun setNotificationBarFieldsWithActions(
         rejectedText: String,
         acceptedText: String,
         heading: String
@@ -314,10 +319,29 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.notificationBar.setHeading(heading)
     }
 
+    private fun hideNotificationAfter4seconds() {
+        if (runnable == null) {
+            setRunnable()
+            handler?.postDelayed(runnable, 4000)
+        } else {
+            handler?.removeCallbacks(runnable)
+            setRunnable()
+            handler?.postDelayed(runnable, 4000)
+        }
+    }
+
+    private fun setRunnable() {
+        runnable = Runnable {
+            binding.notificationBar.visibility = View.GONE
+        }
+    }
+
+
     private fun setNotificationWithoutAction(heading: String) {
         binding.notificationBar.visibility = View.VISIBLE
         binding.notificationBar.hideActionLayout()
         binding.notificationBar.setHeading(heading)
+        hideNotificationAfter4seconds()
     }
 
     private fun switchRoles() {
