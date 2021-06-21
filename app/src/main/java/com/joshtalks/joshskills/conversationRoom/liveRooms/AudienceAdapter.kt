@@ -43,9 +43,6 @@ class AudienceAdapter(
         position: Int,
         model: LiveRoomUser
     ) {
-        val documentSnapshot = snapshots.getSnapshot(position)
-        val id = documentSnapshot.id
-
 
         holder.name.text = model.name
         if (!model.photo_url.isNullOrEmpty()) {
