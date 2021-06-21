@@ -60,41 +60,50 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
 
 
     private fun configureRecyclerView() {
-        //TODO --> Ankit if list is empty replace false with logic
-        if (false) {
-            binding.noAuidenceText.visibility = View.VISIBLE
-            binding.raisedHandsList.visibility = View.GONE
-        } else {
-            binding.noAuidenceText.visibility = View.GONE
-            binding.raisedHandsList.visibility = View.VISIBLE
-            val query = FirebaseFirestore.getInstance().collection("conversation_rooms")
-                .document(roomId.toString())
-                .collection("users").whereEqualTo("is_hand_raised", true)
-                .whereEqualTo("is_speaker", false)
+        val query = FirebaseFirestore.getInstance().collection("conversation_rooms")
+            .document(roomId.toString())
+            .collection("users").whereEqualTo("is_hand_raised", true)
+            .whereEqualTo("is_speaker", false)
+        query.get().addOnSuccessListener {
 
-            val options: FirestoreRecyclerOptions<LiveRoomUser> =
-                FirestoreRecyclerOptions.Builder<LiveRoomUser>()
-                    .setQuery(query, LiveRoomUser::class.java)
-                    .build()
-            adapter = RaisedHandsBottomSheetAdapter(options)
-            raisedHandLists?.layoutManager = LinearLayoutManager(this.context)
-            raisedHandLists?.setHasFixedSize(false)
-            raisedHandLists?.adapter = adapter
-            adapter?.startListening()
-            adapter?.notifyDataSetChanged()
-            adapter?.setOnItemClickListener(object :
-                RaisedHandsBottomSheetAdapter.RaisedHandsBottomSheetAction {
-                override fun onItemClick(documentSnapshot: DocumentSnapshot?, position: Int) {
-                    val id = documentSnapshot?.id
-                    sendNotification(
-                        "SPEAKER_INVITE",
-                        moderatorUid?.toString(),
-                        id
-                    )
-                }
-
-            })
         }
+       query.addSnapshotListener { value, error ->
+           if (error != null){
+               return@addSnapshotListener
+           }else{
+               if (value == null || value.isEmpty){
+                   binding.noAuidenceText.visibility = View.VISIBLE
+                   binding.raisedHandsList.visibility = View.GONE
+               }else {
+                   binding.noAuidenceText.visibility = View.GONE
+                   binding.raisedHandsList.visibility = View.VISIBLE
+
+                   val options: FirestoreRecyclerOptions<LiveRoomUser> =
+                       FirestoreRecyclerOptions.Builder<LiveRoomUser>()
+                           .setQuery(query, LiveRoomUser::class.java)
+                           .build()
+                   adapter = RaisedHandsBottomSheetAdapter(options)
+                   raisedHandLists?.layoutManager = LinearLayoutManager(this.context)
+                   raisedHandLists?.setHasFixedSize(false)
+                   raisedHandLists?.adapter = adapter
+                   adapter?.startListening()
+                   adapter?.notifyDataSetChanged()
+                   adapter?.setOnItemClickListener(object :
+                       RaisedHandsBottomSheetAdapter.RaisedHandsBottomSheetAction {
+                       override fun onItemClick(documentSnapshot: DocumentSnapshot?, position: Int) {
+                           val id = documentSnapshot?.id
+                           sendNotification(
+                               "SPEAKER_INVITE",
+                               moderatorUid?.toString(),
+                               id
+                           )
+                       }
+
+                   })
+               }
+           }
+       }
+
 
     }
 

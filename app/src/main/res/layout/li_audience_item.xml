@@ -1,87 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/_20sdp"
-    android:layout_marginTop="@dimen/_8sdp">
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/user_image"
-        android:layout_width="@dimen/_42sdp"
-        android:layout_height="@dimen/_42sdp"
-        android:background="@color/red"
-        android:scaleType="fitXY"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:shapeAppearanceOverlay="@style/roundedCornersImageView_16dp"
-        app:srcCompat="@drawable/ic_call_placeholder" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/volume_icon"
-        android:layout_width="@dimen/_16sdp"
-        android:layout_height="@dimen/_16sdp"
-        android:background="@drawable/circle2"
-        android:backgroundTint="@color/white"
-        android:padding="@dimen/_3sdp"
-        android:tint="@color/pure_black"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/user_image"
-        app:layout_constraintEnd_toEndOf="@id/user_image"
-        app:srcCompat="@drawable/ic_mic_off"
-        tools:visibility="visible" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/ring_icon"
-        android:layout_width="@dimen/_16sdp"
-        android:layout_height="@dimen/_16sdp"
-        android:src="@drawable/ic_speaker_on"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="@id/user_image"
-        app:layout_constraintTop_toTopOf="@id/user_image" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/raised_hands"
-        android:layout_width="@dimen/_16sdp"
-        android:layout_height="@dimen/_16sdp"
-        android:background="@drawable/circle2"
-        android:backgroundTint="@color/white"
-        android:padding="@dimen/_3sdp"
-        android:tint="@color/pure_black"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/user_image"
-        app:layout_constraintEnd_toEndOf="@id/user_image"
-        app:srcCompat="@drawable/hand"
-        tools:visibility="visible" />
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/_2sdp"
-        android:layout_marginTop="@dimen/_4sdp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/user_image">
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_8sdp">
 
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
-            android:textColor="@color/pure_black"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/user_image"
+            android:layout_width="@dimen/_42sdp"
+            android:layout_height="@dimen/_42sdp"
+            android:background="@color/red"
+            android:scaleType="fitXY"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Rohaneeee a" />
+            app:shapeAppearanceOverlay="@style/roundedCornersImageView_16dp"
+            app:srcCompat="@drawable/ic_call_placeholder" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/volume_icon"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_16sdp"
+            android:background="@drawable/circle2"
+            android:backgroundTint="@color/white"
+            android:padding="@dimen/_3sdp"
+            android:tint="@color/pure_black"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/user_image"
+            app:layout_constraintEnd_toEndOf="@id/user_image"
+            app:srcCompat="@drawable/ic_mic_off"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ring_icon"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_16sdp"
+            android:src="@drawable/ic_speaker_on"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="@id/user_image"
+            app:layout_constraintTop_toTopOf="@id/user_image" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/raised_hands"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_16sdp"
+            android:background="@drawable/circle2"
+            android:backgroundTint="@color/white"
+            android:padding="@dimen/_3sdp"
+            android:tint="@color/pure_black"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/user_image"
+            app:layout_constraintEnd_toEndOf="@id/user_image"
+            app:srcCompat="@drawable/hand"
+            tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_2sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/user_image">
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
+                android:textColor="@color/pure_black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Rohaneeee a" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

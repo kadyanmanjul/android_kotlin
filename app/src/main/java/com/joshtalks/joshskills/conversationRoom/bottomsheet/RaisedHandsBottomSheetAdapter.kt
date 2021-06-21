@@ -1,18 +1,15 @@
 package com.joshtalks.joshskills.conversationRoom.bottomsheet
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.android.material.imageview.ShapeableImageView
 import com.google.firebase.firestore.DocumentSnapshot
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.LiveRoomUser
 import com.joshtalks.joshskills.core.setImage
+import com.joshtalks.joshskills.databinding.LiRaisedHandsItemBinding
 
 class RaisedHandsBottomSheetAdapter(rooms: FirestoreRecyclerOptions<LiveRoomUser>) :
     FirestoreRecyclerAdapter<LiveRoomUser, RaisedHandsBottomSheetAdapter.RaisedHandsViewHolder>(
@@ -20,17 +17,39 @@ class RaisedHandsBottomSheetAdapter(rooms: FirestoreRecyclerOptions<LiveRoomUser
     ) {
     var action: RaisedHandsBottomSheetAction? = null
 
-    class RaisedHandsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val raisedHandUsername: TextView = view.findViewById(R.id.raised_hand_user_name)
-        val userPhoto: ShapeableImageView = view.findViewById(R.id.user_photo)
-        val plus: ImageView = view.findViewById(R.id.add_to_speaker)
+    inner class RaisedHandsViewHolder(val binding: LiRaisedHandsItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        var clickCount = 0
+
+        fun bind(model: LiveRoomUser, bindingAdapterPosition: Int) {
+            with(binding) {
+                raisedHandUserName.text = model.name
+                if (!model.photo_url.isNullOrEmpty())
+                    userPhoto.setImage(model.photo_url)
+                addToSpeaker.setOnClickListener {
+                    if (bindingAdapterPosition != RecyclerView.NO_POSITION && action != null) {
+                        if (clickCount == 0) {
+                            action?.onItemClick(
+                                snapshots.getSnapshot(bindingAdapterPosition),
+                                bindingAdapterPosition
+                            )
+                            clickCount++
+                            addToSpeaker.setImageResource(R.drawable.ic_selected_user)
+                        } else {
+                            addToSpeaker.setImageResource(R.drawable.ic_selected_user)
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RaisedHandsViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.li_raised_hands_item, parent, false)
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = LiRaisedHandsItemBinding.inflate(inflater, parent, false)
 
-        return RaisedHandsViewHolder(view)
+        return RaisedHandsViewHolder(binding)
     }
 
     override fun onBindViewHolder(
@@ -38,22 +57,8 @@ class RaisedHandsBottomSheetAdapter(rooms: FirestoreRecyclerOptions<LiveRoomUser
         position: Int,
         model: LiveRoomUser
     ) {
-        var clickCount = 0
-        holder.raisedHandUsername.text = model.name
-        if (!model.photo_url.isNullOrEmpty())
-            holder.userPhoto.setImage(model.photo_url)
-        holder.plus.setOnClickListener {
-            val position = holder.bindingAdapterPosition
-            if (position != RecyclerView.NO_POSITION && action != null) {
-                if (clickCount == 0) {
-                    action?.onItemClick(snapshots.getSnapshot(position), position)
-                    clickCount++
-                    holder.plus.setImageResource(R.drawable.ic_selected_user)
-                } else {
-                    holder.plus.setImageResource(R.drawable.ic_selected_user)
-                }
-            }
-        }
+        holder.bind(model, holder.bindingAdapterPosition)
+
     }
 
     interface RaisedHandsBottomSheetAction {
