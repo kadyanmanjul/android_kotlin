@@ -20,9 +20,10 @@ import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
-import com.joshtalks.joshskills.core.setRoundImage
+import com.joshtalks.joshskills.core.setUserImageRectOrInitials
 import com.joshtalks.joshskills.databinding.ActivityConversationsRoomsListingBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 
@@ -36,7 +37,7 @@ class ConversationRoomListingActivity : BaseActivity(),
     lateinit var viewModel: ConversationRoomListingViewModel
     lateinit var binding: ActivityConversationsRoomsListingBinding
 
-    companion object{
+    companion object {
         var CONVERSATION_ROOM_VISIBLE_TRACK_FLAG: Boolean = true
     }
 
@@ -53,7 +54,13 @@ class ConversationRoomListingActivity : BaseActivity(),
             showPopup()
         }
         binding.userPic.clipToOutline = true
-        binding.userPic.setRoundImage(Mentor.getInstance().getUser()?.photo ?: "",dp = 8)
+        binding.userPic.setUserImageRectOrInitials(
+            Mentor.getInstance().getUser()?.photo,
+            User.getInstance().firstName?:"JS",
+            16,
+            true,
+            8
+        )
         binding.userPic.setOnClickListener {
             goToProfile()
         }

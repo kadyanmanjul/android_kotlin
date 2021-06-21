@@ -4,19 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/_7sdp"
-    android:layout_marginStart="@dimen/_27sdp">
+    android:layout_marginStart="@dimen/_27sdp"
+    android:layout_marginTop="@dimen/_7sdp">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/user_image"
         android:layout_width="@dimen/_56sdp"
         android:layout_height="@dimen/_56sdp"
-        android:scaleType="fitXY"
-        app:shapeAppearanceOverlay="@style/roundedCornersImageView_16dp"
         android:background="@color/red"
+        android:scaleType="fitXY"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/roundedCornersImageView_16dp"
         app:srcCompat="@drawable/ic_call_placeholder" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -83,6 +83,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_4sdp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
             android:textColor="@color/pure_black"
             app:layout_constraintBottom_toBottomOf="parent"

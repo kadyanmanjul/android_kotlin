@@ -29,11 +29,11 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.getRandomName
 import com.joshtalks.joshskills.core.interfaces.ConversationLiveRoomSpeakerClickAction
-import com.joshtalks.joshskills.core.setUserImageOrInitials
+import com.joshtalks.joshskills.core.setUserImageRectOrInitials
 import com.joshtalks.joshskills.databinding.ActivityConversationLiveRoomBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -111,9 +111,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         setUpRecyclerView()
         setLeaveEndButton(isRoomCreatedByUser)
         binding.userPhoto.clipToOutline = true
-        binding.userPhoto.setUserImageOrInitials(
+        binding.userPhoto.setUserImageRectOrInitials(
             Mentor.getInstance().getUser()?.photo,
-            Mentor.getInstance().getUser()?.username ?: getRandomName()
+            User.getInstance().firstName?:"JS", 16, true, 8
         )
         roomReference?.get()?.addOnSuccessListener {
             moderatorUid = it.get("started_by")?.toString()?.toInt()
@@ -135,7 +135,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun clickListener() {
 
         binding.leaveEndRoomBtn.setOnClickListener {
-            if (binding.leaveEndRoomBtn.text==getString(R.string.end_room)){
+            if (binding.leaveEndRoomBtn.text == getString(R.string.end_room)) {
                 showEndRoomPopup()
             } else {
                 viewModel.leaveEndRoom(isRoomCreatedByUser, roomId)

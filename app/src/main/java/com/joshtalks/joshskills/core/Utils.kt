@@ -967,6 +967,27 @@ fun ImageView.setUserInitial(userName: String, dpToPx: Int = 16) {
     this.setImageDrawable(drawable)
 }
 
+fun ImageView.setUserInitialInRect(userName: String, dpToPx: Int = 16,radius : Int =16) {
+    val font = Typeface.createFromAsset(
+        AppObjectController.joshApplication.assets,
+        "fonts/OpenSans-SemiBold.ttf"
+    )
+    val drawable: TextDrawable = TextDrawable.builder()
+        .beginConfig()
+        .textColor(ContextCompat.getColor(AppObjectController.joshApplication, R.color.white))
+        .useFont(font)
+        .fontSize(Utils.dpToPx(dpToPx))
+        .toUpperCase()
+        .endConfig()
+        .buildRoundRect(
+            getUserNameInShort(userName),
+            ContextCompat.getColor(AppObjectController.joshApplication, R.color.button_color),
+            radius
+        )
+    this.background = drawable
+    this.setImageDrawable(drawable)
+}
+
 fun ImageView.setUserImageOrInitials(
     url: String?,
     userName: String,
@@ -975,6 +996,37 @@ fun ImageView.setUserImageOrInitials(
 ) {
     if (url.isNullOrEmpty()) {
         setUserInitial(userName, dpToPx)
+    } else {
+        if (isRound) {
+            val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)
+                .error(R.drawable.ic_call_placeholder)
+                .format(DecodeFormat.PREFER_RGB_565)
+                .disallowHardwareConfig().dontAnimate().encodeQuality(75)
+            Glide.with(context)
+                .load(url)
+                .optionalTransform(
+                    WebpDrawable::class.java,
+                    WebpDrawableTransformation(CircleCrop())
+                )
+                .circleCrop()
+                .apply(requestOptions)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .into(this)
+        } else {
+            this.setImage(url)
+        }
+    }
+}
+
+fun ImageView.setUserImageRectOrInitials(
+    url: String?,
+    userName: String,
+    dpToPx: Int = 16,
+    isRound: Boolean = false,
+    radius: Int = 16
+) {
+    if (url.isNullOrEmpty()) {
+        setUserInitialInRect(userName, dpToPx,radius)
     } else {
         if (isRound) {
             val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)
