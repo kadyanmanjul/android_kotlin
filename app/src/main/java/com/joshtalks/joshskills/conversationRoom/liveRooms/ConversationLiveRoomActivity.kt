@@ -466,8 +466,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
         engine?.enableAudioVolumeIndication(2000, 3, true)
         engine?.setAudioProfile(
-            Constants.AUDIO_SCENARIO_CHATROOM_ENTERTAINMENT,
-            Constants.AUDIO_SCENARIO_DEFAULT
+            Constants.AUDIO_PROFILE_SPEECH_STANDARD,
+            Constants.AUDIO_SCENARIO_GAME_STREAMING
         )
 
         val option = ChannelMediaOptions()
