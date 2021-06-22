@@ -12,7 +12,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.interfaces.ConversationLiveRoomSpeakerClickAction
-import com.joshtalks.joshskills.core.setImage
+import com.joshtalks.joshskills.core.setUserImageRectOrInitials
 import com.joshtalks.joshskills.databinding.LiSpeakersItemBinding
 
 
@@ -34,7 +34,7 @@ class SpeakerAdapter(
                 if (!model.photo_url.isNullOrEmpty()) {
                     userImage.apply {
                         clipToOutline = true
-                        setImage(model.photo_url ?: "")
+                        setUserImageRectOrInitials(model.photo_url ,model.name,24,true,16)
                     }
                 } else {
                     Glide.with(root.context).load(R.drawable.ic_call_placeholder)
