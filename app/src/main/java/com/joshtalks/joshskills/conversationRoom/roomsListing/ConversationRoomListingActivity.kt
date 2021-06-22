@@ -127,6 +127,10 @@ class ConversationRoomListingActivity : BaseActivity(),
             alertDialog.dismiss()
         }
 
+        dialogView.findViewById<MaterialTextView>(R.id.cancel).setOnClickListener {
+            alertDialog.dismiss()
+        }
+
     }
 
     override fun onStart() {

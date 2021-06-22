@@ -7,9 +7,10 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/_16sdp"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_2sdp"
+        android:layout_marginBottom="@dimen/_4sdp"
         app:cardElevation="@dimen/_2sdp"
         app:cardMaxElevation="@dimen/_2sdp"
         app:cardPreventCornerOverlap="true"
@@ -70,8 +71,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_8sdp"
                 app:layout_constraintHorizontal_bias="0"
+                android:layout_marginTop="@dimen/_6sdp"
                 app:layout_constraintStart_toEndOf="@id/barrier"
-                app:layout_constraintTop_toTopOf="@id/photo1" />
+                app:layout_constraintTop_toBottomOf="@id/conversation_topic_name" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/user_size_container"

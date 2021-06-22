@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/_1sdp"
     android:layout_marginBottom="@dimen/_4sdp"
+    android:paddingBottom="@dimen/_1sdp"
     tools:ignore="RtlSymmetry">
 
     <TextView
@@ -15,18 +15,18 @@
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
         android:textColor="#1E1D1B"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="Speaker Names "
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Speaker Names " />
 
     <ImageView
         android:id="@+id/chat_icon"
         android:layout_width="@dimen/_12sdp"
         android:layout_height="@dimen/_12sdp"
-        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
         android:layout_marginStart="@dimen/_3sdp"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/speaker"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_chat_icon"/>
+        app:srcCompat="@drawable/ic_chat_icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

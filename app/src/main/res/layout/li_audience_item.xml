@@ -28,7 +28,6 @@
             android:background="@drawable/circle2"
             android:backgroundTint="@color/white"
             android:padding="@dimen/_3sdp"
-            android:tint="@color/pure_black"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/user_image"
             app:layout_constraintEnd_toEndOf="@id/user_image"

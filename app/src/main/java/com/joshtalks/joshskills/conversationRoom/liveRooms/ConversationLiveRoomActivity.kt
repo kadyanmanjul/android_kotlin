@@ -195,7 +195,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                             isHandRaised = !isHandRaised
                             when (isRaised) {
                                 true -> {
-                                    binding.handRaiseBtn.text = getString(R.string.raised)
+                                    binding.handRaiseBtn.setImageDrawable(
+                                        ResourcesCompat.getDrawable(
+                                            AppObjectController.joshApplication.resources,
+                                            R.drawable.ic_raise_hand,
+                                            null
+                                        )
+                                    )
                                     setNotificationWithoutAction(
                                         String.format(
                                             "\uD83D\uDC4B You raised your hand! We’ll let the speakers\n" +
@@ -203,8 +209,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                                         ), true
                                     )
                                 }
-                                false -> binding.handRaiseBtn.text =
-                                    getString(R.string.unraised)
+                                false -> binding.handRaiseBtn.setImageDrawable(
+                                    ResourcesCompat.getDrawable(
+                                        AppObjectController.joshApplication.resources,
+                                        R.drawable.ic_unraise_hand,
+                                        null
+                                    )
+                                )
                             }
                             sendNotification(
                                 type,
@@ -236,7 +247,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                         binding.muteBtn.setImageDrawable(
                             ResourcesCompat.getDrawable(
                                 AppObjectController.joshApplication.resources,
-                                R.drawable.ic_mic_grey,
+                                R.drawable.ic_mic_black_on,
                                 null
                             )
                         )
@@ -422,7 +433,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.muteBtn.visibility = View.VISIBLE
         binding.handRaiseBtn.visibility = View.GONE
         setHandRaiseValueToFirestore(false)
-        binding.handRaiseBtn.text = getString(R.string.unraised)
+        binding.handRaiseBtn.setImageDrawable(
+            ResourcesCompat.getDrawable(
+                AppObjectController.joshApplication.resources,
+                R.drawable.ic_unraise_hand,
+                null
+            )
+        )
         isHandRaised = true
         iSSoundOn = isMicOn == true
         engine?.enableLocalAudio(iSSoundOn)
@@ -440,7 +457,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             binding.muteBtn.setImageDrawable(
                 ResourcesCompat.getDrawable(
                     AppObjectController.joshApplication.resources,
-                    R.drawable.ic_mic_grey,
+                    R.drawable.ic_mic_black_on,
                     null
                 )
             )
