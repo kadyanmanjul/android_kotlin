@@ -73,11 +73,10 @@ class LeaderBoardFragment : Fragment() {
         private const val TYPE = "leadberboard_type"
 
         @JvmStatic
-        fun newInstance(type: String, courseId: String?) =
+        fun newInstance(type: String) =
             LeaderBoardFragment().apply {
                 arguments = Bundle().apply {
                     putString(TYPE, type)
-                    putString(COURSE_ID, courseId)
                 }
             }
     }
