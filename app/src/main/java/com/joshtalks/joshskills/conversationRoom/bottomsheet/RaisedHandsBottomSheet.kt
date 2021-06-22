@@ -33,7 +33,8 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, R.style.ConversationRoomStyle)
+        setStyle(STYLE_NORMAL, R.style.BaseBottomSheetDialog)
+
     }
 
     override fun onCreateView(

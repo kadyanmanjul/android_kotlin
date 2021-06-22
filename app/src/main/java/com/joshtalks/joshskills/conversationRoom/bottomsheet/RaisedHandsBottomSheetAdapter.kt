@@ -8,7 +8,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.DocumentSnapshot
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.LiveRoomUser
-import com.joshtalks.joshskills.core.setImage
+import com.joshtalks.joshskills.core.setUserImageRectOrInitials
 import com.joshtalks.joshskills.databinding.LiRaisedHandsItemBinding
 
 class RaisedHandsBottomSheetAdapter(rooms: FirestoreRecyclerOptions<LiveRoomUser>) :
@@ -24,8 +24,13 @@ class RaisedHandsBottomSheetAdapter(rooms: FirestoreRecyclerOptions<LiveRoomUser
         fun bind(model: LiveRoomUser, bindingAdapterPosition: Int) {
             with(binding) {
                 raisedHandUserName.text = model.name
-                if (!model.photo_url.isNullOrEmpty())
-                    userPhoto.setImage(model.photo_url)
+                userPhoto.apply {
+                    setUserImageRectOrInitials(
+                        model.photo_url, model.name, 22, true, 16,
+                        textColor = R.color.black,
+                        bgColor = R.color.conversation_room_gray
+                    )
+                }
                 addToSpeaker.setOnClickListener {
                     if (bindingAdapterPosition != RecyclerView.NO_POSITION && action != null) {
                         if (clickCount == 0) {

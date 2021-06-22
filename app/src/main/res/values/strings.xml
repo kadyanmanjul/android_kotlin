@@ -902,5 +902,8 @@
     <string name="alert_end_room_title">Are you sure, you want to end this room for everyone</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="privacy_label">By continuing you consent to share your information with Josh Skills &amp; agree to <u>Josh Skills’ Privacy Policy</u></string>
+    <string name="raised_hand">Raised hands</string>
+    <string name="open_to_everyone">Open to Everyone</string>
+    <string name="no_raised_hand_text">No one has their hand raised yet</string>
 
 </resources>
