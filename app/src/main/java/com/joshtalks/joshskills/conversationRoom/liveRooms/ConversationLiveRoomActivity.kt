@@ -128,7 +128,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.userPhoto.clipToOutline = true
         binding.userPhoto.setUserImageRectOrInitials(
             Mentor.getInstance().getUser()?.photo,
-            User.getInstance().firstName ?: "JS", 16, true, 8
+            User.getInstance().firstName ?: "JS", 16, true, 8,
+            textColor = R.color.black,
+            bgColor = R.color.conversation_room_gray
         )
         roomReference?.get()?.addOnSuccessListener {
             moderatorUid = it.get("started_by")?.toString()?.toInt()

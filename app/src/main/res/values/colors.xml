@@ -130,5 +130,6 @@
     <color name="pure_black">#000000</color>
     <color name="notification_red_color">#EC5858</color>
     <color name="notification_green_color">#27AE61</color>
+    <color name="conversation_room_gray">#ACA9A9</color>
 
 </resources>

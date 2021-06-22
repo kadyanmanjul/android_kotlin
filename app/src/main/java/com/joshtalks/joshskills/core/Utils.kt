@@ -967,21 +967,21 @@ fun ImageView.setUserInitial(userName: String, dpToPx: Int = 16) {
     this.setImageDrawable(drawable)
 }
 
-fun ImageView.setUserInitialInRect(userName: String, dpToPx: Int = 16,radius : Int =16) {
+fun ImageView.setUserInitialInRect(userName: String, dpToPx: Int = 16,radius : Int =16, textColor:Int = R.color.white,bgColor:Int =  R.color.button_color) {
     val font = Typeface.createFromAsset(
         AppObjectController.joshApplication.assets,
         "fonts/OpenSans-SemiBold.ttf"
     )
     val drawable: TextDrawable = TextDrawable.builder()
         .beginConfig()
-        .textColor(ContextCompat.getColor(AppObjectController.joshApplication, R.color.white))
+        .textColor(ContextCompat.getColor(AppObjectController.joshApplication, textColor))
         .useFont(font)
         .fontSize(Utils.dpToPx(dpToPx))
         .toUpperCase()
         .endConfig()
         .buildRoundRect(
             getUserNameInShort(userName),
-            ContextCompat.getColor(AppObjectController.joshApplication, R.color.button_color),
+            ContextCompat.getColor(AppObjectController.joshApplication, bgColor),
             radius
         )
     this.background = drawable
@@ -1023,10 +1023,12 @@ fun ImageView.setUserImageRectOrInitials(
     userName: String,
     dpToPx: Int = 16,
     isRound: Boolean = false,
-    radius: Int = 16
+    radius: Int = 16,
+    textColor:Int = R.color.white,
+    bgColor:Int =  R.color.button_color
 ) {
     if (url.isNullOrEmpty()) {
-        setUserInitialInRect(userName, dpToPx,radius)
+        setUserInitialInRect(userName, dpToPx,radius,textColor,bgColor)
     } else {
         if (isRound) {
             val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)

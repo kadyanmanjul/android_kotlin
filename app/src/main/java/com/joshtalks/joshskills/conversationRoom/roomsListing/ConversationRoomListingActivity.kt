@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,6 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
 import com.joshtalks.joshskills.core.PrefManager
@@ -59,7 +61,9 @@ class ConversationRoomListingActivity : BaseActivity(),
             User.getInstance().firstName?:"JS",
             16,
             true,
-            8
+            8,
+            textColor = R.color.black,
+            bgColor = R.color.conversation_room_gray
         )
         binding.userPic.setOnClickListener {
             goToProfile()
@@ -118,8 +122,11 @@ class ConversationRoomListingActivity : BaseActivity(),
         dialogBuilder.setView(dialogView)
 
         val alertDialog: AlertDialog = dialogBuilder.create()
-        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val width = AppObjectController.screenWidth * .8
+        val height = ViewGroup.LayoutParams.WRAP_CONTENT
         alertDialog.show()
+        alertDialog.window?.setLayout(width.toInt(), height)
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dialogView.findViewById<MaterialTextView>(R.id.create_room).setOnClickListener {
             topic = dialogView.findViewById<EditText>(R.id.label_field).text.toString()

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.DocumentSnapshot
@@ -31,14 +30,11 @@ class SpeakerAdapter(
         fun bind(model: LiveRoomUser, bindingAdapterPosition: Int) {
             with(binding) {
                 name.text = model.name
-                if (!model.photo_url.isNullOrEmpty()) {
-                    userImage.apply {
-                        clipToOutline = true
-                        setUserImageRectOrInitials(model.photo_url ,model.name,24,true,16)
-                    }
-                } else {
-                    Glide.with(root.context).load(R.drawable.ic_call_placeholder)
-                        .into(userImage)
+                userImage.apply {
+                    clipToOutline = true
+                    setUserImageRectOrInitials(model.photo_url, model.name, 24, true, 16,
+                        textColor = R.color.black,
+                        bgColor = R.color.conversation_room_gray)
                 }
                 if (model.isIs_speaking && model.isIs_speaker && model.isIs_mic_on) {
                     ringIcon.visibility = View.VISIBLE
@@ -51,9 +47,9 @@ class SpeakerAdapter(
                 } else {
                     raisedHands.visibility = View.GONE
                 }
-                if (model.isIs_moderator){
+                if (model.isIs_moderator) {
                     speakerBadge.visibility = View.VISIBLE
-                }else{
+                } else {
                     speakerBadge.visibility = View.GONE
                 }
 
