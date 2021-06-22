@@ -19,6 +19,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBottomSheet
 import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBottomSheetAction
@@ -714,6 +715,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun getFirestoreRecyclerOptions(isSpeaker: Boolean): FirestoreRecyclerOptions<LiveRoomUser> {
         val query = usersReference?.whereEqualTo("is_speaker", isSpeaker)
+        query?.orderBy("sort_order", Query.Direction.ASCENDING)
         return FirestoreRecyclerOptions.Builder<LiveRoomUser>()
             .setQuery(query!!, LiveRoomUser::class.java)
             .build()

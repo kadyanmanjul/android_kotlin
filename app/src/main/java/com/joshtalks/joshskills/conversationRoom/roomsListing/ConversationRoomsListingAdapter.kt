@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
 import androidx.recyclerview.widget.RecyclerView
@@ -14,9 +13,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
-import com.joshtalks.joshskills.core.setRoundImage
+import com.joshtalks.joshskills.core.setUserImageRectOrInitials
 import com.joshtalks.joshskills.databinding.LiConversionRoomsIlistingItemBinding
 
 
@@ -72,6 +70,59 @@ class ConversationRoomsListingAdapter(
                 roomItemAdapter?.startListening()
                 roomItemAdapter?.notifyDataSetChanged()
 
+                query1.get().addOnSuccessListener { documents ->
+                    if (documents.size() == 1) {
+                        photo1.visibility = View.VISIBLE
+                        photo1.clipToOutline = true
+                        photo1.setUserImageRectOrInitials(
+                            documents.documents[0]["photo_url"]?.toString(),
+                            documents.documents[0]["name"]?.toString() ?: "User",
+                            24,
+                            true,
+                            16,
+                            textColor = R.color.black,
+                            bgColor = R.color.conversation_room_gray
+                        )
+
+                    } else if (documents.size() >= 2) {
+                        val size = documents.size()
+                        var firstImageUrl: String? = null
+                        var secondImageUrl: String? = null
+                        for (i in 0 until size) {
+                            if (documents.documents[i]["photo_url"] != null) {
+                                if (firstImageUrl.isNullOrEmpty()) {
+                                    firstImageUrl = documents.documents[i]["photo_url"].toString()
+                                } else if (secondImageUrl.isNullOrEmpty()) {
+                                    secondImageUrl = documents.documents[i]["photo_url"].toString()
+                                    break
+                                }
+                            }
+                        }
+                        val firstImageName = documents.documents[0]["name"]?.toString()
+                        val secondImageName = documents.documents[1]["name"]?.toString()
+
+                        photo1.apply {
+                            clipToOutline = true
+                            visibility = View.VISIBLE
+                            setUserImageRectOrInitials(
+                                firstImageUrl, firstImageName ?: "User", 24, true, 16,
+                                textColor = R.color.black,
+                                bgColor = R.color.conversation_room_gray
+                            )
+                        }
+
+                        photo2.apply {
+                            clipToOutline = true
+                            visibility = View.VISIBLE
+                            setUserImageRectOrInitials(
+                                secondImageUrl, secondImageName ?: "User", 24, true, 16,
+                                textColor = R.color.black,
+                                bgColor = R.color.conversation_room_gray
+                            )
+                        }
+                    }
+                }
+
                 query1.addSnapshotListener { value, error ->
                     if (error != null) {
                         return@addSnapshotListener
@@ -84,37 +135,6 @@ class ConversationRoomsListingAdapter(
                     }
                     usersSize.text = "${list?.size ?: 0}"
                     speakerSize.text = "/ ${list2?.size ?: 0}"
-                    if (options1.snapshots.isNullOrEmpty()) {
-                        photo1.visibility = View.GONE
-                        photo2.visibility = View.GONE
-                    } else {
-                        if (options1.snapshots[0]?.photo_url.isNullOrBlank().not()) {
-                            photo1.visibility = View.VISIBLE
-                            photo1.clipToOutline = true
-                            photo1.setRoundImage(options1.snapshots[0].photo_url!!, dp = 20)
-
-                        } else {
-                            photo1.setImageDrawable(
-                                ResourcesCompat.getDrawable(
-                                    AppObjectController.joshApplication.resources,
-                                    R.drawable.ic_ic_person_new,
-                                    null
-                                )
-                            )
-                        }
-                        if (options1.snapshots.size >= 2 && options1.snapshots[1]?.photo_url.isNullOrBlank()
-                                .not()
-                        ) {
-                            photo2.visibility = View.VISIBLE
-                            photo2.clipToOutline = true
-                            photo2.setRoundImage(
-                                options1.snapshots[1].photo_url!!,
-                                dp = 20
-                            )
-                        } else {
-                            photo2.visibility = View.GONE
-                        }
-                    }
                 }
 
                 container.setOnClickListener {

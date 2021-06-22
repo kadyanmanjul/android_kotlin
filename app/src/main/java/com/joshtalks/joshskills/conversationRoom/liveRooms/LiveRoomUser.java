@@ -10,13 +10,14 @@ public class LiveRoomUser {
     private String photo_url;
     private String mentor_id;
     private boolean is_speaking;
+    private int sort_order = 0;
 
     public LiveRoomUser(){
 
     }
 
     public LiveRoomUser(String name, boolean is_speaker, boolean is_moderator, boolean is_hand_raised, boolean is_mic_on, String photo_url,
-                        String mentor_id, boolean is_speaking) {
+                        String mentor_id, boolean is_speaking, int sort_order) {
         this.name = name;
         this.is_speaker = is_speaker;
         this.is_moderator = is_moderator;
@@ -25,6 +26,7 @@ public class LiveRoomUser {
         this.photo_url = photo_url;
         this.mentor_id = mentor_id;
         this.is_speaking = is_speaking;
+        this.sort_order = sort_order;
     }
 
     public String getName() {
@@ -57,5 +59,9 @@ public class LiveRoomUser {
 
     public String getMentor_id() {
         return mentor_id;
+    }
+
+    public int getSort_order() {
+        return sort_order;
     }
 }

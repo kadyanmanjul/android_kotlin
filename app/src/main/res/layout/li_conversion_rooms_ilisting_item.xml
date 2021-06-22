@@ -41,6 +41,7 @@
                 android:layout_marginTop="@dimen/_8sdp"
                 android:background="@color/black"
                 android:scaleType="fitXY"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="@id/conversation_topic_name"
                 app:layout_constraintTop_toBottomOf="@id/conversation_topic_name"
                 app:shapeAppearanceOverlay="@style/roundedCornersImageView_16dp" />
@@ -53,6 +54,7 @@
                 android:layout_marginTop="@dimen/_14sdp"
                 android:background="@color/colorPrimaryDark"
                 android:scaleType="fitXY"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="@id/photo1"
                 app:layout_constraintTop_toTopOf="@id/photo1"
                 app:shapeAppearanceOverlay="@style/roundedCornersImageView_16dp" />
