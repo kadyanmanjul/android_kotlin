@@ -655,7 +655,7 @@
     </style>
     <style name="roundedCornersImageView_20dp" parent="">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">@dimen/_20sdp</item>
+        <item name="cornerSize">@dimen/_18sdp</item>
     </style>
 
 </resources>
