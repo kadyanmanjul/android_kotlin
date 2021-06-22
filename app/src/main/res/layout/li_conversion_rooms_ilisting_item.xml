@@ -10,7 +10,7 @@
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="@dimen/_12sdp"
         android:layout_marginTop="@dimen/_2sdp"
-        android:layout_marginBottom="@dimen/_4sdp"
+        android:layout_marginBottom="@dimen/_2sdp"
         app:cardElevation="@dimen/_2sdp"
         app:cardMaxElevation="@dimen/_2sdp"
         app:cardPreventCornerOverlap="true"

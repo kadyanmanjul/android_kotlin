@@ -30,7 +30,7 @@ class SpeakerAdapter(
         fun bind(model: LiveRoomUser, bindingAdapterPosition: Int) {
             with(binding) {
                 name.text = model.name
-                userImage.apply {
+                userImageIv.apply {
                     clipToOutline = true
                     setUserImageRectOrInitials(model.photo_url, model.name, 24, true, 16,
                         textColor = R.color.black,
