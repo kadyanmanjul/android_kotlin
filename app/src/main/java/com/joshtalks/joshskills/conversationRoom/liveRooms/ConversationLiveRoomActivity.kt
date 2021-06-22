@@ -201,7 +201,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                                     binding.handRaiseBtn.setImageDrawable(
                                         ResourcesCompat.getDrawable(
                                             AppObjectController.joshApplication.resources,
-                                            R.drawable.ic_raise_hand,
+                                            R.drawable.ic_hand_raised_icon,
                                             null
                                         )
                                     )
@@ -215,7 +215,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                                 false -> binding.handRaiseBtn.setImageDrawable(
                                     ResourcesCompat.getDrawable(
                                         AppObjectController.joshApplication.resources,
-                                        R.drawable.ic_unraise_hand,
+                                        R.drawable.ic_unraise_hand_icon,
                                         null
                                     )
                                 )
@@ -439,7 +439,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.handRaiseBtn.setImageDrawable(
             ResourcesCompat.getDrawable(
                 AppObjectController.joshApplication.resources,
-                R.drawable.ic_unraise_hand,
+                R.drawable.ic_unraise_hand_icon,
                 null
             )
         )

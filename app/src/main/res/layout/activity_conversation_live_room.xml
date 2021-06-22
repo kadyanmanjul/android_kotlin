@@ -208,7 +208,7 @@
                 android:background="@drawable/circle2"
                 android:backgroundTint="#F2F2F2"
                 android:padding="@dimen/_5sdp"
-                android:src="@drawable/ic_raise_hand"
+                android:src="@drawable/ic_hand_raised_icon"
                 android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@id/mute_btn"
                 app:layout_constraintTop_toTopOf="@id/leave_end_room_btn"
