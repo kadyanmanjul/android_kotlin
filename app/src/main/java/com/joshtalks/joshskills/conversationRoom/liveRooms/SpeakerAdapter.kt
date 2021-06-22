@@ -37,9 +37,9 @@ class SpeakerAdapter(
                         bgColor = R.color.conversation_room_gray)
                 }
                 if (model.isIs_speaking && model.isIs_speaker && model.isIs_mic_on) {
-                    ringIcon.visibility = View.VISIBLE
+                    userImage.setBackgroundResource(R.drawable.golden_ring_27dp_border)
                 } else {
-                    ringIcon.visibility = View.GONE
+                    userImage.setBackgroundResource(R.color.white)
                 }
 
                 if (isModerator && model.isIs_hand_raised) {
@@ -47,6 +47,7 @@ class SpeakerAdapter(
                 } else {
                     raisedHands.visibility = View.GONE
                 }
+
                 if (model.isIs_moderator) {
                     speakerBadge.visibility = View.VISIBLE
                 } else {

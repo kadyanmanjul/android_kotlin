@@ -44,15 +44,6 @@
             tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ring_icon"
-            android:layout_width="@dimen/_16sdp"
-            android:layout_height="@dimen/_16sdp"
-            android:src="@drawable/ic_speaker_on"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="@id/user_image"
-            app:layout_constraintTop_toTopOf="@id/user_image" />
-
-        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/raised_hands"
             android:layout_width="@dimen/_16sdp"
             android:layout_height="@dimen/_16sdp"
