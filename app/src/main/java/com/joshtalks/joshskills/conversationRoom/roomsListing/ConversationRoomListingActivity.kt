@@ -52,9 +52,13 @@ class ConversationRoomListingActivity : BaseActivity(),
         viewModel = ConversationRoomListingViewModel()
         setUpRecyclerView()
         viewModel.makeEnterExitConversationRoom(true)
-        binding.createRoom.setOnClickListener {
-            showPopup()
+        binding.createRoom.apply {
+            clipToOutline = true
+            setOnClickListener {
+                showPopup()
+            }
         }
+
         binding.userPic.clipToOutline = true
         binding.userPic.setUserImageRectOrInitials(
             Mentor.getInstance().getUser()?.photo,

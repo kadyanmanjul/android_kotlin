@@ -91,16 +91,16 @@
                     android:layout_marginTop="@dimen/_8sdp"
                     android:text="Speakers"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toTopOf="@id/speakers_list"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/topic"
                     app:layout_constraintVertical_chainStyle="packed"
                     tools:visibility="visible" />
 
-
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/speakers_list"
+                    android:layout_marginTop="@dimen/_8sdp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_3sdp"
@@ -205,8 +205,8 @@
                 android:layout_marginEnd="@dimen/_16sdp"
                 android:background="@drawable/circle2"
                 android:backgroundTint="#F2F2F2"
-                android:padding="@dimen/_5sdp"
-                android:src="@drawable/ic_hand_raised_icon"
+                android:padding="@dimen/_7sdp"
+                android:src="@drawable/ic_unraise_hand_icon"
                 android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@id/mute_btn"
                 app:layout_constraintTop_toTopOf="@id/leave_end_room_btn"
