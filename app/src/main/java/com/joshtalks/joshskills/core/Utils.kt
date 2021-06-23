@@ -967,7 +967,13 @@ fun ImageView.setUserInitial(userName: String, dpToPx: Int = 16) {
     this.setImageDrawable(drawable)
 }
 
-fun ImageView.setUserInitialInRect(userName: String, dpToPx: Int = 16,radius : Int =16, textColor:Int = R.color.white,bgColor:Int =  R.color.button_color) {
+fun ImageView.setUserInitialInRect(
+    userName: String,
+    dpToPx: Int = 16,
+    radius: Int = 16,
+    textColor: Int = R.color.white,
+    bgColor: Int = R.color.button_color
+) {
     val font = Typeface.createFromAsset(
         AppObjectController.joshApplication.assets,
         "fonts/OpenSans-SemiBold.ttf"
@@ -1024,37 +1030,20 @@ fun ImageView.setUserImageRectOrInitials(
     dpToPx: Int = 16,
     isRound: Boolean = false,
     radius: Int = 16,
-    textColor:Int = R.color.white,
-    bgColor:Int =  R.color.button_color
+    textColor: Int = R.color.white,
+    bgColor: Int = R.color.button_color
 ) {
     if (url.isNullOrEmpty()) {
-        setUserInitialInRect(userName, dpToPx,radius,textColor,bgColor)
+        setUserInitialInRect(userName, dpToPx, radius, textColor, bgColor)
     } else {
-        if (isRound) {
-            val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)
-                .error(R.drawable.ic_call_placeholder)
-                .format(DecodeFormat.PREFER_RGB_565)
-                .disallowHardwareConfig().dontAnimate().encodeQuality(75)
-            Glide.with(context)
-                .load(url)
-                .optionalTransform(
-                    WebpDrawable::class.java,
-                    WebpDrawableTransformation(CircleCrop())
-                )
-                .circleCrop()
-                .apply(requestOptions)
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .into(this)
-        } else {
-            this.setImage(url)
-        }
+        this.setImage(url)
     }
 }
 
 fun ImageView.setRoundImage(
     url: String,
     context: Context = AppObjectController.joshApplication,
-    dp: Int =16
+    dp: Int = 16
 ) {
 
     val multi = MultiTransformation(RoundedCornersTransformation(Utils.dpToPx(dp), 0))
