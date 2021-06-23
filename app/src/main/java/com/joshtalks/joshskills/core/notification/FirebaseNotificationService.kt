@@ -47,6 +47,7 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
+import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
@@ -56,6 +57,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
+import com.joshtalks.joshskills.repository.local.model.ShortNotificationObject
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
@@ -70,6 +72,7 @@ import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
+import com.joshtalks.joshskills.ui.voip.OPPOSITE_USER_UID
 import com.joshtalks.joshskills.ui.voip.RTC_CALLER_PHOTO
 import com.joshtalks.joshskills.ui.voip.RTC_CALLER_UID_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_CHANNEL_KEY
@@ -134,13 +137,27 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         Gson().toJson(remoteMessage.data)
                     )
                 }
-                val notificationTypeToken: Type =
-                    object : TypeToken<NotificationObject>() {}.type
-                val nc: NotificationObject = AppObjectController.gsonMapper.fromJson(
-                    AppObjectController.gsonMapper.toJson(remoteMessage.data),
-                    notificationTypeToken
-                )
-                sendNotification(nc)
+
+                if (remoteMessage.data.containsKey("nType")) {
+                    val notificationTypeToken: Type =
+                        object : TypeToken<ShortNotificationObject>() {}.type
+                    val shortNc: ShortNotificationObject = AppObjectController.gsonMapper.fromJson(
+                        AppObjectController.gsonMapper.toJson(remoteMessage.data),
+                        notificationTypeToken
+                    )
+                    FirestoreDB.getNotification {
+                        val nc = it.toNotificationObject(shortNc.id)
+                        sendNotification(nc)
+                    }
+                } else {
+                    val notificationTypeToken: Type =
+                        object : TypeToken<NotificationObject>() {}.type
+                    val nc: NotificationObject = AppObjectController.gsonMapper.fromJson(
+                        AppObjectController.gsonMapper.toJson(remoteMessage.data),
+                        notificationTypeToken
+                    )
+                    sendNotification(nc)
+                }
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -428,6 +445,17 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             }
             NotificationAction.CALL_RESUME_NOTIFICATION -> {
                 WebRtcService.resumeCall()
+                return null
+            }
+            NotificationAction.CALL_CONNECTED_NOTIFICATION -> {
+                if (notificationObject.actionData != null) {
+                    try {
+                        val obj = JSONObject(notificationObject.actionData!!)
+                        WebRtcService.userJoined(obj.getInt(OPPOSITE_USER_UID))
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                }
                 return null
             }
             NotificationAction.AUDIO_FEEDBACK_REPORT -> {

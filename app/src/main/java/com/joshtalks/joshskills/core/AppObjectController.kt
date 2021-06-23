@@ -55,6 +55,7 @@ import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
 import com.uxcam.UXCam
 import com.yariksoffice.lingver.Lingver
+import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.RtcEngineConfig
@@ -69,6 +70,7 @@ import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import java.net.URL
 import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.Collections
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -350,16 +352,16 @@ class AppObjectController {
                     mAreaCode = RtcEngineConfig.AreaCode.AREA_CODE_IN
                     mEventHandler = object : IRtcEngineEventHandler() {
                     }
-                    // -------------------Only For Debug Purposes -----------------------
-//                    mLogConfig = RtcEngineConfig.LogConfig().apply {
-//                        // Set the log filter to INFO
-//                        level = Constants.LogLevel.getValue(Constants.LogLevel.LOG_LEVEL_INFO)
-//                        // Get the current timestamp to separate log files
-//                        val ts = SimpleDateFormat("yyyyMMdd").format(Date())
-//                        filePath = "/sdcard/$ts.log"        // Set the log file path
-//                        fileSize = 2048     // Set the log file size to 2 MB
-//                    }
-                    // ---------------------------------------------------------------------
+                    if (BuildConfig.DEBUG) {
+                        mLogConfig = RtcEngineConfig.LogConfig().apply {
+                            // Set the log filter to INFO
+                            level = Constants.LogLevel.getValue(Constants.LogLevel.LOG_LEVEL_INFO)
+                            // Get the current timestamp to separate log files
+                            val ts = SimpleDateFormat("yyyyMMdd").format(Date())
+                            filePath = "/sdcard/$ts.log"        // Set the log file path
+                            fileSize = 2048     // Set the log file size to 2 MB
+                        }
+                    }
                 })
             } catch (ex: Throwable) {
                 ex.printStackTrace()

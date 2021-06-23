@@ -269,6 +269,17 @@ class WebRtcService : BaseWebRtcService() {
             }
             serviceIntent.startServiceForWebrtc()
         }
+
+        fun userJoined(uid: Int) {
+            val serviceIntent = Intent(
+                AppObjectController.joshApplication,
+                WebRtcService::class.java
+            ).apply {
+                action = UserJoined().action
+                putExtra(OPPOSITE_USER_UID, uid)
+            }
+            serviceIntent.startServiceForWebrtc()
+        }
     }
 
     @Volatile
@@ -373,26 +384,7 @@ class WebRtcService : BaseWebRtcService() {
         override fun onUserJoined(uid: Int, elapsed: Int) {
             Timber.tag(TAG).e("onUserJoined=  $uid  $elapsed" + "   " + mRtcEngine?.connectionState)
             super.onUserJoined(uid, elapsed)
-            removeIncomingNotification()
-            oppositeCallerId = uid
-            compositeDisposable.clear()
-            isCallWasOnGoing.postValue(true)
-            isCallerJoin = true
-            if (callStartTime == 0L) {
-                startCallTimer()
-            }
-            callCallback?.get()?.onConnect(uid.toString())
-            mHandler?.postDelayed(
-                {
-                    callCallback?.get()?.onServerConnect()
-                },
-                500
-            )
-            addNotification(CallConnect().action, callData)
-            // addSensor()
-            joshAudioManager?.startCommunication()
-            joshAudioManager?.stopConnectTone()
-            audioFocus()
+            userJoined(uid)
         }
 
         override fun onUserOffline(uid: Int, reason: Int) {
@@ -439,31 +431,6 @@ class WebRtcService : BaseWebRtcService() {
             callCallback?.get()?.onNetworkReconnect()
             joshAudioManager?.stopConnectTone()
             audioFocus()
-        }
-
-        private fun audioFocus() {
-            val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val af = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).run {
-                    setAudioAttributes(
-                        AudioAttributes.Builder().run {
-                            setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
-                            setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                            build()
-                        }
-                    )
-                    setAcceptsDelayedFocusGain(true)
-                    build()
-                }
-                af.acceptsDelayedFocusGain()
-                audioManager.requestAudioFocus(af)
-            } else {
-                audioManager.requestAudioFocus(
-                    { },
-                    AudioManager.STREAM_VOICE_CALL,
-                    AudioManager.AUDIOFOCUS_GAIN
-                )
-            }
         }
 
         override fun onConnectionStateChanged(state: Int, reason: Int) {
@@ -576,6 +543,12 @@ class WebRtcService : BaseWebRtcService() {
                     mRtcEngine?.muteLocalAudioStream(false)
                     mRtcEngine?.enableLocalAudio(true)
 
+                    mRtcEngine?.adjustRecordingSignalVolume(400)
+                    val audio = getSystemService(AUDIO_SERVICE) as AudioManager
+                    val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
+                    val currentVolume = audio.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
+                    mRtcEngine?.adjustPlaybackSignalVolume((95 / maxVolume) * currentVolume)
+
                     val message = Message()
                     message.what = CallState.UNHOLD.state
                     mHandler?.sendMessageDelayed(message, 500)
@@ -657,13 +630,10 @@ class WebRtcService : BaseWebRtcService() {
             mRtcEngine?.apply {
                 if (BuildConfig.DEBUG) {
                     setParameters("{\"rtc.log_filter\": 65535}")
+                    setParameters("{\"che.audio.start_debug_recording\":\"all\"}")
                 }
                 setParameters("{\"rtc.peer.offline_period\":$callReconnectTime}")
                 setParameters("{\"che.audio.keep.audiosession\":true}")
-                // ---------------------Only for debug Purposes-----------------
-//                // Enable saving of PCM Dump files
-//                setParameters("{\"che.audio.start_debug_recording\":\"all\"}")
-                // -------------------------------------------------------------
 
                 disableVideo()
                 enableAudio()
@@ -734,6 +704,7 @@ class WebRtcService : BaseWebRtcService() {
                                 joinCall(data)
                             }
                             this == CallConnect().action -> {
+                                removeIncomingNotification()
                                 val callData: HashMap<String, String?>? =
                                     intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
                                 callConnectService(callData)
@@ -819,6 +790,13 @@ class WebRtcService : BaseWebRtcService() {
                                 message.what = CallState.CALL_RESUME_BY_OPPOSITE.state
                                 mHandler?.sendMessage(message)
                             }
+                            this == UserJoined().action -> {
+                                val uid =
+                                    intent.getIntExtra(OPPOSITE_USER_UID, -1)
+                                if (uid != -1) {
+                                    userJoined(uid)
+                                }
+                            }
                         }
                     } catch (ex: Exception) {
                         ex.printStackTrace()
@@ -839,6 +817,54 @@ class WebRtcService : BaseWebRtcService() {
         message.what = CallState.EXIT.state
         mHandler?.sendMessageDelayed(message, 1000)
         disconnectService()
+    }
+
+    fun userJoined(uid: Int) {
+        removeIncomingNotification()
+        oppositeCallerId = uid
+        compositeDisposable.clear()
+        isCallWasOnGoing.postValue(true)
+        isCallerJoin = true
+        if (callStartTime == 0L) {
+            startCallTimer()
+        }
+        callCallback?.get()?.onConnect(uid.toString())
+        mHandler?.postDelayed(
+            {
+                callCallback?.get()?.onServerConnect()
+            },
+            500
+        )
+        addNotification(CallConnect().action, callData)
+        // addSensor()
+        joshAudioManager?.startCommunication()
+        joshAudioManager?.stopConnectTone()
+        audioFocus()
+    }
+
+    private fun audioFocus() {
+        val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val af = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).run {
+                setAudioAttributes(
+                    AudioAttributes.Builder().run {
+                        setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
+                        setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        build()
+                    }
+                )
+                setAcceptsDelayedFocusGain(true)
+                build()
+            }
+            af.acceptsDelayedFocusGain()
+            audioManager.requestAudioFocus(af)
+        } else {
+            audioManager.requestAudioFocus(
+                { },
+                AudioManager.STREAM_VOICE_CALL,
+                AudioManager.AUDIOFOCUS_GAIN
+            )
+        }
     }
 
     private fun callConnectService(data: HashMap<String, String?>?) {
@@ -1231,6 +1257,7 @@ class WebRtcService : BaseWebRtcService() {
                     }
                 }
                 CallConnect().action -> {
+                    removeIncomingNotification()
                     showNotification(
                         callConnectedNotification(data),
                         CONNECTED_CALL_NOTIFICATION_ID
@@ -1634,6 +1661,7 @@ data class NoUserFound(val action: String = "calling.action.no_user_found") :
 
 data class HoldCall(val action: String = "calling.action.hold_call") : WebRtcCalling()
 data class ResumeCall(val action: String = "calling.action.resume_call") : WebRtcCalling()
+data class UserJoined(val action: String = "calling.action.resume_call") : WebRtcCalling()
 
 data class FavoriteIncomingCall(val action: String = "calling.action.favorite_incoming_call") :
     WebRtcCalling()

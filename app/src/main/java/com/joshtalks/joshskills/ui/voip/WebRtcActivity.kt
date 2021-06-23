@@ -54,6 +54,7 @@ const val CALL_USER_OBJ = "call_user_obj"
 const val CALL_TYPE = "call_type"
 const val IS_DEMO_P2P = "is_demo_p2p"
 const val IS_CALL_CONNECTED = "is_call_connected"
+const val OPPOSITE_USER_UID = "opp_user_uid"
 
 class WebRtcActivity : AppCompatActivity() {
 

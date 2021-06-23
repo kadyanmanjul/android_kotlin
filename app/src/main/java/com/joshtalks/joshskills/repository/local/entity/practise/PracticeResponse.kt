@@ -28,7 +28,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Entity(
     tableName = "practise_engagement_table",
-    indices = [Index(value = ["practiseId", "question"])],
+    indices = [Index(value = ["practiseId", "question", "questionForId"])],
     foreignKeys = [ForeignKey(
         entity = Question::class,
         parentColumns = arrayOf("questionId"),
