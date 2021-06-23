@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.interfaces.ConversationLiveRoomSpeakerClickAction
 import com.joshtalks.joshskills.core.setUserImageRectOrInitials
 import com.joshtalks.joshskills.databinding.LiSpeakersItemBinding
+import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 
 
 class SpeakerAdapter(
@@ -60,7 +61,7 @@ class SpeakerAdapter(
                     volumeIcon.visibility = View.GONE
                 }
 
-                root.setOnClickListener {
+                root.setOnSingleClickListener {
                     if (bindingAdapterPosition != RecyclerView.NO_POSITION && listenerUserAction != null) {
                         listenerUserAction?.onItemClick(
                             snapshots.getSnapshot(bindingAdapterPosition),

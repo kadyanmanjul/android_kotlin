@@ -27,6 +27,7 @@ import com.joshtalks.joshskills.databinding.ActivityConversationsRoomsListingBin
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 
 
@@ -54,7 +55,7 @@ class ConversationRoomListingActivity : BaseActivity(),
         viewModel.makeEnterExitConversationRoom(true)
         binding.createRoom.apply {
             clipToOutline = true
-            setOnClickListener {
+            setOnSingleClickListener {
                 showPopup()
             }
         }
@@ -69,7 +70,7 @@ class ConversationRoomListingActivity : BaseActivity(),
             textColor = R.color.black,
             bgColor = R.color.conversation_room_gray
         )
-        binding.userPic.setOnClickListener {
+        binding.userPic.setOnSingleClickListener {
             goToProfile()
         }
 

@@ -37,6 +37,7 @@ import com.joshtalks.joshskills.core.setUserImageRectOrInitials
 import com.joshtalks.joshskills.databinding.ActivityConversationLiveRoomBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -158,13 +159,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun clickListener() {
 
-        binding.leaveEndRoomBtn.setOnClickListener {
+        binding.leaveEndRoomBtn.setOnSingleClickListener {
             if (binding.leaveEndRoomBtn.text == getString(R.string.end_room)) {
                 showEndRoomPopup()
             } else {
                 viewModel.leaveEndRoom(isRoomCreatedByUser, roomId, moderatorMentorId)
             }
         }
+
         binding.userPhoto.setOnClickListener {
             openUserProfile(Mentor.getInstance().getId())
         }
@@ -182,7 +184,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             }
         }
 
-        binding.raisedHands.setOnClickListener {
+        binding.raisedHands.setOnSingleClickListener {
             openRaisedHandsBottomSheet()
         }
     }
@@ -677,13 +679,15 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
         listenerAdapter?.setOnItemClickListener(object : AudienceAdapter.OnUserItemClickListener {
             override fun onItemClick(documentSnapshot: DocumentSnapshot?, position: Int) {
+                if (supportFragmentManager.backStackEntryCount == 0)
                 getDataOnSpeakerAdapterItemClick(documentSnapshot, false)
             }
         })
 
         speakerAdapter?.setOnItemClickListener(object : SpeakerAdapter.OnUserItemClickListener {
             override fun onItemClick(documentSnapshot: DocumentSnapshot?, position: Int) {
-                getDataOnSpeakerAdapterItemClick(documentSnapshot, true)
+                if (supportFragmentManager.backStackEntryCount == 0)
+                    getDataOnSpeakerAdapterItemClick(documentSnapshot, true)
             }
         })
 
