@@ -73,8 +73,12 @@
                 android:layout_height="@dimen/_14sdp"
                 android:background="@drawable/circle2"
                 android:backgroundTint="#27AE61"
+                android:layout_margin="@dimen/_2sdp"
                 android:padding="@dimen/_2sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/name"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="spread"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_star" />
@@ -86,12 +90,13 @@
                 android:layout_marginStart="@dimen/_4sdp"
                 android:ellipsize="end"
                 android:maxLines="1"
+                android:layout_margin="@dimen/_2sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
                 android:textColor="@color/pure_black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@id/speaker_badge"
+                app:layout_constraintStart_toEndOf="@+id/speaker_badge"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Rohaneeee a" />
 
