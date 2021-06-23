@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -15,6 +16,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -47,6 +49,9 @@ import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.models.ChannelMediaOptions
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlin.math.abs
 
 class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeakerClickAction,
@@ -80,6 +85,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     var speakingUsersOldList = arrayListOf<Int>()
     var handler: Handler? = null
     var runnable: Runnable? = null
+    var micBlackDrawable: Drawable? = null
+    var micOffDrawable: Drawable? = null
+    var handRaisedDrawable: Drawable? = null
+    var handUnRaisedDrawable: Drawable? = null
+    private val compositeDisposable = CompositeDisposable()
+    private var internetAvailableFlag: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,10 +99,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         setContentView(binding.root)
         viewModel = ConversationLiveRoomViewModel()
         getIntentExtras()
-        getUserName()
+        setImageDrawable()
         binding.notificationBar.setNotificationViewEnquiryAction(this)
         roomReference = liveRoomReference.document(roomId.toString())
         usersReference = roomReference?.collection("users")
+        getUserName()
         handler = Handler(Looper.getMainLooper())
         updateUI()
         initializeEngine()
@@ -108,6 +120,29 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
         clickListener()
         switchRoles()
+    }
+
+    private fun setImageDrawable() {
+        micBlackDrawable = ResourcesCompat.getDrawable(
+            AppObjectController.joshApplication.resources,
+            R.drawable.ic_mic_black_on,
+            null
+        )
+        micOffDrawable = ResourcesCompat.getDrawable(
+            AppObjectController.joshApplication.resources,
+            R.drawable.ic_mic_off,
+            null
+        )
+        handRaisedDrawable = ResourcesCompat.getDrawable(
+            AppObjectController.joshApplication.resources,
+            R.drawable.ic_hand_raised_icon,
+            null
+        )
+        handUnRaisedDrawable = ResourcesCompat.getDrawable(
+            AppObjectController.joshApplication.resources,
+            R.drawable.ic_unraise_hand_icon,
+            null
+        )
     }
 
     private fun getUserName() {
@@ -201,11 +236,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                             when (isRaised) {
                                 true -> {
                                     binding.handRaiseBtn.setImageDrawable(
-                                        ResourcesCompat.getDrawable(
-                                            AppObjectController.joshApplication.resources,
-                                            R.drawable.ic_hand_raised_icon,
-                                            null
-                                        )
+                                        handRaisedDrawable
                                     )
                                     setNotificationWithoutAction(
                                         String.format(
@@ -215,11 +246,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                                     )
                                 }
                                 false -> binding.handRaiseBtn.setImageDrawable(
-                                    ResourcesCompat.getDrawable(
-                                        AppObjectController.joshApplication.resources,
-                                        R.drawable.ic_unraise_hand_icon,
-                                        null
-                                    )
+                                    handUnRaisedDrawable
                                 )
                             }
                             sendNotification(
@@ -232,6 +259,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                         }?.addOnFailureListener {
                             showApiCallErrorToast(it.message ?: "")
                         }
+                } else {
+                    setNotificationWithoutAction(
+                        "Room has reached maximum allowed number of speakers." +
+                                " Please try again after sometime.", false
+                    )
                 }
             }
             ?.addOnFailureListener { exception ->
@@ -250,20 +282,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 when (isMicOn) {
                     true -> {
                         binding.muteBtn.setImageDrawable(
-                            ResourcesCompat.getDrawable(
-                                AppObjectController.joshApplication.resources,
-                                R.drawable.ic_mic_black_on,
-                                null
-                            )
+                            micBlackDrawable
                         )
                     }
                     false -> {
                         binding.muteBtn.setImageDrawable(
-                            ResourcesCompat.getDrawable(
-                                AppObjectController.joshApplication.resources,
-                                R.drawable.ic_mic_off,
-                                null
-                            )
+                            micOffDrawable
                         )
                     }
                 }
@@ -439,11 +463,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.handRaiseBtn.visibility = View.GONE
         setHandRaiseValueToFirestore(false)
         binding.handRaiseBtn.setImageDrawable(
-            ResourcesCompat.getDrawable(
-                AppObjectController.joshApplication.resources,
-                R.drawable.ic_unraise_hand_icon,
-                null
-            )
+            handUnRaisedDrawable
         )
         isHandRaised = true
         iSSoundOn = isMicOn == true
@@ -460,19 +480,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun updateMuteButtonText() {
         if (iSSoundOn) {
             binding.muteBtn.setImageDrawable(
-                ResourcesCompat.getDrawable(
-                    AppObjectController.joshApplication.resources,
-                    R.drawable.ic_mic_black_on,
-                    null
-                )
+                micBlackDrawable
             )
         } else {
             binding.muteBtn.setImageDrawable(
-                ResourcesCompat.getDrawable(
-                    AppObjectController.joshApplication.resources,
-                    R.drawable.ic_mic_off,
-                    null
-                )
+                micOffDrawable
             )
         }
     }
@@ -490,6 +502,17 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 return@addSnapshotListener
             } else {
                 if (value?.exists() == false) {
+                    engine?.leaveChannel()
+                    showRoomEndNotification()
+                }
+            }
+        }
+        usersReference?.addSnapshotListener { value, error ->
+            if (error != null) {
+                Log.d(TAG, error.message)
+                return@addSnapshotListener
+            } else {
+                if (value?.isEmpty == true) {
                     engine?.leaveChannel()
                     showRoomEndNotification()
                 }
@@ -596,7 +619,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                         if (documents.size() > 1) {
                             if (documents.documents[0].id.toInt() == agoraUid) {
                                 viewModel.leaveEndRoom(true, roomId, moderatorMentorId)
-
                             } else if (documents.documents[1].id.toInt() == agoraUid) {
                                 viewModel.leaveEndRoom(true, roomId, moderatorMentorId)
                             }
@@ -650,6 +672,34 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             .show()
     }
 
+    private fun observeNetwork() {
+        compositeDisposable.add(
+            ReactiveNetwork.observeNetworkConnectivity(applicationContext)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { connectivity ->
+                    internetAvailableFlag = connectivity.available()
+                    if (internetAvailableFlag) {
+                        internetAvailable()
+                    } else {
+                        internetNotAvailable()
+                    }
+                }
+        )
+    }
+
+    private fun internetNotAvailable() {
+        binding.notificationBar.visibility = View.VISIBLE
+        binding.notificationBar.hideActionLayout()
+        binding.notificationBar.setHeading("The Internet connection appears to be offline")
+        binding.notificationBar.setBackgroundColor(false)
+    }
+
+    private fun internetAvailable() {
+        binding.notificationBar.visibility = View.GONE
+    }
+
+
     private fun setLeaveEndButton(isRoomCreatedByUser: Boolean) {
         when (isRoomCreatedByUser) {
             true -> {
@@ -660,7 +710,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             }
         }
         binding.leaveEndRoomBtn.visibility = View.VISIBLE
-
     }
 
     private fun setUpRecyclerView() {
@@ -748,7 +797,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                             ?.get()
                             ?.addOnSuccessListener { documents ->
                                 if (documents.size() < 16) {
-
                                     sendNotification(
                                         "SPEAKER_INVITE",
                                         moderatorUid?.toString(),
@@ -757,12 +805,10 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                                         userName
                                     )
                                 } else {
-                                    Toast.makeText(
-                                        this@ConversationLiveRoomActivity,
-                                        "Speakers limit reached !!!",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    // show pop up in place of toast
+                                    setNotificationWithoutAction(
+                                        "Room has reached maximum allowed number of speakers." +
+                                                " Please try again after sometime.", false
+                                    )
                                 }
                             }
                     }
@@ -813,14 +859,21 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         listenerAdapter?.startListening()
     }
 
+    override fun onPause() {
+        super.onPause()
+        compositeDisposable.clear()
+    }
+
     override fun onStop() {
         super.onStop()
         speakerAdapter?.stopListening()
         listenerAdapter?.stopListening()
+        compositeDisposable.clear()
     }
 
     override fun onResume() {
         super.onResume()
+        observeNetwork()
         ConversationRoomListingActivity.CONVERSATION_ROOM_VISIBLE_TRACK_FLAG = true
     }
 
@@ -837,7 +890,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         if (engine != null) {
             engine?.leaveChannel()
             engine = null
-            Log.d(TAG, "Agora engine set null")
         }
         super.onDestroy()
 
@@ -863,7 +915,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             ) {
                 val reference = usersReference?.document(agoraUid.toString())
                 reference?.update("is_speaker", true)?.addOnSuccessListener {
-                    binding.notificationBar.visibility = View.GONE
                     sendNotification(
                         "SPEAKER_INVITE_ACCEPTED",
                         notificationTo?.get("uid"),
@@ -873,6 +924,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
                     )
                 }
+                binding.notificationBar.visibility = View.GONE
             }
         }
 

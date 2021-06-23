@@ -11,6 +11,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -29,6 +30,9 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 
 
 class ConversationRoomListingActivity : BaseActivity(),
@@ -39,6 +43,8 @@ class ConversationRoomListingActivity : BaseActivity(),
     private var adapter: ConversationRoomsListingAdapter? = null
     lateinit var viewModel: ConversationRoomListingViewModel
     lateinit var binding: ActivityConversationsRoomsListingBinding
+    private val compositeDisposable = CompositeDisposable()
+    private var internetAvailableFlag: Boolean = true
 
     companion object {
         var CONVERSATION_ROOM_VISIBLE_TRACK_FLAG: Boolean = true
@@ -98,6 +104,38 @@ class ConversationRoomListingActivity : BaseActivity(),
         )
     }
 
+    override fun onResume() {
+        super.onResume()
+        observeNetwork()
+    }
+
+    private fun observeNetwork() {
+        compositeDisposable.add(
+            ReactiveNetwork.observeNetworkConnectivity(applicationContext)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { connectivity ->
+                    internetAvailableFlag = connectivity.available()
+                    if (internetAvailableFlag) {
+                        internetAvailable()
+                    } else {
+                        internetNotAvailable()
+                    }
+                }
+        )
+    }
+
+    private fun internetNotAvailable() {
+        binding.notificationBar.visibility = View.VISIBLE
+        binding.notificationBar.hideActionLayout()
+        binding.notificationBar.setHeading("The Internet connection appears to be offline")
+        binding.notificationBar.setBackgroundColor(false)
+    }
+
+    private fun internetAvailable() {
+        binding.notificationBar.visibility = View.GONE
+    }
+
     private fun openConversationLiveRoom(
         channelName: String?,
         uid: Int?,
@@ -153,6 +191,12 @@ class ConversationRoomListingActivity : BaseActivity(),
     override fun onStop() {
         super.onStop()
         adapter?.stopListening()
+        compositeDisposable.clear()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        compositeDisposable.clear()
     }
 
     override fun onDestroy() {
