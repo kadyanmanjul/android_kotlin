@@ -100,13 +100,13 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/speakers_list"
-                    android:layout_marginTop="@dimen/_8sdp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_3sdp"
-                    android:nestedScrollingEnabled="false"
-                    android:isScrollContainer="false"
+                    android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginEnd="@dimen/_36sdp"
+                    android:isScrollContainer="false"
+                    android:nestedScrollingEnabled="false"
                     app:layout_constraintBottom_toTopOf="@id/audienceTextView"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -142,14 +142,14 @@
         </ScrollView>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:background="@color/white"
-            android:paddingTop="@dimen/_4sdp"
             android:id="@+id/button_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:paddingTop="@dimen/_4sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/leave_end_room_btn"
@@ -174,9 +174,8 @@
                 android:id="@+id/mute_btn"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
-                android:layout_margin="@dimen/_20sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
-                android:layout_marginBottom="@dimen/_40sdp"
+                android:layout_marginBottom="@dimen/_20sdp"
                 android:background="@drawable/circle2"
                 android:backgroundTint="#F2F2F2"
                 android:padding="@dimen/_7sdp"
@@ -189,13 +188,14 @@
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
+                android:layout_marginBottom="@dimen/_20sdp"
                 android:background="@drawable/circle2"
                 android:backgroundTint="#F2F2F2"
                 android:padding="@dimen/_5sdp"
                 android:src="@drawable/ic_raised_hand_list"
                 android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/mute_btn"
-                app:layout_constraintTop_toTopOf="@id/leave_end_room_btn"
                 tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -203,14 +203,15 @@
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
+                android:layout_marginBottom="@dimen/_20sdp"
                 android:background="@drawable/circle2"
                 android:backgroundTint="#F2F2F2"
                 android:padding="@dimen/_7sdp"
                 android:src="@drawable/ic_unraise_hand_icon"
                 android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/mute_btn"
-                app:layout_constraintTop_toTopOf="@id/leave_end_room_btn"
-                tools:visibility="visible"  />
+                tools:visibility="gone" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.joshtalks.joshskills.conversationRoom.notification.NotificationView
