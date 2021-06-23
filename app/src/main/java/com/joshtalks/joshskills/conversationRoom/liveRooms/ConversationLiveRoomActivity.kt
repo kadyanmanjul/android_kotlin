@@ -798,6 +798,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         dialogView.findViewById<AppCompatTextView>(R.id.end_room).setOnClickListener {
             viewModel.leaveEndRoom(isRoomCreatedByUser, roomId, moderatorMentorId)
             alertDialog.dismiss()
+            finish()
         }
 
     }
@@ -820,8 +821,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        viewModel.leaveEndRoom(isRoomCreatedByUser, roomId, moderatorMentorId)
+        if (binding.leaveEndRoomBtn.text == getString(R.string.end_room)) {
+            showEndRoomPopup()
+        } else {
+            viewModel.leaveEndRoom(isRoomCreatedByUser, roomId, moderatorMentorId)
+            super.onBackPressed()
+        }
     }
 
     override fun onDestroy() {

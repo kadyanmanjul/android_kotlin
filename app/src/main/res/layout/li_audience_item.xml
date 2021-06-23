@@ -13,13 +13,13 @@
             android:id="@+id/user_image"
             android:layout_width="@dimen/_42sdp"
             android:layout_height="@dimen/_42sdp"
-            android:background="@color/red"
+            android:background="@color/conversation_room_gray"
             android:scaleType="fitXY"
+            android:layout_gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/roundedCornersImageView_20dp"
-            app:srcCompat="@drawable/ic_call_placeholder" />
+            app:shapeAppearanceOverlay="@style/roundedCornersImageView_20dp" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/volume_icon"
