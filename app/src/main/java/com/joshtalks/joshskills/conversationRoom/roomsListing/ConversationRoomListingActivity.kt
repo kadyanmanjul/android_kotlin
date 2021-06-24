@@ -222,7 +222,7 @@ class ConversationRoomListingActivity : BaseActivity(),
             } else {
                 if (value == null || value.isEmpty) {
                     binding.noRoomsText.visibility = View.VISIBLE
-                    binding.noRoomsText.text = String.format("\uD83D\uDC4B Hi there! \\n\\n Start a new room to get a conversation going!")
+                    binding.noRoomsText.text = String.format("\uD83D\uDC4B Hi there! \n\n Start a new room to get a\n conversation going!")
                     binding.recyclerView.visibility = View.GONE
                 } else {
                     binding.noRoomsText.visibility = View.GONE
