@@ -7,8 +7,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_9sdp"
-        android:layout_marginEnd="@dimen/_9sdp"
         android:layout_marginTop="@dimen/_4sdp"
+        android:layout_marginEnd="@dimen/_9sdp"
         android:padding="@dimen/_2sdp">
 
         <FrameLayout
@@ -58,33 +58,44 @@
             app:srcCompat="@drawable/ic_hand_raised_icon"
             tools:visibility="visible" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/speaker_badge"
-            android:layout_width="@dimen/_14sdp"
-            android:layout_height="@dimen/_14sdp"
-            android:layout_margin="@dimen/_2sdp"
-            android:background="@drawable/circle2"
-            android:backgroundTint="#27AE61"
-            android:padding="@dimen/_2sdp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/user_image"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:srcCompat="@drawable/ic_star" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/name"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_2sdp"
-            android:layout_marginStart="@dimen/_18sdp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
-            android:textColor="@color/pure_black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/speaker_badge"
-            app:layout_constraintTop_toBottomOf="@id/user_image"
-            tools:text="Rohaneeee a" />
+            android:padding="@dimen/_2sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/user_image">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/speaker_badge"
+                android:layout_width="@dimen/_14sdp"
+                android:layout_height="@dimen/_14sdp"
+                android:layout_margin="@dimen/_2sdp"
+                android:background="@drawable/circle2"
+                android:backgroundTint="#27AE61"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/name"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_star" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:layout_marginHorizontal="@dimen/_2sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
+                android:textColor="@color/pure_black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/speaker_badge"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Rohaneeee a" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
