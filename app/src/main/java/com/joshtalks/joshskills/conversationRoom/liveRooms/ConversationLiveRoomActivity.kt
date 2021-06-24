@@ -76,6 +76,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     var moderatorMentorId: String? = null
     var currentUserName: String? = null
     var iSSoundOn = true
+    var isBottomSheetVisible = false
     var isHandRaised = true
     var topicName: String? = null
     var notificationTo: HashMap<String, String>? = null
@@ -728,15 +729,19 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
         listenerAdapter?.setOnItemClickListener(object : AudienceAdapter.OnUserItemClickListener {
             override fun onItemClick(documentSnapshot: DocumentSnapshot?, position: Int) {
-                if (supportFragmentManager.backStackEntryCount == 0)
-                getDataOnSpeakerAdapterItemClick(documentSnapshot, false)
+                if (supportFragmentManager.backStackEntryCount == 0 && isBottomSheetVisible.not()) {
+                    getDataOnSpeakerAdapterItemClick(documentSnapshot, false)
+                    isBottomSheetVisible = true
+                }
             }
         })
 
         speakerAdapter?.setOnItemClickListener(object : SpeakerAdapter.OnUserItemClickListener {
             override fun onItemClick(documentSnapshot: DocumentSnapshot?, position: Int) {
-                if (supportFragmentManager.backStackEntryCount == 0)
+                if (supportFragmentManager.backStackEntryCount == 0 && isBottomSheetVisible.not()) {
                     getDataOnSpeakerAdapterItemClick(documentSnapshot, true)
+                    isBottomSheetVisible = true
+                }
             }
         })
 
@@ -811,6 +816,10 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                                     )
                                 }
                             }
+                    }
+
+                    override fun onDismiss() {
+                        isBottomSheetVisible = false
                     }
 
                 })

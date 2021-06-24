@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.conversationRoom.bottomsheet
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
@@ -112,6 +113,11 @@ class ConversationRoomBottomSheet : BottomSheetDialogFragment() {
 
     }
 
+    override fun onDismiss(dialog: DialogInterface) {
+        roomUserClickAction?.onDismiss()
+        super.onDismiss(dialog)
+    }
+
     private fun setViews(view: View?) {
         // Initialize views
         userPhoto = view?.findViewById(R.id.user_photo)
@@ -127,4 +133,5 @@ interface ConversationRoomBottomSheetAction {
     fun openUserProfile()
     fun moveToAudience()
     fun moveToSpeaker()
+    fun onDismiss()
 }
