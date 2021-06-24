@@ -103,7 +103,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_8sdp"
-                    android:layout_marginStart="@dimen/_11sdp"
+                    android:layout_marginHorizontal="@dimen/_6sdp"
                     android:isScrollContainer="false"
                     android:nestedScrollingEnabled="false"
                     app:layout_constraintHorizontal_bias="0.5"
