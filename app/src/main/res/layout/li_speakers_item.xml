@@ -6,9 +6,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_9sdp"
+        android:layout_marginStart="@dimen/_16sdp"
         android:layout_marginTop="@dimen/_4sdp"
-        android:layout_marginEnd="@dimen/_9sdp"
         android:padding="@dimen/_2sdp">
 
         <FrameLayout
@@ -40,6 +39,7 @@
             android:backgroundTint="@color/white"
             android:padding="@dimen/_3sdp"
             android:visibility="gone"
+            android:layout_margin="@dimen/_4sdp"
             app:layout_constraintBottom_toBottomOf="@id/user_image"
             app:layout_constraintEnd_toEndOf="@id/user_image"
             app:srcCompat="@drawable/ic_mic_off"
@@ -53,6 +53,7 @@
             android:backgroundTint="@color/white"
             android:padding="@dimen/_3sdp"
             android:visibility="gone"
+            android:layout_margin="@dimen/_4sdp"
             app:layout_constraintBottom_toBottomOf="@id/user_image"
             app:layout_constraintEnd_toEndOf="@id/user_image"
             app:srcCompat="@drawable/ic_hand_raised_icon"
@@ -86,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:layout_marginHorizontal="@dimen/_2sdp"
+                android:layout_marginHorizontal="@dimen/_4sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
                 android:textColor="@color/pure_black"
                 app:layout_constraintBottom_toBottomOf="parent"

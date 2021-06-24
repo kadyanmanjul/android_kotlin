@@ -67,7 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginHorizontal="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_50sdp"
+            android:layout_marginBottom="@dimen/_40sdp"
             android:backgroundTint="@color/notification_green_color"
             android:drawableLeft="@drawable/create_room_plus"
             android:drawablePadding="@dimen/_7sdp"

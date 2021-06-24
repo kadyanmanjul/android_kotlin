@@ -70,7 +70,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/background_bottomsheet">
+                android:background="@drawable/background_bottomsheet_24dp_corner">
 
                 <TextView
                     android:id="@+id/topic"
@@ -103,6 +103,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginStart="@dimen/_11sdp"
                     android:isScrollContainer="false"
                     android:nestedScrollingEnabled="false"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -145,7 +146,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:paddingTop="@dimen/_4sdp"
+            android:paddingTop="@dimen/_10sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -159,6 +160,7 @@
                 android:background="@drawable/rect_round"
                 android:backgroundTint="#F2F2F2"
                 android:drawableStart="@drawable/ic_victory_emoji"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                 android:drawablePadding="@dimen/_8sdp"
                 android:paddingVertical="@dimen/_8sdp"
                 android:paddingStart="@dimen/_10sdp"
@@ -190,7 +192,7 @@
                 android:layout_marginBottom="@dimen/_20sdp"
                 android:background="@drawable/circle2"
                 android:backgroundTint="#F2F2F2"
-                android:padding="@dimen/_5sdp"
+                android:padding="@dimen/_7sdp"
                 android:src="@drawable/raised_hand_list_icon"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
