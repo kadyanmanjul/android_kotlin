@@ -9,10 +9,10 @@ import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.firestore.FireStoreDatabase
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
 import com.joshtalks.joshskills.core.setUserImageRectOrInitials
 import com.joshtalks.joshskills.databinding.LiConversionRoomsIlistingItemBinding
@@ -26,7 +26,7 @@ class ConversationRoomsListingAdapter(
         rooms
     ) {
     var task: ListenerRegistration? = null
-    val firebaseFirestore = FirebaseFirestore.getInstance().collection("conversation_rooms")
+    val firebaseFirestore = FireStoreDatabase.getInstance().collection("conversation_rooms")
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConversationRoomViewHolder {
@@ -52,7 +52,7 @@ class ConversationRoomsListingAdapter(
         val binding: LiConversionRoomsIlistingItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(model: ConversationRoomsListingItem) {
-            val query1: Query = FirebaseFirestore.getInstance().collection("conversation_rooms")
+            val query1: Query = FireStoreDatabase.getInstance().collection("conversation_rooms")
                 .document(model.room_id.toString()).collection("users")
             val options1: FirestoreRecyclerOptions<ConversationRoomSpeakerList> =
                 FirestoreRecyclerOptions.Builder<ConversationRoomSpeakerList>()

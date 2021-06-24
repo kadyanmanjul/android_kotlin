@@ -14,6 +14,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.LiveRoomUser
+import com.joshtalks.joshskills.core.firestore.FireStoreDatabase
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.LiBottomSheetRaisedHandsBinding
 
@@ -24,7 +25,7 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
     private var moderatorUid: Int? = null
     private var moderatorName: String? = null
     private var adapter: RaisedHandsBottomSheetAdapter? = null
-    val db = FirebaseFirestore.getInstance()
+    val db = FireStoreDatabase.getInstance()
     private var usersReference: CollectionReference? = null
 
 
