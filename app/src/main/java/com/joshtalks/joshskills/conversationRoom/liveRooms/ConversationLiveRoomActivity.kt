@@ -772,7 +772,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun getFirestoreRecyclerOptions(isSpeaker: Boolean): FirestoreRecyclerOptions<LiveRoomUser> {
-        val query = usersReference?.whereEqualTo("is_speaker", isSpeaker)
+        val query = usersReference?.whereEqualTo("is_speaker", isSpeaker)?.orderBy("sort_order")
         return FirestoreRecyclerOptions.Builder<LiveRoomUser>()
             .setQuery(query!!, LiveRoomUser::class.java)
             .build()
