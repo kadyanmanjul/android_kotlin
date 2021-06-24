@@ -9,10 +9,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.LiveRoomUser
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.LiBottomSheetRaisedHandsBinding
 
 class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
@@ -20,13 +22,18 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
     private var raisedHandLists: RecyclerView? = null
     private var roomId: Int? = null
     private var moderatorUid: Int? = null
+    private var moderatorName: String? = null
     private var adapter: RaisedHandsBottomSheetAdapter? = null
+    val db = FirebaseFirestore.getInstance()
+    private var usersReference: CollectionReference? = null
+
 
     companion object {
-        fun newInstance(id: Int, moderatorId: Int?): RaisedHandsBottomSheet {
+        fun newInstance(id: Int, moderatorId: Int?, name: String?): RaisedHandsBottomSheet {
             return RaisedHandsBottomSheet().apply {
                 roomId = id
                 moderatorUid = moderatorId
+                moderatorName = name
             }
         }
     }
@@ -34,6 +41,9 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NORMAL, R.style.BaseBottomSheetDialog)
+        usersReference = db.collection("conversation_rooms")
+            .document(roomId.toString())
+            .collection("users")
 
     }
 
@@ -65,64 +75,71 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
             .document(roomId.toString())
             .collection("users").whereEqualTo("is_hand_raised", true)
             .whereEqualTo("is_speaker", false)
-        query.get().addOnSuccessListener {
 
+        query?.addSnapshotListener { value, error ->
+            if (error != null) {
+                return@addSnapshotListener
+            } else {
+                if (value == null || value.isEmpty) {
+                    binding.noAuidenceText.visibility = View.VISIBLE
+                    binding.raisedHandsList.visibility = View.GONE
+                } else {
+                    binding.noAuidenceText.visibility = View.GONE
+                    binding.raisedHandsList.visibility = View.VISIBLE
+
+                    val options: FirestoreRecyclerOptions<LiveRoomUser> =
+                        FirestoreRecyclerOptions.Builder<LiveRoomUser>()
+                            .setQuery(query, LiveRoomUser::class.java)
+                            .build()
+                    adapter = RaisedHandsBottomSheetAdapter(options)
+                    raisedHandLists?.layoutManager = LinearLayoutManager(this.context)
+                    raisedHandLists?.setHasFixedSize(false)
+                    raisedHandLists?.adapter = adapter
+                    adapter?.startListening()
+                    adapter?.notifyDataSetChanged()
+                    adapter?.setOnItemClickListener(object :
+                        RaisedHandsBottomSheetAdapter.RaisedHandsBottomSheetAction {
+                        override fun onItemClick(
+                            documentSnapshot: DocumentSnapshot?,
+                            position: Int
+                        ) {
+                            val id = documentSnapshot?.id
+                            val liveRoomUser = documentSnapshot?.toObject(LiveRoomUser::class.java)
+                            sendNotification(
+                                "SPEAKER_INVITE",
+                                moderatorUid?.toString(),
+                                id ?: "0", liveRoomUser?.name ?: "User"
+                            )
+
+                        }
+
+                    })
+                }
+            }
         }
-       query.addSnapshotListener { value, error ->
-           if (error != null){
-               return@addSnapshotListener
-           }else{
-               if (value == null || value.isEmpty){
-                   binding.noAuidenceText.visibility = View.VISIBLE
-                   binding.raisedHandsList.visibility = View.GONE
-               }else {
-                   binding.noAuidenceText.visibility = View.GONE
-                   binding.raisedHandsList.visibility = View.VISIBLE
-
-                   val options: FirestoreRecyclerOptions<LiveRoomUser> =
-                       FirestoreRecyclerOptions.Builder<LiveRoomUser>()
-                           .setQuery(query, LiveRoomUser::class.java)
-                           .build()
-                   adapter = RaisedHandsBottomSheetAdapter(options)
-                   raisedHandLists?.layoutManager = LinearLayoutManager(this.context)
-                   raisedHandLists?.setHasFixedSize(false)
-                   raisedHandLists?.adapter = adapter
-                   adapter?.startListening()
-                   adapter?.notifyDataSetChanged()
-                   adapter?.setOnItemClickListener(object :
-                       RaisedHandsBottomSheetAdapter.RaisedHandsBottomSheetAction {
-                       override fun onItemClick(documentSnapshot: DocumentSnapshot?, position: Int) {
-                           val id = documentSnapshot?.id
-                           sendNotification(
-                               "SPEAKER_INVITE",
-                               moderatorUid?.toString(),
-                               id
-                           )
-                       }
-
-                   })
-               }
-           }
-       }
 
 
     }
 
-    private fun sendNotification(type: String, fromUid: String?, toUiD: String?) {
+    private fun sendNotification(type: String, fromUid: String?, toUiD: String, toName: String) {
         FirebaseFirestore.getInstance().collection("conversation_rooms").document(roomId.toString())
             .collection("notifications").document().set(
                 hashMapOf(
                     "from" to hashMapOf(
                         "uid" to fromUid,
-                        "name" to "listener name"
+                        "name" to moderatorName
                     ),
                     "to" to hashMapOf(
                         "uid" to toUiD,
-                        "name" to "Moderator"
+                        "name" to toName
                     ),
                     "type" to type
                 )
-            )
+            ).addOnSuccessListener {
+                usersReference?.document(toUiD)?.update("is_speaker_invite_sent", true)?.addOnFailureListener {
+                    showToast(it.message.toString())
+                }
+            }
     }
 
     private fun setViews(contentView: View?) {

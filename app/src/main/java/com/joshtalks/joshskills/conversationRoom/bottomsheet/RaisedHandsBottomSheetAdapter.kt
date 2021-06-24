@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.LiveRoomUser
 import com.joshtalks.joshskills.core.setUserImageRectOrInitials
 import com.joshtalks.joshskills.databinding.LiRaisedHandsItemBinding
+import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 
 class RaisedHandsBottomSheetAdapter(rooms: FirestoreRecyclerOptions<LiveRoomUser>) :
     FirestoreRecyclerAdapter<LiveRoomUser, RaisedHandsBottomSheetAdapter.RaisedHandsViewHolder>(
@@ -19,7 +20,6 @@ class RaisedHandsBottomSheetAdapter(rooms: FirestoreRecyclerOptions<LiveRoomUser
 
     inner class RaisedHandsViewHolder(val binding: LiRaisedHandsItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        var clickCount = 0
 
         fun bind(model: LiveRoomUser, bindingAdapterPosition: Int) {
             with(binding) {
@@ -31,19 +31,19 @@ class RaisedHandsBottomSheetAdapter(rooms: FirestoreRecyclerOptions<LiveRoomUser
                         bgColor = R.color.conversation_room_gray
                     )
                 }
-                addToSpeaker.setOnClickListener {
-                    if (bindingAdapterPosition != RecyclerView.NO_POSITION && action != null) {
-                        if (clickCount == 0) {
-                            action?.onItemClick(
-                                snapshots.getSnapshot(bindingAdapterPosition),
-                                bindingAdapterPosition
-                            )
-                            clickCount++
-                            addToSpeaker.setImageResource(R.drawable.ic_selected_user)
-                        } else {
-                            addToSpeaker.setImageResource(R.drawable.ic_selected_user)
-                        }
+                addToSpeaker.setOnSingleClickListener {
+                    if (bindingAdapterPosition != RecyclerView.NO_POSITION && action != null && !model.isIs_speaker_invite_sent) {
+                        action?.onItemClick(
+                            snapshots.getSnapshot(bindingAdapterPosition),
+                            bindingAdapterPosition
+                        )
                     }
+                }
+
+                when (model.isIs_speaker_invite_sent) {
+                    true -> addToSpeaker.setImageResource(R.drawable.ic_selected_user)
+                    false -> addToSpeaker.setImageResource(R.drawable.ic_unselected_user)
+
                 }
             }
         }

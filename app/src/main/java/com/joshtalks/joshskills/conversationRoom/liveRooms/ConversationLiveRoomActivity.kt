@@ -21,7 +21,6 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBottomSheet
 import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBottomSheetAction
@@ -58,7 +57,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     NotificationView.NotificationViewAction {
     lateinit var binding: ActivityConversationLiveRoomBinding
     lateinit var viewModel: ConversationLiveRoomViewModel
-    val liveRoomReference = FirebaseFirestore.getInstance().collection("conversation_rooms")
+    val database = FirebaseFirestore.getInstance()
     var roomReference: DocumentReference? = null
     var usersReference: CollectionReference? = null
 
@@ -102,6 +101,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         getIntentExtras()
         setImageDrawable()
         binding.notificationBar.setNotificationViewEnquiryAction(this)
+        val liveRoomReference = database.collection("conversation_rooms")
         roomReference = liveRoomReference.document(roomId.toString())
         usersReference = roomReference?.collection("users")
         getUserName()
@@ -773,7 +773,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun getFirestoreRecyclerOptions(isSpeaker: Boolean): FirestoreRecyclerOptions<LiveRoomUser> {
         val query = usersReference?.whereEqualTo("is_speaker", isSpeaker)
-        query?.orderBy("sort_order", Query.Direction.ASCENDING)
         return FirestoreRecyclerOptions.Builder<LiveRoomUser>()
             .setQuery(query!!, LiveRoomUser::class.java)
             .build()
@@ -836,7 +835,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     fun openRaisedHandsBottomSheet() {
-        val bottomSheet = RaisedHandsBottomSheet.newInstance(roomId ?: 0, moderatorUid)
+        val bottomSheet = RaisedHandsBottomSheet.newInstance(roomId ?: 0, moderatorUid, moderatorName)
         bottomSheet.show(supportFragmentManager, "Bottom sheet Hands Raised")
     }
 
@@ -930,16 +929,22 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                         notificationTo?.get("name").toString(),
                         notificationFrom?.get("uid"),
                         notificationFrom?.get("name").toString()
-
                     )
+                    binding.notificationBar.visibility = View.GONE
+                }?.addOnFailureListener {
+                    binding.notificationBar.visibility = View.GONE
+                    usersReference?.document(agoraUid.toString())?.update("is_speaker_invite_sent", false)
                 }
-                binding.notificationBar.visibility = View.GONE
             }
         }
 
     }
 
     override fun onRejectNotification() {
+        if (notificationType == "SPEAKER_INVITE" && notificationTo?.get("uid").toString()
+                .toInt() == agoraUid){
+            usersReference?.document(agoraUid.toString())?.update("is_speaker_invite_sent", false)
+        }
         binding.notificationBar.visibility = View.GONE
     }
 }
