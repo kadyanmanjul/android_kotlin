@@ -30,39 +30,37 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/rejectButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_16sdp"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_26sdp"
+            android:layout_marginLeft="@dimen/_16sdp"
             android:layout_marginTop="@dimen/_13sdp"
             android:background="@drawable/background_rejected_btn"
             android:gravity="center"
-            android:padding="@dimen/_8sdp"
-            android:paddingHorizontal="@dimen/_6sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
             android:textColor="#FFFFFF"
             android:textSize="@dimen/_12ssp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/acceptButton"
             tools:text="Dismiss" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/acceptButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_26sdp"
             android:layout_marginHorizontal="@dimen/_16sdp"
             android:layout_marginTop="@dimen/_13sdp"
             android:background="@drawable/background_accepted_btn"
             android:gravity="center"
             android:letterSpacing="0.02"
-            android:padding="@dimen/_8sdp"
-            android:paddingHorizontal="@dimen/_18sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
             android:textColor="#27AE61"
             android:textSize="@dimen/_12ssp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/rejectButton"
             tools:text="Join as speaker" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
