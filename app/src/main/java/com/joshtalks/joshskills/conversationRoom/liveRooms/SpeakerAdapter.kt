@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.interfaces.ConversationLiveRoomSpeakerClickAction
@@ -28,14 +27,16 @@ class SpeakerAdapter(
     inner class SpeakerViewHolder(val binding: LiSpeakersItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(model: LiveRoomUser, bindingAdapterPosition: Int) {
+        fun bind(model: LiveRoomUser, uid: String) {
             with(binding) {
                 name.text = model.name
                 userImageIv.apply {
                     clipToOutline = true
-                    setUserImageRectOrInitials(model.photo_url, model.name, 24, true, 16,
+                    setUserImageRectOrInitials(
+                        model.photo_url, model.name, 24, true, 16,
                         textColor = R.color.black,
-                        bgColor = R.color.conversation_room_gray)
+                        bgColor = R.color.conversation_room_gray
+                    )
                 }
                 if (model.isIs_speaking && model.isIs_speaker && model.isIs_mic_on) {
                     userImage.setBackgroundResource(R.drawable.golden_ring_27dp_border)
@@ -62,10 +63,9 @@ class SpeakerAdapter(
                 }
 
                 root.setOnSingleClickListener {
-                    if (bindingAdapterPosition != RecyclerView.NO_POSITION && listenerUserAction != null) {
+                    if (listenerUserAction != null) {
                         listenerUserAction?.onItemClick(
-                            snapshots.getSnapshot(bindingAdapterPosition),
-                            bindingAdapterPosition
+                            model, uid.toInt()
                         )
                     }
                 }
@@ -81,7 +81,8 @@ class SpeakerAdapter(
         position: Int,
         model: LiveRoomUser
     ) {
-        holder.bind(model, holder.bindingAdapterPosition)
+
+        holder.bind(model, snapshots.getSnapshot(position).id)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SpeakerViewHolder {
@@ -92,7 +93,7 @@ class SpeakerAdapter(
     }
 
     interface OnUserItemClickListener {
-        fun onItemClick(documentSnapshot: DocumentSnapshot?, position: Int)
+        fun onItemClick(user: LiveRoomUser, userUid: Int)
     }
 
     fun setOnItemClickListener(listenerUser: OnUserItemClickListener) {

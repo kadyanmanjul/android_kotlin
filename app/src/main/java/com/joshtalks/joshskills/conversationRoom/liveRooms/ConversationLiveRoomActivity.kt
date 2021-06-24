@@ -19,7 +19,6 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.DocumentSnapshot
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBottomSheet
 import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBottomSheetAction
@@ -328,11 +327,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             if (value != null) {
                 for (item in value.documentChanges) {
                     val map = item.document.data
-                    notificationTo = map["to"] as HashMap<String, String>
-                    notificationFrom = map["from"] as HashMap<String, String>
-                    notificationType = map["type"].toString()
+                    val mapTo = map["to"] as HashMap<String, String>
+                    if (mapTo?.get("uid")?.toInt()?.equals(agoraUid) == true) {
 
-                    if (notificationTo?.get("uid")?.toInt()?.equals(agoraUid) == true) {
+                        notificationTo = map["to"] as HashMap<String, String>
+                        notificationFrom = map["from"] as HashMap<String, String>
+                        notificationType = map["type"].toString()
+
                         if (isRoomCreatedByUser) {
                             when (notificationType) {
                                 "HAND_RAISED" -> {
@@ -379,6 +380,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         acceptedText: String,
         heading: String,
     ) {
+        Log.d(TAG, "setNotificationBarFieldsWithActions: ")
         binding.notificationBar.visibility = View.VISIBLE
         binding.notificationBar.showActionLayout()
         binding.notificationBar.setRejectButtonText(rejectedText)
@@ -404,11 +406,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun setRunnable() {
         runnable = Runnable {
             binding.notificationBar.visibility = View.GONE
+            Log.d(TAG, "setRunnable: hideNotificationAfter4seconds")
         }
     }
 
 
     private fun setNotificationWithoutAction(heading: String, isGreenColorNotification: Boolean) {
+        Log.d(TAG, "setNotificationWithoutAction: ")
         binding.notificationBar.visibility = View.VISIBLE
         binding.notificationBar.hideActionLayout()
         binding.notificationBar.setHeading(heading)
@@ -417,6 +421,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun showRoomEndNotification() {
+        Log.d(TAG, "showRoomEndNotification: ")
         binding.notificationBar.visibility = View.VISIBLE
         binding.notificationBar.hideActionLayout()
         binding.notificationBar.setBackgroundColor(false)
@@ -575,7 +580,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             engine?.addHandler(eventListener)
         }
 
-        engine?.enableAudioVolumeIndication(2000, 3, true)
+        engine?.enableAudioVolumeIndication(1800, 3, true)
         engine?.setAudioProfile(
             Constants.AUDIO_PROFILE_SPEECH_STANDARD,
             Constants.AUDIO_SCENARIO_GAME_STREAMING
@@ -694,10 +699,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.notificationBar.hideActionLayout()
         binding.notificationBar.setHeading("The Internet connection appears to be offline")
         binding.notificationBar.setBackgroundColor(false)
+        Log.d(TAG, "internetNotAvailable: Show notification")
+
     }
 
     private fun internetAvailable() {
         binding.notificationBar.visibility = View.GONE
+        Log.d(TAG, "internetAvailable: Hide notification")
     }
 
 
@@ -728,18 +736,19 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.listenerList.adapter = listenerAdapter
 
         listenerAdapter?.setOnItemClickListener(object : AudienceAdapter.OnUserItemClickListener {
-            override fun onItemClick(documentSnapshot: DocumentSnapshot?, position: Int) {
+
+            override fun onItemClick(user: LiveRoomUser, userUid: Int) {
                 if (supportFragmentManager.backStackEntryCount == 0 && isBottomSheetVisible.not()) {
-                    getDataOnSpeakerAdapterItemClick(documentSnapshot, false)
+                    getDataOnSpeakerAdapterItemClick(user, userUid, false)
                     isBottomSheetVisible = true
                 }
             }
         })
 
         speakerAdapter?.setOnItemClickListener(object : SpeakerAdapter.OnUserItemClickListener {
-            override fun onItemClick(documentSnapshot: DocumentSnapshot?, position: Int) {
+            override fun onItemClick(user: LiveRoomUser, userUid: Int) {
                 if (supportFragmentManager.backStackEntryCount == 0 && isBottomSheetVisible.not()) {
-                    getDataOnSpeakerAdapterItemClick(documentSnapshot, true)
+                    getDataOnSpeakerAdapterItemClick(user, userUid, true)
                     isBottomSheetVisible = true
                 }
             }
@@ -748,23 +757,21 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun getDataOnSpeakerAdapterItemClick(
-        documentSnapshot: DocumentSnapshot?,
+        user: LiveRoomUser?, userUid: Int,
         toSpeaker: Boolean
     ) {
-        val userUid = documentSnapshot?.id?.toInt()
-        val liveRoomUser = documentSnapshot?.toObject(LiveRoomUser::class.java)
         val roomInfo = ConversationRoomBottomSheetInfo(
             isRoomCreatedByUser,
             isRoomUserSpeaker,
             toSpeaker,
-            liveRoomUser?.name ?: "",
-            liveRoomUser?.photo_url ?: "",
+            user?.name ?: "",
+            user?.photo_url ?: "",
             userUid == agoraUid
         )
         usersReference?.document(userUid.toString())?.get()?.addOnSuccessListener {
             showBottomSheet(
                 roomInfo,
-                liveRoomUser?.mentor_id ?: "",
+                user?.mentor_id ?: "",
                 userUid,
                 it.get("name").toString()
             )
@@ -835,7 +842,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     fun openRaisedHandsBottomSheet() {
-        val bottomSheet = RaisedHandsBottomSheet.newInstance(roomId ?: 0, moderatorUid, moderatorName)
+        val bottomSheet =
+            RaisedHandsBottomSheet.newInstance(roomId ?: 0, moderatorUid, moderatorName)
         bottomSheet.show(supportFragmentManager, "Bottom sheet Hands Raised")
     }
 
@@ -908,6 +916,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     override fun onAcceptNotification() {
+        Log.d(
+            TAG,
+            "onAcceptNotification: type: $notificationType, moderatorUid: $moderatorUid, uid: $agoraUid , notificationTo ${
+                notificationTo?.get("uid")
+            }"
+        )
         if (isRoomCreatedByUser) {
             sendNotification(
                 "SPEAKER_INVITE",
@@ -933,7 +947,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     binding.notificationBar.visibility = View.GONE
                 }?.addOnFailureListener {
                     binding.notificationBar.visibility = View.GONE
-                    usersReference?.document(agoraUid.toString())?.update("is_speaker_invite_sent", false)
+                    usersReference?.document(agoraUid.toString())
+                        ?.update("is_speaker_invite_sent", false)
                 }
             }
         }
@@ -942,7 +957,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     override fun onRejectNotification() {
         if (notificationType == "SPEAKER_INVITE" && notificationTo?.get("uid").toString()
-                .toInt() == agoraUid){
+                .toInt() == agoraUid
+        ) {
             usersReference?.document(agoraUid.toString())?.update("is_speaker_invite_sent", false)
         }
         binding.notificationBar.visibility = View.GONE
