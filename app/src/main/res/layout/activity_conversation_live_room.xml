@@ -76,9 +76,12 @@
                     android:id="@+id/topic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/_16sdp"
+                    android:layout_margin="@dimen/_14sdp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                     android:textColor="@color/pure_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    android:padding="@dimen/_2sdp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Topic" />
@@ -100,10 +103,11 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/speakers_list"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_8sdp"
-                    android:layout_marginHorizontal="@dimen/_6sdp"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
                     android:isScrollContainer="false"
                     android:nestedScrollingEnabled="false"
                     app:layout_constraintHorizontal_bias="0.5"
