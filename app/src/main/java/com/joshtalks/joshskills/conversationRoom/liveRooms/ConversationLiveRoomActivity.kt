@@ -258,7 +258,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                                 moderatorName ?: "Moderator"
                             )
                         }?.addOnFailureListener {
-                            showApiCallErrorToast(it.message ?: "")
+                            setNotificationWithoutAction("Something Went Wrong", false)
                         }
                 } else {
                     setNotificationWithoutAction(
@@ -268,7 +268,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 }
             }
             ?.addOnFailureListener { exception ->
-                Log.w(TAG, "Error getting documents: ", exception)
+                setNotificationWithoutAction("Something Went Wrong", false)
             }
 
     }
@@ -294,7 +294,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 }
 
             }?.addOnFailureListener {
-                showApiCallErrorToast(it.message ?: "")
+                setNotificationWithoutAction("Something Went Wrong", false)
             }
     }
 
@@ -368,7 +368,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                         }
                         roomReference?.collection("notifications")?.document(item.document.id)
                             ?.delete()?.addOnFailureListener {
-                                Log.d(TAG, "notification not deleted")
+                                setNotificationWithoutAction("Something Went Wrong", false)
                             }
                     }
                 }
@@ -483,7 +483,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun setHandRaiseValueToFirestore(is_hand_raised: Boolean) {
         val reference = usersReference?.document(agoraUid.toString())
-        reference?.update("is_hand_raised", is_hand_raised)
+        reference?.update("is_hand_raised", is_hand_raised)?.addOnFailureListener {
+            setNotificationWithoutAction("Something Went Wrong", false)
+        }
     }
 
     private fun updateMuteButtonText() {
@@ -664,9 +666,15 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun updateFirestoreData() {
         speakingUsersOldList.forEach {
             usersReference?.document(it.toString())?.update("is_speaking", false)
+                ?.addOnFailureListener {
+                    setNotificationWithoutAction("Something Went Wrong", false)
+                }
         }
         speakingUsersNewList.forEach {
             usersReference?.document(it.toString())?.update("is_speaking", true)
+                ?.addOnFailureListener {
+                    setNotificationWithoutAction("Something Went Wrong", false)
+                }
         }
 
     }
@@ -803,7 +811,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
                     override fun moveToAudience() {
                         val reference = usersReference?.document(userUid.toString())
-                        reference?.update("is_speaker", false)
+                        reference?.update("is_speaker", false)?.addOnFailureListener {
+                            setNotificationWithoutAction("Something Went Wrong", false)
+                        }
                     }
 
                     override fun moveToSpeaker() {
@@ -824,6 +834,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                                                 " Please try again after sometime.", false
                                     )
                                 }
+                            }?.addOnFailureListener {
+                                setNotificationWithoutAction("Something Went Wrong", false)
                             }
                     }
 
@@ -953,7 +965,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     binding.notificationBar.visibility = View.GONE
                     isInviteRequestComeFromModerator = false
                     usersReference?.document(agoraUid.toString())
-                        ?.update("is_speaker_invite_sent", false)
+                        ?.update("is_speaker_invite_sent", false)?.addOnFailureListener {
+                            setNotificationWithoutAction("Something Went Wrong", false)
+                        }
                 }
             }
         }
@@ -966,6 +980,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         ) {
             isInviteRequestComeFromModerator = false
             usersReference?.document(agoraUid.toString())?.update("is_speaker_invite_sent", false)
+                ?.addOnFailureListener {
+                    setNotificationWithoutAction("Something Went Wrong", false)
+                }
         }
         binding.notificationBar.visibility = View.GONE
     }

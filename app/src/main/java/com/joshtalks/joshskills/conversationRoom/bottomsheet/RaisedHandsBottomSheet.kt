@@ -140,7 +140,8 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
                 )
             ).addOnSuccessListener {
                 usersReference?.document(toUiD)?.update("is_speaker_invite_sent", true)?.addOnFailureListener {
-                    showToast(it.message.toString())
+                    showToast("Something Went Wrong")
+
                 }
             }
     }
