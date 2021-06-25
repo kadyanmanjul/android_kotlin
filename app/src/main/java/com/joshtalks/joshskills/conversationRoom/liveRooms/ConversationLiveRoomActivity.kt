@@ -121,6 +121,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
         clickListener()
         switchRoles()
+        speakerAdapter?.startListening()
+        listenerAdapter?.startListening()
     }
 
     private fun setImageDrawable() {
@@ -743,6 +745,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.listenerList.layoutManager = GridLayoutManager(this, 4)
         binding.speakersList.setHasFixedSize(false)
         binding.listenerList.setHasFixedSize(false)
+        binding.speakersList.setNestedScrollingEnabled(false)
+        binding.listenerList.setNestedScrollingEnabled(false)
         binding.speakersList.adapter = speakerAdapter
         binding.listenerList.adapter = listenerAdapter
 
@@ -886,8 +890,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     override fun onStart() {
         super.onStart()
-        speakerAdapter?.startListening()
-        listenerAdapter?.startListening()
     }
 
     override fun onPause() {
@@ -897,8 +899,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     override fun onStop() {
         super.onStop()
-        speakerAdapter?.stopListening()
-        listenerAdapter?.stopListening()
         compositeDisposable.clear()
     }
 
@@ -918,6 +918,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     override fun onDestroy() {
+        speakerAdapter?.stopListening()
+        listenerAdapter?.stopListening()
         if (engine != null) {
             engine?.leaveChannel()
             engine = null
