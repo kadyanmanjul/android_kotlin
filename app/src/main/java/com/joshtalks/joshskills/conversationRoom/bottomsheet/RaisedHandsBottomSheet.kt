@@ -26,7 +26,10 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
     private var moderatorName: String? = null
     private var adapter: RaisedHandsBottomSheetAdapter? = null
     val db = FireStoreDatabase.getInstance()
-    private var usersReference: CollectionReference? = null
+    private var usersReference: CollectionReference? = db.collection("conversation_rooms")
+        .document(roomId.toString())
+        .collection("users")
+    private var isRecyclerViewStateAlreadyVisible = false
 
 
     companion object {
@@ -42,9 +45,6 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NORMAL, R.style.BaseBottomSheetDialog)
-        usersReference = db.collection("conversation_rooms")
-            .document(roomId.toString())
-            .collection("users")
 
     }
 
@@ -84,9 +84,11 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
                 if (value == null || value.isEmpty) {
                     binding.noAuidenceText.visibility = View.VISIBLE
                     binding.raisedHandsList.visibility = View.GONE
-                } else {
+                    isRecyclerViewStateAlreadyVisible = false
+                } else if(!isRecyclerViewStateAlreadyVisible) {
                     binding.noAuidenceText.visibility = View.GONE
                     binding.raisedHandsList.visibility = View.VISIBLE
+                    isRecyclerViewStateAlreadyVisible = true
 
                     val options: FirestoreRecyclerOptions<LiveRoomUser> =
                         FirestoreRecyclerOptions.Builder<LiveRoomUser>()

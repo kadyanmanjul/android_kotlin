@@ -90,6 +90,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     var handUnRaisedDrawable: Drawable? = null
     private val compositeDisposable = CompositeDisposable()
     private var internetAvailableFlag: Boolean = true
+    private var isInviteRequestComeFromModerator: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -356,7 +357,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
                             }
                         } else {
-                            if (notificationType == "SPEAKER_INVITE") {
+                            if (notificationType == "SPEAKER_INVITE" && !isInviteRequestComeFromModerator) {
                                 setNotificationBarFieldsWithActions(
                                     "Maybe later?", "Join as speaker", String.format(
                                         "\uD83D\uDC4B %s invited you to join as a speaker",
@@ -459,10 +460,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE)
         binding.muteBtn.visibility = View.GONE
         binding.handRaiseBtn.visibility = View.VISIBLE
+        isInviteRequestComeFromModerator = false
     }
 
     private fun updateUiWhenSwitchToSpeaker(isMicOn: Any?) {
         isRoomUserSpeaker = true
+        isInviteRequestComeFromModerator = true
         initializeEngine()
         engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER)
         binding.muteBtn.visibility = View.VISIBLE
@@ -580,7 +583,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             engine?.addHandler(eventListener)
         }
 
-        engine?.enableAudioVolumeIndication(1800, 3, true)
+        engine?.enableAudioVolumeIndication(1600, 3, true)
         engine?.setAudioProfile(
             Constants.AUDIO_PROFILE_SPEECH_STANDARD,
             Constants.AUDIO_SCENARIO_GAME_STREAMING
@@ -944,9 +947,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                         notificationFrom?.get("uid"),
                         notificationFrom?.get("name").toString()
                     )
+                    isInviteRequestComeFromModerator = true
                     binding.notificationBar.visibility = View.GONE
                 }?.addOnFailureListener {
                     binding.notificationBar.visibility = View.GONE
+                    isInviteRequestComeFromModerator = false
                     usersReference?.document(agoraUid.toString())
                         ?.update("is_speaker_invite_sent", false)
                 }
@@ -959,6 +964,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         if (notificationType == "SPEAKER_INVITE" && notificationTo?.get("uid").toString()
                 .toInt() == agoraUid
         ) {
+            isInviteRequestComeFromModerator = false
             usersReference?.document(agoraUid.toString())?.update("is_speaker_invite_sent", false)
         }
         binding.notificationBar.visibility = View.GONE
