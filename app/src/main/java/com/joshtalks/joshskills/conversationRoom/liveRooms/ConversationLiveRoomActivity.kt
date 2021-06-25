@@ -735,20 +735,26 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun setUpRecyclerView() {
-        speakerAdapter?.notifyDataSetChanged()
-        listenerAdapter?.notifyDataSetChanged()
         speakerAdapter =
             SpeakerAdapter(getFirestoreRecyclerOptions(true), this, isRoomCreatedByUser)
         listenerAdapter =
             AudienceAdapter(getFirestoreRecyclerOptions(false), this, isRoomCreatedByUser)
-        binding.speakersList.layoutManager = GridLayoutManager(this, 3)
-        binding.listenerList.layoutManager = GridLayoutManager(this, 4)
-        binding.speakersList.setHasFixedSize(false)
-        binding.listenerList.setHasFixedSize(false)
-        binding.speakersList.setNestedScrollingEnabled(false)
-        binding.listenerList.setNestedScrollingEnabled(false)
-        binding.speakersList.adapter = speakerAdapter
-        binding.listenerList.adapter = listenerAdapter
+
+        binding.speakersList.apply {
+            layoutManager = GridLayoutManager(this@ConversationLiveRoomActivity, 3)
+            setHasFixedSize(false)
+            isNestedScrollingEnabled = false
+            itemAnimator = null
+            adapter = speakerAdapter
+        }
+
+        binding.listenerList.apply {
+            layoutManager = GridLayoutManager(this@ConversationLiveRoomActivity, 3)
+            setHasFixedSize(false)
+            isNestedScrollingEnabled = false
+            itemAnimator = null
+            adapter = listenerAdapter
+        }
 
         listenerAdapter?.setOnItemClickListener(object : AudienceAdapter.OnUserItemClickListener {
 

@@ -97,6 +97,7 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
                     adapter = RaisedHandsBottomSheetAdapter(options)
                     raisedHandLists?.layoutManager = LinearLayoutManager(this.context)
                     raisedHandLists?.setHasFixedSize(false)
+                    raisedHandLists?.itemAnimator = null
                     raisedHandLists?.adapter = adapter
                     adapter?.startListening()
                     adapter?.notifyDataSetChanged()
