@@ -319,7 +319,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 ),
                 "type" to type
             )
-        )
+        )?.addOnFailureListener {
+            setNotificationWithoutAction("Something Went Wrong", false)
+        }
     }
 
     private fun setNotificationStates() {

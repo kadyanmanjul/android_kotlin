@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
@@ -25,10 +24,6 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
     private var moderatorUid: Int? = null
     private var moderatorName: String? = null
     private var adapter: RaisedHandsBottomSheetAdapter? = null
-    val db = FireStoreDatabase.getInstance()
-    private var usersReference: CollectionReference? = db.collection("conversation_rooms")
-        .document(roomId.toString())
-        .collection("users")
     private var isRecyclerViewStateAlreadyVisible = false
 
 
@@ -85,7 +80,7 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
                     binding.noAuidenceText.visibility = View.VISIBLE
                     binding.raisedHandsList.visibility = View.GONE
                     isRecyclerViewStateAlreadyVisible = false
-                } else if(!isRecyclerViewStateAlreadyVisible) {
+                } else if (!isRecyclerViewStateAlreadyVisible) {
                     binding.noAuidenceText.visibility = View.GONE
                     binding.raisedHandsList.visibility = View.VISIBLE
                     isRecyclerViewStateAlreadyVisible = true
@@ -126,7 +121,7 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun sendNotification(type: String, fromUid: String?, toUiD: String, toName: String) {
-        FirebaseFirestore.getInstance().collection("conversation_rooms").document(roomId.toString())
+        FireStoreDatabase.getInstance().collection("conversation_rooms").document(roomId.toString())
             .collection("notifications").document().set(
                 hashMapOf(
                     "from" to hashMapOf(
@@ -140,10 +135,12 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
                     "type" to type
                 )
             ).addOnSuccessListener {
-                usersReference?.document(toUiD)?.update("is_speaker_invite_sent", true)?.addOnFailureListener {
-                    showToast("Something Went Wrong")
-
-                }
+                FireStoreDatabase.getInstance().collection("conversation_rooms")
+                    .document(roomId.toString())
+                    .collection("users").document(toUiD).update("is_speaker_invite_sent", true)
+                    .addOnFailureListener {
+                        showToast("Something Went Wrong")
+                    }
             }
     }
 

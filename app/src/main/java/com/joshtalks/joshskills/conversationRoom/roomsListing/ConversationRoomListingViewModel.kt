@@ -35,7 +35,7 @@ class ConversationRoomListingViewModel : ViewModel() {
                             response?.channelName,
                             response?.uid,
                             response?.token,
-                            false,
+                            item.started_by == response?.uid,
                             response?.roomId ?: item.room_id
                         )
                     )
