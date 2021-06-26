@@ -680,140 +680,141 @@ class WebRtcService : BaseWebRtcService() {
     @Suppress("UNCHECKED_CAST")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Timber.tag(TAG).e("onStartCommand=  %s", intent?.action)
-        Log.d("ConversationRtc", "onStartCommand: ")
-        executor.execute {
-            intent?.action?.run {
-                initEngine {
-                    try {
-                        callForceDisconnect = false
-                        when {
-                            this == InitLibrary().action -> {
-                                Timber.tag(TAG).e("LibraryInit")
-                            }
-                            this == IncomingCall().action -> {
-                                if (CallState.CALL_STATE_BUSY == pstnCallState || isCallOnGoing.value == true) {
-                                    return@initEngine
+        if (!PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE)) {
+            executor.execute {
+                intent?.action?.run {
+                    initEngine {
+                        try {
+                            callForceDisconnect = false
+                            when {
+                                this == InitLibrary().action -> {
+                                    Timber.tag(TAG).e("LibraryInit")
                                 }
-                                val data =
-                                    intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
-                                data.let {
-                                    callData = it
+                                this == IncomingCall().action -> {
+                                    if (CallState.CALL_STATE_BUSY == pstnCallState || isCallOnGoing.value == true) {
+                                        return@initEngine
+                                    }
+                                    val data =
+                                        intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
+                                    data.let {
+                                        callData = it
+                                    }
+                                    setOppositeUserInfo(null)
+                                    callType = CallType.INCOMING
+                                    isTimeOutToPickCall = false
+                                    callStartTime = 0L
+                                    handleIncomingCall()
                                 }
-                                setOppositeUserInfo(null)
-                                callType = CallType.INCOMING
-                                isTimeOutToPickCall = false
-                                callStartTime = 0L
-                                handleIncomingCall()
-                            }
-                            this == OutgoingCall().action -> {
-                                setOppositeUserInfo(null)
-                                callStartTime = 0L
-                                isTimeOutToPickCall = false
-                                val data: HashMap<String, String?> =
-                                    intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
-                                data.let {
-                                    callData = it
+                                this == OutgoingCall().action -> {
+                                    setOppositeUserInfo(null)
+                                    callStartTime = 0L
+                                    isTimeOutToPickCall = false
+                                    val data: HashMap<String, String?> =
+                                        intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
+                                    data.let {
+                                        callData = it
+                                    }
+                                    callType = CallType.OUTGOING
+                                    joinCall(data)
                                 }
-                                callType = CallType.OUTGOING
-                                joinCall(data)
-                            }
-                            this == CallConnect().action -> {
-                                removeIncomingNotification()
-                                val callData: HashMap<String, String?>? =
-                                    intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
-                                callConnectService(callData)
-                            }
-                            this == CallReject().action -> {
-                                addNotification(CallDisconnect().action, null)
-                                callData?.let {
-                                    callStatusNetworkApi(it, CallAction.DECLINE)
-                                    rejectCall()
+                                this == CallConnect().action -> {
+                                    removeIncomingNotification()
+                                    val callData: HashMap<String, String?>? =
+                                        intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
+                                    callConnectService(callData)
                                 }
-                                disconnectService()
-                            }
-                            this == CallDisconnect().action -> {
-                                addNotification(CallDisconnect().action, null)
-                                callData?.let {
-                                    callStatusNetworkApi(
-                                        it,
-                                        CallAction.DISCONNECT,
-                                        hasDisconnected = true
+                                this == CallReject().action -> {
+                                    addNotification(CallDisconnect().action, null)
+                                    callData?.let {
+                                        callStatusNetworkApi(it, CallAction.DECLINE)
+                                        rejectCall()
+                                    }
+                                    disconnectService()
+                                }
+                                this == CallDisconnect().action -> {
+                                    addNotification(CallDisconnect().action, null)
+                                    callData?.let {
+                                        callStatusNetworkApi(
+                                            it,
+                                            CallAction.DISCONNECT,
+                                            hasDisconnected = true
+                                        )
+                                    }
+                                    endCall()
+                                }
+                                this == NoUserFound().action -> {
+                                    callData?.let {
+                                        callStatusNetworkApi(it, CallAction.NOUSERFOUND)
+                                    }
+                                    mRtcEngine?.leaveChannel()
+                                    callCallback?.get()?.onNoUserFound()
+                                    disconnectService()
+                                }
+                                this == CallStop().action -> {
+                                    addNotification(CallDisconnect().action, null)
+                                    callStopWithoutIssue()
+                                }
+                                this == CallForceDisconnect().action -> {
+                                    stopRing()
+                                    callForceDisconnect = true
+                                    if (JoshApplication.isAppVisible.not()) {
+                                        addNotification(CallDisconnect().action, null)
+                                    }
+                                    endCall(apiCall = false)
+                                    RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
+                                }
+                                this == CallForceConnect().action -> {
+                                    stopRing()
+                                    callStartTime = 0L
+                                    compositeDisposable.clear()
+                                    switchChannel = true
+                                    setOppositeUserInfo(null)
+                                    if (isCallOnGoing.value == true) {
+                                        mRtcEngine?.leaveChannel()
+                                    }
+                                    resetConfig()
+                                    addNotification(CallForceConnect().action, null)
+                                    callData = null
+                                    AppObjectController.uiHandler.postDelayed(
+                                        {
+                                            val data =
+                                                intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
+                                            callData = data
+                                            if (data.containsKey(RTC_CHANNEL_KEY)) {
+                                                channelName = data[RTC_CHANNEL_KEY]
+                                            }
+                                            removeIncomingNotification()
+                                            if (callCallback != null && callCallback?.get() != null) {
+                                                callCallback?.get()?.switchChannel(data)
+                                            } else {
+                                                startAutoPickCallActivity(false)
+                                            }
+                                        },
+                                        750
                                     )
                                 }
-                                endCall()
-                            }
-                            this == NoUserFound().action -> {
-                                callData?.let {
-                                    callStatusNetworkApi(it, CallAction.NOUSERFOUND)
+                                this == HoldCall().action -> {
+                                    val message = Message()
+                                    message.what = CallState.CALL_HOLD_BY_OPPOSITE.state
+                                    mHandler?.sendMessage(message)
                                 }
-                                mRtcEngine?.leaveChannel()
-                                callCallback?.get()?.onNoUserFound()
-                                disconnectService()
-                            }
-                            this == CallStop().action -> {
-                                addNotification(CallDisconnect().action, null)
-                                callStopWithoutIssue()
-                            }
-                            this == CallForceDisconnect().action -> {
-                                stopRing()
-                                callForceDisconnect = true
-                                if (JoshApplication.isAppVisible.not()) {
-                                    addNotification(CallDisconnect().action, null)
+                                this == ResumeCall().action -> {
+                                    compositeDisposable.clear()
+                                    val message = Message()
+                                    message.what = CallState.CALL_RESUME_BY_OPPOSITE.state
+                                    mHandler?.sendMessage(message)
                                 }
-                                endCall(apiCall = false)
-                                RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
-                            }
-                            this == CallForceConnect().action -> {
-                                stopRing()
-                                callStartTime = 0L
-                                compositeDisposable.clear()
-                                switchChannel = true
-                                setOppositeUserInfo(null)
-                                if (isCallOnGoing.value == true) {
-                                    mRtcEngine?.leaveChannel()
-                                }
-                                resetConfig()
-                                addNotification(CallForceConnect().action, null)
-                                callData = null
-                                AppObjectController.uiHandler.postDelayed(
-                                    {
-                                        val data =
-                                            intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
-                                        callData = data
-                                        if (data.containsKey(RTC_CHANNEL_KEY)) {
-                                            channelName = data[RTC_CHANNEL_KEY]
-                                        }
-                                        removeIncomingNotification()
-                                        if (callCallback != null && callCallback?.get() != null) {
-                                            callCallback?.get()?.switchChannel(data)
-                                        } else {
-                                            startAutoPickCallActivity(false)
-                                        }
-                                    },
-                                    750
-                                )
-                            }
-                            this == HoldCall().action -> {
-                                val message = Message()
-                                message.what = CallState.CALL_HOLD_BY_OPPOSITE.state
-                                mHandler?.sendMessage(message)
-                            }
-                            this == ResumeCall().action -> {
-                                compositeDisposable.clear()
-                                val message = Message()
-                                message.what = CallState.CALL_RESUME_BY_OPPOSITE.state
-                                mHandler?.sendMessage(message)
-                            }
-                            this == UserJoined().action -> {
-                                val uid =
-                                    intent.getIntExtra(OPPOSITE_USER_UID, -1)
-                                if (uid != -1) {
-                                    userJoined(uid)
+                                this == UserJoined().action -> {
+                                    val uid =
+                                        intent.getIntExtra(OPPOSITE_USER_UID, -1)
+                                    if (uid != -1) {
+                                        userJoined(uid)
+                                    }
                                 }
                             }
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
                         }
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
                     }
                 }
             }

@@ -30,6 +30,7 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
+import com.joshtalks.joshskills.ui.voip.WebRtcService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -58,6 +59,7 @@ class ConversationRoomListingActivity : BaseActivity(),
         setContentView(view)
         viewModel = ConversationRoomListingViewModel()
         setUpRecyclerView()
+        setFlagInWebRtcServie()
         viewModel.makeEnterExitConversationRoom(true)
         binding.createRoom.apply {
             clipToOutline = true
@@ -93,6 +95,11 @@ class ConversationRoomListingActivity : BaseActivity(),
             }
         })
 
+    }
+
+    private fun setFlagInWebRtcServie() {
+        val intent = Intent(this, WebRtcService::class.java)
+        startService(intent)
     }
 
     fun goToProfile() {
