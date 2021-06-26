@@ -21,10 +21,10 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.* // ktlint-disable no-wildcard-imports
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.extension.transaltionAnimationNew
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.core.videotranscoder.recyclerView
-import com.joshtalks.joshskills.core.extension.transaltionAnimation
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
