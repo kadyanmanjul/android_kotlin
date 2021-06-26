@@ -48,7 +48,6 @@ import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
-import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
@@ -89,6 +88,9 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.ExecutorService
 import kotlin.collections.set
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import timber.log.Timber
 
@@ -442,17 +444,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 WebRtcService.resumeCall()
                 return null
             }
-            NotificationAction.CALL_CONNECTED_NOTIFICATION -> {
-                if (notificationObject.actionData != null) {
-                    try {
-                        val obj = JSONObject(notificationObject.actionData!!)
-                        WebRtcService.userJoined(obj.getInt(OPPOSITE_USER_UID))
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
-                    }
-                }
-                return null
-            }
             NotificationAction.AUDIO_FEEDBACK_REPORT -> {
                 // deleteUserCredentials()
                 // deleteUserData()
@@ -500,6 +491,78 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 //            }
             else -> {
                 return null
+            }
+        }
+    }
+
+    private fun callForceConnect(actionData: String?) {
+        actionData?.let {
+            try {
+                val obj = JSONObject(it)
+                val data = HashMap<String, String>()
+                data[RTC_TOKEN_KEY] = obj.getString("token")
+                data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
+                data[RTC_UID_KEY] = obj.getString("uid")
+                data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
+                WebRtcService.forceConnect(data)
+            } catch (t: Throwable) {
+                t.printStackTrace()
+            }
+        }
+    }
+
+    private fun callForceDisconnect() {
+        WebRtcService.forceDisconnect()
+    }
+
+    private fun callDisconnectNotificationAction() {
+        WebRtcService.disconnectCallFromCallie()
+    }
+
+    private fun declineCallWhenInConversationRoom(actionData: String?){
+        actionData?.let {
+            try {
+                val obj = JSONObject(it)
+                val data = HashMap<String, String?>()
+                data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
+                data[RTC_UID_KEY] = obj.getString("uid")
+                data["call_response"] = "DECLINE"
+
+                WebRtcService.rejectCall()
+                CoroutineScope(Dispatchers.IO).launch{
+                    AppObjectController.p2pNetworkService.getAgoraCallResponse(data)
+                }
+            }catch (t: Throwable){
+                t.printStackTrace()
+            }
+        }
+
+    }
+
+    private fun incomingCallNotificationAction(actionData: String?) {
+        actionData?.let {
+            try {
+                val obj = JSONObject(it)
+                val data = HashMap<String, String?>()
+                data[RTC_TOKEN_KEY] = obj.getString("token")
+                data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
+                data[RTC_UID_KEY] = obj.getString("uid")
+                data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
+
+                if (obj.has("f")) {
+                    val id = obj.getInt("caller_uid")
+                    val caller =
+                        AppObjectController.appDatabase.favoriteCallerDao().getFavoriteCaller(id)
+                    Thread.sleep(25)
+                    if (caller != null) {
+                        data[RTC_NAME] = caller.name
+                        data[RTC_CALLER_PHOTO] = caller.image
+                        data[RTC_IS_FAVORITE] = "true"
+                    }
+                }
+                WebRtcService.startOnNotificationIncomingCall(data)
+            } catch (t: Throwable) {
+                t.printStackTrace()
             }
         }
     }
