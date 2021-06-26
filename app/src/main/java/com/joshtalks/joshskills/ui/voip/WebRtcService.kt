@@ -27,6 +27,7 @@ import android.telephony.TelephonyManager
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.widget.RemoteViews
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
@@ -679,6 +680,7 @@ class WebRtcService : BaseWebRtcService() {
     @Suppress("UNCHECKED_CAST")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Timber.tag(TAG).e("onStartCommand=  %s", intent?.action)
+        Log.d("ConversationRtc", "onStartCommand: ")
         executor.execute {
             intent?.action?.run {
                 initEngine {
@@ -1261,6 +1263,7 @@ class WebRtcService : BaseWebRtcService() {
 
     private fun addNotification(action: String, data: HashMap<String, String?>?) {
         // mNotificationManager?.cancelAll()
+        Log.d("ConversationRtc", "addNotification: $action $data")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             when (action) {
                 IncomingCall().action, FavoriteIncomingCall().action -> {
@@ -1509,6 +1512,7 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     private fun callConnectedNotification(data: HashMap<String, String?>?): Notification {
+        Log.d("ConversationRtc", "callConnectedNotification: $data")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name: CharSequence = "Voip call connect"
             val importance: Int = NotificationManager.IMPORTANCE_LOW
