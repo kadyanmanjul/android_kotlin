@@ -8,7 +8,6 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -385,7 +384,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         acceptedText: String,
         heading: String,
     ) {
-        Log.d(TAG, "setNotificationBarFieldsWithActions: ")
         binding.notificationBar.visibility = View.VISIBLE
         binding.notificationBar.showActionLayout()
         binding.notificationBar.setRejectButtonText(rejectedText)
@@ -411,13 +409,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun setRunnable() {
         runnable = Runnable {
             binding.notificationBar.visibility = View.GONE
-            Log.d(TAG, "setRunnable: hideNotificationAfter4seconds")
         }
     }
 
 
     private fun setNotificationWithoutAction(heading: String, isGreenColorNotification: Boolean) {
-        Log.d(TAG, "setNotificationWithoutAction: ")
         binding.notificationBar.visibility = View.VISIBLE
         binding.notificationBar.hideActionLayout()
         binding.notificationBar.setHeading(heading)
@@ -426,7 +422,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     private fun showRoomEndNotification() {
-        Log.d(TAG, "showRoomEndNotification: ")
         binding.notificationBar.visibility = View.VISIBLE
         binding.notificationBar.hideActionLayout()
         binding.notificationBar.setBackgroundColor(false)
@@ -513,7 +508,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun leaveRoomIfModeratorEndRoom() {
         roomReference?.addSnapshotListener { value, error ->
             if (error != null) {
-                Log.d(TAG, error.message)
                 return@addSnapshotListener
             } else {
                 if (value?.exists() == false) {
@@ -524,7 +518,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         }
         usersReference?.addSnapshotListener { value, error ->
             if (error != null) {
-                Log.d(TAG, error.message)
                 return@addSnapshotListener
             } else {
                 if (value?.isEmpty == true) {
@@ -589,7 +582,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             engine?.addHandler(eventListener)
         }
 
-        engine?.enableAudioVolumeIndication(1600, 3, true)
+        engine?.enableAudioVolumeIndication(1650, 3, true)
         engine?.setAudioProfile(
             Constants.AUDIO_PROFILE_SPEECH_STANDARD,
             Constants.AUDIO_SCENARIO_GAME_STREAMING
@@ -714,13 +707,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.notificationBar.hideActionLayout()
         binding.notificationBar.setHeading("The Internet connection appears to be offline")
         binding.notificationBar.setBackgroundColor(false)
-        Log.d(TAG, "internetNotAvailable: Show notification")
 
     }
 
     private fun internetAvailable() {
         binding.notificationBar.visibility = View.GONE
-        Log.d(TAG, "internetAvailable: Hide notification")
     }
 
 
@@ -741,7 +732,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             SpeakerAdapter(getFirestoreRecyclerOptions(true), this, isRoomCreatedByUser)
         listenerAdapter =
             AudienceAdapter(getFirestoreRecyclerOptions(false), this, isRoomCreatedByUser)
-
         binding.speakersList.apply {
             layoutManager = GridLayoutManager(this@ConversationLiveRoomActivity, 3)
             setHasFixedSize(false)
@@ -941,12 +931,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     override fun onAcceptNotification() {
-        Log.d(
-            TAG,
-            "onAcceptNotification: type: $notificationType, moderatorUid: $moderatorUid, uid: $agoraUid , notificationTo ${
-                notificationTo?.get("uid")
-            }"
-        )
         if (isRoomCreatedByUser) {
             sendNotification(
                 "SPEAKER_INVITE",
