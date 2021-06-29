@@ -484,14 +484,16 @@ class WebRtcService : BaseWebRtcService() {
                 when (msg.what) {
                     CallState.UNHOLD.state -> {
                         phoneCallState = CallState.CALL_STATE_IDLE
+                        if (holdCallByMe) {
+                            callData?.let {
+                                callStatusNetworkApi(it, CallAction.RESUME)
+                            }
+                        }
                         holdCallByMe = false
                         mRtcEngine?.muteAllRemoteAudioStreams(false)
                         mRtcEngine?.muteLocalAudioStream(false)
                         mRtcEngine?.enableLocalAudio(true)
                         callCallback?.get()?.onUnHoldCall()
-                        callData?.let {
-                            callStatusNetworkApi(it, CallAction.RESUME)
-                        }
                     }
                     CallState.ONHOLD.state -> {
                         phoneCallState = CallState.CALL_STATE_CONNECTED
