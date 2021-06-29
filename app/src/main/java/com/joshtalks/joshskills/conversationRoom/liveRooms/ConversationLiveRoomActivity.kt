@@ -279,8 +279,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         reference?.update("is_mic_on", isMicOn)
             ?.addOnSuccessListener {
                 iSSoundOn = isMicOn
-                engine?.enableLocalAudio(iSSoundOn)
-                engine?.muteLocalAudioStream(!iSSoundOn)
                 when (isMicOn) {
                     true -> {
                         binding.muteBtn.setImageDrawable(
@@ -293,6 +291,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                         )
                     }
                 }
+                engine?.muteLocalAudioStream(!iSSoundOn)
 
             }?.addOnFailureListener {
                 setNotificationWithoutAction("Something Went Wrong", false)
@@ -475,7 +474,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         )
         isHandRaised = true
         iSSoundOn = isMicOn == true
-        engine?.enableLocalAudio(iSSoundOn)
         engine?.muteLocalAudioStream(!iSSoundOn)
         updateMuteButtonText()
     }
@@ -581,8 +579,8 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         if (eventListener != null) {
             engine?.addHandler(eventListener)
         }
-
-        engine?.enableAudioVolumeIndication(1650, 3, true)
+        engine?.adjustPlaybackSignalVolume(100)
+        engine?.enableAudioVolumeIndication(1800, 3, true)
         engine?.setAudioProfile(
             Constants.AUDIO_PROFILE_SPEECH_STANDARD,
             Constants.AUDIO_SCENARIO_GAME_STREAMING

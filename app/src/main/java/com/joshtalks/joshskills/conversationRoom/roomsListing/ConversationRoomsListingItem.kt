@@ -39,8 +39,8 @@ class ConversationRoomSpeakerList {
         private set
     var is_moderator: Boolean = false
         private set
-    var is_speaker: Boolean = false
-        private set
+    private var is_speaker: Boolean = false
+
     var mentor_id: String = ""
         private set
     var name: String = ""
@@ -68,5 +68,9 @@ class ConversationRoomSpeakerList {
         this.mentor_id = mentor_id
         this.name = name
         this.photo_url = photo_url
+    }
+
+    fun isUserSpeaker(): Boolean{
+        return is_speaker
     }
 }

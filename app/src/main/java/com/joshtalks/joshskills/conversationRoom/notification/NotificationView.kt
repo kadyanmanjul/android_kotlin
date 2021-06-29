@@ -15,7 +15,7 @@ class NotificationView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
-    var enquiryAction: NotificationViewAction? = null
+    private var enquiryAction: NotificationViewAction? = null
 
     interface NotificationViewAction {
         fun onAcceptNotification()

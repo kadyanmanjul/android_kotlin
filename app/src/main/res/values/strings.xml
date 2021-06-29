@@ -905,5 +905,7 @@
     <string name="raised_hand">Raised hands</string>
     <string name="open_to_everyone">Open to Everyone</string>
     <string name="no_raised_hand_text">No one has their hand raised yet</string>
+    <string name="audience">Audience</string>
+    <string name="speakers">Speakers</string>
 
 </resources>

@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.firestore.DocumentSnapshot
@@ -19,11 +18,10 @@ import com.joshtalks.joshskills.databinding.LiBottomSheetRaisedHandsBinding
 
 class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
     private lateinit var binding: LiBottomSheetRaisedHandsBinding
-    private var raisedHandLists: RecyclerView? = null
     private var roomId: Int? = null
     private var moderatorUid: Int? = null
     private var moderatorName: String? = null
-    private var adapter: RaisedHandsBottomSheetAdapter? = null
+    private var bottomSheetAdapter: RaisedHandsBottomSheetAdapter? = null
     private var isRecyclerViewStateAlreadyVisible = false
 
 
@@ -61,7 +59,6 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setViews(view)
         configureRecyclerView()
     }
 
@@ -77,26 +74,32 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
                 return@addSnapshotListener
             } else {
                 if (value == null || value.isEmpty) {
-                    binding.noAuidenceText.visibility = View.VISIBLE
-                    binding.raisedHandsList.visibility = View.GONE
+                    with(binding) {
+                        noAuidenceText.visibility = View.VISIBLE
+                        raisedHandsList.visibility = View.GONE
+                    }
                     isRecyclerViewStateAlreadyVisible = false
                 } else if (!isRecyclerViewStateAlreadyVisible) {
-                    binding.noAuidenceText.visibility = View.GONE
-                    binding.raisedHandsList.visibility = View.VISIBLE
+                    with(binding) {
+                        noAuidenceText.visibility = View.GONE
+                        raisedHandsList.visibility = View.VISIBLE
+                    }
                     isRecyclerViewStateAlreadyVisible = true
 
                     val options: FirestoreRecyclerOptions<LiveRoomUser> =
                         FirestoreRecyclerOptions.Builder<LiveRoomUser>()
                             .setQuery(query, LiveRoomUser::class.java)
                             .build()
-                    adapter = RaisedHandsBottomSheetAdapter(options)
-                    raisedHandLists?.layoutManager = LinearLayoutManager(this.context)
-                    raisedHandLists?.setHasFixedSize(false)
-                    raisedHandLists?.itemAnimator = null
-                    raisedHandLists?.adapter = adapter
-                    adapter?.startListening()
-                    adapter?.notifyDataSetChanged()
-                    adapter?.setOnItemClickListener(object :
+                    bottomSheetAdapter = RaisedHandsBottomSheetAdapter(options)
+                    binding.raisedHandsList.apply {
+                        layoutManager = LinearLayoutManager(this.context)
+                        setHasFixedSize(false)
+                        adapter = bottomSheetAdapter
+                        itemAnimator = null
+                    }
+                    bottomSheetAdapter?.startListening()
+                    bottomSheetAdapter?.notifyDataSetChanged()
+                    bottomSheetAdapter?.setOnItemClickListener(object :
                         RaisedHandsBottomSheetAdapter.RaisedHandsBottomSheetAction {
                         override fun onItemClick(
                             documentSnapshot: DocumentSnapshot?,
@@ -144,13 +147,9 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
             }
     }
 
-    private fun setViews(contentView: View?) {
-        raisedHandLists = contentView?.findViewById(R.id.raised_hands_list)
-    }
-
     override fun onStop() {
         super.onStop()
-        adapter?.stopListening()
+        bottomSheetAdapter?.stopListening()
 
     }
 }

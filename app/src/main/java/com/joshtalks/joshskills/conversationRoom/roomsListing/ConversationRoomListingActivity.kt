@@ -46,6 +46,7 @@ class ConversationRoomListingActivity : BaseActivity(),
     lateinit var binding: ActivityConversationsRoomsListingBinding
     private val compositeDisposable = CompositeDisposable()
     private var internetAvailableFlag: Boolean = true
+    private var isBackPressed: Boolean = false
 
     companion object {
         var CONVERSATION_ROOM_VISIBLE_TRACK_FLAG: Boolean = true
@@ -71,7 +72,7 @@ class ConversationRoomListingActivity : BaseActivity(),
         binding.userPic.clipToOutline = true
         binding.userPic.setUserImageRectOrInitials(
             Mentor.getInstance().getUser()?.photo,
-            User.getInstance().firstName?:"JS",
+            User.getInstance().firstName ?: "JS",
             16,
             true,
             8,
@@ -207,12 +208,16 @@ class ConversationRoomListingActivity : BaseActivity(),
     }
 
     override fun onDestroy() {
+        if (!isBackPressed) {
+            viewModel.makeEnterExitConversationRoom(false)
+        }
         super.onDestroy()
         PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, false)
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
+        isBackPressed = true
         viewModel.makeEnterExitConversationRoom(false)
     }
 
@@ -229,7 +234,8 @@ class ConversationRoomListingActivity : BaseActivity(),
             } else {
                 if (value == null || value.isEmpty) {
                     binding.noRoomsText.visibility = View.VISIBLE
-                    binding.noRoomsText.text = String.format("\uD83D\uDC4B Hi there! \n\n Start a new room to get a\n conversation going!")
+                    binding.noRoomsText.text =
+                        String.format("\uD83D\uDC4B Hi there! \n\n Start a new room to get a\n conversation going!")
                     binding.recyclerView.visibility = View.GONE
                 } else {
                     binding.noRoomsText.visibility = View.GONE

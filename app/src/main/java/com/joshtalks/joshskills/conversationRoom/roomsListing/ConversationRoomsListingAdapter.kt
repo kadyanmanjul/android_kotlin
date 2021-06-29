@@ -12,6 +12,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.conversationRoom.liveRooms.LiveRoomUser
 import com.joshtalks.joshskills.core.firestore.FireStoreDatabase
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
 import com.joshtalks.joshskills.core.setUserImageRectOrInitials
@@ -54,19 +55,23 @@ class ConversationRoomsListingAdapter(
         fun bind(model: ConversationRoomsListingItem) {
             val query1: Query = FireStoreDatabase.getInstance().collection("conversation_rooms")
                 .document(model.room_id.toString()).collection("users")
-            val options1: FirestoreRecyclerOptions<ConversationRoomSpeakerList> =
-                FirestoreRecyclerOptions.Builder<ConversationRoomSpeakerList>()
-                    .setQuery(query1.limit(4), ConversationRoomSpeakerList::class.java).build()
+            val options1: FirestoreRecyclerOptions<LiveRoomUser> =
+                FirestoreRecyclerOptions.Builder<LiveRoomUser>()
+                    .setQuery(query1.limit(4), LiveRoomUser::class.java).build()
             val roomItemAdapter: ConversationRoomItemAdapter? =
                 ConversationRoomItemAdapter(options1)
 
             with(binding) {
                 conversationTopicName.text = model.topic ?: ""
-                speakersList.recycledViewPool.clear()
-                speakersList.adapter = roomItemAdapter
-                speakersList.layoutManager =
-                    LinearLayoutManager(binding.root.context, VERTICAL, false)
-                speakersList.setHasFixedSize(false)
+                speakersList.apply {
+                    recycledViewPool.clear()
+                    itemAnimator = null
+                    adapter = roomItemAdapter
+                    layoutManager =
+                        LinearLayoutManager(binding.root.context, VERTICAL, false)
+                    setHasFixedSize(false)
+                }
+
                 roomItemAdapter?.startListening()
                 roomItemAdapter?.notifyDataSetChanged()
 

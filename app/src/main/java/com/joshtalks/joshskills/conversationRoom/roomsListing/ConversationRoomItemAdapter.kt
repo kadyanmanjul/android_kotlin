@@ -3,39 +3,47 @@ package com.joshtalks.joshskills.conversationRoom.roomsListing
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.conversationRoom.liveRooms.LiveRoomUser
+import com.joshtalks.joshskills.databinding.LiConversionRoomsSpeakersBinding
 
 class ConversationRoomItemAdapter(
-    rooms: FirestoreRecyclerOptions<ConversationRoomSpeakerList>
+    rooms: FirestoreRecyclerOptions<LiveRoomUser>
 ) :
-    FirestoreRecyclerAdapter<ConversationRoomSpeakerList, ConversationRoomItemAdapter.ConversationRoomSpeakerViewHolder>(
+    FirestoreRecyclerAdapter<LiveRoomUser, ConversationRoomItemAdapter.ConversationRoomSpeakerViewHolder>(
         rooms
     ) {
-
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): ConversationRoomSpeakerViewHolder {
-        val view: View = LayoutInflater.from(parent.context).inflate(
-            R.layout.li_conversion_rooms_speakers, parent, false
-        )
-        return ConversationRoomSpeakerViewHolder(view)
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = LiConversionRoomsSpeakersBinding.inflate(inflater, parent, false)
+        return ConversationRoomSpeakerViewHolder(binding)
     }
 
     override fun onBindViewHolder(
         holder: ConversationRoomSpeakerViewHolder,
         position: Int,
-        model: ConversationRoomSpeakerList
+        model: LiveRoomUser
     ) {
-        holder.speaker.text = model.name
+        holder.bind(model)
     }
 
-    class ConversationRoomSpeakerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var speaker: TextView = itemView.findViewById(R.id.speaker)
+    class ConversationRoomSpeakerViewHolder(val binding: LiConversionRoomsSpeakersBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(model: LiveRoomUser) {
+            with(binding) {
+                speaker.text = model.name
+                when (model.isIs_speaker) {
+                    true -> chatIcon.visibility = View.GONE
+                    false -> chatIcon.visibility = View.VISIBLE
+                }
+            }
+        }
+
     }
 }

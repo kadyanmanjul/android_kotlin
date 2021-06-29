@@ -476,7 +476,8 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme" />
-        <activity android:name=".conversationRoom.roomsListing.ConversationRoomListingActivity" />
+        <activity android:name=".conversationRoom.roomsListing.ConversationRoomListingActivity"
+            android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="CLEVERTAP_ACCOUNT_ID"

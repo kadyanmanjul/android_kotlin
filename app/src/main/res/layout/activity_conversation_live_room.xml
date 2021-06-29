@@ -62,13 +62,14 @@
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_6sdp"
             android:nestedScrollingEnabled="false"
-            android:fillViewport="true"
             app:layout_constraintBottom_toTopOf="@id/button_container"
-            app:layout_constraintVertical_bias="0"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar">
+            android:fillViewport="true"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintVertical_bias="0">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/speaker_containers"
@@ -81,11 +82,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/_14sdp"
+                    android:padding="@dimen/_2sdp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                     android:textColor="@color/pure_black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
-                    android:padding="@dimen/_2sdp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Topic" />
@@ -96,7 +97,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_16sdp"
                     android:layout_marginTop="@dimen/_8sdp"
-                    android:text="Speakers"
+                    android:text="@string/speakers"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                     android:visibility="gone"
                     app:layout_constraintBottom_toTopOf="@id/speakers_list"
@@ -109,14 +110,14 @@
                     android:id="@+id/speakers_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginStart="@dimen/_24sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginEnd="@dimen/_5sdp"
                     android:isScrollContainer="false"
                     android:nestedScrollingEnabled="false"
-                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintBottom_toTopOf="@id/audienceTextView"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/speakerTextView"
                     app:layout_constraintVertical_chainStyle="packed" />
@@ -127,7 +128,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_16sdp"
                     android:layout_marginTop="@dimen/_16sdp"
-                    android:text="Audience"
+                    android:text="@string/audience"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
                     android:textColor="#E7E4D5"
                     app:layout_constraintBottom_toTopOf="@id/listener_list"
@@ -141,7 +142,7 @@
                     android:id="@+id/listener_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_14sdp"
+                    android:layout_marginStart="@dimen/_12sdp"
                     android:layout_marginEnd="@dimen/_38sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -168,16 +169,15 @@
                 android:background="@drawable/rect_round"
                 android:backgroundTint="#F2F2F2"
                 android:drawableStart="@drawable/ic_victory_emoji"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                 android:drawablePadding="@dimen/_8sdp"
                 android:paddingVertical="@dimen/_8sdp"
                 android:paddingStart="@dimen/_10sdp"
                 android:paddingEnd="@dimen/_14sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                 android:textColor="#D86464"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:text="Leave quietly" />
-
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/mute_btn"
@@ -230,6 +230,6 @@
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="gone" />
+            tools:visibility="visible" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
