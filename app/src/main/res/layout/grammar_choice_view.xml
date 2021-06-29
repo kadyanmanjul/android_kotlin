@@ -1,28 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/choice_ats_root_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:paddingHorizontal="@dimen/_10sdp"
     android:paddingTop="@dimen/_8sdp">
 
     <FrameLayout
         android:id="@+id/ats_answer_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_4sdp"
+        app:layout_constraintBottom_toTopOf="@id/ats_options_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.nex3z.flowlayout.FlowLayout
             android:id="@+id/dummy_answer_flow_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             app:flFlow="true" />
 
         <com.nex3z.flowlayout.FlowLayout
             android:id="@+id/ats_answer_flow_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             app:flFlow="true" />
 
     </FrameLayout>
@@ -31,11 +36,31 @@
         android:id="@+id/ats_options_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="@dimen/_4sdp"
+        android:layout_marginTop="@dimen/_12sdp"
         android:layout_below="@+id/ats_answer_container"
         android:layout_marginHorizontal="@dimen/_12sdp"
-        android:layout_marginTop="@dimen/_12sdp"
-        android:layout_marginBottom="@dimen/_60sdp">
+        android:layout_marginBottom="@dimen/_8sdp"
+        app:layout_constraintTop_toBottomOf="@id/ats_answer_container"
+        app:layout_constraintBottom_toTopOf="@id/grammar_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
     </RelativeLayout>
 
-</RelativeLayout>
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/grammar_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_6sdp"
+        android:visibility="invisible"
+        android:enabled="false"
+        android:paddingVertical="@dimen/_10sdp"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+        app:cornerRadius="@dimen/_10sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

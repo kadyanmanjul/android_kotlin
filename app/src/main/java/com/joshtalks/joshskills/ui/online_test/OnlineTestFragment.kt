@@ -126,10 +126,10 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     }
 
     private fun initViews() {
-        headingView = Stub(binding.container.findViewById(R.id.heading_view))
-        mcqChoiceView = Stub(binding.container.findViewById(R.id.mcq_choice_view))
-        atsChoiceView = Stub(binding.container.findViewById(R.id.ats_choice_view))
-        subjectiveChoiceView = Stub(binding.container.findViewById(R.id.subjective_choice_view))
+        headingView = Stub(binding.choiceContainer.findViewById(R.id.heading_view))
+        mcqChoiceView = Stub(binding.choiceContainer.findViewById(R.id.mcq_choice_view))
+        atsChoiceView = Stub(binding.choiceContainer.findViewById(R.id.ats_choice_view))
+        subjectiveChoiceView = Stub(binding.choiceContainer.findViewById(R.id.subjective_choice_view))
         buttonView = Stub(binding.container.findViewById(R.id.button_action_views))
     }
 

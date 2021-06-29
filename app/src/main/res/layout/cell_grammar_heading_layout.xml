@@ -104,24 +104,26 @@
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/question_heading"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:srcCompat="@drawable/ic_speaker"
             tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/question_text"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
-            android:paddingEnd="@dimen/_1sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
             android:textColor="@color/grammar_black_text_color"
             android:visibility="gone"
             android:minLines="1"
-            app:layout_constraintBottom_toBottomOf="@+id/single_audio"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintVertical_bias="0.5"
             app:layout_constraintStart_toEndOf="@id/single_audio"
-            app:layout_constraintTop_toTopOf="@id/single_audio"
+            app:layout_constraintTop_toBottomOf="@id/question_heading"
+            app:layout_constraintBottom_toBottomOf="parent"
             tools:text="काश मुझे सच पता होता।  "
             tools:visibility="visible" />
 

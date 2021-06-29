@@ -9,6 +9,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.OnLifecycleEvent
@@ -34,9 +35,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class AtsChoiceView : RelativeLayout, AudioPlayerEventListener {
+class AtsChoiceView : ConstraintLayout, AudioPlayerEventListener {
 
-    private lateinit var rootView: RelativeLayout
+    private lateinit var rootView: ConstraintLayout
     private lateinit var answerContainer: FrameLayout
     private lateinit var answerFlowLayout: FlowLayout
     private lateinit var dummyAnswerFlowLayout: FlowLayout
