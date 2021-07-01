@@ -42,13 +42,17 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.firestore.AgoraNotificationListener
+import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.getRandomName
+import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
 import com.joshtalks.joshskills.core.printAll
 import com.joshtalks.joshskills.core.startServiceForWebrtc
 import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.core.urlToBitmap
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
+import com.joshtalks.joshskills.repository.local.model.FirestoreNotificationObject
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.ACTION_NOTIFICATION_ID
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.CALL_NOTIFICATION_CHANNEL
@@ -586,6 +590,16 @@ class WebRtcService : BaseWebRtcService() {
             TelephonyUtil.getManager(this@WebRtcService)
                 .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_CALL_STATE)
         }
+        addFirestoreObserver()
+    }
+
+    private fun addFirestoreObserver() {
+        FirestoreDB.setNotificationListener(listener = object : AgoraNotificationListener {
+            override fun onReceived(firestoreNotification: FirestoreNotificationObject) {
+                val nc = firestoreNotification.toNotificationObject(null)
+                FirebaseNotificationService.sendFirestoreNotification(nc, this@WebRtcService)
+            }
+        })
     }
 
     private fun initIncomingCallChannel() {
