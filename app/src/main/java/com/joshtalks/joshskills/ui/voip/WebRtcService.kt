@@ -98,10 +98,10 @@ class WebRtcService : BaseWebRtcService() {
     private val handlerThread: HandlerThread by lazy { CustomHandlerThread("WebrtcThread") }
     private var userAgoraId: Int? = null
     var channelName: String? = null
-    private var isEngineInit = false
-    var isCallerJoin: Boolean = false
-    private var isMicEnable = true
-    private var isSpeakerEnable = false
+    private var isEngineInitialized = false
+    var isCallerJoined: Boolean = false
+    private var isMicEnabled = true
+    private var isSpeakerEnabled = false
     private var oppositeCallerId: Int? = null
     private var userDetailMap: HashMap<String, String>? = null
 
@@ -292,11 +292,11 @@ class WebRtcService : BaseWebRtcService() {
                 if (routing == AUDIO_ROUTE_HEADSET) {
                     bluetoothDisconnected()
                     callCallback?.get()?.onSpeakerOff()
-                    isSpeakerEnable = false
-                    mRtcEngine?.setDefaultAudioRoutetoSpeakerphone(isSpeakerEnable)
+                    isSpeakerEnabled = false
+                    mRtcEngine?.setDefaultAudioRoutetoSpeakerphone(isSpeakerEnabled)
                 } else if (routing == AUDIO_ROUTE_HEADSETBLUETOOTH) {
                     callCallback?.get()?.onSpeakerOff()
-                    isSpeakerEnable = false
+                    isSpeakerEnabled = false
                     bluetoothConnected()
                 } else {
                     bluetoothDisconnected()
@@ -369,7 +369,7 @@ class WebRtcService : BaseWebRtcService() {
                 callCallback?.get()?.onDisconnect(
                     callId,
                     callData?.let { getChannelName(it) },
-                    if (isCallerJoin) {
+                    if (isCallerJoined) {
                         TimeUnit.SECONDS.toMillis(stats.totalDuration.toLong())
                     } else {
                         getTimeOfTalk()
@@ -394,7 +394,7 @@ class WebRtcService : BaseWebRtcService() {
                 val id = getUID(it)
                 Timber.tag(TAG).e("onUserOffline =  $id")
                 if (id != uid && reason == Constants.USER_OFFLINE_QUIT) {
-                    if (isCallerJoin) {
+                    if (isCallerJoined) {
                         endCall(apiCall = true, action = CallAction.DISCONNECT)
                     } else {
                         endCall(apiCall = true, action = CallAction.AUTO_DISCONNECT)
@@ -441,11 +441,11 @@ class WebRtcService : BaseWebRtcService() {
                     Completable.complete()
                         .delay(5, TimeUnit.SECONDS)
                         .doOnComplete {
-                            Timber.tag("Reconnect").e("doOnComplete  $isCallerJoin")
+                            Timber.tag("Reconnect").e("doOnComplete  $isCallerJoined")
                         }
                         .subscribeOn(Schedulers.io())
                         .subscribe {
-                            if (isCallerJoin) {
+                            if (isCallerJoined) {
                                 lostNetwork()
                             }
                         }
@@ -621,7 +621,7 @@ class WebRtcService : BaseWebRtcService() {
             if (eventListener != null) {
                 mRtcEngine?.addHandler(eventListener)
             }
-            if (isEngineInit) {
+            if (isEngineInitialized) {
                 callback.invoke()
                 return
             }
@@ -654,7 +654,7 @@ class WebRtcService : BaseWebRtcService() {
                 setRemoteSubscribeFallbackOption(STREAM_FALLBACK_OPTION_AUDIO_ONLY)
             }
             if (mRtcEngine != null) {
-                isEngineInit = true
+                isEngineInitialized = true
                 callback.invoke()
             }
         } catch (ex: Throwable) {
@@ -822,7 +822,7 @@ class WebRtcService : BaseWebRtcService() {
         oppositeCallerId = uid
         compositeDisposable.clear()
         isCallOnGoing.postValue(true)
-        isCallerJoin = true
+        isCallerJoined = true
         if (callStartTime == 0L) {
             startCallTimer()
         }
@@ -1102,9 +1102,9 @@ class WebRtcService : BaseWebRtcService() {
         return callData?.get(RTC_NAME) ?: EMPTY
     }
 
-    fun getSpeaker() = isSpeakerEnable
+    fun getSpeaker() = isSpeakerEnabled
 
-    fun getMic() = isMicEnable
+    fun getMic() = isMicEnabled
 
     fun getUserAgoraId() = userAgoraId
 
@@ -1149,11 +1149,11 @@ class WebRtcService : BaseWebRtcService() {
     fun switchAudioSpeaker() {
         executor.submit {
             val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
-            isSpeakerEnable = !isSpeakerEnable
+            isSpeakerEnabled = !isSpeakerEnabled
             audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-            mRtcEngine?.setEnableSpeakerphone(isSpeakerEnable)
+            mRtcEngine?.setEnableSpeakerphone(isSpeakerEnabled)
 //            mRtcEngine?.setDefaultAudioRoutetoSpeakerphone(isSpeakerEnable)
-            audioManager.isSpeakerphoneOn = isSpeakerEnable
+            audioManager.isSpeakerphoneOn = isSpeakerEnabled
         }
     }
 
@@ -1161,8 +1161,8 @@ class WebRtcService : BaseWebRtcService() {
         executor.submit {
             try {
                 if (holdCallByMe.not() && holdCallByAnotherUser.not()) {
-                    isMicEnable = !isMicEnable
-                    if (isMicEnable) {
+                    isMicEnabled = !isMicEnabled
+                    if (isMicEnabled) {
                         unMuteCall()
                     } else {
                         muteCall()
@@ -1178,10 +1178,10 @@ class WebRtcService : BaseWebRtcService() {
         stopRing()
         joshAudioManager?.stopConnectTone()
         // removeSensor()
-        isCallerJoin = false
+        isCallerJoined = false
         eventListener = null
-        isSpeakerEnable = false
-        isMicEnable = true
+        isSpeakerEnabled = false
+        isMicEnabled = true
         oppositeCallerId = null
         phoneCallState = CallState.CALL_STATE_IDLE
         compositeDisposable.clear()
@@ -1210,10 +1210,10 @@ class WebRtcService : BaseWebRtcService() {
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         joshAudioManager?.quitEverything()
-        isEngineInit = false
+        isEngineInitialized = false
         isTimeOutToPickCall = false
         switchChannel = false
-        isCallerJoin = false
+        isCallerJoined = false
         callStartTime = 0L
         retryInitLibrary = 0
         userDetailMap = null
@@ -1225,12 +1225,12 @@ class WebRtcService : BaseWebRtcService() {
         RtcEngine.destroy()
         stopRing()
         userDetailMap = null
-        isEngineInit = false
+        isEngineInitialized = false
         joshAudioManager?.quitEverything()
         AppObjectController.mRtcEngine = null
         handlerThread?.quitSafely()
         isTimeOutToPickCall = false
-        isCallerJoin = false
+        isCallerJoined = false
         callStartTime = 0L
         retryInitLibrary = 0
         isCallOnGoing.postValue(false)

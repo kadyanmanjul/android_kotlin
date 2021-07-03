@@ -159,7 +159,7 @@ class WebRtcActivity : AppCompatActivity() {
         override fun onNetworkReconnect() {
             super.onNetworkReconnect()
             Timber.tag(TAG).e("onNetworkReconnect")
-            val isCallerJoin = mBoundService?.isCallerJoin ?: false
+            val isCallerJoin = mBoundService?.isCallerJoined ?: false
             if (isCallerJoin.not()) {
                 return
             }
@@ -454,7 +454,7 @@ class WebRtcActivity : AppCompatActivity() {
 
     private fun updateStatusLabel() {
         lifecycleScope.launchWhenCreated {
-            val callConnected = mBoundService?.isCallerJoin ?: false
+            val callConnected = mBoundService?.isCallerJoined ?: false
             val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
             callType?.run {
                 if (CallType.FAVORITE_MISSED_CALL == this || CallType.OUTGOING == this) {
