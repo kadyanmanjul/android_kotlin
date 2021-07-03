@@ -283,7 +283,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     override fun onDestroy() {
         super.onDestroy()
-        if (WebRtcService.isCallWasOnGoing.value == false) {
+        if (WebRtcService.isCallOnGoing.value == false) {
             RtcEngine.destroy()
         }
         inAppUpdateManager = null

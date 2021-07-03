@@ -35,7 +35,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.track.CONVERSATION_ID
-import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isCallWasOnGoing
+import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isCallOnGoing
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -235,7 +235,7 @@ class WebRtcActivity : AppCompatActivity() {
             .addBasicParam()
             .addUserDetails()
             .push()
-        if (isCallWasOnGoing.value == false) {
+        if (isCallOnGoing.value == false) {
             callMissedCallUser()
         }
     }
@@ -378,7 +378,7 @@ class WebRtcActivity : AppCompatActivity() {
             }
         )
 
-        WebRtcService.isCallWasOnGoing.observe(this, { isCallOngoing ->
+        WebRtcService.isCallOnGoing.observe(this, { isCallOngoing ->
             if (isCallOngoing) {
                 var partnerUid: String? = intent.getIntExtra(RTC_PARTNER_ID, -1).toString()
                 if (partnerUid == "-1") {
@@ -401,7 +401,7 @@ class WebRtcActivity : AppCompatActivity() {
         updateButtonStatus()
         val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
 
-        if (isCallFavoritePP() || WebRtcService.isCallWasOnGoing.value == true) {
+        if (isCallFavoritePP() || WebRtcService.isCallOnGoing.value == true) {
             updateCallInfo()
         } /*else if (callType == CallType.INCOMING && WebRtcService.isCallWasOnGoing.value == true) {
             updateCallInfo()
@@ -442,7 +442,7 @@ class WebRtcActivity : AppCompatActivity() {
 
     private fun phoneConnectedStatus() {
         try {
-            if (WebRtcService.isCallWasOnGoing.value == true) {
+            if (WebRtcService.isCallOnGoing.value == true) {
                 binding.groupForIncoming.visibility = View.GONE
                 binding.groupForOutgoing.visibility = View.VISIBLE
                 startCallTimer()
