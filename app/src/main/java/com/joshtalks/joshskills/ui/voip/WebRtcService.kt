@@ -95,7 +95,7 @@ class WebRtcService : BaseWebRtcService() {
     private var callStartTime: Long = 0
     private var callForceDisconnect = false
     private var mHandler: Handler? = null
-    private var handlerThread: HandlerThread? = null
+    private val handlerThread: HandlerThread by lazy { CustomHandlerThread("WebrtcThread") }
     private var userAgoraId: Int? = null
     var channelName: String? = null
     private var isEngineInit = false
@@ -480,11 +480,12 @@ class WebRtcService : BaseWebRtcService() {
     inner class CustomHandlerThread(name: String) : HandlerThread(name) {
         override fun onLooperPrepared() {
             super.onLooperPrepared()
-            mHandler = Handler(looper) { msg ->
+            mHandler = Handler(handlerThread.looper) { msg ->
                 when (msg.what) {
                     CallState.UNHOLD.state -> {
                         phoneCallState = CallState.CALL_STATE_IDLE
                         if (holdCallByMe) {
+                            mRtcEngine?.connectionState
                             callData?.let {
                                 callStatusNetworkApi(it, CallAction.RESUME)
                             }
@@ -539,8 +540,6 @@ class WebRtcService : BaseWebRtcService() {
                 TelephonyManager.CALL_STATE_IDLE -> {
                     isOnPstnCall = false
                     phoneCallState = CallState.CALL_STATE_IDLE
-                    holdCallByMe = false
-                    holdCallByAnotherUser = false
                     mRtcEngine?.muteAllRemoteAudioStreams(false)
                     mRtcEngine?.muteLocalAudioStream(false)
                     mRtcEngine?.enableLocalAudio(true)
@@ -581,11 +580,8 @@ class WebRtcService : BaseWebRtcService() {
         Timber.tag(TAG).e("onCreate")
         initIncomingCallChannel()
         phoneCallState = CallState.CALL_STATE_IDLE
-        handlerThread = CustomHandlerThread("WebrtcThread")
-        handlerThread?.start()
-        if (handlerThread != null) {
-            mHandler = Handler(handlerThread!!.looper)
-        }
+        handlerThread.start()
+        mHandler = Handler(handlerThread.looper)
         CoroutineScope(Dispatchers.IO).launch {
             TelephonyUtil.getManager(this@WebRtcService)
                 .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_CALL_STATE)
