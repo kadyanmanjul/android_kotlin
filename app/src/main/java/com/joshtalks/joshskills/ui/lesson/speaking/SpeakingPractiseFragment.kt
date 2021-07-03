@@ -134,6 +134,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.btnStart.setOnClickListener {
             startPractise(favoriteUserCall = false)
         }
+
         binding.btnContinue.setOnClickListener {
             lessonActivityListener?.onNextTabCall(3)
         }
