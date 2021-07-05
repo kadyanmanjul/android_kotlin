@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import androidx.core.content.ContextCompat
 import com.afollestad.materialdialogs.MaterialDialog
@@ -25,12 +26,22 @@ object PermissionUtils {
         context: Context?,
         multiplePermissionsListener: MultiplePermissionsListener
     ) {
-        Dexter.withContext(context)
-            .withPermissions(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-            .withListener(multiplePermissionsListener).check()
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+
+            Dexter.withContext(context)
+                .withPermissions(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+                .withListener(multiplePermissionsListener).check()
+        } else {
+
+            Dexter.withContext(context)
+                .withPermissions(
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                )
+                .withListener(multiplePermissionsListener).check()
+        }
     }
 
     fun locationPermission(
@@ -50,24 +61,43 @@ object PermissionUtils {
         activity: Activity?,
         multiplePermissionsListener: MultiplePermissionsListener
     ) {
-        Dexter.withContext(activity)
-            .withPermissions(
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-            .withListener(multiplePermissionsListener).check()
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+
+            Dexter.withContext(activity)
+                .withPermissions(
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+                .withListener(multiplePermissionsListener).check()
+        } else {
+
+            Dexter.withContext(activity)
+                .withPermissions(
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                )
+                .withListener(multiplePermissionsListener).check()
+        }
     }
 
 
     fun isStoragePermissionEnabled(context: Context): Boolean {
-        return ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        ) + ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+
+            return ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        } else{
+            return ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        }
     }
 
     fun isLocationPermissionEnabled(context: Context): Boolean {
@@ -81,16 +111,27 @@ object PermissionUtils {
     }
 
     fun isAudioAndStoragePermissionEnable(context: Context): Boolean {
-        return ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.RECORD_AUDIO
-        ) + ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        ) + ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+            return ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.RECORD_AUDIO
+            ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        } else{
+
+            return ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.RECORD_AUDIO
+            ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        }
     }
 
 
@@ -118,16 +159,25 @@ object PermissionUtils {
 
     @JvmStatic
     fun checkPermissionForAudioRecord(context: Context): Boolean {
-        return ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        ) + ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.RECORD_AUDIO
-        ) + ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+            return ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.RECORD_AUDIO
+            ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        } else
+            return ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.RECORD_AUDIO
+            ) == PackageManager.PERMISSION_GRANTED
     }
 
 
@@ -150,69 +200,131 @@ object PermissionUtils {
         activity: Activity?,
         multiplePermissionsListener: MultiplePermissionsListener
     ) {
-        Dexter.withContext(activity)
-            .withPermissions(
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.RECORD_AUDIO
 
-            )
-            .withListener(multiplePermissionsListener).check()
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+            Dexter.withContext(activity)
+                .withPermissions(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.RECORD_AUDIO
+
+                )
+                .withListener(multiplePermissionsListener).check()
+        } else {
+
+            Dexter.withContext(activity)
+                .withPermissions(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.RECORD_AUDIO
+
+                )
+                .withListener(multiplePermissionsListener).check()
+        }
     }
 
 
     fun isCallingPermissionEnabled(context: Context): Boolean {
-        return ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.READ_PHONE_STATE
-        ) +
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.MODIFY_AUDIO_SETTINGS
-                ) +
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.RECORD_AUDIO
-                ) + ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_NETWORK_STATE
 
-        ) + ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.READ_EXTERNAL_STORAGE
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+            return ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.READ_PHONE_STATE
+            ) +
+                    ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.MODIFY_AUDIO_SETTINGS
+                    ) +
+                    ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.RECORD_AUDIO
+                    ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_NETWORK_STATE
 
-        ) + ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.READ_EXTERNAL_STORAGE
 
-        ) + ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION
+            ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
 
-        ) + ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_COARSE_LOCATION
+            ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
 
-        ) == PackageManager.PERMISSION_GRANTED
+            ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            return ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.READ_PHONE_STATE
+            ) +
+                    ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.MODIFY_AUDIO_SETTINGS
+                    ) +
+                    ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.RECORD_AUDIO
+                    ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_NETWORK_STATE
+
+            ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+
+            ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+
+            ) + ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+
     }
 
     fun callingFeaturePermission(
         activity: Activity,
         multiplePermissionsListener: MultiplePermissionsListener
     ) {
-        Dexter.withContext(activity)
-            .withPermissions(
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.ACCESS_NETWORK_STATE,
-                Manifest.permission.MODIFY_AUDIO_SETTINGS,
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            )
-            .withListener(multiplePermissionsListener).check()
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+
+            Dexter.withContext(activity)
+                .withPermissions(
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.ACCESS_NETWORK_STATE,
+                    Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                    Manifest.permission.READ_PHONE_STATE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+                .withListener(multiplePermissionsListener).check()
+        } else {
+            Dexter.withContext(activity)
+                .withPermissions(
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.ACCESS_NETWORK_STATE,
+                    Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                    Manifest.permission.READ_PHONE_STATE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+                .withListener(multiplePermissionsListener).check()
+
+        }
     }
 
 
