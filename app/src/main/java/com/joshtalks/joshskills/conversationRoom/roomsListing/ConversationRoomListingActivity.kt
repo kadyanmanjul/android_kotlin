@@ -7,6 +7,8 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -57,6 +59,8 @@ class ConversationRoomListingActivity : BaseActivity(),
         PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
         binding = ActivityConversationsRoomsListingBinding.inflate(layoutInflater)
         val view = binding.root
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        this.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(view)
         viewModel = ConversationRoomListingViewModel()
         setUpRecyclerView()
