@@ -96,7 +96,10 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        this.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        this.window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
         PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
         binding = ActivityConversationLiveRoomBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -849,6 +852,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
                 })
         bottomSheet.show(supportFragmentManager, "Bottom sheet")
+        bottomSheet.dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
     }
 
@@ -864,6 +868,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         val bottomSheet =
             RaisedHandsBottomSheet.newInstance(roomId ?: 0, moderatorUid, moderatorName)
         bottomSheet.show(supportFragmentManager, "Bottom sheet Hands Raised")
+        bottomSheet.dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
     private fun showEndRoomPopup() {

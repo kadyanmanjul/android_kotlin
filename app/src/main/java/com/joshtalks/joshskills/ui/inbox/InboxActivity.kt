@@ -136,6 +136,11 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 return@setOnMenuItemClickListener false
             }
         }
+        when(PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)){
+            true -> popupMenu?.menu?.findItem(R.id.menu_conversation_room)?.isVisible = true
+            false -> popupMenu?.menu?.findItem(R.id.menu_conversation_room)?.isVisible = false
+        }
+
         popupMenu?.show()
     }
 

@@ -48,7 +48,9 @@ data class UserProfileResponse(
     @SerializedName("certificates")
     val certificates: List<Certificate>?,
     @SerializedName("group_info")
-    val groupInfo: List<GroupInfo>?
+    val groupInfo: List<GroupInfo>?,
+    @SerializedName("is_conv_room_active")
+    val isConvRoomActive: Boolean
 )
 
 data class GroupInfo(
