@@ -395,6 +395,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.notificationBar.setRejectButtonText(rejectedText)
         binding.notificationBar.setAcceptButtonText(acceptedText)
         binding.notificationBar.setHeading(heading)
+        binding.notificationBar.startSound()
         binding.notificationBar.setBackgroundColor(true)
         if (runnable != null) {
             handler?.removeCallbacks(runnable)
@@ -415,6 +416,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun setRunnable() {
         runnable = Runnable {
             binding.notificationBar.visibility = View.GONE
+            binding.notificationBar.endSound()
         }
     }
 
@@ -424,6 +426,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.notificationBar.hideActionLayout()
         binding.notificationBar.setHeading(heading)
         binding.notificationBar.setBackgroundColor(isGreenColorNotification)
+        binding.notificationBar.startSound()
         hideNotificationAfter4seconds()
     }
 
@@ -432,6 +435,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.notificationBar.hideActionLayout()
         binding.notificationBar.setBackgroundColor(false)
         binding.notificationBar.setHeading("This room has ended")
+        binding.notificationBar.startSound()
         Handler(Looper.getMainLooper()).postDelayed({
             finish()
         }, 4000)
@@ -929,6 +933,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             engine?.leaveChannel()
             engine = null
         }
+        binding.notificationBar.destroyMediaPlayer()
         super.onDestroy()
 
     }

@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.conversationRoom.notification
 
 import android.content.Context
+import android.media.MediaPlayer
 import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -16,6 +17,7 @@ class NotificationView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
     private var enquiryAction: NotificationViewAction? = null
+    var mediaPlayer: MediaPlayer? = MediaPlayer.create(context, R.raw.ib_core_sound_new_message)
 
     interface NotificationViewAction {
         fun onAcceptNotification()
@@ -62,4 +64,17 @@ class NotificationView @JvmOverloads constructor(
     fun setNotificationViewEnquiryAction(action: NotificationViewAction) {
         this.enquiryAction = action
     }
+
+    fun startSound(){
+        mediaPlayer?.start()
+    }
+
+    fun endSound(){
+        mediaPlayer?.pause()
+    }
+
+    fun destroyMediaPlayer(){
+        mediaPlayer = null
+    }
+
 }
