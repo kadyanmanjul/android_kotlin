@@ -119,24 +119,28 @@ class DownloadMediaService : Service(), FetchListener {
         downloadService.execute {
             intent?.let {
                 if (it.hasExtra(DOWNLOAD_CHAT_OBJECT)) {
-                    val data = it.getParcelableExtra(DOWNLOAD_CHAT_OBJECT) as ChatModel
+                    val data = it.getParcelableExtra(DOWNLOAD_CHAT_OBJECT) as ChatModel?
                     showNotification(
                         downloadNotification(),
                         NotificationId.INCOMING_CALL_NOTIFICATION_ID
                     )
                     val url = it.getStringExtra(DOWNLOAD_FILE_URL)!!
                     val localAudioFile = AppDirectory.getAudioReceivedFile(url).absolutePath
-                    addDownload(data, url, localAudioFile)
+                    data?.run {
+                        addDownload(this, url, localAudioFile)
+                    }
                 } else if (it.hasExtra(DOWNLOAD_LESSON_QUESTION_OBJECT)) {
                     val data =
-                        it.getParcelableExtra(DOWNLOAD_LESSON_QUESTION_OBJECT) as LessonQuestion
+                        it.getParcelableExtra(DOWNLOAD_LESSON_QUESTION_OBJECT) as LessonQuestion?
                     showNotification(
                         downloadNotification(),
                         NotificationId.INCOMING_CALL_NOTIFICATION_ID
                     )
                     val url = it.getStringExtra(DOWNLOAD_FILE_URL)!!
                     val localAudioFile = AppDirectory.getAudioReceivedFile(url).absolutePath
-                    addDownload(data, url, localAudioFile)
+                    data?.run {
+                        addDownload(this, url, localAudioFile)
+                    }
                 } else {
                     return@execute
                 }

@@ -40,7 +40,7 @@ class PreviousLeaderboardActivity : WebRtcMiddlewareActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_previous_leaderboard)
         binding.lifecycleOwner = this
-        intervalType = intent.getStringExtra(INTERVAL_TYPE)
+        intervalType = intent.getStringExtra(INTERVAL_TYPE)?: EMPTY
         addObserver()
         initRV()
         initToolbar()

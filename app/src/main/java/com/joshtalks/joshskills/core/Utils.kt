@@ -27,7 +27,6 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import android.provider.Browser
 import android.provider.Settings
 import android.telephony.TelephonyManager
@@ -201,7 +200,7 @@ object Utils {
             val mmr = MediaMetadataRetriever()
             mmr.setDataSource(context, uri)
             val durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-            return durationStr.toLong()
+            return durationStr?.toLong()
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -225,7 +224,8 @@ object Utils {
     }
 
     fun getPathFromUri(path: String): String {
-        return Environment.getExternalStorageDirectory().toString().plus("/")
+        return AppObjectController.joshApplication.getExternalFilesDir(null)?.path.toString()
+            .plus("/")
             .plus(path.split(Regex("/"), 3)[2])
     }
 

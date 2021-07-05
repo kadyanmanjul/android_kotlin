@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.core.custom_ui
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +7,7 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.findSuitableParent
+import timber.log.Timber
 
 class PointSnackbar(
     parent: ViewGroup,
@@ -52,7 +52,7 @@ class PointSnackbar(
                     .setAnimationMode(ANIMATION_MODE_SLIDE)
 
             } catch (e: Exception) {
-                Log.v("exception ", e.message)
+                Timber.e(e)
             }
 
             return null

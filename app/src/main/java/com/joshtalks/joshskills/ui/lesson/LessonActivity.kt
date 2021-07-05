@@ -115,7 +115,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         whatsappUrl =
             if (intent.hasExtra(WHATSAPP_URL) && intent.getStringExtra(WHATSAPP_URL).isNullOrBlank()
                     .not()
-            ) intent.getStringExtra(WHATSAPP_URL) else EMPTY
+            ) intent.getStringExtra(WHATSAPP_URL)?: EMPTY else EMPTY
         testId = intent.getIntExtra(TEST_ID, -1)
 
         titleView = findViewById(R.id.text_message_title)

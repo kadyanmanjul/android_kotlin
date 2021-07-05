@@ -178,7 +178,7 @@ class OnBoardingActivityNew : CoreJoshActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == 1343 && data != null) {
             if (data.hasExtra("result")) {
-                val courseIds = data.getIntegerArrayListExtra("result")
+                val courseIds = data.getIntegerArrayListExtra("result")?: arrayListOf()
                 if (courseIds.isNotEmpty()) {
                     CoroutineScope(Dispatchers.Main).launch {
                         supportFragmentManager.popBackStack()
