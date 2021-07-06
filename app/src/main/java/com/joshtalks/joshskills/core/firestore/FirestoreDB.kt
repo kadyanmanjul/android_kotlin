@@ -7,7 +7,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 
 const val COLLECTION_AGORA_USER_STATE = "AgoraUserState"
 const val COLLECTION_AGORA_CHANNEL_STATE = "AgoraChannelState"
-const val COLLECTION_AGORA_NOTIFICATION = "AgoraNotification"
+const val COLLECTION_AGORA_NOTIFICATION = "Notifications"
 
 object FirestoreDB {
 
