@@ -20,6 +20,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBottomSheet
 import com.joshtalks.joshskills.conversationRoom.bottomsheet.ConversationRoomBottomSheetAction
@@ -32,7 +33,6 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.firestore.FireStoreDatabase
 import com.joshtalks.joshskills.core.interfaces.ConversationLiveRoomSpeakerClickAction
 import com.joshtalks.joshskills.core.setUserImageRectOrInitials
 import com.joshtalks.joshskills.databinding.ActivityConversationLiveRoomBinding
@@ -57,7 +57,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     NotificationView.NotificationViewAction {
     lateinit var binding: ActivityConversationLiveRoomBinding
     lateinit var viewModel: ConversationLiveRoomViewModel
-    val database = FireStoreDatabase.getInstance()
+    val database = FirebaseFirestore.getInstance()
     var roomReference: DocumentReference? = null
     var usersReference: CollectionReference? = null
 

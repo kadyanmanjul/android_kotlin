@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.material.textview.MaterialTextView
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
@@ -23,7 +24,6 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
-import com.joshtalks.joshskills.core.firestore.FireStoreDatabase
 import com.joshtalks.joshskills.core.interfaces.ConversationRoomListAction
 import com.joshtalks.joshskills.core.setUserImageRectOrInitials
 import com.joshtalks.joshskills.databinding.ActivityConversationsRoomsListingBinding
@@ -41,7 +41,7 @@ import io.reactivex.schedulers.Schedulers
 class ConversationRoomListingActivity : BaseActivity(),
     ConversationRoomListAction {
 
-    private val db = FireStoreDatabase.getInstance()
+    private val db = FirebaseFirestore.getInstance()
     private val notebookRef = db.collection("conversation_rooms")
     private var adapter: ConversationRoomsListingAdapter? = null
     lateinit var viewModel: ConversationRoomListingViewModel

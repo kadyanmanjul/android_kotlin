@@ -12,7 +12,6 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.LiveRoomUser
-import com.joshtalks.joshskills.core.firestore.FireStoreDatabase
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.LiBottomSheetRaisedHandsBinding
 
@@ -124,7 +123,7 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun sendNotification(type: String, fromUid: String?, toUiD: String, toName: String) {
-        FireStoreDatabase.getInstance().collection("conversation_rooms").document(roomId.toString())
+        FirebaseFirestore.getInstance().collection("conversation_rooms").document(roomId.toString())
             .collection("notifications").document().set(
                 hashMapOf(
                     "from" to hashMapOf(
@@ -138,7 +137,7 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
                     "type" to type
                 )
             ).addOnSuccessListener {
-                FireStoreDatabase.getInstance().collection("conversation_rooms")
+                FirebaseFirestore.getInstance().collection("conversation_rooms")
                     .document(roomId.toString())
                     .collection("users").document(toUiD).update("is_speaker_invite_sent", true)
                     .addOnFailureListener {
