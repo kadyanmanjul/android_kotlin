@@ -107,7 +107,7 @@ class WebRtcService : BaseWebRtcService() {
 
     companion object {
         private val TAG = WebRtcService::class.java.simpleName
-        var phoneCallState = CallState.CALL_STATE_IDLE
+        var pstnCallState = CallState.CALL_STATE_IDLE
 
         var isOnPstnCall = false
 
@@ -420,7 +420,7 @@ class WebRtcService : BaseWebRtcService() {
 
         private fun lostNetwork(time: Long = callDisconnectTime) {
             callCallback?.get()?.onNetworkLost()
-            if (phoneCallState == CallState.CALL_STATE_IDLE) {
+            if (pstnCallState == CallState.CALL_STATE_IDLE) {
                 addTimerReconnect(time)
                 joshAudioManager?.startConnectTone()
             }
@@ -483,7 +483,7 @@ class WebRtcService : BaseWebRtcService() {
             mHandler = Handler(handlerThread.looper) { msg ->
                 when (msg.what) {
                     CallState.UNHOLD.state -> {
-                        phoneCallState = CallState.CALL_STATE_IDLE
+                        pstnCallState = CallState.CALL_STATE_IDLE
                         if (holdCallByMe) {
                             mRtcEngine?.connectionState
                             callData?.let {
@@ -497,7 +497,7 @@ class WebRtcService : BaseWebRtcService() {
                         callCallback?.get()?.onUnHoldCall()
                     }
                     CallState.ONHOLD.state -> {
-                        phoneCallState = CallState.CALL_STATE_CONNECTED
+                        pstnCallState = CallState.CALL_STATE_CONNECTED
                         holdCallByMe = true
                         mRtcEngine?.muteAllRemoteAudioStreams(true)
                         mRtcEngine?.muteLocalAudioStream(true)
@@ -539,7 +539,7 @@ class WebRtcService : BaseWebRtcService() {
             when (state) {
                 TelephonyManager.CALL_STATE_IDLE -> {
                     isOnPstnCall = false
-                    phoneCallState = CallState.CALL_STATE_IDLE
+                    pstnCallState = CallState.CALL_STATE_IDLE
                     mRtcEngine?.muteAllRemoteAudioStreams(false)
                     mRtcEngine?.muteLocalAudioStream(false)
                     mRtcEngine?.enableLocalAudio(true)
@@ -562,7 +562,7 @@ class WebRtcService : BaseWebRtcService() {
                 }
                 else -> {
                     isOnPstnCall = true
-                    phoneCallState = CallState.CALL_STATE_BUSY
+                    pstnCallState = CallState.CALL_STATE_BUSY
                 }
             }
         }
@@ -579,7 +579,7 @@ class WebRtcService : BaseWebRtcService() {
         super.onCreate()
         Timber.tag(TAG).e("onCreate")
         initIncomingCallChannel()
-        phoneCallState = CallState.CALL_STATE_IDLE
+        pstnCallState = CallState.CALL_STATE_IDLE
         handlerThread.start()
         mHandler = Handler(handlerThread.looper)
         CoroutineScope(Dispatchers.IO).launch {
@@ -675,7 +675,7 @@ class WebRtcService : BaseWebRtcService() {
                                 Timber.tag(TAG).e("LibraryInit")
                             }
                             this == IncomingCall().action -> {
-                                if (CallState.CALL_STATE_BUSY == phoneCallState || isCallOnGoing.value == true) {
+                                if (CallState.CALL_STATE_BUSY == pstnCallState || isCallOnGoing.value == true) {
                                     return@initEngine
                                 }
                                 val data =
@@ -1184,7 +1184,7 @@ class WebRtcService : BaseWebRtcService() {
         isSpeakerEnabled = false
         isMicEnabled = true
         oppositeCallerId = null
-        phoneCallState = CallState.CALL_STATE_IDLE
+        pstnCallState = CallState.CALL_STATE_IDLE
         compositeDisposable.clear()
     }
 
@@ -1238,7 +1238,7 @@ class WebRtcService : BaseWebRtcService() {
         switchChannel = false
         TelephonyUtil.getManager(this)
             .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_NONE)
-        phoneCallState = CallState.CALL_STATE_IDLE
+        pstnCallState = CallState.CALL_STATE_IDLE
         Timber.tag(TAG).e("onDestroy")
         // removeSensor()
         executor.shutdown()

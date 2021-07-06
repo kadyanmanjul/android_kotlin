@@ -46,6 +46,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -283,8 +284,8 @@ class WebRtcActivity : AppCompatActivity() {
                 binding.connectionLost.text = getString(R.string.ringing)
                 binding.connectionLost.visibility = View.VISIBLE
                 binding.callTime.visibility = View.INVISIBLE
-                setUserInfo(pId.toString())
                 viewModel.initMissedCall(pId.toString(), ::callback)
+                setUserInfo(pId.toString())
                 (getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager?)?.cancel(pId.hashCode())
             }
         }
@@ -514,6 +515,7 @@ class WebRtcActivity : AppCompatActivity() {
 //            return
 //        }
         lifecycleScope.launch(Dispatchers.IO) {
+            delay(750)
             try {
                 val userInfo = mBoundService?.getOppositeUserInfo()
                 val userDetails =
@@ -557,7 +559,7 @@ class WebRtcActivity : AppCompatActivity() {
     private fun startCallTimer() {
         binding.callTime.base = SystemClock.elapsedRealtime() - getCallTime()
         binding.callTime.start()
-        if (WebRtcService.phoneCallState == CallState.CALL_STATE_IDLE) {
+        if (WebRtcService.pstnCallState == CallState.CALL_STATE_IDLE) {
             binding.connectionLost.visibility = View.INVISIBLE
             binding.callTime.visibility = View.VISIBLE
         } else {
