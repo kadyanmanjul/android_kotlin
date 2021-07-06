@@ -974,10 +974,11 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     fun isCallConnected(): Boolean {
-        return (mRtcEngine?.connectionState == Constants.CONNECTION_STATE_CONNECTING ||
+        return ((mRtcEngine?.connectionState == Constants.CONNECTION_STATE_CONNECTING ||
                 mRtcEngine?.connectionState == Constants.CONNECTION_STATE_CONNECTED ||
-                mRtcEngine?.connectionState == Constants.CONNECTION_STATE_RECONNECTING ||
-                isCallOnGoing.value == true)
+                mRtcEngine?.connectionState == Constants.CONNECTION_STATE_RECONNECTING) &&
+                isCallOnGoing.value == true &&
+                isCallerJoined)
     }
 
     fun timeoutCaller() {
