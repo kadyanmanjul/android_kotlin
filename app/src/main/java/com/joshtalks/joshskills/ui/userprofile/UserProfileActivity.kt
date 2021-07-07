@@ -544,8 +544,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }*/
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
-            ImagePicker.getFilePath(data)?.let {
-                addUserImageInView(it)
+            val url= data?.data?.path?: EMPTY
+            if (url.isNotBlank()){
+                addUserImageInView(url)
             }
         } else if (resultCode == ImagePicker.RESULT_ERROR) {
             Timber.e(ImagePicker.getError(data))

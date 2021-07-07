@@ -23,7 +23,6 @@ import com.facebook.GraphRequest
 import com.facebook.login.LoginBehavior
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
-import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -37,6 +36,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SignUpStepStatus
@@ -355,13 +355,11 @@ class SignUpActivity : BaseActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val url = ImagePicker.getFilePath(data)
-        if (url.isNullOrBlank().not() && resultCode == Activity.RESULT_OK) {
-            ImagePicker.getFilePath(data)?.let {
-                val imageUpdatedPath = AppDirectory.getImageSentFilePath()
-                AppDirectory.copy(it, imageUpdatedPath)
-                viewModelForDpUpload.uploadMedia(imageUpdatedPath)
-            }
+        val url = data?.data?.path ?: EMPTY
+        if (url.isNotBlank() && resultCode == Activity.RESULT_OK) {
+            val imageUpdatedPath = AppDirectory.getImageSentFilePath()
+            AppDirectory.copy(url, imageUpdatedPath)
+            viewModelForDpUpload.uploadMedia(imageUpdatedPath)
         } else if (requestCode == GOOGLE_SIGN_UP_REQUEST_CODE) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
