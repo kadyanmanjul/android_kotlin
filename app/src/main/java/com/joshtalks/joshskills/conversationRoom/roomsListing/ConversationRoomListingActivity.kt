@@ -5,6 +5,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -49,6 +51,8 @@ class ConversationRoomListingActivity : BaseActivity(),
     private val compositeDisposable = CompositeDisposable()
     private var internetAvailableFlag: Boolean = true
     private var isBackPressed: Boolean = false
+    var isActivityOpenFromNotification: Boolean = false
+    var roomId: String = ""
 
     companion object {
         var CONVERSATION_ROOM_VISIBLE_TRACK_FLAG: Boolean = true
@@ -60,9 +64,14 @@ class ConversationRoomListingActivity : BaseActivity(),
         binding = ActivityConversationsRoomsListingBinding.inflate(layoutInflater)
         val view = binding.root
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        this.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        this.window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
         setContentView(view)
         viewModel = ConversationRoomListingViewModel()
+        isActivityOpenFromNotification = intent.getBooleanExtra("open_from_notification", false)
+        roomId = intent?.getStringExtra("room_id") ?: ""
         setUpRecyclerView()
         setFlagInWebRtcServie()
         viewModel.makeEnterExitConversationRoom(true)
@@ -99,6 +108,23 @@ class ConversationRoomListingActivity : BaseActivity(),
                 )
             }
         })
+
+        if (isActivityOpenFromNotification) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (roomId.isNotEmpty()) {
+                    notebookRef.document(roomId).get().addOnSuccessListener {
+                        viewModel.joinRoom(
+                            ConversationRoomsListingItem(
+                                it["channel_name"]?.toString() ?: "",
+                                it["topic"]?.toString(),
+                                it["started_by"]?.toString()?.toInt(),
+                                roomId.toInt()
+                            )
+                        )
+                    }
+                }
+            }, 200)
+        }
 
     }
 

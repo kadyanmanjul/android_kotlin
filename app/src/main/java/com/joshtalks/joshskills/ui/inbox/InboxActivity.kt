@@ -146,6 +146,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun openConversationRoom() {
         val intent = Intent(this, ConversationRoomListingActivity::class.java)
+        intent.putExtra("open_from_notification", false)
+        intent.putExtra("room_id", "")
         startActivity(intent)
     }
 

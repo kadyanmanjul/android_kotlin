@@ -156,6 +156,9 @@ enum class NotificationAction(val type: String) {
     @SerializedName("GROUP_CHAT_PIN_MESSAGE")
     GROUP_CHAT_PIN_MESSAGE("GROUP_CHAT_PIN_MESSAGE"),
 
+    @SerializedName("JOIN_CONVERSATION_ROOM")
+    JOIN_CONVERSATION_ROOM("JOIN_CONVERSATION_ROOM")
+
 }
 
 enum class NotificationChannelNames(val type: String) {

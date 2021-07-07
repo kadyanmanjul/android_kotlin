@@ -39,6 +39,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingActivity
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
 import com.joshtalks.joshskills.core.AppObjectController
@@ -410,11 +411,14 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             }
             NotificationAction.INCOMING_CALL_NOTIFICATION -> {
                 if (User.getInstance().isVerified && !PrefManager.getBoolValue(
-                        IS_CONVERSATION_ROOM_ACTIVE)
+                        IS_CONVERSATION_ROOM_ACTIVE
+                    )
                 ) {
                     incomingCallNotificationAction(notificationObject.actionData)
-                }else if (PrefManager.getBoolValue(
-                        IS_CONVERSATION_ROOM_ACTIVE)){
+                } else if (PrefManager.getBoolValue(
+                        IS_CONVERSATION_ROOM_ACTIVE
+                    )
+                ) {
                     callForceDisconnect()
                 }
                 return null
@@ -520,7 +524,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         WebRtcService.disconnectCallFromCallie()
     }
 
-    private fun declineCallWhenInConversationRoom(actionData: String?){
+    private fun declineCallWhenInConversationRoom(actionData: String?) {
         actionData?.let {
             try {
                 val obj = JSONObject(it)
@@ -530,10 +534,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 data["call_response"] = "DECLINE"
 
                 WebRtcService.rejectCall()
-                CoroutineScope(Dispatchers.IO).launch{
+                CoroutineScope(Dispatchers.IO).launch {
                     AppObjectController.p2pNetworkService.getAgoraCallResponse(data)
                 }
-            }catch (t: Throwable){
+            } catch (t: Throwable) {
                 t.printStackTrace()
             }
         }
@@ -1012,7 +1016,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         @RequiresApi(Build.VERSION_CODES.N)
         private var importance = NotificationManager.IMPORTANCE_DEFAULT
 
-        public fun sendFirestoreNotification(
+        fun sendFirestoreNotification(
             notificationObject: NotificationObject,
             context: Context
         ) {
@@ -1157,6 +1161,12 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         }
                     }
                     null
+                }
+                NotificationAction.JOIN_CONVERSATION_ROOM ->{
+                    val intent = Intent(AppObjectController.joshApplication, ConversationRoomListingActivity::class.java)
+                    intent.putExtra("open_from_notification", true)
+                    intent.putExtra("room_id", actionData)
+                    return intent
                 }
                 else -> {
                     null

@@ -23,6 +23,13 @@ class ConversationRoomsListingItem {
         this.topic = topic
     }
 
+    constructor(channel_name: String, topic: String?, started_by: Int?, room_id: Int?) {
+        this.channel_name = channel_name
+        this.topic = topic
+        this.started_by = started_by
+        this.room_id = room_id
+    }
+
     fun addUser(item: ConversationRoomSpeakerList){
         if (users == null) {
             users = arrayListOf()
