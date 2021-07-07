@@ -170,17 +170,22 @@ class PdfCourseProgressView : FrameLayout {
 
             //progressLayout.visibility = View.GONE
 
-
-            if (PermissionUtils.isStoragePermissionEnabled(context) && AppDirectory.getFileSize(
-                    File(
-                        AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath
-                    )
-                ) > 0
-            ) {
-                fileDownloadSuccess()
-            } else {
+            try {
+                if (PermissionUtils.isStoragePermissionEnabled(context) && AppDirectory.getFileSize(
+                        File(
+                            AppDirectory.docsReceivedFile(it.coursePdfUrl).absolutePath
+                        )
+                    ) > 0
+                ) {
+                    fileDownloadSuccess()
+                } else {
+                    fileNotDownloadView()
+                }
+            } catch (ex:Exception){
+                ex.printStackTrace()
                 fileNotDownloadView()
             }
+
         }
 
     }
