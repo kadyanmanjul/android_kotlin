@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.core.io
 
 import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.text.format.DateUtils
@@ -32,12 +31,9 @@ object AppDirectory {
 
 
     fun getRootDirectoryPath(): File {
-        val rootPath = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q)
-            Environment.getExternalStorageDirectory().toString()
-        else Environment.getStorageDirectory().path.toString()
 
         val f = File(
-            rootPath + File.separator + APP_DIRECTORY
+            Environment.getStorageDirectory().path.toString() + File.separator + APP_DIRECTORY
         )
         if (f.exists().not()) {
             f.mkdirs()
@@ -50,20 +46,12 @@ object AppDirectory {
      * this code is using for received audio file
      **/
 
-    private val AUDIO_RECEIVED_PATH =
-        Environment.getExternalStorageDirectory()
-            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppAudio/"
-
     private val AUDIO_RECEIVED_MIGRATED_PATH =
         AppObjectController.joshApplication.getExternalFilesDir(null)
             .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppAudio/"
 
     fun getAudioReceivedFile(path: String): File {
-        val rootPath = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-            AUDIO_RECEIVED_PATH
-        } else {
-            AUDIO_RECEIVED_MIGRATED_PATH
-        }
+        val rootPath = AUDIO_RECEIVED_MIGRATED_PATH
         val f = File(rootPath)
         if (f.exists().not()) {
             f.mkdirs()
@@ -82,21 +70,13 @@ object AppDirectory {
      * this code is using for sent audio file
      *
      * */
-    private val AUDIO_SENT_PATH =
-        Environment.getExternalStorageDirectory()
-            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppAudio/Sent"
-
     private val AUDIO_SENT_MIGRATED_PATH =
         AppObjectController.joshApplication.getExternalFilesDir(null)
             .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppAudio/Sent"
 
     fun getAudioSentFile(path: String?, audioExtension: String = AUDIO_EXTENSION): File {
 
-        val rootPath = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-            AUDIO_SENT_PATH
-        } else {
-            AUDIO_SENT_MIGRATED_PATH
-        }
+        val rootPath = AUDIO_SENT_MIGRATED_PATH
         val f = File(rootPath)
         if (f.exists().not()) {
             f.mkdirs()
@@ -120,21 +100,12 @@ object AppDirectory {
     /**
      * this code is using for received audio file
      **/
-
-    private val IMAGE_RECEIVED_PATH =
-        Environment.getExternalStorageDirectory()
-            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppImages/"
-
     private val IMAGE_RECEIVED_MIGRATED_PATH =
         AppObjectController.joshApplication.getExternalFilesDir(null)
             .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppImages/"
 
     fun getImageReceivedFile(path: String?): File {
-        val rootPath = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-            IMAGE_RECEIVED_PATH
-        } else {
-            IMAGE_RECEIVED_MIGRATED_PATH
-        }
+        val rootPath = IMAGE_RECEIVED_MIGRATED_PATH
 
         val f = File(rootPath)
         if (f.exists().not()) {
@@ -153,21 +124,12 @@ object AppDirectory {
     /**
      * this code is using for sent file
      **/
-
-    private val FILE_SENT_PATH =
-        Environment.getExternalStorageDirectory()
-            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppFiles/Sent"
-
     private val FILE_SENT_MIGRATED_PATH =
         AppObjectController.joshApplication.getExternalFilesDir(null)
             .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppFiles/Sent"
 
     fun getSentFile(fileName: String): File {
-        val rootPath = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-            FILE_SENT_PATH
-        } else {
-            FILE_SENT_MIGRATED_PATH
-        }
+        val rootPath = FILE_SENT_MIGRATED_PATH
 
         val f = File(rootPath)
         if (f.exists().not()) {
@@ -187,20 +149,12 @@ object AppDirectory {
      * this code is using for sent audio file
      *
      * */
-    private val IMAGE_SENT_PATH =
-        Environment.getExternalStorageDirectory()
-            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppImages/Sent"
-
     private val IMAGE_SENT_MIGRATED_PATH =
         AppObjectController.joshApplication.getExternalFilesDir(null)
             .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppImages/Sent"
 
     fun getImageSentFile(path: String?): File {
-        val rootPath = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-            IMAGE_SENT_PATH
-        } else {
-            IMAGE_SENT_MIGRATED_PATH
-        }
+        val rootPath = IMAGE_SENT_MIGRATED_PATH
         val f = File(rootPath)
         if (f.exists().not()) {
             f.mkdirs()
@@ -220,22 +174,13 @@ object AppDirectory {
         return file
     }
 
-
-    private val DOCS_RECEIVED_PATH =
-        Environment.getExternalStorageDirectory()
-            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppDocuments/"
-
     private val DOCS_RECEIVED_MIGRATED_PATH =
         AppObjectController.joshApplication.getExternalFilesDir(null)
             .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppDocuments/"
 
 
     fun docsReceivedFile(url: String): File {
-        val rootPath = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-            DOCS_RECEIVED_PATH
-        } else {
-            DOCS_RECEIVED_MIGRATED_PATH
-        }
+        val rootPath = DOCS_RECEIVED_MIGRATED_PATH
 
         val f = File(rootPath)
         if (f.exists().not()) {
@@ -247,12 +192,6 @@ object AppDirectory {
         return file
     }
 
-
-    private val VIDEO_RECEIVED_PATH =
-        Environment.getExternalStorageDirectory()
-            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppVideos/"
-
-
     private val VIDEO_RECEIVED_MIGRATED_PATH =
         AppObjectController.joshApplication.getExternalFilesDir(null)
             .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppVideos/"
@@ -260,11 +199,7 @@ object AppDirectory {
 
     @JvmStatic
     fun getVideoDownloadDirectory(): File {
-        val rootPath = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-            VIDEO_RECEIVED_PATH
-        } else {
-            VIDEO_RECEIVED_MIGRATED_PATH
-        }
+        val rootPath = VIDEO_RECEIVED_MIGRATED_PATH
 
         val f = File(rootPath)
         if (f.exists().not()) {
@@ -275,11 +210,6 @@ object AppDirectory {
     }
 
 
-    val VIDEO_SENT_PATH =
-        Environment.getExternalStorageDirectory()
-            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppVideos/Sent"
-
-
     val VIDEO_SENT_MIGRATED_PATH =
         AppObjectController.joshApplication.getExternalFilesDir(null)
             .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppVideos/Sent"
@@ -288,11 +218,6 @@ object AppDirectory {
     val VIDEO_CACHED_RECEIVED_PATH =
         AppObjectController.joshApplication.getExternalFilesDir(null)
             .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp/cached"
-
-
-    val TEMP_PATH =
-        Environment.getExternalStorageDirectory()
-            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppTemp"
 
     val TEMP_MIGRATED_PATH =
         AppObjectController.joshApplication.getExternalFilesDir(null)
@@ -352,11 +277,7 @@ object AppDirectory {
 
 
     fun imageSentFile(): File {
-        val rootPath = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-            IMAGE_SENT_PATH
-        } else {
-            IMAGE_SENT_MIGRATED_PATH
-        }
+        val rootPath = IMAGE_SENT_MIGRATED_PATH
         val f = File(rootPath)
         if (f.exists().not()) {
             f.mkdirs()
@@ -373,11 +294,7 @@ object AppDirectory {
     }
 
     fun imageReceivedFile(): File {
-        val rootPath = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-            IMAGE_RECEIVED_PATH
-        } else {
-            IMAGE_RECEIVED_MIGRATED_PATH
-        }
+        val rootPath = IMAGE_RECEIVED_MIGRATED_PATH
         val f = File(rootPath)
         if (f.exists().not()) {
             f.mkdirs()
@@ -390,11 +307,7 @@ object AppDirectory {
 
 
     fun videoReceivedFile(): File {
-        val rootPath = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-            VIDEO_RECEIVED_PATH
-        } else {
-            VIDEO_RECEIVED_MIGRATED_PATH
-        }
+        val rootPath = VIDEO_RECEIVED_MIGRATED_PATH
 
         val f = File(rootPath)
         if (f.exists().not()) {
@@ -407,11 +320,7 @@ object AppDirectory {
     }
 
     fun videoSentFile(): File {
-        val rootPath = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-            VIDEO_SENT_PATH
-        } else {
-            VIDEO_SENT_MIGRATED_PATH
-        }
+        val rootPath = VIDEO_SENT_MIGRATED_PATH
 
         val f = File(rootPath)
         if (f.exists().not()) {
@@ -521,11 +430,7 @@ object AppDirectory {
     }
 
     fun getTempPath(): String {
-        val rootPath = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-            TEMP_PATH
-        } else {
-            TEMP_MIGRATED_PATH
-        }
+        val rootPath = TEMP_MIGRATED_PATH
 
         val f = File(rootPath)
         if (f.exists().not()) {
