@@ -270,6 +270,25 @@
                 app:layout_constraintTop_toBottomOf="@+id/p2p_setting" />
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/privacy_policy_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:background="@color/white"
+                android:drawablePadding="@dimen/_8sdp"
+                android:gravity="center_vertical"
+                android:onClick="@{()->handler.onPrivacyPolicyClicked()}"
+                android:paddingVertical="@dimen/_12sdp"
+                android:paddingStart="@dimen/_8sdp"
+                android:paddingEnd="@dimen/_8sdp"
+                android:text="@string/privacy_policy"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                app:drawableStartCompat="@drawable/ic_privacy_policy"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rate_us_tv" />
+
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/sign_out_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -286,7 +305,7 @@
                 app:drawableStartCompat="@drawable/ic_signout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rate_us_tv" />
+                app:layout_constraintTop_toBottomOf="@+id/privacy_policy_tv" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.AppCompatImageView

@@ -884,5 +884,6 @@
     <string name="fname_error_toast">Father name cannot be empty!</string>
     <string name="certificate_download_success">Congratulations, your certificate has been downloaded</string>
     <string name="my_batch">My Batch</string>
+    <string name="privacy_policy">Privacy Policy</string>
 
 </resources>
