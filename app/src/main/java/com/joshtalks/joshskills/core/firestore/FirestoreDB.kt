@@ -54,8 +54,8 @@ object FirestoreDB {
                             if (it.action != FirestoreNotificationAction.CALL_RECEIVE_NOTIFICATION) {
                                 Timber.d("FSDB : NotificationListener : $it")
                                 listener.onReceived(it)
+                                removeNotificationAfterRead(mentorId)
                             }
-                            removeNotificationAfterRead(mentorId)
                         }
                     } catch (ex: Exception) {
                         ex.printStackTrace()
