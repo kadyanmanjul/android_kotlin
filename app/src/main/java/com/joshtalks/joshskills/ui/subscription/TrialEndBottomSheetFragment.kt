@@ -1,19 +1,18 @@
 package com.joshtalks.joshskills.ui.subscription
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.databinding.FragmentTrialEndBottomsheetBinding
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
+import com.joshtalks.joshskills.ui.userprofile.UserPicChooserFragment
 
 const val TRIAL_TEST_ID = 13
 
@@ -36,25 +35,10 @@ class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        val isSubscriptionEnded = PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED, false)
-
-        binding.txtTrialEndMsg.text = if (isSubscriptionEnded) {
-            AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_END_SCREEN_MESSAGE)
-        } else {
-            AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.TRAIL_END_SCREEN_MESSAGE)
-        }
-
-        binding.btnUnlock.text = if (isSubscriptionEnded) {
-            AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_END_SCREEN_CTA_LABEL)
-        } else {
-            AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.TRAIL_END_SCREEN_CTA_LABEL)
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        isCancelable=false
     }
 
     fun cancel() {
@@ -68,13 +52,24 @@ class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
     fun unlockCourses() {
         PaymentSummaryActivity.startPaymentSummaryActivity(
             requireActivity(),
-            PrefManager.getIntValue(SUBSCRIPTION_TEST_ID).toString()
+            "151"
         )
     }
 
     companion object {
         @JvmStatic
         fun newInstance() = TrialEndBottomSheetFragment()
+
+        fun showDialog(
+            supportFragmentManager: FragmentManager) {
+            val fragmentTransaction = supportFragmentManager.beginTransaction()
+            val prev = supportFragmentManager.findFragmentByTag(UserPicChooserFragment.TAG)
+            if (prev != null) {
+                fragmentTransaction.remove(prev)
+            }
+            fragmentTransaction.addToBackStack(null)
+            newInstance().show(supportFragmentManager, UserPicChooserFragment.TAG)
+        }
     }
 
 }

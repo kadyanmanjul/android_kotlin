@@ -63,6 +63,7 @@ import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
+import com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.video_player.*
 import com.joshtalks.joshskills.ui.view_holders.*
@@ -227,6 +228,18 @@ class ConversationActivity :
         addObservable()
         fetchMessage()
         readMessageDatabaseUpdate()
+        if(inboxEntity.isCapsuleCourse){
+            if (inboxEntity.isCourseLocked || System.currentTimeMillis().minus(inboxEntity.created?:0)>86400000)
+            {
+                initEndTrialBottomSheet()
+            }
+        }
+    }
+
+    private fun initEndTrialBottomSheet() {
+        TrialEndBottomSheetFragment.showDialog(
+            supportFragmentManager
+        )
     }
 
     private fun initToolbar() {

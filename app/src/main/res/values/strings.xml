@@ -355,7 +355,7 @@
     <string name="start_subscription">Start 1-Year Subscription</string>
     <string name="enjoy_free_trial">Enjoy Your Free Trial!</string>
     <string name="convert">Upgrade</string>
-    <string name="trial_ended">Your 7 day trial has ended!\nKya aapko mazaa aaya?\nAccess all your courses now.</string>
+    <string name="trial_ended">Your 2 day trial has ended! Kya aapko mazaa aaya?\nAccess this courses now.</string>
     <string name="unlock_all_courses">Unlock All Courses</string>
     <string name="get_one_year_pass">Get All Course Access Pass</string>
     <string name="free_trial_ended">Free trial has ended</string>
@@ -894,5 +894,7 @@
     <string name="grammar_unlock_text">क्लास शुरू करने के लिए नीचे बटन को दबाएं </string>
     <string name="grammar_continue_test_text">क्लास जारी रखने के लिए नीचे बटन को दबाएं </string>
     <string name="grammar_input_question_hint">अंग्रेजी में जवाब लिखे </string>
+    <string name="start_free_trial">Start Free Trial</string>
+    <string name="start_2day_trial">Start 2 days Free Trial</string>
 
 </resources>

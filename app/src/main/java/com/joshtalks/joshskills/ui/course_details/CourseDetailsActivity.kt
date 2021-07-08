@@ -794,7 +794,11 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
     private fun updateButtonText(discountedPrice: Double) {
         if (discountedPrice == 0.0) {
-            binding.btnStartCourse.text = getString(R.string.start_free_course)
+            if (PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED)) {
+                binding.btnStartCourse.text = getString(R.string.start_free_course)
+            }else {
+                binding.btnStartCourse.text = getString(R.string.start_free_trial)
+            }
             binding.btnStartCourse.textSize = 16f
         }
 

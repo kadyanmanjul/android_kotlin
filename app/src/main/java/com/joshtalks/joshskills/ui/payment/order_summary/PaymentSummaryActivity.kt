@@ -260,8 +260,12 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                             .roundToInt()
                     }"
             } else {
-                binding.materialButton.text = AppObjectController.getFirebaseRemoteConfig()
-                    .getString(PAYMENT_SUMMARY_CTA_LABEL_FREE)
+                if (PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED)) {
+                    binding.materialButton.text = AppObjectController.getFirebaseRemoteConfig()
+                        .getString(PAYMENT_SUMMARY_CTA_LABEL_FREE)
+                }else {
+                    binding.materialButton.text = getString(R.string.start_2day_trial)
+                }
             }
 
             if (couponApplied) {

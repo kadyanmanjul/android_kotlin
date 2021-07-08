@@ -60,6 +60,9 @@ data class Course(
     @ColumnInfo(name = "is_points_active")
     @SerializedName("is_points_active") val isPointsActive: Boolean = false,
 
+    @ColumnInfo(name = "is_course_locked")
+    @SerializedName("is_course_locked") val isCourseLocked: Boolean = false
+
 ) : Serializable
 
 @Dao

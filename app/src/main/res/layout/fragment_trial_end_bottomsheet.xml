@@ -14,7 +14,7 @@
             android:id="@+id/parent_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/black">
+            android:background="@color/transparent">
 
         <View
                 android:id="@+id/view"
@@ -42,9 +42,10 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/txt_trial_end_msg"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"
                 android:gravity="center"
                 android:text="@string/trial_ended"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
@@ -69,7 +70,7 @@
                 android:onClick="@{()->handler.unlockCourses()}"
                 android:paddingTop="@dimen/_10sdp"
                 android:paddingBottom="@dimen/_10sdp"
-                android:text="@string/unlock_all_courses"
+                android:text="@string/buy_course"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:textColor="@color/white"
                 app:cornerRadius="@dimen/_16sdp"
