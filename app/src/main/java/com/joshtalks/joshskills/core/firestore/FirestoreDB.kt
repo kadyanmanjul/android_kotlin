@@ -1,8 +1,11 @@
 package com.joshtalks.joshskills.core.firestore
 
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.joshtalks.joshskills.core.LAST_FIRESTORE_NOTIFICATION_TIME
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.FirestoreNotificationAction
 import com.joshtalks.joshskills.repository.local.model.FirestoreNotificationObject
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -26,14 +29,21 @@ object FirestoreDB {
             .addOnSuccessListener { querySnapshot ->
                 try {
                     querySnapshot.toObject(FirestoreNotificationObject::class.java)?.let {
-                        Timber.d("FSDB : Notification : $it")
-                        onSuccess(it)
-                        removeNotificationAfterRead(mentorId)
+                        if (isNotificationLatest(it)) {
+                            Timber.d("FSDB : Notification : $it")
+                            saveCurrentNotificationTime(it.modified!!.seconds)
+                            onSuccess(it)
+                            // removeNotificationAfterRead(mentorId)
+                        }
                     }
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                 }
             }
+    }
+
+    private fun saveCurrentNotificationTime(timeInSec: Long) {
+        PrefManager.put(LAST_FIRESTORE_NOTIFICATION_TIME, timeInSec)
     }
 
     fun setNotificationListener(
@@ -51,10 +61,13 @@ object FirestoreDB {
                             return@addSnapshotListener
                         }
                         querySnapshot.toObject(FirestoreNotificationObject::class.java)?.let {
-                            if (it.action != FirestoreNotificationAction.CALL_RECEIVE_NOTIFICATION) {
+                            if (it.action != FirestoreNotificationAction.CALL_RECEIVE_NOTIFICATION &&
+                                isNotificationLatest(it)
+                            ) {
                                 Timber.d("FSDB : NotificationListener : $it")
+                                saveCurrentNotificationTime(it.modified!!.seconds)
                                 listener.onReceived(it)
-                                removeNotificationAfterRead(mentorId)
+                                // removeNotificationAfterRead(mentorId)
                             }
                         }
                     } catch (ex: Exception) {
@@ -62,6 +75,21 @@ object FirestoreDB {
                     }
                 }
             }
+    }
+
+    private fun isNotificationLatest(obj: FirestoreNotificationObject): Boolean {
+        val lastFSNotificationTime = PrefManager.getLongValue(LAST_FIRESTORE_NOTIFICATION_TIME)
+        return when {
+            obj.modified == null -> {
+                false
+            }
+            lastFSNotificationTime > 0 -> {
+                obj.modified!!.seconds > lastFSNotificationTime
+            }
+            else -> {
+                obj.modified!!.seconds > Timestamp.now().seconds - 300
+            }
+        }
     }
 
     fun removeNotificationAfterRead(mentorId: String = Mentor.getInstance().getId()) {
