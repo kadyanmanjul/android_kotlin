@@ -200,8 +200,8 @@
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                             android:textColor="@color/black"
                             android:visibility="gone"
-                            app:layout_constraintEnd_toStartOf="@id/txt_price"
                             app:layout_constraintBottom_toBottomOf="@id/txt_price"
+                            app:layout_constraintEnd_toStartOf="@id/txt_price"
                             tools:text="$ 499" />
 
                         <TextView
@@ -448,10 +448,10 @@
                         android:layout_height="@dimen/_60sdp"
                         android:layout_marginHorizontal="@dimen/_24sdp"
                         android:layout_marginTop="@dimen/_40sdp"
-                        app:srcCompat="@drawable/payment_bottom"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/et_container"
+                        app:srcCompat="@drawable/payment_bottom"
                         tools:ignore="ContentDescription" />
 
                     <com.google.android.material.textview.MaterialTextView
@@ -471,13 +471,30 @@
                         android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                         android:textColor="@color/white"
                         app:cornerRadius="@dimen/_8sdp"
-                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/text_view_privacy"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/imageView2"
                         app:rippleColor="@color/white"
                         app:textAllCaps="false"
                         tools:text="Pay $500" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/text_view_privacy"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_16sdp"
+                        android:gravity="center"
+                        android:onClick="@{()->handler.showPrivacyPolicyDialog()}"
+                        android:text="@string/privacy_label"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                        android:textColor="@color/grey"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/materialButton"
+                        app:layout_constraintWidth_default="percent"
+                        app:layout_constraintWidth_percent="0.9" />
 
                     <androidx.constraintlayout.widget.Group
                         android:id="@+id/group_1"

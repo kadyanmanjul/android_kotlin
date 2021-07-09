@@ -16,6 +16,7 @@ import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.TIMEOUT_TIME
@@ -197,6 +198,11 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
 
     fun clearPhoneNumber() {
         binding.mobileEt.setText(EMPTY)
+    }
+
+    fun showPrivacyPolicyDialog() {
+        val url = AppObjectController.getFirebaseRemoteConfig().getString("terms_condition_url")
+        (activity as BaseActivity).showWebViewDialog(url)
     }
 
     private fun setupVerificationSystem(countryRegion: String? = null) {

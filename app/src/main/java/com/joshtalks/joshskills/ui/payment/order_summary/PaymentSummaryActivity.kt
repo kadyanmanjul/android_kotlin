@@ -508,8 +508,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }
     }
 
-
-
     private fun getPaymentDetails(isSubscription: Boolean, testId: String, coupon: String? = null) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -918,4 +916,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         )
         this@PaymentSummaryActivity.finish()
     }
+
+    fun showPrivacyPolicyDialog() {
+        val url = AppObjectController.getFirebaseRemoteConfig().getString("terms_condition_url")
+        showWebViewDialog(url)
+    }
+
 }

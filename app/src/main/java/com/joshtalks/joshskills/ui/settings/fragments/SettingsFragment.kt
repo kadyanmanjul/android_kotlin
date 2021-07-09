@@ -251,23 +251,8 @@ class SettingsFragment : Fragment() {
     }
 
     fun onPrivacyPolicyClicked() {
-        val uri: Uri =
-            Uri.parse(
-                AppObjectController.getFirebaseRemoteConfig().getString("terms_condition_url")
-            )
-        val browserIntent = Intent(Intent.ACTION_VIEW, uri)
-        browserIntent.addFlags(
-            Intent.FLAG_ACTIVITY_NO_HISTORY or
-                    Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
-                    Intent.FLAG_ACTIVITY_MULTIPLE_TASK
-        )
-        try {
-            startActivity(browserIntent)
-        } catch (e: ActivityNotFoundException) {
-            startActivity(
-                Intent(Intent.ACTION_VIEW, uri)
-            )
-        }
+        val url = AppObjectController.getFirebaseRemoteConfig().getString("terms_condition_url")
+        (activity as BaseActivity).showWebViewDialog(url)
 
         logEvent(AnalyticsEvent.TERMS_CONDITION_CLICKED.name)
     }

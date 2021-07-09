@@ -268,12 +268,12 @@
             android:clickable="true"
             android:focusable="true"
             android:onClick="@{()->handler.loginViaTrueCaller()}"
-            app:srcCompat="@drawable/ic_truecaller"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.3"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_view_1"
+            app:srcCompat="@drawable/ic_truecaller"
             tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -286,9 +286,9 @@
             android:clickable="true"
             android:focusable="true"
             android:onClick="@{()->handler.loginViaFacebook()}"
-            app:srcCompat="@drawable/ic_facebook"
             app:layout_constraintStart_toEndOf="@+id/btn_truecaller_login"
-            app:layout_constraintTop_toBottomOf="@+id/text_view_1" />
+            app:layout_constraintTop_toBottomOf="@+id/text_view_1"
+            app:srcCompat="@drawable/ic_facebook" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/btn_google"
@@ -300,9 +300,25 @@
             android:clickable="true"
             android:focusable="true"
             android:onClick="@{()->handler.loginViaGoogle()}"
-            app:srcCompat="@drawable/ic_google"
             app:layout_constraintStart_toEndOf="@+id/btn_facebook"
-            app:layout_constraintTop_toBottomOf="@+id/text_view_1" />
+            app:layout_constraintTop_toBottomOf="@+id/text_view_1"
+            app:srcCompat="@drawable/ic_google" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/text_view_privacy"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_16sdp"
+            android:gravity="center"
+            android:onClick="@{()->handler.showPrivacyPolicyDialog()}"
+            android:text="@string/privacy_label"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+            android:textColor="@color/grey"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.9" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

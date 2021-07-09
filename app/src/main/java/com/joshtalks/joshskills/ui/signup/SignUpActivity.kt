@@ -153,16 +153,16 @@ class SignUpActivity : BaseActivity() {
                     openNumberVerificationFragment()
                 }
                 SignUpStepStatus.ProfileInCompleted -> {
-                    binding.ivBack.visibility=View.GONE
+                    binding.ivBack.visibility = View.GONE
                     openProfileDetailFragment(true)
                 }
                 SignUpStepStatus.ProfileCompleted -> {
-                    binding.ivBack.visibility=View.GONE
+                    binding.ivBack.visibility = View.GONE
                     openProfilePicUpdateFragment()
                 }
                 SignUpStepStatus.ProfilePicUploaded -> {
-                    binding.ivBack.visibility=View.GONE
-                    binding.skip.visibility=View.INVISIBLE
+                    binding.ivBack.visibility = View.GONE
+                    binding.skip.visibility = View.INVISIBLE
                     openProfilePicSuccessfullyUpdateFragment()
                 }
                 SignUpStepStatus.StartAfterPicUploaded, SignUpStepStatus.ProfilePicSkipped, SignUpStepStatus.SignUpCompleted -> {
@@ -183,18 +183,18 @@ class SignUpActivity : BaseActivity() {
         })
 
         viewModelForDpUpload.apiCallStatus.observe(this, Observer {
-            when(it){
-                ApiCallStatus.SUCCESS->{
+            when (it) {
+                ApiCallStatus.SUCCESS -> {
                     hideProgressBar()
                     viewModel.changeSignupStatusToProfilePicUploaded()
                 }
-                ApiCallStatus.FAILED->{
+                ApiCallStatus.FAILED -> {
                     hideProgressBar()
                 }
-                ApiCallStatus.START->{
+                ApiCallStatus.START -> {
                     showProgressBar()
                 }
-                else ->{
+                else -> {
 
                 }
             }
@@ -298,6 +298,9 @@ class SignUpActivity : BaseActivity() {
     }
 
     private fun openSignUpOptionsFragment() {
+        binding.skip.visibility = View.GONE
+        binding.ivHelp.visibility = View.GONE
+        binding.ivPrivacy.visibility = View.VISIBLE
         supportFragmentManager.commit(true) {
             addToBackStack(SignUpOptionsFragment::class.java.name)
             replace(
@@ -308,7 +311,7 @@ class SignUpActivity : BaseActivity() {
         }
     }
 
-    private fun openProfileDetailFragment(isRegistrationScreenFirstTime:Boolean) {
+    private fun openProfileDetailFragment(isRegistrationScreenFirstTime: Boolean) {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
             addToBackStack(null)
@@ -321,8 +324,9 @@ class SignUpActivity : BaseActivity() {
     }
 
     private fun openProfilePicUpdateFragment() {
-        binding.skip.visibility= View.VISIBLE
-        binding.ivHelp.visibility= View.GONE
+        binding.skip.visibility = View.VISIBLE
+        binding.ivHelp.visibility = View.GONE
+        binding.ivPrivacy.visibility = View.GONE
         supportFragmentManager.commit(true) {
             addToBackStack(null)
             replace(
@@ -364,15 +368,14 @@ class SignUpActivity : BaseActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val url= ImagePicker.getFilePath(data)
-        if (url.isNullOrBlank().not()&&resultCode == Activity.RESULT_OK){
-                ImagePicker.getFilePath(data)?.let {
-                    val imageUpdatedPath = AppDirectory.getImageSentFilePath()
-                    AppDirectory.copy(it, imageUpdatedPath)
-                    viewModelForDpUpload.uploadMedia(imageUpdatedPath)
-                }
-        }
-        else if (requestCode == GOOGLE_SIGN_UP_REQUEST_CODE) {
+        val url = ImagePicker.getFilePath(data)
+        if (url.isNullOrBlank().not() && resultCode == Activity.RESULT_OK) {
+            ImagePicker.getFilePath(data)?.let {
+                val imageUpdatedPath = AppDirectory.getImageSentFilePath()
+                AppDirectory.copy(it, imageUpdatedPath)
+                viewModelForDpUpload.uploadMedia(imageUpdatedPath)
+            }
+        } else if (requestCode == GOOGLE_SIGN_UP_REQUEST_CODE) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)
@@ -408,6 +411,11 @@ class SignUpActivity : BaseActivity() {
 
     private fun trueCallerLogin() {
         TruecallerSDK.getInstance().getUserProfile(this@SignUpActivity)
+    }
+
+    fun showPrivacyPolicyDialog() {
+        val url = AppObjectController.getFirebaseRemoteConfig().getString("terms_condition_url")
+        showWebViewDialog(url)
     }
 
     fun onSkipPressed() {
@@ -470,7 +478,8 @@ class SignUpActivity : BaseActivity() {
         }
     }
 
-    private fun handleFirebaseAuth(accountUser: FirebaseUser?
+    private fun handleFirebaseAuth(
+        accountUser: FirebaseUser?
     ) {
         if (accountUser != null) {
 

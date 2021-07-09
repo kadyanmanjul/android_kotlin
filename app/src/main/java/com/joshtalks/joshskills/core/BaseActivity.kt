@@ -82,6 +82,7 @@ import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import com.joshtalks.joshskills.ui.termsandconditions.WebViewFragment
 import com.joshtalks.joshskills.ui.userprofile.ShowAnimatedLeaderBoardFragment
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
@@ -836,6 +837,10 @@ abstract class BaseActivity :
                 isFromUserProfile
             )
         }
+    }
+
+    fun showWebViewDialog(webUrl: String) {
+        WebViewFragment.showDialog(supportFragmentManager, webUrl)
     }
 
     fun showLeaderboardAchievement(

@@ -25,8 +25,8 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_back"
-                android:layout_width="33dp"
-                android:layout_height="27dp"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
@@ -56,17 +56,17 @@
                 android:id="@+id/skip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_4sdp"
                 android:gravity="start"
-                android:text="@string/skip"
                 android:onClick="@{()->handler.onSkipPressed()}"
+                android:text="@string/skip"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="#687C90"
-                android:visibility="gone"
-                tools:visibility="visible"
                 android:textSize="@dimen/_12ssp"
-                android:layout_marginEnd="@dimen/_4sdp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/text_message_title"
                 app:layout_constraintEnd_toEndOf="@+id/iv_help"
-                app:layout_constraintBottom_toBottomOf="@id/text_message_title" />
+                tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_help"
@@ -79,6 +79,18 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_help_outline" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_privacy"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:background="@drawable/ic_privacy_policy"
+                android:onClick="@{()->handler.showPrivacyPolicyDialog()}"
+                android:padding="@dimen/_4sdp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
