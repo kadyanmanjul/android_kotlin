@@ -66,6 +66,18 @@ data class FirestoreNotificationObject(
 
     @SerializedName("additionalData")
     var extraData: String? = null,
+
+    @SerializedName("callTopic")
+    var topicName: String? = null,
+
+    @SerializedName("topicId")
+    var topicId: Int = -1,
+
+    @SerializedName("profilePic")
+    var profilePicUrl: String? = null,
+
+    @SerializedName("userName")
+    var userName: String? = null,
 ) {
     fun toNotificationObject(id: String?) = NotificationObject().also {
         it.id = id
