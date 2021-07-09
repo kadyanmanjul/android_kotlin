@@ -227,6 +227,7 @@ class FirebaseRemoteConfigKey {
 
         const val POINTS_HISTORY_TITLES = "POINTS_HISTORY_TITLES"
         const val GRAMMAR_CHOICE_PLAYBACK_SPEED = "GRAMMAR_CHOICE_PLAYBACK_SPEED"
+        const val FREE_TRIAL_PAYMENT_TEST_ID = "FREE_TRIAL_PAYMENT_TEST_ID"
 
     }
 }

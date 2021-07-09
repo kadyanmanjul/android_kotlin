@@ -84,6 +84,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 import kotlin.concurrent.scheduleAtFixedRate
 import kotlinx.android.synthetic.main.activity_inbox.*
@@ -228,9 +229,12 @@ class ConversationActivity :
         addObservable()
         fetchMessage()
         readMessageDatabaseUpdate()
-        if(inboxEntity.isCapsuleCourse){
-            if (inboxEntity.isCourseLocked || System.currentTimeMillis().minus(inboxEntity.created?:0)>86400000)
-            {
+        if (inboxEntity.isCapsuleCourse) {
+            if (inboxEntity.isCourseLocked ||
+                (inboxEntity.created != null &&
+                        TimeUnit.MILLISECONDS.toHours
+                            (System.currentTimeMillis().minus(inboxEntity.created!!)) >= 48)
+            ) {
                 initEndTrialBottomSheet()
             }
         }

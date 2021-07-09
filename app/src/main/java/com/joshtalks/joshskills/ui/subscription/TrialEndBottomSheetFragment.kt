@@ -10,6 +10,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.databinding.FragmentTrialEndBottomsheetBinding
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.userprofile.UserPicChooserFragment
@@ -38,7 +40,7 @@ class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        isCancelable=false
+        isCancelable = false
     }
 
     fun cancel() {
@@ -52,7 +54,10 @@ class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
     fun unlockCourses() {
         PaymentSummaryActivity.startPaymentSummaryActivity(
             requireActivity(),
-            "151"
+            AppObjectController.getFirebaseRemoteConfig().getString(
+                FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+            )
+
         )
     }
 
@@ -61,7 +66,8 @@ class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
         fun newInstance() = TrialEndBottomSheetFragment()
 
         fun showDialog(
-            supportFragmentManager: FragmentManager) {
+            supportFragmentManager: FragmentManager
+        ) {
             val fragmentTransaction = supportFragmentManager.beginTransaction()
             val prev = supportFragmentManager.findFragmentByTag(UserPicChooserFragment.TAG)
             if (prev != null) {

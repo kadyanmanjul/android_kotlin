@@ -666,5 +666,9 @@
         <key>GRAMMAR_CHOICE_PLAYBACK_SPEED</key>
         <value>1.5F</value>
     </entry>
+    <entry>
+        <key>FREE_TRIAL_PAYMENT_TEST_ID</key>
+        <value>102</value>
+    </entry>
 
 </defaultsMap>
