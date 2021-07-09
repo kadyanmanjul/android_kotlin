@@ -918,8 +918,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     }
 
     override fun onBackPressed() {
-        if (!isBackPressDisabled)
+        if (!isBackPressDisabled){
             super.onBackPressed()
+            overridePendingTransition(R.anim.slide_up_dialog, R.anim.slide_out_top)
+        }
     }
 
     override fun onPause() {

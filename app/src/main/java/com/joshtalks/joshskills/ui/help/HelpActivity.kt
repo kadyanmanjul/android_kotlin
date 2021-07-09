@@ -36,6 +36,7 @@ class HelpActivity : CoreJoshActivity() {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         super.onCreate(savedInstanceState)
+        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
         setContentView(R.layout.activity_help)
         setToolbar()
         openListOfHelp()

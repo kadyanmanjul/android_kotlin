@@ -14,8 +14,10 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.points_history.viewholder.PointsSummaryTitleViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewholder.SpokenSummaryDescViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewmodel.PointsViewModel
-import kotlinx.android.synthetic.main.base_toolbar.*
 import java.text.DecimalFormat
+import kotlinx.android.synthetic.main.base_toolbar.iv_back
+import kotlinx.android.synthetic.main.base_toolbar.iv_help
+import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 
 class SpokenHistoryActivity : WebRtcMiddlewareActivity() {
     private val viewModel: PointsViewModel by lazy {
@@ -26,6 +28,7 @@ class SpokenHistoryActivity : WebRtcMiddlewareActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        overridePendingTransition(R.anim.scale, R.anim.scale)
         if (intent.hasExtra(MENTOR_ID)) {
             mentorId = intent.getStringExtra(MENTOR_ID)
         }
@@ -96,6 +99,11 @@ class SpokenHistoryActivity : WebRtcMiddlewareActivity() {
                 hideProgressBar()
             }
         )
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        overridePendingTransition(R.anim.scale, R.anim.scale)
     }
 
     companion object {

@@ -169,6 +169,7 @@ class ConversationActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
         conversationBinding.handler = this
         activityRef = WeakReference(this)

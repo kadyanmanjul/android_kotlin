@@ -38,6 +38,7 @@ class PreviousLeaderboardActivity : WebRtcMiddlewareActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_previous_leaderboard)
         binding.lifecycleOwner = this
         intervalType = intent.getStringExtra(INTERVAL_TYPE)?: EMPTY

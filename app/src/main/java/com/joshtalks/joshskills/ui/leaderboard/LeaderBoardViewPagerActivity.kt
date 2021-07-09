@@ -51,6 +51,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_leaderboard_view_pager)
         binding.lifecycleOwner = this
         binding.handler = this
