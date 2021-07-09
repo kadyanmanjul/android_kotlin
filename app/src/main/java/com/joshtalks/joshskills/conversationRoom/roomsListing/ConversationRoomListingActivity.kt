@@ -4,13 +4,12 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.view.WindowManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -58,16 +57,23 @@ class ConversationRoomListingActivity : BaseActivity(),
         var CONVERSATION_ROOM_VISIBLE_TRACK_FLAG: Boolean = true
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        isActivityOpenFromNotification =
+            intent?.getBooleanExtra("open_from_notification", false) == true
+        roomId = intent?.getStringExtra("room_id") ?: ""
+        openConversationRoomByNotificationIntent()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
         binding = ActivityConversationsRoomsListingBinding.inflate(layoutInflater)
         val view = binding.root
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        this.window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            this.window.statusBarColor =
+                this.resources.getColor(R.color.conversation_room_color, theme)
+        }
         setContentView(view)
         viewModel = ConversationRoomListingViewModel()
         isActivityOpenFromNotification = intent.getBooleanExtra("open_from_notification", false)
@@ -98,7 +104,7 @@ class ConversationRoomListingActivity : BaseActivity(),
 
         viewModel.navigation.observe(this, {
             when (it) {
-                is ConversationRoomListingNavigation.ApiCallError -> showApiCallErrorToast()
+                is ConversationRoomListingNavigation.ApiCallError -> showApiCallErrorToast(it.error)
                 is ConversationRoomListingNavigation.OpenConversationLiveRoom -> openConversationLiveRoom(
                     it.channelName,
                     it.uid,
@@ -108,7 +114,11 @@ class ConversationRoomListingActivity : BaseActivity(),
                 )
             }
         })
+        openConversationRoomByNotificationIntent()
 
+    }
+
+    private fun openConversationRoomByNotificationIntent() {
         if (isActivityOpenFromNotification) {
             Handler(Looper.getMainLooper()).postDelayed({
                 if (roomId.isNotEmpty()) {
@@ -125,7 +135,6 @@ class ConversationRoomListingActivity : BaseActivity(),
                 }
             }, 200)
         }
-
     }
 
     private fun setFlagInWebRtcServie() {
@@ -164,14 +173,19 @@ class ConversationRoomListingActivity : BaseActivity(),
     }
 
     private fun internetNotAvailable() {
-        binding.notificationBar.visibility = View.VISIBLE
-        binding.notificationBar.hideActionLayout()
-        binding.notificationBar.setHeading("The Internet connection appears to be offline")
-        binding.notificationBar.setBackgroundColor(false)
+        binding.notificationBar.apply {
+            visibility = View.VISIBLE
+            hideActionLayout()
+            setHeading("The Internet connection appears to be offline")
+            setBackgroundColor(false)
+            loadAnimationSlideDown()
+        }
     }
 
     private fun internetAvailable() {
-        binding.notificationBar.visibility = View.GONE
+        binding.notificationBar.apply {
+            loadAnimationSlideUp()
+        }
     }
 
     private fun openConversationLiveRoom(
@@ -191,8 +205,12 @@ class ConversationRoomListingActivity : BaseActivity(),
         startActivity(intent)
     }
 
-    private fun showApiCallErrorToast() {
-        Toast.makeText(this, "Something went wrong. Please try Again!!!", Toast.LENGTH_SHORT).show()
+    private fun showApiCallErrorToast(error: String) {
+        if (error.isNotEmpty()) {
+            Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Something Went Wrong !!!", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun showPopup() {

@@ -5,9 +5,14 @@ import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.firestore.FirebaseFirestore
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingActivity
@@ -22,6 +27,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
@@ -57,6 +63,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     var isPermissionRequired: Boolean = true
     private val courseListSet: MutableSet<InboxEntity> = hashSetOf()
     private val inboxAdapter: InboxAdapter by lazy { InboxAdapter(this, this) }
+    private var conversationRoomLauncherButton: AppCompatImageView? = null
+    private var roomNumberTextView: AppCompatTextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
@@ -103,6 +111,29 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         find_more.setOnClickListener {
             courseExploreClick()
         }
+        conversationRoomLauncherButton = findViewById(R.id.groupchatIcon)
+        conversationRoomLauncherButton?.apply {
+            clipToOutline = true
+            setOnSingleClickListener {
+                openConversationRoom()
+            }
+        }
+        roomNumberTextView = findViewById(R.id.roomsNumber)
+        FirebaseFirestore.getInstance().collection("conversation_rooms")
+            .addSnapshotListener { rooms, error ->
+                if (error != null) {
+                    return@addSnapshotListener
+                } else {
+                    if (rooms != null) {
+                        if (rooms.size() == 0) {
+                            roomNumberTextView?.visibility = GONE
+                        } else {
+                            roomNumberTextView?.visibility = VISIBLE
+                            roomNumberTextView?.text = rooms.size().toString()
+                        }
+                    }
+                }
+            }
     }
 
     private fun openPopupMenu(view: View) {
@@ -129,14 +160,14 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     }
                     R.id.menu_settings ->
                         openSettingActivity()
-                    R.id.menu_conversation_room ->{
+                    R.id.menu_conversation_room -> {
                         openConversationRoom()
                     }
                 }
                 return@setOnMenuItemClickListener false
             }
         }
-        when(PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)){
+        when (PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)) {
             true -> popupMenu?.menu?.findItem(R.id.menu_conversation_room)?.isVisible = true
             false -> popupMenu?.menu?.findItem(R.id.menu_conversation_room)?.isVisible = false
         }

@@ -1,9 +1,10 @@
 package com.joshtalks.joshskills.conversationRoom.roomsListing
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
+import com.joshtalks.joshskills.conversationRoom.model.ConversationRoomResponse
 import com.joshtalks.joshskills.conversationRoom.model.CreateConversionRoomRequest
 import com.joshtalks.joshskills.conversationRoom.model.EnterExitConversionRoomRequest
 import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
@@ -39,11 +40,14 @@ class ConversationRoomListingViewModel : ViewModel() {
                             response?.roomId ?: item.room_id
                         )
                     )
-                    Log.d("ConversationViewModel", "Join Room Api Success")
 
                 } else {
-                    navigation.postValue(ApiCallError())
-                    Log.d("ConversationViewModel", "Join Room Api Failure")
+                    val errorResponse = Gson().fromJson(
+                        apiResponse.errorBody()?.string(),
+                        ConversationRoomResponse::class.java
+                    )
+                    navigation.postValue(ApiCallError(errorResponse.message ?: ""))
+
                 }
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
@@ -71,10 +75,12 @@ class ConversationRoomListingViewModel : ViewModel() {
                             response?.roomId
                         )
                     )
-                    Log.d("ConversationViewModel", "Create Room Api Success")
                 } else {
-                    navigation.postValue(ApiCallError())
-                    Log.d("ConversationViewModel", "Create Room Api Failure")
+                    val errorResponse = Gson().fromJson(
+                        apiResponse.errorBody()?.string(),
+                        ConversationRoomResponse::class.java
+                    )
+                    navigation.postValue(ApiCallError(errorResponse?.message ?: ""))
                 }
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()

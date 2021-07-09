@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="@dimen/_12sdp"
-    tools:background="@color/notification_green_color">
+    tools:background="@color/notification_green_color"
+    tools:visibility="visible">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/heading"
@@ -40,9 +41,9 @@
             android:textColor="#FFFFFF"
             android:textSize="@dimen/_12ssp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/acceptButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/acceptButton"
             tools:text="Dismiss" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -59,8 +60,8 @@
             android:textSize="@dimen/_12ssp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toEndOf="@id/rejectButton"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="Join as speaker" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

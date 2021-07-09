@@ -477,6 +477,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme" />
         <activity android:name=".conversationRoom.roomsListing.ConversationRoomListingActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 
         <meta-data

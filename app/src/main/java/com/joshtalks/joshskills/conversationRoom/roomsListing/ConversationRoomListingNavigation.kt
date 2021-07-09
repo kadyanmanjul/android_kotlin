@@ -9,5 +9,5 @@ sealed class ConversationRoomListingNavigation {
         val roomId: Int?
     ) : ConversationRoomListingNavigation()
 
-    class ApiCallError(): ConversationRoomListingNavigation()
+    class ApiCallError(val error: String): ConversationRoomListingNavigation()
 }

@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.
 import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.notification_bar
 import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.rejectButton
 
+
 class NotificationView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -38,6 +39,17 @@ class NotificationView @JvmOverloads constructor(
         this.acceptButton.text = text
     }
 
+    fun loadAnimationSlideUp() {
+        notification_bar.pivotY = notification_bar.layoutParams.height.div(2).toFloat()
+        notification_bar.animate().scaleY(0.0F).duration = 500
+
+    }
+
+    fun loadAnimationSlideDown() {
+        notification_bar.pivotY = notification_bar.layoutParams.height.div(2).toFloat()
+        notification_bar.animate().scaleY(1.0F).duration = 500
+    }
+
     fun setRejectButtonText(text: String) {
         this.rejectButton.text = text
     }
@@ -50,12 +62,12 @@ class NotificationView @JvmOverloads constructor(
         this.action_layout.visibility = View.GONE
     }
 
-    fun showActionLayout(){
+    fun showActionLayout() {
         this.action_layout.visibility = View.VISIBLE
     }
 
-    fun setBackgroundColor(isPositive: Boolean){
-        when(isPositive){
+    fun setBackgroundColor(isPositive: Boolean) {
+        when (isPositive) {
             true -> this.notification_bar.setBackgroundResource(R.color.notification_green_color)
             false -> this.notification_bar.setBackgroundResource(R.color.notification_red_color)
         }
@@ -65,15 +77,15 @@ class NotificationView @JvmOverloads constructor(
         this.enquiryAction = action
     }
 
-    fun startSound(){
+    fun startSound() {
         mediaPlayer?.start()
     }
 
-    fun endSound(){
+    fun endSound() {
         mediaPlayer?.pause()
     }
 
-    fun destroyMediaPlayer(){
+    fun destroyMediaPlayer() {
         mediaPlayer = null
     }
 

@@ -5,12 +5,12 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.view.Window
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatTextView
@@ -96,10 +96,10 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        this.window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            this.window.statusBarColor =
+                this.resources.getColor(R.color.conversation_room_color, theme)
+        }
         PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
         binding = ActivityConversationLiveRoomBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -397,6 +397,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.notificationBar.setHeading(heading)
         binding.notificationBar.startSound()
         binding.notificationBar.setBackgroundColor(true)
+        binding.notificationBar.loadAnimationSlideDown()
         if (runnable != null) {
             handler?.removeCallbacks(runnable)
         }
@@ -415,7 +416,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun setRunnable() {
         runnable = Runnable {
-            binding.notificationBar.visibility = View.GONE
+            binding.notificationBar.loadAnimationSlideUp()
             binding.notificationBar.endSound()
         }
     }
@@ -427,6 +428,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.notificationBar.setHeading(heading)
         binding.notificationBar.setBackgroundColor(isGreenColorNotification)
         binding.notificationBar.startSound()
+        binding.notificationBar.loadAnimationSlideDown()
         hideNotificationAfter4seconds()
     }
 
@@ -436,6 +438,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         binding.notificationBar.setBackgroundColor(false)
         binding.notificationBar.setHeading("This room has ended")
         binding.notificationBar.startSound()
+        binding.notificationBar.loadAnimationSlideDown()
         Handler(Looper.getMainLooper()).postDelayed({
             finish()
         }, 4000)
@@ -951,7 +954,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 notificationFrom?.get("uid").toString(),
                 notificationFrom?.get("name").toString()
             )
-            binding.notificationBar.visibility = View.GONE
+            binding.notificationBar.loadAnimationSlideUp()
         } else {
             if (notificationType == "SPEAKER_INVITE" && notificationTo?.get("uid").toString()
                     .toInt() == agoraUid
@@ -966,9 +969,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                         notificationFrom?.get("name").toString()
                     )
                     isInviteRequestComeFromModerator = true
-                    binding.notificationBar.visibility = View.GONE
+                    binding.notificationBar.loadAnimationSlideUp()
                 }?.addOnFailureListener {
-                    binding.notificationBar.visibility = View.GONE
+                    binding.notificationBar.loadAnimationSlideUp()
                     isInviteRequestComeFromModerator = false
                     usersReference?.document(agoraUid.toString())
                         ?.update("is_speaker_invite_sent", false)?.addOnFailureListener {
@@ -990,6 +993,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     setNotificationWithoutAction("Something Went Wrong", false)
                 }
         }
-        binding.notificationBar.visibility = View.GONE
+        binding.notificationBar.loadAnimationSlideUp()
     }
 }

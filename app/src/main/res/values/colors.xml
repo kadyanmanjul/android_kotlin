@@ -131,5 +131,6 @@
     <color name="notification_red_color">#EC5858</color>
     <color name="notification_green_color">#27AE61</color>
     <color name="conversation_room_gray">#ACA9A9</color>
+    <color name="conversation_room_color">#F2F0E4</color>
 
 </resources>
