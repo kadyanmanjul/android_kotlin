@@ -467,7 +467,16 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
             val status = device?.apiStatus ?: ApiRespStatus.EMPTY
             val deviceId = device?.id ?: 0
             if (ApiRespStatus.PATCH == status) {
-                return Result.success()
+                //return Result.success()
+                if (deviceId > 0) {
+                    val details = AppObjectController.signUpNetworkService.patchDeviceDetails(
+                        deviceId,
+                        UpdateDeviceRequest()
+                    )
+                    // TODO no need to send UpdateDeviceRequest object in patch request
+                    details.apiStatus = ApiRespStatus.PATCH
+                    details.update()
+                }
             } else if (ApiRespStatus.POST == status) {
                 if (deviceId > 0) {
                     val details = AppObjectController.signUpNetworkService.patchDeviceDetails(
