@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.subscription
 
+import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -48,6 +49,14 @@ class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
             requireActivity().finish()
         } catch (ex: Exception) {
             ex.printStackTrace()
+        }
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return object : Dialog(requireActivity(), R.style.BaseBottomSheetDialog) {
+            override fun onBackPressed() {
+                requireActivity().finish()
+            }
         }
     }
 
