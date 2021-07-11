@@ -20,8 +20,6 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.RequestVerifyOTP
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
-import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
-import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
@@ -334,50 +332,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
 
     fun incrementIncorrectAttempts() {
         incorrectAttempt += 1
-    }
-
-    fun updateSubscriptionStatus() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response =
-                    AppObjectController.signUpNetworkService.getOnBoardingStatus(
-                        PrefManager.getStringValue(INSTANCE_ID, false),
-                        Mentor.getInstance().getId(),
-                        PrefManager.getStringValue(USER_UNIQUE_ID)
-                    )
-                if (response.isSuccessful) {
-                    response.body()?.run {
-                        // Update Version Data in local
-                        PrefManager.put(SUBSCRIPTION_TEST_ID, this.subscriptionTestId)
-                        val versionData = VersionResponse.getInstance()
-                        versionData.version.let {
-                            it.name = this.version.name
-                            it.id = this.version.id
-                            VersionResponse.update(versionData)
-                        }
-
-                        // save Free trial data
-                        FreeTrialData.update(this.freeTrialData)
-
-                        PrefManager.put(EXPLORE_TYPE, this.exploreType)
-                        PrefManager.put(
-                            IS_SUBSCRIPTION_STARTED,
-                            this.subscriptionData.isSubscriptionBought
-                        )
-                        PrefManager.put(
-                            REMAINING_SUBSCRIPTION_DAYS,
-                            this.subscriptionData.remainingDays
-                        )
-
-                        PrefManager.put(IS_TRIAL_STARTED, this.freeTrialData.is7DFTBought)
-                        PrefManager.put(REMAINING_TRIAL_DAYS, this.freeTrialData.remainingDays)
-                        PrefManager.put(SHOW_COURSE_DETAIL_TOOLTIP, this.showTooltip5)
-                    }
-                }
-            } catch (ex: Throwable) {
-                ex.showAppropriateMsg()
-            }
-        }
     }
 
     fun changeSignupStatusToProfilePicUploaded() {

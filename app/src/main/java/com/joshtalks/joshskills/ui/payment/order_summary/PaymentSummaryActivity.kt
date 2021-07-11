@@ -207,6 +207,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 else -> {
                     binding.progressBar.visibility = View.GONE
                     binding.container.visibility = View.VISIBLE
+                    viewModel.updateSubscriptionStatus()
                 }
             }
         })
