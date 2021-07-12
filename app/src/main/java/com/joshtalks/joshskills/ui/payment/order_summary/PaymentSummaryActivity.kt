@@ -36,6 +36,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CTA_PAYMENT_SUMMARY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_PAYMENT_BTN_TXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PAYMENT_SUMMARY_CTA_LABEL_FREE
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.databinding.ActivityPaymentSummaryBinding
@@ -88,6 +89,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private var isBackPressDisabled = false
     private var isRequestHintAppearred = false
     private var couponApplied = false
+    private var isFromNewFreeTrial = false
     private var razorpayOrderId = EMPTY
     private var compositeDisposable = CompositeDisposable()
 
@@ -95,10 +97,12 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         fun startPaymentSummaryActivity(
             activity: Activity,
             testId: String,
-            hasFreeTrial: Boolean? = null
+            hasFreeTrial: Boolean? = null,
+            isFromNewFreeTrial: Boolean = false
         ) {
             Intent(activity, PaymentSummaryActivity::class.java).apply {
                 putExtra(TEST_ID_PAYMENT, testId)
+                putExtra(IS_FROM_NEW_FREE_TRIAL, isFromNewFreeTrial)
                 hasFreeTrial?.run {
                     putExtra(HAS_FREE_7_DAY_TRIAL, hasFreeTrial)
                 }
@@ -111,6 +115,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
         const val TEST_ID_PAYMENT = "test_ID"
         const val HAS_FREE_7_DAY_TRIAL = "7 day free trial"
+        const val IS_FROM_NEW_FREE_TRIAL = "IS_FROM_NEW_FREE_TRIAL"
 
     }
 
@@ -134,6 +139,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             this.testId = temp
             appAnalytics.addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, temp)
         }
+        isFromNewFreeTrial = intent.getBooleanExtra(IS_FROM_NEW_FREE_TRIAL,false)
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_payment_summary)
         binding.lifecycleOwner = this
         binding.handler = this
@@ -261,12 +268,13 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                             .roundToInt()
                     }"
             } else {
-                if (PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED)) {
-                    binding.materialButton.text = AppObjectController.getFirebaseRemoteConfig()
-                        .getString(PAYMENT_SUMMARY_CTA_LABEL_FREE)
-                }else {
-                    binding.materialButton.text = getString(R.string.start_2day_trial)
-                }
+                binding.materialButton.text = AppObjectController.getFirebaseRemoteConfig()
+                    .getString(PAYMENT_SUMMARY_CTA_LABEL_FREE)
+            }
+
+            if (isFromNewFreeTrial) {
+                binding.materialButton.text = AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FREE_TRIAL_PAYMENT_BTN_TXT)
             }
 
             if (couponApplied) {
@@ -513,6 +521,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }
     }
 
+
     private fun getPaymentDetails(isSubscription: Boolean, testId: String, coupon: String? = null) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -708,7 +717,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         showToast(getString(R.string.please_enter_valid_number))
                         return
                     }
-                    viewModel.getCourseDiscountedAmount() < 1 -> {
+                    (viewModel.getCourseDiscountedAmount() < 1 || isFromNewFreeTrial) -> {
                         viewModel.createFreeOrder(
                             viewModel.getPaymentTestId(),
                             binding.mobileEt.text.toString()
@@ -751,8 +760,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
-        if (PrefManager.getBoolValue(IS_DEMO_P2P,defValue = false)){
-            PrefManager.put(IS_DEMO_P2P,false)
+        if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
+            PrefManager.put(IS_DEMO_P2P, false)
         }
         appAnalytics.addParam(AnalyticsEvent.PAYMENT_COMPLETED.NAME, true)
         logPaymentStatusAnalyticsEvents(AnalyticsEvent.SUCCESS_PARAM.NAME)

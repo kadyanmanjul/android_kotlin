@@ -894,7 +894,5 @@
     <string name="grammar_unlock_text">क्लास शुरू करने के लिए नीचे बटन को दबाएं </string>
     <string name="grammar_continue_test_text">क्लास जारी रखने के लिए नीचे बटन को दबाएं </string>
     <string name="grammar_input_question_hint">अंग्रेजी में जवाब लिखे </string>
-    <string name="start_free_trial">Start Free Trial</string>
-    <string name="start_2day_trial">Start 2 days Free Trial</string>
 
 </resources>

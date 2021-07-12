@@ -670,5 +670,21 @@
         <key>FREE_TRIAL_PAYMENT_TEST_ID</key>
         <value>102</value>
     </entry>
+    <entry>
+        <key>FREE_TRIAL_COURSE_DETAIL_BTN_TXT</key>
+        <value>Start Free Trial</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_PAYMENT_BTN_TXT</key>
+        <value>Start 2 days Free Trial</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_DIALOG_BTN_TXT</key>
+        <value>Buy Course</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_DIALOG_TXT</key>
+        <value>Your 2 day trial has ended! Kya aapko mazaa aaya?\nAccess this courses now.</value>
+    </entry>
 
 </defaultsMap>

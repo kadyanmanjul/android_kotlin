@@ -229,14 +229,12 @@ class ConversationActivity :
         addObservable()
         fetchMessage()
         readMessageDatabaseUpdate()
-        if (inboxEntity.isCapsuleCourse) {
-            if (inboxEntity.isCourseLocked ||
-                (inboxEntity.created != null &&
-                        TimeUnit.MILLISECONDS.toHours
-                            (System.currentTimeMillis().minus(inboxEntity.created!!)) >= 48)
-            ) {
-                initEndTrialBottomSheet()
-            }
+        if (inboxEntity.isCourseLocked ||
+            (inboxEntity.created != null &&
+                    TimeUnit.MILLISECONDS.toHours
+                        (System.currentTimeMillis().minus(inboxEntity.created!!)) >= 48)
+        ) {
+            initEndTrialBottomSheet()
         }
     }
 

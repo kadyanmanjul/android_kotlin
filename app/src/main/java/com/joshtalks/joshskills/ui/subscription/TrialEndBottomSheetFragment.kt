@@ -42,6 +42,13 @@ class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         isCancelable = false
+
+        binding.txtTrialEndMsg.text =
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.FREE_TRIAL_DIALOG_TXT)
+
+        binding.btnUnlock.text = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FirebaseRemoteConfigKey.FREE_TRIAL_DIALOG_BTN_TXT)
     }
 
     fun cancel() {
