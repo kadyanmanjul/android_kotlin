@@ -4,17 +4,16 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.view.Window
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
@@ -85,10 +84,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     var speakingUsersOldList = arrayListOf<Int>()
     var handler: Handler? = null
     var runnable: Runnable? = null
-    var micBlackDrawable: Drawable? = null
-    var micOffDrawable: Drawable? = null
-    var handRaisedDrawable: Drawable? = null
-    var handUnRaisedDrawable: Drawable? = null
     private val compositeDisposable = CompositeDisposable()
     private var internetAvailableFlag: Boolean = true
     private var isInviteRequestComeFromModerator: Boolean = false
@@ -100,12 +95,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             this.window.statusBarColor =
                 this.resources.getColor(R.color.conversation_room_color, theme)
         }
+        this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, true)
         binding = ActivityConversationLiveRoomBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ConversationLiveRoomViewModel()
         getIntentExtras()
-        setImageDrawable()
         binding.notificationBar.setNotificationViewEnquiryAction(this)
         val liveRoomReference = database.collection("conversation_rooms")
         roomReference = liveRoomReference.document(roomId.toString())
@@ -131,33 +126,35 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         listenerAdapter?.startListening()
     }
 
-    private fun setImageDrawable() {
-        micBlackDrawable = ResourcesCompat.getDrawable(
-            AppObjectController.joshApplication.resources,
-            R.drawable.ic_mic_black_on,
-            null
-        )
-        micOffDrawable = ResourcesCompat.getDrawable(
-            AppObjectController.joshApplication.resources,
-            R.drawable.ic_mic_off,
-            null
-        )
-        handRaisedDrawable = ResourcesCompat.getDrawable(
-            AppObjectController.joshApplication.resources,
-            R.drawable.ic_hand_raised_icon,
-            null
-        )
-        handUnRaisedDrawable = ResourcesCompat.getDrawable(
-            AppObjectController.joshApplication.resources,
-            R.drawable.ic_unraise_hand_icon,
-            null
-        )
-    }
-
     private fun getUserName() {
         usersReference?.document(agoraUid.toString())?.get()?.addOnSuccessListener {
             currentUserName = it.get("name").toString()
+            iSSoundOn = it.get("is_mic_on") == true
+            if (isRoomCreatedByUser) {
+                updateMuteButtonState()
+            } else {
+                binding.apply {
+                    muteBtn.visibility = View.GONE
+                    unmuteBtn.visibility = View.GONE
+                    handUnraiseBtn.visibility = View.VISIBLE
+                    handRaiseBtn.visibility = View.GONE
+                }
+            }
         }
+    }
+
+    private fun updateMuteButtonState() {
+        when (iSSoundOn) {
+            true -> {
+                binding.unmuteBtn.visibility = View.VISIBLE
+                binding.muteBtn.visibility = View.GONE
+            }
+            false -> {
+                binding.unmuteBtn.visibility = View.GONE
+                binding.muteBtn.visibility = View.VISIBLE
+            }
+        }
+        engine?.muteLocalAudioStream(!iSSoundOn)
     }
 
     private fun getIntentExtras() {
@@ -192,12 +189,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         if (isRoomCreatedByUser) {
             binding.handRaiseBtn.visibility = View.GONE
             binding.raisedHands.visibility = View.VISIBLE
-            binding.muteBtn.visibility = View.VISIBLE
-            engine?.muteLocalAudioStream(false)
         } else {
             binding.handRaiseBtn.visibility = View.VISIBLE
             binding.raisedHands.visibility = View.GONE
-            binding.muteBtn.visibility = View.GONE
         }
     }
 
@@ -220,8 +214,20 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 false -> changeMuteButtonState(true)
             }
         }
+        binding.unmuteBtn.setOnClickListener {
+            when (iSSoundOn) {
+                true -> changeMuteButtonState(false)
+                false -> changeMuteButtonState(true)
+            }
+        }
 
         binding.handRaiseBtn.setOnClickListener {
+            when (isHandRaised) {
+                true -> clickHandRaisedButton(true, "HAND_RAISED")
+                false -> clickHandRaisedButton(false, "HAND_UNRAISED")
+            }
+        }
+        binding.handUnraiseBtn.setOnClickListener {
             when (isHandRaised) {
                 true -> clickHandRaisedButton(true, "HAND_RAISED")
                 false -> clickHandRaisedButton(false, "HAND_UNRAISED")
@@ -244,9 +250,10 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                             isHandRaised = !isHandRaised
                             when (isRaised) {
                                 true -> {
-                                    binding.handRaiseBtn.setImageDrawable(
-                                        handRaisedDrawable
-                                    )
+                                    binding.apply {
+                                        handRaiseBtn.visibility = View.VISIBLE
+                                        handUnraiseBtn.visibility = View.GONE
+                                    }
                                     setNotificationWithoutAction(
                                         String.format(
                                             "\uD83D\uDC4B You raised your hand! We’ll let the speakers\n" +
@@ -254,9 +261,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                                         ), true
                                     )
                                 }
-                                false -> binding.handRaiseBtn.setImageDrawable(
-                                    handUnRaisedDrawable
-                                )
+                                false -> {
+                                    binding.apply {
+                                        handRaiseBtn.visibility = View.GONE
+                                        handUnraiseBtn.visibility = View.VISIBLE
+                                    }
+                                }
                             }
                             sendNotification(
                                 type,
@@ -286,20 +296,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         reference?.update("is_mic_on", isMicOn)
             ?.addOnSuccessListener {
                 iSSoundOn = isMicOn
-                when (isMicOn) {
-                    true -> {
-                        binding.muteBtn.setImageDrawable(
-                            micBlackDrawable
-                        )
-                    }
-                    false -> {
-                        binding.muteBtn.setImageDrawable(
-                            micOffDrawable
-                        )
-                    }
-                }
-                engine?.muteLocalAudioStream(!iSSoundOn)
-
+                updateMuteButtonState()
             }?.addOnFailureListener {
                 setNotificationWithoutAction("Something Went Wrong", false)
             }
@@ -470,8 +467,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         isRoomUserSpeaker = false
         initializeEngine()
         engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE)
-        binding.muteBtn.visibility = View.GONE
-        binding.handRaiseBtn.visibility = View.VISIBLE
+        binding.apply {
+            muteBtn.visibility = View.GONE
+            unmuteBtn.visibility = View.GONE
+            handUnraiseBtn.visibility = View.VISIBLE
+            handRaiseBtn.visibility = View.GONE
+        }
+
         isInviteRequestComeFromModerator = false
     }
 
@@ -480,34 +482,19 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         isInviteRequestComeFromModerator = true
         initializeEngine()
         engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER)
-        binding.muteBtn.visibility = View.VISIBLE
         binding.handRaiseBtn.visibility = View.GONE
+        binding.handUnraiseBtn.visibility = View.GONE
         setHandRaiseValueToFirestore(false)
-        binding.handRaiseBtn.setImageDrawable(
-            handUnRaisedDrawable
-        )
         isHandRaised = true
         iSSoundOn = isMicOn == true
+        updateMuteButtonState()
         engine?.muteLocalAudioStream(!iSSoundOn)
-        updateMuteButtonText()
     }
 
     private fun setHandRaiseValueToFirestore(is_hand_raised: Boolean) {
         val reference = usersReference?.document(agoraUid.toString())
         reference?.update("is_hand_raised", is_hand_raised)?.addOnFailureListener {
             setNotificationWithoutAction("Something Went Wrong", false)
-        }
-    }
-
-    private fun updateMuteButtonText() {
-        if (iSSoundOn) {
-            binding.muteBtn.setImageDrawable(
-                micBlackDrawable
-            )
-        } else {
-            binding.muteBtn.setImageDrawable(
-                micOffDrawable
-            )
         }
     }
 
@@ -576,7 +563,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 }
             }
         )
-
     }
 
     private fun joinChannel(channelName: String?) {
@@ -594,12 +580,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             engine?.addHandler(eventListener)
         }
         engine?.adjustPlaybackSignalVolume(100)
-        engine?.enableAudioVolumeIndication(1800, 3, true)
+        engine?.enableAudioVolumeIndication(1500, 3, true)
         engine?.setAudioProfile(
             Constants.AUDIO_PROFILE_SPEECH_STANDARD,
             Constants.AUDIO_SCENARIO_GAME_STREAMING
         )
-
         val option = ChannelMediaOptions()
         option.autoSubscribeAudio = true
         val res = engine?.joinChannel(
@@ -629,12 +614,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
         override fun onUserOffline(uid: Int, reason: Int) {
             super.onUserOffline(uid, reason)
+            val isUserLeave =
+                reason == Constants.USER_OFFLINE_QUIT || reason == Constants.USER_OFFLINE_DROPPED
             if (isRoomCreatedByUser) {
-                if (reason == Constants.USER_OFFLINE_QUIT || reason == Constants.USER_OFFLINE_DROPPED) {
+                if (isUserLeave) {
                     usersReference?.document(uid.toString())?.delete()
                 }
             } else {
-                if (uid == moderatorUid && reason == Constants.USER_OFFLINE_DROPPED) {
+                if (uid == moderatorUid && isUserLeave) {
                     usersReference?.get()?.addOnSuccessListener { documents ->
                         if (documents.size() > 1) {
                             if (documents.documents[0].id.toInt() == agoraUid) {

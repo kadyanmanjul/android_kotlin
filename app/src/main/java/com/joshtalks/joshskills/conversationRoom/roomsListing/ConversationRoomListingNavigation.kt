@@ -10,4 +10,7 @@ sealed class ConversationRoomListingNavigation {
     ) : ConversationRoomListingNavigation()
 
     class ApiCallError(val error: String): ConversationRoomListingNavigation()
+
+    object NoRoomAvailable: ConversationRoomListingNavigation()
+    object AtleastOneRoomAvailable: ConversationRoomListingNavigation()
 }

@@ -13,9 +13,9 @@
             android:id="@+id/user_image"
             android:layout_width="@dimen/_42sdp"
             android:layout_height="@dimen/_42sdp"
+            android:layout_gravity="center"
             android:background="@color/conversation_room_gray"
             android:scaleType="fitXY"
-            android:layout_gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -33,15 +33,6 @@
             app:layout_constraintEnd_toEndOf="@id/user_image"
             app:srcCompat="@drawable/ic_mic_off"
             tools:visibility="visible" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ring_icon"
-            android:layout_width="@dimen/_16sdp"
-            android:layout_height="@dimen/_16sdp"
-            android:src="@drawable/ic_speaker_on"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="@id/user_image"
-            app:layout_constraintTop_toTopOf="@id/user_image" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/raised_hands"
@@ -72,9 +63,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
+                android:maxLength="8"
                 android:maxLines="1"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
                 android:textColor="@color/pure_black"
+                android:textSize="@dimen/_12ssp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"

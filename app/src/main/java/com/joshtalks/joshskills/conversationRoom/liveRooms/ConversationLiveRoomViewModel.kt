@@ -53,11 +53,10 @@ class ConversationLiveRoomViewModel : ViewModel() {
                 }
             }
 
-            val response = apiResponse.body()
             if (apiResponse.isSuccessful) {
-                navigation.postValue(ExitRoom())
+                navigation.postValue(ExitRoom)
             } else {
-                navigation.postValue(ApiCallError())
+                navigation.postValue(ApiCallError)
             }
         } catch (ex: Throwable) {
             ex.showAppropriateMsg()

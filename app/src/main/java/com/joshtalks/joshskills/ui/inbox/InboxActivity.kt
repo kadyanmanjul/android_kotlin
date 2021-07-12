@@ -87,7 +87,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun initView() {
         text_message_title.text = getString(R.string.inbox_header)
-        iv_reminder.visibility = View.GONE
+        iv_reminder.visibility = GONE
         iv_setting.visibility = View.VISIBLE
         findMoreLayout = findViewById(R.id.parent_layout)
         recycler_view_inbox.apply {
@@ -111,8 +111,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         find_more.setOnClickListener {
             courseExploreClick()
         }
-        conversationRoomLauncherButton = findViewById(R.id.groupchatIcon)
-        conversationRoomLauncherButton?.apply {
+        if (!PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)) {
+            conversation_room_launcher.visibility = GONE
+        } else {
+            conversation_room_launcher.visibility = VISIBLE
+        }
+        conversation_room_launcher.apply {
             clipToOutline = true
             setOnSingleClickListener {
                 openConversationRoom()

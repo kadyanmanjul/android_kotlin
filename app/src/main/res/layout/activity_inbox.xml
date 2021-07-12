@@ -57,6 +57,7 @@
         android:layout="@layout/new_user_layout_stub" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/conversation_room_launcher"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"

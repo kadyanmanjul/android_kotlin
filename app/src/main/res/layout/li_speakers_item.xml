@@ -22,8 +22,8 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/user_image_iv"
-                android:layout_width="@dimen/_54sdp"
-                android:layout_height="@dimen/_54sdp"
+                android:layout_width="@dimen/_56sdp"
+                android:layout_height="@dimen/_56sdp"
                 android:layout_gravity="center"
                 android:background="@color/conversation_room_gray"
                 android:scaleType="fitXY"
@@ -93,6 +93,7 @@
                 android:ellipsize="end"
                 android:maxLength="8"
                 android:maxLines="1"
+                android:textSize="@dimen/_12ssp"
                 android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito"
                 android:textColor="@color/pure_black"

@@ -17,7 +17,6 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.AppObjectController
@@ -44,7 +43,7 @@ class ConversationRoomListingActivity : BaseActivity(),
 
     private val db = FirebaseFirestore.getInstance()
     private val notebookRef = db.collection("conversation_rooms")
-    private var adapter: ConversationRoomsListingAdapter? = null
+    private var conversationRoomsListingAdapter: ConversationRoomsListingAdapter? = null
     lateinit var viewModel: ConversationRoomListingViewModel
     lateinit var binding: ActivityConversationsRoomsListingBinding
     private val compositeDisposable = CompositeDisposable()
@@ -52,6 +51,8 @@ class ConversationRoomListingActivity : BaseActivity(),
     private var isBackPressed: Boolean = false
     var isActivityOpenFromNotification: Boolean = false
     var roomId: String = ""
+    var handler: Handler? = null
+    var runnable: Runnable? = null
 
     companion object {
         var CONVERSATION_ROOM_VISIBLE_TRACK_FLAG: Boolean = true
@@ -59,9 +60,7 @@ class ConversationRoomListingActivity : BaseActivity(),
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        isActivityOpenFromNotification =
-            intent?.getBooleanExtra("open_from_notification", false) == true
-        roomId = intent?.getStringExtra("room_id") ?: ""
+        getIntentExtras(intent)
         openConversationRoomByNotificationIntent()
     }
 
@@ -74,34 +73,37 @@ class ConversationRoomListingActivity : BaseActivity(),
             this.window.statusBarColor =
                 this.resources.getColor(R.color.conversation_room_color, theme)
         }
+        handler = Handler(Looper.getMainLooper())
         setContentView(view)
         viewModel = ConversationRoomListingViewModel()
-        isActivityOpenFromNotification = intent.getBooleanExtra("open_from_notification", false)
-        roomId = intent?.getStringExtra("room_id") ?: ""
+        getIntentExtras(intent)
         setUpRecyclerView()
         setFlagInWebRtcServie()
         viewModel.makeEnterExitConversationRoom(true)
-        binding.createRoom.apply {
-            clipToOutline = true
-            setOnSingleClickListener {
-                showPopup()
+
+        with(binding) {
+            createRoom.apply {
+                clipToOutline = true
+                setOnSingleClickListener {
+                    showPopup()
+                }
+            }
+            userPic.apply {
+                clipToOutline = true
+                setUserImageRectOrInitials(
+                    Mentor.getInstance().getUser()?.photo,
+                    User.getInstance().firstName ?: "JS",
+                    16,
+                    true,
+                    8,
+                    textColor = R.color.black,
+                    bgColor = R.color.conversation_room_gray
+                )
+                setOnSingleClickListener {
+                    goToProfile()
+                }
             }
         }
-
-        binding.userPic.clipToOutline = true
-        binding.userPic.setUserImageRectOrInitials(
-            Mentor.getInstance().getUser()?.photo,
-            User.getInstance().firstName ?: "JS",
-            16,
-            true,
-            8,
-            textColor = R.color.black,
-            bgColor = R.color.conversation_room_gray
-        )
-        binding.userPic.setOnSingleClickListener {
-            goToProfile()
-        }
-
         viewModel.navigation.observe(this, {
             when (it) {
                 is ConversationRoomListingNavigation.ApiCallError -> showApiCallErrorToast(it.error)
@@ -112,26 +114,59 @@ class ConversationRoomListingActivity : BaseActivity(),
                     it.isRoomCreatedByUser,
                     it.roomId
                 )
+                ConversationRoomListingNavigation.AtleastOneRoomAvailable -> showRecyclerView()
+                ConversationRoomListingNavigation.NoRoomAvailable -> showNoRoomAvailableText()
             }
         })
         openConversationRoomByNotificationIntent()
 
     }
 
+    private fun getIntentExtras(intent: Intent?) {
+        isActivityOpenFromNotification =
+            intent?.getBooleanExtra("open_from_notification", false) == true
+        roomId = intent?.getStringExtra("room_id") ?: ""
+    }
+
+    private fun showNoRoomAvailableText() {
+        with(binding) {
+            noRoomsText.apply {
+                visibility = View.VISIBLE
+                text =
+                    String.format("\uD83D\uDC4B Hi there! \n\n Start a new room to get a\n conversation going!")
+            }
+            recyclerView.apply {
+                visibility = View.GONE
+            }
+        }
+    }
+
+    private fun showRecyclerView() {
+        with(binding) {
+            noRoomsText.apply {
+                visibility = View.GONE
+            }
+            recyclerView.apply {
+                visibility = View.VISIBLE
+                setHasFixedSize(true)
+                layoutManager = LinearLayoutManager(this@ConversationRoomListingActivity)
+                adapter = conversationRoomsListingAdapter
+            }
+        }
+    }
+
     private fun openConversationRoomByNotificationIntent() {
-        if (isActivityOpenFromNotification) {
+        if (isActivityOpenFromNotification && roomId.isNotEmpty()) {
             Handler(Looper.getMainLooper()).postDelayed({
-                if (roomId.isNotEmpty()) {
-                    notebookRef.document(roomId).get().addOnSuccessListener {
-                        viewModel.joinRoom(
-                            ConversationRoomsListingItem(
-                                it["channel_name"]?.toString() ?: "",
-                                it["topic"]?.toString(),
-                                it["started_by"]?.toString()?.toInt(),
-                                roomId.toInt()
-                            )
+                notebookRef.document(roomId).get().addOnSuccessListener {
+                    viewModel.joinRoom(
+                        ConversationRoomsListingItem(
+                            it["channel_name"]?.toString() ?: "",
+                            it["topic"]?.toString(),
+                            it["started_by"]?.toString()?.toInt(),
+                            roomId.toInt()
                         )
-                    }
+                    )
                 }
             }, 200)
         }
@@ -207,11 +242,37 @@ class ConversationRoomListingActivity : BaseActivity(),
 
     private fun showApiCallErrorToast(error: String) {
         if (error.isNotEmpty()) {
-            Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
+            binding.notificationBar.apply {
+                visibility = View.VISIBLE
+                hideActionLayout()
+                setHeading(error)
+                setBackgroundColor(false)
+                loadAnimationSlideDown()
+                hideNotificationAfter4seconds()
+            }
         } else {
             Toast.makeText(this, "Something Went Wrong !!!", Toast.LENGTH_SHORT).show()
         }
     }
+
+    private fun hideNotificationAfter4seconds() {
+        if (runnable == null) {
+            setRunnable()
+            handler?.postDelayed(runnable, 4000)
+        } else {
+            handler?.removeCallbacks(runnable)
+            setRunnable()
+            handler?.postDelayed(runnable, 4000)
+        }
+    }
+
+    private fun setRunnable() {
+        runnable = Runnable {
+            binding.notificationBar.loadAnimationSlideUp()
+            binding.notificationBar.endSound()
+        }
+    }
+
 
     private fun showPopup() {
         var topic = ""
@@ -241,12 +302,12 @@ class ConversationRoomListingActivity : BaseActivity(),
 
     override fun onStart() {
         super.onStart()
-        adapter?.startListening()
+        conversationRoomsListingAdapter?.startListening()
     }
 
     override fun onStop() {
         super.onStop()
-        adapter?.stopListening()
+        conversationRoomsListingAdapter?.stopListening()
         compositeDisposable.clear()
     }
 
@@ -270,29 +331,16 @@ class ConversationRoomListingActivity : BaseActivity(),
     }
 
     private fun setUpRecyclerView() {
-        val query: Query = notebookRef
         val options: FirestoreRecyclerOptions<ConversationRoomsListingItem> =
             FirestoreRecyclerOptions.Builder<ConversationRoomsListingItem>()
-                .setQuery(query, ConversationRoomsListingItem::class.java)
+                .setQuery(notebookRef, ConversationRoomsListingItem::class.java)
                 .build()
-        adapter = ConversationRoomsListingAdapter(options, this)
-        query.addSnapshotListener { value, error ->
+        conversationRoomsListingAdapter = ConversationRoomsListingAdapter(options, this)
+        notebookRef.addSnapshotListener { value, error ->
             if (error != null) {
                 return@addSnapshotListener
             } else {
-                if (value == null || value.isEmpty) {
-                    binding.noRoomsText.visibility = View.VISIBLE
-                    binding.noRoomsText.text =
-                        String.format("\uD83D\uDC4B Hi there! \n\n Start a new room to get a\n conversation going!")
-                    binding.recyclerView.visibility = View.GONE
-                } else {
-                    binding.noRoomsText.visibility = View.GONE
-                    binding.recyclerView.visibility = View.VISIBLE
-
-                    binding.recyclerView.setHasFixedSize(true)
-                    binding.recyclerView.layoutManager = LinearLayoutManager(this)
-                    binding.recyclerView.adapter = adapter
-                }
+                viewModel.checkRoomsAvailableOrNot(value)
             }
         }
     }

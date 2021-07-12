@@ -39,12 +39,6 @@ class AudienceAdapter(
                     )
                 }
 
-                if (model.isIs_speaking && model.isIs_speaker && model.isIs_mic_on) {
-                    ringIcon.visibility = View.VISIBLE
-                } else {
-                    ringIcon.visibility = View.GONE
-                }
-
                 if (isModerator && model.isIs_hand_raised) {
                     raisedHands.visibility = View.VISIBLE
                 } else {

@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.conversationRoom.roomsListing
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.gson.Gson
 import com.joshtalks.joshskills.conversationRoom.model.ConversationRoomResponse
 import com.joshtalks.joshskills.conversationRoom.model.CreateConversionRoomRequest
@@ -105,6 +106,14 @@ class ConversationRoomListingViewModel : ViewModel() {
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }
+        }
+    }
+
+    fun checkRoomsAvailableOrNot(value: QuerySnapshot?) {
+        if (value == null || value.isEmpty) {
+            navigation.postValue(ConversationRoomListingNavigation.NoRoomAvailable)
+        }else{
+            navigation.postValue(ConversationRoomListingNavigation.AtleastOneRoomAvailable)
         }
     }
 
