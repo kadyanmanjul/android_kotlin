@@ -30,7 +30,7 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        overridePendingTransition(R.anim.zoom_in_enter, R.anim.zoom_out_enter)
+        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
         if (intent.hasExtra(MENTOR_ID)) {
             mentorId = intent.getStringExtra(MENTOR_ID)
         }

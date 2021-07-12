@@ -57,16 +57,16 @@
 
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/txt_info_duration"
+            android:id="@+id/total_duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/practise_seekbar"
-            android:layout_toLeftOf="@id/submit_txt_info_date"
-            android:text="@string/your_feedback"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-            android:textColor="@color/red_color"
-            android:visibility="gone"
-            app:layout_goneMarginTop="@dimen/spacing_large" />
+            android:layout_below="@+id/practise_seekbar"
+            android:layout_alignLeft="@id/practise_seekbar"
+            android:text="0:56"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+            android:textColor="@color/gray_9E"
+            android:visibility="gone"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/submit_txt_info_date"

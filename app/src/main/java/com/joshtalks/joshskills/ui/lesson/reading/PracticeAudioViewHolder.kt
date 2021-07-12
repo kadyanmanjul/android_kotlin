@@ -47,7 +47,7 @@ class PracticeAudioViewHolder(
     @View(R.id.practise_seekbar)
     lateinit var seekBar: SeekBar
 
-    @View(R.id.txt_info_duration)
+    @View(R.id.total_duration)
     lateinit var time: AppCompatTextView
 
     @View(R.id.submit_txt_info_date)
@@ -67,7 +67,13 @@ class PracticeAudioViewHolder(
 
         if (practiceEngagement != null) {
             date.text = practiceEngagement!!.practiceDate
-            time.text = practiceEngagement!!.id.toString()
+            val totalTime= Utils.getDurationOfMedia(context!!, filePath!!)
+            if (totalTime == null){
+                time.visibility=android.view.View.GONE
+            } else {
+                time.text = totalTime.toString()
+                time.visibility = android.view.View.VISIBLE
+            }
             practiceEngagement?.answerUrl?.let {
                 filePath = it
             }

@@ -28,7 +28,7 @@ class SpokenHistoryActivity : WebRtcMiddlewareActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        overridePendingTransition(R.anim.scale, R.anim.scale)
+        overridePendingTransition(R.anim.slide_up_dialog, R.anim.slide_out_top)
         if (intent.hasExtra(MENTOR_ID)) {
             mentorId = intent.getStringExtra(MENTOR_ID)
         }
@@ -103,7 +103,7 @@ class SpokenHistoryActivity : WebRtcMiddlewareActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        overridePendingTransition(R.anim.scale, R.anim.scale)
+        overridePendingTransition(R.anim.slide_up_dialog, R.anim.slide_out_top)
     }
 
     companion object {

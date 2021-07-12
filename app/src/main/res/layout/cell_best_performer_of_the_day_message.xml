@@ -36,6 +36,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_7sdp"
+                android:autoSizeMaxTextSize="@dimen/_16ssp"
+                app:autoSizeMaxTextSize="@dimen/_18sdp"
                 android:gravity="start"
                 android:text="@string/congratulations"
                 android:textAllCaps="true"

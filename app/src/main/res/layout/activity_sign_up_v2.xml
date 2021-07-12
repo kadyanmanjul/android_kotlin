@@ -49,8 +49,8 @@
                 android:text="@string/registration"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
                 android:textColor="@color/black"
-                app:layout_constraintStart_toStartOf="@+id/iv_back"
-                app:layout_constraintTop_toBottomOf="@+id/iv_back" />
+                app:layout_constraintStart_toEndOf="@id/iv_back"
+                app:layout_constraintTop_toTopOf="@id/iv_back" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/skip"
