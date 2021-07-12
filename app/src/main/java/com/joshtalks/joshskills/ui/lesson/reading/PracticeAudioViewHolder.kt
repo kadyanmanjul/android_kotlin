@@ -67,11 +67,11 @@ class PracticeAudioViewHolder(
 
         if (practiceEngagement != null) {
             date.text = practiceEngagement!!.practiceDate
-            val totalTime= Utils.getDurationOfMedia(context!!, filePath!!)
+            val totalTime= Utils.getDurationOfMedia(context!!, filePath)
             if (totalTime == null){
                 time.visibility=android.view.View.GONE
             } else {
-                time.text = totalTime.toString()
+                time.text = Utils.formatDuration(totalTime.toInt())
                 time.visibility = android.view.View.VISIBLE
             }
             practiceEngagement?.answerUrl?.let {
@@ -95,6 +95,13 @@ class PracticeAudioViewHolder(
             }
             ivCancel.visibility = android.view.View.GONE
         } else {
+            val totalTime= Utils.getDurationOfMedia(context!!, filePath)
+            if (totalTime == null){
+                time.visibility=android.view.View.GONE
+            } else {
+                time.text = Utils.formatDuration(totalTime.toInt())
+                time.visibility = android.view.View.VISIBLE
+            }
             date.text = DD_MM_YYYY.format(Date()).toLowerCase(Locale.getDefault())
             ivCancel.visibility = android.view.View.VISIBLE
         }

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -534,8 +535,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         tab?.let {
             if (isSectionCompleted) {
                 it.findViewById<ImageView>(R.id.tab_iv).visibility = View.VISIBLE
+                it.findViewById<FrameLayout>(R.id.tab_iv_container).visibility = View.VISIBLE
             } else {
                 it.findViewById<ImageView>(R.id.tab_iv).visibility = View.GONE
+                it.findViewById<FrameLayout>(R.id.tab_iv_container).visibility = View.GONE
             }
         }
     }
