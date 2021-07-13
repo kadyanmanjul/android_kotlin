@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.FragmentOfflineConnectionErrorBinding
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.ConnectionErrorRetryEvent
 
 class ConnectionErrorDialogFragment : Fragment() {
     private lateinit var binding: FragmentOfflineConnectionErrorBinding
@@ -38,11 +40,12 @@ class ConnectionErrorDialogFragment : Fragment() {
     }
 
     fun retry() {
-
+            RxBus2.publish(ConnectionErrorRetryEvent(titleText))
     }
 
     companion object {
         const val TITLE_ERROR = "TITLE_ERROR"
+        const val TAG = "ConnectionErrorDialogFragment"
 
         @JvmStatic
         fun newInstance(transactionId: String?) =

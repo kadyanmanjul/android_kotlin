@@ -6,6 +6,7 @@ import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -22,23 +23,23 @@ import com.joshtalks.joshskills.repository.local.eventbus.OpenPreviousLeaderboar
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.error.BaseConnectionErrorActivity
+import com.joshtalks.joshskills.ui.error.ConnectionErrorDialogFragment
 import com.joshtalks.joshskills.ui.leaderboard.search.LeaderBoardSearchActivity
 import com.skydoves.balloon.ArrowOrientation
 import com.skydoves.balloon.Balloon
 import com.skydoves.balloon.BalloonAnimation
 import com.skydoves.balloon.overlay.BalloonOverlayAnimation
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.util.*
 import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
+class LeaderBoardViewPagerActivity : BaseConnectionErrorActivity() {
     lateinit var binding: ActivityLeaderboardViewPagerBinding
     private val viewModel by lazy { ViewModelProvider(this).get(LeaderBoardViewModel::class.java) }
     var mapOfVisitedPage = HashMap<Int, Int>()
-    private var compositeDisposable = CompositeDisposable()
     private var tabPosition = 0
     var isTooltipShow = false
 
@@ -241,6 +242,34 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity() {
     override fun onResume() {
         super.onResume()
         subscribeRXBus()
+    }
+
+    override fun isInternetAvailable(isInternetAvailable: Boolean) {
+        if(isInternetAvailable){
+            if (binding.errorContainer.isVisible){
+                binding.errorContainer.visibility = View.GONE
+                supportFragmentManager.popBackStack()
+                onRetry()
+            }
+        } else {
+            if (binding.errorContainer.isVisible.not()){
+                binding.errorContainer.visibility = View.VISIBLE
+                supportFragmentManager
+                    .beginTransaction()
+                    .add(
+                        binding.errorContainer.id,
+                        ConnectionErrorDialogFragment.newInstance(getString(R.string.no_leaderboard_txt)),
+                        ConnectionErrorDialogFragment.TAG
+                    )
+                    .commitAllowingStateLoss()
+            }
+        }
+    }
+
+    override fun onRetry() {
+        binding.errorContainer.visibility = View.GONE
+        supportFragmentManager.popBackStack()
+        viewModel.getFullLeaderBoardData(Mentor.getInstance().getId(), getCourseId())
     }
 
     private fun subscribeRXBus() {
