@@ -28,8 +28,7 @@
                 android:layout_height="wrap_content"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                android:orientation="vertical"
-                android:paddingBottom="@dimen/_16sdp">
+                android:orientation="vertical">
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/practise_input_layout"
@@ -588,6 +587,24 @@
                     app:layout_constraintTop_toBottomOf="@id/improve_answer_btn"
                     app:layout_goneMarginBottom="@dimen/_8sdp"
                     app:rippleColor="@color/white" />
+
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/barrierNew"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="continue_btn,submit_answer_btn,improve_answer_btn" />
+
+                <View
+                    android:id="@+id/scrollEnd"
+                    android:layout_width="@dimen/_16sdp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/barrierNew"
+                    android:layout_gravity="bottom"
+                    android:layout_height="@dimen/_16sdp" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

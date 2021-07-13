@@ -843,9 +843,9 @@ class ReadingFragmentWithoutFeedback :
                             audioAttachmentInit()
                             AppObjectController.uiHandler.postDelayed(
                                 {
-                                    binding.submitAnswerBtn.parent.requestChildFocus(
-                                        binding.submitAnswerBtn,
-                                        binding.submitAnswerBtn
+                                    binding.scrollEnd.parent.requestChildFocus(
+                                        binding.scrollEnd,
+                                        binding.scrollEnd
                                     )
                                 },
                                 200

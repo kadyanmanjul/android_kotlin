@@ -328,7 +328,8 @@
                 android:id="@+id/inputLL"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_5sdp"
+                android:layout_marginVertical="@dimen/_5sdp"
+                android:layout_marginHorizontal="@dimen/_8sdp"
                 android:background="@drawable/rect_round"
                 android:orientation="vertical"
                 android:paddingStart="@dimen/_5sdp"
@@ -438,8 +439,8 @@
 
             <com.joshtalks.recordview.CustomImageButton
                 android:id="@+id/record_button"
-                android:layout_width="@dimen/_36sdp"
-                android:layout_height="@dimen/_36sdp"
+                android:layout_width="@dimen/_32sdp"
+                android:layout_height="@dimen/_32sdp"
                 android:layout_gravity="end|bottom"
                 android:layout_marginEnd="@dimen/_4sdp"
                 android:background="@drawable/recv_bg_mic"
@@ -456,8 +457,8 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/message_button"
-                android:layout_width="@dimen/_36sdp"
-                android:layout_height="@dimen/_36sdp"
+                android:layout_width="@dimen/_32sdp"
+                android:layout_height="@dimen/_32sdp"
                 android:layout_gravity="end|bottom"
                 android:layout_marginEnd="@dimen/_4sdp"
                 android:background="@drawable/recv_bg_mic"

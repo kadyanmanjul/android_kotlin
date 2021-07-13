@@ -895,6 +895,12 @@
     <string name="grammar_unlock_text">क्लास शुरू करने के लिए नीचे बटन को दबाएं </string>
     <string name="grammar_continue_test_text">क्लास जारी रखने के लिए नीचे बटन को दबाएं </string>
     <string name="grammar_input_question_hint">अंग्रेजी में जवाब लिखे </string>
+    <string name="retry">Retry</string>
+    <string name="no_load_course_txt">Couldn’t load courses</string>
+    <string name="no_load_lesson_txt">Couldn’t load the lesson</string>
+    <string name="connection_error">Connection Error</string>
+    <string name="no_leaderboard_txt">Couldn’t load leaderboard</string>
+    <string name="error_fragment_text">Please try checking both WiFi / 4G or try again later.</string>
     <string name="free_trial_dialog_title">जरुरी जानकारी</string>
     <string name="free_trial_dialog_desc">इस कोर्स की फीस ₹499 है\\nऔर यह एक 90 दिनों का कोर्स है\\n \\nखरीदने से पहले क्या आप इसका एक दिन के लिए मुफ्त में प्रयोग करना चाहते हैं?</string>
     <string name="free_trial_dialog_btn_no">जी नहीं</string>
