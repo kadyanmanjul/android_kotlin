@@ -467,6 +467,7 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_33_34: Migration = object : Migration(33, 34) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE INDEX IF NOT EXISTS `index_practise_engagement_table_practiseId_question_questionForId` ON `practise_engagement_table` (`practiseId`, `question`, `questionForId`)")
+                database.execSQL("DROP INDEX IF EXISTS `index_practise_engagement_table_practiseId_question`")
             }
         }
 
