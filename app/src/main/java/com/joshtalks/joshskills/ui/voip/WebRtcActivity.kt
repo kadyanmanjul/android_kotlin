@@ -205,6 +205,14 @@ class WebRtcActivity : AppCompatActivity() {
                 updateStatusLabel(binding.btnSpeaker, enable = true)
             }
         }
+
+        override fun onBluetoothStateChanged(isOn: Boolean) {
+            super.onBluetoothStateChanged(isOn)
+            Timber.tag("BLUETOOTH").d("onBluetoothStateChanged --- $isOn")
+            AppObjectController.uiHandler.post {
+                updateStatusLabel(binding.btnBluetooth, enable = !isOn)
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -576,6 +584,13 @@ class WebRtcActivity : AppCompatActivity() {
     fun switchAudioMode() {
         updateStatusLabel(binding.btnSpeaker, mBoundService!!.getSpeaker())
         mBoundService?.switchAudioSpeaker()
+        volumeControlStream = AudioManager.STREAM_VOICE_CALL
+    }
+
+    fun switchBluetoothMode() {
+        Timber.tag("BLUETOOTH").d("Button Clicked -- ${mBoundService!!.isBluetoothEnabled}")
+        updateStatusLabel(binding.btnBluetooth, mBoundService!!.isBluetoothEnabled)
+        mBoundService?.changeBluetoothState()
         volumeControlStream = AudioManager.STREAM_VOICE_CALL
     }
 

@@ -8,6 +8,8 @@ import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.NotificationManager.IMPORTANCE_LOW
 import android.app.PendingIntent
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothProfile
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
@@ -27,6 +29,7 @@ import android.telephony.TelephonyManager
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.widget.RemoteViews
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
@@ -44,6 +47,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.getRandomName
 import com.joshtalks.joshskills.core.printAll
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.startServiceForWebrtc
 import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.core.urlToBitmap
@@ -57,11 +61,8 @@ import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_N
 import com.joshtalks.joshskills.ui.voip.util.NotificationUtil
 import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
 import io.agora.rtc.Constants
-import io.agora.rtc.Constants.AUDIO_PROFILE_SPEECH_STANDARD
 import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSET
 import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSETBLUETOOTH
-import io.agora.rtc.Constants.AUDIO_SCENARIO_EDUCATION
-import io.agora.rtc.Constants.CHANNEL_PROFILE_COMMUNICATION
 import io.agora.rtc.Constants.CONNECTION_CHANGED_INTERRUPTED
 import io.agora.rtc.Constants.CONNECTION_STATE_RECONNECTING
 import io.agora.rtc.Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY
@@ -86,7 +87,7 @@ const val RTC_CALLER_PHOTO = "caller_photo"
 const val RTC_IS_FAVORITE = "is_favorite"
 const val RTC_PARTNER_ID = "partner_id"
 
-class WebRtcService : BaseWebRtcService() {
+class WebRtcService : BaseWebRtcService(), BluetoothProfile.ServiceListener {
 
     private val mBinder: IBinder = MyBinder()
     private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
@@ -102,6 +103,10 @@ class WebRtcService : BaseWebRtcService() {
     var isCallerJoined: Boolean = false
     private var isMicEnabled = true
     private var isSpeakerEnabled = false
+    private var isSpeakerTurningOn = false
+    var isBluetoothEnabled = false
+        private set
+    private var bluetoothAdapter: BluetoothAdapter? = null
     private var oppositeCallerId: Int? = null
     private var userDetailMap: HashMap<String, String>? = null
 
@@ -285,7 +290,7 @@ class WebRtcService : BaseWebRtcService() {
     @Volatile
     private var eventListener: IRtcEngineEventHandler? = object : IRtcEngineEventHandler() {
 
-        override fun onAudioRouteChanged(routing: Int) {
+        /*override fun onAudioRouteChanged(routing: Int) {
             super.onAudioRouteChanged(routing)
             Timber.tag(TAG).e("onAudioRouteChanged=  $routing")
             executor.submit {
@@ -301,21 +306,76 @@ class WebRtcService : BaseWebRtcService() {
                 } else {
                     bluetoothDisconnected()
                 }
+               *//* Timber.tag("Bluetooth ISSUE").d("onAudioRouteChanged: ")
+                when (routing) {
+                    Constants.AUDIO_ROUTE_DEFAULT -> {
+                        bluetoothDisconnected()
+                        showToast("DEFAULT")
+                    }
+                    AUDIO_ROUTE_HEADSET -> {
+                        Timber.tag("Bluetooth ISSUE").d("onAudioRouteChanged: AUDIO_ROUTE_HEADSET ")
+                        showToast("HEADSET")
+                        bluetoothDisconnected()
+                        callCallback?.get()?.onSpeakerOff()
+                        isSpeakerEnabled = false
+                        mRtcEngine?.setDefaultAudioRoutetoSpeakerphone(isSpeakerEnabled)
+                    }
+                    AUDIO_ROUTE_HEADSETBLUETOOTH -> {
+                        Timber.tag("Bluetooth ISSUE")
+                            .d("onAudioRouteChanged: AUDIO_ROUTE_HEADSETBLUETOOTH ")
+                        showToast("BLUETOOTH HEADSET")
+                        callCallback?.get()?.onSpeakerOff()
+                        isSpeakerEnabled = false
+                        bluetoothConnected()
+                    }
+                    Constants.AUDIO_ROUTE_LOUDSPEAKER -> {
+                        bluetoothDisconnected()
+                        showToast("LOUDSPEAKER")
+                    }
+                    Constants.AUDIO_ROUTE_SPEAKERPHONE -> {
+                        bluetoothDisconnected()
+                        showToast("SPEAKERPHONE")
+                    }
+                    Constants.AUDIO_ROUTE_EARPIECE -> {
+                        bluetoothDisconnected()
+                        showToast("EARPIECE")
+                    }
+                    else -> {
+                        bluetoothDisconnected()
+                        showToast("ELSE $routing")
+                    }
+                }*//*
             }
-        }
+        }*/
 
-        private fun bluetoothDisconnected() {
-            val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-            audioManager.stopBluetoothSco()
-            audioManager.isBluetoothScoOn = false
-        }
-
-        private fun bluetoothConnected() {
-            val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-            audioManager.startBluetoothSco()
-            audioManager.isBluetoothScoOn = true
+        override fun onAudioRouteChanged(routing: Int) {
+            super.onAudioRouteChanged(routing)
+            when (routing) {
+                Constants.AUDIO_ROUTE_DEFAULT -> {
+                    showToast("DEFAULT")
+                }
+                AUDIO_ROUTE_HEADSET -> {
+                    Timber.tag("Bluetooth ISSUE").d("onAudioRouteChanged: AUDIO_ROUTE_HEADSET ")
+                    showToast("HEADSET")
+                }
+                AUDIO_ROUTE_HEADSETBLUETOOTH -> {
+                    Timber.tag("Bluetooth ISSUE")
+                        .d("onAudioRouteChanged: AUDIO_ROUTE_HEADSETBLUETOOTH ")
+                    showToast("BLUETOOTH HEADSET")
+                }
+                Constants.AUDIO_ROUTE_LOUDSPEAKER -> {
+                    showToast("LOUDSPEAKER")
+                }
+                Constants.AUDIO_ROUTE_SPEAKERPHONE -> {
+                    showToast("SPEAKERPHONE")
+                }
+                Constants.AUDIO_ROUTE_EARPIECE -> {
+                    showToast("EARPIECE")
+                }
+                else -> {
+                    showToast("ELSE $routing")
+                }
+            }
         }
 
         override fun onError(errorCode: Int) {
@@ -582,6 +642,8 @@ class WebRtcService : BaseWebRtcService() {
         pstnCallState = CallState.CALL_STATE_IDLE
         handlerThread.start()
         mHandler = Handler(handlerThread.looper)
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        bluetoothAdapter?.getProfileProxy(this, this, BluetoothProfile.HEADSET)
         CoroutineScope(Dispatchers.IO).launch {
             TelephonyUtil.getManager(this@WebRtcService)
                 .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_CALL_STATE)
@@ -632,15 +694,15 @@ class WebRtcService : BaseWebRtcService() {
                 }
                 setParameters("{\"rtc.peer.offline_period\":$callReconnectTime}")
                 setParameters("{\"che.audio.keep.audiosession\":true}")
+                setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION)
 
                 disableVideo()
                 enableAudio()
                 enableAudioVolumeIndication(1000, 3, true)
                 setAudioProfile(
-                    AUDIO_PROFILE_SPEECH_STANDARD,
-                    AUDIO_SCENARIO_EDUCATION
+                    Constants.AUDIO_PROFILE_SPEECH_STANDARD,
+                    Constants.AUDIO_SCENARIO_EDUCATION
                 )
-                setChannelProfile(CHANNEL_PROFILE_COMMUNICATION)
                 adjustRecordingSignalVolume(400)
                 val audio = getSystemService(AUDIO_SERVICE) as AudioManager
                 val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
@@ -664,7 +726,10 @@ class WebRtcService : BaseWebRtcService() {
 
     @Suppress("UNCHECKED_CAST")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Timber.tag(TAG).e("onStartCommand=  %s", intent?.action)
+        Timber.tag(TAG).e(
+            "onStartCommand=  %s  IsSpeakerOn = $isSpeakerEnabled  IsBluetoothOn = $isBluetoothEnabled",
+            intent?.action
+        )
         executor.execute {
             intent?.action?.run {
                 initEngine {
@@ -673,6 +738,7 @@ class WebRtcService : BaseWebRtcService() {
                         when {
                             this == InitLibrary().action -> {
                                 Timber.tag(TAG).e("LibraryInit")
+                                //isBluetoothEnabled = false
                             }
                             this == IncomingCall().action -> {
                                 if (CallState.CALL_STATE_BUSY == pstnCallState || isCallOnGoing.value == true) {
@@ -841,6 +907,7 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     private fun audioFocus() {
+        Log.d("AUDIO", "audioFocus: ")
         val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val af = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).run {
@@ -852,6 +919,9 @@ class WebRtcService : BaseWebRtcService() {
                     }
                 )
                 setAcceptsDelayedFocusGain(true)
+                /*setOnAudioFocusChangeListener {
+
+                }*/
                 build()
             }
             af.acceptsDelayedFocusGain()
@@ -1147,7 +1217,7 @@ class WebRtcService : BaseWebRtcService() {
         return mBinder
     }
 
-    fun switchAudioSpeaker() {
+    /*fun switchAudioSpeaker() {
         executor.submit {
             val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
             isSpeakerEnabled = !isSpeakerEnabled
@@ -1155,8 +1225,117 @@ class WebRtcService : BaseWebRtcService() {
             mRtcEngine?.setEnableSpeakerphone(isSpeakerEnabled)
 //            mRtcEngine?.setDefaultAudioRoutetoSpeakerphone(isSpeakerEnable)
             audioManager.isSpeakerphoneOn = isSpeakerEnabled
+            if(isSpeakerEnabled) {
+                isBluetoothEnabled = false
+                callCallback?.get()?.onBluetoothStateChanged(false)
+            }
+        }
+    }*/
+
+    fun switchAudioSpeaker() {
+        if (isBluetoothEnabled) {
+            isSpeakerTurningOn = true
+            changeBluetoothState()
+        } else
+            switchSpeaker()
+    }
+
+    private fun switchSpeaker() {
+        Log.d("AUDIO", "switchSpeaker: $isSpeakerEnabled")
+        isSpeakerEnabled = !isSpeakerEnabled
+        mRtcEngine?.setEnableSpeakerphone(isSpeakerEnabled)
+        if (!isSpeakerEnabled)
+            callCallback?.get()?.onSpeakerOff()
+    }
+
+    fun changeBluetoothState() {
+        if (bluetoothAdapter?.isEnabled == true) {
+            showToast("Disconnecting Bluetooth ... Please wait")
+            bluetoothAdapter?.disable()
+        } else {
+            if (bluetoothAdapter != null) {
+                bluetoothAdapter?.enable()
+                showToast("Connecting Bluetooth ... Please wait")
+            }
         }
     }
+
+    /*fun switchAudioViaBluetooth() {
+        executor.submit {
+            if(isBluetoothEnabled)
+                bluetoothDisconnected()
+            else
+                bluetoothConnected()
+        }
+    }*/
+
+    override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
+        Timber.tag("BLUETOOTH").d("bluetoothConnected")
+        isBluetoothEnabled = true
+        callCallback?.get()?.onBluetoothStateChanged(true)
+        isSpeakerEnabled = false
+        mRtcEngine?.setEnableSpeakerphone(isSpeakerEnabled)
+        callCallback?.get()?.onSpeakerOff()
+        showToast("BLUETOOTH CONNECTED")
+    }
+
+    override fun onServiceDisconnected(profile: Int) {
+        if (profile == BluetoothProfile.HEADSET) {
+            showToast("Bluetooth Headset Disconnected")
+        } else {
+            showToast("BT Device Disconnected")
+        }
+        isBluetoothEnabled = false
+        callCallback?.get()?.onBluetoothStateChanged(false)
+        if (isSpeakerTurningOn) {
+            switchSpeaker()
+            isSpeakerTurningOn = false
+        }
+        showToast("BLUETOOTH DISCONNECTED")
+    }
+
+    /*private fun bluetoothDisconnected() {
+        Timber.tag("BLUETOOTH").d("bluetoothDisconnected")
+        val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audioManager.stopBluetoothSco()
+        audioManager.isBluetoothScoOn = false
+        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+        showToast("BLUETOOTH DISCONNECTED")
+    }
+
+    private fun bluetoothConnected() {
+        Timber.tag("BLUETOOTH").d("bluetoothConnected")
+        val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        //if(audioManager.isBluetoothScoAvailableOffCall) {
+            audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+            audioManager.isBluetoothScoOn = true
+            audioManager.startBluetoothSco()
+            audioManager.isSpeakerphoneOn = false
+            isBluetoothEnabled = true
+            callCallback?.get()?.onBluetoothStateChanged(true)
+            showToast("BLUETOOTH CONNECTED")
+        *//*} else {
+            showToast("UNABLE TO CONNECT BLUETOOTH")
+        }*//*
+    }*/
+
+    /*private fun bluetoothDisconnected() {
+        val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        //audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+        audioManager.stopBluetoothSco()
+        //audioManager.isBluetoothScoOn = false
+        isBluetoothEnabled = false
+        callCallback?.get()?.onBluetoothStateChanged(false)
+    }
+
+    private fun bluetoothConnected() {
+        val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        //audioManager.mode = AudioManager.MODE_IN_CALL
+        audioManager.startBluetoothSco()
+        //audioManager.isBluetoothScoOn = true
+        isBluetoothEnabled = true
+        callCallback?.get()?.onBluetoothStateChanged(true)
+    }*/
 
     fun switchSpeck() {
         executor.submit {
@@ -1229,7 +1408,7 @@ class WebRtcService : BaseWebRtcService() {
         isEngineInitialized = false
         joshAudioManager?.quitEverything()
         AppObjectController.mRtcEngine = null
-        handlerThread?.quitSafely()
+        handlerThread.quitSafely()
         isTimeOutToPickCall = false
         isCallerJoined = false
         callStartTime = 0L
@@ -1703,4 +1882,5 @@ interface WebRtcCallback {
     fun onHoldCall() {}
     fun onUnHoldCall() {}
     fun onSpeakerOff() {}
+    fun onBluetoothStateChanged(isOn: Boolean) {}
 }

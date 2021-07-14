@@ -17,8 +17,8 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
         android:background="@drawable/voip_bg"
+        android:fitsSystemWindows="true"
         android:orientation="vertical">
 
 
@@ -116,9 +116,9 @@
             android:id="@+id/topic_header"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_16sdp"
             android:layout_marginTop="@dimen/_28sdp"
             android:gravity="center"
-            android:layout_marginHorizontal="@dimen/_16sdp"
             android:text="@string/topic"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
             android:textColor="@color/white"
@@ -126,23 +126,22 @@
             android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/c_image"
-            />
+            app:layout_constraintTop_toBottomOf="@+id/c_image" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/topic_name"
             android:layout_width="0dp"
-            android:layout_marginTop="@dimen/_2sdp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:gravity="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
             android:textColor="@color/white"
-            android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:ignore="MissingPrefix"
             app:layout_constraintTop_toBottomOf="@+id/topic_header"
+            tools:ignore="MissingPrefix"
             tools:text="Talk about what is Futur" />
 
         <androidx.appcompat.widget.AppCompatImageButton
@@ -155,12 +154,27 @@
             android:padding="@dimen/_14sdp"
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.9"
+            app:layout_constraintBottom_toTopOf="@+id/guideline2"
+            app:layout_constraintEnd_toStartOf="@+id/btn_speaker"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn_bluetooth"
             app:srcCompat="@drawable/ic_baseline_call" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_bluetooth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle2"
+            android:backgroundTint="@color/dis_color_10f"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{()->handler.switchBluetoothMode()}"
+            android:padding="@dimen/_14sdp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline2"
+            app:layout_constraintEnd_toStartOf="@+id/btn_action"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_bluetooth" />
 
 
         <androidx.appcompat.widget.AppCompatImageButton
@@ -173,10 +187,10 @@
             android:focusable="true"
             android:onClick="@{()->handler.switchAudioMode()}"
             android:padding="@dimen/_14sdp"
-            app:layout_constraintBottom_toBottomOf="@id/btn_action"
-            app:layout_constraintEnd_toStartOf="@id/btn_action"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/btn_action"
+            app:layout_constraintBottom_toTopOf="@+id/guideline2"
+            app:layout_constraintEnd_toStartOf="@+id/btn_mute"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn_action"
             app:srcCompat="@drawable/ic_baseline_speaker_on" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -206,11 +220,10 @@
             android:focusable="true"
             android:onClick="@{()->handler.switchTalkMode()}"
             android:padding="@dimen/_14sdp"
-            app:layout_constraintBottom_toBottomOf="@id/btn_action"
+            app:layout_constraintBottom_toTopOf="@+id/guideline2"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/btn_action"
-            app:layout_constraintTop_toTopOf="@id/btn_action"
-            app:layout_constraintVertical_bias="0.9"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn_speaker"
             app:srcCompat="@drawable/ic_baseline_mic_off" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -228,8 +241,6 @@
             app:layout_constraintTop_toBottomOf="@+id/btn_mute"
             tools:ignore="MissingPrefix"
             tools:visibility="visible" />
-
-
 
 
         <androidx.appcompat.widget.AppCompatImageButton
@@ -270,16 +281,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            tools:visibility="gone"
-            app:constraint_referenced_ids="btn_incoming_disconnect,btn_incoming_connect" />
+            app:constraint_referenced_ids="btn_incoming_disconnect,btn_incoming_connect"
+            tools:visibility="gone" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group_for_outgoing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:constraint_referenced_ids="btn_mute,btn_speaker,btn_action,txt_speaker,txt_mute"
+            app:constraint_referenced_ids="btn_mute,btn_speaker,btn_action,txt_speaker,txt_mute,btn_bluetooth"
             tools:visibility="visible" />
+
         <FrameLayout
             android:id="@+id/placeholder_bg"
             android:layout_width="match_parent"
@@ -287,6 +299,13 @@
             android:background="#AA000000"
             android:visibility="gone"
             tools:visibility="gone" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="43dp" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

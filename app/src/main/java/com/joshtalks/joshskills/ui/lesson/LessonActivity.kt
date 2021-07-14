@@ -8,20 +8,17 @@ import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.* // ktlint-disable no-wildcard-imports
-import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
-import com.joshtalks.joshskills.core.videotranscoder.recyclerView
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
@@ -225,13 +222,14 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
         }
     }
 
-    private fun setUpTabLayout() {
+    /*private fun setUpTabLayout() {
         val adapter = LessonPagerAdapter(
             supportFragmentManager,
             this.lifecycle
         )
 
         binding.lessonViewpager.adapter = adapter
+        //binding.lessonViewpager.add
         binding.lessonViewpager.requestTransparentRegion(binding.lessonViewpager)
         binding.lessonViewpager.recyclerView.enforceSingleScrollDirection()
 
@@ -293,6 +291,122 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
                     setUnselectedColor(tab)
                 }
             })
+
+        Handler().postDelayed(
+            {
+                openIncompleteTab(3)
+            },
+            50
+        )
+    }*/
+
+    private fun setUpTabLayout() {
+        val adapter = LessonPagerTestAdapter(
+            supportFragmentManager,
+            FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
+        )
+
+        /*LessonPagerAdapter(
+        supportFragmentManager,
+        this.lifecycle
+    )*/
+
+        binding.lessonViewpager.adapter = adapter
+        binding.lessonViewpager.offscreenPageLimit = 3
+        //binding.lessonViewpager.add
+        //binding.lessonViewpager.requestTransparentRegion(binding.lessonViewpager)
+        //binding.lessonViewpager.recyclerView.enforceSingleScrollDirection()
+
+        tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
+        /*for (i in 0 until tabs.childCount) {
+            val tab = tabs.getChildAt(i)
+            val layoutParams = tab.layoutParams as LinearLayout.LayoutParams
+            layoutParams.weight = 0f
+            //     layoutParams.marginEnd = Utils.dpToPx(2)
+            //  layoutParams.marginStart = Utils.dpToPx(2)
+        }*/
+        binding.lessonTabLayout.requestLayout()
+        // binding.lessonTabLayout.s
+        //for(tab in )
+        val tabCount = binding.lessonTabLayout.tabCount
+        for (index in 0 until tabCount) {
+            val tab = binding.lessonTabLayout.getTabAt(index)
+            tab?.setCustomView(R.layout.capsule_tab_layout_view)
+            when (index) {
+                0 -> {
+                    setSelectedColor(tab)
+                    tab?.view?.findViewById<TextView>(R.id.title_tv)?.text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
+                }
+                1 -> {
+                    setUnselectedColor(tab)
+                    tab?.view?.findViewById<TextView>(R.id.title_tv)?.text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.VOCABULARY_TITLE)
+                }
+                2 -> {
+                    setUnselectedColor(tab)
+                    tab?.view?.findViewById<TextView>(R.id.title_tv)?.text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.READING_TITLE)
+                }
+                3 -> {
+                    setUnselectedColor(tab)
+                    tab?.view?.findViewById<TextView>(R.id.title_tv)?.text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
+                }
+            }
+        }
+        /*TabLayoutMediator(
+            binding.lessonTabLayout,
+            binding.lessonViewpager
+        ) { tab, position ->
+            tab.setCustomView(R.layout.capsule_tab_layout_view)
+            when (position) {
+                0 -> {
+                    setSelectedColor(tab)
+                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
+                }
+                1 -> {
+                    setUnselectedColor(tab)
+                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.VOCABULARY_TITLE)
+                }
+                2 -> {
+                    setUnselectedColor(tab)
+                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.READING_TITLE)
+                }
+                3 -> {
+                    setUnselectedColor(tab)
+                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
+                }
+            }
+        }.attach()*/
+
+        binding.lessonTabLayout.addOnTabSelectedListener(object :
+            TabLayout.OnTabSelectedListener {
+
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                setSelectedColor(tab)
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                setSelectedColor(tab)
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                setUnselectedColor(tab)
+            }
+        })
 
         Handler().postDelayed(
             {
