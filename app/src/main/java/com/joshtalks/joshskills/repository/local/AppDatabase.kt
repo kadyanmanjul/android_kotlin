@@ -101,7 +101,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class
     ],
-    version = 33,
+    version = 34,
     exportSchema = true
 )
 @TypeConverters(
