@@ -179,7 +179,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_28_29,
                                 MIGRATION_30_31,
                                 MIGRATION_31_32,
-                                MIGRATION_32_33
+                                MIGRATION_32_33,
+                                MIGRATION_33_34
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -461,6 +462,11 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.delete("favorite_caller", null, null)
                 database.execSQL("ALTER TABLE favorite_caller ADD COLUMN mentor_id TEXT NOT NULL DEFAULT ''")
+            }
+        }
+        private val MIGRATION_33_34: Migration = object : Migration(33, 34) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE INDEX IF NOT EXISTS `index_practise_engagement_table_practiseId_question_questionForId` ON `practise_engagement_table` (`practiseId`, `question`, `questionForId`)")
             }
         }
 
