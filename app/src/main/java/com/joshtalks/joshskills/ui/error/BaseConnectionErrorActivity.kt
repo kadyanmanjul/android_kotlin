@@ -1,6 +1,10 @@
 package com.joshtalks.joshskills.ui.error
 
+import android.view.View
+import android.widget.FrameLayout
+import androidx.core.view.isVisible
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ConnectionErrorRetryEvent
@@ -14,7 +18,7 @@ abstract class BaseConnectionErrorActivity : WebRtcMiddlewareActivity() {
 
     override fun onResume() {
         super.onResume()
-        observeNetwork()
+        //observeNetwork()
     }
 
     override fun onPause() {
@@ -50,5 +54,27 @@ abstract class BaseConnectionErrorActivity : WebRtcMiddlewareActivity() {
                     }
                 )
         )
+    }
+
+    fun isApiFalied(isApiSuccess: Boolean, container: FrameLayout, stringId:Int?=null) {
+        if(isApiSuccess){
+            if (container.isVisible){
+                container.visibility = View.GONE
+                supportFragmentManager.popBackStack()
+                onRetry()
+            }
+        } else {
+            if (container.isVisible.not()){
+                container.visibility = View.VISIBLE
+                supportFragmentManager
+                    .beginTransaction()
+                    .add(
+                        container.id,
+                        ConnectionErrorDialogFragment.newInstance(getString(stringId?: R.string.connection_error)),
+                        ConnectionErrorDialogFragment.TAG
+                    )
+                    .commitAllowingStateLoss()
+            }
+        }
     }
 }

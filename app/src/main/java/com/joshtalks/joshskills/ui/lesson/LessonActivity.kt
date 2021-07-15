@@ -34,6 +34,7 @@ import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.AnimateAtsOtionViewEvent
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
+import com.joshtalks.joshskills.ui.error.BaseConnectionErrorActivity
 import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
 import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
@@ -45,13 +46,12 @@ import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
+class LessonActivity : BaseConnectionErrorActivity(), LessonActivityListener {
 
     private lateinit var binding: LessonActivityBinding
 
@@ -64,7 +64,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     private var isNewGrammar = false
     private var testId = -1
     private var whatsappUrl = EMPTY
-    private val compositeDisposable = CompositeDisposable()
     private var customView: CustomWord? = null
     var lesson: LessonModel? = null // Do not use this var
     private lateinit var tabs: ViewGroup
@@ -140,6 +139,16 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     override fun onResume() {
         super.onResume()
         subscribeRxBus()
+    }
+
+    override fun isInternetAvailable(isInternetAvailable: Boolean) {
+
+    }
+
+    override fun onRetry() {
+        val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
+        viewModel.getLesson(lessonId)
+        viewModel.getQuestions(lessonId, isDemo)
     }
 
     private fun subscribeRxBus() {
@@ -264,6 +273,24 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             {
                 if (it.pointsList.isNullOrEmpty().not()) {
                     showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
+                }
+            }
+        )
+
+        viewModel.connectionApiStatus.observe(
+            this,
+            {
+                binding.progressView.visibility = View.GONE
+                when(it){
+                    ApiCallStatus.FAILED ->{
+                        isApiFalied(false,binding.errorContainer,R.string.no_load_lesson_txt)
+                    }
+                    ApiCallStatus.SUCCESS ->{
+                        isApiFalied(true,binding.errorContainer)
+                    }
+                    else ->{
+                        isApiFalied(false,binding.errorContainer,R.string.no_load_lesson_txt)
+                    }
                 }
             }
         )

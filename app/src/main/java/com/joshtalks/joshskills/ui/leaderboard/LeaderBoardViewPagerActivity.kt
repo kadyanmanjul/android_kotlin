@@ -6,7 +6,6 @@ import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -24,7 +23,6 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.error.BaseConnectionErrorActivity
-import com.joshtalks.joshskills.ui.error.ConnectionErrorDialogFragment
 import com.joshtalks.joshskills.ui.leaderboard.search.LeaderBoardSearchActivity
 import com.skydoves.balloon.ArrowOrientation
 import com.skydoves.balloon.Balloon
@@ -139,7 +137,12 @@ class LeaderBoardViewPagerActivity : BaseConnectionErrorActivity() {
             Observer {
                 it?.let {
                     when (it) {
-                        ApiCallStatus.FAILED, ApiCallStatus.SUCCESS -> {
+                        ApiCallStatus.FAILED ->{
+                            hideProgressBar()
+                            isApiFalied(false,binding.errorContainer,R.string.no_leaderboard_txt)
+                        }
+                        ApiCallStatus.SUCCESS -> {
+                            isApiFalied(true,binding.errorContainer)
                             hideProgressBar()
                         }
                         ApiCallStatus.START -> {
@@ -244,27 +247,7 @@ class LeaderBoardViewPagerActivity : BaseConnectionErrorActivity() {
         subscribeRXBus()
     }
 
-    override fun isInternetAvailable(isInternetAvailable: Boolean) {
-        if(isInternetAvailable){
-            if (binding.errorContainer.isVisible){
-                binding.errorContainer.visibility = View.GONE
-                supportFragmentManager.popBackStack()
-                onRetry()
-            }
-        } else {
-            if (binding.errorContainer.isVisible.not()){
-                binding.errorContainer.visibility = View.VISIBLE
-                supportFragmentManager
-                    .beginTransaction()
-                    .add(
-                        binding.errorContainer.id,
-                        ConnectionErrorDialogFragment.newInstance(getString(R.string.no_leaderboard_txt)),
-                        ConnectionErrorDialogFragment.TAG
-                    )
-                    .commitAllowingStateLoss()
-            }
-        }
-    }
+    override fun isInternetAvailable(isInternetAvailable: Boolean) { }
 
     override fun onRetry() {
         binding.errorContainer.visibility = View.GONE

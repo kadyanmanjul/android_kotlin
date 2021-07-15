@@ -28,10 +28,10 @@ import com.joshtalks.joshskills.repository.server.Award
 import com.joshtalks.joshskills.repository.server.AwardCategory
 import com.joshtalks.joshskills.repository.server.UserProfileResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.error.BaseConnectionErrorActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.text.DecimalFormat
 import java.util.*
@@ -42,14 +42,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class UserProfileActivity : WebRtcMiddlewareActivity() {
+class UserProfileActivity : BaseConnectionErrorActivity() {
 
     lateinit var binding: ActivityUserProfileBinding
     private var mentorId: String = EMPTY
     private var impressionId: String = EMPTY
     private var intervalType: String? = EMPTY
     private var previousPage: String? = EMPTY
-    private val compositeDisposable = CompositeDisposable()
     private var awardCategory: List<AwardCategory>? = emptyList()
     private var startTime = 0L
 
@@ -128,7 +127,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
         text_message_title.text = getString(R.string.profile)
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE) && mentorId == Mentor.getInstance()
-            .getId()
+                .getId()
         ) {
             with(iv_setting) {
                 visibility = View.VISIBLE
@@ -198,9 +197,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         viewModel.apiCallStatusLiveData.observe(this) {
             if (it == ApiCallStatus.SUCCESS) {
                 hideProgressBar()
+                isApiFalied(true, binding.errorContainer)
             } else if (it == ApiCallStatus.FAILED) {
                 hideProgressBar()
-                this.finish()
+                isApiFalied(false, binding.errorContainer, R.string.connection_error)
             } else if (it == ApiCallStatus.START) {
                 showProgressBar()
             }
@@ -291,7 +291,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
         // binding.points.text = DecimalFormat("#,##,##,###").format(userData.points)
         binding.streaksText.text = getString(R.string.user_streak_text, userData.streak)
-        binding.streaksText.visibility=View.GONE
+        binding.streaksText.visibility = View.GONE
 
         if (userData.awardCategory.isNullOrEmpty()) {
             binding.awardsHeading.visibility = View.GONE
@@ -441,6 +441,14 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         subscribeRXBus()
     }
 
+    override fun isInternetAvailable(isInternetAvailable: Boolean) {
+
+    }
+
+    override fun onRetry() {
+        getProfileData(intervalType, previousPage)
+    }
+
     private fun subscribeRXBus() {
         compositeDisposable.add(
             RxBus2.listen(AwardItemClickedEventBus::class.java)
@@ -544,8 +552,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }*/
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
-            val url= data?.data?.path?: EMPTY
-            if (url.isNotBlank()){
+            val url = data?.data?.path ?: EMPTY
+            if (url.isNotBlank()) {
                 addUserImageInView(url)
             }
         } else if (resultCode == ImagePicker.RESULT_ERROR) {

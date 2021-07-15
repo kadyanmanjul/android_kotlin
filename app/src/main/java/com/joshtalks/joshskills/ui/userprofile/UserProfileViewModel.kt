@@ -218,6 +218,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                 }
 
             } catch (ex: Throwable) {
+                apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
                 ex.showAppropriateMsg()
             }
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)

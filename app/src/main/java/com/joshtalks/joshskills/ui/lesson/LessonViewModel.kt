@@ -60,6 +60,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val demoLessonNoLiveData: MutableLiveData<Int> = MutableLiveData()
     val demoOnboardingData: MutableLiveData<DemoOnboardingData> = MutableLiveData()
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
+    val connectionApiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val favoriteCaller = MutableSharedFlow<Boolean>(replay = 0)
     val ruleListIds: MutableLiveData<RuleIdsList> = MutableLiveData()
 
@@ -67,9 +68,9 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             val lesson = getLessonFromDB(lessonId)
             if (lesson != null) {
-                lessonLiveData.postValue(lesson)
+                lessonLiveData.postValue(lesson!!)
             } else {
-                showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
+                connectionApiStatus.postValue(ApiCallStatus.FAILED)
             }
         }
     }
@@ -83,8 +84,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     fun getQuestions(lessonId: Int, isDemo: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO) {
             val questionsFromDB = getQuestionsFromDB(lessonId)
-            //TODO remove below line and uncomment above code after getting correct data from API
-            //val questionsFromDB = emptyList<LessonQuestion>()
             if (questionsFromDB.isNotEmpty()) {
                 lessonQuestionsLiveData.postValue(questionsFromDB)
             }
@@ -98,7 +97,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             }
 
             if (questionsFromDB.isEmpty() && questionsFromAPI.isEmpty()) {
-                showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
+                connectionApiStatus.postValue(ApiCallStatus.FAILED)
             }
         }
     }
@@ -577,11 +576,12 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             val topicDetailsFromLocal = getTopicFromDB(topicId)
             if (topicDetailsFromLocal != null) {
                 topicDetailsFromLocal.isFromDb = true
-                speakingTopicLiveData.postValue(topicDetailsFromLocal)
+                speakingTopicLiveData.postValue(topicDetailsFromLocal!!)
             }
             if (Utils.isInternetAvailable()) {
-                val topicDetails = getTopicFromAPI(topicId)
-                speakingTopicLiveData.postValue(topicDetails)
+                getTopicFromAPI(topicId)?.let {
+                    speakingTopicLiveData.postValue(it)
+                }
             }
         }
     }
