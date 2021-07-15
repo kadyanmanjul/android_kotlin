@@ -53,6 +53,8 @@ import com.joshtalks.joshskills.ui.payment.ChatNPayDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
 import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
+import com.joshtalks.joshskills.ui.signup.FLOW_FROM
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.razorpay.Checkout
@@ -406,7 +408,16 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     MarketingAnalytics.sevenDayFreeTrialStart(testId)
                 }
                 PrefManager.put(IS_PAYMENT_DONE, true)
-                navigateToStartCourseActivity(false)
+                if (isFromNewFreeTrial){
+                    if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isBlank())
+                        PrefManager.put(
+                            PAYMENT_MOBILE_NUMBER,
+                            prefix.plus(SINGLE_SPACE).plus(binding.mobileEt.text)
+                        )
+                    navigateToLoginActivity()
+                } else {
+                    navigateToStartCourseActivity(false)
+                }
             }
         })
 
@@ -936,4 +947,14 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         showWebViewDialog(url)
     }
 
+
+    private fun navigateToLoginActivity() {
+        val intent = Intent(this, SignUpActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            putExtra(FLOW_FROM, "payment journey")
+        }
+        startActivity(intent)
+        this.finish()
+    }
 }
