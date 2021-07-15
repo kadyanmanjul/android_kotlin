@@ -414,7 +414,12 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                             PAYMENT_MOBILE_NUMBER,
                             prefix.plus(SINGLE_SPACE).plus(binding.mobileEt.text)
                         )
-                    navigateToLoginActivity()
+                    if (User.getInstance().isVerified) {
+                        startActivity(getInboxActivityIntent())
+                        this.finish()
+                    } else {
+                        navigateToLoginActivity()
+                    }
                 } else {
                     navigateToStartCourseActivity(false)
                 }
