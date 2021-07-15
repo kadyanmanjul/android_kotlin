@@ -45,7 +45,7 @@ class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
 
         binding.txtTrialEndMsg.text =
             AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.FREE_TRIAL_DIALOG_TXT)
+                .getString(FirebaseRemoteConfigKey.FREE_TRIAL_DIALOG_TXT).replace("\\n", "\n")
 
         binding.btnUnlock.text = AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.FREE_TRIAL_DIALOG_BTN_TXT)

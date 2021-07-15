@@ -355,7 +355,8 @@
     <string name="start_subscription">Start 1-Year Subscription</string>
     <string name="enjoy_free_trial">Enjoy Your Free Trial!</string>
     <string name="convert">Upgrade</string>
-    <string name="trial_ended">Your 2 day trial has ended! Kya aapko mazaa aaya?\nAccess this courses now.</string>
+    <string name="trial_ended">Your 2 day trial has ended! Kya aapko mazaa aaya?
+        \nAccess this courses now.</string>
     <string name="unlock_all_courses">Unlock All Courses</string>
     <string name="get_one_year_pass">Get All Course Access Pass</string>
     <string name="free_trial_ended">Free trial has ended</string>
