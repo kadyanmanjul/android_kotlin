@@ -265,12 +265,7 @@ class LeaderBoardFragment : Fragment() {
             }
         }
         binding.recyclerView.addView(
-            LeaderBoardItemViewHolder(
-                LeaderboardMentor(
-                    null, null, null, null, null, 0, 0
-                ),
-                requireContext(), isHeader = true
-            )
+            LeaderBoardItemHeaderViewHolder()
         )
 
         if (type == "TODAY") {

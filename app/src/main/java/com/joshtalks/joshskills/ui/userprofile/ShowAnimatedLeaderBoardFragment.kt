@@ -33,6 +33,7 @@ import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.OutrankedDataResponse
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
+import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardItemHeaderViewHolder
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardItemViewHolder
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
@@ -205,12 +206,7 @@ class ShowAnimatedLeaderBoardFragment : DialogFragment() {
                 position = index.plus(4)
             }
             binding.recyclerView.addView(
-                LeaderBoardItemViewHolder(
-                    item,
-                    requireContext(),
-                    false,
-                    false
-                )
+                LeaderBoardItemHeaderViewHolder()
             )
         }
 

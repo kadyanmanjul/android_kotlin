@@ -24,8 +24,7 @@ import java.util.Locale
 class LeaderBoardItemViewHolder(
     var response: LeaderboardMentor,
     var context: Context,
-    var currentUser: Boolean = response.id.equals(Mentor.getInstance().getId()),
-    var isHeader: Boolean = false
+    var currentUser: Boolean = response.id.equals(Mentor.getInstance().getId())
 ) {
 
     @View(R.id.rank)
@@ -50,45 +49,33 @@ class LeaderBoardItemViewHolder(
 
     @Resolve
     fun onViewInflated() {
-        if (isHeader) {
-            rank.text = "Rank"
-            name.text = "Students"
-            points.text = "Points"
-            user_pic.visibility = android.view.View.GONE
-            container.isClickable = false
-            container.isEnabled = false
-            onlineStatusLayout.visibility = android.view.View.GONE
+        if (currentUser) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                container.setBackgroundColor(context.getColor(R.color.lightest_blue))
+            }
         } else {
-            container.isClickable = true
-            container.isEnabled = true
-            if (currentUser) {
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    container.setBackgroundColor(context.getColor(R.color.lightest_blue))
-                }
-            } else {
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    container.setBackgroundColor(context.getColor(R.color.white))
-                }
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                container.setBackgroundColor(context.getColor(R.color.white))
             }
-            rank.text = response.ranking.toString()
-            val resp = StringBuilder()
-            response.name?.split(" ")?.forEach {
-                resp.append(it.toLowerCase(Locale.getDefault()).capitalize(Locale.getDefault()))
-                    .append(" ")
-            }
-            name.text = resp
-            points.text = response.points.toString()
-            user_pic.setUserImageOrInitials(
-                response.photoUrl,
-                response.name ?: getRandomName(),
-                isRound = true
-            )
-            user_pic.visibility = android.view.View.VISIBLE
-            if (response.isOnline != null && response.isOnline!!) {
-                onlineStatusLayout.visibility = android.view.View.VISIBLE
-            } else {
-                onlineStatusLayout.visibility = android.view.View.GONE
-            }
+        }
+        rank.text = response.ranking.toString()
+        val resp = StringBuilder()
+        response.name?.split(" ")?.forEach {
+            resp.append(it.toLowerCase(Locale.getDefault()).capitalize(Locale.getDefault()))
+                .append(" ")
+        }
+        name.text = resp
+        points.text = response.points.toString()
+        user_pic.setUserImageOrInitials(
+            response.photoUrl,
+            response.name ?: getRandomName(),
+            isRound = true
+        )
+        user_pic.visibility = android.view.View.VISIBLE
+        if (response.isOnline != null && response.isOnline!!) {
+            onlineStatusLayout.visibility = android.view.View.VISIBLE
+        } else {
+            onlineStatusLayout.visibility = android.view.View.GONE
         }
     }
 

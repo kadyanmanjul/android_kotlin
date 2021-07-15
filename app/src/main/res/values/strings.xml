@@ -867,6 +867,7 @@
     <string name="empty_favorite_list_message">You have not added anyone to your favorites list.</string>
     <string name="topic">Topic</string>
     <string name="student">Student</string>
+    <string name="students">Students</string>
     <string name="yes_excited">Yes, I am excited</string>
     <string name="existing_user">Existing User?</string>
     <string name="call_engage_record_message">Can\'t record practice while on a call</string>

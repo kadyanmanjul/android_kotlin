@@ -13,11 +13,13 @@
         android:layout_width="@dimen/_220sdp"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
+        android:background="@drawable/round_rect_default"
+        android:backgroundTint="#1c1262"
         android:layout_marginStart="@dimen/_16sdp"
-        android:background="@drawable/ic_card_student_of_the_year"
         android:padding="@dimen/_3sdp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:background="@drawable/ic_card_student_of_the_year"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
