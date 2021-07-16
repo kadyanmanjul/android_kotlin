@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.lesson
+/*package com.joshtalks.joshskills.ui.lesson
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -17,7 +17,7 @@ class LessonPagerAdapter(
 
     override fun createFragment(position: Int): Fragment {
         return fragmentList.get(position)
-        /*return when (position) {
+        *//*return when (position) {
             //0 -> GrammarFragment.getInstance()
             0 -> {
                 if (isNewGrammar) {
@@ -32,6 +32,20 @@ class LessonPagerAdapter(
             2 -> ReadingFragmentWithoutFeedback.getInstance()
 
             else -> SpeakingPractiseFragment.newInstance()
-        }*/
+        }*//*
     }
+}*/
+
+package com.joshtalks.joshskills.ui.lesson
+
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
+
+class LessonPagerAdapter(fm: FragmentManager, behavior: Int, val fragmentList: List<Fragment>) :
+    FragmentPagerAdapter(fm, behavior) {
+
+    override fun getCount() = 4
+
+    override fun getItem(position: Int): Fragment = fragmentList.get(position)
 }
