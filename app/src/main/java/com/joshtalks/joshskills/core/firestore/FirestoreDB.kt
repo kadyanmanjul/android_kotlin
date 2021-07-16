@@ -51,30 +51,34 @@ object FirestoreDB {
         listener: AgoraNotificationListener
     ) {
         notificationListener?.remove()
-        notificationListener = notificationsCollection
-            .document(mentorId)
-            .addSnapshotListener { querySnapshot, error ->
-                if (querySnapshot != null && error == null) {
-                    try {
-                        if (querySnapshot.metadata.isFromCache) {
-                            Timber.d("FSDB : NotificationListener : Cached data")
-                            return@addSnapshotListener
-                        }
-                        querySnapshot.toObject(FirestoreNotificationObject::class.java)?.let {
-                            if (it.action != FirestoreNotificationAction.CALL_RECEIVE_NOTIFICATION &&
-                                isNotificationLatest(it)
-                            ) {
-                                Timber.d("FSDB : NotificationListener : $it")
-                                saveCurrentNotificationTime(it.modified!!.seconds)
-                                listener.onReceived(it)
-                                // removeNotificationAfterRead(mentorId)
+        try {
+            notificationListener = notificationsCollection
+                .document(mentorId)
+                .addSnapshotListener { querySnapshot, error ->
+                    if (querySnapshot != null && error == null) {
+                        try {
+                            if (querySnapshot.metadata.isFromCache) {
+                                Timber.d("FSDB : NotificationListener : Cached data")
+                                return@addSnapshotListener
                             }
+                            querySnapshot.toObject(FirestoreNotificationObject::class.java)?.let {
+                                if (it.action != FirestoreNotificationAction.CALL_RECEIVE_NOTIFICATION &&
+                                    isNotificationLatest(it)
+                                ) {
+                                    Timber.d("FSDB : NotificationListener : $it")
+                                    saveCurrentNotificationTime(it.modified!!.seconds)
+                                    listener.onReceived(it)
+                                    // removeNotificationAfterRead(mentorId)
+                                }
+                            }
+                        } catch (ex: Exception) {
+                            Timber.w(ex)
                         }
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
                     }
                 }
-            }
+        } catch (ex: Exception) {
+            Timber.w(ex)
+        }
     }
 
     private fun isNotificationLatest(obj: FirestoreNotificationObject): Boolean {
