@@ -36,7 +36,6 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.AppSignatureHelper
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
@@ -48,7 +47,6 @@ import com.joshtalks.joshskills.core.VerificationVia
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
-import com.joshtalks.joshskills.core.custom_ui.countrycodepicker.CountryCodePicker
 import com.joshtalks.joshskills.core.getFBProfilePicture
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
@@ -64,16 +62,6 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.sinch.verification.CodeInterceptionException
-import com.sinch.verification.Config
-import com.sinch.verification.IncorrectCodeException
-import com.sinch.verification.InitiationResult
-import com.sinch.verification.InvalidInputException
-import com.sinch.verification.PhoneNumberUtils
-import com.sinch.verification.ServiceErrorException
-import com.sinch.verification.SinchVerification
-import com.sinch.verification.Verification
-import com.sinch.verification.VerificationListener
 import com.truecaller.android.sdk.ITrueCallback
 import com.truecaller.android.sdk.TrueError
 import com.truecaller.android.sdk.TrueException
@@ -82,8 +70,6 @@ import com.truecaller.android.sdk.TruecallerSDK
 import com.truecaller.android.sdk.TruecallerSdkScope
 import com.truecaller.android.sdk.clients.VerificationCallback
 import com.truecaller.android.sdk.clients.VerificationDataBundle
-import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
-import io.michaelrocks.libphonenumber.android.Phonenumber
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -105,17 +91,18 @@ class SignUpActivity : BaseActivity() {
     private var fbCallbackManager = CallbackManager.Factory.create()
     private var mGoogleSignInClient: GoogleSignInClient? = null
     private var compositeDisposable = CompositeDisposable()
-    var verification: Verification? = null
-    private var sinchConfig: Config? = null
+
+    // var verification: Verification? = null
+    // private var sinchConfig: Config? = null
     private lateinit var auth: FirebaseAuth
 
-    init {
+    /*init {
         sinchConfig = SinchVerification.config()
             .applicationKey(BuildConfig.SINCH_API_KEY)
             .appHash(AppSignatureHelper(AppObjectController.joshApplication).appSignatures[0])
             .context(AppObjectController.joshApplication)
             .build()
-    }
+    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         appAnalytics = AppAnalytics.create(AnalyticsEvent.LOGIN_SCREEN.NAME)
@@ -539,13 +526,13 @@ class SignUpActivity : BaseActivity() {
     fun createVerification(
         countryCode: String,
         phoneNumber: String,
-        service: VerificationService = VerificationService.SINCH,
-        verificationVia: VerificationVia = VerificationVia.FLASH_CALL
+        service: VerificationService = VerificationService.SMS_COUNTRY,
+        verificationVia: VerificationVia = VerificationVia.SMS
     ) {
 
         when (service) {
             VerificationService.SINCH -> {
-                verificationThroughSinch(countryCode, phoneNumber, verificationVia)
+                // verificationThroughSinch(countryCode, phoneNumber, verificationVia)
             }
             VerificationService.TRUECALLER -> {
                 verificationThroughTrueCaller(phoneNumber)
@@ -563,7 +550,7 @@ class SignUpActivity : BaseActivity() {
     }
 
     //Use link = https://developers.sinch.com/docs/verification-for-android
-    private fun verificationThroughSinch(
+    /*private fun verificationThroughSinch(
         countryCode: String,
         phoneNumber: String,
         verificationVia: VerificationVia
@@ -614,7 +601,8 @@ class SignUpActivity : BaseActivity() {
             override fun onVerificationFallback() {
             }
         }
-        var defaultRegion: String? = PhoneNumberUtils.getDefaultCountryIso(this)
+        // var defaultRegion: String? = PhoneNumberUtils.getDefaultCountryIso(this)
+        var defaultRegion: String? = "IN"
 
         if (defaultRegion.isNullOrEmpty()) {
             defaultRegion = CountryCodePicker.getRegion(countryCode)
@@ -685,7 +673,7 @@ class SignUpActivity : BaseActivity() {
         verification =
             SinchVerification.createFlashCallVerification(config, phoneNumberInE164, listener)
         verification?.initiate()
-    }
+    }*/
 
     //Use link = https://docs.truecaller.com/truecaller-sdk/android/integrating-with-your-app/verifying-non-truecaller-users
     private fun verificationThroughTrueCaller(

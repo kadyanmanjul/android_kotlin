@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.core.VerificationService
 import com.joshtalks.joshskills.core.VerificationStatus
 import com.joshtalks.joshskills.core.VerificationVia
 import com.joshtalks.joshskills.core.getCountryIsoCode
+import com.joshtalks.joshskills.core.getDefaultCountryIso
 import com.joshtalks.joshskills.core.hideKeyboard
 import com.joshtalks.joshskills.core.isValidFullNumber
 import com.joshtalks.joshskills.core.showToast
@@ -32,7 +33,6 @@ import com.joshtalks.joshskills.databinding.FragmentSignUpOptionsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
-import com.sinch.verification.PhoneNumberUtils
 import java.util.concurrent.TimeUnit
 
 class SignUpOptionsFragment : BaseSignUpFragment() {
@@ -68,7 +68,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(requireContext())
+        val defaultRegion: String = getDefaultCountryIso(requireContext())
         setupVerificationSystem(defaultRegion)
         if (Utils.isTrueCallerAppExist()) {
             binding.btnTruecallerLogin.visibility = View.VISIBLE
@@ -208,7 +208,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
     private fun setupVerificationSystem(countryRegion: String? = null) {
         var defaultRegion: String = countryRegion ?: EMPTY
         if (defaultRegion.isEmpty()) {
-            defaultRegion = PhoneNumberUtils.getDefaultCountryIso(requireContext())
+            defaultRegion = getDefaultCountryIso(requireContext())
         }
         verificationVia = if (defaultRegion == "IN") {
             VerificationVia.SMS
@@ -226,7 +226,8 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         verificationService = if (defaultRegion == "IN") {
             VerificationService.SMS_COUNTRY
         } else {
-            VerificationService.SINCH
+            // VerificationService.SINCH
+            VerificationService.SMS_COUNTRY
         }
         callVerificationService()
         disableMobileEditText()

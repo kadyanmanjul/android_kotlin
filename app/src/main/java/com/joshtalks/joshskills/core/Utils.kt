@@ -30,6 +30,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.Browser
 import android.provider.Settings
+import android.telephony.TelephonyManager
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.format.DateUtils
@@ -73,7 +74,6 @@ import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.muddzdev.styleabletoast.StyleableToast
-import com.sinch.verification.PhoneNumberUtils
 import github.nisrulz.easydeviceinfo.base.EasyConfigMod
 import io.michaelrocks.libphonenumber.android.NumberParseException
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
@@ -897,7 +897,7 @@ fun getCountryIsoCode(number: String, countryRegion: String): String {
         phoneNumberUtil.getRegionCodeForCountryCode(phoneNumber.countryCode)
     } else {
         try {
-            PhoneNumberUtils.getDefaultCountryIso(AppObjectController.joshApplication)
+            getDefaultCountryIso(AppObjectController.joshApplication)
         } catch (ex: Exception) {
             countryRegion
         }
@@ -1339,4 +1339,10 @@ fun getScreenSize(context: Context): IntArray {
 
 private fun isScreenSizeRetrieved(widthHeight: IntArray): Boolean {
     return widthHeight[WIDTH_INDEX] != 0 && widthHeight[HEIGHT_INDEX] != 0
+}
+
+fun getDefaultCountryIso(context: Context): String {
+    val telephoneManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?
+    val simState: Int? = telephoneManager?.simState
+    return if (simState == 5) telephoneManager.simCountryIso.toUpperCase(Locale.ROOT) else Locale.getDefault().country
 }

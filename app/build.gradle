@@ -28,9 +28,9 @@ android {
         buildConfigField "String", "NEW_RELIC_TOKEN", "\"AAd8bc1e3740f51d8d131e42fff378fa2168243e00-NRMA\""
         buildConfigField "String", "FRESH_CHAT_APP_ID", "\"e29909bd-f7d3-45f8-b346-e520dd053ea4\""
         buildConfigField "String", "FRESH_CHAT_APP_KEY", "\"dda815f3-0e82-450a-a6d5-e2644a055bf1\""
-        buildConfigField "String", "SINCH_API_KEY", "\"86f34ed9-cdcf-497c-af80-3f352170164f\""
+        /*buildConfigField "String", "SINCH_API_KEY", "\"86f34ed9-cdcf-497c-af80-3f352170164f\""
         buildConfigField "String", "SINCH_API_SECRET", "\"0A42yytE7kqLGwYOGGidng==\""
-        buildConfigField "String", "SINCH_SERVER", "\"clientapi.sinch.com\""
+        buildConfigField "String", "SINCH_SERVER", "\"clientapi.sinch.com\""*/
         buildConfigField "String", "WX_CAM_KEY", "\"300rqcct068ggy3\""
         //buildConfigField "String", "COMETCHAT_REGION", "\"us\""
         //buildConfigField "String", "COMETCHAT_APP_ID", "\"25039c54194d899\""

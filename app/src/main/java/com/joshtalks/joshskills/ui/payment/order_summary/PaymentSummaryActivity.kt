@@ -56,7 +56,6 @@ import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
-import com.sinch.verification.PhoneNumberUtils
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.branch.referral.util.CurrencyType
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -596,7 +595,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             prefix =
                 binding.countryCodePicker.selectedCountryCodeWithPlus
         }
-        val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(this)
+        val defaultRegion: String = getDefaultCountryIso(this)
         prefix = binding.countryCodePicker.getCountryCodeByName(defaultRegion)
         binding.mobileEt.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus)
@@ -683,7 +682,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             return
         }
 
-        val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(applicationContext)
+        val defaultRegion: String = getDefaultCountryIso(applicationContext)
         appAnalytics.addParam(AnalyticsEvent.COUNTRY_ISO_CODE.NAME, defaultRegion)
 
         when {
