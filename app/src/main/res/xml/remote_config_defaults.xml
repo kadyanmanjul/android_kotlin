@@ -672,11 +672,11 @@
     </entry>
     <entry>
         <key>FREE_TRIAL_COURSE_DETAIL_BTN_TXT</key>
-        <value>Start Free Trial</value>
+        <value>1 दिन के लिए मुफ्त में प्रयोग करें</value>
     </entry>
     <entry>
         <key>FREE_TRIAL_PAYMENT_BTN_TXT</key>
-        <value>Start 2 days Free Trial</value>
+        <value>Start 1 day Free Trial</value>
     </entry>
     <entry>
         <key>FREE_TRIAL_DIALOG_BTN_TXT</key>
@@ -684,7 +684,7 @@
     </entry>
     <entry>
         <key>FREE_TRIAL_DIALOG_TXT</key>
-        <value>Your 2 day trial has ended! Kya aapko mazaa aaya?\nAccess this courses now.</value>
+        <value>Your 1 day trial has ended! Kya aapko mazaa aaya?\nAccess this courses now.</value>
     </entry>
 
 </defaultsMap>
