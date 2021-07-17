@@ -33,49 +33,77 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
     fun getFullLeaderBoardData(mentorId: String, course_id: String?) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                var isApiFailed= false
                 apiCallStatusLiveData.postValue(ApiCallStatus.START)
                 val map = HashMap<String, LeaderboardResponse>()
                 val call1 = async(Dispatchers.IO) {
-                    getMentorData(mentorId, "TODAY", course_id)?.let {
-                        leaderBoardDataOfToday.postValue(it)
-                        map.put("TODAY", it)
+                    val resultResponse = getMentorData(mentorId, "TODAY", course_id)
+                    if (resultResponse!=null){
+                        leaderBoardDataOfToday.postValue(resultResponse)
+                        map.put("TODAY", resultResponse)
+                    } else {
+                        isApiFailed=true
+                        return@async
                     }
                 }
                 val call2 = async(Dispatchers.IO) {
-                    getMentorData(mentorId, "WEEK", course_id)?.let {
-                        leaderBoardDataOfWeek.postValue(it)
-                        map.put("WEEK", it)
+                    val resultResponse = getMentorData(mentorId, "WEEK", course_id)
+                    if (resultResponse!=null){
+                        leaderBoardDataOfWeek.postValue(resultResponse)
+                        map.put("WEEK", resultResponse)
+                    } else {
+                        isApiFailed=true
+                        return@async
                     }
                 }
                 val call3 = async(Dispatchers.IO) {
-                    getMentorData(mentorId, "MONTH", course_id)?.let {
-                        leaderBoardDataOfMonth.postValue(it)
-                        map.put("MONTH", it)
+                    val resultResponse = getMentorData(mentorId, "MONTH", course_id)
+                    if (resultResponse!=null){
+                        leaderBoardDataOfMonth.postValue(resultResponse)
+                        map.put("MONTH", resultResponse)
+                    } else {
+                        isApiFailed=true
+                        return@async
                     }
                 }
                 val call4 = async(Dispatchers.IO) {
-                    getMentorData(mentorId, "BATCH", course_id)?.let {
-                        leaderBoardDataOfBatch.postValue(it)
-                        map.put("BATCH", it)
+
+                    val resultResponse = getMentorData(mentorId, "BATCH", course_id)
+                    if (resultResponse!=null){
+                        leaderBoardDataOfBatch.postValue(resultResponse)
+                        map.put("BATCH", resultResponse)
+                    } else {
+                        isApiFailed=true
+                        return@async
                     }
                 }
                 val call5 = async(Dispatchers.IO) {
-                    getMentorData(mentorId, "LIFETIME", course_id)?.let {
-                        leaderBoardDataOfLifeTime.postValue(it)
-                        map.put("LIFETIME", it)
+                    val resultResponse = getMentorData(mentorId, "LIFETIME", course_id)
+                    if (resultResponse!=null){
+                        leaderBoardDataOfLifeTime.postValue(resultResponse)
+                        map.put("LIFETIME", resultResponse)
+                    } else {
+                        isApiFailed=true
+                        return@async
                     }
                 }
                 joinAll(call1, call2, call3, call4, call5)
+                if (isApiFailed){
+                    apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+                    return@launch
+                }
                 apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                 leaderBoardData.postValue(map)
                 return@launch
             } catch (ex: Exception) {
-                apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
+                ex.printStackTrace()
+                apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
             }
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
         }
     }
 
+    // not used after removing swipe functionality
     fun getRefreshedLeaderboardData(mentorId: String, courseId: String?, type: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -125,7 +153,7 @@ class LeaderBoardViewModel(application: Application) : AndroidViewModel(applicat
                 return response.body()!!
             }
         } catch (ex: Throwable) {
-            ex.showAppropriateMsg()
+            return null
         }
         return null
     }

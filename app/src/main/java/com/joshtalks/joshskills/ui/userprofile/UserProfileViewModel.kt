@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
@@ -13,7 +12,6 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_SCORE
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
@@ -211,15 +209,15 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                     && response.errorBody()!!.string().contains("mentor_id is not valid")
                 ) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
-                    showToast(AppObjectController.joshApplication.getString(R.string.user_does_not_exist))
+                    //showToast(AppObjectController.joshApplication.getString(R.string.user_does_not_exist))
                 } else {
                     apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
-                    showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
+                    //showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
                 }
 
             } catch (ex: Throwable) {
                 apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
-                ex.showAppropriateMsg()
+                //ex.showAppropriateMsg()
             }
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
         }

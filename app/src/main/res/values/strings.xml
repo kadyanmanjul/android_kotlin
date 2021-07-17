@@ -424,6 +424,7 @@
     <string name="notifications">Notifications</string>
     <string name="language">Language</string>
     <string name="english">English</string>
+    <string name="hinglish">Hinglish</string>
     <string name="low">Low</string>
     <string name="login_type">Login Type</string>
     <string name="female">Female</string>

@@ -446,6 +446,8 @@ class UserProfileActivity : BaseConnectionErrorActivity() {
     }
 
     override fun onRetry() {
+        binding.errorContainer.visibility = View.GONE
+        supportFragmentManager.popBackStack()
         getProfileData(intervalType, previousPage)
     }
 

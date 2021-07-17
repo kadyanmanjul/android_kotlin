@@ -143,6 +143,9 @@ class LessonActivity : BaseConnectionErrorActivity(), LessonActivityListener {
     }
 
     override fun onRetry() {
+        binding.progressView.visibility = View.VISIBLE
+        binding.errorContainer.visibility = View.GONE
+        supportFragmentManager.popBackStack()
         val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
         viewModel.getLesson(lessonId)
         viewModel.getQuestions(lessonId, isDemo)

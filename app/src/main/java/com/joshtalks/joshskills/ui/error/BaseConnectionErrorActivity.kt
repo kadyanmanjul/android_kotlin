@@ -18,7 +18,7 @@ abstract class BaseConnectionErrorActivity : WebRtcMiddlewareActivity() {
 
     override fun onResume() {
         super.onResume()
-        //observeNetwork()
+        observeNetwork()
     }
 
     override fun onPause() {
@@ -36,8 +36,7 @@ abstract class BaseConnectionErrorActivity : WebRtcMiddlewareActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { connectivity ->
-                    isInternetAvailable(connectivity.available())
-
+                    //isInternetAvailable(connectivity.available())
                 }
         )
 
@@ -59,8 +58,6 @@ abstract class BaseConnectionErrorActivity : WebRtcMiddlewareActivity() {
     fun isApiFalied(isApiSuccess: Boolean, container: FrameLayout, stringId:Int?=null) {
         if(isApiSuccess){
             if (container.isVisible){
-                container.visibility = View.GONE
-                supportFragmentManager.popBackStack()
                 onRetry()
             }
         } else {
@@ -68,7 +65,7 @@ abstract class BaseConnectionErrorActivity : WebRtcMiddlewareActivity() {
                 container.visibility = View.VISIBLE
                 supportFragmentManager
                     .beginTransaction()
-                    .add(
+                    .replace(
                         container.id,
                         ConnectionErrorDialogFragment.newInstance(getString(stringId?: R.string.connection_error)),
                         ConnectionErrorDialogFragment.TAG

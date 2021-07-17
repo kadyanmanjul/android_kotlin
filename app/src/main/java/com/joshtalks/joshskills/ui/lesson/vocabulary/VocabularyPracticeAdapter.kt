@@ -1,5 +1,7 @@
 package com.joshtalks.joshskills.ui.lesson.vocabulary
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
@@ -350,6 +352,15 @@ class VocabularyPracticeAdapter(
 
         private fun expandCard() {
             binding.quizLayout.visibility = VISIBLE
+            binding.quizLayout.animate()
+                .scaleX(1.0f)
+                .scaleY(1.0f)
+                .setDuration(500)
+                .setListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator?) {
+                        super.onAnimationEnd(animation)
+                    }
+                })
             binding.expandIv.setImageDrawable(
                 ContextCompat.getDrawable(
                     AppObjectController.joshApplication,
@@ -359,7 +370,16 @@ class VocabularyPracticeAdapter(
         }
 
         private fun collapseCard() {
-            binding.quizLayout.visibility = GONE
+            binding.quizLayout.animate()
+                .scaleX(0.0f)
+                .scaleY(0.0f)
+                .setDuration(500)
+                .setListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator?) {
+                        super.onAnimationEnd(animation)
+                        binding.quizLayout.setVisibility(GONE)
+                    }
+                })
             binding.expandIv.setImageDrawable(
                 ContextCompat.getDrawable(
                     AppObjectController.joshApplication,

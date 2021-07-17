@@ -72,7 +72,7 @@
                     android:gravity="center_vertical"
                     android:paddingHorizontal="@dimen/_4sdp"
                     android:paddingVertical="@dimen/_2sdp"
-                    android:text="@string/english"
+                    android:text="@string/hinglish"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                     android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"

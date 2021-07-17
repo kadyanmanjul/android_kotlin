@@ -97,7 +97,6 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
     fun change() {
         logChooserAnalyticsEvent(AnalyticsEvent.GALLERY_UPLOAD.NAME,isFromRegistration)
         ImagePicker.with(this)
-            .crop()                    //Crop image(Optional), Check Customization for more option
             .galleryOnly()
             .saveDir(File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!, "ImagePicker"))
             .start(ImagePicker.REQUEST_CODE)
@@ -107,7 +106,7 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
     fun captureImage() {
         logChooserAnalyticsEvent(AnalyticsEvent.CAMERA_UPLOAD.NAME,isFromRegistration)
         ImagePicker.with(this)
-            .crop()                    //Crop image(Optional), Check Customization for more option
+            .cropSquare()                    //Crop image(Optional), Check Customization for more option
             .cameraOnly()
             .saveDir(File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!, "ImagePicker"))
             .start(ImagePicker.REQUEST_CODE)
