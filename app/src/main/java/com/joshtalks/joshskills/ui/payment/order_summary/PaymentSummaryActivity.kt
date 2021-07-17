@@ -2,10 +2,13 @@ package com.joshtalks.joshskills.ui.payment.order_summary
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -16,6 +19,7 @@ import android.text.Spanned
 import android.text.style.IconMarginSpan
 import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -32,6 +36,7 @@ import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.CredentialsOptions
 import com.google.android.gms.auth.api.credentials.HintRequest
+import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -733,7 +738,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         showToast(getString(R.string.please_enter_valid_number))
                         return
                     }
-                    (viewModel.getCourseDiscountedAmount() < 1 || isFromNewFreeTrial) -> {
+                    isFromNewFreeTrial ->{
+                        showPopup()
+                    }
+                    viewModel.getCourseDiscountedAmount() < 1  -> {
                         viewModel.createFreeOrder(
                             viewModel.getPaymentTestId(),
                             binding.mobileEt.text.toString()
@@ -757,6 +765,34 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             )
             else -> viewModel.getOrderDetails(viewModel.getPaymentTestId(), getPhoneNumber())
         }
+    }
+
+    private fun showPopup() {
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+        val inflater = this.layoutInflater
+        val dialogView: View = inflater.inflate(R.layout.freetrial_alert_dialog, null)
+        dialogBuilder.setView(dialogView)
+
+        val alertDialog: AlertDialog = dialogBuilder.create()
+        val width = AppObjectController.screenWidth * .9
+        val height = ViewGroup.LayoutParams.WRAP_CONTENT
+        alertDialog.show()
+        alertDialog.window?.setLayout(width.toInt(), height)
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
+            viewModel.createFreeOrder(
+                viewModel.getPaymentTestId(),
+                binding.mobileEt.text.toString()
+            )
+            alertDialog.dismiss()
+        }
+
+        dialogView.findViewById<MaterialTextView>(R.id.cancel).setOnClickListener {
+            alertDialog.dismiss()
+            this.finish()
+        }
+
     }
 
     fun clearText() {

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_rectangle_attach"
+    android:backgroundTint="@color/white">
+
+    <TextView
+        android:id="@+id/add_a_topic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginHorizontal="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:gravity="top"
+        android:text="@string/free_trial_dialog_title"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+        android:textColor="#DE000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/e_g_motivat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginHorizontal="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:gravity="top"
+        android:text="@string/free_trial_dialog_desc"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+        android:textColor="#99000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/add_a_topic" />
+
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginVertical="@dimen/_20sdp"
+        android:background="@drawable/download_rounded_bg"
+        android:backgroundTint="@color/colorPrimary"
+        android:backgroundTintMode="add"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/_30sdp"
+        android:paddingVertical="@dimen/_4sdp"
+        android:text="@string/free_trial_dialog_btn_no"
+        android:textAllCaps="false"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_16ssp"
+        app:cornerRadius="@dimen/_26sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/yes"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/e_g_motivat" />
+
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/yes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginVertical="@dimen/_20sdp"
+        android:background="@drawable/download_rounded_bg"
+        android:backgroundTint="@color/colorPrimary"
+        android:backgroundTintMode="add"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/_30sdp"
+        android:paddingVertical="@dimen/_4sdp"
+        android:text="@string/free_trial_dialog_btn_yes"
+        android:textAllCaps="false"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_16ssp"
+        app:cornerRadius="@dimen/_32sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/cancel"
+        app:layout_constraintTop_toBottomOf="@id/e_g_motivat" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
