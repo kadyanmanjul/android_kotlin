@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.chat.vh.PdfCourseProgressView
+import com.joshtalks.joshskills.ui.error.BaseConnectionErrorActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.util.CustomDialog
 import kotlinx.coroutines.CoroutineScope
@@ -33,7 +34,7 @@ import kotlinx.coroutines.launch
 const val COURSE_ID = "course_id"
 
 class CourseProgressActivityNew :
-    WebRtcMiddlewareActivity(),
+    BaseConnectionErrorActivity(),
     CourseProgressAdapter.ProgressItemClickListener {
     private var pdfViewStub: Stub<PdfCourseProgressView>? = null
     private var courseOverviewResponse: List<CourseOverviewResponse>? = null
@@ -60,7 +61,6 @@ class CourseProgressActivityNew :
                     if (intent.hasExtra(CHAT_ROOM_ID) && intent.getStringExtra(CHAT_ROOM_ID)
                             .isNullOrBlank().not()
                     ) {
-                        //binding.progressLayout.visibility=View.VISIBLE
                         viewModel.getCourseOverview(courseId)
                     }
                 }
@@ -104,7 +104,6 @@ class CourseProgressActivityNew :
             this,
             { response ->
 
-                binding.progressLayout.visibility = View.GONE
                 val isAnyDifference = courseOverviewResponse?.deepEquals(response.responseData!!)
                 if (isAnyDifference == false) {
 
@@ -125,21 +124,8 @@ class CourseProgressActivityNew :
                         }
                         return@forEachIndexed
                     }
-                    /*val diffResponse = courseOverviewResponse?.minus(response.responseData!!)
-                    courseOverviewResponse.co
-                    val responseDifference = response.responseData?.filter {
-                        it.title.equals(diffResponse?.get(0)?.title) && it.data.isNullOrEmpty()
-                            .not()
-                    }
-                    responseDifference?.get(0)
-                        ?.let { adapter.updateItem(it, diffResponse?.get(0)?.title) }
-                    responseDifference?.get(0)
-                        ?.let { binding.progressRv.findViewHolderForAdapterPosition() }*/
 
                 } else {
-                    /*courseOverviewResponse?.forEachIndexed { index, courseOverviewResponse ->
-                    courseOverviewResponse.conta(response.responseData)
-                }*/
                     courseOverviewResponse = response.responseData
                     pdfViewStub?.let { view ->
                         view.resolved().let {
@@ -182,6 +168,25 @@ class CourseProgressActivityNew :
                 }
             }
         )
+
+        viewModel.apiCallStatusLiveData.observe(this, {
+            when(it){
+                ApiCallStatus.START->{
+                    binding.progressLayout.visibility = View.VISIBLE
+                }
+                ApiCallStatus.SUCCESS->{
+                    binding.progressLayout.visibility = View.GONE
+                    isApiFalied(true, binding.errorContainer)
+                }
+                ApiCallStatus.FAILED->{
+                    binding.progressLayout.visibility = View.GONE
+                    isApiFalied(false, binding.errorContainer, R.string.connection_error)
+                }
+                else -> {
+                    binding.progressLayout.visibility = View.GONE
+                }
+            }
+        })
     }
 
     fun getData() {
@@ -206,6 +211,16 @@ class CourseProgressActivityNew :
         binding.progressRv.setItemViewCacheSize(4)
         val stickHeaderDecoration = StickHeaderItemDecoration(adapter.getListner())
         binding.progressRv.addItemDecoration(stickHeaderDecoration)
+    }
+
+    override fun isInternetAvailable(isInternetAvailable: Boolean) {
+
+    }
+
+    override fun onRetry() {
+        binding.errorContainer.visibility = View.GONE
+        supportFragmentManager.popBackStack()
+        getData()
     }
 
     override fun getConversationId(): String? {
@@ -303,6 +318,6 @@ class CourseProgressActivityNew :
         resultIntent.putExtra(COURSE_ID, courseId)
         setResult(RESULT_OK, resultIntent)
         this.finish()
-        overridePendingTransition(R.anim.slide_out_top, R.anim.slide_up_dialog)
+        overridePendingTransition(R.anim.slide_up_dialog, R.anim.slide_out_top)
     }
 }

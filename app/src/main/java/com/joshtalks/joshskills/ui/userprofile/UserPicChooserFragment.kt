@@ -97,6 +97,7 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
     fun change() {
         logChooserAnalyticsEvent(AnalyticsEvent.GALLERY_UPLOAD.NAME,isFromRegistration)
         ImagePicker.with(this)
+            .cropSquare()                    //Crop image(Optional), Check Customization for more option
             .galleryOnly()
             .saveDir(File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!, "ImagePicker"))
             .start(ImagePicker.REQUEST_CODE)

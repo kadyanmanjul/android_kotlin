@@ -101,11 +101,6 @@ class SpokenHistoryActivity : WebRtcMiddlewareActivity() {
         )
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
-    }
-
     companion object {
 
         const val MENTOR_ID = "mentor_id"

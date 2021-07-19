@@ -147,7 +147,7 @@
             app:layout_constraintTop_toBottomOf="@id/search_layout_card"
             app:tabGravity="fill"
             app:tabIndicatorColor="@color/button_color"
-            app:tabIndicatorFullWidth="false"
+            app:tabIndicatorFullWidth="true"
             app:tabIndicatorHeight="@dimen/_2sdp"
             app:tabMode="scrollable"
             app:tabSelectedTextColor="@color/button_color"

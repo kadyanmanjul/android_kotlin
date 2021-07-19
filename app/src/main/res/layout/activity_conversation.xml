@@ -330,7 +330,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/_5sdp"
                 android:layout_marginEnd="@dimen/_8sdp"
-                android:layout_marginStart="@dimen/_16sdp"
+                android:layout_marginStart="@dimen/_10sdp"
                 android:background="@drawable/rect_round"
                 android:orientation="vertical"
                 android:paddingStart="@dimen/_5sdp"
