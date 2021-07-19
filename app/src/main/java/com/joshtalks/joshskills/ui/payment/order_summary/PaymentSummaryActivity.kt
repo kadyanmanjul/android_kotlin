@@ -786,9 +786,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
         dialogView.findViewById<TextView>(R.id.e_g_motivat).text = getString(R.string.free_trial_dialog_desc).replace("\\n", "\n")
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
+            val mobileNumber = if (getPhoneNumber().isBlank()) binding.mobileEt.text.toString() else getPhoneNumber()
             viewModel.createFreeOrder(
                 viewModel.getPaymentTestId(),
-                binding.mobileEt.text.toString()
+                mobileNumber
             )
             alertDialog.dismiss()
         }
