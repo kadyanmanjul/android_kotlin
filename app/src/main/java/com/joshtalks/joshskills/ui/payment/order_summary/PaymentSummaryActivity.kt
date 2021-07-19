@@ -759,6 +759,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         }
                 }
             }
+            isFromNewFreeTrial ->{
+                showPopup()
+                return
+            }
             viewModel.getCourseDiscountedAmount() < 1 -> viewModel.createFreeOrder(
                 viewModel.getPaymentTestId(),
                 getPhoneNumber()
