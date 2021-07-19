@@ -80,7 +80,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         iv_reminder.visibility = View.GONE
         iv_setting.visibility = View.VISIBLE
         findMoreLayout = findViewById(R.id.parent_layout)
-        PrefManager.put(INBOX_SCREEN_VISIT_COUNT,PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT).plus(1))
         recycler_view_inbox.apply {
             itemAnimator = null
             layoutManager = LinearLayoutManager(applicationContext).apply {
@@ -208,6 +207,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     override fun onResume() {
         super.onResume()
+        PrefManager.put(INBOX_SCREEN_VISIT_COUNT,PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT).plus(1))
+        if (findMoreLayout.visibility != View.VISIBLE && PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT)>=2) {
+            findMoreLayout.visibility = View.VISIBLE
+        }
         Runtime.getRuntime().gc()
         viewModel.getRegisterCourses()
         viewModel.getProfileData(Mentor.getInstance().getId())
