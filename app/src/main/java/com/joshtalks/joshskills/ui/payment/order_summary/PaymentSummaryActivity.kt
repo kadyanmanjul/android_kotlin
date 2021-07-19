@@ -221,7 +221,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 else -> {
                     binding.progressBar.visibility = View.GONE
                     binding.container.visibility = View.VISIBLE
-                    viewModel.updateSubscriptionStatus()
                 }
             }
         })
@@ -740,6 +739,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     }
                     isFromNewFreeTrial ->{
                         showPopup()
+                        return
                     }
                     viewModel.getCourseDiscountedAmount() < 1  -> {
                         viewModel.createFreeOrder(
@@ -780,6 +780,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         alertDialog.window?.setLayout(width.toInt(), height)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
+        dialogView.findViewById<TextView>(R.id.e_g_motivat).text = getString(R.string.free_trial_dialog_desc).replace("\\n", "\n")
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
             viewModel.createFreeOrder(
                 viewModel.getPaymentTestId(),

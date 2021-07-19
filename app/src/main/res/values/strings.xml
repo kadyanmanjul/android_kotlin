@@ -896,7 +896,7 @@
     <string name="grammar_continue_test_text">क्लास जारी रखने के लिए नीचे बटन को दबाएं </string>
     <string name="grammar_input_question_hint">अंग्रेजी में जवाब लिखे </string>
     <string name="free_trial_dialog_title">जरुरी जानकारी</string>
-    <string name="free_trial_dialog_desc">इस कोर्स की फीस Rs. 499 है और यह एक 90 दिनों का कोर्स ह खरीदने से पहले क्या आप इसका एक दिन के लिए मुफ्त में प्रयोग करना चाहते हैं?</string>
+    <string name="free_trial_dialog_desc">इस कोर्स की फीस ₹499 है\\nऔर यह एक 90 दिनों का कोर्स है\\n \\nखरीदने से पहले क्या आप इसका एक दिन के लिए मुफ्त में प्रयोग करना चाहते हैं?</string>
     <string name="free_trial_dialog_btn_no">जी नहीं</string>
     <string name="free_trial_dialog_btn_yes">जी हाँ</string>
 
