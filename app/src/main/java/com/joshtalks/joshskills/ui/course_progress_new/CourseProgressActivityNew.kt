@@ -85,7 +85,7 @@ class CourseProgressActivityNew :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        overridePendingTransition(R.anim.slide_out_top, R.anim.slide_up_dialog)
+        overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down)
         binding = DataBindingUtil.setContentView(this, R.layout.course_progress_activity_new)
 
         if (intent.hasExtra(COURSE_ID).not())
@@ -318,6 +318,6 @@ class CourseProgressActivityNew :
         resultIntent.putExtra(COURSE_ID, courseId)
         setResult(RESULT_OK, resultIntent)
         this.finish()
-        overridePendingTransition(R.anim.slide_up_dialog, R.anim.slide_out_top)
+        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up)
     }
 }
