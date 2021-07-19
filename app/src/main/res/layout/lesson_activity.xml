@@ -24,36 +24,39 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/lesson_tab_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@color/grey_E8"
-            android:gravity="center"
-            android:minHeight="0dp"
-            android:tabStripEnabled="false"
-            android:textAlignment="center"
-            app:elevation="0dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
-            app:tabBackground="@drawable/capsule_selection_tab"
-            app:tabIconTint="@color/green_right_answer"
-            app:tabIndicatorHeight="0dp"
-            app:tabMinWidth="@dimen/_32sdp"
-            app:tabSelectedTextColor="@color/white"
-            app:tabTextColor="@color/black" />
-
-        <androidx.viewpager2.widget.ViewPager2
+        <androidx.viewpager.widget.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/lesson_viewpager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@id/buy_course_ll"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lesson_tab_layout" />
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_container">
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/lesson_tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/grey_E8"
+                android:gravity="center"
+                android:minHeight="0dp"
+                android:tabStripEnabled="false"
+                android:textAlignment="center"
+                app:elevation="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
+                app:tabBackground="@drawable/capsule_selection_tab"
+                app:tabIconTint="@color/green_right_answer"
+                app:tabIndicatorHeight="0dp"
+                app:tabMinWidth="@dimen/_32sdp"
+                app:tabSelectedTextColor="@color/white"
+                app:tabTextColor="@color/black">
+
+            </com.google.android.material.tabs.TabLayout>
+
+        </androidx.viewpager.widget.ViewPager>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/buy_course_ll"

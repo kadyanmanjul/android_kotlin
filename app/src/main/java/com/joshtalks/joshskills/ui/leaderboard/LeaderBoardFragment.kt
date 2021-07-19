@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.LogException
-import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.databinding.FragmentLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
@@ -118,7 +117,7 @@ class LeaderBoardFragment : Fragment() {
         linearLayoutManager.isSmoothScrollbarEnabled = true
         binding.recyclerView.builder.setHasFixedSize(true)
             .setLayoutManager(linearLayoutManager)
-        binding.recyclerView.enforceSingleScrollDirection()
+        //binding.recyclerView.enforceSingleScrollDirection()
         /*binding.recyclerView.addOnScrollListener(object :
             EndlessRecyclerViewScrollListener(linearLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
@@ -146,8 +145,8 @@ class LeaderBoardFragment : Fragment() {
         })
 
         binding.editName.apply {
-            setCursorVisible(true)
-            isPressed=true
+            isCursorVisible = true
+            isPressed = true
             isFocusableInTouchMode = true
             setOnEditorActionListener { v, actionId, event ->
                 if (actionId == EditorInfo.IME_ACTION_DONE && v.text.isNullOrBlank().not()) {

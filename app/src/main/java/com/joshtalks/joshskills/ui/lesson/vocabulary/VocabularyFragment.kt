@@ -2,28 +2,25 @@ package com.joshtalks.joshskills.ui.lesson.vocabulary
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.HAS_SEEN_VOCAB_TOOLTIP
 import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.databinding.FragmentVocabularyBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
@@ -37,7 +34,6 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.RequestEngage
-import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.karumi.dexter.MultiplePermissionsReport
@@ -50,14 +46,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.PracticeClickListeners {
     private lateinit var adapter: VocabularyPracticeAdapter
 
     private var compositeDisposable = CompositeDisposable()
-
+    private val TAG = "VocabularyFragment"
     private lateinit var binding: FragmentVocabularyBinding
     private var isVideoRecordDone = false
     private var isDocumentAttachDone = false
@@ -68,17 +63,10 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 
     private var lessonActivityListener: LessonActivityListener? = null
     private var aPosition: Int = -1
+    private var playingAudioPositionInList = -1
 
     private val viewModel: LessonViewModel by lazy {
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
-    }
-
-    private var currentTooltipIndex = 0
-    private val lessonTooltipList by lazy {
-        listOf(
-            "हम यहां हर रोज़ 3 शब्द सीखेंगे",
-            "जैसे-जैसे कोर्स आगे बढ़ेगा हम यहां वाक्यांश और मुहावरे भी सीखेंगे"
-        )
     }
 
     override fun onAttach(context: Context) {
@@ -99,9 +87,9 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     ): View {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_vocabulary, container, false)
-        binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         binding.lifecycleOwner = this
         binding.handler = this
+        binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         binding.vocabularyCompletedTv.text = AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.VOCABULARY_COMPLETED)
 
@@ -112,48 +100,6 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         }
 
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        showTooltip()
-    }
-
-    private fun showTooltip() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            if (PrefManager.getBoolValue(HAS_SEEN_VOCAB_TOOLTIP, defValue = false)) {
-                withContext(Dispatchers.Main) {
-                    binding.lessonTooltipLayout.visibility = View.GONE
-                }
-            } else {
-                delay(DEFAULT_TOOLTIP_DELAY_IN_MS)
-                if (viewModel.lessonLiveData.value?.lessonNo == 1) {
-                    withContext(Dispatchers.Main) {
-                        binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
-                        binding.txtTooltipIndex.text =
-                            "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
-                        binding.lessonTooltipLayout.visibility = View.VISIBLE
-                    }
-                }
-            }
-        }
-    }
-
-    private fun showNextTooltip() {
-        if (currentTooltipIndex < lessonTooltipList.size - 1) {
-            currentTooltipIndex++
-            binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
-            binding.txtTooltipIndex.text =
-                "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
-        } else {
-            binding.lessonTooltipLayout.visibility = View.GONE
-            PrefManager.put(HAS_SEEN_VOCAB_TOOLTIP, true)
-        }
-    }
-
-    fun hideTooltip() {
-        binding.lessonTooltipLayout.visibility = View.GONE
-        PrefManager.put(HAS_SEEN_VOCAB_TOOLTIP, true)
     }
 
     private fun addObserver() {
@@ -178,9 +124,6 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!!.get(0))
             }
         }*/
-        binding.btnNextStep.setOnClickListener {
-            showNextTooltip()
-        }
     }
 
     private fun initAdapter(assessmentList: ArrayList<AssessmentWithRelations>) {
@@ -196,12 +139,14 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                 )
             }
 
+        Log.d(TAG, "initAdapter: Init Adapter")
+
         adapter.setHasStableIds(true)
         binding.practiceRv.layoutManager = LinearLayoutManager(requireContext())
         binding.practiceRv.adapter = adapter
         binding.practiceRv.setHasFixedSize(true)
         binding.practiceRv.setItemViewCacheSize(5)
-        binding.practiceRv.enforceSingleScrollDirection()
+        //binding.practiceRv.enforceSingleScrollDirection()
     }
 
     override fun submitQuiz(
@@ -228,6 +173,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         positionInList: Int,
         hasNextItem: Boolean
     ) {
+
         viewModel.saveAssessmentQuestion(assessmentQuestion)
         lessonActivityListener?.onQuestionStatusUpdate(
             QUESTION_STATUS.IP,
@@ -244,6 +190,8 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     }
 
     override fun playAudio(position: Int) {
+        //val viewHolder = getCurrentPlayingViewHolder()
+        //adapter.stopPreviousAudio(viewHolder)
         aPosition = position
     }
 
@@ -397,7 +345,6 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     }
 
     override fun askRecordPermission() {
-
         PermissionUtils.audioRecordStorageReadAndWritePermission(
             requireActivity(),
             object : MultiplePermissionsListener {
@@ -471,16 +418,18 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     }
 
     override fun onPause() {
+        Log.d(TAG, "onPause: ")
         super.onPause()
         if (::adapter.isInitialized) {
-            adapter.audioManager?.onPause()
+            Log.d(TAG, "onPause: isInitialized")
+            //adapter.audioManager?.onPause()
+            adapter.itemList.forEachIndexed { index, lessonQuestion ->
+                if (lessonQuestion.type != LessonQuestionType.QUIZ)
+                    binding.practiceRv.findViewHolderForAdapterPosition(index)?.let {
+                        (it as VocabularyPracticeAdapter.VocabularyViewHolder?)?.stopAudio()
+                    }
+            }
         }
-//        adapter.itemList.forEachIndexed { index, lessonQuestion ->
-//            if (lessonQuestion.type != LessonQuestionType.QUIZ)
-//                binding.practiceRv.findViewHolderForAdapterPosition(index)?.let {
-//                    (it as VocabularyPracticeAdapter.VocabularyViewHolder?)?.pauseAudio()
-//                }
-//        }
 //        aPosition = -1
     }
 
@@ -488,7 +437,7 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         super.onStop()
         compositeDisposable.clear()
         try {
-            adapter.audioManager?.onPause()
+            //adapter.audioManager?.onPause()
         } catch (ex: Exception) {
         }
     }
@@ -508,4 +457,9 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         @JvmStatic
         fun getInstance() = VocabularyFragment()
     }
+
+    private fun getCurrentPlayingViewHolder() =
+        binding.practiceRv.findViewHolderForAdapterPosition(aPosition)
+                as? VocabularyPracticeAdapter.VocabularyViewHolder
+
 }

@@ -49,7 +49,6 @@ import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.databinding.ReadingPracticeFragmentWithoutFeedbackBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.AudioType
@@ -308,6 +307,7 @@ class ReadingFragmentWithoutFeedback :
         val viewHolders = binding.audioList.allViewResolvers as List<PracticeAudioViewHolder>
         viewHolders.forEach {
             it.pauseAudio()
+            it.playPauseBtn.state = MaterialPlayPauseDrawable.State.Play
         }
     }
 
@@ -680,7 +680,7 @@ class ReadingFragmentWithoutFeedback :
             )
         )
         binding.audioList.addItemDecoration(divider)
-        binding.audioList.enforceSingleScrollDirection()
+        //binding.audioList.enforceSingleScrollDirection()
     }
 
     private fun addAudioListRV(practiceEngagement: List<PracticeEngagement>?) {
