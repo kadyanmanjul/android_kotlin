@@ -9,6 +9,7 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.repository.local.ConvertersForDownloadStatus
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterChoiceType
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceColumn
@@ -83,9 +84,12 @@ data class Choice(
     @Expose
     var localAudioUrl: String?,
 
+    @TypeConverters(
+        ConvertersForDownloadStatus::class
+    )
     @ColumnInfo
     @Expose
-    var downloadStatus: DOWNLOAD_STATUS = DOWNLOAD_STATUS.NOT_START,
+    var downloadStatus: DOWNLOAD_STATUS? = DOWNLOAD_STATUS.NOT_START,
 
 
 ) : Parcelable {

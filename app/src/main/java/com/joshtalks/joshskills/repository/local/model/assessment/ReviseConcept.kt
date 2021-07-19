@@ -20,7 +20,7 @@ import kotlinx.android.parcel.Parcelize
             childColumns = arrayOf("questionId"),
             onDelete = ForeignKey.CASCADE
         )], indices = [
-        Index(value = ["questionId"], unique = true),
+        Index(value = ["questionId"]),
         Index(value = ["localId"], unique = true)
     ]
 )

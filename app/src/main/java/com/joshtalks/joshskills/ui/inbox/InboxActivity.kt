@@ -196,13 +196,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         }
         if (findMoreLayout.visibility != View.VISIBLE && PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT)>=2) {
             findMoreLayout.visibility = View.VISIBLE
-            isPermissionRequired = false
-        }
-        lifecycleScope.launch(Dispatchers.IO) {
-            if (isPermissionRequired) {
-                isPermissionRequired = false
-                locationFetch()
-            }
         }
     }
 

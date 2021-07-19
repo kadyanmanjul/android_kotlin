@@ -8,7 +8,6 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.ListConverters
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentMediaType
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterChoiceType
@@ -54,7 +53,7 @@ data class AssessmentQuestion(
 
     @ColumnInfo
     @SerializedName("sub_text")
-    val subText: String? = EMPTY,
+    val subText: String?,
 
     @ColumnInfo
     @SerializedName("sort_order")
@@ -62,16 +61,16 @@ data class AssessmentQuestion(
 
     @ColumnInfo
     @SerializedName("media_url")
-    val mediaUrl: String? = EMPTY,
+    val mediaUrl: String,
 
     @TypeConverters(TypeConverterAssessmentMediaType::class)
     @ColumnInfo
     @SerializedName("media_type")
-    val mediaType: AssessmentMediaType = AssessmentMediaType.NONE,
+    val mediaType: AssessmentMediaType,
 
     @ColumnInfo
     @SerializedName("media_url_2")
-    val mediaUrl2: String? = EMPTY,
+    val mediaUrl2: String?,
 
     @TypeConverters(TypeConverterAssessmentMediaType::class)
     @ColumnInfo
@@ -93,14 +92,14 @@ data class AssessmentQuestion(
 
     @ColumnInfo
     @SerializedName("is_new_header")
-    var isNewHeader: Boolean,
+    var isNewHeader: Boolean = false,
 
     @TypeConverters(
         ListConverters::class
     )
     @ColumnInfo
     @SerializedName("list_of_answers")
-    var listOfAnswers: List<String>? = arrayListOf(),
+    var listOfAnswers: List<String>?,
 
     @TypeConverters(TypeConverterQuestionStatus::class)
     @ColumnInfo
