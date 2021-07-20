@@ -36,6 +36,7 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/tab_iv"
+            android:padding="@dimen/_1sdp"
             android:layout_width="@dimen/_12sdp"
             android:layout_height="@dimen/_12sdp"
             android:layout_gravity="center_horizontal"
