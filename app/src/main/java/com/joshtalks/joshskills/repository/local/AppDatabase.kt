@@ -478,7 +478,7 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE assessment_questions ADD COLUMN subText TEXT ")
                 database.execSQL("ALTER TABLE assessment_questions ADD COLUMN mediaUrl2 TEXT ")
                 database.execSQL("ALTER TABLE assessment_questions ADD COLUMN isNewHeader INTEGER NOT NULL DEFAULT 0")
-                database.execSQL("ALTER TABLE assessment_questions ADD COLUMN mediaType2 TEXT NOT NULL DEFAULT '-1' ")
+                database.execSQL("ALTER TABLE assessment_questions ADD COLUMN mediaType2 TEXT NOT NULL DEFAULT 'NONE' ")
                 database.execSQL("ALTER TABLE assessment_questions ADD COLUMN listOfAnswers TEXT ")
                 database.execSQL("ALTER TABLE course ADD COLUMN is_course_locked INTEGER NOT NULL DEFAULT 0")
                 database.execSQL("ALTER TABLE assessment_choice ADD COLUMN audioUrl TEXT ")
@@ -557,13 +557,18 @@ class MessageTypeConverters {
 class ConvertersForDownloadStatus {
 
     @TypeConverter
-    fun fromString(value: String): DOWNLOAD_STATUS {
-        val matType = object : TypeToken<DOWNLOAD_STATUS>() {}.type
-        return AppObjectController.gsonMapper.fromJson(value, matType)
+    fun fromString(value: String?): DOWNLOAD_STATUS {
+        return try {
+            val matType = object : TypeToken<DOWNLOAD_STATUS>() {}.type
+            AppObjectController.gsonMapper.fromJson(value, matType)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            DOWNLOAD_STATUS.NOT_START
+        }
     }
 
     @TypeConverter
-    fun fromMatType(enumVal: DOWNLOAD_STATUS): String {
+    fun fromMatType(enumVal: DOWNLOAD_STATUS): String? {
         return AppObjectController.gsonMapper.toJson(enumVal)
     }
 }
