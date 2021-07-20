@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.ui.voip
 
 import android.app.Application
+import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableField
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -16,6 +18,8 @@ import retrofit2.HttpException
 
 class WebrtcViewModel(application: Application) : AndroidViewModel(application) {
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
+    val audioState = ObservableField(CallAudioState.HANDSET)
+    val isWiredHeadphoneConnected = ObservableBoolean(false)
 
     fun initMissedCall(partnerId: String, aFunction: (String, String, Int) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -50,4 +54,8 @@ class WebrtcViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
+}
+
+enum class CallAudioState(val value: String) {
+    HANDSET("Handset"), SPEAKER("Speaker"), BLUETOOTH("Bluetooth"), HEADPHONE("Headphone")
 }

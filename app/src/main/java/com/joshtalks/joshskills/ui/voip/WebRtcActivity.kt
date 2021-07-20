@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.os.IBinder
 import android.os.SystemClock
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +24,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -31,6 +34,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
 import com.joshtalks.joshskills.databinding.ActivityCallingBinding
+import com.joshtalks.joshskills.databinding.AudioDeviceBottomsheetBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
@@ -56,6 +60,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
+
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
 const val CALL_USER_OBJ = "call_user_obj"
 const val CALL_TYPE = "call_type"
@@ -73,6 +78,9 @@ class WebRtcActivity : AppCompatActivity() {
     private val userDetailLiveData: MutableLiveData<HashMap<String, String>> = MutableLiveData()
     private val viewModel: WebrtcViewModel by lazy {
         ViewModelProvider(this).get(WebrtcViewModel::class.java)
+    }
+    val am by lazy {
+        getSystemService(AUDIO_SERVICE) as AudioManager
     }
 
     companion object {
@@ -115,6 +123,7 @@ class WebRtcActivity : AppCompatActivity() {
             val myBinder = service as WebRtcService.MyBinder
             mBoundService = myBinder.getService()
             mServiceBound = true
+            mBoundService?.currentButtonState = VoipButtonState.NONE
             mBoundService?.addListener(callback)
             initCall()
         }
@@ -234,9 +243,11 @@ class WebRtcActivity : AppCompatActivity() {
 
         volumeControlStream = AudioManager.STREAM_VOICE_CALL
         super.onCreate(savedInstanceState)
+        viewModel.isWiredHeadphoneConnected.set(am.isWiredHeadsetOn)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_calling)
         binding.lifecycleOwner = this
         binding.handler = this
+        binding.vm = viewModel
         // setCallerInfoOnAppCreate()
         intent.printAllIntent()
         addObserver()
@@ -361,19 +372,33 @@ class WebRtcActivity : AppCompatActivity() {
                     when (it) {
                         State.BluetoothOn -> {
                             Log.d(TAG, "initAudioStateListener: BluetoothOn")
-                            bluetoothEnabled()
-                        }
-                        State.EarpieceOn -> {
-                            Log.d(TAG, "initAudioStateListener: EarpieceOn")
-                            earpieceEnabled()
-                        }
-                        State.HeadphoneOn -> {
-                            Log.d(TAG, "initAudioStateListener: HeadphoneOn")
-                            headphoneEnabled()
+                            viewModel.audioState.set(CallAudioState.BLUETOOTH)
+                            Glide.with(this@WebRtcActivity)
+                                .load(R.drawable.ic_bluetooth)
+                                .into(binding.btnAudioList)
                         }
                         State.SpeakerOn -> {
                             Log.d(TAG, "initAudioStateListener: SpeakerOn")
-                            speakerEnabled()
+                            viewModel.audioState.set(CallAudioState.SPEAKER)
+                            Glide.with(this@WebRtcActivity)
+                                .load(R.drawable.ic_speaker)
+                                .into(binding.btnAudioList)
+                        }
+                        is State.Default -> {
+                            Log.d(TAG, "initAudioStateListener: DEFAULT ${it.isHeadset}")
+                            if (it.isHeadset) {
+                                viewModel.audioState.set(CallAudioState.HANDSET)
+                                viewModel.isWiredHeadphoneConnected.set(false)
+                                Glide.with(this@WebRtcActivity)
+                                    .load(R.drawable.ic_handset)
+                                    .into(binding.btnAudioList)
+                            } else {
+                                viewModel.audioState.set(CallAudioState.HEADPHONE)
+                                viewModel.isWiredHeadphoneConnected.set(true)
+                                Glide.with(this@WebRtcActivity)
+                                    .load(R.drawable.ic_headphone_with_mic)
+                                    .into(binding.btnAudioList)
+                            }
                         }
                     }
                 }
@@ -527,7 +552,7 @@ class WebRtcActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateButtonStatus() {
+    /*private fun updateButtonStatus() {
         mBoundService?.getSpeaker()?.let {
             updateStatusLabel(binding.btnSpeaker, it.not())
         }
@@ -536,7 +561,7 @@ class WebRtcActivity : AppCompatActivity() {
                 updateStatusLabel(binding.btnMute, false)
             }
         }
-    }
+    }*/
 
     private fun getCallTime(): Long {
         return TimeUnit.MILLISECONDS.toSeconds(
@@ -613,16 +638,31 @@ class WebRtcActivity : AppCompatActivity() {
         binding.groupForOutgoing.visibility = View.VISIBLE
     }
 
-    fun switchAudioMode() {
+    /*fun switchAudioMode() {
         //updateStatusLabel(binding.btnSpeaker, mBoundService!!.getSpeaker())
         mBoundService?.switchAudioSpeaker()
         volumeControlStream = AudioManager.STREAM_VOICE_CALL
-    }
+    }*/
 
-    fun switchBluetoothMode() {
+    /*fun switchBluetoothMode() {
         Timber.tag("BLUETOOTH").d("Button Clicked -- ${mBoundService!!.isBluetoothEnabled}")
         //updateStatusLabel(binding.btnBluetooth, mBoundService!!.isBluetoothEnabled)
         mBoundService?.changeBluetoothState()
+        volumeControlStream = AudioManager.STREAM_VOICE_CALL
+    }*/
+
+    fun turnOnBluetooth() {
+        mBoundService?.turnOnBluetooth(VoipButtonState.BLUETOOTH)
+        volumeControlStream = AudioManager.STREAM_VOICE_CALL
+    }
+
+    fun turnOnDefault() {
+        mBoundService?.turnOnDefault(VoipButtonState.DEFAULT)
+        volumeControlStream = AudioManager.STREAM_VOICE_CALL
+    }
+
+    fun turnOnSpeaker() {
+        mBoundService?.turnOnSpeaker(VoipButtonState.SPEAKER)
         volumeControlStream = AudioManager.STREAM_VOICE_CALL
     }
 
@@ -631,7 +671,7 @@ class WebRtcActivity : AppCompatActivity() {
         mBoundService?.switchSpeck()
     }
 
-    private fun bluetoothEnabled() {
+    /*private fun bluetoothEnabled() {
         disableButton(binding.btnSpeaker)
         disableButton(binding.btnHeadphone)
         enableButton(binding.btnBluetooth)
@@ -639,19 +679,17 @@ class WebRtcActivity : AppCompatActivity() {
 
     private fun speakerEnabled() {
         disableButton(binding.btnBluetooth)
-        hideHeadphone()
+        disableButton(binding.btnHeadphone)
         enableButton(binding.btnSpeaker)
     }
 
     private fun earpieceEnabled() {
         disableButton(binding.btnBluetooth)
-        hideHeadphone()
         disableButton(binding.btnSpeaker)
     }
 
     private fun headphoneEnabled() {
         disableButton(binding.btnBluetooth)
-        showHeadphone()
         disableButton(binding.btnSpeaker)
         enableButton(binding.btnHeadphone)
     }
@@ -672,7 +710,7 @@ class WebRtcActivity : AppCompatActivity() {
 
     fun micEnabled() {
         disableButton(binding.btnMute)
-    }
+    }*/
 
     fun onDeclineCall() {
         WebRtcService.rejectCall()
@@ -884,5 +922,32 @@ class WebRtcActivity : AppCompatActivity() {
             PointSnackbar.make(view, duration, action_lable)?.show()
             playSnackbarSound(this)
         }
+    }
+
+    fun openAudioDeviceBottomSheet() {
+        val audioDialogSheet = BottomSheetDialog(this)
+        viewModel.isWiredHeadphoneConnected.set(am.isWiredHeadsetOn)
+        val audioDeviceBottomsheetBinding: AudioDeviceBottomsheetBinding = DataBindingUtil.inflate(
+            LayoutInflater.from(this), R.layout.audio_device_bottomsheet, null, false
+        )
+        audioDeviceBottomsheetBinding.audioBluetooth.setOnClickListener {
+            turnOnBluetooth()
+            audioDialogSheet.dismiss()
+        }
+
+        audioDeviceBottomsheetBinding.audioSpeaker.setOnClickListener {
+            turnOnSpeaker()
+            audioDialogSheet.dismiss()
+        }
+
+        audioDeviceBottomsheetBinding.audioDefault.setOnClickListener {
+            turnOnDefault()
+            audioDialogSheet.dismiss()
+        }
+
+        audioDialogSheet.setContentView(audioDeviceBottomsheetBinding.root)
+        audioDialogSheet.setCancelable(true)
+        audioDialogSheet.setCanceledOnTouchOutside(true)
+        audioDialogSheet.show()
     }
 }

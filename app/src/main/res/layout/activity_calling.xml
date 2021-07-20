@@ -7,18 +7,20 @@
     <data>
 
         <variable
+            name="vm"
+            type="com.joshtalks.joshskills.ui.voip.WebrtcViewModel" />
+
+        <variable
             name="handler"
             type="com.joshtalks.joshskills.ui.voip.WebRtcActivity" />
-
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/voip_bg"
         android:fitsSystemWindows="true"
+        android:background="@drawable/voip_bg"
         android:orientation="vertical">
 
 
@@ -116,9 +118,9 @@
             android:id="@+id/topic_header"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_16sdp"
             android:layout_marginTop="@dimen/_28sdp"
             android:gravity="center"
+            android:layout_marginHorizontal="@dimen/_16sdp"
             android:text="@string/topic"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
             android:textColor="@color/white"
@@ -132,16 +134,16 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/topic_name"
             android:layout_width="0dp"
+            android:layout_marginTop="@dimen/_2sdp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_2sdp"
-            android:gravity="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
             android:textColor="@color/white"
+            android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/topic_header"
             tools:ignore="MissingPrefix"
+            app:layout_constraintTop_toBottomOf="@+id/topic_header"
             tools:text="Talk about what is Futur" />
 
         <androidx.appcompat.widget.AppCompatImageButton
@@ -151,67 +153,33 @@
             android:background="@drawable/circle2"
             android:backgroundTint="@color/checkbox_color"
             android:onClick="@{()->handler.onDisconnectCall()}"
-            android:padding="@dimen/_7sdp"
+            android:padding="@dimen/_14sdp"
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-            app:layout_constraintBottom_toTopOf="@+id/guideline2"
-            app:layout_constraintEnd_toStartOf="@+id/btn_speaker"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/btn_bluetooth"
-            app:layout_constraintTop_toTopOf="@+id/guideline3"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.9"
             app:srcCompat="@drawable/ic_baseline_call" />
 
+
         <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_bluetooth"
+            android:id="@+id/btn_audio_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/circle2"
-            android:backgroundTint="@color/dis_color_10f"
+            android:backgroundTint="@color/white"
+            android:onClick="@{()->handler.openAudioDeviceBottomSheet()}"
             android:clickable="true"
             android:focusable="true"
-            android:onClick="@{()->handler.switchBluetoothMode()}"
+            android:tint="@color/grey_61"
             android:padding="@dimen/_14sdp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline2"
-            app:layout_constraintEnd_toStartOf="@+id/btn_action"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintBottom_toBottomOf="@id/btn_action"
+            app:layout_constraintEnd_toStartOf="@id/btn_action"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline3"
-            app:srcCompat="@drawable/ic_bluetooth" />
-
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_speaker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/circle2"
-            android:backgroundTint="@color/dis_color_10f"
-            android:clickable="true"
-            android:focusable="true"
-            android:onClick="@{()->handler.switchAudioMode()}"
-            android:padding="@dimen/_14sdp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline2"
-            app:layout_constraintEnd_toStartOf="@+id/btn_mute"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/btn_action"
-            app:layout_constraintTop_toTopOf="@+id/guideline3"
+            app:layout_constraintTop_toTopOf="@id/btn_action"
             app:srcCompat="@drawable/ic_baseline_speaker_on" />
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_headphone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/circle2"
-            android:backgroundTint="@color/dis_color_10f"
-            android:clickable="true"
-            android:focusable="true"
-            android:onClick="@{()->handler.switchAudioMode()}"
-            android:padding="@dimen/_14sdp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline2"
-            app:layout_constraintEnd_toStartOf="@+id/btn_mute"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/btn_action"
-            app:layout_constraintTop_toTopOf="@+id/guideline3"
-            app:srcCompat="@drawable/ic_headphone" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txt_mute"
@@ -219,13 +187,13 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:paddingTop="@dimen/_4sdp"
-            android:text="@string/speaker"
+            android:text="@{vm.audioState.value}"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:textColor="@color/white"
             android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="@+id/btn_speaker"
-            app:layout_constraintStart_toStartOf="@+id/btn_speaker"
-            app:layout_constraintTop_toBottomOf="@+id/btn_speaker"
+            app:layout_constraintEnd_toEndOf="@+id/btn_audio_list"
+            app:layout_constraintStart_toStartOf="@+id/btn_audio_list"
+            app:layout_constraintTop_toBottomOf="@+id/btn_audio_list"
             tools:ignore="MissingPrefix"
             tools:visibility="visible" />
 
@@ -240,11 +208,11 @@
             android:focusable="true"
             android:onClick="@{()->handler.switchTalkMode()}"
             android:padding="@dimen/_14sdp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline2"
+            app:layout_constraintBottom_toBottomOf="@id/btn_action"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/btn_speaker"
-            app:layout_constraintTop_toTopOf="@+id/guideline3"
+            app:layout_constraintStart_toEndOf="@id/btn_action"
+            app:layout_constraintTop_toTopOf="@id/btn_action"
+            app:layout_constraintVertical_bias="0.9"
             app:srcCompat="@drawable/ic_baseline_mic_off" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -310,9 +278,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:constraint_referenced_ids="btn_mute,btn_speaker,btn_action,txt_speaker,txt_mute,btn_bluetooth"
+            app:constraint_referenced_ids="btn_mute,btn_audio_list,btn_action,txt_speaker,txt_mute"
             tools:visibility="visible" />
-
         <FrameLayout
             android:id="@+id/placeholder_bg"
             android:layout_width="match_parent"
@@ -320,20 +287,6 @@
             android:background="#AA000000"
             android:visibility="gone"
             tools:visibility="gone" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.94254446" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.8508892" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
