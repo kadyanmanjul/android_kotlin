@@ -17,16 +17,13 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/top_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="@dimen/_8sdp"
-            android:paddingTop="@dimen/_12sdp"
-            android:paddingEnd="@dimen/_8sdp"
-            android:paddingBottom="@dimen/_12sdp">
+            android:layout_height="?attr/actionBarSize"
+            android:paddingHorizontal="@dimen/_4sdp">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_back"
-                android:layout_width="@dimen/_28sdp"
-                android:layout_height="@dimen/_28sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
@@ -34,23 +31,31 @@
                 android:focusable="true"
                 android:gravity="center_vertical|start"
                 android:onClick="@{()->handler.onBackPressed()}"
-                android:padding="@dimen/_4sdp"
+                android:paddingTop="@dimen/_6sdp"
+                android:paddingBottom="@dimen/_6sdp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:srcCompat="@drawable/ic_arrow_back"
                 app:tint="@color/black" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_message_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:gravity="start"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_toStartOf="@id/iv_help"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="start|center"
+                android:singleLine="true"
                 android:text="@string/registration"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                 android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="@id/iv_back"
                 app:layout_constraintStart_toEndOf="@id/iv_back"
-                app:layout_constraintTop_toTopOf="@id/iv_back" />
+                app:layout_constraintTop_toTopOf="@id/iv_back"
+                tools:text="Spoken English Course" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/skip"
@@ -69,16 +74,19 @@
                 tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_help"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="@{()->handler.openHelpActivity()}"
+                android:layout_alignWithParentIfMissing="true"
+                android:layout_centerVertical="true"
                 android:padding="@dimen/_4sdp"
-                android:tint="@color/black"
-                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_help_outline" />
+                app:srcCompat="@drawable/ic_help_outline"
+                android:id="@+id/iv_help"
+                android:onClick="@{()->handler.openHelpActivity()}"
+                android:tint="@color/black"
+                android:visibility="gone"/>
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_privacy"

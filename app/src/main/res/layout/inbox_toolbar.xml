@@ -11,7 +11,7 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
         android:contentInsetStart="0dp"
         android:contentInsetLeft="0dp"
@@ -28,8 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/button_color"
-            android:paddingStart="@dimen/_7sdp"
-            android:paddingEnd="@dimen/_7sdp">
+            android:paddingHorizontal="@dimen/_4sdp">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_back"
@@ -37,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/_4sdp"
+                android:paddingStart="@dimen/_4sdp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
@@ -70,13 +69,12 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_message_title"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/_4sdp"
-                android:layout_marginEnd="@dimen/_8sdp"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_toEndOf="@id/image_view_logo"
                 android:foreground="?android:attr/selectableItemBackground"
-                android:gravity="start"
-                android:padding="@dimen/_4sdp"
+                android:gravity="start|center"
                 android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                 android:textColor="@color/white"
@@ -107,7 +105,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:padding="@dimen/_4sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                android:paddingStart="@dimen/_4sdp"
+                android:paddingEnd="@dimen/_3sdp"
                 android:tint="@color/white"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"

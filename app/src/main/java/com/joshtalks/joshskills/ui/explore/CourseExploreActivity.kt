@@ -72,6 +72,7 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
         courseExploreBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_course_explore)
         courseExploreBinding.lifecycleOwner = this

@@ -30,8 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/button_color"
-            android:paddingStart="@dimen/_4sdp"
-            android:paddingEnd="@dimen/_4sdp">
+            android:paddingHorizontal="@dimen/_4sdp">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_back"
@@ -122,7 +121,9 @@
                 android:id="@+id/iv_setting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/_4sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                android:paddingStart="@dimen/_4sdp"
+                android:paddingEnd="@dimen/_3sdp"
                 android:tint="@color/white"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"

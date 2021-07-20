@@ -52,6 +52,10 @@ class OnBoardActivity : CoreJoshActivity() {
                 }
             }
         }
+        layout.apply {
+            tvNativeLogin.clipToOutline = true
+            materialButton.clipToOutline = true
+        }
     }
 
     fun signUp() {

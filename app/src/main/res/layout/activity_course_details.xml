@@ -47,7 +47,8 @@
                     android:focusable="true"
                     android:gravity="center_vertical|start"
                     android:onClick="@{()->handler.onBackPressed()}"
-                    android:paddingTop="@dimen/_14sdp"
+                    android:paddingStart="@dimen/_8sdp"
+                    android:paddingTop="@dimen/_6sdp"
                     android:paddingBottom="@dimen/_6sdp"
                     android:visibility="visible"
                     app:srcCompat="@drawable/ic_arrow_back" />
@@ -94,11 +95,11 @@
             android:onClick="@{()->handler.goToTop()}"
             android:padding="@dimen/_6sdp"
             android:scaleType="centerCrop"
-            app:srcCompat="@drawable/ic_up_arrow_drawable"
             android:visibility="gone"
             app:layout_anchor="@id/buy_course_ll"
             app:layout_anchorGravity="right|top"
-            app:layout_collapseMode="parallax" />
+            app:layout_collapseMode="parallax"
+            app:srcCompat="@drawable/ic_up_arrow_drawable" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/link_to_whatsapp"
@@ -109,11 +110,11 @@
             android:onClick="@{()->handler.openWhatsapp()}"
             android:padding="@dimen/_4sdp"
             android:scaleType="fitXY"
-            app:srcCompat="@drawable/ic_whatsapp_payment"
             android:visibility="gone"
             app:layout_anchor="@id/buy_course_ll"
             app:layout_anchorGravity="right|top"
             app:layout_collapseMode="parallax"
+            app:srcCompat="@drawable/ic_whatsapp_payment"
             tools:visibility="visible" />
 
         <LinearLayout

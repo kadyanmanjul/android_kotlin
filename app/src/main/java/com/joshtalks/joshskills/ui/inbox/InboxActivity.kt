@@ -61,6 +61,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         WorkManagerAdmin.requiredTaskInLandingPage()
         FileUploadService.uploadAllPendingTasks(AppObjectController.joshApplication)
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
+        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(this)
         setContentView(R.layout.activity_inbox)
