@@ -65,6 +65,9 @@ import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSET
 import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSETBLUETOOTH
 import io.agora.rtc.Constants.CONNECTION_CHANGED_INTERRUPTED
 import io.agora.rtc.Constants.CONNECTION_STATE_RECONNECTING
+import io.agora.rtc.Constants.LOCAL_AUDIO_STREAM_STATE_CAPTURING
+import io.agora.rtc.Constants.LOCAL_AUDIO_STREAM_STATE_FAILED
+import io.agora.rtc.Constants.LOCAL_AUDIO_STREAM_STATE_STOPPED
 import io.agora.rtc.Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
@@ -350,31 +353,59 @@ class WebRtcService : BaseWebRtcService(), BluetoothProfile.ServiceListener {
 
         override fun onAudioRouteChanged(routing: Int) {
             super.onAudioRouteChanged(routing)
-            when (routing) {
-                Constants.AUDIO_ROUTE_DEFAULT -> {
-                    showToast("DEFAULT")
+            val tag =
+                when (routing) {
+                    Constants.AUDIO_ROUTE_DEFAULT -> {
+                        showToast("DEFAULT")
+                        VoipAudioState.switchToEarpiece()
+                    }
+                    AUDIO_ROUTE_HEADSET -> {
+                        Timber.tag("Bluetooth ISSUE").d("onAudioRouteChanged: AUDIO_ROUTE_HEADSET ")
+                        showToast("HEADSET")
+                        VoipAudioState.switchToHeadphone()
+                    }
+                    AUDIO_ROUTE_HEADSETBLUETOOTH -> {
+                        Timber.tag("Bluetooth ISSUE")
+                            .d("onAudioRouteChanged: AUDIO_ROUTE_HEADSETBLUETOOTH ")
+                        showToast("BLUETOOTH HEADSET")
+                        VoipAudioState.switchToBluetooth()
+                    }
+                    Constants.AUDIO_ROUTE_LOUDSPEAKER -> {
+                        showToast("LOUDSPEAKER")
+                        VoipAudioState.switchToSpeaker()
+                    }
+                    Constants.AUDIO_ROUTE_SPEAKERPHONE -> {
+                        showToast("SPEAKERPHONE")
+                        VoipAudioState.switchToSpeaker()
+                    }
+                    Constants.AUDIO_ROUTE_EARPIECE -> {
+                        showToast("EARPIECE")
+                        VoipAudioState.switchToEarpiece()
+                    }
+                    else -> {
+                        showToast("ELSE $routing")
+                        VoipAudioState.switchToEarpiece()
+                    }
                 }
-                AUDIO_ROUTE_HEADSET -> {
-                    Timber.tag("Bluetooth ISSUE").d("onAudioRouteChanged: AUDIO_ROUTE_HEADSET ")
-                    showToast("HEADSET")
+        }
+
+        override fun onLocalAudioStateChanged(state: Int, error: Int) {
+            Log.d(TAG, "onLocalAudioStateChanged: $state")
+            when (state) {
+                LOCAL_AUDIO_STREAM_STATE_STOPPED -> {
+                    //VoipAudioState.switchMicOff()
+                    showToast("Mic On")
                 }
-                AUDIO_ROUTE_HEADSETBLUETOOTH -> {
-                    Timber.tag("Bluetooth ISSUE")
-                        .d("onAudioRouteChanged: AUDIO_ROUTE_HEADSETBLUETOOTH ")
-                    showToast("BLUETOOTH HEADSET")
+
+                LOCAL_AUDIO_STREAM_STATE_CAPTURING -> {
+                    //VoipAudioState.switchMicOn()
+                    showToast("Mic Off")
                 }
-                Constants.AUDIO_ROUTE_LOUDSPEAKER -> {
-                    showToast("LOUDSPEAKER")
+
+                LOCAL_AUDIO_STREAM_STATE_FAILED -> {
+                    showToast("Mic Error Occoured")
                 }
-                Constants.AUDIO_ROUTE_SPEAKERPHONE -> {
-                    showToast("SPEAKERPHONE")
-                }
-                Constants.AUDIO_ROUTE_EARPIECE -> {
-                    showToast("EARPIECE")
-                }
-                else -> {
-                    showToast("ELSE $routing")
-                }
+
             }
         }
 
@@ -1243,11 +1274,19 @@ class WebRtcService : BaseWebRtcService(), BluetoothProfile.ServiceListener {
     private fun switchSpeaker() {
         Log.d("AUDIO", "switchSpeaker: $isSpeakerEnabled")
         isSpeakerEnabled = !isSpeakerEnabled
+        showToast("Turning $isSpeakerEnabled")
         mRtcEngine?.setEnableSpeakerphone(isSpeakerEnabled)
+        val am: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        am.isSpeakerphoneOn = isSpeakerEnabled
+        Log.d(TAG, "switchSpeaker: $isSpeakerEnabled")
+        //mRtcEngine?.setEnableSpeakerphone(!testing)
+        //Log.d(TAG, "changeBluetoothState: ${!testing}")
+        //testing = !testing
         if (!isSpeakerEnabled)
             callCallback?.get()?.onSpeakerOff()
     }
 
+    //var testing = false
     fun changeBluetoothState() {
         if (bluetoothAdapter?.isEnabled == true) {
             showToast("Disconnecting Bluetooth ... Please wait")

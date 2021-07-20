@@ -402,6 +402,7 @@
             android:showOnLockScreen="true"
             android:showWhenLocked="true"
             android:theme="@style/AppNoBarTheme"
+            android:fitsSystemWindows="true"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity

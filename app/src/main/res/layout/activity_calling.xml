@@ -151,13 +151,14 @@
             android:background="@drawable/circle2"
             android:backgroundTint="@color/checkbox_color"
             android:onClick="@{()->handler.onDisconnectCall()}"
-            android:padding="@dimen/_14sdp"
+            android:padding="@dimen/_7sdp"
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.JoshTypography.Button"
             app:layout_constraintBottom_toTopOf="@+id/guideline2"
             app:layout_constraintEnd_toStartOf="@+id/btn_speaker"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/btn_bluetooth"
+            app:layout_constraintTop_toTopOf="@+id/guideline3"
             app:srcCompat="@drawable/ic_baseline_call" />
 
         <androidx.appcompat.widget.AppCompatImageButton
@@ -174,6 +175,7 @@
             app:layout_constraintEnd_toStartOf="@+id/btn_action"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideline3"
             app:srcCompat="@drawable/ic_bluetooth" />
 
 
@@ -191,7 +193,25 @@
             app:layout_constraintEnd_toStartOf="@+id/btn_mute"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/btn_action"
+            app:layout_constraintTop_toTopOf="@+id/guideline3"
             app:srcCompat="@drawable/ic_baseline_speaker_on" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_headphone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle2"
+            android:backgroundTint="@color/dis_color_10f"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{()->handler.switchAudioMode()}"
+            android:padding="@dimen/_14sdp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline2"
+            app:layout_constraintEnd_toStartOf="@+id/btn_mute"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn_action"
+            app:layout_constraintTop_toTopOf="@+id/guideline3"
+            app:srcCompat="@drawable/ic_headphone" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txt_mute"
@@ -224,6 +244,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/btn_speaker"
+            app:layout_constraintTop_toTopOf="@+id/guideline3"
             app:srcCompat="@drawable/ic_baseline_mic_off" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -305,7 +326,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_end="43dp" />
+            app:layout_constraintGuide_percent="0.94254446" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.8508892" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
