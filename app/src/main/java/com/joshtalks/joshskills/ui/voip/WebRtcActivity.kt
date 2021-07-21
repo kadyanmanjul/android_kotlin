@@ -243,11 +243,12 @@ class WebRtcActivity : AppCompatActivity() {
 
         volumeControlStream = AudioManager.STREAM_VOICE_CALL
         super.onCreate(savedInstanceState)
-        viewModel.isWiredHeadphoneConnected.set(am.isWiredHeadsetOn)
+        //viewModel.isWiredHeadphoneConnected.set(isWiredHeadSetOn)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_calling)
         binding.lifecycleOwner = this
         binding.handler = this
         binding.vm = viewModel
+        binding.executePendingBindings()
         // setCallerInfoOnAppCreate()
         intent.printAllIntent()
         addObserver()
@@ -382,21 +383,27 @@ class WebRtcActivity : AppCompatActivity() {
                             viewModel.audioState.set(CallAudioState.SPEAKER)
                             Glide.with(this@WebRtcActivity)
                                 .load(R.drawable.ic_speaker)
+                                .fitCenter()
                                 .into(binding.btnAudioList)
                         }
                         is State.Default -> {
-                            Log.d(TAG, "initAudioStateListener: DEFAULT ${it.isHeadset}")
-                            if (it.isHeadset) {
-                                viewModel.audioState.set(CallAudioState.HANDSET)
-                                viewModel.isWiredHeadphoneConnected.set(false)
-                                Glide.with(this@WebRtcActivity)
-                                    .load(R.drawable.ic_handset)
-                                    .into(binding.btnAudioList)
-                            } else {
+                            Log.d(
+                                TAG,
+                                "initAudioStateListener: DEFAULT ${it.isWiredHeadphonePluggedIn}"
+                            )
+                            if (it.isWiredHeadphonePluggedIn) {
+                                Log.d(TAG, "initAudioStateListener: Setting HEADPHONE")
                                 viewModel.audioState.set(CallAudioState.HEADPHONE)
                                 viewModel.isWiredHeadphoneConnected.set(true)
                                 Glide.with(this@WebRtcActivity)
                                     .load(R.drawable.ic_headphone_with_mic)
+                                    .into(binding.btnAudioList)
+                            } else {
+                                Log.d(TAG, "initAudioStateListener: Setting HEADSET")
+                                viewModel.audioState.set(CallAudioState.HANDSET)
+                                viewModel.isWiredHeadphoneConnected.set(false)
+                                Glide.with(this@WebRtcActivity)
+                                    .load(R.drawable.ic_handset)
                                     .into(binding.btnAudioList)
                             }
                         }
@@ -651,17 +658,17 @@ class WebRtcActivity : AppCompatActivity() {
         volumeControlStream = AudioManager.STREAM_VOICE_CALL
     }*/
 
-    fun turnOnBluetooth() {
+    private fun turnOnBluetooth() {
         mBoundService?.turnOnBluetooth(VoipButtonState.BLUETOOTH)
         volumeControlStream = AudioManager.STREAM_VOICE_CALL
     }
 
-    fun turnOnDefault() {
+    private fun turnOnDefault() {
         mBoundService?.turnOnDefault(VoipButtonState.DEFAULT)
         volumeControlStream = AudioManager.STREAM_VOICE_CALL
     }
 
-    fun turnOnSpeaker() {
+    private fun turnOnSpeaker() {
         mBoundService?.turnOnSpeaker(VoipButtonState.SPEAKER)
         volumeControlStream = AudioManager.STREAM_VOICE_CALL
     }
@@ -926,10 +933,12 @@ class WebRtcActivity : AppCompatActivity() {
 
     fun openAudioDeviceBottomSheet() {
         val audioDialogSheet = BottomSheetDialog(this)
-        viewModel.isWiredHeadphoneConnected.set(am.isWiredHeadsetOn)
+        val isWiredHeadsetOn = am.isWiredHeadsetOn
+        viewModel.isWiredHeadphoneConnected.set(isWiredHeadsetOn)
         val audioDeviceBottomsheetBinding: AudioDeviceBottomsheetBinding = DataBindingUtil.inflate(
             LayoutInflater.from(this), R.layout.audio_device_bottomsheet, null, false
         )
+        audioDeviceBottomsheetBinding.vm = viewModel
         audioDeviceBottomsheetBinding.audioBluetooth.setOnClickListener {
             turnOnBluetooth()
             audioDialogSheet.dismiss()

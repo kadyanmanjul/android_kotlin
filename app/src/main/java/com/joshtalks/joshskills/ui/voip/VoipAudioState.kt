@@ -4,11 +4,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 object VoipAudioState {
-    private val currentState = MutableStateFlow<State>(State.Default(true))
+    private val currentState = MutableStateFlow<State>(State.Default(false))
     val audioState: StateFlow<State> = currentState
 
-    fun switchToDefault(isHeadset: Boolean) {
-        currentState.value = State.Default(isHeadset)
+    fun switchToDefault(isWiredHeadphonePluggedIn: Boolean) {
+        currentState.value = State.Default(isWiredHeadphonePluggedIn)
     }
 
     fun switchToBluetooth() {
@@ -21,7 +21,7 @@ object VoipAudioState {
 }
 
 sealed class State {
-    data class Default(val isHeadset: Boolean) : State()
+    data class Default(val isWiredHeadphonePluggedIn: Boolean) : State()
     object BluetoothOn : State()
     object SpeakerOn : State()
 }

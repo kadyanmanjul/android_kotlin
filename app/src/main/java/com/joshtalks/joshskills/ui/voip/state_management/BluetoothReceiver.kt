@@ -1,11 +1,9 @@
 package com.joshtalks.joshskills.ui.voip.state_management
 
-import android.bluetooth.BluetoothHeadset
+import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.media.AudioManager
-import android.media.AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED
 import android.util.Log
 
 
@@ -14,7 +12,19 @@ class BluetoothReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         // Checking Bluetooth Connection State i.e. Its connected to device or not
-        if (intent?.action.equals(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)) {
+        when (intent?.action) {
+            BluetoothDevice.ACTION_ACL_CONNECTED -> {
+                Log.d(TAG, "onReceive: ACTION_ACL_CONNECTED")
+            }
+            BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED -> {
+                Log.d(TAG, "onReceive: ACTION_ACL_DISCONNECT_REQUESTED")
+
+            }
+            BluetoothDevice.ACTION_ACL_DISCONNECTED -> {
+                Log.d(TAG, "onReceive: ACTION_ACL_DISCONNECTED")
+            }
+        }
+        /*if (intent?.action.equals(BluetoothDevice.ACTION_ACL_CONNECTED)) {
             Log.d(TAG, "onReceive: ACTION_CONNECTION_STATE_CHANGED")
             val state = intent?.getIntExtra(BluetoothHeadset.EXTRA_STATE, -1)
             when (state) {
@@ -43,6 +53,6 @@ class BluetoothReceiver : BroadcastReceiver() {
                     Log.d(TAG, "onReceive: ELSE")
                 }
             }
-        }
+        }*/
     }
 }
