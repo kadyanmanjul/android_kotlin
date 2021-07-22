@@ -10,15 +10,16 @@
         app:showAsAction="collapseActionView" />
 
     <item
-        android:id="@+id/menu_help"
-        android:actionLayout="@layout/base_toolbar"
-        android:orderInCategory="100"
-        android:title="@string/help"
-        app:showAsAction="collapseActionView" />
-    <item
         android:id="@+id/menu_settings"
         android:actionLayout="@layout/base_toolbar"
         android:orderInCategory="100"
         android:title="@string/settings"
+        app:showAsAction="collapseActionView" />
+
+    <item
+        android:id="@+id/menu_help"
+        android:actionLayout="@layout/base_toolbar"
+        android:orderInCategory="100"
+        android:title="@string/help"
         app:showAsAction="collapseActionView" />
 </menu>

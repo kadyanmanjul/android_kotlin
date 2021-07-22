@@ -3,19 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/audio_view_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="@dimen/_4sdp"
-        android:paddingEnd="@dimen/_8sdp">
+        android:paddingVertical="@dimen/_4sdp">
 
         <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
             android:id="@+id/btn_play_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerInParent="true"
             android:layout_gravity="center"
             android:background="@drawable/play_pause_button_background"
             android:backgroundTint="@color/button_color"
@@ -23,23 +20,28 @@
             android:elevation="4dp"
             android:padding="@dimen/_4sdp"
             android:theme="?actionBarTheme"
-            android:tint="?colorControlNormal" />
+            android:tint="?colorControlNormal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <SeekBar
             android:id="@+id/practise_seekbar"
-            android:layout_width="294dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/btn_play_info"
-            android:layout_centerInParent="true"
+            android:layout_gravity="center"
             android:layout_marginStart="@dimen/_8ssp"
-            android:layout_marginEnd="@dimen/_20ssp"
+            android:layout_marginEnd="@dimen/_minus4sdp"
             android:layout_toEndOf="@id/btn_play_info"
             android:paddingStart="@dimen/_6sdp"
-            android:paddingEnd="@dimen/_6sdp"
             android:progressDrawable="@drawable/seek_bar_draw"
             android:thumb="@drawable/seek_thumb"
-            android:thumbTint="@color/colorPrimary" />
+            android:thumbTint="@color/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/barrier_right"
+            app:layout_constraintStart_toEndOf="@id/btn_play_info"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_cancel"
@@ -53,7 +55,25 @@
             android:focusable="true"
             android:tint="#878A91"
             android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_cross" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="left"
+            app:constraint_referenced_ids="iv_cancel,view_right" />
+
+        <View
+            android:id="@+id/view_right"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -62,12 +82,14 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/practise_seekbar"
             android:layout_alignLeft="@id/practise_seekbar"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:layout_marginLeft="@dimen/_4sdp"
             android:text="0:56"
+            android:layout_marginStart="@dimen/_2sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
             android:textColor="@color/gray_9E"
             android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/practise_seekbar"
+            app:layout_constraintTop_toBottomOf="@id/practise_seekbar"
             tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -76,12 +98,13 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/practise_seekbar"
             android:layout_alignRight="@+id/practise_seekbar"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:layout_marginRight="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_12sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
             android:textColor="@color/gray_9E"
-            app:layout_goneMarginTop="@dimen/spacing_large"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/practise_seekbar"
+            app:layout_constraintTop_toBottomOf="@id/practise_seekbar"
             tools:text="just now" />
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

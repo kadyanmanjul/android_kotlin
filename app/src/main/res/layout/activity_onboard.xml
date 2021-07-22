@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@drawable/rect_with_black_bound"
+            android:background="@drawable/ripple_effect"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
@@ -46,8 +46,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/guideline"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.071"
-            android:foreground="?android:attr/selectableItemBackground" />
+            app:layout_constraintVertical_bias="0.071"/>
 
         <TextView
             android:id="@+id/textView"

@@ -2,11 +2,11 @@ package com.joshtalks.joshskills.ui.lesson.reading
 
 import android.content.Context
 import android.view.Gravity
-import android.widget.RelativeLayout
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.DD_MM_YYYY
@@ -39,7 +39,7 @@ class PracticeAudioViewHolder(
 ) : AudioPlayerEventListener, ExoAudioPlayer.ProgressUpdateListener {
 
     @View(R.id.audio_view_container)
-    lateinit var rootView: RelativeLayout
+    lateinit var rootView: ConstraintLayout
 
     @View(R.id.btn_play_info)
     lateinit var playPauseBtn: MaterialPlayPauseButton
@@ -67,9 +67,9 @@ class PracticeAudioViewHolder(
 
         if (practiceEngagement != null) {
             date.text = practiceEngagement!!.practiceDate
-            val totalTime= Utils.getDurationOfMedia(context!!, filePath)
-            if (totalTime == null){
-                time.visibility=android.view.View.GONE
+            val totalTime = Utils.getDurationOfMedia(context!!, filePath)
+            if (totalTime == null) {
+                time.visibility = android.view.View.GONE
             } else {
                 time.text = Utils.formatDuration(totalTime.toInt())
                 time.visibility = android.view.View.VISIBLE
@@ -95,9 +95,9 @@ class PracticeAudioViewHolder(
             }
             ivCancel.visibility = android.view.View.GONE
         } else {
-            val totalTime= Utils.getDurationOfMedia(context!!, filePath)
-            if (totalTime == null){
-                time.visibility=android.view.View.GONE
+            val totalTime = Utils.getDurationOfMedia(context!!, filePath)
+            if (totalTime == null) {
+                time.visibility = android.view.View.GONE
             } else {
                 time.text = Utils.formatDuration(totalTime.toInt())
                 time.visibility = android.view.View.VISIBLE

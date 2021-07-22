@@ -12,9 +12,10 @@
     android:foreground="?android:attr/selectableItemBackground">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/lesson_complete_stub_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/round_rect_default"
+        android:background="@drawable/round_rect_corner_4dp"
         android:backgroundTint="@color/light_shade_of_gray">
 
         <androidx.appcompat.widget.AppCompatTextView

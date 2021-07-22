@@ -763,9 +763,9 @@ abstract class BaseActivity :
 
     protected fun reCreateActivity() {
         finish()
-        overridePendingTransition(0, 0)
+        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
         startActivity(intent)
-        overridePendingTransition(0, 0)
+        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
     }
 
     protected fun showProgressBar() {

@@ -28,22 +28,18 @@
         android:layout_height="@dimen/_14sdp"
         android:background="@drawable/circle2"
         android:backgroundTint="@color/white"
-        android:padding="@dimen/_1sdp"
         android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_tv">
+        android:layout_marginBottom="@dimen/_4sdp">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/tab_iv"
             android:padding="@dimen/_1sdp"
-            android:layout_width="@dimen/_12sdp"
-            android:layout_height="@dimen/_12sdp"
+            android:layout_width="@dimen/_14sdp"
+            android:layout_height="@dimen/_14sdp"
             android:layout_gravity="center_horizontal"
             android:gravity="center"
             android:visibility="gone"
             tools:visibility="visible"
-            android:layout_marginBottom="@dimen/_4sdp"
             app:srcCompat="@drawable/ic_lesson_green_tick" />
 
     </FrameLayout>
