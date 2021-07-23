@@ -51,7 +51,7 @@ class UserProfileActivity : BaseConnectionErrorActivity() {
     private var previousPage: String? = EMPTY
     private var awardCategory: List<AwardCategory>? = emptyList()
     private var startTime = 0L
-
+    private var popupMenu :PopupMenu? = null
     init {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
     }
@@ -119,21 +119,11 @@ class UserProfileActivity : BaseConnectionErrorActivity() {
                 onBackPressed()
             }
         }
-        with(iv_help) {
+        text_message_title.text = getString(R.string.profile)
+        with(iv_setting) {
             visibility = View.VISIBLE
             setOnClickListener {
-                openHelpActivity()
-            }
-        }
-        text_message_title.text = getString(R.string.profile)
-        if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE) && mentorId == Mentor.getInstance()
-                .getId()
-        ) {
-            with(iv_setting) {
-                visibility = View.VISIBLE
-                setOnClickListener {
-                    openPopupMenu(it)
-                }
+                openPopupMenu(it)
             }
         }
         if (mentorId == Mentor.getInstance().getId()) {
@@ -142,9 +132,17 @@ class UserProfileActivity : BaseConnectionErrorActivity() {
     }
 
     private fun openPopupMenu(view: View) {
-        val popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
-        popupMenu.inflate(R.menu.user_profile__menu)
-        popupMenu.setOnMenuItemClickListener {
+        popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
+        popupMenu?.inflate(R.menu.user_profile__menu)
+        val isUser = if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE) && mentorId == Mentor.getInstance()
+                .getId()
+        ){
+            true
+        } else {
+            false
+        }
+        showMenuAsPerMentor(isUser)
+        popupMenu?.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_points_history -> {
                     openPointHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
@@ -162,10 +160,33 @@ class UserProfileActivity : BaseConnectionErrorActivity() {
                 R.id.change_dp -> {
                     openChooser()
                 }
+                R.id.menu_help -> {
+                    openHelpActivity()
+                }
             }
             return@setOnMenuItemClickListener false
         }
-        popupMenu.show()
+        popupMenu?.show()
+    }
+
+    private fun showMenuAsPerMentor(isUser: Boolean) {
+        popupMenu?.let {
+            if (isUser) {
+                popupMenu!!.menu.findItem(R.id.menu_points_history).isVisible = true
+                popupMenu!!.menu.findItem(R.id.menu_points_history).isEnabled = true
+                popupMenu!!.menu.findItem(R.id.minutes_points_history).isVisible = true
+                popupMenu!!.menu.findItem(R.id.minutes_points_history).isEnabled = true
+                popupMenu!!.menu.findItem(R.id.change_dp).isVisible = true
+                popupMenu!!.menu.findItem(R.id.change_dp).isEnabled = true
+            } else {
+                popupMenu!!.menu.findItem(R.id.menu_points_history).isVisible = false
+                popupMenu!!.menu.findItem(R.id.menu_points_history).isEnabled = false
+                popupMenu!!.menu.findItem(R.id.minutes_points_history).isVisible = false
+                popupMenu!!.menu.findItem(R.id.minutes_points_history).isEnabled = false
+                popupMenu!!.menu.findItem(R.id.change_dp).isVisible = false
+                popupMenu!!.menu.findItem(R.id.change_dp).isEnabled = false
+            }
+        }
     }
 
     /* private fun initRecyclerView() {

@@ -122,8 +122,6 @@ class LessonActivity : BaseConnectionErrorActivity(), LessonActivityListener {
         viewModel.getLesson(lessonId)
         viewModel.getQuestions(lessonId, isDemo)
 
-        val helpIv: ImageView = findViewById(R.id.iv_help)
-        helpIv.visibility = View.GONE
         findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
         findViewById<View>(R.id.iv_back).setOnClickListener {
             onBackPressed()

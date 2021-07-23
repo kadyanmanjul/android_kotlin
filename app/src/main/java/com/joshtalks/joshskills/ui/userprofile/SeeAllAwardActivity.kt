@@ -24,7 +24,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.base_toolbar.iv_back
-import kotlinx.android.synthetic.main.base_toolbar.iv_help
 import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 
 class SeeAllAwardActivity : BaseActivity() {
@@ -54,12 +53,7 @@ class SeeAllAwardActivity : BaseActivity() {
                 onBackPressed()
             }
         }
-        with(iv_help) {
-            visibility = View.VISIBLE
-            setOnClickListener {
-                openHelpActivity()
-            }
-        }
+
         text_message_title.text = getString(R.string.awards)
     }
 

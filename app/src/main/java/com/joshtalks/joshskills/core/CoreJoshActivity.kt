@@ -7,7 +7,6 @@ import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.repository.server.feedback.FeedbackTypes
 import com.joshtalks.joshskills.ui.feedback.FeedbackFragment
 import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
-import kotlinx.android.synthetic.main.base_toolbar.iv_help
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -27,11 +26,6 @@ abstract class CoreJoshActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        try {
-            iv_help.setOnClickListener { openHelpActivity() }
-        } catch (ex: Throwable) {
-            //LogException.catchException(ex)
-        }
     }
 
     fun showPromotionScreen(courseId: String?, placeholderImageUrl: String?) {

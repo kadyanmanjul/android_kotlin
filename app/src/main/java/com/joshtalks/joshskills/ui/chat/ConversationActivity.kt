@@ -322,11 +322,11 @@ class ConversationActivity :
             showFavtMenuOption(inboxEntity.isCapsuleCourse)
             conversationBinding.toolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
-                    R.id.menu_referral -> {
-                        ReferralActivity.startReferralActivity(
-                            this@ConversationActivity,
-                            ConversationActivity::class.java.name
-                        )
+                    R.id.menu_setting -> {
+                        openSettingActivity()
+                    }
+                    R.id.course_overview_setting -> {
+                        openCourseProgressListingScreen()
                     }
                     R.id.menu_clear_media -> {
                         clearMediaFromInternal(inboxEntity.conversation_id)

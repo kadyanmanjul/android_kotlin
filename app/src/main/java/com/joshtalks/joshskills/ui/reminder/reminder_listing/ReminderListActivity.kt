@@ -8,7 +8,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.GestureDetectorCompat
 import androidx.databinding.DataBindingUtil
@@ -35,7 +34,6 @@ class ReminderListActivity : CoreJoshActivity(),
     private lateinit var gestureDetector: GestureDetectorCompat
     private var actionMode: Boolean = false
     private lateinit var titleView: AppCompatTextView
-    private lateinit var helpIv: AppCompatImageView
     lateinit var binding: ActivityReminderListLayoutBinding
     private val viewModel by lazy { ViewModelProvider(this).get(ReminderListingViewModel::class.java) }
     private lateinit var adapter: ReminderAdapter
@@ -46,9 +44,7 @@ class ReminderListActivity : CoreJoshActivity(),
         binding.lifecycleOwner = this
         binding.handler = this
         titleView = findViewById(R.id.text_message_title)
-        helpIv = findViewById(R.id.iv_help)
         titleView.text = getString(R.string.reminders)
-        helpIv.visibility = GONE
         findViewById<View>(R.id.iv_back).visibility = VISIBLE
         findViewById<View>(R.id.iv_back).setOnClickListener {
             onBackPressed()

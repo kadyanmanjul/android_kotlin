@@ -24,7 +24,6 @@ import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
-import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.util.FileUploadService
 import io.agora.rtc.RtcEngine
@@ -78,7 +77,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun initView() {
         text_message_title.text = getString(R.string.inbox_header)
-        iv_reminder.visibility = View.GONE
         iv_setting.visibility = View.VISIBLE
         findMoreLayout = findViewById(R.id.parent_layout)
         recycler_view_inbox.apply {
@@ -133,10 +131,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             }
         }
         popupMenu?.show()
-    }
-
-    private fun openSettingActivity() {
-        openSettingActivity.launch(SettingsActivity.getIntent(this))
     }
 
     private fun workInBackground() {

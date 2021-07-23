@@ -47,7 +47,6 @@ class HelpActivity : CoreJoshActivity() {
     }
 
     private fun setToolbar() {
-        findViewById<View>(R.id.iv_help).visibility = View.GONE
         findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
         findViewById<AppCompatImageView>(R.id.iv_back).setOnClickListener {
             onBackPressed()

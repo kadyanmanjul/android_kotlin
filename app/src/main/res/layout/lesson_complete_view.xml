@@ -8,6 +8,7 @@
     android:layout_gravity="start"
     android:clickable="true"
     android:enabled="true"
+    android:background="@android:color/transparent"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground">
 

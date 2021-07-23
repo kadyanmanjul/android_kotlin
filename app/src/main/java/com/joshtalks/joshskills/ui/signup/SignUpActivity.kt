@@ -15,7 +15,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -38,8 +37,6 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
-import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SignUpStepStatus
@@ -79,6 +76,7 @@ import io.reactivex.schedulers.Schedulers
 import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.android.synthetic.main.inbox_toolbar.iv_setting
 
 private const val GOOGLE_SIGN_UP_REQUEST_CODE = 9001
 const val FLOW_FROM = "Flow"
@@ -100,6 +98,7 @@ class SignUpActivity : BaseActivity() {
     // var verification: Verification? = null
     // private var sinchConfig: Config? = null
     private lateinit var auth: FirebaseAuth
+    private var popupMenu: PopupMenu? = null
 
     /*init {
         sinchConfig = SinchVerification.config()
@@ -130,12 +129,39 @@ class SignUpActivity : BaseActivity() {
         addViewModelObserver()
         initLoginFeatures()
         setupTrueCaller()
+        initToolBar()
         if (User.getInstance().isVerified && isUserProfileComplete()) {
             openProfileDetailFragment(false)
         } else {
             openSignUpOptionsFragment()
         }
         window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+
+    private fun initToolBar() {
+        iv_setting.setOnClickListener {
+            openPopupMenu(it)
+        }
+    }
+
+    private fun openPopupMenu(view: View) {
+        if (popupMenu == null) {
+            popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
+            popupMenu?.inflate(R.menu.signin_menu)
+            popupMenu?.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.menu_privacy_policy -> {
+                        showPrivacyPolicyDialog()
+                        return@setOnMenuItemClickListener true
+                    }
+                    R.id.menu_help -> {
+                        openHelpActivity()
+                    }
+                }
+                return@setOnMenuItemClickListener false
+            }
+        }
+        popupMenu?.show()
     }
 
     private fun addViewModelObserver() {

@@ -8,7 +8,7 @@ import android.widget.TextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.ui.settings.fragments.SettingsFragment
-import kotlinx.android.synthetic.main.base_toolbar.*
+import kotlinx.android.synthetic.main.base_toolbar.iv_back
 
 class SettingsActivity : WebRtcMiddlewareActivity() {
 
@@ -17,7 +17,6 @@ class SettingsActivity : WebRtcMiddlewareActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         titleView = findViewById(R.id.text_message_title)
-        iv_help.visibility = View.GONE
         iv_back.visibility = View.VISIBLE
         iv_back.setOnClickListener {
             onBackPressed()

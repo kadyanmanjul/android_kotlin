@@ -3,6 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/course_overview_setting"
+        android:actionLayout="@layout/base_toolbar"
+        android:orderInCategory="100"
+        android:title="@string/course_overview"
+        android:visible="false"
+        app:showAsAction="collapseActionView" />
+
+    <item
         android:id="@+id/profile_setting"
         android:actionLayout="@layout/base_toolbar"
         android:orderInCategory="100"
@@ -19,13 +27,6 @@
         app:showAsAction="collapseActionView" />
 
     <item
-        android:id="@+id/menu_referral"
-        android:actionLayout="@layout/base_toolbar"
-        android:orderInCategory="100"
-        android:title="@string/refer_and_earn"
-        app:showAsAction="collapseActionView" />
-
-    <item
         android:id="@+id/menu_clear_media"
         android:actionLayout="@layout/base_toolbar"
         android:orderInCategory="100"
@@ -37,6 +38,13 @@
         android:actionLayout="@layout/base_toolbar"
         android:orderInCategory="100"
         android:title="@string/favorite_list"
+        app:showAsAction="collapseActionView" />
+
+    <item
+        android:id="@+id/menu_setting"
+        android:actionLayout="@layout/base_toolbar"
+        android:orderInCategory="100"
+        android:title="@string/settings"
         app:showAsAction="collapseActionView" />
     <item
         android:id="@+id/menu_help"

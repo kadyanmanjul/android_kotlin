@@ -9,13 +9,18 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.chip.Chip
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentSelectInterestBinding
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.newonboarding.viewmodel.OnBoardViewModel
-import kotlinx.android.synthetic.main.base_toolbar.view.*
+import kotlinx.android.synthetic.main.base_toolbar.view.text_message_title
 
 class SelectInterestFragment : Fragment() {
 
@@ -54,7 +59,6 @@ class SelectInterestFragment : Fragment() {
         binding.handler = this
         binding.interestDescriptionTv.text = VersionResponse.getInstance().interestText ?: EMPTY
 
-        binding.toolbarContainer.iv_help.setOnClickListener { (requireActivity() as BaseActivity).openHelpActivity() }
         if (VersionResponse.getInstance().hasVersion())
             populateInterests()
         return binding.root

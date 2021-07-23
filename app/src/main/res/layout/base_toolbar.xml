@@ -74,7 +74,7 @@
                 android:layout_height="match_parent"
                 android:layout_centerVertical="true"
                 android:layout_marginHorizontal="@dimen/_8sdp"
-                android:layout_toStartOf="@id/iv_help"
+                android:layout_toStartOf="@id/iv_setting"
                 android:layout_toEndOf="@id/image_view_logo"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="start|center"
@@ -91,31 +91,16 @@
                 android:id="@+id/iv_earn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toStartOf="@id/iv_help"
+                android:layout_toStartOf="@id/iv_setting"
                 android:tint="@color/white"
                 android:layout_marginEnd="@dimen/_4sdp"
                 android:visibility="gone"
                 android:padding="@dimen/_4sdp"
                 tools:src="@drawable/ic_search"
-                app:layout_constraintBottom_toBottomOf="@id/iv_help"
-                app:layout_constraintEnd_toStartOf="@id/iv_help"
-                app:layout_constraintTop_toTopOf="@id/iv_help"
-                tools:visibility="visible" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_help"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignWithParentIfMissing="true"
-                android:layout_centerVertical="true"
-                android:layout_toStartOf="@id/iv_setting"
-                android:padding="@dimen/_4sdp"
-                android:tint="@color/white"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@id/iv_setting"
+                app:layout_constraintBottom_toBottomOf="@id/text_message_title"
                 app:layout_constraintEnd_toStartOf="@id/iv_setting"
-                app:layout_constraintTop_toTopOf="@id/iv_setting"
-                app:srcCompat="@drawable/ic_help_outline" />
+                app:layout_constraintTop_toTopOf="@id/text_message_title"
+                tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_setting"

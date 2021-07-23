@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -23,6 +24,7 @@ import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.error.BaseConnectionErrorActivity
 import com.joshtalks.joshskills.ui.leaderboard.search.LeaderBoardSearchActivity
+import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.skydoves.balloon.ArrowOrientation
 import com.skydoves.balloon.Balloon
 import com.skydoves.balloon.BalloonAnimation
@@ -39,6 +41,7 @@ class LeaderBoardViewPagerActivity : BaseConnectionErrorActivity() {
     var mapOfVisitedPage = HashMap<Int, Int>()
     private var tabPosition = 0
     var isTooltipShow = false
+    private var popupMenu: PopupMenu? = null
 
     val searchActivityResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -74,10 +77,10 @@ class LeaderBoardViewPagerActivity : BaseConnectionErrorActivity() {
                 onBackPressed()
             }
         }
-        with(iv_help) {
+        with(iv_setting) {
             visibility = View.VISIBLE
             setOnClickListener {
-                openHelpActivity()
+                openPopupMenu(it)
             }
         }
         with(iv_earn) {
@@ -97,6 +100,29 @@ class LeaderBoardViewPagerActivity : BaseConnectionErrorActivity() {
                 (PrefManager.getIntValue(LEADER_BOARD_OPEN_COUNT) + 1)
             )
         }
+    }
+
+    private fun openPopupMenu(view: View) {
+        if (popupMenu == null) {
+            popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
+            popupMenu?.inflate(R.menu.leaderboard_menu)
+            popupMenu?.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.menu_profile -> {
+                        UserProfileActivity.startUserProfileActivity(
+                            this,
+                            Mentor.getInstance().getId(),
+                            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                            null,
+                            USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
+                            conversationId =getConversationId()
+                        )
+                    }
+                }
+                return@setOnMenuItemClickListener false
+            }
+        }
+        popupMenu?.show()
     }
 
     private fun openSearchActivity() {

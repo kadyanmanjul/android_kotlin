@@ -11,7 +11,8 @@ import com.joshtalks.joshskills.databinding.ActivityPointsInfoBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.points_history.viewholder.PointsInfoViewHolder
 import com.joshtalks.joshskills.ui.points_history.viewmodel.PointsViewModel
-import kotlinx.android.synthetic.main.base_toolbar.*
+import kotlinx.android.synthetic.main.base_toolbar.iv_back
+import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 
 class PointsInfoActivity : WebRtcMiddlewareActivity() {
     private val viewModel: PointsViewModel by lazy {
@@ -40,12 +41,7 @@ class PointsInfoActivity : WebRtcMiddlewareActivity() {
                 onBackPressed()
             }
         }
-        with(iv_help) {
-            visibility = View.VISIBLE
-            setOnClickListener {
-                openHelpActivity()
-            }
-        }
+
         text_message_title.text = getString(R.string.how_points_work_title)
     }
 

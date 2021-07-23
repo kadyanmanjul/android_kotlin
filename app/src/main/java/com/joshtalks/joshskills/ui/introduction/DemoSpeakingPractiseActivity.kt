@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
@@ -49,17 +48,11 @@ class DemoSpeakingPractiseActivity : BaseActivity() {
 
         text_message_title.text =
             getString(R.string.lesson_no, stringExtra)
-        val helpIv: ImageView = findViewById(R.id.iv_help)
-        helpIv.visibility = View.VISIBLE
         findViewById<View>(R.id.iv_back).visibility = View.GONE
         findViewById<View>(R.id.iv_back).setOnClickListener {
             onBackPressed()
         }
-        helpIv.setOnClickListener {
-            openHelpActivity()
-        }
     }
-
 
     private fun addObservers() {
 
