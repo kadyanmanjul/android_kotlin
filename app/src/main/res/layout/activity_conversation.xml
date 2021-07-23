@@ -83,7 +83,7 @@
                         android:layout_width="@dimen/_26sdp"
                         android:layout_height="@dimen/_26sdp"
                         android:layout_centerVertical="true"
-                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_marginStart="@dimen/_8sdp"
                         android:background="@drawable/white_button_round_enabled"
                         android:gravity="center_vertical|start"
                         android:src="@drawable/ic_josh_course"
