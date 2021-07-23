@@ -5,7 +5,6 @@ import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.BuildConfig
@@ -49,7 +48,6 @@ const val IS_FROM_NEW_ONBOARDING = "is_from_new_on_boarding_flow"
 
 class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListener {
 
-    private var popupMenu: PopupMenu? = null
     private var compositeDisposable = CompositeDisposable()
     private lateinit var findMoreLayout: View
     var isPermissionRequired: Boolean = true
@@ -77,7 +75,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun initView() {
         text_message_title.text = getString(R.string.inbox_header)
-        iv_setting.visibility = View.VISIBLE
         findMoreLayout = findViewById(R.id.parent_layout)
         recycler_view_inbox.apply {
             itemAnimator = null
@@ -94,43 +91,34 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             )
         )
         recycler_view_inbox.adapter = inboxAdapter
-        iv_setting.setOnClickListener {
-            openPopupMenu(it)
+        toolbar.inflateMenu(R.menu.more_options_menu)
+        toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.menu_referral -> {
+                    AppAnalytics
+                        .create(AnalyticsEvent.REFER_BUTTON_CLICKED.NAME)
+                        .addBasicParam()
+                        .addUserDetails()
+                        .addParam(
+                            AnalyticsEvent.REFERRAL_CODE.NAME,
+                            Mentor.getInstance().referralCode
+                        )
+                        .push()
+                    ReferralActivity.startReferralActivity(this@InboxActivity)
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.menu_help -> {
+                    openHelpActivity()
+                }
+                R.id.menu_settings ->
+                    openSettingActivity()
+            }
+            return@setOnMenuItemClickListener true
         }
+
         find_more.setOnClickListener {
             courseExploreClick()
         }
-    }
-
-    private fun openPopupMenu(view: View) {
-        if (popupMenu == null) {
-            popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
-            popupMenu?.inflate(R.menu.more_options_menu)
-            popupMenu?.setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.menu_referral -> {
-                        AppAnalytics
-                            .create(AnalyticsEvent.REFER_BUTTON_CLICKED.NAME)
-                            .addBasicParam()
-                            .addUserDetails()
-                            .addParam(
-                                AnalyticsEvent.REFERRAL_CODE.NAME,
-                                Mentor.getInstance().referralCode
-                            )
-                            .push()
-                        ReferralActivity.startReferralActivity(this@InboxActivity)
-                        return@setOnMenuItemClickListener true
-                    }
-                    R.id.menu_help -> {
-                        openHelpActivity()
-                    }
-                    R.id.menu_settings ->
-                        openSettingActivity()
-                }
-                return@setOnMenuItemClickListener false
-            }
-        }
-        popupMenu?.show()
     }
 
     private fun workInBackground() {

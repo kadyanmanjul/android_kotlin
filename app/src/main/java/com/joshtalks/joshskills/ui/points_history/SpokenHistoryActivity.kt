@@ -4,10 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.appbar.MaterialToolbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.databinding.ActivitySpokenHistoryBinding
@@ -17,7 +17,6 @@ import com.joshtalks.joshskills.ui.points_history.viewholder.SpokenSummaryDescVi
 import com.joshtalks.joshskills.ui.points_history.viewmodel.PointsViewModel
 import java.text.DecimalFormat
 import kotlinx.android.synthetic.main.base_toolbar.iv_back
-import kotlinx.android.synthetic.main.base_toolbar.iv_setting
 import kotlinx.android.synthetic.main.base_toolbar.text_message_title
 
 class SpokenHistoryActivity : WebRtcMiddlewareActivity() {
@@ -55,19 +54,8 @@ class SpokenHistoryActivity : WebRtcMiddlewareActivity() {
             }
         }
 
-        with(iv_setting) {
-            visibility = View.VISIBLE
-            setOnClickListener {
-                openPopupMenu(it)
-            }
-        }
-        text_message_title.text = getString(R.string.minutes_history)
-    }
-
-    private fun openPopupMenu(view: View) {
-        val popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
-        popupMenu.inflate(R.menu.point_history_menu)
-        popupMenu.setOnMenuItemClickListener {
+        binding.toolbarContainer.findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.point_history_menu)
+        binding.toolbarContainer.findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.how_to_get_points -> {
                     startActivity(
@@ -80,9 +68,9 @@ class SpokenHistoryActivity : WebRtcMiddlewareActivity() {
                     openHelpActivity()
                 }
             }
-            return@setOnMenuItemClickListener false
+            return@setOnMenuItemClickListener true
         }
-        popupMenu.show()
+        text_message_title.text = getString(R.string.minutes_history)
     }
 
     private fun addObserver() {

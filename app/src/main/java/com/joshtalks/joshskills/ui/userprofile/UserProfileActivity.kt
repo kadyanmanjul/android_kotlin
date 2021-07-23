@@ -16,6 +16,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.android.material.appbar.MaterialToolbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -120,29 +121,11 @@ class UserProfileActivity : BaseConnectionErrorActivity() {
             }
         }
         text_message_title.text = getString(R.string.profile)
-        with(iv_setting) {
-            visibility = View.VISIBLE
-            setOnClickListener {
-                openPopupMenu(it)
-            }
-        }
-        if (mentorId == Mentor.getInstance().getId()) {
-            binding.editPic.visibility = View.GONE
-        }
-    }
-
-    private fun openPopupMenu(view: View) {
-        popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
-        popupMenu?.inflate(R.menu.user_profile__menu)
-        val isUser = if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE) && mentorId == Mentor.getInstance()
+        binding.toolbarContainer.findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.user_profile__menu)
+        val isUser = PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE) && mentorId == Mentor.getInstance()
                 .getId()
-        ){
-            true
-        } else {
-            false
-        }
         showMenuAsPerMentor(isUser)
-        popupMenu?.setOnMenuItemClickListener {
+        binding.toolbarContainer.findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_points_history -> {
                     openPointHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
@@ -164,44 +147,32 @@ class UserProfileActivity : BaseConnectionErrorActivity() {
                     openHelpActivity()
                 }
             }
-            return@setOnMenuItemClickListener false
+            return@setOnMenuItemClickListener true
         }
-        popupMenu?.show()
+        if (mentorId == Mentor.getInstance().getId()) {
+            binding.editPic.visibility = View.GONE
+        }
     }
 
     private fun showMenuAsPerMentor(isUser: Boolean) {
-        popupMenu?.let {
+        binding.toolbarContainer.findViewById<MaterialToolbar>(R.id.toolbar)?.let {
             if (isUser) {
-                popupMenu!!.menu.findItem(R.id.menu_points_history).isVisible = true
-                popupMenu!!.menu.findItem(R.id.menu_points_history).isEnabled = true
-                popupMenu!!.menu.findItem(R.id.minutes_points_history).isVisible = true
-                popupMenu!!.menu.findItem(R.id.minutes_points_history).isEnabled = true
-                popupMenu!!.menu.findItem(R.id.change_dp).isVisible = true
-                popupMenu!!.menu.findItem(R.id.change_dp).isEnabled = true
+                it.menu.findItem(R.id.menu_points_history).isVisible = true
+                it.menu.findItem(R.id.menu_points_history).isEnabled = true
+                it.menu.findItem(R.id.minutes_points_history).isVisible = true
+                it.menu.findItem(R.id.minutes_points_history).isEnabled = true
+                it.menu.findItem(R.id.change_dp).isVisible = true
+                it.menu.findItem(R.id.change_dp).isEnabled = true
             } else {
-                popupMenu!!.menu.findItem(R.id.menu_points_history).isVisible = false
-                popupMenu!!.menu.findItem(R.id.menu_points_history).isEnabled = false
-                popupMenu!!.menu.findItem(R.id.minutes_points_history).isVisible = false
-                popupMenu!!.menu.findItem(R.id.minutes_points_history).isEnabled = false
-                popupMenu!!.menu.findItem(R.id.change_dp).isVisible = false
-                popupMenu!!.menu.findItem(R.id.change_dp).isEnabled = false
+                it.menu.findItem(R.id.menu_points_history).isVisible = false
+                it.menu.findItem(R.id.menu_points_history).isEnabled = false
+                it.menu.findItem(R.id.minutes_points_history).isVisible = false
+                it.menu.findItem(R.id.minutes_points_history).isEnabled = false
+                it.menu.findItem(R.id.change_dp).isVisible = false
+                it.menu.findItem(R.id.change_dp).isEnabled = false
             }
         }
     }
-
-    /* private fun initRecyclerView() {
-
-         val linearLayoutManager = com.mindorks.placeholderview.SmoothLinearLayoutManager(this)
-         linearLayoutManager.isSmoothScrollbarEnabled = true
-         binding.awardRv.builder.setHasFixedSize(true)
-             .setLayoutManager(linearLayoutManager)
-         binding.awardRv.addItemDecoration(
-             com.joshtalks.joshskills.util.DividerItemDecoration(
-                 this,
-                 R.drawable.list_divider
-             )
-         )
-     }*/
 
     private fun addObserver() {
         viewModel.userData.observe(

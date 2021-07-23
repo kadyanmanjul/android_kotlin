@@ -139,7 +139,7 @@ class SignUpActivity : BaseActivity() {
     }
 
     private fun initToolBar() {
-        iv_setting.setOnClickListener {
+        binding.ivSetting.setOnClickListener {
             openPopupMenu(it)
         }
     }

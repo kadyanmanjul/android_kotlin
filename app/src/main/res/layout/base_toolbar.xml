@@ -74,7 +74,6 @@
                 android:layout_height="match_parent"
                 android:layout_centerVertical="true"
                 android:layout_marginHorizontal="@dimen/_8sdp"
-                android:layout_toStartOf="@id/iv_setting"
                 android:layout_toEndOf="@id/image_view_logo"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="start|center"
@@ -91,30 +90,14 @@
                 android:id="@+id/iv_earn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toStartOf="@id/iv_setting"
                 android:tint="@color/white"
                 android:layout_marginEnd="@dimen/_4sdp"
                 android:visibility="gone"
                 android:padding="@dimen/_4sdp"
                 tools:src="@drawable/ic_search"
                 app:layout_constraintBottom_toBottomOf="@id/text_message_title"
-                app:layout_constraintEnd_toStartOf="@id/iv_setting"
-                app:layout_constraintTop_toTopOf="@id/text_message_title"
-                tools:visibility="visible" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_setting"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingVertical="@dimen/_4sdp"
-                android:paddingStart="@dimen/_4sdp"
-                android:paddingEnd="@dimen/_3sdp"
-                android:tint="@color/white"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_more_option"
+                app:layout_constraintTop_toTopOf="@id/text_message_title"
                 tools:visibility="visible" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 

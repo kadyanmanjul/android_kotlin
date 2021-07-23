@@ -80,7 +80,7 @@
                 android:layout_centerVertical="true"
                 android:padding="@dimen/_4sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/iv_setting"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_help_outline"
                 android:id="@+id/iv_help"
@@ -96,9 +96,27 @@
                 android:onClick="@{()->handler.showPrivacyPolicyDialog()}"
                 android:padding="@dimen/_4sdp"
                 android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/iv_setting"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:paddingVertical="@dimen/_4sdp"
+                android:paddingStart="@dimen/_4sdp"
+                android:paddingEnd="@dimen/_3sdp"
+                android:tint="@color/white"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_more_option"
+                tools:visibility="visible" />
+
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

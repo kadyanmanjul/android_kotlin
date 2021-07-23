@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.tabs.TabLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -77,11 +78,21 @@ class LeaderBoardViewPagerActivity : BaseConnectionErrorActivity() {
                 onBackPressed()
             }
         }
-        with(iv_setting) {
-            visibility = View.VISIBLE
-            setOnClickListener {
-                openPopupMenu(it)
+        binding.toolbarContainer.findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.leaderboard_menu)
+        binding.toolbarContainer.findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.menu_profile -> {
+                    UserProfileActivity.startUserProfileActivity(
+                        this,
+                        Mentor.getInstance().getId(),
+                        arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                        null,
+                        USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
+                        conversationId =getConversationId()
+                    )
+                }
             }
+            return@setOnMenuItemClickListener true
         }
         with(iv_earn) {
             visibility = View.VISIBLE
@@ -100,29 +111,6 @@ class LeaderBoardViewPagerActivity : BaseConnectionErrorActivity() {
                 (PrefManager.getIntValue(LEADER_BOARD_OPEN_COUNT) + 1)
             )
         }
-    }
-
-    private fun openPopupMenu(view: View) {
-        if (popupMenu == null) {
-            popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
-            popupMenu?.inflate(R.menu.leaderboard_menu)
-            popupMenu?.setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.menu_profile -> {
-                        UserProfileActivity.startUserProfileActivity(
-                            this,
-                            Mentor.getInstance().getId(),
-                            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-                            null,
-                            USER_PROFILE_FLOW_FROM.LEADERBOARD.value,
-                            conversationId =getConversationId()
-                        )
-                    }
-                }
-                return@setOnMenuItemClickListener false
-            }
-        }
-        popupMenu?.show()
     }
 
     private fun openSearchActivity() {
