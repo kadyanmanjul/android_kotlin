@@ -70,6 +70,12 @@ const val P2P_LAST_CALL = "has_p2p_last_call"
 const val SEARCH_HINT_SHOW = "search_hint_show"
 const val ONLINE_HINT_SHOW = "online_hint_show"
 const val LAST_FIRESTORE_NOTIFICATION_TIME = "last_firestore_notification_time"
+const val ONLINE_TEST_COMPLETED = "online_test_completed"
+const val ONLINE_TEST_LAST_LESSON_COMPLETED = "online_test_last_lesson_completed"
+const val ONLINE_TEST_LAST_LESSON_ATTEMPTED = "online_test_last_lesson_attempted"
+const val ONLINE_TEST_LIST_OF_COMPLETED_RULES = "online_test_list_of_completed_rules"
+const val ONLINE_TEST_LIST_OF_TOTAL_RULES = "online_test_list_of_total_rules"
+const val INBOX_SCREEN_VISIT_COUNT = "inbox_screen_visit_count"
 
 object PrefManager {
 
@@ -132,6 +138,12 @@ object PrefManager {
     fun getIntValue(key: String, isConsistent: Boolean = false): Int {
         return if (isConsistent) prefManagerConsistent.getInt(key, 0)
         else prefManagerCommon.getInt(key, 0)
+
+    }
+
+    fun getIntValue(key: String, isConsistent: Boolean = false,defValue: Int): Int {
+        return if (isConsistent) prefManagerConsistent.getInt(key, defValue)
+        else prefManagerCommon.getInt(key, defValue)
 
     }
 

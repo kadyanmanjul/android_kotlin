@@ -12,16 +12,17 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQues
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentMediaType
 import kotlinx.android.parcel.Parcelize
 
-@Entity(tableName = "assessment_revise_concept", foreignKeys = [
-    ForeignKey(
-        entity = AssessmentQuestion::class,
-        parentColumns = arrayOf("remoteId"),
-        childColumns = arrayOf("questionId"),
-        onDelete = ForeignKey.CASCADE
-    )], indices = [
-    Index(value = ["questionId"]),
-    Index(value = ["localId"], unique = true)
-]
+@Entity(
+    tableName = "assessment_revise_concept", foreignKeys = [
+        ForeignKey(
+            entity = AssessmentQuestion::class,
+            parentColumns = arrayOf("remoteId"),
+            childColumns = arrayOf("questionId"),
+            onDelete = ForeignKey.CASCADE
+        )], indices = [
+        Index(value = ["questionId"]),
+        Index(value = ["localId"], unique = true)
+    ]
 )
 @Parcelize
 data class ReviseConcept(

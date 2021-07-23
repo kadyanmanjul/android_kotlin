@@ -45,7 +45,8 @@ data class InboxEntity constructor(
     val isCapsuleCourse: Boolean = false,
     @ColumnInfo(name = "lesson_no")
     val lessonNo: Int? = 0,
-
+    @ColumnInfo(name = "is_course_locked")
+    val isCourseLocked: Boolean = false
 
     ) : Parcelable {
     override fun hashCode(): Int {

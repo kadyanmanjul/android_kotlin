@@ -23,7 +23,14 @@ data class AssessmentQuestionWithRelations(
         entityColumn = "questionId",
         entity = ReviseConcept::class
     )
-    val reviseConcept: ReviseConcept?
+    val reviseConcept: ReviseConcept?,
+
+    @Relation(
+        parentColumn = "remoteId",
+        entityColumn = "questionId",
+        entity = AssessmentQuestionFeedback::class
+    )
+    var questionFeedback: AssessmentQuestionFeedback?
 
 ) {
 
@@ -32,6 +39,9 @@ data class AssessmentQuestionWithRelations(
         choiceList = questionResponse.choices.map { Choice(it, questionResponse.id) },
         reviseConcept = questionResponse.reviseConcept?.let {
             ReviseConcept(it, questionResponse.id)
+        },
+        questionFeedback = questionResponse.feedback?.let {
+            AssessmentQuestionFeedback(it, questionResponse.id)
         }
     )
 

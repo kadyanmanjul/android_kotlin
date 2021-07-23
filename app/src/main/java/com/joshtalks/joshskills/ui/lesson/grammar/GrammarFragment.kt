@@ -107,9 +107,8 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
     ): View {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_grammar_layout, container, false)
-        binding.handler = this
         binding.grammarScrollView.layoutTransition?.setAnimateParentHierarchy(false)
-
+        binding.handler = this
         binding.grammarScrollView.viewTreeObserver.addOnScrollChangedListener(this)
         binding.expandIv.setOnClickListener {
             if (binding.grammarDescTv.maxLines == COLLAPSED_DESCRIPTION_MAX_LINES) {

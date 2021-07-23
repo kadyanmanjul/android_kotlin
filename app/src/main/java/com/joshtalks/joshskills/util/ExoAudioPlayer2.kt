@@ -132,8 +132,9 @@ class ExoAudioPlayer2 {
         seekDuration: Long = 0,
         isPlaybackSpeed: Boolean = false,
         delayProgress: Long = 50,
+        playbackSpeed :Float = 1F
     ) {
-        var param = PlaybackParameters(1F)
+        var param = PlaybackParameters(playbackSpeed)
         if (isPlaybackSpeed) {
             param = PlaybackParameters(0.50F, 1F)//pitch sexy hai
         }
@@ -147,14 +148,14 @@ class ExoAudioPlayer2 {
         LAST_ID = id
         val factory = ProgressiveMediaSource.Factory(dataSourceFactory)
         player.repeatMode = ExoPlayer.REPEAT_MODE_OFF
-        player.seekTo(seekDuration)
         player.playWhenReady = true
         progressTracker = ProgressTracker(player, delayProgress)
         player.setWakeMode(C.WAKE_MODE_NETWORK)
         player.setHandleAudioBecomingNoisy(true)
         val audioSource: MediaSource =
             factory.createMediaSource(Uri.parse(audioUrl))
-        player.prepare(audioSource)
+        player.prepare(audioSource,true,false)
+        player.seekTo(seekDuration)
     }
 
     fun isPlaying(): Boolean {

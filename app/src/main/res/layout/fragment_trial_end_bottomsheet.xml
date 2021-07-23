@@ -1,85 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
-                name="handler"
-                type="com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment" />
+            name="handler"
+            type="com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment" />
 
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/parent_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/black">
+        android:id="@+id/parent_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/transparent">
 
         <View
-                android:id="@+id/view"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_220sdp"
-                android:background="@drawable/rectangle_top_rounded"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent" />
+            android:id="@+id/view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/rectangle_top_rounded"
+            android:orientation="vertical"
+            app:layout_constraintHeight_percent="0.3"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageButton
-                android:id="@+id/btnClose"
-                android:layout_width="@dimen/_20sdp"
-                android:layout_height="@dimen/_20sdp"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:layout_marginEnd="@dimen/_16sdp"
-                android:background="@drawable/ic_cross"
-                android:backgroundTint="@color/black"
-                android:contentDescription="@string/cancel_button"
-                android:onClick="@{()->handler.cancel()}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/view" />
+            android:id="@+id/btnClose"
+            android:layout_width="@dimen/_12sdp"
+            android:layout_height="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:layout_marginEnd="@dimen/_14sdp"
+            android:background="@drawable/ic_cross"
+            android:scaleType="fitXY"
+            android:backgroundTint="@color/black"
+            android:contentDescription="@string/cancel_button"
+            android:onClick="@{()->handler.cancel()}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/view" />
 
         <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/txt_trial_end_msg"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:gravity="center"
-                android:text="@string/trial_ended"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                android:textColor="@color/black"
-                app:layout_constraintBottom_toTopOf="@+id/btnUnlock"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/view"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.8" />
+            android:id="@+id/txt_trial_end_msg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginVertical="@dimen/_8sdp"
+            android:gravity="center"
+            android:text="@string/trial_ended"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+            android:textColor="#000000"
+            android:lineSpacingMultiplier="0.8"
+            app:layout_constraintBottom_toTopOf="@+id/btnUnlock"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/view"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.8" />
 
         <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnUnlock"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:backgroundTint="@color/button_color"
-                android:clickable="true"
-                android:focusable="true"
-                android:maxLines="1"
-                android:onClick="@{()->handler.unlockCourses()}"
-                android:paddingTop="@dimen/_10sdp"
-                android:paddingBottom="@dimen/_10sdp"
-                android:text="@string/unlock_all_courses"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                android:textColor="@color/white"
-                app:cornerRadius="@dimen/_16sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt_trial_end_msg"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.8"
-                app:rippleColor="@color/white" />
+            android:id="@+id/btnUnlock"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_16sdp"
+            android:layout_marginHorizontal="@dimen/_18sdp"
+            android:backgroundTint="@color/button_color"
+            android:clickable="true"
+            android:focusable="true"
+            android:maxLines="1"
+            android:onClick="@{()->handler.unlockCourses()}"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_10sdp"
+            android:text="@string/buy_course"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+            android:textColor="@color/white"
+            app:cornerRadius="@dimen/_16sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:rippleColor="@color/white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

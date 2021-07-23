@@ -69,7 +69,7 @@ class LessonInProgressView : FrameLayout {
         rootView = findViewById(R.id.root_view)
         rootView.setOnClickListener {
             lessonModel?.let {
-                RxBus2.publish(LessonItemClickEventBus(it.id))
+                RxBus2.publish(LessonItemClickEventBus(it.id, it.isNewGrammar))
             }
         }
         imageView = findViewById(R.id.lesson_iv)

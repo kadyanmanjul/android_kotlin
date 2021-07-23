@@ -87,10 +87,6 @@ import com.joshtalks.joshskills.ui.userprofile.ShowAnimatedLeaderBoardFragment
 import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 import com.patloew.colocation.CoLocation
-import com.smartlook.sdk.smartlook.Smartlook
-import com.smartlook.sdk.smartlook.analytics.identify.UserProperties
-import com.smartlook.sdk.smartlook.integrations.IntegrationListener
-import com.smartlook.sdk.smartlook.integrations.model.FirebaseCrashlyticsIntegration
 import com.uxcam.OnVerificationListener
 import com.uxcam.UXCam
 import io.branch.referral.Branch
@@ -164,11 +160,11 @@ abstract class BaseActivity :
             initUserForCrashlytics()
             initIdentifierForTools()
             InstallReferralUtil.installReferrer(applicationContext)
-            addScreenRecording()
+            //addScreenRecording()
         }
     }
 
-    private fun addScreenRecording() {
+    /*private fun addScreenRecording() {
         lifecycleScope.launch(Dispatchers.IO) {
             if (BuildConfig.DEBUG.not()) {
                 if (AppObjectController.getFirebaseRemoteConfig()
@@ -206,7 +202,7 @@ abstract class BaseActivity :
                 }
             }
         }
-    }
+    }*/
 
     private fun initIdentifierForTools() {
         lifecycleScope.launch(Dispatchers.IO) {
