@@ -31,6 +31,7 @@
                 android:focusable="true"
                 android:gravity="center_vertical|start"
                 android:onClick="@{()->handler.onBackPressed()}"
+                android:paddingStart="@dimen/_4sdp"
                 android:paddingTop="@dimen/_6sdp"
                 android:paddingBottom="@dimen/_6sdp"
                 app:layout_constraintStart_toStartOf="parent"
