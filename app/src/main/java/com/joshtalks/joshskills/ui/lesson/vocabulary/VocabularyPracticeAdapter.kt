@@ -36,6 +36,8 @@ import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.muddzdev.styleabletoast.StyleableToast
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random.Default.nextInt
 import kotlinx.coroutines.CoroutineScope
@@ -572,6 +574,8 @@ class VocabularyPracticeAdapter(
         var lessonQuestion: LessonQuestion? = null
         var positionInList = -1
         var pronounceAnimation: AnimationDrawable? = null
+        var dateOfRecording: String? = null
+        var durationOdRecording: Long? = null
 
         init {
             initViewHolder()
@@ -1095,6 +1099,8 @@ class VocabularyPracticeAdapter(
                     binding.audioPractiseHint.visibility = VISIBLE
                     binding.submitAudioViewContainer.visibility = GONE
                     binding.yourSubAnswerTv.visibility = GONE
+                    durationOdRecording= null
+                    dateOfRecording= EMPTY
                 }
             }
         }
@@ -1115,6 +1121,7 @@ class VocabularyPracticeAdapter(
                     binding.submitPractiseSeekbar.max =
                         Utils.getDurationOfMedia(context, filePath!!)
                             ?.toInt() ?: 1_00_000
+                    dateOfRecording= DD_MM_YYYY.format(Date()).toLowerCase(Locale.getDefault())
                 } else {
                     val practiseEngagement = lessonQuestion.practiceEngagement?.getOrNull(0)
                     if (EXPECTED_ENGAGE_TYPE.AU == it) {
@@ -1136,6 +1143,28 @@ class VocabularyPracticeAdapter(
                             binding.submitPractiseSeekbar.max = 1_00_000
                         }
                     }
+                    dateOfRecording= practiseEngagement?.practiceDate
+                }
+
+                durationOdRecording= Utils.getDurationOfMedia(context, filePath)
+                if (dateOfRecording.isNullOrBlank()){
+
+                    binding.submitTxtInfoDate.visibility= VISIBLE
+                    dateOfRecording= DD_MM_YYYY.format(Date()).toLowerCase(Locale.getDefault())
+                    binding.submitTxtInfoDate.text= dateOfRecording
+                } else {
+                    //binding.submitTxtInfoDate.visibility= VISIBLE
+                    binding.submitTxtInfoDate.text= dateOfRecording
+
+                }
+                Log.d("Manjul", "audioAttachmentInit() called $durationOdRecording")
+
+                if (durationOdRecording!=null){
+                    binding.submitTxtInfoDuration.visibility= GONE
+                } else {
+                    //binding.submitTxtInfoDuration.visibility= VISIBLE
+                    binding.submitTxtInfoDuration.text= Utils.formatDuration(durationOdRecording?.toInt()?:0)
+
                 }
 
                 initializePractiseSeekBar(lessonQuestion)
@@ -1233,6 +1262,26 @@ class VocabularyPracticeAdapter(
                 }
                 binding.submitPractiseSeekbar.max =
                     Utils.getDurationOfMedia(context, filePath)?.toInt() ?: 0
+                dateOfRecording= DD_MM_YYYY.format(Date()).toLowerCase(Locale.getDefault())
+                durationOdRecording= Utils.getDurationOfMedia(context, filePath)
+                if (dateOfRecording.isNullOrBlank()){
+                    binding.submitTxtInfoDate.visibility= GONE
+                } else {
+                    //binding.submitTxtInfoDate.visibility= VISIBLE
+                    binding.submitTxtInfoDate.text= dateOfRecording
+
+                }
+                Log.d("Manjul", "audioAttachmentInit() called $durationOdRecording")
+                if (durationOdRecording!=null){
+                    binding.submitTxtInfoDuration.visibility= GONE
+                } else {
+                    //binding.submitTxtInfoDuration.visibility= VISIBLE
+                    binding.submitTxtInfoDuration.text= Utils.formatDuration(durationOdRecording?.toInt()?:0)
+
+                }
+
+
+
                 enableSubmitButton()
             }
         }
@@ -1246,6 +1295,8 @@ class VocabularyPracticeAdapter(
                 audioManager?.resumeOrPause()
             }
             hidePracticeSubmitLayout()
+            dateOfRecording= EMPTY
+            durationOdRecording= null
             binding.submitAudioViewContainer.visibility = GONE
             binding.submitPractiseSeekbar.progress = 0
             binding.submitPractiseSeekbar.max = 0

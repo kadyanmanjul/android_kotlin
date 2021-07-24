@@ -98,6 +98,7 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
+                        android:paddingVertical="@dimen/_8sdp"
                         android:layout_height="wrap_content">
 
                         <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton

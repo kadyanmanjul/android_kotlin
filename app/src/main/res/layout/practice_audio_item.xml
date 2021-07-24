@@ -17,7 +17,7 @@
             android:background="@drawable/play_pause_button_background"
             android:backgroundTint="@color/button_color"
             android:contentDescription="@string/play_button_description"
-            android:elevation="4dp"
+            android:elevation="@dimen/_4sdp"
             android:padding="@dimen/_4sdp"
             android:theme="?actionBarTheme"
             android:tint="?colorControlNormal"
