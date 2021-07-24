@@ -8,7 +8,7 @@ class HelpCenterOptions {
 
     companion object {
         fun getHelpOptionsModelObject(): HelpCenterOptionsModel? {
-            val value = AppObjectController.getFirebaseRemoteConfig().getString("help_options")
+            val value = AppObjectController.getFirebaseRemoteConfig().getString("help_options_new")
             return try {
                 AppObjectController.gsonMapper.fromJson(
                     value,
@@ -42,5 +42,3 @@ data class Option(
 enum class Action {
     CALL, HELPCHAT, FAQ, OTHER
 }
-
-
