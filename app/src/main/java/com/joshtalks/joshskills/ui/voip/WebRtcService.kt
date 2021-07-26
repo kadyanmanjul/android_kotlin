@@ -1289,6 +1289,7 @@ class WebRtcService : BaseWebRtcService() {
         Timber.tag(TAG).e("onDestroy")
         // removeSensor()
         executor.shutdown()
+        jobs.forEach { it.cancel() }
         super.onDestroy()
     }
 

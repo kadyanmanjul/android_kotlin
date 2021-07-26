@@ -19,21 +19,22 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.ui.voip.util.WebRtcAudioManager
 import io.reactivex.disposables.CompositeDisposable
 import java.util.concurrent.ExecutorService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 abstract class BaseWebRtcService : Service() { /*,SensorEventListener*/
     protected val executor: ExecutorService =
         JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-Calling Service")
 
-    /*   private var proximityWakelock: PowerManager.WakeLock? = null
-       private var cpuWakelock: PowerManager.WakeLock? = null
-       private var isProximityNear = false
-    */
     protected var joshAudioManager: WebRtcAudioManager? = null
     private var ringtonePlayer: MediaPlayer? = null
     private var ringingPlay = false
     private var vibrator: Vibrator? = null
     protected var compositeDisposable = CompositeDisposable()
     protected var mNotificationManager: NotificationManager? = null
+    val jobs = arrayListOf<Job>()
 
     @SuppressLint("InvalidWakeLockTag")
     override fun onCreate() {
@@ -42,96 +43,11 @@ abstract class BaseWebRtcService : Service() { /*,SensorEventListener*/
 
         try {
             joshAudioManager = WebRtcAudioManager(this)
-            /* cpuWakelock = (getSystemService(POWER_SERVICE) as PowerManager).newWakeLock(
-             PowerManager.PARTIAL_WAKE_LOCK, "joshtalsk"
-         )
-         cpuWakelock?.acquire(60 * 60 * 1000L *//*10 minutes*//*)*/
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
 
-    /*@SuppressLint("InvalidWakeLockTag")
-    protected fun addSensor() {
-        try {
-            removeWakeLock()
-            val sm: SensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
-            val proximity: Sensor? = sm.getDefaultSensor(Sensor.TYPE_PROXIMITY)
-            proximityWakelock = (getSystemService(POWER_SERVICE) as PowerManager?)?.newWakeLock(
-                PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
-                "joshtalsk-prx"
-            )
-            sm.registerListener(
-                this@BaseWebRtcService,
-                proximity,
-                SensorManager.SENSOR_DELAY_NORMAL
-            )
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-    }
-
-    private fun removeWakeLock() {
-        try {
-            if (proximityWakelock != null && proximityWakelock!!.isHeld) {
-                proximityWakelock!!.release(RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
-            }
-            if (cpuWakelock != null && cpuWakelock!!.isHeld) {
-                cpuWakelock!!.release(RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-    }
-
-    protected fun removeSensor() {
-        try {
-            removeWakeLock()
-            val sm = getSystemService(SENSOR_SERVICE) as SensorManager
-            val proximity = sm.getDefaultSensor(Sensor.TYPE_PROXIMITY)
-            if (proximity != null) {
-                sm.unregisterListener(this)
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-    }
-
-    override fun onSensorChanged(event: SensorEvent) {
-        try {
-            if (event.sensor.type == Sensor.TYPE_PROXIMITY) {
-                val am = getSystemService(AUDIO_SERVICE) as AudioManager
-                if (am.isSpeakerphoneOn && am.isBluetoothScoOn) {
-                    return
-                }
-                val newIsNear: Boolean = event.values[0] < min(event.sensor.maximumRange, 3F)
-                checkIsNear(newIsNear)
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-    }
-
-    private fun checkIsNear(newIsNear: Boolean) {
-        if (newIsNear != isProximityNear) {
-            isProximityNear = newIsNear
-            try {
-                if (isProximityNear) {
-                    proximityWakelock?.acquire(30 * 60L * 60)
-                } else {
-                    if (proximityWakelock!!.isHeld) {
-                        proximityWakelock?.release(1)
-                    }
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
-    }
-
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-    }
-*/
     @SuppressLint("MissingPermission")
     protected fun startRingtoneAndVibration() {
         if (PrefManager.getBoolValue(CALL_RINGTONE_NOT_MUTE).not()) {
@@ -211,39 +127,15 @@ abstract class BaseWebRtcService : Service() { /*,SensorEventListener*/
     }
 
     protected fun executeEvent(event: String) {
-        executor.execute {
+        jobs += CoroutineScope(Dispatchers.IO).launch  {
             AppAnalytics.create(event)
                 .addUserDetails()
                 .push()
         }
     }
 
-    /*   private fun showIncomingCallScreen(
-           data: HashMap<String, String?>,
-           autoPickupCall: Boolean = false
-       ) {
-           val callActivityIntent =
-               Intent(
-                   this, WebRtcActivity::class.java
-               ).apply {
-                   putExtra(CALL_TYPE, CallType.INCOMING)
-                   putExtra(AUTO_PICKUP_CALL, autoPickupCall)
-                   putExtra(CALL_USER_OBJ, data)
-                   addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                   addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-               }
-           startActivity(callActivityIntent)
-       }
-
-       private fun isAppVisible(): Boolean {
-           return if (JoshApplication.isAppVisible || Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
-               return true
-           else
-               Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && JoshApplication.isAppVisible.not()
-       }*/
 
     override fun onDestroy() {
         super.onDestroy()
-        //removeSensor()
     }
 }
