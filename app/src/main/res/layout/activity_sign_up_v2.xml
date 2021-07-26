@@ -99,6 +99,7 @@
                 android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@id/iv_setting"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -117,8 +118,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_more_option"
                 tools:visibility="visible" />
-
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
