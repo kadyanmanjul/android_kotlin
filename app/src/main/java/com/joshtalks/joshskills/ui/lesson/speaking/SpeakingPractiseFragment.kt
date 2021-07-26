@@ -2,14 +2,14 @@ package com.joshtalks.joshskills.ui.lesson.speaking
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -47,7 +47,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private var courseId: String = EMPTY
     private var topicId: String? = EMPTY
     private var questionId: String? = null
-    private var favoriteCallerExist = false
+    private var haveAnyFavCaller = false
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -166,7 +166,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     binding.groupTwo.visibility = View.VISIBLE
 
                     val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
-                    if (points.isNullOrEmpty().not()) {
+                    if (points.isNotEmpty()) {
                         // showSnackBar(root_view, Snackbar.LENGTH_LONG, points)
                         PrefManager.put(SPEAKING_POINTS, EMPTY)
                     }
@@ -183,7 +183,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         )
         binding.btnFavorite.setOnClickListener {
-            if (favoriteCallerExist) {
+            if (haveAnyFavCaller) {
                 startPractise(favoriteUserCall = true)
             } else {
                 showToast(getString(R.string.empty_favorite_list_message))
@@ -191,14 +191,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
         lifecycleScope.launchWhenStarted {
             viewModel.favoriteCaller.collect {
-                favoriteCallerExist = it
-                binding.btnFavorite.backgroundTintList =
-                    ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            if (favoriteCallerExist) R.color.colorAccent else R.color.disable_color
-                        )
-                    )
+                haveAnyFavCaller = it
+                binding.btnFavorite.visibility = if (haveAnyFavCaller) VISIBLE else GONE
             }
         }
     }

@@ -160,7 +160,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="@dimen/_16sdp"
-                    android:backgroundTint="@color/disable_color"
+                    android:backgroundTint="@color/colorAccent"
                     android:gravity="center"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
@@ -169,13 +169,15 @@
                     android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_12ssp"
+                    android:visibility="gone"
                     app:cornerRadius="@dimen/_36sdp"
                     app:layout_constraintBottom_toTopOf="@+id/btn_start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintWidth_default="percent"
                     app:layout_constraintWidth_percent="0.7"
-                    app:rippleColor="@color/white" />
+                    app:rippleColor="@color/white"
+                    tools:visibility="visible" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_start"
