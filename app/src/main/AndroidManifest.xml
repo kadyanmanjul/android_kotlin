@@ -96,6 +96,8 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity android:name=".ui.online_test.OnlineTestActivity"
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".ui.points_history.PointsInfoActivity" />
         <activity android:name=".ui.introduction.DemoSpeakingPractiseActivity" />
         <activity android:name=".ui.points_history.PointsHistoryActivity" />

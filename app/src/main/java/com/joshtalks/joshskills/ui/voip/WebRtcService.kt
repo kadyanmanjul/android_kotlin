@@ -17,6 +17,7 @@ import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Binder
 import android.os.Build
+import android.os.CountDownTimer
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
@@ -91,9 +92,10 @@ const val RTC_NAME = "caller_name"
 const val RTC_CALLER_PHOTO = "caller_photo"
 const val RTC_IS_FAVORITE = "is_favorite"
 const val RTC_PARTNER_ID = "partner_id"
+const val DEFAULT_NOTIFICATION_TITLE = "Josh Skills App Running"
 
 class WebRtcService : BaseWebRtcService() {
-
+    private val TAG = "WebRtcService"
     private val mBinder: IBinder = MyBinder()
     private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
         HangUpRtcOnPstnCallAnsweredListener()
@@ -110,6 +112,17 @@ class WebRtcService : BaseWebRtcService() {
     private var isSpeakerEnabled = false
     private var oppositeCallerId: Int? = null
     private var userDetailMap: HashMap<String, String>? = null
+    private var notificationState = NotificationState.NOT_VISIBLE
+    private val timer = object : CountDownTimer(3000, 1000) {
+        override fun onTick(millisUntilFinished: Long) {}
+        override fun onFinish() {
+            if (notificationState == NotificationState.NOT_VISIBLE)
+                showDefaultNotification()
+        }
+    }
+    //private var serviceNotificationState = ServiceNotificationState.NONE
+    /*private val notificationStateSubject = PublishSubject.create<Boolean>()
+    val scope = CompositeDisposable()*/
 
     companion object {
         private val TAG = WebRtcService::class.java.simpleName
@@ -582,6 +595,7 @@ class WebRtcService : BaseWebRtcService() {
 
     @SuppressLint("InvalidWakeLockTag")
     override fun onCreate() {
+        timer.start()
         super.onCreate()
         Timber.tag(TAG).e("onCreate")
         initIncomingCallChannel()
@@ -681,6 +695,12 @@ class WebRtcService : BaseWebRtcService() {
     @Suppress("UNCHECKED_CAST")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Timber.tag(TAG).e("onStartCommand=  %s", intent?.action)
+        /*if(serviceNotificationState == ServiceNotificationState.NONE)
+            showDefaultNotification()*/
+        if (notificationState == NotificationState.NOT_VISIBLE) {
+            showDefaultNotification()
+            timer.cancel()
+        }
         if (!PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE)) {
             executor.execute {
                 intent?.action?.run {
@@ -1036,6 +1056,10 @@ class WebRtcService : BaseWebRtcService() {
         isCallOnGoing.postValue(false)
     }
 
+    private fun showDefaultNotification() {
+        showNotification(actionNotification(DEFAULT_NOTIFICATION_TITLE), ACTION_NOTIFICATION_ID)
+    }
+
     fun answerCall(data: HashMap<String, String?>) {
         executor.execute {
             try {
@@ -1162,6 +1186,10 @@ class WebRtcService : BaseWebRtcService() {
     fun getCallType() = callType
 
     override fun onBind(intent: Intent): IBinder {
+        timer.cancel()
+        Log.d(TAG, "onBind: ")
+        /*if(serviceNotificationState == ServiceNotificationState.NONE)
+            showDefaultNotification()*/
         return mBinder
     }
 
@@ -1215,6 +1243,7 @@ class WebRtcService : BaseWebRtcService() {
         try {
             mNotificationManager?.cancelAll()
             stopForeground(true)
+            notificationState = NotificationState.NOT_VISIBLE
             addMissCallNotification()
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -1307,6 +1336,7 @@ class WebRtcService : BaseWebRtcService() {
         } else {
             startForeground(notificationId, notification)
         }
+        notificationState = NotificationState.VISIBLE
     }
 
     private fun canHeadsUpNotification(): Boolean {
@@ -1596,7 +1626,10 @@ class WebRtcService : BaseWebRtcService() {
             )
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setProgress(0, 0, true)
+
+        if (title != DEFAULT_NOTIFICATION_TITLE)
+            lNotificationBuilder.setProgress(0, 0, true)
+
         lNotificationBuilder.priority = NotificationCompat.PRIORITY_MAX
         return lNotificationBuilder.build()
     }
@@ -1724,3 +1757,11 @@ interface WebRtcCallback {
     fun onUnHoldCall() {}
     fun onSpeakerOff() {}
 }
+
+enum class NotificationState {
+    VISIBLE, NOT_VISIBLE
+}
+
+/*enum class ServiceNotificationState {
+    NONE, ACTION, INCOMING, CONNECTED
+}*/

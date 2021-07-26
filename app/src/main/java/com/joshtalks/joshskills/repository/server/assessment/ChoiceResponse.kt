@@ -33,7 +33,10 @@ data class ChoiceResponse(
     var userSelectedOrder: Int = 100,
 
     @SerializedName("is_selected_by_user")
-    var isSelectedByUser: Boolean = false
+    var isSelectedByUser: Boolean = false,
+
+    @SerializedName("audio_url")
+    val audioUrl: String?
 
 ) : Parcelable
 

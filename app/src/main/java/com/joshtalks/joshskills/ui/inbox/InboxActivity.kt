@@ -81,7 +81,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private fun addAfterTime() {
         workInBackground()
         handelIntentAction()
-        //initNewUserTip()
         viewModel.getTotalWatchTime()
     }
 
@@ -246,19 +245,17 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 inboxAdapter.addItems(temp)
             }
         }
-        if (findMoreLayout.visibility == View.INVISIBLE) {
+        if (findMoreLayout.visibility != View.VISIBLE && PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT)>=2) {
             findMoreLayout.visibility = View.VISIBLE
-        }
-        lifecycleScope.launch(Dispatchers.IO) {
-            if (isPermissionRequired) {
-                isPermissionRequired = false
-                locationFetch()
-            }
         }
     }
 
     override fun onResume() {
         super.onResume()
+        PrefManager.put(INBOX_SCREEN_VISIT_COUNT,PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT).plus(1))
+        if (findMoreLayout.visibility != View.VISIBLE && PrefManager.getIntValue(INBOX_SCREEN_VISIT_COUNT)>=2) {
+            findMoreLayout.visibility = View.VISIBLE
+        }
         Runtime.getRuntime().gc()
         viewModel.getRegisterCourses()
         viewModel.getProfileData(Mentor.getInstance().getId())

@@ -11,5 +11,8 @@ data class CourseDetailsResponseV2(
     val version: String,
 
     @SerializedName("payment_data")
-    val paymentData: PaymentData
+    val paymentData: PaymentData,
+
+    @SerializedName("is_free_trial")
+    val isFreeTrial: Boolean = false
 )

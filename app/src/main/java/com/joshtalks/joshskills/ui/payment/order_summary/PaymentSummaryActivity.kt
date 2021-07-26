@@ -2,10 +2,13 @@ package com.joshtalks.joshskills.ui.payment.order_summary
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -16,6 +19,7 @@ import android.text.Spanned
 import android.text.style.IconMarginSpan
 import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -32,10 +36,12 @@ import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.CredentialsOptions
 import com.google.android.gms.auth.api.credentials.HintRequest
+import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CTA_PAYMENT_SUMMARY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_PAYMENT_BTN_TXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PAYMENT_SUMMARY_CTA_LABEL_FREE
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.databinding.ActivityPaymentSummaryBinding
@@ -52,11 +58,12 @@ import com.joshtalks.joshskills.ui.payment.ChatNPayDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
 import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
+import com.joshtalks.joshskills.ui.signup.FLOW_FROM
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
-import com.sinch.verification.PhoneNumberUtils
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.branch.referral.util.CurrencyType
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -88,6 +95,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private var isBackPressDisabled = false
     private var isRequestHintAppearred = false
     private var couponApplied = false
+    private var isFromNewFreeTrial = false
     private var razorpayOrderId = EMPTY
     private var compositeDisposable = CompositeDisposable()
 
@@ -95,10 +103,12 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         fun startPaymentSummaryActivity(
             activity: Activity,
             testId: String,
-            hasFreeTrial: Boolean? = null
+            hasFreeTrial: Boolean? = null,
+            isFromNewFreeTrial: Boolean = false
         ) {
             Intent(activity, PaymentSummaryActivity::class.java).apply {
                 putExtra(TEST_ID_PAYMENT, testId)
+                putExtra(IS_FROM_NEW_FREE_TRIAL, isFromNewFreeTrial)
                 hasFreeTrial?.run {
                     putExtra(HAS_FREE_7_DAY_TRIAL, hasFreeTrial)
                 }
@@ -111,6 +121,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
         const val TEST_ID_PAYMENT = "test_ID"
         const val HAS_FREE_7_DAY_TRIAL = "7 day free trial"
+        const val IS_FROM_NEW_FREE_TRIAL = "IS_FROM_NEW_FREE_TRIAL"
 
     }
 
@@ -134,6 +145,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             this.testId = temp
             appAnalytics.addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, temp)
         }
+        isFromNewFreeTrial = intent.getBooleanExtra(IS_FROM_NEW_FREE_TRIAL,false)
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_payment_summary)
         binding.lifecycleOwner = this
         binding.handler = this
@@ -262,6 +275,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             } else {
                 binding.materialButton.text = AppObjectController.getFirebaseRemoteConfig()
                     .getString(PAYMENT_SUMMARY_CTA_LABEL_FREE)
+            }
+
+            if (isFromNewFreeTrial) {
+                binding.materialButton.text = AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FREE_TRIAL_PAYMENT_BTN_TXT)
             }
 
             if (couponApplied) {
@@ -393,7 +411,21 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     MarketingAnalytics.sevenDayFreeTrialStart(testId)
                 }
                 PrefManager.put(IS_PAYMENT_DONE, true)
-                navigateToStartCourseActivity(false)
+                if (isFromNewFreeTrial){
+                    if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isBlank())
+                        PrefManager.put(
+                            PAYMENT_MOBILE_NUMBER,
+                            prefix.plus(SINGLE_SPACE).plus(binding.mobileEt.text)
+                        )
+                    if (User.getInstance().isVerified) {
+                        startActivity(getInboxActivityIntent())
+                        this.finish()
+                    } else {
+                        navigateToLoginActivity()
+                    }
+                } else {
+                    navigateToStartCourseActivity(false)
+                }
             }
         })
 
@@ -508,6 +540,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }
     }
 
+
     private fun getPaymentDetails(isSubscription: Boolean, testId: String, coupon: String? = null) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -596,7 +629,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             prefix =
                 binding.countryCodePicker.selectedCountryCodeWithPlus
         }
-        val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(this)
+        val defaultRegion: String = getDefaultCountryIso(this)
         prefix = binding.countryCodePicker.getCountryCodeByName(defaultRegion)
         binding.mobileEt.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus)
@@ -683,7 +716,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             return
         }
 
-        val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(applicationContext)
+        val defaultRegion: String = getDefaultCountryIso(applicationContext)
         appAnalytics.addParam(AnalyticsEvent.COUNTRY_ISO_CODE.NAME, defaultRegion)
 
         when {
@@ -703,7 +736,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         showToast(getString(R.string.please_enter_valid_number))
                         return
                     }
-                    viewModel.getCourseDiscountedAmount() < 1 -> {
+                    isFromNewFreeTrial ->{
+                        showPopup()
+                        return
+                    }
+                    viewModel.getCourseDiscountedAmount() < 1  -> {
                         viewModel.createFreeOrder(
                             viewModel.getPaymentTestId(),
                             binding.mobileEt.text.toString()
@@ -721,12 +758,46 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         }
                 }
             }
+            isFromNewFreeTrial ->{
+                showPopup()
+                return
+            }
             viewModel.getCourseDiscountedAmount() < 1 -> viewModel.createFreeOrder(
                 viewModel.getPaymentTestId(),
                 getPhoneNumber()
             )
             else -> viewModel.getOrderDetails(viewModel.getPaymentTestId(), getPhoneNumber())
         }
+    }
+
+    private fun showPopup() {
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+        val inflater = this.layoutInflater
+        val dialogView: View = inflater.inflate(R.layout.freetrial_alert_dialog, null)
+        dialogBuilder.setView(dialogView)
+
+        val alertDialog: AlertDialog = dialogBuilder.create()
+        val width = AppObjectController.screenWidth * .9
+        val height = ViewGroup.LayoutParams.WRAP_CONTENT
+        alertDialog.show()
+        alertDialog.window?.setLayout(width.toInt(), height)
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        dialogView.findViewById<TextView>(R.id.e_g_motivat).text = getString(R.string.free_trial_dialog_desc).replace("\\n", "\n")
+        dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
+            val mobileNumber = if (getPhoneNumber().isBlank()) binding.mobileEt.text.toString() else getPhoneNumber()
+            viewModel.createFreeOrder(
+                viewModel.getPaymentTestId(),
+                mobileNumber
+            )
+            alertDialog.dismiss()
+        }
+
+        dialogView.findViewById<MaterialTextView>(R.id.cancel).setOnClickListener {
+            alertDialog.dismiss()
+            this.finish()
+        }
+
     }
 
     fun clearText() {
@@ -746,8 +817,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
-        if (PrefManager.getBoolValue(IS_DEMO_P2P,defValue = false)){
-            PrefManager.put(IS_DEMO_P2P,false)
+        if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
+            PrefManager.put(IS_DEMO_P2P, false)
         }
         appAnalytics.addParam(AnalyticsEvent.PAYMENT_COMPLETED.NAME, true)
         logPaymentStatusAnalyticsEvents(AnalyticsEvent.SUCCESS_PARAM.NAME)
@@ -922,4 +993,14 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         showWebViewDialog(url)
     }
 
+
+    private fun navigateToLoginActivity() {
+        val intent = Intent(this, SignUpActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            putExtra(FLOW_FROM, "payment journey")
+        }
+        startActivity(intent)
+        this.finish()
+    }
 }

@@ -28,6 +28,7 @@ import com.joshtalks.joshskills.repository.local.model.googlelocation.Locality
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import com.userexperior.UserExperior
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -82,6 +83,7 @@ class Mentor {
                     .setUserId(loginResponse.userId)
                     .update()
                 AppAnalytics.updateUser()
+                UserExperior.setUserIdentifier(Mentor.getInstance().getId())
             }
         }
 

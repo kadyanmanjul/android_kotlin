@@ -6,8 +6,10 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionFeedback
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
@@ -35,6 +37,9 @@ abstract class AssessmentDao {
             questionWithRelations.reviseConcept?.let { reviseConcept ->
                 insertReviseConcept(reviseConcept)
             }
+            questionWithRelations.questionFeedback?.let { questionFeedback ->
+                insertAssessmentQuestionFeedback(questionFeedback)
+            }
         }
         assessmentWithRelations.assessmentIntroList?.forEach { assessmentIntro ->
             insertAssessmentIntro(assessmentIntro)
@@ -49,6 +54,9 @@ abstract class AssessmentDao {
             insertAssessmentChoice(choice)
             assessmentQuestionWithRelations.reviseConcept?.let { reviseConcept ->
                 insertReviseConcept(reviseConcept)
+            }
+            assessmentQuestionWithRelations.questionFeedback?.let { questionFeedback ->
+                insertAssessmentQuestionFeedback(questionFeedback)
             }
         }
     }
@@ -69,6 +77,11 @@ abstract class AssessmentDao {
             }
             question.reviseConcept?.let { reviseConcept ->
                 insertReviseConcept(ReviseConcept(reviseConcept, question.id))
+            }
+            question.feedback?.let { questionFeedback ->
+                insertAssessmentQuestionFeedback(
+                    AssessmentQuestionFeedback(questionFeedback, question.id)
+                )
             }
         }
         assessmentResponse.intro?.forEach { assessmentIntro ->
@@ -97,6 +110,9 @@ abstract class AssessmentDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insertReviseConcept(reviseConcept: ReviseConcept)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun insertAssessmentQuestionFeedback(assessmentQuestionFeedback: AssessmentQuestionFeedback)
+
     @Update(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun updateReviseConcept(reviseConcept: ReviseConcept)
 
@@ -106,5 +122,11 @@ abstract class AssessmentDao {
     @Transaction
     @Query("SELECT  localId FROM assessments  WHERE remoteId = :assessmentId LIMIT 1;")
     abstract fun countOfAssessment(assessmentId: Int? = -1): Int
+
+    @Query(value = "UPDATE assessment_choice SET downloadStatus = :status where remoteId= :choiceId ")
+    abstract fun updateChoiceDownloadStatusForAudio(choiceId: Int, status: DOWNLOAD_STATUS)
+
+    @Query(value = "UPDATE assessment_choice SET localAudioUrl = :localPath where remoteId= :choiceId ")
+    abstract fun updateChoiceLocalPathForAudio(choiceId: Int, localPath: String)
 
 }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <layer-list>
+            <item android:drawable="@drawable/blue_btn_pressed_state"/>
+            <item android:drawable="@drawable/blue_btn_unpressed_state" android:bottom="@dimen/_1sdp" />
+        </layer-list>
+    </item>
+
+    <item android:state_pressed="false">
+        <layer-list>
+            <item android:drawable="@drawable/blue_btn_pressed_state"/>
+            <item android:drawable="@drawable/blue_btn_unpressed_state" android:bottom="@dimen/_5sdp" />
+        </layer-list>
+    </item>
+</selector>

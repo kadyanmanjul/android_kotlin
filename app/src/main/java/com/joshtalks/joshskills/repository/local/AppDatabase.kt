@@ -70,6 +70,7 @@ import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagem
 import com.joshtalks.joshskills.repository.local.entity.practise.WrongWord
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionFeedback
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentMediaType
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentStatus
@@ -99,9 +100,9 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class,
         AppUsageModel::class, AppActivityModel::class, LessonModel::class, PendingTaskModel::class,
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
-        RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class
+        RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class
     ],
-    version = 33,
+    version = 35,
     exportSchema = true
 )
 @TypeConverters(
@@ -179,7 +180,9 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_28_29,
                                 MIGRATION_30_31,
                                 MIGRATION_31_32,
-                                MIGRATION_32_33
+                                MIGRATION_32_33,
+                                MIGRATION_33_34,
+                                MIGRATION_34_35
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -463,6 +466,31 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE favorite_caller ADD COLUMN mentor_id TEXT NOT NULL DEFAULT ''")
             }
         }
+        private val MIGRATION_33_34: Migration = object : Migration(33, 34) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE INDEX IF NOT EXISTS `index_practise_engagement_table_practiseId_question_questionForId` ON `practise_engagement_table` (`practiseId`, `question`, `questionForId`)")
+                database.execSQL("DROP INDEX IF EXISTS `index_practise_engagement_table_practiseId_question`")
+            }
+        }
+
+        private val MIGRATION_34_35: Migration = object : Migration(34,35) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE assessment_questions ADD COLUMN subText TEXT ")
+                database.execSQL("ALTER TABLE assessment_questions ADD COLUMN mediaUrl2 TEXT ")
+                database.execSQL("ALTER TABLE assessment_questions ADD COLUMN isNewHeader INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE assessment_questions ADD COLUMN mediaType2 TEXT NOT NULL DEFAULT 'NONE' ")
+                database.execSQL("ALTER TABLE assessment_questions ADD COLUMN listOfAnswers TEXT ")
+                database.execSQL("ALTER TABLE course ADD COLUMN is_course_locked INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE assessment_choice ADD COLUMN audioUrl TEXT ")
+                database.execSQL("ALTER TABLE assessment_choice ADD COLUMN localAudioUrl TEXT ")
+                database.execSQL("ALTER TABLE assessment_choice ADD COLUMN downloadStatus TEXT ")
+                database.execSQL("ALTER TABLE lessonmodel ADD COLUMN show_new_grammar_screen INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `assessment_question_feedback` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `questionId` INTEGER NOT NULL, `correctAnswerHeading` TEXT, `correctAnswerText` TEXT, `wrongAnswerHeading` TEXT, `wrongAnswerText` TEXT, `wrongAnswerHeading2` TEXT, `wrongAnswerText2` TEXT, FOREIGN KEY(`questionId`) REFERENCES `assessment_questions`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE )")
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_question_feedback_questionId` ON `assessment_question_feedback` (`questionId`)")
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_question_feedback_localId` ON `assessment_question_feedback` (`localId`)")
+
+            }
+        }
 
         fun clearDatabase() {
             INSTANCE?.clearAllTables()
@@ -529,13 +557,18 @@ class MessageTypeConverters {
 class ConvertersForDownloadStatus {
 
     @TypeConverter
-    fun fromString(value: String): DOWNLOAD_STATUS {
-        val matType = object : TypeToken<DOWNLOAD_STATUS>() {}.type
-        return AppObjectController.gsonMapper.fromJson(value, matType)
+    fun fromString(value: String?): DOWNLOAD_STATUS {
+        return try {
+            val matType = object : TypeToken<DOWNLOAD_STATUS>() {}.type
+            AppObjectController.gsonMapper.fromJson(value, matType)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            DOWNLOAD_STATUS.NOT_START
+        }
     }
 
     @TypeConverter
-    fun fromMatType(enumVal: DOWNLOAD_STATUS): String {
+    fun fromMatType(enumVal: DOWNLOAD_STATUS): String? {
         return AppObjectController.gsonMapper.toJson(enumVal)
     }
 }

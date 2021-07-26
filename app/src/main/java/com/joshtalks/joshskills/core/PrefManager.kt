@@ -73,6 +73,12 @@ const val IS_CONVERSATION_ROOM_ACTIVE = "is_conversation_room_active"
 const val IS_CONVERSATION_ROOM_ACTIVE_FOR_USER = "is_conversation_room_active_for_user"
 
 const val LAST_FIRESTORE_NOTIFICATION_TIME = "last_firestore_notification_time"
+const val ONLINE_TEST_COMPLETED = "online_test_completed"
+const val ONLINE_TEST_LAST_LESSON_COMPLETED = "online_test_last_lesson_completed"
+const val ONLINE_TEST_LAST_LESSON_ATTEMPTED = "online_test_last_lesson_attempted"
+const val ONLINE_TEST_LIST_OF_COMPLETED_RULES = "online_test_list_of_completed_rules"
+const val ONLINE_TEST_LIST_OF_TOTAL_RULES = "online_test_list_of_total_rules"
+const val INBOX_SCREEN_VISIT_COUNT = "inbox_screen_visit_count"
 
 object PrefManager {
 
@@ -135,6 +141,12 @@ object PrefManager {
     fun getIntValue(key: String, isConsistent: Boolean = false): Int {
         return if (isConsistent) prefManagerConsistent.getInt(key, 0)
         else prefManagerCommon.getInt(key, 0)
+
+    }
+
+    fun getIntValue(key: String, isConsistent: Boolean = false,defValue: Int): Int {
+        return if (isConsistent) prefManagerConsistent.getInt(key, defValue)
+        else prefManagerCommon.getInt(key, defValue)
 
     }
 

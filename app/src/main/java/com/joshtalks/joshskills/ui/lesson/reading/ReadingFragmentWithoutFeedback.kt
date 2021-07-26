@@ -119,7 +119,7 @@ class ReadingFragmentWithoutFeedback :
                 CURRENT_VIDEO_PROGRESS_POSITION,
                 0
             )?.let { progress ->
-                binding.videoPlayer.setProgress(progress)
+                binding.videoPlayer.progress = progress
                 binding.videoPlayer.onResume()
             }
         }
@@ -149,9 +149,9 @@ class ReadingFragmentWithoutFeedback :
                 container,
                 false
             )
+        binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         binding.lifecycleOwner = this
         binding.handler = this
-        binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         scaleAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale)
 
         addObserver()
@@ -338,7 +338,7 @@ class ReadingFragmentWithoutFeedback :
                             binding.videoPlayer.setPlayListener {
                                 val videoId = this.videoList?.getOrNull(0)?.id
                                 val videoUrl = this.videoList?.getOrNull(0)?.video_url
-                                val currentVideoProgressPosition = binding.videoPlayer.getProgress()
+                                val currentVideoProgressPosition = binding.videoPlayer.progress
                                 openVideoPlayerActivity.launch(
                                     VideoPlayerActivity.getActivityIntent(
                                         requireContext(),

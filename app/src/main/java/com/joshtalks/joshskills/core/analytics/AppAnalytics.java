@@ -283,8 +283,13 @@ public class AppAnalytics {
     }
 
     public AppAnalytics addParam(String key, String value) {
-        parameters.put(key, value);
-        return this;
+        try {
+            parameters.put(key, value);
+            return this;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return this;
+        }
     }
 
     public AppAnalytics addParam(String key, List<String> value) {
@@ -356,7 +361,8 @@ public class AppAnalytics {
 
     private void pushToFirebase() {
         try {
-            firebaseAnalytics.logEvent(event, convertMapToBundle(parameters));
+            if (firebaseAnalytics != null)
+                firebaseAnalytics.logEvent(event, convertMapToBundle(parameters));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -403,7 +409,8 @@ public class AppAnalytics {
 
     private void pushToCleverTap() {
         try {
-            cleverTapAnalytics.pushEvent(event, parameters);
+            if (cleverTapAnalytics!=null)
+                cleverTapAnalytics.pushEvent(event, parameters);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

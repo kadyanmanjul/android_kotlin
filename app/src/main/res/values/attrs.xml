@@ -424,4 +424,21 @@
         <attr name="maskSpecs_startDelayed" format="integer" />
     </declare-styleable>
 
+
+    <!--New GrammarButton-->
+    <declare-styleable name="GrammarButton">
+        <attr name="shadowEnabled" format="boolean" />
+        <attr name="buttonColor" format="color" />
+        <attr name="shadowColor" format="color" />
+        <attr name="shadowHeight" format="dimension" />
+        <attr name="cornerRadius" format="dimension" />
+    </declare-styleable>
+
+
+    <declare-styleable name="DashedUnderlinedTextView">
+        <attr name="underlineWidth" format="dimension" />
+        <attr name="underlineColor" format="color" />
+        <attr name="underlinePadding" format="integer" />
+    </declare-styleable>
+
 </resources>
