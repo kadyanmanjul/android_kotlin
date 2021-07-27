@@ -1,7 +1,13 @@
 package com.joshtalks.joshskills.ui.online_test
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +15,7 @@ import android.view.ViewTreeObserver
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.transition.TransitionInflater
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
@@ -20,6 +27,7 @@ import com.joshtalks.joshskills.core.ONLINE_TEST_LIST_OF_COMPLETED_RULES
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.custom_ui.JoshGrammarVideoPlayer
+import com.joshtalks.joshskills.core.extension.transaltionMoveAnimation
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.core.playWrongAnswerSound
@@ -81,6 +89,10 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private var isTestCompleted: Boolean = false
     private var testCallback: OnlineTestInterface? = null
     private var lessonActivityListener: LessonActivityListener? = null
+    var isPlayerVisible = false
+        private set
+    private var videoBtnXPosition = 0f
+
     var reviseVideoObject: VideoModel? = null
     private var compositeDisposable = CompositeDisposable()
     private var previousId: Int = -1
@@ -129,7 +141,8 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         headingView = Stub(binding.choiceContainer.findViewById(R.id.heading_view))
         mcqChoiceView = Stub(binding.choiceContainer.findViewById(R.id.mcq_choice_view))
         atsChoiceView = Stub(binding.choiceContainer.findViewById(R.id.ats_choice_view))
-        subjectiveChoiceView = Stub(binding.choiceContainer.findViewById(R.id.subjective_choice_view))
+        subjectiveChoiceView =
+            Stub(binding.choiceContainer.findViewById(R.id.subjective_choice_view))
         buttonView = Stub(binding.container.findViewById(R.id.button_action_views))
     }
 
@@ -486,40 +499,172 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     binding.videoContainer.visibility = View.VISIBLE
-                    binding.videoPlayer.apply {
-                        visibility = View.VISIBLE
-                        setUrl(it.videoUrl)
-                        setVideoId(it.videoId)
-                        fitToScreen()
-                        downloadStreamPlay()
-                        setPlayListener(object : JoshGrammarVideoPlayer.PlayerFullScreenListener {
+                    val OFFSET =
+                        (getScreenHeightAndWidth().first - binding.container.height).toFloat()
+                    Log.d(TAG, "addObserver: $OFFSET")
+                    val fromX = it.location?.get(0)!!.toFloat() - (binding.videoPlayer.width / 2f)
+                    videoBtnXPosition = fromX
+                    val fromY =
+                        (getScreenHeightAndWidth().first - binding.buttonActionViews.root.height) - (binding.videoPlayer.height / 2f)
+                    val targetX = 11f * getConverterValue()
+                    val targetY =
+                        (getScreenHeightAndWidth().first / 2f) - (binding.videoPlayer.height / 2f)
+                    val animatorSet = binding.videoPlayer.transaltionMoveAnimation(
+                        fromLocation = fromX to fromY,
+                        toLocation = targetX to targetY,
+                    )
 
-                            override fun onFullScreen() {
-                                val currentVideoProgressPosition = binding.videoPlayer.getProgress()
-                                startActivity(
-                                    VideoPlayerActivity.getActivityIntent(
-                                        requireContext(),
-                                        "",
-                                        it.videoId,
-                                        it.videoUrl,
-                                        currentVideoProgressPosition,
-                                        conversationId = getConversationId()
-                                    )
-                                )
-                                visibility = View.GONE
-                            }
+                    val containerAnimator = ValueAnimator.ofArgb(
+                        Color.parseColor("#FFFFFF"),
+                        Color.parseColor("#000000")
+                    ).apply {
+                        duration = 1000
 
-                            override fun onClose() {
-                                onPause()
-                                visibility = View.GONE
-                            }
-                        })
+                        addUpdateListener {
+                            binding.videoContainer.background =
+                                ColorDrawable(it.animatedValue as Int)
+                        }
                     }
+                    animatorSet.playTogether(containerAnimator)
+                    animatorSet.addListener(object : Animator.AnimatorListener {
+                        override fun onAnimationStart(animation: Animator?) {
+                        }
 
+                        override fun onAnimationEnd(animation: Animator?) {
+                            binding.videoPlayer.apply {
+                                setUrl(it.videoUrl)
+                                setVideoId(it.videoId)
+                                fitToScreen()
+                                downloadStreamPlay()
+                                setPlayListener(object :
+                                    JoshGrammarVideoPlayer.PlayerFullScreenListener {
+                                    override fun onFullScreen() {
+                                        val currentVideoProgressPosition =
+                                            binding.videoPlayer.progress
+                                        startActivity(
+                                            VideoPlayerActivity.getActivityIntent(
+                                                requireContext(),
+                                                "",
+                                                it.videoId,
+                                                it.videoUrl,
+                                                currentVideoProgressPosition,
+                                                conversationId = getConversationId()
+                                            )
+                                        )
+                                        visibility = View.INVISIBLE
+                                    }
+
+                                    override fun onClose() {
+                                        onPause()
+                                        visibility = View.INVISIBLE
+                                    }
+                                })
+                            }
+                        }
+
+                        override fun onAnimationCancel(animation: Animator?) {}
+
+                        override fun onAnimationRepeat(animation: Animator?) {}
+
+                    })
+                    lessonActivityListener?.onPlayerActivityRequest()
+                    animatorSet.start()
+                    isPlayerVisible = true
                 }, {
                     it.printStackTrace()
                 })
         )
+    }
+
+    fun closePlayer() {
+        binding.videoPlayer.onPause()
+        buttonView?.get()?.stopVideoButtonAnimation()
+        val OFFSET = (getScreenHeightAndWidth().first - binding.container.height).toFloat()
+        Log.d(TAG, "addObserver: $OFFSET")
+        val fromX = videoBtnXPosition
+        val fromY =
+            (getScreenHeightAndWidth().first - binding.buttonActionViews.root.height - OFFSET) - (binding.videoPlayer.height - (19 * getConverterValue()))
+        val targetX = 11f * getConverterValue()
+        val targetY = (getScreenHeightAndWidth().first / 2f) - (binding.videoPlayer.height / 2f)
+        val animatorSet = binding.videoPlayer.transaltionMoveAnimation(
+            fromLocation = fromX to fromY,
+            toLocation = targetX to targetY,
+            isReverse = true
+        )
+
+        val containerAnimator =
+            ValueAnimator.ofArgb(Color.parseColor("#000000"), Color.TRANSPARENT).apply {
+                duration = 1000
+
+                addUpdateListener {
+                    binding.videoContainer.background = ColorDrawable(it.animatedValue as Int)
+                }
+            }
+        animatorSet.playTogether(containerAnimator)
+        animatorSet.addListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator?) {
+            }
+
+            override fun onAnimationEnd(animation: Animator?) {
+                binding.videoPlayer.scaleX = 1f
+                binding.videoPlayer.scaleY = 1f
+                binding.videoPlayer.visibility = View.INVISIBLE
+                binding.videoContainer.visibility = View.INVISIBLE
+                isPlayerVisible = false
+            }
+
+            override fun onAnimationCancel(animation: Animator?) {
+            }
+
+            override fun onAnimationRepeat(animation: Animator?) {}
+
+        })
+        animatorSet.start()
+    }
+
+    /*private fun addObserver() {
+        Log.d(TAG, "addObserver: VideoShowEvent")
+        compositeDisposable.add(
+            RxBus2.listen(VideoShowEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    Log.d(TAG, "addObserver: ")
+                    //animationTest()
+                    lessonActivityListener?.onPlayerActivityRequest()
+                    //isFirstTime = true
+                    activity?.supportFragmentManager?.let {fm ->
+                        val playerFragment = NewGrammarPlayerFragment.getFragment(
+                            videoId = it.videoId,
+                            videoUrl = it.videoUrl,
+                            conversationId = getConversationId()
+                        )
+                        fm.commit {
+                            val startView = buttonView?.get()?.getVideoButtonView()
+                            if(binding.buttonActionViews.isInflated)
+                                                binding.buttonActionViews.root.findViewById(R.id.video_iv)
+                                            else
+                                                binding.buttonActionViews.viewStub?.inflate()?.findViewById<AppCompatImageView>(R.id.video_iv)
+                            addSharedElement(startView!!, "player_transition")
+                            replace(R.id.parent_Container, playerFragment, NewGrammarPlayerFragment::class.java.simpleName)
+                            addToBackStack("Josh")
+                        }
+                    }
+                    viewModel.isFromPlayerActivity = true
+                }, {
+                    it.printStackTrace()
+                })
+        )
+    }*/
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate: ")
+        val transaction =
+            TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move)
+        //val transaction = ChangeBounds()
+        sharedElementEnterTransition = transaction
+        sharedElementReturnTransition = transaction
     }
 
     override fun onScrollChanged() {
@@ -540,5 +685,30 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             fragment.arguments = args
             return fragment
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart: ")
+        buttonView?.get()?.startVideoButtonAnimation()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.d(TAG, "onDestroyView: ")
+    }
+
+    private fun getConverterValue(): Float {
+        val metrics = DisplayMetrics()
+        activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
+        val logicalDensity: Float = metrics.density
+        Log.d(TAG, "getConverterValue: $logicalDensity")
+        return logicalDensity
+    }
+
+    fun getScreenHeightAndWidth(): Pair<Int, Int> {
+        val metrics = DisplayMetrics()
+        activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
+        return metrics.heightPixels to metrics.widthPixels
     }
 }

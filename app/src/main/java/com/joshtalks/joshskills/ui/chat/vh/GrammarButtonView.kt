@@ -1,5 +1,7 @@
 package com.joshtalks.joshskills.ui.chat.vh
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
@@ -27,7 +29,7 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQues
 import com.joshtalks.joshskills.repository.server.course_detail.VideoModel
 
 class GrammarButtonView : FrameLayout {
-
+    private val BUTTON_ANIMATION_DURATION = 600L
     private lateinit var rootView: FrameLayout
     private lateinit var textContainer: ConstraintLayout
     private lateinit var correctAnswerTitle: AppCompatTextView
@@ -46,6 +48,28 @@ class GrammarButtonView : FrameLayout {
     private var questionFeedback: AssessmentQuestionFeedback? = null
     private var reviseVideoObject: VideoModel? = null
     private var currentState: GrammarButtonState = GrammarButtonState.DISABLED
+
+    private val scaleX by lazy {
+        ObjectAnimator.ofFloat(videoIv, "scaleX", 0.9f, 1.2f).apply {
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+            duration = BUTTON_ANIMATION_DURATION
+        }
+    }
+
+    private val scaleY by lazy {
+        ObjectAnimator.ofFloat(videoIv, "scaleY", 0.9f, 1.2f).apply {
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+            duration = BUTTON_ANIMATION_DURATION
+        }
+    }
+
+    private val videoButtonAnimator by lazy<AnimatorSet> {
+        AnimatorSet().apply {
+            play(scaleX).with(scaleY)
+        }
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     val onTouchListener3 = OnTouchListener { v, event ->
@@ -114,10 +138,12 @@ class GrammarButtonView : FrameLayout {
 
     constructor(context: Context) : super(context) {
         init()
+        isSaveEnabled = true
     }
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         init()
+        isSaveEnabled = true
     }
 
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(
@@ -126,6 +152,7 @@ class GrammarButtonView : FrameLayout {
         defStyle
     ) {
         init()
+        isSaveEnabled = true
     }
 
     private fun init() {
@@ -144,6 +171,15 @@ class GrammarButtonView : FrameLayout {
         videoIv = findViewById(R.id.video_iv)
         grammarBtn = findViewById(R.id.grammar_btn)
         setGrammarButtonListners()
+    }
+
+    fun startVideoButtonAnimation() = videoButtonAnimator.start()
+
+    fun stopVideoButtonAnimation() {
+        if (videoButtonAnimator.isStarted || videoButtonAnimator.isRunning)
+            videoButtonAnimator.cancel()
+        videoIv.scaleX = 1f
+        videoIv.scaleY = 1f
     }
 
 
@@ -171,7 +207,7 @@ class GrammarButtonView : FrameLayout {
         }
         grammarBtn.setOnTouchListener(onTouchListener3)
         videoIv.setOnClickListener {
-            if (reviseVideoObject?.video_url.isNullOrBlank().not()){
+            if (reviseVideoObject?.video_url.isNullOrBlank().not()) {
                 openVideoObject()
             }
         }
@@ -179,11 +215,14 @@ class GrammarButtonView : FrameLayout {
 
     private fun openVideoObject() {
         if (reviseVideoObject?.video_url.isNullOrBlank().not()) {
+            val fromLocation = IntArray(2)
+            videoIv.getLocationOnScreen(fromLocation)
             RxBus2.publish(
                 VideoShowEvent(
                     EMPTY,
                     reviseVideoObject?.id,
-                    reviseVideoObject?.video_url
+                    reviseVideoObject?.video_url,
+                    location = fromLocation
                 )
             )
         }
@@ -260,7 +299,7 @@ class GrammarButtonView : FrameLayout {
 
     }
 
-    public fun enableBtn() {
+    fun enableBtn() {
 
         grammarBtn.isEnabled = true
         grammarBtn.isClickable = true
@@ -270,7 +309,7 @@ class GrammarButtonView : FrameLayout {
 
     }
 
-    public fun disableBtn() {
+    fun disableBtn() {
 
         grammarBtn.isEnabled = false
         grammarBtn.isClickable = false
@@ -281,7 +320,6 @@ class GrammarButtonView : FrameLayout {
     }
 
     fun setCorrectView() {
-
         wrongAnswerGroup.visibility = View.GONE
         rightAnswerGroup.visibility = View.VISIBLE
         setCorrectViewVisibility()
@@ -368,6 +406,8 @@ class GrammarButtonView : FrameLayout {
         } else
             setWrongView()
     }
+
+    fun getVideoButtonView() = videoIv
 
     private fun updateGrammarButtonDrawable(
         grammarBtn: MaterialTextView,

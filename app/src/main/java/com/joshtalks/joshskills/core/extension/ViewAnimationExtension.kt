@@ -202,13 +202,81 @@ fun View.transaltionAnimationNew(
     slideSet.addListener(object : AnimatorListenerAdapter() {
         override fun onAnimationEnd(animation: Animator) {
             optionLayout?.let {
-                optionLayout.addViewAt(customWord,customWord.choice.sortOrder-1)
+                optionLayout.addViewAt(customWord, customWord.choice.sortOrder - 1)
             }
-            this@transaltionAnimationNew.setVisibility(View.INVISIBLE)
-            customWord.visibility=View.VISIBLE
+            this@transaltionAnimationNew.visibility = View.INVISIBLE
+            customWord.visibility = View.VISIBLE
         }
     })
     slideSet.start()
+}
+
+fun View.transaltionAnimationNew2(
+    toLocation: IntArray,
+) {
+    this@transaltionAnimationNew2.visibility = View.VISIBLE
+    val slideAnim = AnimatorSet()
+    slideAnim.playTogether(
+        ObjectAnimator.ofFloat(this, View.X, toLocation[0].toFloat()),
+        ObjectAnimator.ofFloat(this, View.Y, toLocation[1].toFloat())
+    )
+
+    val slideSet = AnimatorSet()
+    slideSet.play(slideAnim)
+    val interpolator = DecelerateInterpolator()
+    slideSet.interpolator = interpolator
+    slideSet.duration = 5000
+    slideSet.addListener(object : AnimatorListenerAdapter() {
+        override fun onAnimationEnd(animation: Animator) {
+
+        }
+    })
+    slideSet.start()
+}
+
+fun View.transaltionMoveAnimation(
+    fromLocation: Pair<Float, Float>,
+    toLocation: Pair<Float, Float>,
+    isReverse: Boolean = false
+): AnimatorSet {
+    this@transaltionMoveAnimation.visibility = View.VISIBLE
+    val DURATION = 600L
+
+    val x = ObjectAnimator.ofFloat(
+        this,
+        "x",
+        if (isReverse) toLocation.first else fromLocation.first,
+        if (isReverse) fromLocation.first else toLocation.first
+    )
+        .apply {
+            duration = DURATION
+        }
+
+    val y = ObjectAnimator.ofFloat(
+        this,
+        "y",
+        if (isReverse) toLocation.second else fromLocation.second,
+        if (isReverse) fromLocation.second else toLocation.second
+    )
+        .apply {
+            duration = DURATION
+        }
+
+    val scaleX =
+        ObjectAnimator.ofFloat(this, "scaleX", if (isReverse) 1f else 0f, if (isReverse) 0f else 1f)
+            .apply {
+                duration = DURATION
+            }
+
+    val scaleY =
+        ObjectAnimator.ofFloat(this, "scaleY", if (isReverse) 1f else 0f, if (isReverse) 0f else 1f)
+            .apply {
+                duration = DURATION
+            }
+
+    return AnimatorSet().apply {
+        play(y).with(scaleX).with(scaleY).with(x)
+    }
 }
 
 fun View.slideUpAnimation(context: Context) {
@@ -218,7 +286,7 @@ fun View.slideUpAnimation(context: Context) {
     )
 
     this.startAnimation(bottomUp)
-    this.setVisibility(View.VISIBLE)
+    this.visibility = View.VISIBLE
 }
 
 fun AppCompatImageView.shiftGroupChatIconUp(txtUnreadCount: TextView) {

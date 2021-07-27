@@ -142,9 +142,9 @@
             app:matProg_progressIndeterminate="true" />
 
         <FrameLayout
+            android:id="@+id/new_grammer_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
         </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

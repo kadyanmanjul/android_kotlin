@@ -40,6 +40,7 @@ import com.joshtalks.joshskills.ui.lesson.reading.ReadingFragmentWithoutFeedback
 import com.joshtalks.joshskills.ui.lesson.speaking.SpeakingPractiseFragment
 import com.joshtalks.joshskills.ui.lesson.vocabulary.VocabularyFragment
 import com.joshtalks.joshskills.ui.online_test.GrammarOnlineTestFragment
+import com.joshtalks.joshskills.ui.online_test.OnlineTestFragment
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
@@ -456,9 +457,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     private fun isOnlineTestCompleted(): Boolean {
         if (ruleCompletedList.isNullOrEmpty()) {
             return false
-        } else if (ruleIdLeftList.isNullOrEmpty()) {
-            return true
-        } else return false
+        } else return ruleIdLeftList.isNullOrEmpty()
     }
 
     private fun openIncompleteTab(currentTabNumber: Int) {
@@ -613,6 +612,20 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
     }
 
     override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount >= 1) {
+            val playerFragment =
+                supportFragmentManager.findFragmentByTag(OnlineTestFragment.TAG) as OnlineTestFragment
+            if (playerFragment.isPlayerVisible) {
+                playerFragment.closePlayer()
+                resetViewState()
+            } else
+                closeActivity()
+        } else {
+            closeActivity()
+        }
+    }
+
+    private fun closeActivity() {
         val resultIntent = Intent()
         viewModel.lessonLiveData.value?.let {
             resultIntent.putExtra(CHAT_ROOM_ID, it.chatId)
@@ -659,5 +672,16 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener {
             }
             addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         }
+    }
+
+    override fun onPlayerActivityRequest() {
+        super.onPlayerActivityRequest()
+        binding.lessonTabLayout.visibility = View.GONE
+        binding.toolbarContainer.visibility = View.GONE
+    }
+
+    fun resetViewState() {
+        binding.lessonTabLayout.visibility = View.VISIBLE
+        binding.toolbarContainer.visibility = View.VISIBLE
     }
 }
