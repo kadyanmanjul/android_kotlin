@@ -39,6 +39,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
+import com.joshtalks.joshskills.ui.voip.ConversationRoomCallback
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -655,6 +656,61 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 }
                 updateFirestoreData()
             }
+        }
+
+    }
+
+    private var conversationRoomCallback = object : ConversationRoomCallback{
+
+        override fun onUserOffline(uid: Int, reason: Int) {
+            val isUserLeave =
+                reason == Constants.USER_OFFLINE_QUIT || reason == Constants.USER_OFFLINE_DROPPED
+            if (isRoomCreatedByUser) {
+                if (isUserLeave) {
+                    usersReference?.document(uid.toString())?.delete()
+                }
+            } else {
+                if (uid == moderatorUid && isUserLeave) {
+                    usersReference?.get()?.addOnSuccessListener { documents ->
+                        if (documents.size() > 1) {
+                            if (documents.documents[0].id.toInt() == agoraUid) {
+                                viewModel.leaveEndRoom(true, roomId, moderatorMentorId)
+                            } else if (documents.documents[1].id.toInt() == agoraUid) {
+                                viewModel.leaveEndRoom(true, roomId, moderatorMentorId)
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+
+        override fun onAudioVolumeIndication(
+            speakers: Array<out IRtcEngineEventHandler.AudioVolumeInfo>?,
+            totalVolume: Int
+        ) {
+            if (isRoomCreatedByUser) {
+                speakingUsersOldList.clear()
+                speakingUsersOldList.addAll(speakingUsersNewList)
+                speakingUsersNewList.clear()
+                speakers?.forEach {
+                    if (it.uid != 0 && it.volume > 0) {
+                        speakingUsersNewList.add(it.uid)
+                    }
+                    if (it.uid == 0 && it.volume > 0) {
+                        speakingUsersNewList.add(agoraUid ?: 0)
+                    }
+                }
+                updateFirestoreData()
+            }
+        }
+
+        override fun onSwitchToSpeaker() {
+            engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER)
+        }
+
+        override fun onSwitchToAudience() {
+            engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE)
         }
 
     }

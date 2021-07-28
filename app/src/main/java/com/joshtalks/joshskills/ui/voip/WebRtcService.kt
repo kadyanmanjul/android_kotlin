@@ -68,6 +68,7 @@ import io.agora.rtc.Constants.AUDIO_PROFILE_SPEECH_STANDARD
 import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSET
 import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSETBLUETOOTH
 import io.agora.rtc.Constants.AUDIO_SCENARIO_EDUCATION
+import io.agora.rtc.Constants.AUDIO_SCENARIO_GAME_STREAMING
 import io.agora.rtc.Constants.CHANNEL_PROFILE_COMMUNICATION
 import io.agora.rtc.Constants.CONNECTION_CHANGED_INTERRUPTED
 import io.agora.rtc.Constants.CONNECTION_STATE_RECONNECTING
@@ -129,6 +130,7 @@ class WebRtcService : BaseWebRtcService() {
         var pstnCallState = CallState.CALL_STATE_IDLE
 
         var isOnPstnCall = false
+        var isConversionRoomActive = false
 
         @JvmStatic
         private val callReconnectTime = AppObjectController.getFirebaseRemoteConfig()
@@ -172,6 +174,9 @@ class WebRtcService : BaseWebRtcService() {
 
         @Volatile
         private var callCallback: WeakReference<WebRtcCallback>? = null
+
+        @Volatile
+        private var conversationRoomCallback: WeakReference<ConversationRoomCallback>? = null
 
         fun initLibrary() {
             val serviceIntent = Intent(
@@ -496,6 +501,39 @@ class WebRtcService : BaseWebRtcService() {
         }
     }
 
+    @Volatile
+    private var conversationRoomEventListener: IRtcEngineEventHandler? =
+        object : IRtcEngineEventHandler() {
+
+            override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
+                super.onJoinChannelSuccess(channel, uid, elapsed)
+            }
+
+            override fun onLeaveChannel(stats: RtcStats) {
+                super.onLeaveChannel(stats)
+            }
+
+            override fun onRejoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
+                super.onRejoinChannelSuccess(channel, uid, elapsed)
+            }
+
+            override fun onUserOffline(uid: Int, reason: Int) {
+                super.onUserOffline(uid, reason)
+                conversationRoomCallback?.get()?.onUserOffline(uid, reason)
+
+            }
+
+            override fun onAudioVolumeIndication(
+                speakers: Array<out AudioVolumeInfo>?,
+                totalVolume: Int
+            ) {
+                super.onAudioVolumeIndication(speakers, totalVolume)
+                conversationRoomCallback?.get()?.onAudioVolumeIndication(speakers, totalVolume)
+            }
+
+        }
+
+
     inner class CustomHandlerThread(name: String) : HandlerThread(name) {
         override fun onLooperPrepared() {
             super.onLooperPrepared()
@@ -645,12 +683,25 @@ class WebRtcService : BaseWebRtcService() {
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
-            if (eventListener != null) {
-                mRtcEngine?.removeHandler(eventListener)
+            when (isConversionRoomActive) {
+                true -> {
+                    if (eventListener != null) {
+                        mRtcEngine?.removeHandler(eventListener)
+                    }
+                    if (eventListener != null) {
+                        mRtcEngine?.addHandler(eventListener)
+                    }
+                }
+                false -> {
+                    if (conversationRoomEventListener != null) {
+                        mRtcEngine?.removeHandler(conversationRoomEventListener)
+                    }
+                    if (conversationRoomEventListener != null) {
+                        mRtcEngine?.addHandler(conversationRoomEventListener)
+                    }
+                }
             }
-            if (eventListener != null) {
-                mRtcEngine?.addHandler(eventListener)
-            }
+
             if (isEngineInitialized) {
                 callback.invoke()
                 return
@@ -665,12 +716,25 @@ class WebRtcService : BaseWebRtcService() {
 
                 disableVideo()
                 enableAudio()
-                enableAudioVolumeIndication(1000, 3, true)
-                setAudioProfile(
-                    AUDIO_PROFILE_SPEECH_STANDARD,
-                    AUDIO_SCENARIO_EDUCATION
-                )
-                setChannelProfile(CHANNEL_PROFILE_COMMUNICATION)
+                when (isConversionRoomActive) {
+                    true -> {
+                        setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING)
+                        enableAudioVolumeIndication(1500, 3, true)
+                        setAudioProfile(
+                            AUDIO_PROFILE_SPEECH_STANDARD,
+                            AUDIO_SCENARIO_GAME_STREAMING
+                        )
+                    }
+                    false -> {
+                        enableAudioVolumeIndication(1000, 3, true)
+                        setAudioProfile(
+                            AUDIO_PROFILE_SPEECH_STANDARD,
+                            AUDIO_SCENARIO_EDUCATION
+                        )
+                        setChannelProfile(CHANNEL_PROFILE_COMMUNICATION)
+                    }
+                }
+
                 adjustRecordingSignalVolume(400)
                 val audio = getSystemService(AUDIO_SERVICE) as AudioManager
                 val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
@@ -845,6 +909,10 @@ class WebRtcService : BaseWebRtcService() {
 
     fun addListener(callback: WebRtcCallback?) {
         callCallback = WeakReference(callback)
+    }
+
+    fun addListener(callback: ConversationRoomCallback) {
+        conversationRoomCallback = WeakReference(callback)
     }
 
     private fun callStopWithoutIssue() {
@@ -1757,6 +1825,17 @@ interface WebRtcCallback {
     fun onHoldCall() {}
     fun onUnHoldCall() {}
     fun onSpeakerOff() {}
+}
+
+interface ConversationRoomCallback {
+    fun onUserOffline(uid: Int, reason: Int)
+    fun onAudioVolumeIndication(
+        speakers: Array<out IRtcEngineEventHandler.AudioVolumeInfo>?,
+        totalVolume: Int
+    )
+
+    fun onSwitchToSpeaker()
+    fun onSwitchToAudience()
 }
 
 enum class NotificationState {
