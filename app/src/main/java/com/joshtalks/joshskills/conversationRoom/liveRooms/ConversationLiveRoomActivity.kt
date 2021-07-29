@@ -108,7 +108,12 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         setContentView(binding.root)
         viewModel = ConversationLiveRoomViewModel()
         getIntentExtras()
-        myConnection
+        bindService(
+            Intent(this, WebRtcService::class.java),
+            myConnection,
+            BIND_AUTO_CREATE
+        )
+//        myConnection
         binding.notificationBar.setNotificationViewEnquiryAction(this)
         val liveRoomReference = database.collection("conversation_rooms")
         roomReference = liveRoomReference.document(roomId.toString())
@@ -117,7 +122,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         handler = Handler(Looper.getMainLooper())
         updateUI()
         initializeEngine()
-        takePermissions()
+//        takePermissions()
         setNotificationStates()
         leaveRoomIfModeratorEndRoom()
 

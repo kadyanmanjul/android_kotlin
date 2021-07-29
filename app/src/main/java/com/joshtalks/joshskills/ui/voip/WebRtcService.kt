@@ -684,7 +684,7 @@ class WebRtcService : BaseWebRtcService() {
                 e.printStackTrace()
             }
             when (isConversionRoomActive) {
-                true -> {
+                false -> {
                     if (eventListener != null) {
                         mRtcEngine?.removeHandler(eventListener)
                     }
@@ -692,7 +692,7 @@ class WebRtcService : BaseWebRtcService() {
                         mRtcEngine?.addHandler(eventListener)
                     }
                 }
-                false -> {
+                true -> {
                     if (conversationRoomEventListener != null) {
                         mRtcEngine?.removeHandler(conversationRoomEventListener)
                     }
