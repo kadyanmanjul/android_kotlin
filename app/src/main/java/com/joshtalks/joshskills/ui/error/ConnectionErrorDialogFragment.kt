@@ -5,23 +5,38 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.FragmentOfflineConnectionErrorBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ConnectionErrorRetryEvent
 
-class ConnectionErrorDialogFragment : Fragment() {
+class ConnectionErrorDialogFragment : DialogFragment() {
     private lateinit var binding: FragmentOfflineConnectionErrorBinding
     private var titleText: String = EMPTY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        isCancelable = false
+        setStyle(STYLE_NO_FRAME, R.style.full_dialog)
         arguments?.let {
             titleText = it.getString(TITLE_ERROR, getString(R.string.connection_error))
         }
     }
+
+    override fun onStart() {
+        super.onStart()
+        val dialog = dialog
+        if (dialog != null) {
+            val width = ViewGroup.LayoutParams.MATCH_PARENT
+            val height = ViewGroup.LayoutParams.MATCH_PARENT
+            dialog.window?.setLayout(width, height)
+            dialog.setCanceledOnTouchOutside(true)
+        }
+    }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,6 +56,7 @@ class ConnectionErrorDialogFragment : Fragment() {
 
     fun retry() {
             RxBus2.publish(ConnectionErrorRetryEvent(titleText))
+            dismiss()
     }
 
     companion object {

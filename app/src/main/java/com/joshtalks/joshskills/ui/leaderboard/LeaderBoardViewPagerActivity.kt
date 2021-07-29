@@ -160,10 +160,10 @@ class LeaderBoardViewPagerActivity : BaseConnectionErrorActivity() {
                     when (it) {
                         ApiCallStatus.FAILED ->{
                             hideProgressBar()
-                            isApiFalied(false,binding.errorContainer,R.string.no_leaderboard_txt)
+                            isApiFalied(false,R.string.no_leaderboard_txt)
                         }
                         ApiCallStatus.SUCCESS -> {
-                            isApiFalied(true,binding.errorContainer)
+                            isApiFalied(true)
                             hideProgressBar()
                         }
                         ApiCallStatus.START -> {
@@ -278,7 +278,6 @@ class LeaderBoardViewPagerActivity : BaseConnectionErrorActivity() {
     override fun isInternetAvailable(isInternetAvailable: Boolean) { }
 
     override fun onRetry() {
-        binding.errorContainer.visibility = View.GONE
         supportFragmentManager.popBackStack()
         viewModel.getFullLeaderBoardData(Mentor.getInstance().getId(), getCourseId())
     }

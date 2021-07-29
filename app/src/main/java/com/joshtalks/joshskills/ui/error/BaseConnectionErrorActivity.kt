@@ -1,8 +1,5 @@
 package com.joshtalks.joshskills.ui.error
 
-import android.view.View
-import android.widget.FrameLayout
-import androidx.core.view.isVisible
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
@@ -15,6 +12,7 @@ import io.reactivex.schedulers.Schedulers
 abstract class BaseConnectionErrorActivity : WebRtcMiddlewareActivity() {
     protected val compositeDisposable = CompositeDisposable()
     protected var internetAvailableFlag: Boolean = true
+    protected var dialogFragment: ConnectionErrorDialogFragment? = null
 
     override fun onResume() {
         super.onResume()
@@ -55,22 +53,22 @@ abstract class BaseConnectionErrorActivity : WebRtcMiddlewareActivity() {
         )
     }
 
-    fun isApiFalied(isApiSuccess: Boolean, container: FrameLayout, stringId:Int?=null) {
-        if(isApiSuccess){
-            if (container.isVisible){
+    fun isApiFalied(isApiSuccess: Boolean, stringId: Int? = null) {
+        if (isApiSuccess) {
+            if (dialogFragment?.isVisible == true) {
+                dialogFragment?.dismiss()
+                dialogFragment = null
                 onRetry()
             }
         } else {
-            if (container.isVisible.not()){
-                container.visibility = View.VISIBLE
-                supportFragmentManager
-                    .beginTransaction()
-                    .replace(
-                        container.id,
-                        ConnectionErrorDialogFragment.newInstance(getString(stringId?: R.string.connection_error)),
-                        ConnectionErrorDialogFragment.TAG
+            if (dialogFragment?.isVisible == false || dialogFragment == null) {
+                dialogFragment = ConnectionErrorDialogFragment.newInstance(
+                    getString(
+                        stringId ?: R.string.connection_error
                     )
-                    .commitAllowingStateLoss()
+                )
+                dialogFragment?.show(supportFragmentManager, ConnectionErrorDialogFragment.TAG)
+
             }
         }
     }

@@ -19,11 +19,15 @@
         android:layout_height="match_parent">
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/image_bg"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintStart_toStartOf="parent"
             android:scaleType="fitXY"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1"
             app:layout_constraintHeight_percent="0.6"
+            app:layout_constraintWidth_percent="1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:srcCompat="@drawable/connection_error_gradient_bg_4x"/>
@@ -59,6 +63,8 @@
             android:layout_height="@dimen/_70sdp"
             android:layout_marginBottom="@dimen/_20sdp"
             app:layout_constraintBottom_toTopOf="@+id/title"
+            app:layout_constraintTop_toTopOf="@id/image_bg"
+            app:layout_constraintVertical_bias="1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:srcCompat="@drawable/ic_error_black"

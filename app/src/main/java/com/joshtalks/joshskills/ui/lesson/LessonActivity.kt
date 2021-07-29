@@ -142,7 +142,6 @@ class LessonActivity : BaseConnectionErrorActivity(), LessonActivityListener {
 
     override fun onRetry() {
         binding.progressView.visibility = View.VISIBLE
-        binding.errorContainer.visibility = View.GONE
         supportFragmentManager.popBackStack()
         val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
         viewModel.getLesson(lessonId)
@@ -281,13 +280,13 @@ class LessonActivity : BaseConnectionErrorActivity(), LessonActivityListener {
                 binding.progressView.visibility = View.GONE
                 when(it){
                     ApiCallStatus.FAILED ->{
-                        isApiFalied(false,binding.errorContainer,R.string.no_load_lesson_txt)
+                        isApiFalied(false,R.string.no_load_lesson_txt)
                     }
                     ApiCallStatus.SUCCESS ->{
-                        isApiFalied(true,binding.errorContainer)
+                        isApiFalied(true)
                     }
                     else ->{
-                        isApiFalied(false,binding.errorContainer,R.string.no_load_lesson_txt)
+                        isApiFalied(false,R.string.no_load_lesson_txt)
                     }
                 }
             }

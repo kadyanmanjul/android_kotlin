@@ -189,10 +189,10 @@ class UserProfileActivity : BaseConnectionErrorActivity() {
         viewModel.apiCallStatusLiveData.observe(this) {
             if (it == ApiCallStatus.SUCCESS) {
                 hideProgressBar()
-                isApiFalied(true, binding.errorContainer)
+                isApiFalied(true)
             } else if (it == ApiCallStatus.FAILED) {
                 hideProgressBar()
-                isApiFalied(false, binding.errorContainer, R.string.connection_error)
+                isApiFalied(false, R.string.connection_error)
             } else if (it == ApiCallStatus.START) {
                 showProgressBar()
             }
@@ -438,7 +438,6 @@ class UserProfileActivity : BaseConnectionErrorActivity() {
     }
 
     override fun onRetry() {
-        binding.errorContainer.visibility = View.GONE
         supportFragmentManager.popBackStack()
         getProfileData(intervalType, previousPage)
     }

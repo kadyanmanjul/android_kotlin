@@ -176,11 +176,11 @@ class CourseProgressActivityNew :
                 }
                 ApiCallStatus.SUCCESS->{
                     binding.progressLayout.visibility = View.GONE
-                    isApiFalied(true, binding.errorContainer)
+                    isApiFalied(true)
                 }
                 ApiCallStatus.FAILED->{
                     binding.progressLayout.visibility = View.GONE
-                    isApiFalied(false, binding.errorContainer, R.string.connection_error)
+                    isApiFalied(false, R.string.connection_error)
                 }
                 else -> {
                     binding.progressLayout.visibility = View.GONE
@@ -218,7 +218,6 @@ class CourseProgressActivityNew :
     }
 
     override fun onRetry() {
-        binding.errorContainer.visibility = View.GONE
         supportFragmentManager.popBackStack()
         getData()
     }
