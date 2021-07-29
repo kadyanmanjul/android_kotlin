@@ -80,6 +80,12 @@
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
         <activity
+            android:name=".ui.signup.FreeTrialOnBoardActivity"
+            android:alwaysRetainTaskState="true"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:launchMode="singleTop"
+            android:theme="@style/AppNoBarTheme" />
+        <activity
             android:name=".ui.introduction.IntroductionActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:launchMode="singleTask"
@@ -93,8 +99,9 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity android:name=".ui.online_test.OnlineTestActivity"
-            android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name=".ui.online_test.OnlineTestActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.points_history.PointsInfoActivity" />
         <activity android:name=".ui.introduction.DemoSpeakingPractiseActivity" />
         <activity android:name=".ui.points_history.PointsHistoryActivity" />
@@ -406,7 +413,6 @@
             android:showWhenLocked="true"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
         <activity
             android:name=".ui.voip.voip_rating.VoipCallFeedbackActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
@@ -414,7 +420,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
         <activity android:name=".ui.deeplink.DeeplinkAnalyzeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -734,7 +739,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-
     </application>
 
 </manifest>

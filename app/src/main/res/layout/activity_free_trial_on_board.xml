@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.signup.FreeTrialOnBoardActivity">
+
+    <data>
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.1"
+            app:srcCompat="@drawable/josh_skill_logo" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txtHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:text="Spoken English Course"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/logo" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewHighlights"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_24sdp"
+            app:cardElevation="@dimen/_4sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtHeading">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/_12sdp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/_24sdp"
+                    android:paddingVertical="@dimen/_2sdp"
+                    android:paddingStart="@dimen/_24sdp"
+                    android:paddingEnd="@dimen/_12sdp"
+                    android:text="90 Day Course"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                    android:textColor="@color/black"
+                    app:drawableStartCompat="@drawable/ic_check_box"
+                    app:drawableTint="@color/right_answer_color" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_check_box"
+                    android:drawablePadding="@dimen/_24sdp"
+                    android:paddingVertical="@dimen/_2sdp"
+                    android:paddingStart="@dimen/_24sdp"
+                    android:paddingEnd="@dimen/_12sdp"
+                    android:text="Beginner To Advanced"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                    android:textColor="@color/black"
+                    app:drawableTint="@color/right_answer_color" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_check_box"
+                    android:drawablePadding="@dimen/_24sdp"
+                    android:paddingVertical="@dimen/_2sdp"
+                    android:paddingStart="@dimen/_24sdp"
+                    android:paddingEnd="@dimen/_12sdp"
+                    android:text="Course Fees ₹499"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                    android:textColor="@color/black"
+                    app:drawableTint="@color/right_answer_color" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.cardview.widget.CardView>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/btnStartTrial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/_14sdp"
+            android:background="@drawable/round_rectangle_for_course_expo"
+            android:backgroundTint="@color/button_color"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:onClick="@{()->handler.startTrial()}"
+            android:paddingHorizontal="@dimen/_8sdp"
+            android:paddingVertical="@dimen/_14sdp"
+            android:text="Start 1 Day Free Trial"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+            android:textColor="@color/white"
+            app:cornerRadius="@dimen/_32sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardViewHighlights"
+            app:layout_constraintVertical_bias="0.65" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txtLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:onClick="@{()->handler.signUp()}"
+            android:padding="@dimen/_4sdp"
+            android:text="Already a user? Log in"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toBottomOf="@+id/btnStartTrial" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

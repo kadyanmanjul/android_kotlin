@@ -40,7 +40,6 @@ import com.google.firebase.inappmessaging.model.Action
 import com.google.firebase.inappmessaging.model.InAppMessage
 import com.google.firebase.ktx.Firebase
 import com.google.gson.reflect.TypeToken
-import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -80,6 +79,7 @@ import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
+import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.termsandconditions.WebViewFragment
@@ -293,6 +293,10 @@ abstract class BaseActivity :
                     }
                     PrefManager.getBoolValue(IS_PAYMENT_DONE, false) -> {
                         Intent(this, SignUpActivity::class.java)
+                    }
+                    PrefManager.getBoolValue(IS_FREE_TRIAL, false, true) -> {
+                        // TODO -> change defValue from true to false
+                        Intent(this, FreeTrialOnBoardActivity::class.java)
                     }
                     else -> {
                         Intent(this, OnBoardActivity::class.java)
