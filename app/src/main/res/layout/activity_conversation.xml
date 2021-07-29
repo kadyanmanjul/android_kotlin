@@ -221,8 +221,9 @@
                 android:id="@+id/lesson_tooltip_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8sdp"
                 android:layout_marginTop="@dimen/_236sdp"
-                android:background="@drawable/bg_tooltip">
+                android:background="@drawable/bg_tooltip_small_center">
 
                 <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                     android:layout_width="wrap_content"
