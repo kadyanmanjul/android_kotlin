@@ -108,11 +108,9 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         setContentView(binding.root)
         viewModel = ConversationLiveRoomViewModel()
         getIntentExtras()
-        bindService(
-            Intent(this, WebRtcService::class.java),
-            myConnection,
-            BIND_AUTO_CREATE
-        )
+        val intent = Intent(AppObjectController.joshApplication, WebRtcService::class.java)
+        startService(intent)
+        WebRtcService.isConversionRoomActive = true
 //        myConnection
         binding.notificationBar.setNotificationViewEnquiryAction(this)
         val liveRoomReference = database.collection("conversation_rooms")
@@ -122,7 +120,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         handler = Handler(Looper.getMainLooper())
         updateUI()
         initializeEngine()
-//        takePermissions()
+        takePermissions()
         setNotificationStates()
         leaveRoomIfModeratorEndRoom()
 
@@ -972,6 +970,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     override fun onStart() {
         super.onStart()
+        bindService(
+            Intent(this, WebRtcService::class.java),
+            myConnection,
+            BIND_AUTO_CREATE
+        )
     }
 
     override fun onPause() {
