@@ -557,21 +557,18 @@
         <item name="android:layout_width">fill_parent</item>
 
         <!-- No backgrounds, titles or window float -->
-        <style name="split_line_horizontal">
-            592
-            <item name="android:layout_width">match_parent</item>
-            593
-            <item name="android:layout_height">@dimen/_2sdp</item>
-            594
-            <item name="android:background">@color/light_shade_of_gray</item>
-            595
-        </style>
         <item name="android:windowBackground">@null</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">false</item>
 
         <!-- Just to prove it's working -->
         <item name="android:background">#fff</item>
+    </style>
+
+    <style name="split_line_horizontal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/_2sdp</item>
+        <item name="android:background">@color/light_shade_of_gray</item>
     </style>
 
     <style name="ExpandedAppBar" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
