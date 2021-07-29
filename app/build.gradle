@@ -408,7 +408,7 @@ dependencies {
     //Flow Layout
     implementation 'com.nex3z:flow-layout:1.2.2'
     //Bugsee
-    implementation 'com.bugsee:bugsee-android:+'
+    implementation 'com.bugsee:bugsee-android:1.19.18'
     //smartLook
     implementation 'com.smartlook.recording:app:1.8.1-native'
     implementation 'com.userexperior:userexperior-android:6.0.6'
