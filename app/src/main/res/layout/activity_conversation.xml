@@ -217,6 +217,29 @@
                     tools:listitem="@layout/lesson_progress_stub" />
             </com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout>
 
+            <FrameLayout
+                android:id="@+id/lesson_tooltip_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_236sdp"
+                android:background="@drawable/bg_tooltip">
+
+                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/_12sdp"
+                    android:paddingTop="@dimen/_18sdp"
+                    android:paddingBottom="@dimen/_8sdp"
+                    android:text="You will find new lessons here daily"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            </FrameLayout>
+
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/scroll_to_end_button"
                 android:layout_width="@dimen/_32sdp"
