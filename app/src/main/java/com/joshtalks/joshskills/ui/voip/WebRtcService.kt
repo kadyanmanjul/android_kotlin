@@ -37,11 +37,11 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingActivity
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CallType
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -765,7 +765,7 @@ class WebRtcService : BaseWebRtcService() {
             showDefaultNotification()
             timer.cancel()
         }
-        if (!PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE)) {
+        if (!isConversionRoomActive) {
             executor.execute {
                 intent?.action?.run {
                     initEngine {
@@ -903,6 +903,29 @@ class WebRtcService : BaseWebRtcService() {
                     }
                 }
             }
+        } else {
+            executor.execute {
+                intent?.action?.run {
+                    initEngine {
+                        try {
+                            when {
+                                this == ConversationRoomJoin().action -> {
+                                    removeNotifications()
+                                    val roomId = intent.getStringExtra("room_id")
+                                    val conversatonRoomIntent = Intent(this@WebRtcService, ConversationRoomListingActivity::class.java)
+                                    conversatonRoomIntent.putExtra("open_from_notification", false)
+                                    conversatonRoomIntent.putExtra("room_id", roomId)
+                                    startActivity(conversatonRoomIntent)
+                                }
+                            }
+
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
+                    }
+                }
+            }
+
         }
         return START_NOT_STICKY
     }
@@ -947,7 +970,8 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     private fun audioFocus() {
-        val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val audioManager: AudioManager =
+            getSystemService(Context.AUDIO_SERVICE) as AudioManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val af = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).run {
                 setAudioAttributes(
@@ -1125,7 +1149,10 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     private fun showDefaultNotification() {
-        showNotification(actionNotification(DEFAULT_NOTIFICATION_TITLE), ACTION_NOTIFICATION_ID)
+        showNotification(
+            actionNotification(DEFAULT_NOTIFICATION_TITLE),
+            ACTION_NOTIFICATION_ID
+        )
     }
 
     fun answerCall(data: HashMap<String, String?>) {
@@ -1383,7 +1410,10 @@ class WebRtcService : BaseWebRtcService() {
                     )
                 }
                 CallForceConnect().action -> {
-                    showNotification(actionNotification("Connecting Call"), ACTION_NOTIFICATION_ID)
+                    showNotification(
+                        actionNotification("Connecting Call"),
+                        ACTION_NOTIFICATION_ID
+                    )
                 }
                 CallDisconnect().action -> {
                     showNotification(
@@ -1509,7 +1539,12 @@ class WebRtcService : BaseWebRtcService() {
                 }
 
         val answerPendingIntent: PendingIntent =
-            PendingIntent.getService(this, 0, answerActionIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getService(
+                this,
+                0,
+                answerActionIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
 
         builder.addAction(
             NotificationCompat.Action(
@@ -1617,9 +1652,10 @@ class WebRtcService : BaseWebRtcService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name: CharSequence = "Voip call connect"
             val importance: Int = NotificationManager.IMPORTANCE_LOW
-            val mChannel = NotificationChannel(CALL_NOTIFICATION_CHANNEL, name, importance).apply {
-                description = "Notifications for voice calling"
-            }
+            val mChannel =
+                NotificationChannel(CALL_NOTIFICATION_CHANNEL, name, importance).apply {
+                    description = "Notifications for voice calling"
+                }
             mNotificationManager?.createNotificationChannel(mChannel)
         }
 
@@ -1644,29 +1680,31 @@ class WebRtcService : BaseWebRtcService() {
                 declineActionIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
-        val lNotificationBuilder = NotificationCompat.Builder(this, CALL_NOTIFICATION_CHANNEL)
-            .setChannelId(CALL_NOTIFICATION_CHANNEL)
-            .setContentIntent(pendingIntent)
-            .setContentTitle(getNameAfterConnectedCall(data))
-            .setContentText("Ongoing voice call")
-            .setSmallIcon(R.drawable.ic_status_bar_notification)
-            .setColor(
-                ContextCompat.getColor(
-                    AppObjectController.joshApplication,
-                    R.color.colorPrimary
+        val lNotificationBuilder =
+            NotificationCompat.Builder(this, CALL_NOTIFICATION_CHANNEL)
+                .setChannelId(CALL_NOTIFICATION_CHANNEL)
+                .setContentIntent(pendingIntent)
+                .setContentTitle(getNameAfterConnectedCall(data))
+                .setContentText("Ongoing voice call")
+                .setSmallIcon(R.drawable.ic_status_bar_notification)
+                .setColor(
+                    ContextCompat.getColor(
+                        AppObjectController.joshApplication,
+                        R.color.colorPrimary
+                    )
                 )
-            )
-            .setOngoing(true)
-            .setContentInfo("Outgoing call")
-            .addAction(
-                NotificationCompat.Action(
-                    R.drawable.ic_call_end,
-                    getActionText(R.string.hang_up, R.color.error_color),
-                    declineActionPendingIntent
+                .setOngoing(true)
+                .setContentInfo("Outgoing call")
+                .addAction(
+                    NotificationCompat.Action(
+                        R.drawable.ic_call_end,
+                        getActionText(R.string.hang_up, R.color.error_color),
+                        declineActionPendingIntent
+                    )
+                ).setStyle(
+                    androidx.media.app.NotificationCompat.MediaStyle()
+                        .setShowActionsInCompactView(0)
                 )
-            ).setStyle(
-                androidx.media.app.NotificationCompat.MediaStyle().setShowActionsInCompactView(0)
-            )
         return lNotificationBuilder.build()
     }
 
@@ -1683,18 +1721,19 @@ class WebRtcService : BaseWebRtcService() {
             }
             mNotificationManager?.createNotificationChannel(mChannel)
         }
-        val lNotificationBuilder = NotificationCompat.Builder(this, CALL_NOTIFICATION_CHANNEL)
-            .setChannelId(CALL_NOTIFICATION_CHANNEL)
-            .setContentTitle(title)
-            .setSmallIcon(R.drawable.ic_status_bar_notification)
-            .setColor(
-                ContextCompat.getColor(
-                    AppObjectController.joshApplication,
-                    R.color.colorPrimary
+        val lNotificationBuilder =
+            NotificationCompat.Builder(this, CALL_NOTIFICATION_CHANNEL)
+                .setChannelId(CALL_NOTIFICATION_CHANNEL)
+                .setContentTitle(title)
+                .setSmallIcon(R.drawable.ic_status_bar_notification)
+                .setColor(
+                    ContextCompat.getColor(
+                        AppObjectController.joshApplication,
+                        R.color.colorPrimary
+                    )
                 )
-            )
-            .setOngoing(true)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setOngoing(true)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
 
         if (title != DEFAULT_NOTIFICATION_TITLE)
             lNotificationBuilder.setProgress(0, 0, true)
@@ -1724,7 +1763,10 @@ class WebRtcService : BaseWebRtcService() {
         return "Speaking Practice"
     }
 
-    private fun getActionText(@StringRes stringRes: Int, @ColorRes colorRes: Int): Spannable {
+    private fun getActionText(
+        @StringRes stringRes: Int,
+        @ColorRes colorRes: Int
+    ): Spannable {
         val spannable: Spannable = SpannableString(getText(stringRes))
         spannable.setSpan(
             ForegroundColorSpan(ContextCompat.getColor(this, colorRes)),
@@ -1769,14 +1811,22 @@ class WebRtcService : BaseWebRtcService() {
 
 sealed class WebRtcCalling
 data class InitLibrary(val action: String = "calling.action.initLibrary") : WebRtcCalling()
-data class IncomingCall(val action: String = "calling.action.incoming_call") : WebRtcCalling()
+data class IncomingCall(val action: String = "calling.action.incoming_call") :
+    WebRtcCalling()
+
 data class CallConnect(val action: String = "calling.action.connect") : WebRtcCalling()
-data class CallDisconnect(val action: String = "calling.action.disconnect") : WebRtcCalling()
+data class CallDisconnect(val action: String = "calling.action.disconnect") :
+    WebRtcCalling()
+
 data class CallReject(val action: String = "calling.action.callReject") : WebRtcCalling()
 
-data class OutgoingCall(val action: String = "calling.action.outgoing_call") : WebRtcCalling()
+data class OutgoingCall(val action: String = "calling.action.outgoing_call") :
+    WebRtcCalling()
+
 data class CallStop(val action: String = "calling.action.stopcall") : WebRtcCalling()
-data class CallForceConnect(val action: String = "calling.action.force_connect") : WebRtcCalling()
+data class CallForceConnect(val action: String = "calling.action.force_connect") :
+    WebRtcCalling()
+
 data class CallForceDisconnect(val action: String = "calling.action.force_disconnect") :
     WebRtcCalling()
 
@@ -1786,6 +1836,8 @@ data class NoUserFound(val action: String = "calling.action.no_user_found") :
 data class HoldCall(val action: String = "calling.action.hold_call") : WebRtcCalling()
 data class ResumeCall(val action: String = "calling.action.resume_call") : WebRtcCalling()
 data class UserJoined(val action: String = "calling.action.resume_call") : WebRtcCalling()
+data class ConversationRoomJoin(val action: String = "calling.action.conversation_room_joined") :
+    WebRtcCalling()
 
 data class FavoriteIncomingCall(val action: String = "calling.action.favorite_incoming_call") :
     WebRtcCalling()

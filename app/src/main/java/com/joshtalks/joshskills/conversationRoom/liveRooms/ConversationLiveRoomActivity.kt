@@ -1,12 +1,15 @@
 package com.joshtalks.joshskills.conversationRoom.liveRooms
 
+import android.content.ComponentName
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.ServiceConnection
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.IBinder
 import android.os.Looper
 import android.view.View
 import android.view.Window
@@ -40,6 +43,7 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.voip.ConversationRoomCallback
+import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -55,11 +59,13 @@ import kotlin.math.abs
 
 class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeakerClickAction,
     NotificationView.NotificationViewAction {
+    private var mServiceBound: Boolean = false
     lateinit var binding: ActivityConversationLiveRoomBinding
     lateinit var viewModel: ConversationLiveRoomViewModel
     val database = FirebaseFirestore.getInstance()
     var roomReference: DocumentReference? = null
     var usersReference: CollectionReference? = null
+    private var mBoundService: WebRtcService? = null
 
     var roomId: Int? = null
     var isRoomCreatedByUser: Boolean = false
@@ -102,6 +108,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         setContentView(binding.root)
         viewModel = ConversationLiveRoomViewModel()
         getIntentExtras()
+        myConnection
         binding.notificationBar.setNotificationViewEnquiryAction(this)
         val liveRoomReference = database.collection("conversation_rooms")
         roomReference = liveRoomReference.document(roomId.toString())
@@ -127,7 +134,22 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         listenerAdapter?.startListening()
     }
 
-    private fun getUserName() {
+    private var myConnection: ServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val myBinder = service as WebRtcService.MyBinder
+            mBoundService = myBinder.getService()
+            mServiceBound = true
+            mBoundService?.addListener(conversationRoomCallback)
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            mServiceBound = false
+        }
+
+    }
+
+
+        private fun getUserName() {
         usersReference?.document(agoraUid.toString())?.get()?.addOnSuccessListener {
             currentUserName = it.get("name").toString()
             iSSoundOn = it.get("is_mic_on") == true
