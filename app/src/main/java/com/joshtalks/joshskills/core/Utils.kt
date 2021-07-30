@@ -106,14 +106,13 @@ val YYYY_MM_DD = SimpleDateFormat("yyyy-MM-dd")
 val DD_MM_YYYY = SimpleDateFormat("dd/MM/yyyy")
 val DATE_FORMATTER = SimpleDateFormat("yyyy-MM-dd")
 val DATE_FORMATTER_2 = SimpleDateFormat("dd - MMM - yyyy")
+const val IS_FOREGROUND = "is_foreground"
 
 object Utils {
 
     fun formatToShort(number: Int?): String {
-
         try {
             var value = number!! * 1.0
-
             val power: Int
             val suffix = " kmbt"
             var formattedNumber: String
@@ -788,7 +787,7 @@ object Utils {
             val bitmap: Bitmap
             val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
             connection.connect()
-            val input: InputStream = connection.getInputStream()
+            val input: InputStream = connection.inputStream
             bitmap = BitmapFactory.decodeStream(input)
             BitmapDrawable(Resources.getSystem(), bitmap)
         } catch (ex: Exception) {
@@ -1133,6 +1132,7 @@ fun Intent.startServiceForWebrtc() {
     if (JoshApplication.isAppVisible) {
         AppObjectController.joshApplication.startService(this)
     } else {
+        this.putExtra(IS_FOREGROUND, true)
         ContextCompat.startForegroundService(
             AppObjectController.joshApplication,
             this
@@ -1333,7 +1333,7 @@ fun getScreenSize(context: Context): IntArray {
     widthHeight[HEIGHT_INDEX] = 0
     val windowManager: WindowManager =
         context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-    val display: Display = windowManager.getDefaultDisplay()
+    val display: Display = windowManager.defaultDisplay
     val size = Point()
     display.getSize(size)
     widthHeight[WIDTH_INDEX] = size.x
@@ -1346,8 +1346,8 @@ fun getScreenSize(context: Context): IntArray {
     }
     // Last defense. Use deprecated API that was introduced in lower than API 13
     if (!isScreenSizeRetrieved(widthHeight)) {
-        widthHeight[0] = display.getWidth() // deprecated
-        widthHeight[1] = display.getHeight() // deprecated
+        widthHeight[0] = display.width // deprecated
+        widthHeight[1] = display.height // deprecated
     }
     return widthHeight
 }

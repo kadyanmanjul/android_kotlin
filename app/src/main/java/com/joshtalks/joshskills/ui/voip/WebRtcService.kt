@@ -39,6 +39,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CallType
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IS_FOREGROUND
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -89,9 +90,10 @@ const val RTC_NAME = "caller_name"
 const val RTC_CALLER_PHOTO = "caller_photo"
 const val RTC_IS_FAVORITE = "is_favorite"
 const val RTC_PARTNER_ID = "partner_id"
+const val DEFAULT_NOTIFICATION_TITLE = "Josh Skills App Running"
 
 class WebRtcService : BaseWebRtcService() {
-
+    private val TAG = "WebRtcService"
     private val mBinder: IBinder = MyBinder()
     private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
         HangUpRtcOnPstnCallAnsweredListener()
@@ -108,6 +110,7 @@ class WebRtcService : BaseWebRtcService() {
     private var isSpeakerEnabled = false
     private var oppositeCallerId: Int? = null
     private var userDetailMap: HashMap<String, String>? = null
+    private var notificationState = NotificationState.NOT_VISIBLE
 
     companion object {
         private val TAG = WebRtcService::class.java.simpleName
@@ -580,6 +583,7 @@ class WebRtcService : BaseWebRtcService() {
 
     @SuppressLint("InvalidWakeLockTag")
     override fun onCreate() {
+        //timer.start()
         super.onCreate()
         Timber.tag(TAG).e("onCreate")
         initIncomingCallChannel()
@@ -679,6 +683,11 @@ class WebRtcService : BaseWebRtcService() {
     @Suppress("UNCHECKED_CAST")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Timber.tag(TAG).e("onStartCommand=  %s", intent?.action)
+        val isForeground = intent?.extras?.getBoolean(IS_FOREGROUND, false)
+        Timber.tag(TAG).e("onStartCommand: is Foreground --> $isForeground")
+        if (isForeground == true && notificationState == NotificationState.NOT_VISIBLE) {
+            showDefaultNotification()
+        }
         executor.execute {
             intent?.action?.run {
                 initEngine {
@@ -1032,6 +1041,10 @@ class WebRtcService : BaseWebRtcService() {
         isCallOnGoing.postValue(false)
     }
 
+    private fun showDefaultNotification() {
+        showNotification(actionNotification(DEFAULT_NOTIFICATION_TITLE), ACTION_NOTIFICATION_ID)
+    }
+
     fun answerCall(data: HashMap<String, String?>) {
         executor.execute {
             try {
@@ -1158,6 +1171,7 @@ class WebRtcService : BaseWebRtcService() {
     fun getCallType() = callType
 
     override fun onBind(intent: Intent): IBinder {
+        Timber.tag(TAG).e("onBind")
         return mBinder
     }
 
@@ -1211,6 +1225,7 @@ class WebRtcService : BaseWebRtcService() {
         try {
             mNotificationManager?.cancelAll()
             stopForeground(true)
+            notificationState = NotificationState.NOT_VISIBLE
             addMissCallNotification()
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -1232,6 +1247,10 @@ class WebRtcService : BaseWebRtcService() {
         callStartTime = 0L
         retryInitLibrary = 0
         userDetailMap = null
+        stopForeground(true)
+        notificationState = NotificationState.NOT_VISIBLE
+        Timber.tag(TAG).e("onTaskRemoved")
+        stopSelf()
         super.onTaskRemoved(rootIntent)
         Timber.tag(TAG).e("OnTaskRemoved")
     }
@@ -1243,7 +1262,7 @@ class WebRtcService : BaseWebRtcService() {
         isEngineInitialized = false
         joshAudioManager?.quitEverything()
         AppObjectController.mRtcEngine = null
-        handlerThread?.quitSafely()
+        handlerThread.quitSafely()
         isTimeOutToPickCall = false
         isCallerJoined = false
         callStartTime = 0L
@@ -1256,11 +1275,13 @@ class WebRtcService : BaseWebRtcService() {
         Timber.tag(TAG).e("onDestroy")
         // removeSensor()
         executor.shutdown()
+        stopForeground(true)
+        notificationState = NotificationState.NOT_VISIBLE
+        stopSelf()
         super.onDestroy()
     }
 
     private fun addNotification(action: String, data: HashMap<String, String?>?) {
-        // mNotificationManager?.cancelAll()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             when (action) {
                 IncomingCall().action, FavoriteIncomingCall().action -> {
@@ -1293,6 +1314,7 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     private fun showNotification(notification: Notification, notificationId: Int) {
+        Timber.tag(TAG).e("showNotification")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(
                 notificationId,
@@ -1302,6 +1324,7 @@ class WebRtcService : BaseWebRtcService() {
         } else {
             startForeground(notificationId, notification)
         }
+        notificationState = NotificationState.VISIBLE
     }
 
     private fun canHeadsUpNotification(): Boolean {
@@ -1590,7 +1613,10 @@ class WebRtcService : BaseWebRtcService() {
             )
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setProgress(0, 0, true)
+
+        if (title != DEFAULT_NOTIFICATION_TITLE)
+            lNotificationBuilder.setProgress(0, 0, true)
+
         lNotificationBuilder.priority = NotificationCompat.PRIORITY_MAX
         return lNotificationBuilder.build()
     }
@@ -1718,3 +1744,11 @@ interface WebRtcCallback {
     fun onUnHoldCall() {}
     fun onSpeakerOff() {}
 }
+
+enum class NotificationState {
+    VISIBLE, NOT_VISIBLE
+}
+
+/*enum class ServiceNotificationState {
+    NONE, ACTION, INCOMING, CONNECTED
+}*/
