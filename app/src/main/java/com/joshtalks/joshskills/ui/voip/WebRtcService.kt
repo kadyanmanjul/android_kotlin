@@ -1,9 +1,5 @@
 package com.joshtalks.joshskills.ui.voip
 
-//import androidx.mediarouter.media.MediaControlIntent
-//import androidx.mediarouter.media.MediaRouteSelector
-//import androidx.mediarouter.media.MediaRouter
-
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Notification
@@ -110,26 +106,18 @@ class WebRtcService : BaseWebRtcService(), BluetoothProfile.ServiceListener {
     var isBluetoothEnabled = false
         private set
     private var bluetoothAdapter: BluetoothAdapter? = null
+    private val AUDIO_SWITCH_OFFSET = 1000L
     private var oppositeCallerId: Int? = null
     private var userDetailMap: HashMap<String, String>? = null
-    //private val bluetoothReceiver = BluetoothReceiver()
-    var currentButtonState = VoipButtonState.NONE
-    /*private val mediaRouting = MediaRouter.getInstance(AppObjectController.joshApplication)
-    private val mediaRouteSelector = MediaRouteSelector.Builder()
-    .addControlCategory(MediaControlIntent.CATEGORY_LIVE_AUDIO)
-    .build()
-    private val mediaRouteCallback = object : MediaRouter.Callback() {
-        override fun onRouteChanged(router: MediaRouter?, route: MediaRouter.RouteInfo?) {
-            super.onRouteChanged(router, route)
-            Log.d(TAG, "onRouteChanged: $router ---- $route")
-        }
-    }*/
 
     companion object {
         private val TAG = WebRtcService::class.java.simpleName
         var pstnCallState = CallState.CALL_STATE_IDLE
 
         var isOnPstnCall = false
+
+        var BLUETOOTH_RETRY_COUNT = 0
+        var currentButtonState = VoipButtonState.NONE
 
         @JvmStatic
         private val callReconnectTime = AppObjectController.getFirebaseRemoteConfig()
@@ -305,80 +293,17 @@ class WebRtcService : BaseWebRtcService(), BluetoothProfile.ServiceListener {
     @Volatile
     private var eventListener: IRtcEngineEventHandler? = object : IRtcEngineEventHandler() {
 
-        /*override fun onAudioRouteChanged(routing: Int) {
-            super.onAudioRouteChanged(routing)
-            Timber.tag(TAG).e("onAudioRouteChanged=  $routing")
-            executor.submit {
-                if (routing == AUDIO_ROUTE_HEADSET) {
-                    bluetoothDisconnected()
-                    callCallback?.get()?.onSpeakerOff()
-                    isSpeakerEnabled = false
-                    mRtcEngine?.setDefaultAudioRoutetoSpeakerphone(isSpeakerEnabled)
-                } else if (routing == AUDIO_ROUTE_HEADSETBLUETOOTH) {
-                    callCallback?.get()?.onSpeakerOff()
-                    isSpeakerEnabled = false
-                    bluetoothConnected()
-                } else {
-                    bluetoothDisconnected()
-                }
-               *//* Timber.tag("Bluetooth ISSUE").d("onAudioRouteChanged: ")
-                when (routing) {
-                    Constants.AUDIO_ROUTE_DEFAULT -> {
-                        bluetoothDisconnected()
-                        showToast("DEFAULT")
-                    }
-                    AUDIO_ROUTE_HEADSET -> {
-                        Timber.tag("Bluetooth ISSUE").d("onAudioRouteChanged: AUDIO_ROUTE_HEADSET ")
-                        showToast("HEADSET")
-                        bluetoothDisconnected()
-                        callCallback?.get()?.onSpeakerOff()
-                        isSpeakerEnabled = false
-                        mRtcEngine?.setDefaultAudioRoutetoSpeakerphone(isSpeakerEnabled)
-                    }
-                    AUDIO_ROUTE_HEADSETBLUETOOTH -> {
-                        Timber.tag("Bluetooth ISSUE")
-                            .d("onAudioRouteChanged: AUDIO_ROUTE_HEADSETBLUETOOTH ")
-                        showToast("BLUETOOTH HEADSET")
-                        callCallback?.get()?.onSpeakerOff()
-                        isSpeakerEnabled = false
-                        bluetoothConnected()
-                    }
-                    Constants.AUDIO_ROUTE_LOUDSPEAKER -> {
-                        bluetoothDisconnected()
-                        showToast("LOUDSPEAKER")
-                    }
-                    Constants.AUDIO_ROUTE_SPEAKERPHONE -> {
-                        bluetoothDisconnected()
-                        showToast("SPEAKERPHONE")
-                    }
-                    Constants.AUDIO_ROUTE_EARPIECE -> {
-                        bluetoothDisconnected()
-                        showToast("EARPIECE")
-                    }
-                    else -> {
-                        bluetoothDisconnected()
-                        showToast("ELSE $routing")
-                    }
-                }*//*
-            }
-        }*/
-
         override fun onAudioRouteChanged(routing: Int) {
             super.onAudioRouteChanged(routing)
             val am = getSystemService(AUDIO_SERVICE) as AudioManager
                 when (routing) {
                     AUDIO_ROUTE_HEADSETBLUETOOTH -> {
-                        Timber.tag("Bluetooth ISSUE")
-                            .d("onAudioRouteChanged: AUDIO_ROUTE_HEADSETBLUETOOTH ")
-                        showToast("BLUETOOTH HEADSET")
                         VoipAudioState.switchToBluetooth()
                     }
                     Constants.AUDIO_ROUTE_LOUDSPEAKER -> {
-                        showToast("LOUDSPEAKER")
                         VoipAudioState.switchToSpeaker()
                     }
                     Constants.AUDIO_ROUTE_SPEAKERPHONE -> {
-                        showToast("SPEAKERPHONE")
                         VoipAudioState.switchToSpeaker()
                     }
                     else -> {
@@ -386,26 +311,6 @@ class WebRtcService : BaseWebRtcService(), BluetoothProfile.ServiceListener {
                     }
                 }
         }
-
-        /*override fun onLocalAudioStateChanged(state: Int, error: Int) {
-            Log.d(TAG, "onLocalAudioStateChanged: $state")
-            when (state) {
-                LOCAL_AUDIO_STREAM_STATE_STOPPED -> {
-                    //VoipAudioState.switchMicOff()
-                    showToast("Mic On")
-                }
-
-                LOCAL_AUDIO_STREAM_STATE_CAPTURING -> {
-                    //VoipAudioState.switchMicOn()
-                    showToast("Mic Off")
-                }
-
-                LOCAL_AUDIO_STREAM_STATE_FAILED -> {
-                    showToast("Mic Error Occoured")
-                }
-
-            }
-        }*/
 
         override fun onError(errorCode: Int) {
             Timber.tag(TAG).e("onError=  $errorCode")
@@ -666,9 +571,7 @@ class WebRtcService : BaseWebRtcService(), BluetoothProfile.ServiceListener {
     @SuppressLint("InvalidWakeLockTag")
     override fun onCreate() {
         super.onCreate()
-        //registerBluetoothReceiver()
         Timber.tag(TAG).e("onCreate")
-        // mediaRouting.addCallback(mediaRouteSelector, mediaRouteCallback, MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY)
         initIncomingCallChannel()
         pstnCallState = CallState.CALL_STATE_IDLE
         handlerThread.start()
@@ -680,21 +583,6 @@ class WebRtcService : BaseWebRtcService(), BluetoothProfile.ServiceListener {
                 .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_CALL_STATE)
         }
     }
-
-    /*private fun registerBluetoothReceiver() {
-        Log.d(TAG, "registerBluetoothReceiver: ")
-        val filter = IntentFilter().apply {
-            addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
-            addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED)
-            addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
-        }
-        registerReceiver(bluetoothReceiver, filter)
-    }*/
-
-    /*private fun unregisterBluetoothReceiver() {
-        Log.d(TAG, "unregisterBluetoothReceiver: ")
-        unregisterReceiver(bluetoothReceiver)
-    }*/
 
     private fun initIncomingCallChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -946,7 +834,6 @@ class WebRtcService : BaseWebRtcService(), BluetoothProfile.ServiceListener {
             500
         )
         addNotification(CallConnect().action, callData)
-        // addSensor()
         joshAudioManager?.startCommunication()
         joshAudioManager?.stopConnectTone()
         audioFocus()
@@ -965,9 +852,6 @@ class WebRtcService : BaseWebRtcService(), BluetoothProfile.ServiceListener {
                     }
                 )
                 setAcceptsDelayedFocusGain(true)
-                /*setOnAudioFocusChangeListener {
-
-                }*/
                 build()
             }
             af.acceptsDelayedFocusGain()
@@ -1263,209 +1147,106 @@ class WebRtcService : BaseWebRtcService(), BluetoothProfile.ServiceListener {
         return mBinder
     }
 
-    /*fun switchAudioSpeaker() {
-        executor.submit {
-            val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
-            isSpeakerEnabled = !isSpeakerEnabled
-            audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-            mRtcEngine?.setEnableSpeakerphone(isSpeakerEnabled)
-//            mRtcEngine?.setDefaultAudioRoutetoSpeakerphone(isSpeakerEnable)
-            audioManager.isSpeakerphoneOn = isSpeakerEnabled
-            if(isSpeakerEnabled) {
-                isBluetoothEnabled = false
-                callCallback?.get()?.onBluetoothStateChanged(false)
-            }
-        }
-    }*/
-
-    /*fun switchAudioSpeaker() {
-        if (isBluetoothEnabled) {
-            isSpeakerTurningOn = true
-            changeBluetoothState()
-        } else
-            switchSpeaker()
-    }*/
-
-/*    private fun switchSpeaker() {
-        Log.d(TAG, "switchSpeaker: $isSpeakerEnabled")
-        isSpeakerEnabled = !isSpeakerEnabled
-        showToast("Turning $isSpeakerEnabled")
-        val am: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        am.isSpeakerphoneOn = isSpeakerEnabled
-        Log.d(TAG, "switchSpeaker: Is Wired Connected --> ${am.isWiredHeadsetOn}")
-        mRtcEngine?.setEnableSpeakerphone(isSpeakerEnabled)
-
-        if (!isSpeakerEnabled)
-            callCallback?.get()?.onSpeakerOff()
-    }
-
-    private fun changeBluetoothState() {
-        if (bluetoothAdapter?.isEnabled == true) {
-            showToast("Disconnecting Bluetooth ... Please wait")
-            bluetoothAdapter?.disable()
-        } else {
-            if (bluetoothAdapter != null) {
-                bluetoothAdapter?.enable()
-                showToast("Connecting Bluetooth ... Please wait")
-            }
-        }
-    }*/
-
+    @Synchronized
     fun turnOnDefault(state: VoipButtonState) {
+        Log.d(TAG, "turnOnDefault: ")
+        if (state != VoipButtonState.BLUETOOTH)
+            BLUETOOTH_RETRY_COUNT = 0
         val am: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         currentButtonState = state
-        if (bluetoothAdapter?.isEnabled == true)
-            turnOffBluetooth()
-        else {
-            am.isSpeakerphoneOn = false
-            Log.d(
-                TAG,
-                "switchSpeaker: Is Wired Connected --> ${am.isWiredHeadsetOn} SPEAKER TURNING OFF"
-            )
+        am.mode = AudioManager.MODE_IN_COMMUNICATION
+        am.stopBluetoothSco()
+        am.isBluetoothScoOn = false
+        if (state == VoipButtonState.DEFAULT)
+            showToast("Switching to ${if (am.isWiredHeadsetOn) "Earphone" else "Headset"}...")
+        AppObjectController.uiHandler.postDelayed({
             mRtcEngine?.setEnableSpeakerphone(false)
-            VoipAudioState.switchToDefault(am.isWiredHeadsetOn)
-            isSpeakerEnabled = false
-        }
-    }
-
-    fun turnOnBluetooth(state: VoipButtonState) {
-        currentButtonState = state
-        if (bluetoothAdapter != null) {
-            if (bluetoothAdapter?.isEnabled == true) {
-                bluetoothAdapter?.disable()
-            } else {
-                bluetoothAdapter?.enable()
-            }
-            showToast("Switching to Bluetooth...Please wait")
-        } else {
-            showToast("Switching Bluetooth Failed...Try again")
-        }
-    }
-
-    private fun turnOffBluetooth() =
-        bluetoothAdapter?.disable()
-
-    fun turnOnSpeaker(state: VoipButtonState) {
-        val am: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        currentButtonState = state
-        if (bluetoothAdapter?.isEnabled == true)
-            turnOffBluetooth()
-        else {
-            am.isSpeakerphoneOn = true
-            Log.d(TAG, "switchSpeaker: Is Wired Connected --> ${am.isWiredHeadsetOn} SPEAKER")
-            mRtcEngine?.setEnableSpeakerphone(true)
-            VoipAudioState.switchToSpeaker()
-            isSpeakerEnabled = true
-        }
-    }
-
-    /*fun switchAudioViaBluetooth() {
-        executor.submit {
-            if(isBluetoothEnabled)
-                bluetoothDisconnected()
+            am.isSpeakerphoneOn = false
+            if (state == VoipButtonState.BLUETOOTH)
+                turnOnBluetooth(state, isRetrying = true)
             else
-                bluetoothConnected()
+                VoipAudioState.switchToDefault(am.isWiredHeadsetOn)
+        }, AUDIO_SWITCH_OFFSET)
+    }
+
+    @Synchronized
+    fun turnOnBluetooth(state: VoipButtonState, isRetrying: Boolean = false) {
+        Log.d(TAG, "turnOnBluetooth: ")
+        if (!isRetrying && currentButtonState == state) {
+            BLUETOOTH_RETRY_COUNT += 1
+            retryTurningOnBluetooth(state)
+            return
         }
-    }*/
+        currentButtonState = state
+        val am: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        am.mode = AudioManager.MODE_IN_COMMUNICATION
+        mRtcEngine?.setEnableSpeakerphone(false)
+        am.isSpeakerphoneOn = false
+        if (BLUETOOTH_RETRY_COUNT == 0)
+            showToast("Switching to Bluetooth...")
+        else if (BLUETOOTH_RETRY_COUNT < 3)
+            showToast("Retrying($BLUETOOTH_RETRY_COUNT) switching to Bluetooth")
+        else if (BLUETOOTH_RETRY_COUNT == 3)
+            showToast("Please wait... Fixing Bluetooth audio")
+        else if (BLUETOOTH_RETRY_COUNT > 3)
+            showToast("Please restart your bluetooth headset")
+
+        AppObjectController.uiHandler.postDelayed({
+            am.startBluetoothSco()
+            am.isBluetoothScoOn = true
+            VoipAudioState.switchToBluetooth()
+        }, AUDIO_SWITCH_OFFSET)
+    }
+
+    @Synchronized
+    private fun retryTurningOnBluetooth(state: VoipButtonState) {
+        when (BLUETOOTH_RETRY_COUNT) {
+            1 -> {
+                turnOnSpeaker(state)
+            }
+            2 -> {
+                turnOnDefault(state)
+            }
+            3 -> {
+                bluetoothAdapter?.disable()
+            }
+        }
+    }
+
+    @Synchronized
+    fun turnOnSpeaker(state: VoipButtonState) {
+        Log.d(TAG, "turnOnSpeaker: ")
+        if (state != VoipButtonState.BLUETOOTH)
+            BLUETOOTH_RETRY_COUNT = 0
+        currentButtonState = state
+        val am: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        am.mode = AudioManager.MODE_IN_COMMUNICATION
+        am.stopBluetoothSco()
+        am.isBluetoothScoOn = false
+        if (state == VoipButtonState.SPEAKER)
+            showToast("Switching to Speaker...")
+        AppObjectController.uiHandler.postDelayed({
+            mRtcEngine?.setEnableSpeakerphone(true)
+            am.isSpeakerphoneOn = true
+            if (state == VoipButtonState.BLUETOOTH)
+                turnOnBluetooth(state, isRetrying = true)
+            else
+                VoipAudioState.switchToSpeaker()
+        }, AUDIO_SWITCH_OFFSET)
+    }
 
     override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
         Timber.tag("BLUETOOTH").d("bluetoothConnected")
-        if (profile === BluetoothProfile.HEADSET) {
-            isBluetoothEnabled = true
-            callCallback?.get()?.onBluetoothStateChanged(true)
-            isSpeakerEnabled = false
-            mRtcEngine?.setEnableSpeakerphone(isSpeakerEnabled)
-            callCallback?.get()?.onSpeakerOff()
-            showToast("BLUETOOTH CONNECTED")
-            VoipAudioState.switchToBluetooth()
-        }
     }
 
     override fun onServiceDisconnected(profile: Int) {
-        isBluetoothEnabled = false
-        callCallback?.get()?.onBluetoothStateChanged(false)
-        if (profile == BluetoothProfile.HEADSET) {
-            if (currentButtonState == VoipButtonState.BLUETOOTH) {
-                AppObjectController.uiHandler.postDelayed({
-                    bluetoothAdapter?.enable()
-                }, 1000)
-                return
-            }
-            val am: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            if (currentButtonState == VoipButtonState.DEFAULT) {
-                am.isSpeakerphoneOn = false
-                Log.d(TAG, "switchSpeaker: Is Wired Connected --> ${am.isWiredHeadsetOn} DEFAULT")
-                mRtcEngine?.setEnableSpeakerphone(false)
-                VoipAudioState.switchToDefault(am.isWiredHeadsetOn)
-            } else if (currentButtonState == VoipButtonState.SPEAKER && am.isWiredHeadsetOn) {
-                showToast("Wired Headset is connected switching will take some time")
-                /*Handler(mainLooper).postDelayed({
-                    //val am: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-                    am.isSpeakerphoneOn = true
-                    Log.d(TAG, "switchSpeaker: Is Wired Connected --> ${am.isWiredHeadsetOn} SPEAKER")
-                    mRtcEngine?.setEnableSpeakerphone(true)
-                    VoipAudioState.switchToSpeaker()
-                }, 8000)*/
-            } else if (currentButtonState == VoipButtonState.SPEAKER) {
-                am.isSpeakerphoneOn = true
-                Log.d(TAG, "switchSpeaker: Is Wired Connected --> ${am.isWiredHeadsetOn} SPEAKER")
-                mRtcEngine?.setEnableSpeakerphone(true)
-                VoipAudioState.switchToSpeaker()
-            }
-            /*if (isSpeakerTurningOn) {
-                switchSpeaker()
-                isSpeakerTurningOn = false
-            }*/
-            Log.d(TAG, "onServiceDisconnected: ${bluetoothAdapter?.state}")
-            showToast("BLUETOOTH DISCONNECTED")
-            Log.d(TAG, "onServiceDisconnected: ${bluetoothAdapter?.state}")
-        } else {
-            showToast("BT Device Disconnected")
+        if (currentButtonState == VoipButtonState.BLUETOOTH && BLUETOOTH_RETRY_COUNT == 3) {
+            AppObjectController.uiHandler.postDelayed({
+                bluetoothAdapter?.enable()
+            }, 1000)
+            return
         }
     }
-
-    /*private fun bluetoothDisconnected() {
-        Timber.tag("BLUETOOTH").d("bluetoothDisconnected")
-        val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        audioManager.stopBluetoothSco()
-        audioManager.isBluetoothScoOn = false
-        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-        showToast("BLUETOOTH DISCONNECTED")
-    }
-
-    private fun bluetoothConnected() {
-        Timber.tag("BLUETOOTH").d("bluetoothConnected")
-        val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        //if(audioManager.isBluetoothScoAvailableOffCall) {
-            audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-            audioManager.isBluetoothScoOn = true
-            audioManager.startBluetoothSco()
-            audioManager.isSpeakerphoneOn = false
-            isBluetoothEnabled = true
-            callCallback?.get()?.onBluetoothStateChanged(true)
-            showToast("BLUETOOTH CONNECTED")
-        *//*} else {
-            showToast("UNABLE TO CONNECT BLUETOOTH")
-        }*//*
-    }*/
-
-    /*private fun bluetoothDisconnected() {
-        val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        //audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-        audioManager.stopBluetoothSco()
-        //audioManager.isBluetoothScoOn = false
-        isBluetoothEnabled = false
-        callCallback?.get()?.onBluetoothStateChanged(false)
-    }
-
-    private fun bluetoothConnected() {
-        val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        //audioManager.mode = AudioManager.MODE_IN_CALL
-        audioManager.startBluetoothSco()
-        //audioManager.isBluetoothScoOn = true
-        isBluetoothEnabled = true
-        callCallback?.get()?.onBluetoothStateChanged(true)
-    }*/
 
     fun switchSpeck() {
         executor.submit {
@@ -1487,7 +1268,6 @@ class WebRtcService : BaseWebRtcService(), BluetoothProfile.ServiceListener {
     private fun resetConfig() {
         stopRing()
         joshAudioManager?.stopConnectTone()
-        // removeSensor()
         isCallerJoined = false
         eventListener = null
         isSpeakerEnabled = false

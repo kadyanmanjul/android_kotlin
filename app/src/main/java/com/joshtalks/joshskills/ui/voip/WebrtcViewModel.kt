@@ -15,11 +15,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
-
 class WebrtcViewModel(application: Application) : AndroidViewModel(application) {
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val audioState = ObservableField(CallAudioState.HANDSET)
     val isWiredHeadphoneConnected = ObservableBoolean(false)
+    val isBluetoothHeadsetConnected = ObservableBoolean(false)
 
     fun initMissedCall(partnerId: String, aFunction: (String, String, Int) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
