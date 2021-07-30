@@ -33,6 +33,8 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService
+import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isConversionRoomActive
+import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isRoomCreatedByUser
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -231,6 +233,7 @@ class ConversationRoomListingActivity : BaseActivity(),
         roomId: Int?
     ) {
         CONVERSATION_ROOM_VISIBLE_TRACK_FLAG = false
+        WebRtcService.isRoomCreatedByUser = true
         val intent = Intent(this, ConversationLiveRoomActivity::class.java)
         intent.putExtra("CHANNEL_NAME", channelName)
         intent.putExtra("UID", uid)
@@ -322,6 +325,8 @@ class ConversationRoomListingActivity : BaseActivity(),
         }
         super.onDestroy()
         PrefManager.put(IS_CONVERSATION_ROOM_ACTIVE, false)
+        isConversionRoomActive = false
+        isRoomCreatedByUser = false
     }
 
     override fun onBackPressed() {

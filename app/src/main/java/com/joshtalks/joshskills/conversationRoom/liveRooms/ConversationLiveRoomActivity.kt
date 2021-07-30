@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.conversationRoom.liveRooms
 
 import android.content.ComponentName
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.Color
@@ -43,6 +42,7 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.voip.ConversationRoomCallback
+import com.joshtalks.joshskills.ui.voip.ConversationRoomJoin
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -50,12 +50,11 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
-import io.agora.rtc.RtcEngine
-import io.agora.rtc.models.ChannelMediaOptions
+import io.agora.rtc.IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE
+import io.agora.rtc.IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlin.math.abs
 
 class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeakerClickAction,
     NotificationView.NotificationViewAction {
@@ -72,7 +71,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     var isRoomUserSpeaker: Boolean = false
     var speakerAdapter: SpeakerAdapter? = null
     var listenerAdapter: AudienceAdapter? = null
-    private var engine: RtcEngine? = null
     var channelName: String? = null
     var agoraUid: Int? = null
     var token: String? = null
@@ -109,9 +107,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         viewModel = ConversationLiveRoomViewModel()
         getIntentExtras()
         val intent = Intent(AppObjectController.joshApplication, WebRtcService::class.java)
+        intent.action = ConversationRoomJoin().action
+        intent.putExtra("token", token)
+        intent.putExtra("channel_name", channelName)
+        intent.putExtra("uid", agoraUid)
+        intent.putExtra("isModerator", isRoomCreatedByUser)
         startService(intent)
         WebRtcService.isConversionRoomActive = true
-//        myConnection
+        WebRtcService.isRoomCreatedByUser = isRoomCreatedByUser
         binding.notificationBar.setNotificationViewEnquiryAction(this)
         val liveRoomReference = database.collection("conversation_rooms")
         roomReference = liveRoomReference.document(roomId.toString())
@@ -119,8 +122,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         getUserName()
         handler = Handler(Looper.getMainLooper())
         updateUI()
-        initializeEngine()
-        takePermissions()
         setNotificationStates()
         leaveRoomIfModeratorEndRoom()
 
@@ -151,8 +152,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     }
 
-
-        private fun getUserName() {
+    private fun getUserName() {
         usersReference?.document(agoraUid.toString())?.get()?.addOnSuccessListener {
             currentUserName = it.get("name").toString()
             iSSoundOn = it.get("is_mic_on") == true
@@ -174,13 +174,14 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             true -> {
                 binding.unmuteBtn.visibility = View.VISIBLE
                 binding.muteBtn.visibility = View.GONE
+                mBoundService?.unMuteCall()
             }
             false -> {
                 binding.unmuteBtn.visibility = View.GONE
                 binding.muteBtn.visibility = View.VISIBLE
+                mBoundService?.muteCall()
             }
         }
-        engine?.muteLocalAudioStream(!iSSoundOn)
     }
 
     private fun getIntentExtras() {
@@ -215,9 +216,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         if (isRoomCreatedByUser) {
             binding.handRaiseBtn.visibility = View.GONE
             binding.raisedHands.visibility = View.VISIBLE
+            mBoundService?.setClientRole(CLIENT_ROLE_BROADCASTER)
         } else {
             binding.handRaiseBtn.visibility = View.VISIBLE
             binding.raisedHands.visibility = View.GONE
+            mBoundService?.setClientRole(CLIENT_ROLE_AUDIENCE)
         }
     }
 
@@ -361,7 +364,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 for (item in value.documentChanges) {
                     val map = item.document.data
                     val mapTo = map["to"] as HashMap<String, String>
-                    if (mapTo?.get("uid")?.toInt()?.equals(agoraUid) == true) {
+                    if (mapTo["uid"]?.toInt()?.equals(agoraUid) == true) {
 
                         notificationTo = map["to"] as HashMap<String, String>
                         notificationFrom = map["from"] as HashMap<String, String>
@@ -491,30 +494,30 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun updateUiWhenSwitchToListener() {
         isRoomUserSpeaker = false
-        initializeEngine()
-        engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE)
+        mBoundService?.setClientRole(CLIENT_ROLE_AUDIENCE)
         binding.apply {
             muteBtn.visibility = View.GONE
             unmuteBtn.visibility = View.GONE
             handUnraiseBtn.visibility = View.VISIBLE
             handRaiseBtn.visibility = View.GONE
         }
-
         isInviteRequestComeFromModerator = false
     }
 
     private fun updateUiWhenSwitchToSpeaker(isMicOn: Any?) {
         isRoomUserSpeaker = true
         isInviteRequestComeFromModerator = true
-        initializeEngine()
-        engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER)
+        mBoundService?.setClientRole(CLIENT_ROLE_BROADCASTER)
         binding.handRaiseBtn.visibility = View.GONE
         binding.handUnraiseBtn.visibility = View.GONE
         setHandRaiseValueToFirestore(false)
         isHandRaised = true
         iSSoundOn = isMicOn == true
         updateMuteButtonState()
-        engine?.muteLocalAudioStream(!iSSoundOn)
+        when (iSSoundOn) {
+            true -> mBoundService?.unMuteCall()
+            false -> mBoundService?.muteCall()
+        }
     }
 
     private fun setHandRaiseValueToFirestore(is_hand_raised: Boolean) {
@@ -524,19 +527,13 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         }
     }
 
-    private fun initializeEngine() {
-        if (engine == null) {
-            engine = AppObjectController.getRtcEngine(AppObjectController.joshApplication)
-        }
-    }
-
     private fun leaveRoomIfModeratorEndRoom() {
         roomReference?.addSnapshotListener { value, error ->
             if (error != null) {
                 return@addSnapshotListener
             } else {
                 if (value?.exists() == false) {
-                    engine?.leaveChannel()
+                    mBoundService?.leaveChannel()
                     showRoomEndNotification()
                 }
             }
@@ -546,7 +543,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 return@addSnapshotListener
             } else {
                 if (value?.isEmpty == true) {
-                    engine?.leaveChannel()
+                    mBoundService?.leaveChannel()
                     showRoomEndNotification()
                 }
             }
@@ -556,7 +553,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun takePermissions() {
         if (PermissionUtils.isDemoCallingPermissionEnabled(this)) {
-            joinChannel(channelName)
             return
         }
 
@@ -566,7 +562,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
-                            joinChannel(channelName)
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
@@ -591,101 +586,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         )
     }
 
-    private fun joinChannel(channelName: String?) {
-
-        engine?.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING)
-        if (isRoomCreatedByUser) {
-            engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER)
-        } else {
-            engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE)
-        }
-        if (eventListener != null) {
-            engine?.removeHandler(eventListener)
-        }
-        if (eventListener != null) {
-            engine?.addHandler(eventListener)
-        }
-        engine?.adjustPlaybackSignalVolume(100)
-        engine?.enableAudioVolumeIndication(1500, 3, true)
-        engine?.setAudioProfile(
-            Constants.AUDIO_PROFILE_SPEECH_STANDARD,
-            Constants.AUDIO_SCENARIO_GAME_STREAMING
-        )
-        val option = ChannelMediaOptions()
-        option.autoSubscribeAudio = true
-        val res = engine?.joinChannel(
-            token, channelName, "test", agoraUid!!, option
-        )
-        if (res != 0) {
-            showAlert(res?.let { abs(it) }?.let { RtcEngine.getErrorDescription(it) })
-            return
-        }
-    }
-
-    @Volatile
-    private var eventListener: IRtcEngineEventHandler? = object : IRtcEngineEventHandler() {
-
-        override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
-            super.onJoinChannelSuccess(channel, uid, elapsed)
-            agoraUid = uid
-        }
-
-        override fun onLeaveChannel(stats: RtcStats) {
-            super.onLeaveChannel(stats)
-        }
-
-        override fun onRejoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
-            super.onRejoinChannelSuccess(channel, uid, elapsed)
-        }
-
-        override fun onUserOffline(uid: Int, reason: Int) {
-            super.onUserOffline(uid, reason)
-            val isUserLeave =
-                reason == Constants.USER_OFFLINE_QUIT || reason == Constants.USER_OFFLINE_DROPPED
-            if (isRoomCreatedByUser) {
-                if (isUserLeave) {
-                    usersReference?.document(uid.toString())?.delete()
-                }
-            } else {
-                if (uid == moderatorUid && isUserLeave) {
-                    usersReference?.get()?.addOnSuccessListener { documents ->
-                        if (documents.size() > 1) {
-                            if (documents.documents[0].id.toInt() == agoraUid) {
-                                viewModel.leaveEndRoom(true, roomId, moderatorMentorId)
-                            } else if (documents.documents[1].id.toInt() == agoraUid) {
-                                viewModel.leaveEndRoom(true, roomId, moderatorMentorId)
-                            }
-                        }
-
-                    }
-                }
-            }
-        }
-
-        override fun onAudioVolumeIndication(
-            speakers: Array<out AudioVolumeInfo>?,
-            totalVolume: Int
-        ) {
-            super.onAudioVolumeIndication(speakers, totalVolume)
-            if (isRoomCreatedByUser) {
-                speakingUsersOldList.clear()
-                speakingUsersOldList.addAll(speakingUsersNewList)
-                speakingUsersNewList.clear()
-                speakers?.forEach {
-                    if (it.uid != 0 && it.volume > 0) {
-                        speakingUsersNewList.add(it.uid)
-                    }
-                    if (it.uid == 0 && it.volume > 0) {
-                        speakingUsersNewList.add(agoraUid ?: 0)
-                    }
-                }
-                updateFirestoreData()
-            }
-        }
-
-    }
-
-    private var conversationRoomCallback = object : ConversationRoomCallback{
+    private var conversationRoomCallback = object : ConversationRoomCallback {
 
         override fun onUserOffline(uid: Int, reason: Int) {
             val isUserLeave =
@@ -731,11 +632,11 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         }
 
         override fun onSwitchToSpeaker() {
-            engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER)
+            mBoundService?.setClientRole(CLIENT_ROLE_BROADCASTER)
         }
 
         override fun onSwitchToAudience() {
-            engine?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE)
+            mBoundService?.setClientRole(CLIENT_ROLE_AUDIENCE)
         }
 
     }
@@ -758,12 +659,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun showApiCallErrorToast(errorMessage: String) {
         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showAlert(message: String?) {
-        AlertDialog.Builder(this).setTitle("Tips").setMessage(message)
-            .setPositiveButton("OK") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
-            .show()
     }
 
     private fun observeNetwork() {
@@ -975,6 +870,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             myConnection,
             BIND_AUTO_CREATE
         )
+        takePermissions()
     }
 
     override fun onPause() {
@@ -985,6 +881,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     override fun onStop() {
         super.onStop()
         compositeDisposable.clear()
+        unbindService(myConnection)
     }
 
     override fun onResume() {
@@ -1005,10 +902,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     override fun onDestroy() {
         speakerAdapter?.stopListening()
         listenerAdapter?.stopListening()
-        if (engine != null) {
-            engine?.leaveChannel()
-            engine = null
-        }
+        mBoundService?.leaveChannel()
         binding.notificationBar.destroyMediaPlayer()
         super.onDestroy()
 

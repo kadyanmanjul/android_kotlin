@@ -37,7 +37,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingActivity
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CallType
 import com.joshtalks.joshskills.core.EMPTY
@@ -70,11 +69,13 @@ import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSETBLUETOOTH
 import io.agora.rtc.Constants.AUDIO_SCENARIO_EDUCATION
 import io.agora.rtc.Constants.AUDIO_SCENARIO_GAME_STREAMING
 import io.agora.rtc.Constants.CHANNEL_PROFILE_COMMUNICATION
+import io.agora.rtc.Constants.CLIENT_ROLE_AUDIENCE
+import io.agora.rtc.Constants.CLIENT_ROLE_BROADCASTER
 import io.agora.rtc.Constants.CONNECTION_CHANGED_INTERRUPTED
 import io.agora.rtc.Constants.CONNECTION_STATE_RECONNECTING
-import io.agora.rtc.Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
+import io.agora.rtc.models.ChannelMediaOptions
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
@@ -121,9 +122,6 @@ class WebRtcService : BaseWebRtcService() {
                 showDefaultNotification()
         }
     }
-    //private var serviceNotificationState = ServiceNotificationState.NONE
-    /*private val notificationStateSubject = PublishSubject.create<Boolean>()
-    val scope = CompositeDisposable()*/
 
     companion object {
         private val TAG = WebRtcService::class.java.simpleName
@@ -131,6 +129,7 @@ class WebRtcService : BaseWebRtcService() {
 
         var isOnPstnCall = false
         var isConversionRoomActive = false
+        var isRoomCreatedByUser = false
 
         @JvmStatic
         private val callReconnectTime = AppObjectController.getFirebaseRemoteConfig()
@@ -528,6 +527,7 @@ class WebRtcService : BaseWebRtcService() {
                 totalVolume: Int
             ) {
                 super.onAudioVolumeIndication(speakers, totalVolume)
+                Log.d(TAG, "${speakers?.size} ${speakers?.get(0)?.uid} ${speakers?.get(0)?.volume}")
                 conversationRoomCallback?.get()?.onAudioVolumeIndication(speakers, totalVolume)
             }
 
@@ -714,8 +714,6 @@ class WebRtcService : BaseWebRtcService() {
                 setParameters("{\"rtc.peer.offline_period\":$callReconnectTime}")
                 setParameters("{\"che.audio.keep.audiosession\":true}")
 
-                disableVideo()
-                enableAudio()
                 when (isConversionRoomActive) {
                     true -> {
                         setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING)
@@ -724,28 +722,39 @@ class WebRtcService : BaseWebRtcService() {
                             AUDIO_PROFILE_SPEECH_STANDARD,
                             AUDIO_SCENARIO_GAME_STREAMING
                         )
+                        if (isRoomCreatedByUser){
+                            setClientRole(CLIENT_ROLE_BROADCASTER)
+                        }else{
+                            setClientRole(CLIENT_ROLE_AUDIENCE)
+                        }
+                        val option = ChannelMediaOptions()
+                        option.autoSubscribeAudio = true
                     }
                     false -> {
+                        disableVideo()
+                        enableAudio()
                         enableAudioVolumeIndication(1000, 3, true)
                         setAudioProfile(
                             AUDIO_PROFILE_SPEECH_STANDARD,
                             AUDIO_SCENARIO_EDUCATION
                         )
                         setChannelProfile(CHANNEL_PROFILE_COMMUNICATION)
+                        adjustRecordingSignalVolume(400)
+                        val audio = getSystemService(AUDIO_SERVICE) as AudioManager
+                        val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
+                        val currentVolume = audio.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
+                        adjustPlaybackSignalVolume((95 / maxVolume) * currentVolume)
+                        enableDeepLearningDenoise(true)
+                        // Configuration for the publisher. When the network condition is poor, send audio only.
+                        setLocalPublishFallbackOption(Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY)
+
+                        // Configuration for the subscriber. Try to receive low stream under poor network conditions. When the current network conditions are not sufficient for video streams, receive audio stream only.
+                        setRemoteSubscribeFallbackOption(Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY)
                     }
+
                 }
 
-                adjustRecordingSignalVolume(400)
-                val audio = getSystemService(AUDIO_SERVICE) as AudioManager
-                val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
-                val currentVolume = audio.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
-                adjustPlaybackSignalVolume((95 / maxVolume) * currentVolume)
-                enableDeepLearningDenoise(true)
-                // Configuration for the publisher. When the network condition is poor, send audio only.
-                setLocalPublishFallbackOption(STREAM_FALLBACK_OPTION_AUDIO_ONLY)
 
-                // Configuration for the subscriber. Try to receive low stream under poor network conditions. When the current network conditions are not sufficient for video streams, receive audio stream only.
-                setRemoteSubscribeFallbackOption(STREAM_FALLBACK_OPTION_AUDIO_ONLY)
             }
             if (mRtcEngine != null) {
                 isEngineInitialized = true
@@ -911,11 +920,24 @@ class WebRtcService : BaseWebRtcService() {
                             when {
                                 this == ConversationRoomJoin().action -> {
                                     removeNotifications()
-                                    val roomId = intent.getStringExtra("room_id")
-                                    val conversatonRoomIntent = Intent(this@WebRtcService, ConversationRoomListingActivity::class.java)
-                                    conversatonRoomIntent.putExtra("open_from_notification", false)
-                                    conversatonRoomIntent.putExtra("room_id", roomId)
-                                    startActivity(conversatonRoomIntent)
+                                    val agoraUid = intent.getIntExtra(RTC_UID_KEY, 0)
+                                    val token = intent.getStringExtra(RTC_TOKEN_KEY)
+                                    val channelName = intent.getStringExtra(RTC_CHANNEL_KEY)
+                                    val statusCode = agoraUid.let {
+                                        mRtcEngine?.joinChannel(
+                                            token,
+                                            channelName, "test",
+                                            it
+                                        )
+                                    } ?: -3
+                                    val isRoomCreatedByUser =
+                                        intent.getBooleanExtra("isModerator", false)
+                                    if (isRoomCreatedByUser){
+                                        setClientRole(CLIENT_ROLE_BROADCASTER)
+                                    }else{
+                                        setClientRole(CLIENT_ROLE_AUDIENCE)
+                                    }
+
                                 }
                             }
 
@@ -936,6 +958,19 @@ class WebRtcService : BaseWebRtcService() {
 
     fun addListener(callback: ConversationRoomCallback) {
         conversationRoomCallback = WeakReference(callback)
+    }
+
+    fun initConversationRoom(channelName: String?, agoraUid: Int?, token: String?) {
+        initEngine {
+            val statusCode = agoraUid?.let {
+                mRtcEngine?.joinChannel(
+                    token,
+                    channelName, "test",
+                    it
+                )
+            } ?: -3
+        }
+
     }
 
     private fun callStopWithoutIssue() {
@@ -1260,12 +1295,20 @@ class WebRtcService : BaseWebRtcService() {
 
     fun getOppositeUserInfo() = userDetailMap
 
-    private fun muteCall() {
+    fun muteCall() {
         mRtcEngine?.muteLocalAudioStream(true)
     }
 
-    private fun unMuteCall() {
+    fun unMuteCall() {
         mRtcEngine?.muteLocalAudioStream(false)
+    }
+
+    fun setClientRole(role: Int) {
+        mRtcEngine?.setClientRole(role)
+    }
+
+    fun leaveChannel() {
+        mRtcEngine?.leaveChannel()
     }
 
     fun startCallTimer() {
