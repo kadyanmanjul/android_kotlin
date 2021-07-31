@@ -77,6 +77,7 @@ const val ONLINE_TEST_LIST_OF_COMPLETED_RULES = "online_test_list_of_completed_r
 const val ONLINE_TEST_LIST_OF_TOTAL_RULES = "online_test_list_of_total_rules"
 const val INBOX_SCREEN_VISIT_COUNT = "inbox_screen_visit_count"
 const val IS_FREE_TRIAL = "joshskills_is_free_trial"
+const val FREE_TRIAL_TEST_SCORE = "free_trial_test_score"
 const val HAS_OPENED_CONVERSATION_FIRST_TIME = "joshskills_has_opened_conversation_first_time"
 const val HAS_OPENED_GRAMMAR_FIRST_TIME = "joshskills_has_opened_grammar_first_time"
 const val HAS_OPENED_VOCAB_FIRST_TIME = "joshskills_has_opened_vocab_first_time"

@@ -172,16 +172,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:gravity="center"
                 android:paddingHorizontal="@dimen/_12sdp"
                 android:text="@string/your_score"
-                android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                android:textSize="@dimen/_8ssp"
                 android:textColor="@color/grammar_black_text_color"
                 app:layout_constraintBottom_toTopOf="@+id/score"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintVertical_chainStyle="packed"
                 app:layout_constraintTop_toBottomOf="@+id/score_title" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -198,6 +198,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintVertical_chainStyle="packed"
                 app:layout_constraintTop_toBottomOf="@+id/your_score_text" />
 
             <com.google.android.material.textview.MaterialTextView
@@ -218,6 +219,7 @@
                 android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:textColor="@color/white"
                 app:cornerRadius="@dimen/_10sdp"
+                app:layout_constraintVertical_chainStyle="packed"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />

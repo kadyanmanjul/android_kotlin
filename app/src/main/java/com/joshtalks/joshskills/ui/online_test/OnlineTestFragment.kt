@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_SCORE
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LIST_OF_COMPLETED_RULES
@@ -147,6 +148,10 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 }
                 isTestCompleted = onlineTestResponse.completed
                 scoreText = onlineTestResponse.scoreText
+                onlineTestResponse.scoreText?.let {
+                    PrefManager.put(
+                        FREE_TRIAL_TEST_SCORE, it,false)
+                }
                 pointsList = onlineTestResponse.pointsList?.get(0)
 
             } else {

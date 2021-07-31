@@ -12,6 +12,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_SCORE
 import com.joshtalks.joshskills.core.HAS_OPENED_GRAMMAR_FIRST_TIME
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
@@ -84,11 +85,12 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 ) {
                     binding.testScoreContainer.visibility = View.VISIBLE
                     if (scoreText != -1) {
-                        binding.score.text = getString(R.string.test_score, scoreText )
+                        binding.score.text = getString(R.string.test_score, scoreText)
 
                     } else {
-                        binding.score.text = getString(R.string.test_score, "0")
-
+                        binding.score.text = getString(R.string.test_score, PrefManager.getIntValue(
+                            FREE_TRIAL_TEST_SCORE,false
+                        ,0))
                     }
                     if (pointsList.isNullOrBlank().not()) {
                         showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, pointsList)
@@ -172,7 +174,9 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 binding.score.text = getString(R.string.test_score, scoreText )
 
             } else {
-                binding.score.text = getString(R.string.test_score, "0")
+                binding.score.text = getString(R.string.test_score, PrefManager.getIntValue(
+                    FREE_TRIAL_TEST_SCORE,false
+                    ,0))
 
             }
             if (pointsList.isNullOrBlank().not()) {
