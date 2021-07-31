@@ -106,15 +106,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         setContentView(binding.root)
         viewModel = ConversationLiveRoomViewModel()
         getIntentExtras()
-        val intent = Intent(AppObjectController.joshApplication, WebRtcService::class.java)
-        intent.action = ConversationRoomJoin().action
-        intent.putExtra("token", token)
-        intent.putExtra("channel_name", channelName)
-        intent.putExtra("uid", agoraUid)
-        intent.putExtra("isModerator", isRoomCreatedByUser)
-        startService(intent)
-        WebRtcService.isConversionRoomActive = true
-        WebRtcService.isRoomCreatedByUser = isRoomCreatedByUser
         binding.notificationBar.setNotificationViewEnquiryAction(this)
         val liveRoomReference = database.collection("conversation_rooms")
         roomReference = liveRoomReference.document(roomId.toString())
@@ -136,6 +127,19 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         switchRoles()
         speakerAdapter?.startListening()
         listenerAdapter?.startListening()
+        takePermissions()
+    }
+
+    private fun callWebRtcService() {
+        val intent = Intent(AppObjectController.joshApplication, WebRtcService::class.java)
+        intent.action = ConversationRoomJoin().action
+        intent.putExtra("token", token)
+        intent.putExtra("channel_name", channelName)
+        intent.putExtra("uid", agoraUid)
+        intent.putExtra("isModerator", isRoomCreatedByUser)
+        startService(intent)
+        WebRtcService.isConversionRoomActive = true
+        WebRtcService.isRoomCreatedByUser = isRoomCreatedByUser
     }
 
     private var myConnection: ServiceConnection = object : ServiceConnection {
@@ -416,14 +420,16 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
         acceptedText: String,
         heading: String,
     ) {
-        binding.notificationBar.visibility = View.VISIBLE
-        binding.notificationBar.showActionLayout()
-        binding.notificationBar.setRejectButtonText(rejectedText)
-        binding.notificationBar.setAcceptButtonText(acceptedText)
-        binding.notificationBar.setHeading(heading)
-        binding.notificationBar.startSound()
-        binding.notificationBar.setBackgroundColor(true)
-        binding.notificationBar.loadAnimationSlideDown()
+        binding.notificationBar.apply {
+            visibility = View.VISIBLE
+            showActionLayout()
+            setRejectButtonText(rejectedText)
+            setAcceptButtonText(acceptedText)
+            setHeading(heading)
+            startSound()
+            setBackgroundColor(true)
+            loadAnimationSlideDown()
+        }
         if (runnable != null) {
             handler?.removeCallbacks(runnable)
         }
@@ -559,6 +565,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
 
     private fun takePermissions() {
         if (PermissionUtils.isDemoCallingPermissionEnabled(this)) {
+            callWebRtcService()
             return
         }
 
@@ -568,6 +575,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
+                            callWebRtcService()
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
@@ -689,7 +697,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             hideActionLayout()
             setHeading("The Internet connection appears to be offline")
             setBackgroundColor(false)
-            startSound()
         }
 
     }
@@ -697,7 +704,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     private fun internetAvailable() {
         binding.notificationBar.apply {
             visibility = View.GONE
-            endSound()
         }
     }
 
@@ -882,7 +888,6 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
             myConnection,
             BIND_AUTO_CREATE
         )
-        takePermissions()
     }
 
     override fun onPause() {

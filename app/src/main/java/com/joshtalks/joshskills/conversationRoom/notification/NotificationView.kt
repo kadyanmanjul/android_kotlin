@@ -18,7 +18,7 @@ class NotificationView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
     private var enquiryAction: NotificationViewAction? = null
-    var mediaPlayer: MediaPlayer? = MediaPlayer.create(context, R.raw.ib_core_sound_new_message)
+    var mediaPlayer: MediaPlayer? = null
 
     interface NotificationViewAction {
         fun onAcceptNotification()
@@ -26,6 +26,7 @@ class NotificationView @JvmOverloads constructor(
     }
 
     init {
+        mediaPlayer = MediaPlayer.create(context, R.raw.ib_core_sound_new_message)
         View.inflate(context, R.layout.li_conversion_rooms_notification_bar, this)
         this.acceptButton.setOnClickListener {
             this.enquiryAction?.onAcceptNotification()
@@ -78,6 +79,9 @@ class NotificationView @JvmOverloads constructor(
     }
 
     fun startSound() {
+        if (mediaPlayer == null){
+            mediaPlayer = MediaPlayer.create(context, R.raw.ib_core_sound_new_message)
+        }
         mediaPlayer?.start()
     }
 

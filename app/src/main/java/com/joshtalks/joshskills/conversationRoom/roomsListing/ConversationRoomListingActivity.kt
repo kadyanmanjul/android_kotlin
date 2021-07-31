@@ -176,6 +176,7 @@ class ConversationRoomListingActivity : BaseActivity(),
 
     private fun setFlagInWebRtcServie() {
         val intent = Intent(this, WebRtcService::class.java)
+        isConversionRoomActive = true
         startService(intent)
     }
 
@@ -236,6 +237,7 @@ class ConversationRoomListingActivity : BaseActivity(),
     ) {
         CONVERSATION_ROOM_VISIBLE_TRACK_FLAG = false
         WebRtcService.isRoomCreatedByUser = true
+        isConversionRoomActive = true
         val intent = Intent(this, ConversationLiveRoomActivity::class.java)
         intent.putExtra("CHANNEL_NAME", channelName)
         intent.putExtra("UID", uid)

@@ -960,6 +960,16 @@ class WebRtcService : BaseWebRtcService() {
         conversationRoomCallback = WeakReference(callback)
     }
 
+    fun joinConversationRoom(uid: Int, channelName: String, token: String){
+        mRtcEngine = AppObjectController.getRtcEngine(AppObjectController.joshApplication)
+        mRtcEngine?.joinChannel(token, channelName, "test", uid)
+        if (isRoomCreatedByUser){
+            setClientRole(CLIENT_ROLE_BROADCASTER)
+        }else{
+            setClientRole(CLIENT_ROLE_AUDIENCE)
+        }
+    }
+
     fun initConversationRoom(channelName: String?, agoraUid: Int?, token: String?) {
         initEngine {
             val statusCode = agoraUid?.let {
