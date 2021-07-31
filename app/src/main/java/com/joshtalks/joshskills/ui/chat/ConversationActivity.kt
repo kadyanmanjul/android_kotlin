@@ -229,6 +229,11 @@ class ConversationActivity :
         if (inboxEntity.isCourseLocked) {
             initEndTrialBottomSheet()
         }
+        if (PrefManager.getBoolValue(HAS_OPENED_CONVERSATION_FIRST_TIME, defValue = true)) {
+            conversationBinding.lessonTooltipLayout.visibility = VISIBLE
+        } else {
+            conversationBinding.lessonTooltipLayout.visibility = GONE
+        }
     }
 
     private fun initEndTrialBottomSheet() {
@@ -671,9 +676,9 @@ class ConversationActivity :
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
                 this@ConversationActivity.userProfileData = userProfileData
-                    initScoreCardView(userProfileData)
-                    if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
-                        profileFeatureActiveView(true)
+                initScoreCardView(userProfileData)
+                if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
+                    profileFeatureActiveView(true)
             }
         }
 
@@ -1443,6 +1448,8 @@ class ConversationActivity :
 
     override fun onPause() {
         super.onPause()
+//        conversationBinding.lessonTooltipLayout.visibility = GONE
+//        PrefManager.put(HAS_OPENED_CONVERSATION_FIRST_TIME, false)
         audioPlayerManager?.onPause()
         compositeDisposable.clear()
     }

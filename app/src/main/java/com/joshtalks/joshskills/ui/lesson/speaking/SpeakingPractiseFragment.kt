@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.HAS_OPENED_SPEAKING_FIRST_TIME
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SPEAKING_POINTS
@@ -78,6 +79,12 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
         addObservers()
 
+        if (PrefManager.getBoolValue(HAS_OPENED_SPEAKING_FIRST_TIME, defValue = true)) {
+            binding.lessonTooltipLayout.visibility = VISIBLE
+        } else {
+            binding.lessonTooltipLayout.visibility = GONE
+        }
+
         return binding.rootView
     }
 
@@ -88,6 +95,12 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
         viewModel.isFavoriteCallerExist()
         subscribeRXBus()
+    }
+
+    override fun onPause() {
+        super.onPause()
+//        binding.lessonTooltipLayout.visibility = View.GONE
+//        PrefManager.put(HAS_OPENED_SPEAKING_FIRST_TIME, false)
     }
 
     override fun onStop() {
@@ -142,7 +155,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         viewModel.speakingTopicLiveData.observe(
             viewLifecycleOwner,
             { response ->
-                binding.progressView.visibility = View.GONE
+                binding.progressView.visibility = GONE
                 if (response == null) {
                     showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
                 } else {
@@ -163,7 +176,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     } catch (ex: Exception) {
                         ex.printStackTrace()
                     }
-                    binding.groupTwo.visibility = View.VISIBLE
+                    binding.groupTwo.visibility = VISIBLE
 
                     val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
                     if (points.isNotEmpty()) {
@@ -172,7 +185,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     }
 
                     if (response.alreadyTalked >= response.duration && response.isFromDb.not()) {
-                        binding.btnContinue.visibility = View.VISIBLE
+                        binding.btnContinue.visibility = VISIBLE
                         lessonActivityListener?.onQuestionStatusUpdate(
                             QUESTION_STATUS.AT,
                             questionId

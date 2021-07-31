@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.HAS_OPENED_GRAMMAR_FIRST_TIME
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
 import com.joshtalks.joshskills.core.PrefManager
@@ -90,6 +91,18 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 )
             }
         }
+
+        if (PrefManager.getBoolValue(HAS_OPENED_GRAMMAR_FIRST_TIME, defValue = true)) {
+            binding.lessonTooltipLayout.visibility = View.VISIBLE
+        } else {
+            binding.lessonTooltipLayout.visibility = View.GONE
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+//        binding.lessonTooltipLayout.visibility = View.GONE
+//        PrefManager.put(HAS_OPENED_GRAMMAR_FIRST_TIME, false)
     }
 
     private fun completeGrammarCardLogic() {

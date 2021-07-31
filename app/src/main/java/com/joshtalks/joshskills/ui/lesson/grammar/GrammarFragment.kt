@@ -57,11 +57,11 @@ import com.tonyodev.fetch2core.DownloadBlock
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.io.File
+import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.File
-import java.util.*
 
 class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedListener {
 
@@ -131,7 +131,6 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         }
         subscribeRxBus()
         setObservers()
-
         return binding.root
     }
 
@@ -140,6 +139,12 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         appAnalytics = AppAnalytics.create(AnalyticsEvent.PDF_VH.NAME)
             .addBasicParam()
             .addUserDetails()
+
+        if (PrefManager.getBoolValue(HAS_OPENED_GRAMMAR_FIRST_TIME, defValue = true)) {
+            binding.lessonTooltipLayout.visibility = View.VISIBLE
+        } else {
+            binding.lessonTooltipLayout.visibility = View.GONE
+        }
     }
 
     private fun subscribeRxBus() {
@@ -250,6 +255,8 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
 
     override fun onPause() {
         binding.videoPlayer.onPause()
+//        binding.lessonTooltipLayout.visibility = View.GONE
+//        PrefManager.put(HAS_OPENED_GRAMMAR_FIRST_TIME, false)
         super.onPause()
     }
 
@@ -664,9 +671,9 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                 evaluateQuestionStatus((binding.quizRadioGroup.tag as Int) == binding.quizRadioGroup.checkedRadioButtonId)
 
             val selectedChoice = question.choiceList[
-                binding.quizRadioGroup.indexOfChild(
-                    binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
-                )
+                    binding.quizRadioGroup.indexOfChild(
+                        binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
+                    )
             ]
             selectedChoice.isSelectedByUser = true
             selectedChoice.userSelectedOrder = selectedChoice.sortOrder
@@ -775,8 +782,8 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                         download()
                     } else if (PermissionUtils.isStoragePermissionEnabled(requireContext()) && AppDirectory.getFileSize(
                             File(
-                                    AppDirectory.docsReceivedFile(pdfObj.url).absolutePath
-                                )
+                                AppDirectory.docsReceivedFile(pdfObj.url).absolutePath
+                            )
                         ) > 0
                     ) {
                         pdfQuestion.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED

@@ -19,9 +19,9 @@
             android:id="@+id/lesson_tooltip_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_8sdp"
+            android:layout_marginHorizontal="@dimen/_9sdp"
             android:layout_marginTop="@dimen/_4sdp"
-            android:background="@drawable/bg_tooltip_large_center">
+            android:background="@drawable/bg_tooltip_large_start">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="@dimen/_180sdp"

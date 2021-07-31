@@ -14,7 +14,9 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.HAS_OPENED_VOCAB_FIRST_TIME
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
@@ -99,6 +101,15 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         }
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (PrefManager.getBoolValue(HAS_OPENED_VOCAB_FIRST_TIME, defValue = true)) {
+            binding.lessonTooltipLayout.visibility = View.VISIBLE
+        } else {
+            binding.lessonTooltipLayout.visibility = View.GONE
+        }
     }
 
     private fun addObserver() {
@@ -414,6 +425,8 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
 
     override fun onPause() {
         super.onPause()
+//        binding.lessonTooltipLayout.visibility = View.GONE
+//        PrefManager.put(HAS_OPENED_VOCAB_FIRST_TIME, false)
         if (::adapter.isInitialized) {
             adapter.audioManager?.onPause()
         }

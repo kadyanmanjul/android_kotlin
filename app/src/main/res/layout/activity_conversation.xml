@@ -221,9 +221,11 @@
                 android:id="@+id/lesson_tooltip_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_360sdp"
-                android:background="@drawable/bg_tooltip_small_center">
+                android:layout_marginHorizontal="@dimen/_30sdp"
+                android:layout_marginTop="@dimen/_368sdp"
+                android:background="@drawable/bg_tooltip_small_center"
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                     android:layout_width="wrap_content"

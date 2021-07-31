@@ -3,9 +3,9 @@
     <item
         android:width="@dimen/_12sdp"
         android:bottom="@dimen/_12sdp"
-        android:gravity="start"
-        android:left="@dimen/_48sdp"
-        android:right="@dimen/_48sdp"
+        android:gravity="center"
+        android:left="@dimen/_24sdp"
+        android:right="@dimen/_minus36sdp"
         android:top="@dimen/_minus9sdp">
         <rotate android:fromDegrees="45">
             <shape android:shape="rectangle">
